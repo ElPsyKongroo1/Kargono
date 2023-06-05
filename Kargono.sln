@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Kargono", "Kargono.vcxproj", "{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestingStuff", "..\TestingStuff\TestingStuff.vcxproj", "{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,14 +21,6 @@ Global
 		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Release|x64.Build.0 = Release|x64
 		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Release|x86.ActiveCfg = Release|Win32
 		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Release|x86.Build.0 = Release|Win32
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Debug|x64.ActiveCfg = Debug|x64
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Debug|x64.Build.0 = Debug|x64
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Debug|x86.ActiveCfg = Debug|Win32
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Debug|x86.Build.0 = Debug|Win32
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Release|x64.ActiveCfg = Release|x64
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Release|x64.Build.0 = Release|x64
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Release|x86.ActiveCfg = Release|Win32
-		{FAA69077-29BC-4BAD-B841-ACB5EFBB38D0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
