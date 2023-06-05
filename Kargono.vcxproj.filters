@@ -514,6 +514,10 @@
     <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
     <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
     <None Include="glfw3.pdb" />
+    <None Include="assimp-vc143-mtd.pdb" />
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="assimp-vc143-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -543,6 +547,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
+    <Text Include="imgui_log.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />

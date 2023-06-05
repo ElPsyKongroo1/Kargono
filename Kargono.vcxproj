@@ -319,6 +319,10 @@
     <ClInclude Include="src\Library\UserInterface\WindowFunctions.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="assimp-vc143-mtd.dll" />
+    <None Include="assimp-vc143-mtd.pdb" />
     <None Include="glfw3.pdb" />
     <None Include="imgui.ini" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
@@ -354,6 +358,7 @@
     <Image Include="src\Resources\Textures\Images\SpecularMap\Metal_Box.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="imgui_log.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
