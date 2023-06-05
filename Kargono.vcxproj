@@ -360,6 +360,7 @@
   <ItemGroup>
     <Text Include="imgui_log.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
+    <Text Include="testing.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="glfw3.lib" />
