@@ -17,7 +17,7 @@ int Application2D()
 {
 	// Initialize GLFW context, Meshes, Shaders, and Textures
 
-	FInitializeRenderer();
+	FInitializeRenderer(); // GLFW, GLEW, and IMGui contexts
 	FInitializeLibraryResources();
 
 

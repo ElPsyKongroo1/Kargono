@@ -7,6 +7,7 @@
 #include "../Library/Textures/Textures.h"
 #include "../Library/Objects/Objects.h"
 #include "../Library/UserInterface/WindowFunctions.h"
+//#include <windows.h>
 
 /*============================================================================================================================================================================================
  * Application Entry Point
@@ -81,7 +82,6 @@ int DefaultApplication()
     //object6.lightSource.lightDirection = glm::vec3(0.0f, -1.0f, 1.0f);
     //Resources::currentApplication->allObjects.push_back(object6);
 
-
     // Main running Loop
     while (!glfwWindowShouldClose(Resources::currentApplication->window))
     {
@@ -97,8 +97,15 @@ int DefaultApplication()
         FPostRendering();
 
     }
+    
 
     FTerminateLibraryResources();
+    
+    //glfwSetWindowShouldClose(Resources::currentApplication->window, GL_FALSE);
+    //glfwSetWindowMonitor(Resources::currentApplication->window, NULL, 0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y, 0);
+    //glfwSetWindowShouldClose(Resources::currentApplication->window, GL_TRUE);
+    //Sleep(3000);
+    
     FTerminateRenderer();
 
     return 0;

@@ -19,5 +19,6 @@ void FTerminateLibraryResources()
 }
 void FTerminateRenderer()
 {
+
 	glfwTerminate();
 }

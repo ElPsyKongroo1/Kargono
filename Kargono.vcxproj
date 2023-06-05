@@ -203,6 +203,8 @@
     <ClCompile Include="src\Library\UserInterface\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="glfw3.h" />
+    <ClInclude Include="glfw3native.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\aabb.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\ai_assert.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\anim.h" />
@@ -284,6 +286,8 @@
     <ClInclude Include="OpenGLResources\Includes\Assimp\XMLTools.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="OpenGLResources\Includes\glad\glad.h" />
+    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
+    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Application2D\Application2D.h" />
     <ClInclude Include="src\Application2D\Rendering1.h" />
     <ClInclude Include="src\DefaultApplication\DefaultApplication.h" />
@@ -315,6 +319,7 @@
     <ClInclude Include="src\Library\UserInterface\WindowFunctions.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="glfw3.pdb" />
     <None Include="imgui.ini" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
     <None Include="OpenGLResources\Includes\Assimp\color4.inl" />
@@ -326,6 +331,8 @@
     <None Include="OpenGLResources\Includes\Assimp\SmoothingGroups.inl" />
     <None Include="OpenGLResources\Includes\Assimp\vector2.inl" />
     <None Include="OpenGLResources\Includes\Assimp\vector3.inl" />
+    <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
+    <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
     <None Include="Resources\Shaders\Lighting\shader.fs" />
     <None Include="Resources\Shaders\Lighting\shader.vs" />
     <None Include="Resources\Shaders\LightSource\shader.fs" />
@@ -348,6 +355,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="glfw3.lib" />
+    <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
+    <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -461,6 +461,18 @@
     <ClInclude Include="OpenGLResources\Includes\Assimp\Compiler\pushpack1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -499,6 +511,9 @@
     <None Include="OpenGLResources\Includes\Assimp\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
+    <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
+    <None Include="glfw3.pdb" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -528,5 +543,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
+    <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
+    <Library Include="glfw3.lib" />
   </ItemGroup>
 </Project>

@@ -543,7 +543,7 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
                     Resources::currentApplication->allLightSources.erase(Resources::currentApplication->allLightSources.begin() + i);
                     break;
                 }
-            }
+            }   
         }
         break;
     case TOGGLE_DEVICE_MOUSE_MOVEMENT:
@@ -551,6 +551,7 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
         else { Resources::currentApplication->currentInput->isMouseMovement = true; Resources::currentApplication->currentCamera->firstMouse = true; }
         break;
     case EXIT_APPLICATION:
+        //glfwSetWindowMonitor(Resources::currentApplication->window, NULL, 0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y, NULL);
         glfwSetWindowShouldClose(Resources::currentApplication->window, true);
         break;
     case RANDOM_FLASHLIGHT_COLOR:
