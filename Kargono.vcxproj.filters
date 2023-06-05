@@ -548,6 +548,7 @@
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
     <Text Include="imgui_log.txt" />
+    <Text Include="testing.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
