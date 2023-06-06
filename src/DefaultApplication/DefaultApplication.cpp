@@ -22,19 +22,19 @@ int DefaultApplication()
     FInitializeLibraryResources();
     
     // Initialize Objects
-    Object object1 = Object(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+    ModelRenderer object1 = ModelRenderer(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
         glm::vec3(2.0f, 0.0f, 0.0f),
         glm::vec3(2.0f, 2.0f, 2.0f));
     Resources::currentApplication->allSimpleObjects.push_back(object1);
 
-    Object object2 = Object(glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
+    ModelRenderer object2 = ModelRenderer(glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
         glm::vec3(3.0f, -2.0f, 4.0f),
         glm::vec3(50.0f, 50.0f, 2.0f),
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader);
     Resources::currentApplication->allSimpleObjects.push_back(object2);
 
-    Object object4 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
+    ModelRenderer object4 = ModelRenderer(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
         glm::vec3(7.0f, 5.0f, -4.0f),
         glm::vec3(0.5f, 0.5f, 0.5f),
         Resources::currentApplication->defaultModel,
@@ -42,7 +42,7 @@ int DefaultApplication()
     object4.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Resources::currentApplication->allSimpleObjects.push_back(object4);
 
-    Object object5 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
+    ModelRenderer object5 = ModelRenderer(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
         glm::vec3(-21.0f, 5.0f, 12.0f),
         glm::vec3(0.5f, 0.5f, 0.5f),
         Resources::currentApplication->defaultModel,
@@ -50,7 +50,7 @@ int DefaultApplication()
     object5.createLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
     Resources::currentApplication->allSimpleObjects.push_back(object5);
 
-    Object object7 = Object(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+    ModelRenderer object7 = ModelRenderer(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
         glm::vec3(8.0f, 0.0f, -10.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         &Resources::modelManager.human,
@@ -58,14 +58,14 @@ int DefaultApplication()
     object7.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Resources::currentApplication->allSimpleObjects.push_back(object7);
 
-    Object object8 = Object(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+    ModelRenderer object8 = ModelRenderer(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
         glm::vec3(-8.0f, 0.0f, 30.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         &Resources::modelManager.house,
         Resources::currentApplication->defaultShader);
     Resources::currentApplication->allSimpleObjects.push_back(object8);
 
-    Object object9 = Object(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+    ModelRenderer object9 = ModelRenderer(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
         glm::vec3(20.0f, 0.0f, 30.0f),
         glm::vec3(1.0f, 1.0f, 1.0f),
         &Resources::modelManager.house2,

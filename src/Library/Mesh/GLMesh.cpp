@@ -41,7 +41,7 @@ void GLMesh::setupMesh()
 
 void GLMesh::Draw(void* object)
 {
-    Object* object0 = (Object*)object;
+    ModelRenderer* object0 = (ModelRenderer*)object;
     // Matrix Local Variables
     glm::mat4 scale, rotation, translation;
     glm::mat4 model = glm::mat4(1.0f);

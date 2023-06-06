@@ -11,7 +11,7 @@
  * Object Class
  *============================================================================================================================================================================================*/
 
-class Object : public Renderable
+class ModelRenderer : public Renderable
 {
 public:
 	glm::vec4 rotation; // x,y,z, and rotation in degrees
@@ -24,12 +24,12 @@ public:
 	
 
 public:
-	Object(const glm::vec4& rotation,
+	ModelRenderer(const glm::vec4& rotation,
 		const glm::vec3& translation,
 		const glm::vec3& scale,
 		Model* model,
 		GLShader* shader);
-	Object(const glm::vec4& rotation,
+	ModelRenderer(const glm::vec4& rotation,
 		const glm::vec3& translation,
 		const glm::vec3& scale);
 public:

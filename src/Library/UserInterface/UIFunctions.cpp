@@ -69,7 +69,7 @@ void renderDevTool()
 		{
 			for (int i = 0; i < Resources::currentApplication->allSimpleObjects.size(); i++)
 			{
-				Object* object = &Resources::currentApplication->allSimpleObjects.at(i);
+				ModelRenderer* object = &Resources::currentApplication->allSimpleObjects.at(i);
 				if (ImGui::TreeNode((void*)(intptr_t)i, "Object %d", i + 1))
 				{
 					ImGui::Text("Translation: %fx, %fy, %fz", object->translation.x, object->translation.y, object->translation.z);
