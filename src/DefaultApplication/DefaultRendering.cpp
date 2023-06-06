@@ -10,8 +10,8 @@
 void FRendering()
 {
     // Render Objects
-    for (ModelRenderer object : Resources::currentApplication->allSimpleObjects)
+    for (ModelRenderer renderable : Resources::currentApplication->allSimpleObjects)
     {
-        object.model->Draw(&object);
+        renderable.model->Draw(&renderable);
     }
 }

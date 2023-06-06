@@ -21,7 +21,6 @@ public:
 	bool isLightSource;
 	Model* model;
 	GLShader* shader;
-	
 
 public:
 	ModelRenderer(const glm::vec4& rotation,
@@ -66,3 +65,18 @@ private:
 //private:
 //
 //};
+
+class Object 
+{
+public:
+	Object(Orientation* orientation, Renderable* renderer) : orientation{ orientation }, renderer{renderer}
+	{
+		assert(orientation && renderer && "Object class failed to instantiate. Orientation or Renderer are nullptr");
+		renderer->orientation = orientation;
+	}
+
+private:
+	Orientation* orientation;
+	Renderable* renderer;
+
+};
