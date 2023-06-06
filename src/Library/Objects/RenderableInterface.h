@@ -13,7 +13,7 @@ struct Orientation
 class Renderable
 {
 public:
-	Orientation* orientation;
+	Orientation* orientation{nullptr};
 protected:
 	virtual void render() = 0;
 };

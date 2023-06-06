@@ -72,9 +72,9 @@ void renderDevTool()
 				ModelRenderer* object = &Resources::currentApplication->allSimpleObjects.at(i);
 				if (ImGui::TreeNode((void*)(intptr_t)i, "Object %d", i + 1))
 				{
-					ImGui::Text("Translation: %fx, %fy, %fz", object->translation.x, object->translation.y, object->translation.z);
-					ImGui::Text("Rotation: %fx, %fy, %fz, %fdeg", object->rotation.x, object->rotation.y, object->rotation.z, object->rotation.w);
-					ImGui::Text("Scale: %fx, %fy, %fz", object->scale.x, object->scale.y, object->scale.z);
+					ImGui::Text("Translation: %fx, %fy, %fz", object->orientation->translation.x, object->orientation->translation.y, object->orientation->translation.z);
+					ImGui::Text("Rotation: %fx, %fy, %fz, %fdeg", object->orientation->rotation.x, object->orientation->rotation.y, object->orientation->rotation.z, object->orientation->rotation.w);
+					ImGui::Text("Scale: %fx, %fy, %fz", object->orientation->scale.x, object->orientation->scale.y, object->orientation->scale.z);
 					ImGui::Separator();
 					ImGui::TreePop();
 				}

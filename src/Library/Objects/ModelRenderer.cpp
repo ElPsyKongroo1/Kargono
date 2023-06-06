@@ -11,37 +11,21 @@
   * Overloaded Constructors
   *============================================================================================================================================================================================*/
 
-ModelRenderer::ModelRenderer(const glm::vec4& rotation,
-	const glm::vec3& translation,
-	const glm::vec3& scale,
+ModelRenderer::ModelRenderer(Orientation& orientation,
 	Model* model,
 	GLShader* shader)
 
 {
-	this->orientation = new Orientation();
-	this->orientation->rotation = rotation;
-	this->orientation->translation = translation;
-	this->orientation->scale = scale;
-	this->rotation = rotation;
-	this->translation = translation;
-	this->scale = scale;
+	this->orientation = &orientation;
 	this->model = model;
 	this->shader = shader;
 	this->isLightSource = false;
 
 }
 
-ModelRenderer::ModelRenderer(const glm::vec4& rotation,
-	const glm::vec3& translation,
-	const glm::vec3& scale)
+ModelRenderer::ModelRenderer(Orientation& orientation)
 {
-	this->orientation = new Orientation();
-	this->orientation->rotation = rotation;
-	this->orientation->translation = translation;
-	this->orientation->scale = scale;
-	this->rotation = rotation;
-	this->translation = translation;
-	this->scale = scale;
+	this->orientation = &orientation;
 	this->model = Resources::currentApplication->defaultModel;
 	this->shader = Resources::currentApplication->defaultShader;
 	this->isLightSource = false;
@@ -49,7 +33,7 @@ ModelRenderer::ModelRenderer(const glm::vec4& rotation,
 
 ModelRenderer::~ModelRenderer()
 {
-	delete this->orientation;
+	
 }
 
 /*============================================================================================================================================================================================
@@ -59,7 +43,7 @@ ModelRenderer::~ModelRenderer()
 void ModelRenderer::createLightSource(glm::vec3 color)
 {
 	isLightSource = true;
-	this->lightSource = LightSource(this->translation, color);
+	this->lightSource = LightSource(this->orientation->translation, color);
 	this->shader = &Resources::shaderManager.lightSourceShader;
 	lightSource.parentObject = LightSource::OBJECT;
 	Resources::currentApplication->allLightSources.push_back(&lightSource);

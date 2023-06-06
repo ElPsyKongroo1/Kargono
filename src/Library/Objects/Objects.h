@@ -14,23 +14,16 @@
 class ModelRenderer : public Renderable
 {
 public:
-	glm::vec4 rotation; // x,y,z, and rotation in degrees
-	glm::vec3 translation;
-	glm::vec3 scale;
 	LightSource lightSource;
 	bool isLightSource;
 	Model* model;
 	GLShader* shader;
 
 public:
-	ModelRenderer(const glm::vec4& rotation,
-		const glm::vec3& translation,
-		const glm::vec3& scale,
+	ModelRenderer(Orientation& orientation,
 		Model* model,
 		GLShader* shader);
-	ModelRenderer(const glm::vec4& rotation,
-		const glm::vec3& translation,
-		const glm::vec3& scale);
+	ModelRenderer(Orientation& orientation);
 	~ModelRenderer();
 public:
 	void createLightSource(glm::vec3 color);
@@ -70,14 +63,15 @@ private:
 class Object 
 {
 public:
-	Object(Orientation* orientation, Renderable* renderer) : orientation{ orientation }, renderer{renderer}
+	Object(Orientation orientation, Renderable* renderer) : orientation{ orientation }, renderer{renderer}
 	{
-		assert(orientation && renderer && "Object class failed to instantiate. Orientation or Renderer are nullptr");
-		renderer->orientation = orientation;
+		
+		assert(renderer && "Object class failed to instantiate. Renderer is a nullptr");
+		renderer->orientation = &this->orientation;
 	}
 
 private:
-	Orientation* orientation;
+	Orientation orientation;
 	Renderable* renderer;
 
 };
