@@ -18,9 +18,10 @@ ModelRenderer::ModelRenderer(const glm::vec4& rotation,
 	GLShader* shader)
 
 {
-	/*this->orientation->rotation = rotation;
+	this->orientation = new Orientation();
+	this->orientation->rotation = rotation;
 	this->orientation->translation = translation;
-	this->orientation->scale = scale;*/
+	this->orientation->scale = scale;
 	this->rotation = rotation;
 	this->translation = translation;
 	this->scale = scale;
@@ -34,16 +35,21 @@ ModelRenderer::ModelRenderer(const glm::vec4& rotation,
 	const glm::vec3& translation,
 	const glm::vec3& scale)
 {
-	/*this->orientation->rotation = rotation;
+	this->orientation = new Orientation();
+	this->orientation->rotation = rotation;
 	this->orientation->translation = translation;
-	this->orientation->scale = scale;*/
+	this->orientation->scale = scale;
 	this->rotation = rotation;
 	this->translation = translation;
 	this->scale = scale;
 	this->model = Resources::currentApplication->defaultModel;
 	this->shader = Resources::currentApplication->defaultShader;
 	this->isLightSource = false;
+}
 
+ModelRenderer::~ModelRenderer()
+{
+	delete this->orientation;
 }
 
 /*============================================================================================================================================================================================

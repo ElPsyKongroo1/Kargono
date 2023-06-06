@@ -31,6 +31,7 @@ public:
 	ModelRenderer(const glm::vec4& rotation,
 		const glm::vec3& translation,
 		const glm::vec3& scale);
+	~ModelRenderer();
 public:
 	void createLightSource(glm::vec3 color);
 	void render() override {}
