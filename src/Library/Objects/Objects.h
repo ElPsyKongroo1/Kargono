@@ -5,12 +5,13 @@
 #include "../Mesh/Meshes.h"
 #include "../Model/Model.h"
 #include "../LightSource/LightSource.h"
+#include "RenderableInterface.h"
 
 /*============================================================================================================================================================================================
  * Object Class
  *============================================================================================================================================================================================*/
 
-class Object 
+class Object : public Renderable
 {
 public:
 	glm::vec4 rotation; // x,y,z, and rotation in degrees
@@ -33,6 +34,7 @@ public:
 		const glm::vec3& scale);
 public:
 	void createLightSource(glm::vec3 color);
+	void render() override {}
 private:
 
 };
