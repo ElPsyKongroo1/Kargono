@@ -180,7 +180,7 @@
     <ClCompile Include="src\Library\Mesh\MeshManager.cpp" />
     <ClCompile Include="src\Library\Model\Model.cpp" />
     <ClCompile Include="src\Library\Model\ModelManager.cpp" />
-    <ClCompile Include="src\Library\Objects\Objects.cpp" />
+    <ClCompile Include="src\Library\Objects\ModelRenderer.cpp" />
     <ClCompile Include="src\Library\External_Libraries\glad.c" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_demo.cpp" />
