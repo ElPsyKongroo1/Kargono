@@ -87,7 +87,6 @@
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
     <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
@@ -192,6 +191,7 @@
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Library\Library.cpp" />
     <ClCompile Include="src\Library\Mesh\GLMesh.cpp" />
+    <ClCompile Include="src\Library\Objects\RenderableInterface.cpp" />
     <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp" />
     <ClCompile Include="src\Library\RuntimeFunctions.cpp" />
     <ClCompile Include="src\Library\Shaders\ShaderManager.cpp" />
@@ -205,6 +205,8 @@
     <ClCompile Include="src\Library\UserInterface\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="glfw3.h" />
+    <ClInclude Include="glfw3native.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\aabb.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\ai_assert.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\anim.h" />
@@ -322,6 +324,10 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="assimp-vc143-mtd.dll" />
+    <None Include="assimp-vc143-mtd.pdb" />
+    <None Include="glfw3.pdb" />
+    <None Include="imgui.ini" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
     <None Include="OpenGLResources\Includes\Assimp\color4.inl" />
     <None Include="OpenGLResources\Includes\Assimp\config.h.in" />
@@ -332,7 +338,6 @@
     <None Include="OpenGLResources\Includes\Assimp\SmoothingGroups.inl" />
     <None Include="OpenGLResources\Includes\Assimp\vector2.inl" />
     <None Include="OpenGLResources\Includes\Assimp\vector3.inl" />
-    <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.dll" />
     <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
     <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
     <None Include="Resources\Shaders\Lighting\shader.fs" />
@@ -357,11 +362,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Documentation\ToDO.txt" />
+    <Text Include="imgui_log.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
-    <Library Include="OpenGLResources\Libraries\glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
