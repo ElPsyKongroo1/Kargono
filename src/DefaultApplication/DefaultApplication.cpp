@@ -25,16 +25,17 @@ int DefaultApplication()
     Orientation orientation1{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                                     glm::vec3(2.0f, 0.0f, 0.0f),
                                     glm::vec3(2.0f, 2.0f, 2.0f) };
-    ModelRenderer renderer1 = ModelRenderer(orientation1);
+    ModelRenderer renderer1{ ModelRenderer(orientation1) };
     Resources::currentApplication->allSimpleObjects.push_back(renderer1);
+    /*Object object1{}*/
     
 
     Orientation orientation2{ glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
                               glm::vec3(3.0f, -2.0f, 4.0f),
                               glm::vec3(50.0f, 50.0f, 2.0f) };
-    ModelRenderer renderer2 = ModelRenderer(orientation2,
+    ModelRenderer renderer2{ ModelRenderer(orientation2,
         Resources::currentApplication->defaultModel,
-        Resources::currentApplication->defaultShader);
+        Resources::currentApplication->defaultShader) };
     Resources::currentApplication->allSimpleObjects.push_back(renderer2);
 
     Orientation orientation4{ glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
