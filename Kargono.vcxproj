@@ -180,7 +180,7 @@
     <ClCompile Include="src\Library\Mesh\MeshManager.cpp" />
     <ClCompile Include="src\Library\Model\Model.cpp" />
     <ClCompile Include="src\Library\Model\ModelManager.cpp" />
-    <ClCompile Include="src\Library\Objects\Objects.cpp" />
+    <ClCompile Include="src\Library\Objects\ModelRenderer.cpp" />
     <ClCompile Include="src\Library\External_Libraries\glad.c" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_demo.cpp" />
@@ -313,6 +313,7 @@
     <ClInclude Include="src\Library\Library.h" />
     <ClInclude Include="src\Library\Mesh\Meshes.h" />
     <ClInclude Include="src\Library\External_Libraries\stb_image.h" />
+    <ClInclude Include="src\Library\Objects\RenderableInterface.h" />
     <ClInclude Include="src\Library\Shaders\Shaders.h" />
     <ClInclude Include="src\Library\Textures\Textures.h" />
     <ClInclude Include="src\Library\UserInterface\UIFunctions.h" />
@@ -360,7 +361,6 @@
   <ItemGroup>
     <Text Include="imgui_log.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
-    <Text Include="testing.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="glfw3.lib" />
