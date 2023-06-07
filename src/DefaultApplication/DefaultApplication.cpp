@@ -25,59 +25,60 @@ int DefaultApplication()
     Orientation orientation1{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                                     glm::vec3(2.0f, 0.0f, 0.0f),
                                     glm::vec3(2.0f, 2.0f, 2.0f) };
-    ModelRenderer object1 = ModelRenderer(orientation1);
-    Resources::currentApplication->allSimpleObjects.push_back(object1);
+    ModelRenderer renderer1 = ModelRenderer(orientation1);
+    Resources::currentApplication->allSimpleObjects.push_back(renderer1);
+    
 
     Orientation orientation2{ glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
                               glm::vec3(3.0f, -2.0f, 4.0f),
                               glm::vec3(50.0f, 50.0f, 2.0f) };
-    ModelRenderer object2 = ModelRenderer(orientation2,
+    ModelRenderer renderer2 = ModelRenderer(orientation2,
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader);
-    Resources::currentApplication->allSimpleObjects.push_back(object2);
+    Resources::currentApplication->allSimpleObjects.push_back(renderer2);
 
     Orientation orientation4{ glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
                               glm::vec3(7.0f, 5.0f, -4.0f),
                               glm::vec3(0.5f, 0.5f, 0.5f) };
-    ModelRenderer object4 = ModelRenderer(orientation4,
+    ModelRenderer renderer4 = ModelRenderer(orientation4,
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader);
-    object4.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
-    Resources::currentApplication->allSimpleObjects.push_back(object4);
+    renderer4.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
+    Resources::currentApplication->allSimpleObjects.push_back(renderer4);
 
     Orientation orientation5{ glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
                               glm::vec3(-21.0f, 5.0f, 12.0f),
                               glm::vec3(0.5f, 0.5f, 0.5f) };
-    ModelRenderer object5 = ModelRenderer(orientation5,
+    ModelRenderer renderer5 = ModelRenderer(orientation5,
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader);
-    object5.createLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
-    Resources::currentApplication->allSimpleObjects.push_back(object5);
+    renderer5.createLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
+    Resources::currentApplication->allSimpleObjects.push_back(renderer5);
 
     Orientation orientation7{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                               glm::vec3(8.0f, 0.0f, -10.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
-    ModelRenderer object7 = ModelRenderer(orientation7,
+    ModelRenderer renderer7 = ModelRenderer(orientation7,
         &Resources::modelManager.human,
         Resources::currentApplication->defaultShader);
-    object7.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
-    Resources::currentApplication->allSimpleObjects.push_back(object7);
+    renderer7.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
+    Resources::currentApplication->allSimpleObjects.push_back(renderer7);
 
     Orientation orientation8{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                               glm::vec3(-8.0f, 0.0f, 30.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
-    ModelRenderer object8 = ModelRenderer(orientation8,
+    ModelRenderer renderer8 = ModelRenderer(orientation8,
         &Resources::modelManager.house,
         Resources::currentApplication->defaultShader);
-    Resources::currentApplication->allSimpleObjects.push_back(object8);
+    Resources::currentApplication->allSimpleObjects.push_back(renderer8);
 
     Orientation orientation9{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                               glm::vec3(20.0f, 0.0f, 30.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
-    ModelRenderer object9 = ModelRenderer(orientation9,
+    ModelRenderer renderer9 = ModelRenderer(orientation9,
         &Resources::modelManager.house2,
         Resources::currentApplication->defaultShader);
-    Resources::currentApplication->allSimpleObjects.push_back(object9);
+    Resources::currentApplication->allSimpleObjects.push_back(renderer9);
 
     //Object object6 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
     //    glm::vec3(0.0f, 40.0f, -40.0f),
