@@ -47,7 +47,7 @@ int DefaultApplication()
     ModelRenderer renderer4{ ModelRenderer(orientation4,
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader) };
-    renderer4.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
+    renderer4.addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Object object4{ orientation4, &renderer4 };
     Resources::currentApplication->allSimpleObjects.push_back(object4);
     
@@ -58,7 +58,7 @@ int DefaultApplication()
     ModelRenderer renderer5{ ModelRenderer(orientation5,
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader) };
-    renderer5.createLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
+    renderer5.addLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
     Object object5{ orientation5, &renderer5 };
     Resources::currentApplication->allSimpleObjects.push_back(object5);
     
@@ -69,7 +69,7 @@ int DefaultApplication()
     ModelRenderer renderer7{ ModelRenderer(orientation7,
         &Resources::modelManager.human,
         Resources::currentApplication->defaultShader) };
-    renderer7.createLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
+    renderer7.addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Object object7{ orientation7, &renderer7 };
     Resources::currentApplication->allSimpleObjects.push_back(object7);
     

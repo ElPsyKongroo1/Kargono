@@ -14,8 +14,6 @@
 class ModelRenderer : public Renderable
 {
 public:
-	LightSource lightSource;
-	bool isLightSource;
 	Model* model;
 	GLShader* shader;
 
@@ -26,7 +24,7 @@ public:
 	ModelRenderer(Orientation& orientation);
 	~ModelRenderer();
 public:
-	void createLightSource(glm::vec3 color);
+	void addLightSource(glm::vec3 color) override;
 	void render() override {}
 private:
 

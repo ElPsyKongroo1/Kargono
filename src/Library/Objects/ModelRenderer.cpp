@@ -19,16 +19,16 @@ ModelRenderer::ModelRenderer(Orientation& orientation,
 	this->orientation = &orientation;
 	this->model = model;
 	this->shader = shader;
-	this->isLightSource = false;
-
+	
 }
+
 
 ModelRenderer::ModelRenderer(Orientation& orientation)
 {
 	this->orientation = &orientation;
 	this->model = Resources::currentApplication->defaultModel;
 	this->shader = Resources::currentApplication->defaultShader;
-	this->isLightSource = false;
+	
 }
 
 ModelRenderer::~ModelRenderer()
@@ -40,9 +40,8 @@ ModelRenderer::~ModelRenderer()
  * Getter/Setter
  *============================================================================================================================================================================================*/
 
-void ModelRenderer::createLightSource(glm::vec3 color)
+void ModelRenderer::addLightSource (glm::vec3 color) 
 {
-	isLightSource = true;
 	this->lightSource = LightSource(this->orientation->translation, color);
 	this->shader = &Resources::shaderManager.lightSourceShader;
 	lightSource.parentObject = LightSource::OBJECT;

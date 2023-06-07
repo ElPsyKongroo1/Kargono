@@ -1,7 +1,8 @@
 Current List
-1. Redo Lighting System
-2. Impliment Basic Shapes
+1. Impliment Basic Shapes
+2. Split Application into render and application state
 
 
 Completed
--Add Object Composition systemtg
+-Add Object Composition system
+-Redo Lighting System

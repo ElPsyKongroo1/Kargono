@@ -13,7 +13,11 @@ struct Orientation
 class Renderable
 {
 public:
+	LightSource lightSource;
 	Orientation* orientation{nullptr};
 protected:
 	virtual void render() = 0;
+public:
+	virtual void addLightSource(glm::vec3 color) = 0;
+
 };
