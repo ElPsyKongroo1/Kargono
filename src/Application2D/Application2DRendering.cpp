@@ -10,9 +10,9 @@
 void FRendering1()
 {
     // Render Objects
-    for (ModelRenderer object : Resources::currentApplication->allSimpleObjects)
+    for (Object object : Resources::currentApplication->allSimpleObjects)
     {
-        object.model->Draw(&object);
+        static_cast<ModelRenderer*>(object.renderer)->model->Draw(&object);
     }
 }
 

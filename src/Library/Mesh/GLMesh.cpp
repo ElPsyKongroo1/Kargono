@@ -41,7 +41,8 @@ void GLMesh::setupMesh()
 
 void GLMesh::Draw(void* object)
 {
-    ModelRenderer* object0 = (ModelRenderer*)object;
+    ModelRenderer* renderer = static_cast<ModelRenderer*>(static_cast<Object*>(object)->renderer);
+    GLShader* shader = renderer->shader;
     // Matrix Local Variables
     glm::mat4 scale, rotation, translation;
     glm::mat4 model = glm::mat4(1.0f);
@@ -50,11 +51,11 @@ void GLMesh::Draw(void* object)
     unsigned int specularNr = 0;
     unsigned int totalNumber = 0;
     // Attach Appropriate texture units
-    object0->shader->useProgram();
+    shader->useProgram();
 
     std::string textureName;
 
-    if (object0->shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::NOTEXTURE)
     {
         // Do nothing
     }
@@ -65,7 +66,7 @@ void GLMesh::Draw(void* object)
             if (texture.type == "texture_diffuse")
             {
                 textureName = "material.diffuse[" + std::to_string(diffuseNr) + "]";
-                object0->shader->setInt(textureName, totalNumber);
+                shader->setInt(textureName, totalNumber);
                 glActiveTexture(GL_TEXTURE0 + totalNumber);
                 glBindTexture(GL_TEXTURE_2D, texture.id);
                 diffuseNr++;
@@ -73,10 +74,10 @@ void GLMesh::Draw(void* object)
             }
             else if (texture.type == "texture_specular")
             {
-                if (object0->shader->type == GLShader::LIGHTING)
+                if (shader->type == GLShader::LIGHTING)
                 {
                     textureName = "material.specular[" + std::to_string(specularNr) + "]";
-                    object0->shader->setInt(textureName, totalNumber);
+                    shader->setInt(textureName, totalNumber);
                     glActiveTexture(GL_TEXTURE0 + totalNumber);
                     glBindTexture(GL_TEXTURE_2D, texture.id);
                     specularNr++;
@@ -92,56 +93,56 @@ void GLMesh::Draw(void* object)
     }
 
     glBindVertexArray(vao);
-    if (object0->shader->type == GLShader::LIGHTING)
+    if (shader->type == GLShader::LIGHTING)
     {
-        object0->shader->setInt("material.nDiffuseTexture", diffuseNr);
-        object0->shader->setInt("material.nSpecularTexture", specularNr);
-        object0->shader->setFloat("material.shininess", 32.0f);
-        object0->shader->setVec3("viewPosition", Resources::currentApplication->currentCamera->cameraPosition);
+        shader->setInt("material.nDiffuseTexture", diffuseNr);
+        shader->setInt("material.nSpecularTexture", specularNr);
+        shader->setFloat("material.shininess", 32.0f);
+        shader->setVec3("viewPosition", Resources::currentApplication->currentCamera->cameraPosition);
 
         int numPointLights = 0, numSpotLights = 0, numDirectionalLights = 0;
         for (LightSource* lightSource : Resources::currentApplication->allLightSources)
         {
             if (lightSource->lightType == LightSource::POINT)
             {
-                object0->shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].ambient", lightSource->ambientColor);
-                object0->shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].diffuse", lightSource->diffuseColor);
-                object0->shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].specular", lightSource->specularColor);
-                object0->shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].position", lightSource->position);
-                object0->shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].attenuation", lightSource->attenuation);
+                shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].ambient", lightSource->ambientColor);
+                shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].diffuse", lightSource->diffuseColor);
+                shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].specular", lightSource->specularColor);
+                shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].position", lightSource->position);
+                shader->setVec3("pointLight[" + std::to_string(numPointLights) + "].attenuation", lightSource->attenuation);
                 numPointLights++;
             }
             else if (lightSource->lightType == LightSource::DIRECTIONAL)
             {
-                object0->shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].ambient", lightSource->ambientColor);
-                object0->shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].diffuse", lightSource->diffuseColor);
-                object0->shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].specular", lightSource->specularColor);
-                object0->shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].direction", lightSource->lightDirection);
+                shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].ambient", lightSource->ambientColor);
+                shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].diffuse", lightSource->diffuseColor);
+                shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].specular", lightSource->specularColor);
+                shader->setVec3("directionalLight[" + std::to_string(numDirectionalLights) + "].direction", lightSource->lightDirection);
                 numDirectionalLights++;
             }
             else if (lightSource->lightType == LightSource::SPOT)
             {
                 if (lightSource->parentObject == LightSource::CAMERA)
                 {
-                    object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentApplication->currentCamera->cameraPosition);
-                    object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentApplication->currentCamera->cameraFront);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentApplication->currentCamera->cameraPosition);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentApplication->currentCamera->cameraFront);
                 }
                 else if (lightSource->parentObject == LightSource::OBJECT)
                 {
-                    object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", lightSource->position);
-                    object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", lightSource->lightDirection);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", lightSource->position);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", lightSource->lightDirection);
                 }
                 else
                 {
                     std::cerr << "ERROR::INVALID_LIGHT_PARENT_OBJECT" << std::endl;
                     throw std::runtime_error("Check Logs");
                 }
-                object0->shader->setFloat("spotLight[" + std::to_string(numSpotLights) + "].innerCutOff", glm::cos(glm::radians(lightSource->innerCutOff)));
-                object0->shader->setFloat("spotLight[" + std::to_string(numSpotLights) + "].outerCutOff", glm::cos(glm::radians(lightSource->outerCutOff)));
-                object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].ambient", lightSource->ambientColor);
-                object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].diffuse", lightSource->diffuseColor);
-                object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].specular", lightSource->specularColor);
-                object0->shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].attenuation", lightSource->attenuation);
+                shader->setFloat("spotLight[" + std::to_string(numSpotLights) + "].innerCutOff", glm::cos(glm::radians(lightSource->innerCutOff)));
+                shader->setFloat("spotLight[" + std::to_string(numSpotLights) + "].outerCutOff", glm::cos(glm::radians(lightSource->outerCutOff)));
+                shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].ambient", lightSource->ambientColor);
+                shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].diffuse", lightSource->diffuseColor);
+                shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].specular", lightSource->specularColor);
+                shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].attenuation", lightSource->attenuation);
                 numSpotLights++;
             }
             else
@@ -150,35 +151,35 @@ void GLMesh::Draw(void* object)
                 throw std::runtime_error("Check Logs");
             }
         }
-        object0->shader->setInt("numPointLights", numPointLights);
-        object0->shader->setInt("numDirectionalLights", numDirectionalLights);
-        object0->shader->setInt("numSpotLights", numSpotLights);
+        shader->setInt("numPointLights", numPointLights);
+        shader->setInt("numDirectionalLights", numDirectionalLights);
+        shader->setInt("numSpotLights", numSpotLights);
 
 
     }
-    if (object0->shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::NOTEXTURE)
     {
-        object0->shader->setVec3("lightColor", object0->lightSource.sourceColor);
+        shader->setVec3("lightColor", renderer->lightSource.sourceColor);
     }
 
         //Set up projection and view matrix
     Resources::currentApplication->currentCamera->processProjection(view, projection);
         //Set up model matrix
-    scale = glm::scale(object0->orientation->scale);
-    rotation = glm::rotate(glm::radians(object0->orientation->rotation.w), glm::vec3(object0->orientation->rotation.x, object0->orientation->rotation.y, object0->orientation->rotation.z));
-    translation = glm::translate(object0->orientation->translation);
+    scale = glm::scale(renderer->orientation->scale);
+    rotation = glm::rotate(glm::radians(renderer->orientation->rotation.w), glm::vec3(renderer->orientation->rotation.x, renderer->orientation->rotation.y, renderer->orientation->rotation.z));
+    translation = glm::translate(renderer->orientation->translation);
     model = translation * rotation * scale;
     // Send uniforms to object's shader
-    object0->shader->setMatrix4f("view", view);
-    object0->shader->setMatrix4f("projection", projection);
-    object0->shader->setMatrix4f("model", model);
+    shader->setMatrix4f("view", view);
+    shader->setMatrix4f("projection", projection);
+    shader->setMatrix4f("model", model);
     // Output current mesh
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
 
-    if (object0->shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::NOTEXTURE)
     {
         // Do Nothing
     }

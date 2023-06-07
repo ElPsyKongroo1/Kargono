@@ -70,7 +70,7 @@ public:
 		renderer->orientation = &this->orientation;
 	}
 
-private:
+public:
 	Orientation orientation;
 	Renderable* renderer;
 
