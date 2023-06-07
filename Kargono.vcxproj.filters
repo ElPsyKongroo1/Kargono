@@ -30,6 +30,9 @@
     <ClCompile Include="src\Library\Cameras\GLCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Library\Objects\Objects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -124,12 +127,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Model\ModelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Objects\ModelRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -470,7 +467,10 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Objects\RenderableInterface.h">
+    <ClInclude Include="glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -478,6 +478,7 @@
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
     <None Include="src\Library\External_Libraries\imgui\.gitattributes" />
     <None Include="src\Library\External_Libraries\imgui\.gitignore" />
+    <None Include="imgui.ini" />
     <None Include="Resources\Shaders\Lighting\shader.fs" />
     <None Include="Resources\Shaders\Lighting\shader.vs" />
     <None Include="Resources\Shaders\LightSource\shader.fs" />
@@ -512,9 +513,11 @@
     </None>
     <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
     <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
+    <None Include="glfw3.pdb" />
+    <None Include="assimp-vc143-mtd.pdb" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.dll" />
+    <None Include="assimp-vc143-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -544,11 +547,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
-    <Text Include="Documentation\ToDO.txt" />
+    <Text Include="imgui_log.txt" />
+    <Text Include="testing.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
-    <Library Include="OpenGLResources\Libraries\glfw3.lib" />
+    <Library Include="glfw3.lib" />
   </ItemGroup>
 </Project>

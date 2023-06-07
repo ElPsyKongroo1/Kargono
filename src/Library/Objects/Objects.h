@@ -18,7 +18,7 @@ public:
 	ShapeRenderer(Orientation& orientation);
 	~ShapeRenderer();
 public:
-	void addLightSource(glm::vec3 color);
+
 	void render() override 
 	{
 		this->mesh->Draw(this);
@@ -39,7 +39,7 @@ public:
 	ModelRenderer(Orientation& orientation);
 	~ModelRenderer();
 public:
-	void addLightSource(glm::vec3 color);
+
 	void render() override
 	{
 		this->model->Draw(this);
