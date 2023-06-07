@@ -1,0 +1,7 @@
+Current List
+1. Redo Lighting System
+2. Impliment Basic Shapes
+
+
+Completed
+-Add Object Composition system
