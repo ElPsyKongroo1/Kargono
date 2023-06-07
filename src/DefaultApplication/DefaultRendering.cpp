@@ -12,7 +12,6 @@ void FRendering()
     // Render Objects
     for (Object object : Resources::currentApplication->allSimpleObjects)
     {
-        ModelRenderer* renderer{ static_cast<ModelRenderer*>(object.renderer) };
-        renderer->model->Draw(renderer);
+        object.renderer->render();
     }
 }

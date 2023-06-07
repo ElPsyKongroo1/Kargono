@@ -42,7 +42,6 @@ void MeshManager::DestroyMesh(GLMesh& mesh)
     {
         mesh.vbos[i] = -1;
     }
-    mesh.vbos[2];
     mesh.textures.clear();
     mesh.vertices.clear();
     mesh.output = GLMesh::NOOUTPUT;

@@ -39,9 +39,9 @@ void GLMesh::setupMesh()
 }
 
 
-void GLMesh::Draw(void* object)
+void GLMesh::Draw(void* objectRenderer)
 {
-    ModelRenderer* renderer = static_cast<ModelRenderer*>(object);
+    Renderable* renderer = static_cast<Renderable*>(objectRenderer);
     GLShader* shader = renderer->shader;
     // Matrix Local Variables
     glm::mat4 scale, rotation, translation;

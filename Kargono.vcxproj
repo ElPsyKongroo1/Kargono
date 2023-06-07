@@ -191,6 +191,8 @@
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Library\Library.cpp" />
     <ClCompile Include="src\Library\Mesh\GLMesh.cpp" />
+    <ClCompile Include="src\Library\Objects\RenderableInterface.cpp" />
+    <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp" />
     <ClCompile Include="src\Library\RuntimeFunctions.cpp" />
     <ClCompile Include="src\Library\Shaders\ShaderManager.cpp" />
     <ClCompile Include="src\Library\Shaders\GLShader.cpp" />

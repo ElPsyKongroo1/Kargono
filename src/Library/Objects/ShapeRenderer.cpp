@@ -3,7 +3,7 @@
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
- * ModelRenderer Class
+ * ShapeRenderer Class
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
@@ -11,29 +11,29 @@
   * Overloaded Constructors
   *============================================================================================================================================================================================*/
 
-ModelRenderer::ModelRenderer(Orientation& orientation,
-	Model* model,
+ShapeRenderer::ShapeRenderer(Orientation& orientation,
+	GLMesh* mesh,
 	GLShader* shader)
 
 {
 	this->orientation = &orientation;
-	this->model = model;
+	this->mesh = mesh;
 	this->shader = shader;
-	
+
 }
 
 
-ModelRenderer::ModelRenderer(Orientation& orientation)
+ShapeRenderer::ShapeRenderer(Orientation& orientation)
 {
 	this->orientation = &orientation;
-	this->model = Resources::currentApplication->defaultModel;
+	this->mesh = Resources::currentApplication->defaultMesh;
 	this->shader = Resources::currentApplication->defaultShader;
-	
+
 }
 
-ModelRenderer::~ModelRenderer()
+ShapeRenderer::~ShapeRenderer()
 {
-	
+
 }
 
 /*============================================================================================================================================================================================

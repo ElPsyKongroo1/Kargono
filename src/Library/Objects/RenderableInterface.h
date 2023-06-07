@@ -1,5 +1,11 @@
 #pragma once
 #include "../Includes.h"
+#include "../Includes.h"
+#include "../Textures/Textures.h"
+#include "../Shaders/Shaders.h"
+#include "../Mesh/Meshes.h"
+#include "../Model/Model.h"
+#include "../LightSource/LightSource.h"
 
 
 
@@ -15,9 +21,9 @@ class Renderable
 public:
 	LightSource lightSource;
 	Orientation* orientation{nullptr};
-protected:
-	virtual void render() = 0;
+	GLShader* shader;
 public:
+	virtual void render() = 0;
 	virtual void addLightSource(glm::vec3 color) = 0;
-
 };
+
