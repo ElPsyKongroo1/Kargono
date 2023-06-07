@@ -1,8 +1,8 @@
 Current List
-1. Impliment Basic Shapes
-2. Split Application into render and application state
+1. Split Application into render and application state
 
 
 Completed
 -Add Object Composition system
 -Redo Lighting System
+-Impliment Basic Shapes
