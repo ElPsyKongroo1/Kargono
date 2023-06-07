@@ -99,6 +99,7 @@ int DefaultApplication()
     ShapeRenderer renderer10{ ShapeRenderer(orientation10) };
     Object object10{ orientation10, &renderer10 };
     Resources::currentApplication->allSimpleObjects.push_back(object10);
+
     //Object object6 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
     //    glm::vec3(0.0f, 40.0f, -40.0f),
     //    glm::vec3(0.5f, 0.5f, 0.5f),

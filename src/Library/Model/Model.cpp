@@ -91,7 +91,7 @@ GLMesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-    return GLMesh(vertices, indices, textures);
+    return GLMesh(vertices, indices, textures, GLMesh::DRAWELEMENTS);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)

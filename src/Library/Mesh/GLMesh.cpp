@@ -12,7 +12,6 @@
 
 void GLMesh::setupMesh()
 {
-    output = GLMesh::DRAWARRAYS; // FIXME !!!!!!!
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -175,7 +174,10 @@ void GLMesh::Draw(void* objectRenderer)
     shader->setMatrix4f("model", model);
     // Output current mesh
 
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    if (output == DRAWELEMENTS) { glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); }
+    if (output == DRAWARRAYS) { glDrawArrays(GL_TRIANGLES, 0, vertices.size()); }
+
+
 
     glBindVertexArray(0);
 
