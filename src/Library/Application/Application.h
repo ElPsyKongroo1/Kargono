@@ -22,7 +22,7 @@ public:
 	glm::vec2 screenDimension;
 	glm::vec3 backgroundColor;
 public:
-	std::vector<Object> allSimpleObjects;
+	std::vector<ModelRenderer> allSimpleObjects;
 	std::vector<LightSource*> allLightSources;
 	GLInput* currentInput;
 	GLInput* defaultInput;

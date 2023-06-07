@@ -5,34 +5,73 @@
 #include "../Mesh/Meshes.h"
 #include "../Model/Model.h"
 #include "../LightSource/LightSource.h"
+#include "RenderableInterface.h"
 
 /*============================================================================================================================================================================================
  * Object Class
  *============================================================================================================================================================================================*/
 
-class Object 
+class ModelRenderer : public Renderable
 {
 public:
-	glm::vec4 rotation; // x,y,z, and rotation in degrees
-	glm::vec3 translation;
-	glm::vec3 scale;
 	LightSource lightSource;
 	bool isLightSource;
 	Model* model;
 	GLShader* shader;
-	
 
 public:
-	Object(const glm::vec4& rotation,
-		const glm::vec3& translation,
-		const glm::vec3& scale,
+	ModelRenderer(Orientation& orientation,
 		Model* model,
 		GLShader* shader);
-	Object(const glm::vec4& rotation,
-		const glm::vec3& translation,
-		const glm::vec3& scale);
+	ModelRenderer(Orientation& orientation);
+	~ModelRenderer();
 public:
 	void createLightSource(glm::vec3 color);
+	void render() override {}
 private:
+
+};
+
+//class PrimitiveRenderer : public Renderable
+//{
+//public:
+//	glm::vec4 rotation; // x,y,z, and rotation in degrees
+//	glm::vec3 translation;
+//	glm::vec3 scale;
+//	LightSource lightSource;
+//	bool isLightSource;
+//	Model* model;
+//	GLShader* shader;
+//
+//
+//public:
+//	PrimitiveRenderer(const glm::vec4& rotation,
+//		const glm::vec3& translation,
+//		const glm::vec3& scale,
+//		Model* model,
+//		GLShader* shader);
+//	PrimitiveRenderer(const glm::vec4& rotation,
+//		const glm::vec3& translation,
+//		const glm::vec3& scale);
+//public:
+//	void createLightSource(glm::vec3 color);
+//	void render() override {}
+//private:
+//
+//};
+
+class Object 
+{
+public:
+	Object(Orientation orientation, Renderable* renderer) : orientation{ orientation }, renderer{renderer}
+	{
+		
+		assert(renderer && "Object class failed to instantiate. Renderer is a nullptr");
+		renderer->orientation = &this->orientation;
+	}
+
+private:
+	Orientation orientation;
+	Renderable* renderer;
 
 };

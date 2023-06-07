@@ -3,7 +3,7 @@
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
- * Object Class
+ * ModelRenderer Class
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
@@ -11,43 +11,39 @@
   * Overloaded Constructors
   *============================================================================================================================================================================================*/
 
-Object::Object(const glm::vec4& rotation,
-	const glm::vec3& translation,
-	const glm::vec3& scale,
-    Model* model,
+ModelRenderer::ModelRenderer(Orientation& orientation,
+	Model* model,
 	GLShader* shader)
 
 {
-	this->rotation = rotation;
-	this->translation = translation;
-	this->scale = scale;
+	this->orientation = &orientation;
 	this->model = model;
 	this->shader = shader;
 	this->isLightSource = false;
 
 }
 
-Object::Object(const glm::vec4& rotation,
-	const glm::vec3& translation,
-	const glm::vec3& scale)
+ModelRenderer::ModelRenderer(Orientation& orientation)
 {
-	this->rotation = rotation;
-	this->translation = translation;
-	this->scale = scale;
+	this->orientation = &orientation;
 	this->model = Resources::currentApplication->defaultModel;
 	this->shader = Resources::currentApplication->defaultShader;
 	this->isLightSource = false;
+}
 
+ModelRenderer::~ModelRenderer()
+{
+	
 }
 
 /*============================================================================================================================================================================================
  * Getter/Setter
  *============================================================================================================================================================================================*/
 
-void Object::createLightSource(glm::vec3 color)
+void ModelRenderer::createLightSource(glm::vec3 color)
 {
 	isLightSource = true;
-	this->lightSource = LightSource(this->translation, color);
+	this->lightSource = LightSource(this->orientation->translation, color);
 	this->shader = &Resources::shaderManager.lightSourceShader;
 	lightSource.parentObject = LightSource::OBJECT;
 	Resources::currentApplication->allLightSources.push_back(&lightSource);

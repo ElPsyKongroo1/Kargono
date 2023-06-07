@@ -41,7 +41,7 @@ void GLMesh::setupMesh()
 
 void GLMesh::Draw(void* object)
 {
-    Object* object0 = (Object*)object;
+    ModelRenderer* object0 = (ModelRenderer*)object;
     // Matrix Local Variables
     glm::mat4 scale, rotation, translation;
     glm::mat4 model = glm::mat4(1.0f);
@@ -164,9 +164,9 @@ void GLMesh::Draw(void* object)
         //Set up projection and view matrix
     Resources::currentApplication->currentCamera->processProjection(view, projection);
         //Set up model matrix
-    scale = glm::scale(object0->scale);
-    rotation = glm::rotate(glm::radians(object0->rotation.w), glm::vec3(object0->rotation.x, object0->rotation.y, object0->rotation.z));
-    translation = glm::translate(object0->translation);
+    scale = glm::scale(object0->orientation->scale);
+    rotation = glm::rotate(glm::radians(object0->orientation->rotation.w), glm::vec3(object0->orientation->rotation.x, object0->orientation->rotation.y, object0->orientation->rotation.z));
+    translation = glm::translate(object0->orientation->translation);
     model = translation * rotation * scale;
     // Send uniforms to object's shader
     object0->shader->setMatrix4f("view", view);

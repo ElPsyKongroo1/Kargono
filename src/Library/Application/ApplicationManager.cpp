@@ -56,7 +56,7 @@ void ApplicationManager::CreateDefaultApplication(Application& application)
 	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
 	application.backgroundColor = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	application.allSimpleObjects = std::vector<Object>();
+	application.allSimpleObjects = std::vector<ModelRenderer>();
 	application.allLightSources = std::vector<LightSource*>();
 	application.defaultInput = &Resources::inputManager.input3D;
 	application.currentInput = application.defaultInput;
@@ -76,7 +76,7 @@ void ApplicationManager::CreateApplication2D(Application& application)
 	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
 	application.backgroundColor = glm::vec3(0.0f, 0.11f, 0.1f);
 
-	application.allSimpleObjects = std::vector<Object>();
+	application.allSimpleObjects = std::vector<ModelRenderer>();
 	application.allLightSources = std::vector<LightSource*>();
 	application.defaultInput = &Resources::inputManager.input2D;
 	application.currentInput = application.defaultInput;
