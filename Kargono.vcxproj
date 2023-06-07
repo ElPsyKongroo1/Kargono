@@ -359,6 +359,7 @@
     <Image Include="src\Resources\Textures\Images\SpecularMap\Metal_Box.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Documentation\ToDO.txt" />
     <Text Include="imgui_log.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
   </ItemGroup>
