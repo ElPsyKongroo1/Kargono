@@ -10,6 +10,11 @@
 class GLCamera
 {
 public:
+	struct Orientation 
+	{
+		
+	};
+public:
 	enum Projection
 	{
 		PERSPECTIVE, ORTHOGRAPHIC, NOPROJECTION
