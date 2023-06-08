@@ -1,6 +1,7 @@
 Current List
 1. Split Application into render and application state
-
+2. Fix Input
+3. Set up Game
 
 Completed
 -Add Object Composition system

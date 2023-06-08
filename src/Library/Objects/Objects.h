@@ -62,5 +62,4 @@ public:
 public:
 	Orientation orientation;
 	Renderable* renderer;
-
 };
