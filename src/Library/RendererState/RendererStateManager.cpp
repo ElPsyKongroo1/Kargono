@@ -3,28 +3,28 @@
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
- * Application Manager Class
+ * RendererState Manager Class
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
  /*============================================================================================================================================================================================
   * Instantiate/Delete Application objects
   *============================================================================================================================================================================================*/
-void RendererStateManager::CreateApplications()
+void RendererStateManager::CreateDefaultRenderers()
 {
-	CreateDefaultApplication(defaultApplication);
-	CreateApplication2D(application2D);
+	CreateSample3DRenderer(Sample3DRenderer);
+	CreateSample2DRenderer(Sample2DRenderer);
 
 }
 
-void RendererStateManager::DestroyApplications()
+void RendererStateManager::DestroyDefaultRenderers()
 {
-	DestroyApplication(defaultApplication);
-	DestroyApplication(application2D);
+	DestroyRenderer(Sample3DRenderer);
+	DestroyRenderer(Sample2DRenderer);
 
 }
 
-void RendererStateManager::DestroyApplication(RendererState& application)
+void RendererStateManager::DestroyRenderer(RendererState& application)
 {
 	application.programName = "";
 	int GLFWVersionSize = sizeof(application.GLFWVersion) / sizeof(int);
@@ -45,10 +45,10 @@ void RendererStateManager::DestroyApplication(RendererState& application)
 }
 
 /*============================================================================================================================================================================================
- * Initializes Application Objects with specified values
+ * Initializes RendererState Objects with specified values
  *============================================================================================================================================================================================*/
 
-void RendererStateManager::CreateDefaultApplication(RendererState& application)
+void RendererStateManager::CreateSample3DRenderer(RendererState& application)
 {
 	application.programName = "3D Renderer";
 	application.GLFWVersion[0] = 4;
@@ -68,7 +68,7 @@ void RendererStateManager::CreateDefaultApplication(RendererState& application)
 
 }
 
-void RendererStateManager::CreateApplication2D(RendererState& application)
+void RendererStateManager::CreateSample2DRenderer(RendererState& application)
 {
 	application.programName = "2D Renderer";
 	application.GLFWVersion[0] = 4;

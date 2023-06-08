@@ -10,7 +10,7 @@
 
 int main()
 {
-	Resources::applicationManager.CreateApplications();
+	Resources::applicationManager.CreateDefaultRenderers();
 	
 	int choice = 0;
 	while (choice != 3) {
@@ -28,12 +28,12 @@ int main()
 			switch (choice) {
 			case 1:
 				// Run Default Application
-				Resources::currentApplication = &Resources::applicationManager.defaultApplication;
+				Resources::currentApplication = &Resources::applicationManager.Sample3DRenderer;
 				DefaultApplication();
 				break;
 			case 2:
 				// Run Default Application
-				Resources::currentApplication = &Resources::applicationManager.application2D;
+				Resources::currentApplication = &Resources::applicationManager.Sample2DRenderer;
 				Application2D();
 				break;
 			case 3:
@@ -49,5 +49,5 @@ int main()
 		}
 	}
 	
-	Resources::applicationManager.DestroyApplications();
+	Resources::applicationManager.DestroyDefaultRenderers();
 }

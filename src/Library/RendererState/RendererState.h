@@ -7,7 +7,7 @@
 #include "../UserInterface/WindowFunctions.h"
 
 /*============================================================================================================================================================================================
- * Application Class
+ * RendererState Class
  *============================================================================================================================================================================================*/
 
 
@@ -34,21 +34,21 @@ public:
 };
 
 /*============================================================================================================================================================================================
- * ApplicationManager Class
+ * RendererStateManager Class
  *============================================================================================================================================================================================*/
 
 
 class RendererStateManager {
 public:
-	RendererState defaultApplication;
-	RendererState application2D;
+	RendererState Sample3DRenderer;
+	RendererState Sample2DRenderer;
 public:
-	void CreateApplications();
-	void DestroyApplications();
+	void CreateDefaultRenderers();
+	void DestroyDefaultRenderers();
 
 private:
-	void CreateDefaultApplication(RendererState& application);
-	void CreateApplication2D(RendererState& application);
+	void CreateSample3DRenderer(RendererState& application);
+	void CreateSample2DRenderer(RendererState& application);
 	
-	void DestroyApplication(RendererState& application);
+	void DestroyRenderer(RendererState& application);
 };

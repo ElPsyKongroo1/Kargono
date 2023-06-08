@@ -16,7 +16,7 @@ namespace Resources
  * Static Resources
  *============================================================================================================================================================================================*/
 	RendererStateManager applicationManager = RendererStateManager();
-	RendererState* currentApplication = &applicationManager.defaultApplication;
+	RendererState* currentApplication = &applicationManager.Sample3DRenderer;
 	ShaderManager shaderManager = ShaderManager();
 	MeshManager meshManager = MeshManager();
 	TextureManager textureManager = TextureManager();

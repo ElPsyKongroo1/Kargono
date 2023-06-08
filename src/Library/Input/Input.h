@@ -59,6 +59,11 @@ public:
 class GLInput
 {
 public:
+	enum MaskNumber 
+	{
+		SINGLEKEYPRESS = 0, DOUBLEKEYPRESS = 1, TRIPLEKEYPRESS = 2
+	};
+public:
 	GLButton gamePadClick[2][128];
 	int gamePadClickSize[2] = {0, 0};
 	GLButton gamePadStick[2][32];
