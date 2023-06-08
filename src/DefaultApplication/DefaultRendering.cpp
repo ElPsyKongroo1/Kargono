@@ -10,7 +10,7 @@
 void FRendering()
 {
     // Render Objects
-    for (Object object : Resources::currentApplication->allSimpleObjects)
+    for (Object object : Resources::currentApplication->objectRenderBuffer)
     {
         object.renderer->render();
     }

@@ -67,9 +67,9 @@ void renderDevTool()
 	{
 		if (ImGui::CollapsingHeader("Objects"))
 		{
-			for (int i = 0; i < Resources::currentApplication->allSimpleObjects.size(); i++)
+			for (int i = 0; i < Resources::currentApplication->objectRenderBuffer.size(); i++)
 			{
-				Object* object = &Resources::currentApplication->allSimpleObjects.at(i);
+				Object* object = &Resources::currentApplication->objectRenderBuffer.at(i);
 				if (ImGui::TreeNode((void*)(intptr_t)i, "Object %d", i + 1))
 				{
 					ImGui::Text("Translation: %fx, %fy, %fz", object->orientation.translation.x, object->orientation.translation.y, object->orientation.translation.z);

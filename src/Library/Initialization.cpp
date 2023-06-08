@@ -43,6 +43,7 @@ void FInitializeRenderer()
 
     glViewport(0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y);
     glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_ALWAYS); // Everything is displaying out of order. Hell yea
     glfwSwapInterval(1);
     
 

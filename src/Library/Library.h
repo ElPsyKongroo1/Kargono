@@ -6,7 +6,7 @@
 #include "Cameras/Cameras.h"
 #include "Input/Input.h"
 #include "LightSource/LightSource.h"
-#include "Application/Application.h"
+#include "RendererState/RendererState.h"
 #include "Model/Model.h"
 
 namespace Resources 
@@ -16,11 +16,11 @@ namespace Resources
 	extern MeshManager meshManager;
 	extern ShaderManager shaderManager;
 	extern CameraManager cameraManager;
-	extern ApplicationManager applicationManager;
+	extern RendererStateManager applicationManager;
 	extern WindowManager windowManager;
 	extern ModelManager modelManager;
 
-	extern Application* currentApplication;
+	extern RendererState* currentApplication;
 
 	extern float currentFrame;
 	extern float deltaTime;

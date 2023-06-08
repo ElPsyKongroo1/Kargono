@@ -11,7 +11,7 @@
  *============================================================================================================================================================================================*/
 
 
-class Application 
+class RendererState 
 {
 
 public:
@@ -22,8 +22,8 @@ public:
 	glm::vec2 screenDimension;
 	glm::vec3 backgroundColor;
 public:
-	std::vector<Object> allSimpleObjects;
-	std::vector<LightSource*> allLightSources;
+	std::vector<Object> objectRenderBuffer;
+	std::vector<LightSource*> lightSourceRenderBuffer;
 	GLInput* currentInput;
 	GLInput* defaultInput;
 	GLCamera* currentCamera;
@@ -38,17 +38,17 @@ public:
  *============================================================================================================================================================================================*/
 
 
-class ApplicationManager {
+class RendererStateManager {
 public:
-	Application defaultApplication;
-	Application application2D;
+	RendererState defaultApplication;
+	RendererState application2D;
 public:
 	void CreateApplications();
 	void DestroyApplications();
 
 private:
-	void CreateDefaultApplication(Application& application);
-	void CreateApplication2D(Application& application);
+	void CreateDefaultApplication(RendererState& application);
+	void CreateApplication2D(RendererState& application);
 	
-	void DestroyApplication(Application& application);
+	void DestroyApplication(RendererState& application);
 };

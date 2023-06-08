@@ -167,10 +167,10 @@
     <ClCompile Include="src\Application2D\Application2DRendering.cpp" />
     <ClCompile Include="src\DefaultApplication\DefaultRendering.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
-    <ClCompile Include="src\Library\Application\ApplicationManager.cpp" />
+    <ClCompile Include="src\Library\RendererState\RendererStateManager.cpp" />
     <ClCompile Include="src\Library\Cameras\CameraManager.cpp" />
     <ClCompile Include="src\Library\Initialization.cpp" />
-    <ClCompile Include="src\Library\Application\Application.cpp" />
+    <ClCompile Include="src\Library\RendererState\RendererState.cpp" />
     <ClCompile Include="src\Library\Cameras\GLCamera.cpp" />
     <ClCompile Include="src\Library\Input\GLButton.cpp" />
     <ClCompile Include="src\Library\Input\GLInput.cpp" />
@@ -295,7 +295,7 @@
     <ClInclude Include="src\DefaultApplication\DefaultApplication.h" />
     <ClInclude Include="src\DefaultApplication\Rendering2.h" />
     <ClInclude Include="src\Library\Initialization.h" />
-    <ClInclude Include="src\Library\Application\Application.h" />
+    <ClInclude Include="src\Library\RendererState\RendererState.h" />
     <ClInclude Include="src\Library\Cameras\Cameras.h" />
     <ClInclude Include="src\Library\Input\Input.h" />
     <ClInclude Include="src\Library\Input\InputFunctions.h" />

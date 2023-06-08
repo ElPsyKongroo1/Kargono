@@ -1,4 +1,4 @@
-#include "Application.h"
+#include "RendererState.h"
 #include "../Library.h"
 
 /*============================================================================================================================================================================================
@@ -10,21 +10,21 @@
  /*============================================================================================================================================================================================
   * Instantiate/Delete Application objects
   *============================================================================================================================================================================================*/
-void ApplicationManager::CreateApplications()
+void RendererStateManager::CreateApplications()
 {
 	CreateDefaultApplication(defaultApplication);
 	CreateApplication2D(application2D);
 
 }
 
-void ApplicationManager::DestroyApplications()
+void RendererStateManager::DestroyApplications()
 {
 	DestroyApplication(defaultApplication);
 	DestroyApplication(application2D);
 
 }
 
-void ApplicationManager::DestroyApplication(Application& application)
+void RendererStateManager::DestroyApplication(RendererState& application)
 {
 	application.programName = "";
 	int GLFWVersionSize = sizeof(application.GLFWVersion) / sizeof(int);
@@ -35,8 +35,8 @@ void ApplicationManager::DestroyApplication(Application& application)
 	application.screenDimension = glm::vec3();
 	application.backgroundColor = glm::vec3();
 
-	application.allSimpleObjects.clear();
-	application.allLightSources.clear();
+	application.objectRenderBuffer.clear();
+	application.lightSourceRenderBuffer.clear();
 	application.currentInput = nullptr;
 	application.currentCamera = nullptr;
 	application.defaultMesh = nullptr;
@@ -48,7 +48,7 @@ void ApplicationManager::DestroyApplication(Application& application)
  * Initializes Application Objects with specified values
  *============================================================================================================================================================================================*/
 
-void ApplicationManager::CreateDefaultApplication(Application& application)
+void RendererStateManager::CreateDefaultApplication(RendererState& application)
 {
 	application.programName = "3D Renderer";
 	application.GLFWVersion[0] = 4;
@@ -56,19 +56,19 @@ void ApplicationManager::CreateDefaultApplication(Application& application)
 	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
 	application.backgroundColor = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	application.allSimpleObjects = std::vector<Object>();
-	application.allLightSources = std::vector<LightSource*>();
+	application.objectRenderBuffer = std::vector<Object>();
+	application.lightSourceRenderBuffer = std::vector<LightSource*>();
 	application.defaultInput = &Resources::inputManager.input3D;
 	application.currentInput = application.defaultInput;
 	application.currentCamera = &Resources::cameraManager.flyCamera;
 	application.defaultModel = &Resources::modelManager.simpleBackpack;
 	application.defaultMesh = &Resources::meshManager.cubeMesh;
-	application.defaultShader = &Resources::shaderManager.defaultShader;
+	application.defaultShader = &Resources::shaderManager.lightingShader;
 	application.currentWindow = nullptr;
 
 }
 
-void ApplicationManager::CreateApplication2D(Application& application)
+void RendererStateManager::CreateApplication2D(RendererState& application)
 {
 	application.programName = "2D Renderer";
 	application.GLFWVersion[0] = 4;
@@ -76,8 +76,8 @@ void ApplicationManager::CreateApplication2D(Application& application)
 	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
 	application.backgroundColor = glm::vec3(0.0f, 0.11f, 0.1f);
 
-	application.allSimpleObjects = std::vector<Object>();
-	application.allLightSources = std::vector<LightSource*>();
+	application.objectRenderBuffer = std::vector<Object>();
+	application.lightSourceRenderBuffer = std::vector<LightSource*>();
 	application.defaultInput = &Resources::inputManager.input2D;
 	application.currentInput = application.defaultInput;
 	application.defaultModel = &Resources::modelManager.simpleBackpack;

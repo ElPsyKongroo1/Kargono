@@ -50,5 +50,5 @@ void ShapeRenderer::addLightSource(glm::vec3 color)
 	this->lightSource = LightSource(this->orientation->translation, color);
 	this->shader = &Resources::shaderManager.lightSourceShader;
 	lightSource.parentObject = LightSource::OBJECT;
-	Resources::currentApplication->allLightSources.push_back(&lightSource);
+	Resources::currentApplication->lightSourceRenderBuffer.push_back(&lightSource);
 }

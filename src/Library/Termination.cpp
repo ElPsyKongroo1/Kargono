@@ -10,8 +10,8 @@ void FTerminateLibraryResources()
 
 	Resources::meshManager.DestroyMeshes();
 	Resources::textureManager.DestroyTextures();
-	Resources::currentApplication->allSimpleObjects.clear();
-	Resources::currentApplication->allLightSources.clear();
+	Resources::currentApplication->objectRenderBuffer.clear();
+	Resources::currentApplication->lightSourceRenderBuffer.clear();
 	Resources::cameraManager.DestroyCameras();
 	Resources::inputManager.DestroyInputs();
 	Resources::windowManager.DestroyUIWindows();

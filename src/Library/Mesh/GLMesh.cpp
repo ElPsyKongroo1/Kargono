@@ -101,7 +101,7 @@ void GLMesh::Draw(void* objectRenderer)
         shader->setVec3("viewPosition", Resources::currentApplication->currentCamera->cameraPosition);
 
         int numPointLights = 0, numSpotLights = 0, numDirectionalLights = 0;
-        for (LightSource* lightSource : Resources::currentApplication->allLightSources)
+        for (LightSource* lightSource : Resources::currentApplication->lightSourceRenderBuffer)
         {
             if (lightSource->lightType == LightSource::POINT)
             {

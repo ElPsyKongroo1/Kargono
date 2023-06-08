@@ -27,7 +27,7 @@ int DefaultApplication()
                                     glm::vec3(2.0f, 2.0f, 2.0f) };
     ModelRenderer renderer1{ ModelRenderer(orientation1) };
     Object object1{ orientation1, &renderer1 };
-    Resources::currentApplication->allSimpleObjects.push_back(object1);
+    Resources::currentApplication->objectRenderBuffer.push_back(object1);
     
     
 
@@ -38,7 +38,7 @@ int DefaultApplication()
         Resources::currentApplication->defaultModel,
         Resources::currentApplication->defaultShader) };
     Object object2{ orientation2, &renderer2 };
-    Resources::currentApplication->allSimpleObjects.push_back(object2);
+    Resources::currentApplication->objectRenderBuffer.push_back(object2);
     
 
     Orientation orientation4{ glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
@@ -49,7 +49,7 @@ int DefaultApplication()
         Resources::currentApplication->defaultShader) };
     renderer4.addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Object object4{ orientation4, &renderer4 };
-    Resources::currentApplication->allSimpleObjects.push_back(object4);
+    Resources::currentApplication->objectRenderBuffer.push_back(object4);
     
 
     Orientation orientation5{ glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
@@ -60,7 +60,7 @@ int DefaultApplication()
         Resources::currentApplication->defaultShader) };
     renderer5.addLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
     Object object5{ orientation5, &renderer5 };
-    Resources::currentApplication->allSimpleObjects.push_back(object5);
+    Resources::currentApplication->objectRenderBuffer.push_back(object5);
     
 
     Orientation orientation7{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
@@ -71,7 +71,7 @@ int DefaultApplication()
         Resources::currentApplication->defaultShader) };
     renderer7.addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Object object7{ orientation7, &renderer7 };
-    Resources::currentApplication->allSimpleObjects.push_back(object7);
+    Resources::currentApplication->objectRenderBuffer.push_back(object7);
     
 
     Orientation orientation8{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
@@ -81,7 +81,7 @@ int DefaultApplication()
         &Resources::modelManager.house,
         Resources::currentApplication->defaultShader) };
     Object object8{ orientation8, &renderer8 };
-    Resources::currentApplication->allSimpleObjects.push_back(object8);
+    Resources::currentApplication->objectRenderBuffer.push_back(object8);
     
 
     Orientation orientation9{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
@@ -91,14 +91,14 @@ int DefaultApplication()
         &Resources::modelManager.house2,
         Resources::currentApplication->defaultShader) };
     Object object9{ orientation9, &renderer9 };
-    Resources::currentApplication->allSimpleObjects.push_back(object9);
+    Resources::currentApplication->objectRenderBuffer.push_back(object9);
 
     Orientation orientation10{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                               glm::vec3(0.0f, 10.0f, 0.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
     ShapeRenderer renderer10{ ShapeRenderer(orientation10) };
     Object object10{ orientation10, &renderer10 };
-    Resources::currentApplication->allSimpleObjects.push_back(object10);
+    Resources::currentApplication->objectRenderBuffer.push_back(object10);
 
     //Object object6 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),
     //    glm::vec3(0.0f, 40.0f, -40.0f),

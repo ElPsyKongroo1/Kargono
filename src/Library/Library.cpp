@@ -6,7 +6,7 @@
 #include "Cameras/Cameras.h"
 #include "Input/Input.h"
 #include "LightSource/LightSource.h"
-#include "Application/Application.h"
+#include "RendererState/RendererState.h"
 #include "UserInterface/WindowFunctions.h"
 #include "Model/Model.h"
 
@@ -15,8 +15,8 @@ namespace Resources
 /*============================================================================================================================================================================================
  * Static Resources
  *============================================================================================================================================================================================*/
-	ApplicationManager applicationManager = ApplicationManager();
-	Application* currentApplication = &applicationManager.defaultApplication;
+	RendererStateManager applicationManager = RendererStateManager();
+	RendererState* currentApplication = &applicationManager.defaultApplication;
 	ShaderManager shaderManager = ShaderManager();
 	MeshManager meshManager = MeshManager();
 	TextureManager textureManager = TextureManager();

@@ -68,7 +68,7 @@ void CameraManager::CreateFlyCamera(GLCamera& camera)
     camera.flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
     if (Resources::currentApplication->currentCamera == &camera)
     {
-        Resources::currentApplication->allLightSources.push_back(&camera.flashLight);
+        Resources::currentApplication->lightSourceRenderBuffer.push_back(&camera.flashLight);
     }
     camera.isFlashLight = true;
 
@@ -97,7 +97,7 @@ void CameraManager::CreateStatic2DCamera(GLCamera& camera)
     camera.flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
     if (Resources::currentApplication->currentCamera == &camera)
     {
-        Resources::currentApplication->allLightSources.push_back(&camera.flashLight);
+        Resources::currentApplication->lightSourceRenderBuffer.push_back(&camera.flashLight);
     }
     camera.isFlashLight = false;
 }

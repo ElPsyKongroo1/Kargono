@@ -519,9 +519,9 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
         if (decision)
         {
             Resources::currentApplication->currentCamera->isFlashLight = true;
-            for (int i = 0; i < Resources::currentApplication->allLightSources.size(); i++)
+            for (int i = 0; i < Resources::currentApplication->lightSourceRenderBuffer.size(); i++)
             {
-                if (&Resources::currentApplication->currentCamera->flashLight == Resources::currentApplication->allLightSources.at(i))
+                if (&Resources::currentApplication->currentCamera->flashLight == Resources::currentApplication->lightSourceRenderBuffer.at(i))
                 {
                     foundFlashLight = true;
                     break;
@@ -529,18 +529,18 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
             }
             if (!foundFlashLight)
             {
-                Resources::currentApplication->allLightSources.push_back(&Resources::currentApplication->currentCamera->flashLight);
+                Resources::currentApplication->lightSourceRenderBuffer.push_back(&Resources::currentApplication->currentCamera->flashLight);
             }
         }
         else
         {
             Resources::currentApplication->currentCamera->isFlashLight = false;
-            for (int i = 0; i < Resources::currentApplication->allLightSources.size(); i++)
+            for (int i = 0; i < Resources::currentApplication->lightSourceRenderBuffer.size(); i++)
             {
-                if (&Resources::currentApplication->currentCamera->flashLight == Resources::currentApplication->allLightSources.at(i))
+                if (&Resources::currentApplication->currentCamera->flashLight == Resources::currentApplication->lightSourceRenderBuffer.at(i))
                 {
                     foundFlashLight = true;
-                    Resources::currentApplication->allLightSources.erase(Resources::currentApplication->allLightSources.begin() + i);
+                    Resources::currentApplication->lightSourceRenderBuffer.erase(Resources::currentApplication->lightSourceRenderBuffer.begin() + i);
                     break;
                 }
             }   
