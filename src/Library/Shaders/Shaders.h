@@ -8,7 +8,7 @@
 struct GLShader
 {
 public:
-	enum ShaderType { LIGHTING, NOLIGHTING, NOTEXTURE };
+	enum ShaderType { LIGHTING, NOLIGHTING, LIGHTSOURCE };
 public:
 	unsigned int shaderID;
 	ShaderType type;

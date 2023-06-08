@@ -63,7 +63,7 @@ void ApplicationManager::CreateDefaultApplication(Application& application)
 	application.currentCamera = &Resources::cameraManager.flyCamera;
 	application.defaultModel = &Resources::modelManager.simpleBackpack;
 	application.defaultMesh = &Resources::meshManager.cubeMesh;
-	application.defaultShader = &Resources::shaderManager.lightingShader;
+	application.defaultShader = &Resources::shaderManager.defaultShader;
 	application.currentWindow = nullptr;
 
 }

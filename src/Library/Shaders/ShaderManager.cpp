@@ -34,7 +34,7 @@ void ShaderManager::CreateLightingShader(GLShader& shader)
 }
 void ShaderManager::CreateLightSourceShader(GLShader& shader)
 {
-	shader.type = GLShader::NOTEXTURE;
+	shader.type = GLShader::LIGHTSOURCE;
 	loadSource("Resources/Shaders/LightSource/shader.vs", "Resources/Shaders/LightSource/shader.fs", shader);
 }
 

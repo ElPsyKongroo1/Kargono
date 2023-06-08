@@ -54,7 +54,7 @@ void GLMesh::Draw(void* objectRenderer)
 
     std::string textureName;
 
-    if (shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::LIGHTSOURCE)
     {
         // Do nothing
     }
@@ -92,6 +92,7 @@ void GLMesh::Draw(void* objectRenderer)
     }
 
     glBindVertexArray(vao);
+    if (shader->type == GLShader::NOLIGHTING) {shader->setInt("material.nDiffuseTexture", diffuseNr); }
     if (shader->type == GLShader::LIGHTING)
     {
         shader->setInt("material.nDiffuseTexture", diffuseNr);
@@ -156,7 +157,7 @@ void GLMesh::Draw(void* objectRenderer)
 
 
     }
-    if (shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::LIGHTSOURCE)
     {
         shader->setVec3("lightColor", renderer->lightSource.sourceColor);
     }
@@ -181,7 +182,7 @@ void GLMesh::Draw(void* objectRenderer)
 
     glBindVertexArray(0);
 
-    if (shader->type == GLShader::NOTEXTURE)
+    if (shader->type == GLShader::LIGHTSOURCE)
     {
         // Do Nothing
     }
