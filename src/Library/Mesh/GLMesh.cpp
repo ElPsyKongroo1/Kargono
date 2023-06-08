@@ -98,7 +98,7 @@ void GLMesh::Draw(void* objectRenderer)
         shader->setInt("material.nDiffuseTexture", diffuseNr);
         shader->setInt("material.nSpecularTexture", specularNr);
         shader->setFloat("material.shininess", 32.0f);
-        shader->setVec3("viewPosition", Resources::currentApplication->currentCamera->cameraPosition);
+        shader->setVec3("viewPosition", Resources::currentApplication->currentCamera->orientation.cameraPosition);
 
         int numPointLights = 0, numSpotLights = 0, numDirectionalLights = 0;
         for (LightSource* lightSource : Resources::currentApplication->lightSourceRenderBuffer)
@@ -124,8 +124,8 @@ void GLMesh::Draw(void* objectRenderer)
             {
                 if (lightSource->parentObject == LightSource::CAMERA)
                 {
-                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentApplication->currentCamera->cameraPosition);
-                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentApplication->currentCamera->cameraFront);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentApplication->currentCamera->orientation.cameraPosition);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentApplication->currentCamera->orientation.cameraFront);
                 }
                 else if (lightSource->parentObject == LightSource::OBJECT)
                 {

@@ -14,7 +14,7 @@
 
 void GLCamera::processProjection(glm::mat4 &view, glm::mat4 &projection)
 {
-    view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+    view = glm::lookAt(orientation.cameraPosition, orientation.cameraPosition + orientation.cameraFront, orientation.cameraUp);
     if (this->projection == PERSPECTIVE)
     {
         projection = glm::perspective(glm::radians(fov), (float)Resources::currentApplication->screenDimension.x / (float)Resources::currentApplication->screenDimension.y, 0.1f, 100.0f);

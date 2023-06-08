@@ -23,9 +23,9 @@ void CameraManager::DestroyCameras()
 }
 void CameraManager::DestroyCamera(GLCamera& camera)
 {
-    camera.cameraPosition = glm::vec3();
-    camera.cameraFront = glm::vec3();
-    camera.cameraUp = glm::vec3();
+    camera.orientation.cameraPosition = glm::vec3();
+    camera.orientation.cameraFront = glm::vec3();
+    camera.orientation.cameraUp = glm::vec3();
 
     camera.currentCameraSpeed = -1;
     camera.slowCameraSpeed = -1;
@@ -47,9 +47,7 @@ void CameraManager::DestroyCamera(GLCamera& camera)
  *============================================================================================================================================================================================*/
 void CameraManager::CreateFlyCamera(GLCamera& camera)
 {
-    camera.cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-    camera.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    camera.cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera.orientation = { glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
     camera.slowCameraSpeed = 4.0f;
     camera.currentCameraSpeed = camera.slowCameraSpeed;
     camera.currentCameraDiagonal = sqrt(2 * camera.currentCameraSpeed * camera.currentCameraSpeed) / 2;
@@ -76,9 +74,7 @@ void CameraManager::CreateFlyCamera(GLCamera& camera)
 
 void CameraManager::CreateStatic2DCamera(GLCamera& camera)
 {
-    camera.cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-    camera.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    camera.cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera.orientation = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
     camera.slowCameraSpeed = 1.0f;
     camera.currentCameraSpeed = camera.slowCameraSpeed;
     camera.currentCameraDiagonal = sqrt(2 * camera.currentCameraSpeed * camera.currentCameraSpeed) / 2;

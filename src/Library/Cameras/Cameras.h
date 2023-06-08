@@ -12,7 +12,9 @@ class GLCamera
 public:
 	struct Orientation 
 	{
-		
+		glm::vec3 cameraPosition;
+		glm::vec3 cameraFront;
+		glm::vec3 cameraUp;
 	};
 public:
 	enum Projection
@@ -21,9 +23,7 @@ public:
 	};
 
 public:
-	glm::vec3 cameraPosition;
-	glm::vec3 cameraFront;
-	glm::vec3 cameraUp;
+	Orientation orientation;
 	float currentCameraSpeed, slowCameraSpeed, currentCameraDiagonal;
 	float currentSensitivity, slowSensitivity;
 	Projection projection;

@@ -412,19 +412,19 @@ bool InputManager::accessHoldFunctions(FunctionReferences index)
     {
     case MOVE_FORWARD_KEY:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += cameraSpeed * Resources::currentApplication->currentCamera->cameraFront;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_BACKWARD_KEY:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= cameraSpeed * Resources::currentApplication->currentCamera->cameraFront;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_LEFT_KEY:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::normalize(glm::cross(Resources::currentApplication->currentCamera->cameraFront, Resources::currentApplication->currentCamera->cameraUp)) * cameraSpeed;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
         break;
     case MOVE_RIGHT_KEY:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->cameraFront, Resources::currentApplication->currentCamera->cameraUp)) * cameraSpeed;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
         break;
     case CAMERA_PITCH_UP_KEY:
         Resources::currentApplication->currentCamera->pitch += Resources::currentApplication->currentCamera->currentSensitivity;
@@ -452,39 +452,39 @@ bool InputManager::accessHoldFunctions(FunctionReferences index)
         break;
     case MOVE_UP_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
         break;
     case MOVE_DOWN_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
         break;
     case MOVE_RIGHT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_LEFT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_UP_LEFT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_DOWN_LEFT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_UP_RIGHT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_DOWN_RIGHT_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     default:
         std::cerr << "ERROR::INVALID_ENUM::ACCESS_HOLD_FUNCTION" << std::endl;
@@ -705,7 +705,7 @@ void InputManager::accessMouseMovementFunctions(FunctionReferences index, double
         direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
-        Resources::currentApplication->currentCamera->cameraFront = glm::normalize(direction);
+        Resources::currentApplication->currentCamera->orientation.cameraFront = glm::normalize(direction);
         break;
     default:
         std::cerr << "ERROR::INVALID_ENUM::ACCESS_MOUSE_MOVEMENT_FUNCTION" << std::endl;
@@ -722,19 +722,19 @@ bool InputManager::accessJoyStickFunctions(FunctionReferences index, float axis)
     {
     case MOVE_LEFT_RIGHT_STICK:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->cameraFront, Resources::currentApplication->currentCamera->cameraUp)) * (cameraSpeed * axis);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * (cameraSpeed * axis);
         break;
     case MOVE_UP_DOWN_STICK:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= (cameraSpeed * axis) * Resources::currentApplication->currentCamera->cameraFront;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= (cameraSpeed * axis) * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_LEFT_RIGHT_STICK_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition += glm::vec3(cameraSpeed * axis, 0.0f, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed * axis, 0.0f, 0.0f);
         break;
     case MOVE_UP_DOWN_STICK_2D:
         cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->cameraPosition -= glm::vec3(0.0f, cameraSpeed * axis, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed * axis, 0.0f);
         break;
     case CAMERA_YAW_STICK:
         Resources::currentApplication->currentCamera->yaw += axis;

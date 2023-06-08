@@ -118,7 +118,7 @@ void GLInput::processKeyboardHold(GLFWwindow* window)
         direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
-        Resources::currentApplication->currentCamera->cameraFront = glm::normalize(direction);
+        Resources::currentApplication->currentCamera->orientation.cameraFront = glm::normalize(direction);
     }
     if (updateType)
     {
@@ -161,7 +161,7 @@ void GLInput::processGamePadStick(const float* axes)
         direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->pitch));
         direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
-        Resources::currentApplication->currentCamera->cameraFront = glm::normalize(direction);
+        Resources::currentApplication->currentCamera->orientation.cameraFront = glm::normalize(direction);
     }
     if (updateType)
     {
