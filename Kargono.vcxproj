@@ -167,6 +167,7 @@
     <ClCompile Include="src\Application2D\Application2DRendering.cpp" />
     <ClCompile Include="src\DefaultApplication\DefaultRendering.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
+    <ClCompile Include="src\Library\Input\default3DFunctions.cpp" />
     <ClCompile Include="src\Library\RendererState\RendererStateManager.cpp" />
     <ClCompile Include="src\Library\Cameras\CameraManager.cpp" />
     <ClCompile Include="src\Library\Initialization.cpp" />
