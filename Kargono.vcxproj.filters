@@ -135,7 +135,10 @@
     <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\default3DFunctions.cpp">
+    <ClCompile Include="src\Library\Input\Default3DFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Input\Default2DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -483,6 +486,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Objects\RenderableInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Input\Default3DFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Input\Default2DFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
