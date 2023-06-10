@@ -16,28 +16,44 @@ public:
 		glm::vec3 cameraFront;
 		glm::vec3 cameraUp;
 	};
+	struct EulerAngle 
+	{
+		float yaw;
+		float pitch;
+		float roll;
+	};
 public:
-	enum Projection
+	enum ProjectionType
 	{
 		PERSPECTIVE, ORTHOGRAPHIC, NOPROJECTION
 	};
 
 public:
+	// Orientation
 	Orientation orientation;
-	float currentCameraSpeed, slowCameraSpeed, currentCameraDiagonal;
-	float currentSensitivity, slowSensitivity;
-	Projection projection;
-	float yaw, pitch;
+	// Euler Angles
+	EulerAngle eulerAngle;
+
+	// Movement Speed
+	float currentMovementSpeed, defaultMovementSpeed, currentDiagonalMovementSpeed;
+	float currentPanningSpeed, defaultPanningSpeed;
+	
+	
+
+	// State
+	ProjectionType projection;
 	float fov;
-	float lastX, lastY;
-	bool firstMouse;
 	LightSource flashLight;
 	bool isFlashLight;
+
+	// Other
+	float lastX, lastY;
+	bool firstMouse;
 public:
 	void setCurrentCameraSpeed(float speed)
 	{
-		currentCameraSpeed = speed;
-		currentCameraDiagonal = sqrt(2 * currentCameraSpeed * currentCameraSpeed) / 2;
+		currentMovementSpeed = speed;
+		currentDiagonalMovementSpeed = sqrt(2 * currentMovementSpeed * currentMovementSpeed) / 2;
 	}
 public:
 	void processProjection(glm::mat4& view, glm::mat4& projection);

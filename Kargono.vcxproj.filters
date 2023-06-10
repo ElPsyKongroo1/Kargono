@@ -30,9 +30,6 @@
     <ClCompile Include="src\Library\Cameras\GLCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Objects\Objects.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Application\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\EntryPoint\Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,9 +76,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Initialization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\ApplicationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Cameras\CameraManager.cpp">
@@ -127,6 +118,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Model\ModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\RendererState\RendererStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\RendererState\RendererState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Objects\ModelRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Objects\RenderableInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Input\default3DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -186,9 +195,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\DefaultApplication\DefaultApplication.h">
@@ -473,6 +479,12 @@
     <ClInclude Include="glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Library\RendererState\RendererState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Objects\RenderableInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -518,6 +530,8 @@
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="assimp-vc143-mtd.dll" />
+    <None Include="Output\Release\binaries\Kargono.exe" />
+    <None Include="Output\Release\binaries\Kargono.pdb" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -548,7 +562,7 @@
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
     <Text Include="imgui_log.txt" />
-    <Text Include="testing.txt" />
+    <Text Include="Documentation\ToDO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />

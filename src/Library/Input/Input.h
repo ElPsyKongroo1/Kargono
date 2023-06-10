@@ -100,9 +100,9 @@ public:
 class InputManager
 {
 public:
-	GLInput input3D;
-	GLInput menuInput;
-	GLInput input2D;
+	GLInput default3DInput;
+	GLInput debugMenuInput;
+	GLInput default2DInput;
 	FunctionReferences functions[1024];
 public:
 	bool accessClickFunction(FunctionReferences index, GLButton* gamePadButton);

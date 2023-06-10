@@ -14,15 +14,15 @@
 
 void InputManager::CreateInputs()
 {
-    Create3DInput(input3D);
-    Create2DInput(input2D);
-    CreateMenuInput(menuInput);
+    Create3DInput(default3DInput);
+    Create2DInput(default2DInput);
+    CreateMenuInput(debugMenuInput);
 }
 void InputManager::DestroyInputs()
 {
-    DestroyInput(input3D);
-    DestroyInput(menuInput);
-    DestroyInput(input2D);
+    DestroyInput(default3DInput);
+    DestroyInput(debugMenuInput);
+    DestroyInput(default2DInput);
 }
 void InputManager::DestroyInput(GLInput& input)
 {
@@ -411,78 +411,78 @@ bool InputManager::accessHoldFunctions(FunctionReferences index)
     switch (index)
     {
     case MOVE_FORWARD_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_BACKWARD_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_LEFT_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
         break;
     case MOVE_RIGHT_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
         break;
     case CAMERA_PITCH_UP_KEY:
-        Resources::currentApplication->currentCamera->pitch += Resources::currentApplication->currentCamera->currentSensitivity;
-        if (Resources::currentApplication->currentCamera->pitch > 89.0f)
-            Resources::currentApplication->currentCamera->pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->pitch < -89.0f)
-            Resources::currentApplication->currentCamera->pitch = -89.0f;
+        Resources::currentApplication->currentCamera->eulerAngle.pitch += Resources::currentApplication->currentCamera->currentPanningSpeed;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
         break;
     case CAMERA_PITCH_DOWN_KEY:
-        Resources::currentApplication->currentCamera->pitch -= Resources::currentApplication->currentCamera->currentSensitivity;
-        if (Resources::currentApplication->currentCamera->pitch > 89.0f)
-            Resources::currentApplication->currentCamera->pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->pitch < -89.0f)
-            Resources::currentApplication->currentCamera->pitch = -89.0f;
+        Resources::currentApplication->currentCamera->eulerAngle.pitch -= Resources::currentApplication->currentCamera->currentPanningSpeed;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
         break;
     case CAMERA_YAW_LEFT_KEY:
-        Resources::currentApplication->currentCamera->yaw -= Resources::currentApplication->currentCamera->currentSensitivity;
+        Resources::currentApplication->currentCamera->eulerAngle.yaw -= Resources::currentApplication->currentCamera->currentPanningSpeed;
         return true;
         break;
     case CAMERA_YAW_RIGHT_KEY:
-        Resources::currentApplication->currentCamera->yaw += Resources::currentApplication->currentCamera->currentSensitivity;
+        Resources::currentApplication->currentCamera->eulerAngle.yaw += Resources::currentApplication->currentCamera->currentPanningSpeed;
         return true;
         break;
     case MOVE_UP_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
         break;
     case MOVE_DOWN_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
         break;
     case MOVE_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_UP_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_DOWN_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_UP_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
     case MOVE_DOWN_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraDiagonal * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
         break;
@@ -588,18 +588,18 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
         Resources::currentApplication->currentCamera->flashLight.specularColor = randomColor;
         break;
     case TOGGLE_MENU:
-        if (Resources::currentApplication->currentInput != &Resources::inputManager.menuInput)
+        if (Resources::currentApplication->currentInput != &Resources::inputManager.debugMenuInput)
         {
             glfwSetInputMode(Resources::currentApplication->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             updateType = true;
             typeChange[0] = Resources::currentApplication->currentInput;
-            typeChange[1] = &Resources::inputManager.menuInput;
+            typeChange[1] = &Resources::inputManager.debugMenuInput;
             if (gamePadButton != nullptr) oldButton = gamePadButton;
             Resources::currentApplication->currentCamera->firstMouse = true;
             Resources::windowManager.mainMenu.isRendering = true;
             Resources::currentApplication->currentWindow = &Resources::windowManager.mainMenu;
         }
-        else if (Resources::currentApplication->currentInput == &Resources::inputManager.menuInput)
+        else if (Resources::currentApplication->currentInput == &Resources::inputManager.debugMenuInput)
         {
             glfwSetInputMode(Resources::currentApplication->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
@@ -625,24 +625,24 @@ bool InputManager::accessClickFunction(FunctionReferences index, GLButton* gameP
         }
         break;
     case CAMERA_DEINCREMENT_SENSITIVITY:
-        if ((Resources::currentApplication->currentCamera->currentSensitivity - Resources::currentApplication->currentCamera->slowSensitivity) < Resources::currentApplication->currentCamera->slowSensitivity)
+        if ((Resources::currentApplication->currentCamera->currentPanningSpeed - Resources::currentApplication->currentCamera->defaultPanningSpeed) < Resources::currentApplication->currentCamera->defaultPanningSpeed)
             return false;
-        Resources::currentApplication->currentCamera->currentSensitivity -= Resources::currentApplication->currentCamera->slowSensitivity;
+        Resources::currentApplication->currentCamera->currentPanningSpeed -= Resources::currentApplication->currentCamera->defaultPanningSpeed;
         break;
     case CAMERA_INCREMENT_SENSITIVITY:
-        if ((Resources::currentApplication->currentCamera->currentSensitivity + Resources::currentApplication->currentCamera->slowSensitivity) > (Resources::currentApplication->currentCamera->slowSensitivity * 10))
+        if ((Resources::currentApplication->currentCamera->currentPanningSpeed + Resources::currentApplication->currentCamera->defaultPanningSpeed) > (Resources::currentApplication->currentCamera->defaultPanningSpeed * 10))
             return false;
-        Resources::currentApplication->currentCamera->currentSensitivity += Resources::currentApplication->currentCamera->slowSensitivity;
+        Resources::currentApplication->currentCamera->currentPanningSpeed += Resources::currentApplication->currentCamera->defaultPanningSpeed;
         break;
     case CAMERA_DEINCREMENT_SPEED:
-        if ((Resources::currentApplication->currentCamera->currentCameraSpeed - Resources::currentApplication->currentCamera->slowCameraSpeed) < Resources::currentApplication->currentCamera->slowCameraSpeed)
+        if ((Resources::currentApplication->currentCamera->currentMovementSpeed - Resources::currentApplication->currentCamera->defaultMovementSpeed) < Resources::currentApplication->currentCamera->defaultMovementSpeed)
             return false;
-        Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentCameraSpeed - Resources::currentApplication->currentCamera->slowCameraSpeed);
+        Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentMovementSpeed - Resources::currentApplication->currentCamera->defaultMovementSpeed);
         break;
     case CAMERA_INCREMENT_SPEED:
-        if ((Resources::currentApplication->currentCamera->currentCameraSpeed + Resources::currentApplication->currentCamera->slowCameraSpeed) > (Resources::currentApplication->currentCamera->slowCameraSpeed * 50))
+        if ((Resources::currentApplication->currentCamera->currentMovementSpeed + Resources::currentApplication->currentCamera->defaultMovementSpeed) > (Resources::currentApplication->currentCamera->defaultMovementSpeed * 50))
             return false;
-        Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentCameraSpeed + Resources::currentApplication->currentCamera->slowCameraSpeed);
+        Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentMovementSpeed + Resources::currentApplication->currentCamera->defaultMovementSpeed);
         break;
     default:
         std::cerr << "ERROR::INVALID_ENUM::ACCESS_CLICK_FUNCTION" << std::endl;
@@ -690,21 +690,21 @@ void InputManager::accessMouseMovementFunctions(FunctionReferences index, double
         Resources::currentApplication->currentCamera->lastX = xpos;
         Resources::currentApplication->currentCamera->lastY = ypos;
 
-        xoffset *= Resources::currentApplication->currentCamera->currentSensitivity;
-        yoffset *= Resources::currentApplication->currentCamera->currentSensitivity;
+        xoffset *= Resources::currentApplication->currentCamera->currentPanningSpeed;
+        yoffset *= Resources::currentApplication->currentCamera->currentPanningSpeed;
 
-        Resources::currentApplication->currentCamera->yaw += xoffset;
-        Resources::currentApplication->currentCamera->pitch += yoffset;
+        Resources::currentApplication->currentCamera->eulerAngle.yaw += xoffset;
+        Resources::currentApplication->currentCamera->eulerAngle.pitch += yoffset;
 
-        if (Resources::currentApplication->currentCamera->pitch > 89.0f)
-            Resources::currentApplication->currentCamera->pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->pitch < -89.0f)
-            Resources::currentApplication->currentCamera->pitch = -89.0f;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
 
 
-        direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
-        direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->pitch));
-        direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->pitch));
+        direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
+        direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
+        direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
         Resources::currentApplication->currentCamera->orientation.cameraFront = glm::normalize(direction);
         break;
     default:
@@ -716,36 +716,36 @@ void InputManager::accessMouseMovementFunctions(FunctionReferences index, double
 
 bool InputManager::accessJoyStickFunctions(FunctionReferences index, float axis)
 {
-    float cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+    float cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
 
     switch (index)
     {
     case MOVE_LEFT_RIGHT_STICK:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * (cameraSpeed * axis);
         break;
     case MOVE_UP_DOWN_STICK:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= (cameraSpeed * axis) * Resources::currentApplication->currentCamera->orientation.cameraFront;
         break;
     case MOVE_LEFT_RIGHT_STICK_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed * axis, 0.0f, 0.0f);
         break;
     case MOVE_UP_DOWN_STICK_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentCameraSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
         Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed * axis, 0.0f);
         break;
     case CAMERA_YAW_STICK:
-        Resources::currentApplication->currentCamera->yaw += axis;
+        Resources::currentApplication->currentCamera->eulerAngle.yaw += axis;
         return true;
         break;
     case CAMERA_PITCH_STICK:
-        Resources::currentApplication->currentCamera->pitch -= axis;
-        if (Resources::currentApplication->currentCamera->pitch > 89.0f)
-            Resources::currentApplication->currentCamera->pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->pitch < -89.0f)
-            Resources::currentApplication->currentCamera->pitch = -89.0f;
+        Resources::currentApplication->currentCamera->eulerAngle.pitch -= axis;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
         break;
     default:
@@ -793,31 +793,31 @@ void InputManager::accessTriggerFunctions(FunctionReferences index, float axis)
     case CAMERA_SPEED_TRIGGER:
         if (axis < -0.15)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed);
         }
         if (axis < -0.5f)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 3.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 3.0f);
         }
         else if (axis < 0.0f)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 5.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 5.0f);
         }
         else if (axis < 0.5f)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 7.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 7.0f);
         }
         else if (axis < 0.75f)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 8.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 8.0f);
         }
         else if (axis < 0.875f)
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 9.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 9.0f);
         }
         else
         {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->slowCameraSpeed * 10.0f);
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 10.0f);
         }
         break;
     default:

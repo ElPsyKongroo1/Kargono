@@ -58,7 +58,7 @@ void RendererStateManager::CreateSample3DRenderer(RendererState& application)
 
 	application.objectRenderBuffer = std::vector<Object>();
 	application.lightSourceRenderBuffer = std::vector<LightSource*>();
-	application.defaultInput = &Resources::inputManager.input3D;
+	application.defaultInput = &Resources::inputManager.default3DInput;
 	application.currentInput = application.defaultInput;
 	application.currentCamera = &Resources::cameraManager.flyCamera;
 	application.defaultModel = &Resources::modelManager.simpleBackpack;
@@ -78,7 +78,7 @@ void RendererStateManager::CreateSample2DRenderer(RendererState& application)
 
 	application.objectRenderBuffer = std::vector<Object>();
 	application.lightSourceRenderBuffer = std::vector<LightSource*>();
-	application.defaultInput = &Resources::inputManager.input2D;
+	application.defaultInput = &Resources::inputManager.default2DInput;
 	application.currentInput = application.defaultInput;
 	application.defaultModel = &Resources::modelManager.simpleBackpack;
 	application.currentCamera = &Resources::cameraManager.static2DCamera;
