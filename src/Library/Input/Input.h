@@ -129,7 +129,6 @@ public:
 public:
 	bool accessClickFunction(FunctionReferences index, GLInputLink* gamePadButton);
 	bool accessHoldFunctions(FunctionReferences index);
-	void accessScrollFunctions(FunctionReferences index, double xoffset, double yoffset);
 	bool accessJoyStickFunctions(FunctionReferences index, float axis);
 	void accessTriggerFunctions(FunctionReferences index, float axis);
 public:
