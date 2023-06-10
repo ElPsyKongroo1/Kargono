@@ -8,5 +8,5 @@
 
 extern bool updateType;
 extern GLInput* typeChange[2];
-extern GLButton* oldButton;
+extern GLInputLink* oldButton;
 void updateInputType();

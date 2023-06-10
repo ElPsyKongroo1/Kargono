@@ -8,7 +8,7 @@
 
 bool updateType = false;
 GLInput* typeChange[2];
-GLButton* oldButton = nullptr;
+GLInputLink* oldButton = nullptr;
 
 void updateInputType()
 {

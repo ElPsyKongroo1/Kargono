@@ -1,6 +1,8 @@
 #include "Input.h"
 #include "../Library.h"
 #include "InputFunctions.h"
+#include "Default3DFunctions.h"
+#include "Default2DFunctions.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -20,7 +22,7 @@ void GLInput::processScroll(double xoffset, double yoffset)
 
     for (int i = 0; i < mouseScrollSize[0]; i++)
     {
-        Resources::inputManager.accessScrollFunctions(mouseScroll[0][i].function, xoffset, yoffset);
+       mouseScroll[0][i].functionReference(xoffset, yoffset);
     }
     if (updateType)
     {
@@ -35,7 +37,7 @@ void GLInput::processMouseMovement(double xpos, double ypos)
 
     for (int i = 0; i < mouseMovementSize[0]; i++)
     {
-        Resources::inputManager.accessMouseMovementFunctions(mouseMovement[0][i].function, xpos, ypos);
+        mouseMovement[0][i].functionReference(xpos, ypos) ;
     }
     if (updateType)
     {

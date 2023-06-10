@@ -18,11 +18,9 @@ enum FunctionReferences
 	CAMERA_YAW_RIGHT_KEY, CAMERA_YAW_LEFT_KEY, CAMERA_PITCH_UP_KEY, CAMERA_PITCH_DOWN_KEY,
 	//2D
 	MOVE_UP_2D, MOVE_DOWN_2D, MOVE_LEFT_2D, MOVE_RIGHT_2D, MOVE_UP_LEFT_2D, MOVE_UP_RIGHT_2D, MOVE_DOWN_LEFT_2D, MOVE_DOWN_RIGHT_2D,
-	
-	// Mouse Input
-	CAMERA_YAW_PITCH_MOUSE,
+
 	// Mouse Scroll Input
-	CAMERA_FOV_MOUSE,
+	
 
 	// GamePad JoyStick
 	CAMERA_YAW_STICK, CAMERA_PITCH_STICK, MOVE_LEFT_RIGHT_STICK, MOVE_UP_DOWN_STICK,
@@ -41,7 +39,7 @@ enum FunctionReferences
  *============================================================================================================================================================================================*/
 
 
-class GLButton
+class GLInputLink
 {
 public:
 	int previousState;
@@ -49,8 +47,32 @@ public:
 	int glfwMask;
 	FunctionReferences function;
 public:
-	GLButton();
+	GLInputLink();
 };
+
+class GLMouseMovementLink : public GLInputLink
+{
+public:
+	void (*functionReference)(double, double);
+public:
+	GLMouseMovementLink() : GLInputLink(), functionReference{nullptr}
+	{
+			
+	}
+};
+
+class GLScrollLink : public GLInputLink
+{
+public:
+	void (*functionReference)(double, double);
+public:
+	GLScrollLink() : GLInputLink(), functionReference{ nullptr }
+	{
+
+	}
+};
+
+
 
 
 /*============================================================================================================================================================================================
@@ -64,19 +86,19 @@ public:
 		SINGLEKEYPRESS = 0, DOUBLEKEYPRESS = 1, TRIPLEKEYPRESS = 2
 	};
 public:
-	GLButton gamePadClick[2][128];
+	GLInputLink gamePadClick[2][128];
 	int gamePadClickSize[2] = {0, 0};
-	GLButton gamePadStick[2][32];
+	GLInputLink gamePadStick[2][32];
 	int gamePadStickSize[2] = { 0, 0 };
-	GLButton gamePadTrigger[2][8];
+	GLInputLink gamePadTrigger[2][8];
 	int gamePadTriggerSize[2] = { 0, 0 };
-	GLButton keyboardHold[2][128];
+	GLInputLink keyboardHold[2][128];
 	int keyboardHoldSize[2] = { 0, 0 };
-	GLButton keyboardClick[2][128];
+	GLInputLink keyboardClick[2][128];
 	int keyboardClickSize[2] = { 0, 0 };
-	GLButton mouseScroll[2][2];
+	GLScrollLink mouseScroll[2][2];
 	int mouseScrollSize[2] = { 0, 0 };
-	GLButton mouseMovement[2][2];
+	GLMouseMovementLink mouseMovement[2][2];
 	int mouseMovementSize[2] = { 0, 0 };
 public:
 public:
@@ -105,10 +127,9 @@ public:
 	GLInput default2DInput;
 	FunctionReferences functions[1024];
 public:
-	bool accessClickFunction(FunctionReferences index, GLButton* gamePadButton);
+	bool accessClickFunction(FunctionReferences index, GLInputLink* gamePadButton);
 	bool accessHoldFunctions(FunctionReferences index);
 	void accessScrollFunctions(FunctionReferences index, double xoffset, double yoffset);
-	void accessMouseMovementFunctions(FunctionReferences index, double xpos, double ypos);
 	bool accessJoyStickFunctions(FunctionReferences index, float axis);
 	void accessTriggerFunctions(FunctionReferences index, float axis);
 public:
