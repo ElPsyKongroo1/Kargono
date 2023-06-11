@@ -141,6 +141,9 @@
     <ClCompile Include="src\Library\Input\Default2DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Library\Input\DebugMenuFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -492,6 +495,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Input\Default2DFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Input\DebugMenuFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

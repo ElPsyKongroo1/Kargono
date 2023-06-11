@@ -72,6 +72,18 @@ public:
 	}
 };
 
+class GLClickLink : public GLInputLink
+{
+public:
+	bool (*functionReference)(GLInputLink*);
+public:
+	GLClickLink() : GLInputLink(), functionReference{ nullptr }
+	{
+
+	}
+};
+
+
 
 
 
@@ -86,7 +98,7 @@ public:
 		SINGLEKEYPRESS = 0, DOUBLEKEYPRESS = 1, TRIPLEKEYPRESS = 2
 	};
 public:
-	GLInputLink gamePadClick[2][128];
+	GLClickLink gamePadClick[2][128];
 	int gamePadClickSize[2] = {0, 0};
 	GLInputLink gamePadStick[2][32];
 	int gamePadStickSize[2] = { 0, 0 };
@@ -94,7 +106,7 @@ public:
 	int gamePadTriggerSize[2] = { 0, 0 };
 	GLInputLink keyboardHold[2][128];
 	int keyboardHoldSize[2] = { 0, 0 };
-	GLInputLink keyboardClick[2][128];
+	GLClickLink keyboardClick[2][128];
 	int keyboardClickSize[2] = { 0, 0 };
 	GLScrollLink mouseScroll[2][2];
 	int mouseScrollSize[2] = { 0, 0 };

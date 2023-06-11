@@ -3,6 +3,7 @@
 #include "InputFunctions.h"
 #include "Default3DFunctions.h"
 #include "Default2DFunctions.h"
+#include "DebugMenuFunctions.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -54,7 +55,7 @@ void GLInput::processKeyboardClick(GLFWwindow* window, int key, int scancode, in
     {
         if (key == keyboardClick[0][i].glfwValue && action == GLFW_PRESS)
         {
-            Resources::inputManager.accessClickFunction(keyboardClick[0][i].function, nullptr);
+            keyboardClick[0][i].functionReference(nullptr);
         }
     }
     if (updateType)
@@ -209,7 +210,7 @@ void GLInput::processGamePadClick()
             std::cout << gamePadClickSize[0] << std::endl;
             if (currentButtons[gamePadClick[0][i].glfwValue] == GLFW_PRESS)
             {
-                Resources::inputManager.accessClickFunction(gamePadClick[0][i].function, &gamePadClick[0][i]);
+                gamePadClick[0][i].functionReference(&gamePadClick[0][i]);
 
             }
             if (currentButtons[gamePadClick[0][i].glfwValue] == GLFW_RELEASE)

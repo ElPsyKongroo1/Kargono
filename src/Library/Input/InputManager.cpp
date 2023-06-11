@@ -3,6 +3,7 @@
 #include "InputFunctions.h"
 #include "Default3DFunctions.h"
 #include "Default2DFunctions.h"
+#include "DebugMenuFunctions.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -33,7 +34,7 @@ void InputManager::DestroyInput(GLInput& input)
     currentArraySize = sizeof(input.gamePadClick) / sizeof(GLInputLink);
     for (int i = 0; i < currentArraySize; i++)
     {
-        input.gamePadClick[0][i] = GLInputLink();
+        input.gamePadClick[0][i] = GLClickLink();
     }
     input.gamePadClickSize[0] = 0;
     currentArraySize = sizeof(input.gamePadStick) / sizeof(GLInputLink);
@@ -57,7 +58,7 @@ void InputManager::DestroyInput(GLInput& input)
     currentArraySize = sizeof(input.keyboardClick) / sizeof(GLInputLink);
     for (int i = 0; i < currentArraySize; i++)
     {
-        input.keyboardClick[0][i] = GLInputLink();
+        input.keyboardClick[0][i] = GLClickLink();
     }
     input.keyboardClickSize[0] = 0;
     currentArraySize = sizeof(input.mouseScroll) / sizeof(GLInputLink);
@@ -90,10 +91,13 @@ void InputManager::Create3DInput(GLInput& input)
     // GamePad Initialization
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_BUTTON_Y;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_FLASHLIGHT;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::TOGGLE_FLASHLIGHT;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_BUTTON_B;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::RANDOM_FLASHLIGHT_COLOR;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][1].functionReference = Default3DFunctions::RANDOM_FLASHLIGHT_COLOR;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_GAMEPAD_BUTTON_START;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::TOGGLE_MENU;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][2].functionReference = Default3DFunctions::TOGGLE_MENU;
     for (int i = 0; i < sizeof(input.gamePadClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -157,18 +161,25 @@ void InputManager::Create3DInput(GLInput& input)
 
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_F;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_FLASHLIGHT;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::TOGGLE_FLASHLIGHT;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_F1;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::TOGGLE_MENU;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][1].functionReference = Default3DFunctions::TOGGLE_MENU;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_MINUS;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::CAMERA_DEINCREMENT_SENSITIVITY;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][2].functionReference = Default3DFunctions::CAMERA_DEINCREMENT_SENSITIVITY;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_EQUAL;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][3].function = FunctionReferences::CAMERA_INCREMENT_SENSITIVITY;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][3].functionReference = Default3DFunctions::CAMERA_INCREMENT_SENSITIVITY;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][4].glfwValue = GLFW_KEY_LEFT_BRACKET;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][4].function = FunctionReferences::CAMERA_DEINCREMENT_SPEED;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][4].functionReference = Default3DFunctions::CAMERA_DEINCREMENT_SPEED;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][5].glfwValue = GLFW_KEY_RIGHT_BRACKET;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][5].function = FunctionReferences::CAMERA_INCREMENT_SPEED;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][5].functionReference = Default3DFunctions::CAMERA_INCREMENT_SPEED;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][6].glfwValue = GLFW_KEY_F9;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][6].function = FunctionReferences::TOGGLE_DEVICE_MOUSE_MOVEMENT;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][6].functionReference = Default3DFunctions::TOGGLE_DEVICE_MOUSE_MOVEMENT;
     for (int i = 0; i < sizeof(input.keyboardClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -211,10 +222,12 @@ void InputManager::Create2DInput(GLInput& input)
     // GamePad Initialization
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_BUTTON_Y;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_FLASHLIGHT;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::TOGGLE_FLASHLIGHT;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_BUTTON_B;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::RANDOM_FLASHLIGHT_COLOR;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][1].functionReference = Default2DFunctions::RANDOM_FLASHLIGHT_COLOR;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_GAMEPAD_BUTTON_START;
-    input.gamePadClick[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::TOGGLE_MENU;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][2].functionReference = Default2DFunctions::TOGGLE_MENU;
     for (int i = 0; i < sizeof(input.gamePadClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -283,18 +296,25 @@ void InputManager::Create2DInput(GLInput& input)
 
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_F;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_FLASHLIGHT;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::TOGGLE_FLASHLIGHT;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_F1;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::TOGGLE_MENU;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][1].functionReference = Default2DFunctions::TOGGLE_MENU;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_MINUS;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::CAMERA_DEINCREMENT_SENSITIVITY;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][2].functionReference = Default2DFunctions::CAMERA_DEINCREMENT_SENSITIVITY;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_EQUAL;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][3].function = FunctionReferences::CAMERA_INCREMENT_SENSITIVITY;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][3].functionReference = Default2DFunctions::CAMERA_INCREMENT_SENSITIVITY;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][4].glfwValue = GLFW_KEY_LEFT_BRACKET;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][4].function = FunctionReferences::CAMERA_DEINCREMENT_SPEED;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][4].functionReference = Default2DFunctions::CAMERA_DEINCREMENT_SPEED;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][5].glfwValue = GLFW_KEY_RIGHT_BRACKET;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][5].function = FunctionReferences::CAMERA_INCREMENT_SPEED;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][5].functionReference = Default2DFunctions::CAMERA_INCREMENT_SPEED;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][6].glfwValue = GLFW_KEY_F9;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][6].function = FunctionReferences::TOGGLE_DEVICE_MOUSE_MOVEMENT;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][6].functionReference = Default2DFunctions::TOGGLE_DEVICE_MOUSE_MOVEMENT;
     for (int i = 0; i < sizeof(input.keyboardClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -335,8 +355,10 @@ void InputManager::CreateMenuInput(GLInput& input)
     // GamePad Initialization
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_BUTTON_START;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_MENU;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][0].functionReference = DebugMenuFunctions::TOGGLE_MENU;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_BUTTON_B;
     input.gamePadClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::CLOSE_CURRENT_WINDOW;
+    input.gamePadClick[GLInput::SINGLEKEYPRESS][1].functionReference = DebugMenuFunctions::CLOSE_CURRENT_WINDOW;
     for (int i = 0; i < sizeof(input.gamePadClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -371,8 +393,10 @@ void InputManager::CreateMenuInput(GLInput& input)
 
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_F1;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::TOGGLE_MENU;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][0].functionReference = DebugMenuFunctions::TOGGLE_MENU;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_TAB;
     input.keyboardClick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::CLOSE_CURRENT_WINDOW;
+    input.keyboardClick[GLInput::SINGLEKEYPRESS][1].functionReference = DebugMenuFunctions::CLOSE_CURRENT_WINDOW;
     for (int i = 0; i < sizeof(input.keyboardClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
