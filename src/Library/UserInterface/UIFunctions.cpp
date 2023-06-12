@@ -1,5 +1,6 @@
 #include "../Includes.h"
 #include "../Library.h"
+#include "../Input/DebugMenuFunctions.h"
 
 void renderMainMenu()
 {
@@ -50,7 +51,7 @@ void renderMainMenu()
 	}
 	if (ImGui::Button("Exit Application"))
 	{
-		Resources::inputManager.accessClickFunction(EXIT_APPLICATION, nullptr);
+		DebugMenuFunctions::EXIT_APPLICATION();
 	}
 	ImGui::End();
 }

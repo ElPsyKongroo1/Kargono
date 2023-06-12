@@ -46,4 +46,10 @@ namespace DebugMenuFunctions
         }
         return false;
     }
+
+    bool EXIT_APPLICATION()
+    {
+        glfwSetWindowShouldClose(Resources::currentApplication->window, true);
+        return false;
+    }
 }
