@@ -15,28 +15,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DefaultApplication\DefaultApplication.cpp">
+    <ClCompile Include="src\Applications\DefaultApplication\DefaultApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Library.cpp">
+    <ClCompile Include="src\Library\Rendering\Library.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Shaders\GLShader.cpp">
+    <ClCompile Include="src\Library\Rendering\Shaders\GLShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Mesh\GLMesh.cpp">
+    <ClCompile Include="src\Library\Rendering\Mesh\GLMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Cameras\GLCamera.cpp">
+    <ClCompile Include="src\Library\Rendering\Cameras\GLCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\LightSource\LightSource.cpp">
+    <ClCompile Include="src\Library\Rendering\LightSource\LightSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\GLInput.cpp">
+    <ClCompile Include="src\Library\Game\Input\GLInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp">
@@ -63,114 +63,114 @@
     <ClCompile Include="src\EntryPoint\Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application2D\Application2D.cpp">
+    <ClCompile Include="src\Applications\Application2D\Application2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\UserInterface\UIWindow.cpp">
+    <ClCompile Include="src\Library\Rendering\UserInterface\UIWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application2D\Application2DRendering.cpp">
+    <ClCompile Include="src\Applications\Application2D\Application2DRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DefaultApplication\DefaultRendering.cpp">
+    <ClCompile Include="src\Applications\DefaultApplication\DefaultRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Initialization.cpp">
+    <ClCompile Include="src\Library\Rendering\Initialization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Cameras\CameraManager.cpp">
+    <ClCompile Include="src\Library\Rendering\Cameras\CameraManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\InputManager.cpp">
+    <ClCompile Include="src\Library\Game\Input\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\MiscFunctions.cpp">
+    <ClCompile Include="src\Library\Game\Input\MiscFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Mesh\MeshManager.cpp">
+    <ClCompile Include="src\Library\Rendering\Mesh\MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Shaders\ShaderManager.cpp">
+    <ClCompile Include="src\Library\Rendering\Shaders\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Textures\TextureManager.cpp">
+    <ClCompile Include="src\Library\Rendering\Textures\TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\UserInterface\UIFunctions.cpp">
+    <ClCompile Include="src\Library\Rendering\UserInterface\UIFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\UserInterface\WindowManager.cpp">
+    <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Termination.cpp">
+    <ClCompile Include="src\Library\Rendering\Termination.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\RuntimeFunctions.cpp">
+    <ClCompile Include="src\Library\Rendering\RuntimeFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Model\Model.cpp">
+    <ClCompile Include="src\Library\Rendering\Model\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Textures\Texture.cpp">
+    <ClCompile Include="src\Library\Rendering\Textures\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Model\ModelManager.cpp">
+    <ClCompile Include="src\Library\Rendering\Model\ModelManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\RendererState\RendererStateManager.cpp">
+    <ClCompile Include="src\Library\Rendering\RendererState\RendererStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\RendererState\RendererState.cpp">
+    <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Objects\ModelRenderer.cpp">
+    <ClCompile Include="src\Library\Game\Objects\ModelRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Objects\RenderableInterface.cpp">
+    <ClCompile Include="src\Library\Game\Objects\RenderableInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Objects\ShapeRenderer.cpp">
+    <ClCompile Include="src\Library\Game\Objects\ShapeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\Default-Input-Libraries\Default3DFunctions.cpp">
+    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\Default3DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\Default-Input-Libraries\Default2DFunctions.cpp">
+    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\Default2DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
+    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Library\Library.h">
+    <ClInclude Include="src\Library\Rendering\Library.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Includes.h">
+    <ClInclude Include="src\Library\Rendering\Includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Shaders\Shaders.h">
+    <ClInclude Include="src\Library\Rendering\Shaders\Shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Mesh\Meshes.h">
+    <ClInclude Include="src\Library\Rendering\Mesh\Meshes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\External_Libraries\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Textures\Textures.h">
+    <ClInclude Include="src\Library\Rendering\Textures\Textures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Cameras\Cameras.h">
+    <ClInclude Include="src\Library\Rendering\Cameras\Cameras.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Objects\Objects.h">
+    <ClInclude Include="src\Library\Game\Objects\Objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\LightSource\LightSource.h">
+    <ClInclude Include="src\Library\Rendering\LightSource\LightSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Input\Input.h">
+    <ClInclude Include="src\Library\Game\Input\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\External_Libraries\imgui\imconfig.h">
@@ -200,31 +200,31 @@
     <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DefaultApplication\DefaultApplication.h">
+    <ClInclude Include="src\Applications\DefaultApplication\DefaultApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Application2D\Application2D.h">
+    <ClInclude Include="src\Applications\Application2D\Application2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\UserInterface\WindowFunctions.h">
+    <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Application2D\Rendering1.h">
+    <ClInclude Include="src\Applications\Application2D\Rendering1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DefaultApplication\Rendering2.h">
+    <ClInclude Include="src\Applications\DefaultApplication\Rendering2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Initialization.h">
+    <ClInclude Include="src\Library\Rendering\Initialization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Input\MiscFunctions.h">
+    <ClInclude Include="src\Library\Game\Input\MiscFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\UserInterface\UIFunctions.h">
+    <ClInclude Include="src\Library\Rendering\UserInterface\UIFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Model\Model.h">
+    <ClInclude Include="src\Library\Rendering\Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLResources\Includes\glad\glad.h">
@@ -482,19 +482,19 @@
     <ClInclude Include="glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\RendererState\RendererState.h">
+    <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Objects\RenderableInterface.h">
+    <ClInclude Include="src\Library\Game\Objects\RenderableInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Input\Default-Input-Libraries\Default3DFunctions.h">
+    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\Default3DFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Input\Default-Input-Libraries\Default2DFunctions.h">
+    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\Default2DFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Input\Default-Input-Libraries\DebugMenuFunctions.h">
+    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\DebugMenuFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -503,12 +503,12 @@
     <None Include="src\Library\External_Libraries\imgui\.gitattributes" />
     <None Include="src\Library\External_Libraries\imgui\.gitignore" />
     <None Include="imgui.ini" />
-    <None Include="Resources\Shaders\Lighting\shader.fs" />
-    <None Include="Resources\Shaders\Lighting\shader.vs" />
-    <None Include="Resources\Shaders\LightSource\shader.fs" />
-    <None Include="Resources\Shaders\LightSource\shader.vs" />
-    <None Include="Resources\Shaders\DefaultShader\shader.fs" />
-    <None Include="Resources\Shaders\DefaultShader\shader.vs" />
+    <None Include="Resources\Default-Resources\Shaders\Lighting\shader.fs" />
+    <None Include="Resources\Default-Resources\Shaders\Lighting\shader.vs" />
+    <None Include="Resources\Default-Resources\Shaders\LightSource\shader.fs" />
+    <None Include="Resources\Default-Resources\Shaders\LightSource\shader.vs" />
+    <None Include="Resources\Default-Resources\Shaders\DefaultShader\shader.fs" />
+    <None Include="Resources\Default-Resources\Shaders\DefaultShader\shader.vs" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
     <None Include="OpenGLResources\Includes\Assimp\color4.inl">
       <Filter>Header Files</Filter>
@@ -558,16 +558,16 @@
     <Image Include="src\Resources\Textures\Images\SpecularMap\awesomeface.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Textures\Original\awesomeface.png">
+    <Image Include="Resources\Default-Resources\Textures\Original\awesomeface.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Textures\Original\Metal_Box.png">
+    <Image Include="Resources\Default-Resources\Textures\Original\Metal_Box.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Textures\SpecularMap\awesomeface.png">
+    <Image Include="Resources\Default-Resources\Textures\SpecularMap\awesomeface.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Textures\SpecularMap\Metal_Box.png">
+    <Image Include="Resources\Default-Resources\Textures\SpecularMap\Metal_Box.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
