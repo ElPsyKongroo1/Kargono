@@ -20,6 +20,12 @@ int Application2D()
 	FInitializeRenderer(); // GLFW, GLEW, and IMGui contexts
 	FInitializeLibraryResources();
 
+	Resources::currentRenderer->setDefaultValues(Resources::inputManager.default2DInput,
+		Resources::modelManager.simpleBackpack,
+		Resources::meshManager.cubeMesh,
+		Resources::shaderManager.lightingShader,
+		Resources::cameraManager.static2DCamera);
+
 	Orientation orientation2{ glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
 							  glm::vec3(0.0f, 0.0f, -3.0f),
 							  glm::vec3(1.0f, 1.0f, 2.0f) };
@@ -28,6 +34,13 @@ int Application2D()
 		Resources::currentRenderer->defaultShader) };
 	Object object2{ orientation2, &renderer2 };
 	Resources::currentRenderer->objectRenderBuffer.push_back(object2);
+
+	Orientation orientation10{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+							  glm::vec3(1.0f, 1.5f, -3.0f),
+							  glm::vec3(1.0f, 1.0f, 1.0f) };
+	ShapeRenderer renderer10{ ShapeRenderer(orientation10) };
+	Object object10{ orientation10, &renderer10 };
+	Resources::currentRenderer->objectRenderBuffer.push_back(object10);
 
 
 	// Main running Loop

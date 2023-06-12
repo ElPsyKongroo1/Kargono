@@ -37,8 +37,6 @@ public:
 	// Movement Speed
 	float currentMovementSpeed, defaultMovementSpeed, currentDiagonalMovementSpeed;
 	float currentPanningSpeed, defaultPanningSpeed;
-	
-	
 
 	// State
 	ProjectionType projection;
@@ -49,6 +47,32 @@ public:
 	// Other
 	float lastX, lastY;
 	bool firstMouse;
+
+public:
+	~GLCamera() 
+	{
+		eulerAngle.yaw = -1;
+		eulerAngle.pitch = -1;
+		eulerAngle.roll = -1;
+
+		orientation.cameraPosition = glm::vec3();
+		orientation.cameraFront = glm::vec3();
+		orientation.cameraUp = glm::vec3();
+
+		currentMovementSpeed = -1;
+		defaultMovementSpeed = -1;
+		currentPanningSpeed = -1;
+		defaultPanningSpeed = -1;
+
+
+		fov = -1;
+		lastX = -1;
+		lastY = -1;
+		firstMouse = 0;
+		isFlashLight = 0;
+		projection = GLCamera::NOPROJECTION;
+		flashLight = LightSource();
+	}
 public:
 	void setCurrentCameraSpeed(float speed)
 	{

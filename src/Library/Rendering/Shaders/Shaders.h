@@ -14,6 +14,17 @@ public:
 	ShaderType type;
 
 public:
+	GLShader() {};
+	GLShader(ShaderType shaderType, const char* vertexPath, const char* fragmentPath);
+	~GLShader() 
+	{
+		type = NOLIGHTING;
+		shaderID = -1;
+	}
+public:
+	void loadSource(const char* vertexPath, const char* fragmentPath);
+	void checkCompileErrors(std::string type);
+public:
 	void useProgram();
 	void setBool(const std::string& name, bool value) const;
 	void setInt(const std::string& name, int value) const;
@@ -30,16 +41,13 @@ public:
 class ShaderManager
 {
 public:
-	GLShader defaultShader;
-	GLShader lightingShader;
-	GLShader lightSourceShader;
+	GLShader* defaultShader;
+	GLShader* lightingShader;
+	GLShader* lightSourceShader;
 public: 
-	void CreateDefaultShader(GLShader& shader);
-	void CreateLightingShader(GLShader& shader);
-	void CreateLightSourceShader(GLShader& shader);
+	ShaderManager() {};
 public:
 	void CreateShaders();
-private:
-	void checkCompileErrors(unsigned int shader, std::string type);
-	void loadSource(const char* vertexPath, const char* fragmentPath, GLShader& shader);
+	void DestroyShaders();
+	
 };

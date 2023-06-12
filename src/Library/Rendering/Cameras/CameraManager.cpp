@@ -23,27 +23,6 @@ void CameraManager::DestroyCameras()
 }
 void CameraManager::DestroyCamera(GLCamera& camera)
 {
-    camera.eulerAngle.yaw = -1;
-    camera.eulerAngle.pitch = -1;
-    camera.eulerAngle.roll = -1;
-    
-    camera.orientation.cameraPosition = glm::vec3();
-    camera.orientation.cameraFront = glm::vec3();
-    camera.orientation.cameraUp = glm::vec3();
-
-    camera.currentMovementSpeed = -1;
-    camera.defaultMovementSpeed = -1;
-    camera.currentPanningSpeed = -1;
-    camera.defaultPanningSpeed = -1;
-
-    
-    camera.fov = -1;
-    camera.lastX = -1;
-    camera.lastY = -1;
-    camera.firstMouse = 0;
-    camera.isFlashLight = 0;
-    camera.projection = GLCamera::NOPROJECTION;
-    camera.flashLight = LightSource();
 }
 /*============================================================================================================================================================================================
  * Initializes GLCamera Structs with specified values

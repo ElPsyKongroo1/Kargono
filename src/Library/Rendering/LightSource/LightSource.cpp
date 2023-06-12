@@ -40,6 +40,21 @@ LightSource::LightSource()
 	outerCutOff = 20.0f;
 	innerCutOff = 10.0f;
 }
+LightSource::~LightSource() 
+{
+
+	this->position = glm::vec3();
+	this->sourceColor = glm::vec3();
+	this->ambientColor = glm::vec3();
+	this->diffuseColor = glm::vec3();
+	this->specularColor = glm::vec3();
+	parentObject = ParentObject::NONE;
+	lightType = LightType::NA;
+	lightDirection = glm::vec3();
+	attenuation = glm::vec3();
+	outerCutOff = -1.0f;
+	innerCutOff = -1.0f;
+}
 
 /*============================================================================================================================================================================================
   * External Functionality

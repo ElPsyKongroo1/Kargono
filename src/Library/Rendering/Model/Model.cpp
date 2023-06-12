@@ -3,11 +3,21 @@
 
 unsigned int TextureFromFile(const char* path, const std::string& directory);
 
-void Model::Draw(void* object)
+//Model::~Model() 
+//{
+//    for (GLMesh* mesh : meshes)
+//    {
+//        delete mesh;
+//    }
+//    meshes.clear();
+//    textures_loaded.clear();
+//}
+
+void Model::Draw(void* modelRenderer)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        meshes[i].Draw(object);
+        meshes[i]->Draw(modelRenderer);
     }  
 }
 
@@ -41,11 +51,11 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-GLMesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+GLMesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    std::vector<Texture*> textures;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -83,20 +93,22 @@ GLMesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material,
+        std::vector<Texture*> diffuseMaps = loadMaterialTextures(material,
             aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        std::vector<Texture> specularMaps = loadMaterialTextures(material,
+        std::vector<Texture*> specularMaps = loadMaterialTextures(material,
             aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-    return GLMesh(vertices, indices, textures, GLMesh::DRAWELEMENTS);
+    GLMesh* outputMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWELEMENTS) };
+
+    return outputMesh;
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-    std::vector<Texture> textures;
+    std::vector<Texture*> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
@@ -104,7 +116,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         bool skip = false;
         for (unsigned int j = 0; j < textures_loaded.size(); j++)
         {
-            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            if (std::strcmp(textures_loaded[j]->path.data(), str.C_Str()) == 0)
             {
                 textures.push_back(textures_loaded[j]);
                 skip = true;
@@ -113,7 +125,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         }
         if (!skip)
         {   // if texture hasn't been loaded already, load it
-            Texture texture;
+            Texture* texture = new Texture();
             std::string tempString = str.C_Str();
             if (tempString.find("C:") != std::string::npos)
             {
@@ -137,9 +149,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
                 }
             }
             tempString = "textures/" + tempString;
-            texture.id = TextureFromFile(tempString.c_str(), directory);
-            texture.type = typeName;
-            texture.path = str.C_Str();
+            texture->id = TextureFromFile(tempString.c_str(), directory);
+            texture->type = typeName;
+            texture->path = str.C_Str();
             textures.push_back(texture);
             textures_loaded.push_back(texture); // add to loaded textures
         }

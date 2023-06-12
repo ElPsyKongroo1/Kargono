@@ -8,22 +8,23 @@
 class Model
 {
 public:
-	std::vector<Texture> textures_loaded;
+	std::vector<Texture*> textures_loaded;
 public:
 	Model() {};
 	Model(char* path)
 	{
 		loadModel(path);
 	}
+	//~Model();
 	void Draw(void* object);
 public:
-		std::vector<GLMesh> meshes;
+		std::vector<GLMesh*> meshes;
 		std::string directory;
 private:
 		void loadModel(std::string path);
 		void processNode(aiNode* Node, const aiScene* scene);
-		GLMesh processMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture> loadMaterialTextures(aiMaterial* mat,
+		GLMesh* processMesh(aiMesh* mesh, const aiScene* scene);
+		std::vector<Texture*> loadMaterialTextures(aiMaterial* mat,
 			aiTextureType type,
 			std::string typeName);
 };
@@ -31,10 +32,10 @@ private:
 class ModelManager
 {
 public:
-	Model simpleBackpack;
-	Model human;
-	Model house;
-	Model house2;
+	Model* simpleBackpack{nullptr};
+	Model* human{ nullptr };
+	Model* house{ nullptr };
+	Model* house2{ nullptr };
 
 public:
 	ModelManager() {};
@@ -44,10 +45,9 @@ public:
 	void DestroyModels();
 
 private:
-	void CreateBackpack(Model& model);
-	void CreateHuman(Model& model);
-	void CreateHouse(Model& model);
-	void CreateHouse2(Model& model);
-	void DestroyModel(Model& model);
+	void CreateBackpack();
+	void CreateHuman();
+	void CreateHouse();
+	void CreateHouse2();
 
 };

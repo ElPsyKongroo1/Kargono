@@ -11,40 +11,17 @@
   *============================================================================================================================================================================================*/
 void MeshManager::CreateMeshes()
 {
-
     CreateCubeMesh(cubeMesh);
-    allMeshes.push_back(&cubeMesh);
 }
 
 void MeshManager::DestroyMeshes()
 {
-    for (GLMesh* mesh : allMeshes)
-    {
-        DestroyMesh(*mesh);
-    }
-    allMeshes.clear();
+
 }
 
 void MeshManager::DestroyMesh(GLMesh& mesh)
 {
-    glDeleteVertexArrays(1, &mesh.vao);
-    if (mesh.indices.size() == 0)
-    {
-        glDeleteBuffers(1, mesh.vbos);
-    }
-    else
-    {
-        glDeleteBuffers(2, mesh.vbos);
-    }
-    mesh.vao = -1;
-    int vbosSize = sizeof(mesh.vbos) / sizeof(int);
-    for (int i = 0; i < vbosSize; i++)
-    {
-        mesh.vbos[i] = -1;
-    }
-    mesh.textures.clear();
-    mesh.vertices.clear();
-    mesh.output = GLMesh::NOOUTPUT;
+    
 }
 
 /*============================================================================================================================================================================================

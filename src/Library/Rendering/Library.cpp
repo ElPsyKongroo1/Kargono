@@ -16,7 +16,7 @@ namespace Resources
  * Static Resources
  *============================================================================================================================================================================================*/
 	RendererStateManager applicationManager = RendererStateManager();
-	RendererState* currentRenderer = &applicationManager.Sample3DRenderer;
+	RendererState* currentRenderer{nullptr};
 	ShaderManager shaderManager = ShaderManager();
 	MeshManager meshManager = MeshManager();
 	TextureManager textureManager = TextureManager();
@@ -31,9 +31,9 @@ namespace Resources
 /*============================================================================================================================================================================================
  * Manage Update Time
  *============================================================================================================================================================================================*/
-	float deltaTime = 0.0f;
-	float lastFrame = 0.0f;
+	float deltaTime{0.0f};
+	float lastFrame{0.0f};
 	float currentFrame;
-	int framesPerSecond = 0;
-	float framesCounter = 0.0f;
+	int framesPerSecond{0};
+	float framesCounter{0.0f};
 }

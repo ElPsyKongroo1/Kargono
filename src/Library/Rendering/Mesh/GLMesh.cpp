@@ -6,6 +6,35 @@
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
+GLMesh::~GLMesh() 
+{
+    glDeleteVertexArrays(1, &vao);
+    if (indices.size() == 0)
+    {
+        glDeleteBuffers(1, vbos);
+    }
+    else
+    {
+        glDeleteBuffers(2, vbos);
+    }
+    vao = -1;
+    for (Texture* texture : textures)
+    {
+        if (!texture) { continue; }
+        glDeleteTextures(1, &texture->id);
+    }
+    
+    int vbosSize = sizeof(vbos) / sizeof(int);
+    for (int i = 0; i < vbosSize; i++)
+    {
+        vbos[i] = -1;
+    }
+    textures.clear();
+    vertices.clear();
+    output = GLMesh::NOOUTPUT;
+    
+}
+
  /*============================================================================================================================================================================================
   * GLMesh Functionality
   *============================================================================================================================================================================================*/
@@ -60,32 +89,32 @@ void GLMesh::Draw(void* objectRenderer)
     }
     else
     {
-        for (Texture texture : textures)
+        for (Texture* texture : textures)
         {
-            if (texture.type == "texture_diffuse")
+            if (texture->type == "texture_diffuse")
             {
                 textureName = "material.diffuse[" + std::to_string(diffuseNr) + "]";
                 shader->setInt(textureName, totalNumber);
                 glActiveTexture(GL_TEXTURE0 + totalNumber);
-                glBindTexture(GL_TEXTURE_2D, texture.id);
+                glBindTexture(GL_TEXTURE_2D, texture->id);
                 diffuseNr++;
                 totalNumber++;
             }
-            else if (texture.type == "texture_specular")
+            else if (texture->type == "texture_specular")
             {
                 if (shader->type == GLShader::LIGHTING)
                 {
                     textureName = "material.specular[" + std::to_string(specularNr) + "]";
                     shader->setInt(textureName, totalNumber);
                     glActiveTexture(GL_TEXTURE0 + totalNumber);
-                    glBindTexture(GL_TEXTURE_2D, texture.id);
+                    glBindTexture(GL_TEXTURE_2D, texture->id);
                     specularNr++;
                     totalNumber++;
                 }
             }
             else
             {
-                std::cerr << "ERROR::INVALID_TEXTURE_TYPE:: " << texture.type << std::endl;
+                std::cerr << "ERROR::INVALID_TEXTURE_TYPE:: " << texture->type << std::endl;
                 throw new std::runtime_error("Check Logs");
             }
         }
@@ -174,7 +203,6 @@ void GLMesh::Draw(void* objectRenderer)
     shader->setMatrix4f("projection", projection);
     shader->setMatrix4f("model", model);
     // Output current mesh
-
     if (output == DRAWELEMENTS) { glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); }
     if (output == DRAWARRAYS) { glDrawArrays(GL_TRIANGLES, 0, vertices.size()); }
 

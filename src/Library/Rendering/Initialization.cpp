@@ -73,6 +73,7 @@ void FInitializeLibraryResources()
     Resources::inputManager.CreateInputs();
     Resources::cameraManager.CreateCameras();
     Resources::modelManager.CreateModels();
+
 }
 
 

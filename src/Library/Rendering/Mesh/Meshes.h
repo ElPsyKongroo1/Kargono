@@ -23,6 +23,12 @@ struct Vertex {
 		this->Normal = Normal;
 		this->TexCoords = TexCoords;
 	}
+	~Vertex() 
+	{
+		Position = glm::vec3();
+		Normal = glm::vec3();
+		TexCoords = glm::vec2();
+	}
 };
 
 class GLMesh
@@ -32,7 +38,7 @@ public:
 public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	GLuint vao;
 	GLuint vbos[2];
 	OUTPUTTYPE output;
@@ -40,7 +46,8 @@ public:
 	GLMesh() 
 	{
 	}
-	GLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, GLMesh::OUTPUTTYPE type)
+	~GLMesh();
+	GLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures, GLMesh::OUTPUTTYPE type)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
@@ -62,8 +69,6 @@ private:
 class MeshManager 
 {
 public:
-
-	std::vector<GLMesh*> allMeshes;
 	GLMesh cubeMesh;
 public:
 	void CreateMeshes();

@@ -11,7 +11,7 @@ class LightSource
 public:
 	enum LightType
 	{
-		DIRECTIONAL = 0, POINT = 1, SPOT = 2
+		DIRECTIONAL = 0, POINT = 1, SPOT = 2, NA = 3
 	};
 	enum ParentObject
 	{
@@ -38,6 +38,8 @@ public:
 public:
 	LightSource(glm::vec3& position, glm::vec3& color);
 	LightSource();
+	~LightSource();
 public:
 	void setAttenuation(AttenuationPreset preset);
+
 };

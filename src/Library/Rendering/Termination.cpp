@@ -9,6 +9,7 @@ void FTerminateLibraryResources()
 	ImGui::DestroyContext();
 
 	Resources::meshManager.DestroyMeshes();
+	Resources::shaderManager.DestroyShaders();
 	Resources::textureManager.DestroyTextures();
 	Resources::currentRenderer->objectRenderBuffer.clear();
 	Resources::currentRenderer->lightSourceRenderBuffer.clear();

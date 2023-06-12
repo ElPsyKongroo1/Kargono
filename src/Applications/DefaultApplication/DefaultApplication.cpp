@@ -20,6 +20,11 @@ int DefaultApplication()
     // Initialize GLFW context, Meshes, Shaders, and Textures
     FInitializeRenderer();
     FInitializeLibraryResources();
+    Resources::currentRenderer->setDefaultValues(Resources::inputManager.default3DInput,
+        Resources::modelManager.simpleBackpack,
+        Resources::meshManager.cubeMesh,
+        Resources::shaderManager.lightingShader,
+        Resources::cameraManager.flyCamera);
     
     // Initialize Objects
     Orientation orientation1{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
@@ -67,7 +72,7 @@ int DefaultApplication()
                               glm::vec3(8.0f, 0.0f, -10.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
     ModelRenderer renderer7{ ModelRenderer(orientation7,
-        &Resources::modelManager.human,
+        Resources::modelManager.human,
         Resources::currentRenderer->defaultShader) };
     renderer7.addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
     Object object7{ orientation7, &renderer7 };
@@ -78,7 +83,7 @@ int DefaultApplication()
                               glm::vec3(-8.0f, 0.0f, 30.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
     ModelRenderer renderer8{ ModelRenderer(orientation8,
-        &Resources::modelManager.house,
+        Resources::modelManager.house,
         Resources::currentRenderer->defaultShader) };
     Object object8{ orientation8, &renderer8 };
     Resources::currentRenderer->objectRenderBuffer.push_back(object8);
@@ -88,7 +93,7 @@ int DefaultApplication()
                               glm::vec3(20.0f, 0.0f, 30.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
     ModelRenderer renderer9{ ModelRenderer(orientation9,
-        &Resources::modelManager.house2,
+        Resources::modelManager.house2,
         Resources::currentRenderer->defaultShader) };
     Object object9{ orientation9, &renderer9 };
     Resources::currentRenderer->objectRenderBuffer.push_back(object9);
