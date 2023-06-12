@@ -1,7 +1,7 @@
-#include "../DefaultApplication/DefaultApplication.h"
-#include "../Application2D/Application2D.h"
-#include "../Library/RendererState/RendererState.h"
-#include "../Library/Library.h"
+#include "../Applications/DefaultApplication/DefaultApplication.h"
+#include "../Applications/Application2D/Application2D.h"
+#include "../Library/Rendering/RendererState/RendererState.h"
+#include "../Library/Rendering/Library.h"
 
 /*============================================================================================================================================================================================
  * Entry Point of Projects
@@ -28,12 +28,12 @@ int main()
 			switch (choice) {
 			case 1:
 				// Run Default Application
-				Resources::currentApplication = &Resources::applicationManager.Sample3DRenderer;
+				Resources::currentRenderer = &Resources::applicationManager.Sample3DRenderer;
 				DefaultApplication();
 				break;
 			case 2:
 				// Run Default Application
-				Resources::currentApplication = &Resources::applicationManager.Sample2DRenderer;
+				Resources::currentRenderer = &Resources::applicationManager.Sample2DRenderer;
 				Application2D();
 				break;
 			case 3:
