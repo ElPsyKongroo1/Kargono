@@ -2,37 +2,6 @@
 #include "../Includes.h"
 
 /*============================================================================================================================================================================================
- * Function Enum References
- *============================================================================================================================================================================================*/
-
-enum FunctionReferences
-{
-	// Click Input
-	
-
-	// Keyboard Hold Input
-	//3D
-	MOVE_FORWARD_KEY, MOVE_BACKWARD_KEY, MOVE_LEFT_KEY, MOVE_RIGHT_KEY,
-	CAMERA_YAW_RIGHT_KEY, CAMERA_YAW_LEFT_KEY, CAMERA_PITCH_UP_KEY, CAMERA_PITCH_DOWN_KEY,
-	//2D
-	MOVE_UP_2D, MOVE_DOWN_2D, MOVE_LEFT_2D, MOVE_RIGHT_2D, MOVE_UP_LEFT_2D, MOVE_UP_RIGHT_2D, MOVE_DOWN_LEFT_2D, MOVE_DOWN_RIGHT_2D,
-
-	// Mouse Scroll Input
-	
-
-	// GamePad JoyStick
-	CAMERA_YAW_STICK, CAMERA_PITCH_STICK, MOVE_LEFT_RIGHT_STICK, MOVE_UP_DOWN_STICK,
-	MOVE_LEFT_RIGHT_STICK_2D, MOVE_UP_DOWN_STICK_2D,
-
-	// GamePad Trigger
-	CAMERA_FOV_TRIGGER, CAMERA_SPEED_TRIGGER,
-
-	// Default
-	NA
-
-};
-
-/*============================================================================================================================================================================================
  * GLButton Class
  *============================================================================================================================================================================================*/
 
@@ -43,9 +12,12 @@ public:
 	int previousState;
 	int glfwValue;
 	int glfwMask;
-	FunctionReferences function;
 public:
-	GLInputLink();
+	GLInputLink()
+	{
+		previousState = GLFW_RELEASE;
+		glfwValue = -1;
+	}
 };
 
 class GLMouseMovementLink : public GLInputLink
@@ -81,9 +53,38 @@ public:
 	}
 };
 
+class GLHoldLink : public GLInputLink
+{
+public:
+	bool (*functionReference)();
+public:
+	GLHoldLink() : GLInputLink(), functionReference{ nullptr }
+	{
 
+	}
+};
 
+class GLTriggerLink : public GLInputLink
+{
+public:
+	void (*functionReference)(float);
+public:
+	GLTriggerLink() : GLInputLink(), functionReference{ nullptr }
+	{
 
+	}
+};
+
+class GLJoyStickLink : public GLInputLink
+{
+public:
+	bool (*functionReference)(float);
+public:
+	GLJoyStickLink() : GLInputLink(), functionReference{ nullptr }
+	{
+
+	}
+};
 
 /*============================================================================================================================================================================================
  * GLInput Class
@@ -98,11 +99,11 @@ public:
 public:
 	GLClickLink gamePadClick[2][128];
 	int gamePadClickSize[2] = {0, 0};
-	GLInputLink gamePadStick[2][32];
+	GLJoyStickLink gamePadStick[2][32];
 	int gamePadStickSize[2] = { 0, 0 };
-	GLInputLink gamePadTrigger[2][8];
+	GLTriggerLink gamePadTrigger[2][8];
 	int gamePadTriggerSize[2] = { 0, 0 };
-	GLInputLink keyboardHold[2][128];
+	GLHoldLink keyboardHold[2][128];
 	int keyboardHoldSize[2] = { 0, 0 };
 	GLClickLink keyboardClick[2][128];
 	int keyboardClickSize[2] = { 0, 0 };
@@ -135,12 +136,6 @@ public:
 	GLInput default3DInput;
 	GLInput debugMenuInput;
 	GLInput default2DInput;
-	FunctionReferences functions[1024];
-public:
-	bool accessClickFunction(FunctionReferences index, GLInputLink* gamePadButton);
-	bool accessHoldFunctions(FunctionReferences index);
-	bool accessJoyStickFunctions(FunctionReferences index, float axis);
-	void accessTriggerFunctions(FunctionReferences index, float axis);
 public:
 	void CreateInputs();
 	void DestroyInputs();

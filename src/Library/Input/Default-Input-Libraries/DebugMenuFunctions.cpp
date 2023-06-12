@@ -1,6 +1,6 @@
-#include "Input.h"
-#include "../Library.h"
-#include "InputFunctions.h"
+#include "../Input.h"
+#include "../../Library.h"
+#include "../MiscFunctions.h"
 
 
 namespace DebugMenuFunctions 

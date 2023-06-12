@@ -1,9 +1,9 @@
 #include "Input.h"
 #include "../Library.h"
-#include "InputFunctions.h"
-#include "Default3DFunctions.h"
-#include "Default2DFunctions.h"
-#include "DebugMenuFunctions.h"
+#include "MiscFunctions.h"
+#include "Default-Input-Libraries/Default3DFunctions.h"
+#include "Default-Input-Libraries/Default2DFunctions.h"
+#include "Default-Input-Libraries/DebugMenuFunctions.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -90,7 +90,7 @@ void GLInput::processKeyboardHold(GLFWwindow* window)
         if (glfwGetKey(window, keyboardHold[1][i].glfwValue) == GLFW_PRESS &&
             glfwGetKey(window, keyboardHold[1][i].glfwMask) == GLFW_PRESS)
         {
-            shouldCalcDir += Resources::inputManager.accessHoldFunctions(keyboardHold[1][i].function);
+            shouldCalcDir += keyboardHold[1][i].functionReference();
             disabledButtons.push_back(keyboardHold[1][i].glfwValue);
             disabledButtons.push_back(keyboardHold[1][i].glfwMask);
         }
@@ -112,7 +112,7 @@ void GLInput::processKeyboardHold(GLFWwindow* window)
 
         if (glfwGetKey(window, keyboardHold[0][i].glfwValue) == GLFW_PRESS)
         {
-            shouldCalcDir += Resources::inputManager.accessHoldFunctions(keyboardHold[0][i].function);
+            shouldCalcDir += keyboardHold[0][i].functionReference();
         }
     }
     if (shouldCalcDir > 0)
@@ -155,7 +155,7 @@ void GLInput::processGamePadStick(const float* axes)
     {
         if (fabs(axes[gamePadStick[0][i].glfwValue]) > 0.1f)
         {
-            shouldCalcDir += Resources::inputManager.accessJoyStickFunctions(gamePadStick[0][i].function, axes[gamePadStick[0][i].glfwValue]);
+            shouldCalcDir += gamePadStick[0][i].functionReference(axes[gamePadStick[0][i].glfwValue]);
         }
     }
     if (shouldCalcDir > 0)
@@ -181,7 +181,7 @@ void GLInput::processGamePadTrigger(const float* axes)
     {
         if (axes[gamePadTrigger[0][i].glfwValue] > -0.9f)
         {
-            Resources::inputManager.accessTriggerFunctions(gamePadTrigger[0][i].function, axes[gamePadTrigger[0][i].glfwValue]);
+            gamePadTrigger[0][i].functionReference(axes[gamePadTrigger[0][i].glfwValue]);
         }
     }
     if (updateType)

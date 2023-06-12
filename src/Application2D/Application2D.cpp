@@ -20,6 +20,15 @@ int Application2D()
 	FInitializeRenderer(); // GLFW, GLEW, and IMGui contexts
 	FInitializeLibraryResources();
 
+	Orientation orientation2{ glm::vec4(1.0f, 0.0f, 0.0f, 270.0f),
+							  glm::vec3(0.0f, 0.0f, -3.0f),
+							  glm::vec3(1.0f, 1.0f, 2.0f) };
+	ModelRenderer renderer2{ ModelRenderer(orientation2,
+		Resources::currentApplication->defaultModel,
+		Resources::currentApplication->defaultShader) };
+	Object object2{ orientation2, &renderer2 };
+	Resources::currentApplication->objectRenderBuffer.push_back(object2);
+
 
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->window))

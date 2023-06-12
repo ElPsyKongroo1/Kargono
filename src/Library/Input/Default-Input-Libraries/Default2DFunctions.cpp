@@ -1,46 +1,11 @@
-#include "Input.h"
-#include "../Library.h"
-#include "InputFunctions.h"
+#include "../Input.h"
+#include "../../Library.h"
+#include "../MiscFunctions.h"
 
-namespace Default3DFunctions {
-    // Mouse Movement
-    void CAMERA_YAW_PITCH_MOUSE(double xpos, double ypos)
-    {
-        float xoffset;
-        float yoffset;
-        glm::vec3 direction;
-
-        if (Resources::currentApplication->currentCamera->firstMouse) // initially set to true
-        {
-            Resources::currentApplication->currentCamera->lastX = xpos;
-            Resources::currentApplication->currentCamera->lastY = ypos;
-            Resources::currentApplication->currentCamera->firstMouse = false;
-        }
-
-        xoffset = xpos - Resources::currentApplication->currentCamera->lastX;
-        yoffset = Resources::currentApplication->currentCamera->lastY - ypos; // reversed since y-coordinates range from bottom to top
-        Resources::currentApplication->currentCamera->lastX = xpos;
-        Resources::currentApplication->currentCamera->lastY = ypos;
-
-        xoffset *= Resources::currentApplication->currentCamera->currentPanningSpeed;
-        yoffset *= Resources::currentApplication->currentCamera->currentPanningSpeed;
-
-        Resources::currentApplication->currentCamera->eulerAngle.yaw += xoffset;
-        Resources::currentApplication->currentCamera->eulerAngle.pitch += yoffset;
-
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
-
-
-        direction.x = cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
-        direction.y = sin(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
-        direction.z = sin(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->currentCamera->eulerAngle.pitch));
-        Resources::currentApplication->currentCamera->orientation.cameraFront = glm::normalize(direction);
-    }
+namespace Default2DFunctions 
+{
     // Mouse Scroll Wheel
-    void CAMERA_FOV_MOUSE(double xoffset, double yoffset) 
+    void CAMERA_FOV_MOUSE(double xoffset, double yoffset)
     {
         Resources::currentApplication->currentCamera->fov -= (float)yoffset;
         if (Resources::currentApplication->currentCamera->fov < 1.0f)
@@ -105,18 +70,18 @@ namespace Default3DFunctions {
         return false;
     }
 
-    bool EXIT_APPLICATION(GLInputLink* gamePadButton)
+    bool EXIT_APPLICATION(GLInputLink* gamePadButton) 
     {
         //glfwSetWindowMonitor(Resources::currentApplication->window, NULL, 0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y, NULL);
         glfwSetWindowShouldClose(Resources::currentApplication->window, true);
         return false;
     }
 
-    bool RANDOM_FLASHLIGHT_COLOR(GLInputLink* gamePadButton)
+    bool RANDOM_FLASHLIGHT_COLOR(GLInputLink* gamePadButton) 
     {
         glm::vec3 randomColor;
         float r, g, b;
-
+    
         r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         if (r < 0.4f)
         {
@@ -176,7 +141,7 @@ namespace Default3DFunctions {
         return true;
     }
 
-    bool CAMERA_DEINCREMENT_SENSITIVITY(GLInputLink* gamePadButton)
+    bool CAMERA_DEINCREMENT_SENSITIVITY (GLInputLink* gamePadButton)
     {
         if ((Resources::currentApplication->currentCamera->currentPanningSpeed - Resources::currentApplication->currentCamera->defaultPanningSpeed) < Resources::currentApplication->currentCamera->defaultPanningSpeed)
             return false;
@@ -184,26 +149,135 @@ namespace Default3DFunctions {
         return false;
     }
 
-    bool CAMERA_INCREMENT_SENSITIVITY(GLInputLink* gamePadButton)
+    bool CAMERA_INCREMENT_SENSITIVITY (GLInputLink* gamePadButton)
     {
         if ((Resources::currentApplication->currentCamera->currentPanningSpeed + Resources::currentApplication->currentCamera->defaultPanningSpeed) > (Resources::currentApplication->currentCamera->defaultPanningSpeed * 10))
             return false;
         Resources::currentApplication->currentCamera->currentPanningSpeed += Resources::currentApplication->currentCamera->defaultPanningSpeed;
         return false;
     }
-    bool CAMERA_DEINCREMENT_SPEED(GLInputLink* gamePadButton)
+    bool CAMERA_DEINCREMENT_SPEED (GLInputLink* gamePadButton)
     {
         if ((Resources::currentApplication->currentCamera->currentMovementSpeed - Resources::currentApplication->currentCamera->defaultMovementSpeed) < Resources::currentApplication->currentCamera->defaultMovementSpeed)
             return false;
         Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentMovementSpeed - Resources::currentApplication->currentCamera->defaultMovementSpeed);
         return false;
-
     }
-    bool CAMERA_INCREMENT_SPEED(GLInputLink* gamePadButton)
+    bool CAMERA_INCREMENT_SPEED (GLInputLink* gamePadButton)
     {
         if ((Resources::currentApplication->currentCamera->currentMovementSpeed + Resources::currentApplication->currentCamera->defaultMovementSpeed) > (Resources::currentApplication->currentCamera->defaultMovementSpeed * 50))
             return false;
         Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->currentMovementSpeed + Resources::currentApplication->currentCamera->defaultMovementSpeed);
         return false;
     }
+
+    bool MOVE_UP_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        return false;
+    }
+    bool MOVE_DOWN_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        return false;
+    }
+    bool MOVE_RIGHT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_LEFT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_UP_LEFT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_DOWN_LEFT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_UP_RIGHT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_DOWN_RIGHT_2D ()
+    {
+        float cameraSpeed;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
+        return false;
+    }
+
+    bool MOVE_LEFT_RIGHT_STICK_2D (float axis)
+    {
+        float cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed * axis, 0.0f, 0.0f);
+        return false;
+    }
+    bool MOVE_UP_DOWN_STICK_2D (float axis)
+    {
+        float cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed * axis, 0.0f);
+        return false;
+    }
+
+    void CAMERA_SPEED_TRIGGER (float axis)
+    {
+        if (axis < -0.15)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed);
+        }
+        if (axis < -0.5f)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 3.0f);
+        }
+        else if (axis < 0.0f)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 5.0f);
+        }
+        else if (axis < 0.5f)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 7.0f);
+        }
+        else if (axis < 0.75f)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 8.0f);
+        }
+        else if (axis < 0.875f)
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 9.0f);
+        }
+        else
+        {
+            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 10.0f);
+        }
+    }
+
+
 }

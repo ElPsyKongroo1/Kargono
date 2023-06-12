@@ -1,9 +1,9 @@
 #include "Input.h"
 #include "../Library.h"
-#include "InputFunctions.h"
-#include "Default3DFunctions.h"
-#include "Default2DFunctions.h"
-#include "DebugMenuFunctions.h"
+#include "MiscFunctions.h"
+#include "Default-Input-Libraries/Default3DFunctions.h"
+#include "Default-Input-Libraries/Default2DFunctions.h"
+#include "Default-Input-Libraries/DebugMenuFunctions.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -31,43 +31,43 @@ void InputManager::DestroyInput(GLInput& input)
 {
     int currentArraySize;
 
-    currentArraySize = sizeof(input.gamePadClick) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.gamePadClick) / sizeof(GLClickLink);
     for (int i = 0; i < currentArraySize; i++)
     {
         input.gamePadClick[0][i] = GLClickLink();
     }
     input.gamePadClickSize[0] = 0;
-    currentArraySize = sizeof(input.gamePadStick) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.gamePadStick) / sizeof(GLJoyStickLink);
     for (int i = 0; i < currentArraySize; i++)
     {
-        input.gamePadStick[0][i] = GLInputLink();
+        input.gamePadStick[0][i] = GLJoyStickLink();
     }
     input.gamePadStickSize[0] = 0;
-    currentArraySize = sizeof(input.gamePadTrigger) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.gamePadTrigger) / sizeof(GLTriggerLink);
     for (int i = 0; i < currentArraySize; i++)
     {
-        input.gamePadTrigger[0][i] = GLInputLink();
+        input.gamePadTrigger[0][i] = GLTriggerLink();
     }
     input.gamePadTriggerSize[0] = 0;
-    currentArraySize = sizeof(input.keyboardHold) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.keyboardHold) / sizeof(GLHoldLink);
     for (int i = 0; i < currentArraySize; i++)
     {
-        input.keyboardHold[0][i] = GLInputLink();
+        input.keyboardHold[0][i] = GLHoldLink();
     }
     input.keyboardHoldSize[0] = 0;
-    currentArraySize = sizeof(input.keyboardClick) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.keyboardClick) / sizeof(GLClickLink);
     for (int i = 0; i < currentArraySize; i++)
     {
         input.keyboardClick[0][i] = GLClickLink();
     }
     input.keyboardClickSize[0] = 0;
-    currentArraySize = sizeof(input.mouseScroll) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.mouseScroll) / sizeof(GLScrollLink);
     for (int i = 0; i < currentArraySize; i++)
     {
         input.mouseScroll[0][i] = GLScrollLink();
     }
     input.mouseScrollSize[0] = 0;
-    currentArraySize = sizeof(input.mouseMovement) / sizeof(GLInputLink);
+    currentArraySize = sizeof(input.mouseMovement) / sizeof(GLMouseMovementLink);
     for (int i = 0; i < currentArraySize; i++)
     {
         input.mouseMovement[0][i] = GLMouseMovementLink();
@@ -104,13 +104,13 @@ void InputManager::Create3DInput(GLInput& input)
     }
 
     input.gamePadStick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_X;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::MOVE_LEFT_RIGHT_STICK;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::MOVE_LEFT_RIGHT_STICK;
     input.gamePadStick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_Y;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::MOVE_UP_DOWN_STICK;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][1].functionReference = Default3DFunctions::MOVE_UP_DOWN_STICK;
     input.gamePadStick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_GAMEPAD_AXIS_RIGHT_X;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::CAMERA_YAW_STICK;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][2].functionReference = Default3DFunctions::CAMERA_YAW_STICK;
     input.gamePadStick[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_GAMEPAD_AXIS_RIGHT_Y;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][3].function = FunctionReferences::CAMERA_PITCH_STICK;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][3].functionReference = Default3DFunctions::CAMERA_PITCH_STICK;
     for (int i = 0; i < sizeof(input.gamePadStick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadStick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -120,9 +120,9 @@ void InputManager::Create3DInput(GLInput& input)
     }
 
     input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::CAMERA_FOV_TRIGGER;
+    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::CAMERA_FOV_TRIGGER;
     input.gamePadTrigger[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::CAMERA_SPEED_TRIGGER;
+    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][1].functionReference = Default3DFunctions::CAMERA_SPEED_TRIGGER;
     for (int i = 0; i < sizeof(input.gamePadTrigger[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadTrigger[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -133,21 +133,21 @@ void InputManager::Create3DInput(GLInput& input)
 
     // Keyboard Initialization
     input.keyboardHold[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_W;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::MOVE_FORWARD_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::MOVE_FORWARD_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_S;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::MOVE_BACKWARD_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][1].functionReference = Default3DFunctions::MOVE_BACKWARD_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_D;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::MOVE_RIGHT_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][2].functionReference = Default3DFunctions::MOVE_RIGHT_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_A;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][3].function = FunctionReferences::MOVE_LEFT_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][3].functionReference = Default3DFunctions::MOVE_LEFT_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][4].glfwValue = GLFW_KEY_UP;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][4].function = FunctionReferences::CAMERA_PITCH_UP_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][4].functionReference = Default3DFunctions::CAMERA_PITCH_UP_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][5].glfwValue = GLFW_KEY_DOWN;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][5].function = FunctionReferences::CAMERA_PITCH_DOWN_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][5].functionReference = Default3DFunctions::CAMERA_PITCH_DOWN_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][6].glfwValue = GLFW_KEY_RIGHT;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][6].function = FunctionReferences::CAMERA_YAW_RIGHT_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][6].functionReference = Default3DFunctions::CAMERA_YAW_RIGHT_KEY;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][7].glfwValue = GLFW_KEY_LEFT;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][7].function = FunctionReferences::CAMERA_YAW_LEFT_KEY;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][7].functionReference = Default3DFunctions::CAMERA_YAW_LEFT_KEY;
     for (int i = 0; i < sizeof(input.keyboardHold[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardHold[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -225,9 +225,9 @@ void InputManager::Create2DInput(GLInput& input)
     }
 
     input.gamePadStick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_X;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::MOVE_LEFT_RIGHT_STICK_2D;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::MOVE_LEFT_RIGHT_STICK_2D;
     input.gamePadStick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_Y;
-    input.gamePadStick[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::MOVE_UP_DOWN_STICK_2D;
+    input.gamePadStick[GLInput::SINGLEKEYPRESS][1].functionReference = Default2DFunctions::MOVE_UP_DOWN_STICK_2D;
     for (int i = 0; i < sizeof(input.gamePadStick[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadStick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -237,7 +237,7 @@ void InputManager::Create2DInput(GLInput& input)
     }
 
     input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::CAMERA_SPEED_TRIGGER;
+    input.gamePadTrigger[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::CAMERA_SPEED_TRIGGER;
     for (int i = 0; i < sizeof(input.gamePadTrigger[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.gamePadTrigger[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -248,13 +248,13 @@ void InputManager::Create2DInput(GLInput& input)
 
     // Keyboard Initialization
     input.keyboardHold[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_W;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][0].function = FunctionReferences::MOVE_UP_2D;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::MOVE_UP_2D;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_S;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][1].function = FunctionReferences::MOVE_DOWN_2D;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][1].functionReference = Default2DFunctions::MOVE_DOWN_2D;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_D;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][2].function = FunctionReferences::MOVE_RIGHT_2D;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][2].functionReference = Default2DFunctions::MOVE_RIGHT_2D;
     input.keyboardHold[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_A;
-    input.keyboardHold[GLInput::SINGLEKEYPRESS][3].function = FunctionReferences::MOVE_LEFT_2D;
+    input.keyboardHold[GLInput::SINGLEKEYPRESS][3].functionReference = Default2DFunctions::MOVE_LEFT_2D;
     for (int i = 0; i < sizeof(input.keyboardHold[GLInput::SINGLEKEYPRESS]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardHold[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
@@ -264,16 +264,16 @@ void InputManager::Create2DInput(GLInput& input)
     }
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][0].glfwValue = GLFW_KEY_W;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][0].glfwMask = GLFW_KEY_A;
-    input.keyboardHold[GLInput::DOUBLEKEYPRESS][0].function = FunctionReferences::MOVE_UP_LEFT_2D;
+    input.keyboardHold[GLInput::DOUBLEKEYPRESS][0].functionReference = Default2DFunctions::MOVE_UP_LEFT_2D;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][1].glfwValue = GLFW_KEY_W;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][1].glfwMask = GLFW_KEY_D;
-    input.keyboardHold[GLInput::DOUBLEKEYPRESS][1].function = FunctionReferences::MOVE_UP_RIGHT_2D;
+    input.keyboardHold[GLInput::DOUBLEKEYPRESS][1].functionReference = Default2DFunctions::MOVE_UP_RIGHT_2D;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][2].glfwValue = GLFW_KEY_S;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][2].glfwMask = GLFW_KEY_A;
-    input.keyboardHold[GLInput::DOUBLEKEYPRESS][2].function = FunctionReferences::MOVE_DOWN_LEFT_2D;
+    input.keyboardHold[GLInput::DOUBLEKEYPRESS][2].functionReference = Default2DFunctions::MOVE_DOWN_LEFT_2D;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][3].glfwValue = GLFW_KEY_S;
     input.keyboardHold[GLInput::DOUBLEKEYPRESS][3].glfwMask = GLFW_KEY_D;
-    input.keyboardHold[GLInput::DOUBLEKEYPRESS][3].function = FunctionReferences::MOVE_DOWN_RIGHT_2D;
+    input.keyboardHold[GLInput::DOUBLEKEYPRESS][3].functionReference = Default2DFunctions::MOVE_DOWN_RIGHT_2D;
     for (int i = 0; i < sizeof(input.keyboardHold[1]) / sizeof(GLInputLink); i++)
     {
         if (input.keyboardHold[GLInput::DOUBLEKEYPRESS][i].glfwValue != -1)
@@ -407,206 +407,5 @@ void InputManager::CreateMenuInput(GLInput& input)
  *============================================================================================================================================================================================*/
 
 
-bool InputManager::accessHoldFunctions(FunctionReferences index)
-{
-    float cameraSpeed;
 
-    switch (index)
-    {
-    case MOVE_FORWARD_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
-        break;
-    case MOVE_BACKWARD_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= cameraSpeed * Resources::currentApplication->currentCamera->orientation.cameraFront;
-        break;
-    case MOVE_LEFT_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
-        break;
-    case MOVE_RIGHT_KEY:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * cameraSpeed;
-        break;
-    case CAMERA_PITCH_UP_KEY:
-        Resources::currentApplication->currentCamera->eulerAngle.pitch += Resources::currentApplication->currentCamera->currentPanningSpeed;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
-        return true;
-        break;
-    case CAMERA_PITCH_DOWN_KEY:
-        Resources::currentApplication->currentCamera->eulerAngle.pitch -= Resources::currentApplication->currentCamera->currentPanningSpeed;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
-        return true;
-        break;
-    case CAMERA_YAW_LEFT_KEY:
-        Resources::currentApplication->currentCamera->eulerAngle.yaw -= Resources::currentApplication->currentCamera->currentPanningSpeed;
-        return true;
-        break;
-    case CAMERA_YAW_RIGHT_KEY:
-        Resources::currentApplication->currentCamera->eulerAngle.yaw += Resources::currentApplication->currentCamera->currentPanningSpeed;
-        return true;
-        break;
-    case MOVE_UP_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
-        break;
-    case MOVE_DOWN_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
-        break;
-    case MOVE_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    case MOVE_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    case MOVE_UP_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    case MOVE_DOWN_LEFT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    case MOVE_UP_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    case MOVE_DOWN_RIGHT_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentDiagonalMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed, 0.0f);
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed, 0.0f, 0.0f);
-        break;
-    default:
-        std::cerr << "ERROR::INVALID_ENUM::ACCESS_HOLD_FUNCTION" << std::endl;
-        throw std::runtime_error("Check Logs");
-        break;
-    }
-    return false;
-}
-
-bool InputManager::accessJoyStickFunctions(FunctionReferences index, float axis)
-{
-    float cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-
-    switch (index)
-    {
-    case MOVE_LEFT_RIGHT_STICK:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->currentCamera->orientation.cameraFront, Resources::currentApplication->currentCamera->orientation.cameraUp)) * (cameraSpeed * axis);
-        break;
-    case MOVE_UP_DOWN_STICK:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= (cameraSpeed * axis) * Resources::currentApplication->currentCamera->orientation.cameraFront;
-        break;
-    case MOVE_LEFT_RIGHT_STICK_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition += glm::vec3(cameraSpeed * axis, 0.0f, 0.0f);
-        break;
-    case MOVE_UP_DOWN_STICK_2D:
-        cameraSpeed = Resources::currentApplication->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentApplication->currentCamera->orientation.cameraPosition -= glm::vec3(0.0f, cameraSpeed * axis, 0.0f);
-        break;
-    case CAMERA_YAW_STICK:
-        Resources::currentApplication->currentCamera->eulerAngle.yaw += axis;
-        return true;
-        break;
-    case CAMERA_PITCH_STICK:
-        Resources::currentApplication->currentCamera->eulerAngle.pitch -= axis;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentApplication->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentApplication->currentCamera->eulerAngle.pitch = -89.0f;
-        return true;
-        break;
-    default:
-        std::cerr << "ERROR::INVALID_ENUM::ACCESS_JOY_STICK_FUNCTION" << std::endl;
-        throw std::runtime_error("Check Logs");
-        break;
-    }
-    return false;
-}
-
-void InputManager::accessTriggerFunctions(FunctionReferences index, float axis)
-{
-    switch (index)
-    {
-    case CAMERA_FOV_TRIGGER:
-        if (axis < -0.15)
-        {
-            Resources::currentApplication->currentCamera->fov = 45.0f;
-        }
-        if (axis < -0.5f)
-        {
-            Resources::currentApplication->currentCamera->fov = 34.0f;
-        }
-        else if (axis < 0.0f)
-        {
-            Resources::currentApplication->currentCamera->fov = 23.0f;
-        }
-        else if (axis < 0.5f)
-        {
-            Resources::currentApplication->currentCamera->fov = 12.0f;
-        }
-        else if (axis < 0.75f)
-        {
-            Resources::currentApplication->currentCamera->fov = 6.5f;
-        }
-        else if (axis < 0.875f)
-        {
-            Resources::currentApplication->currentCamera->fov = 3.75f;
-        }
-        else
-        {
-            Resources::currentApplication->currentCamera->fov = 1.0f;
-        }
-        break;
-    case CAMERA_SPEED_TRIGGER:
-        if (axis < -0.15)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed);
-        }
-        if (axis < -0.5f)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 3.0f);
-        }
-        else if (axis < 0.0f)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 5.0f);
-        }
-        else if (axis < 0.5f)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 7.0f);
-        }
-        else if (axis < 0.75f)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 8.0f);
-        }
-        else if (axis < 0.875f)
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 9.0f);
-        }
-        else
-        {
-            Resources::currentApplication->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->currentCamera->defaultMovementSpeed * 10.0f);
-        }
-        break;
-    default:
-        std::cerr << "ERROR::INVALID_ENUM::ACCESS_TRIGGER_FUNCTION" << std::endl;
-        throw std::runtime_error("Check Logs");
-        break;
-    }
-}
 
