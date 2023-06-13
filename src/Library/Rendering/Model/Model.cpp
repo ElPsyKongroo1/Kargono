@@ -3,15 +3,15 @@
 
 unsigned int TextureFromFile(const char* path, const std::string& directory);
 
-//Model::~Model() 
-//{
-//    for (GLMesh* mesh : meshes)
-//    {
-//        delete mesh;
-//    }
-//    meshes.clear();
-//    textures_loaded.clear();
-//}
+Model::~Model() 
+{
+    for (GLMesh* mesh : meshes)
+    {
+        delete mesh;
+    }
+    meshes.clear();
+    textures_loaded.clear();
+}
 
 void Model::Draw(void* modelRenderer)
 {

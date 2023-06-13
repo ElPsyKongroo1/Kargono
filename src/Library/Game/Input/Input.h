@@ -92,6 +92,15 @@ public:
 class GLInput
 {
 public:
+	GLInput() {};
+	GLInput(bool valPadClick, bool valKeyHold, bool valMouseScroll,
+		bool valPadStick, bool valKeyClick, bool valMouseMove,
+		bool valPadTrigger, GLClickLink gamePadClick[2][128],
+		GLJoyStickLink gamePadStick[2][32], GLTriggerLink gamePadTrigger[2][8],
+		GLHoldLink keyboardHold[2][128], GLClickLink keyboardClick[2][128],
+		GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2]);
+	~GLInput();
+public:
 	enum MaskNumber 
 	{
 		SINGLEKEYPRESS = 0, DOUBLEKEYPRESS = 1, TRIPLEKEYPRESS = 2
@@ -133,16 +142,17 @@ public:
 class InputManager
 {
 public:
-	GLInput default3DInput;
-	GLInput debugMenuInput;
-	GLInput default2DInput;
+	InputManager() {};
+public:
+	GLInput* default3DInput;
+	GLInput* debugMenuInput;
+	GLInput* default2DInput;
 public:
 	void CreateInputs();
 	void DestroyInputs();
 private:
-	void Create3DInput(GLInput& input);
-	void Create2DInput(GLInput& input);
-	void CreateMenuInput(GLInput& input);
-	void DestroyInput(GLInput& input);
+	void Create3DInput();
+	void Create2DInput();
+	void CreateMenuInput();
 
 };

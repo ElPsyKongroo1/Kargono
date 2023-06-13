@@ -15,7 +15,7 @@ public:
 	{
 		loadModel(path);
 	}
-	//~Model();
+	~Model();
 	void Draw(void* object);
 public:
 		std::vector<GLMesh*> meshes;

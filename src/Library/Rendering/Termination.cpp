@@ -17,6 +17,12 @@ void FTerminateLibraryResources()
 	Resources::inputManager.DestroyInputs();
 	Resources::windowManager.DestroyUIWindows();
 	Resources::modelManager.DestroyModels();
+
+	Resources::deltaTime = 0.0f;
+	Resources::lastFrame = 0.0f;
+	Resources::currentFrame = 0.0f;
+	Resources::framesPerSecond = 0;
+	Resources::framesCounter = 0.0f;
 }
 void FTerminateRenderer()
 {

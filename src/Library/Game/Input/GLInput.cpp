@@ -4,12 +4,176 @@
 #include "Default-Input-Libraries/Default3DFunctions.h"
 #include "Default-Input-Libraries/Default2DFunctions.h"
 #include "Default-Input-Libraries/DebugMenuFunctions.h"
+#include <algorithm>
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
  * GLInput Class
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
+
+GLInput::GLInput(bool valPadClick, bool valKeyHold, bool valMouseScroll,
+    bool valPadStick, bool valKeyClick, bool valMouseMove,
+    bool valPadTrigger, GLClickLink gamePadClick[2][128],
+    GLJoyStickLink gamePadStick[2][32], GLTriggerLink gamePadTrigger[2][8],
+    GLHoldLink keyboardHold[2][128], GLClickLink keyboardClick[2][128],
+    GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2])
+{
+
+    // Toggle Device Input
+    isGamePadClick = valPadClick; isGamePadStick = valPadStick, isGamePadTrigger = valPadTrigger;
+    isKeyboardHold = valKeyHold, isKeyboardClick = valKeyClick;
+    isMouseScroll = valMouseScroll, isMouseMovement = valMouseMove;
+
+    // GamePad Click Initialization
+    for (int i = 0; i < sizeof(gamePadClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLClickLink); i++)
+    {
+        if (gamePadClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->gamePadClickSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (gamePadClickSize[GLInput::SINGLEKEYPRESS] > 0) 
+    {
+        std::copy(gamePadClick[0], (gamePadClick[0] + gamePadClickSize[GLInput::SINGLEKEYPRESS]), this->gamePadClick[0]);
+    }
+    // GamePad Stick Initialization
+    for (int i = 0; i < sizeof(gamePadStick[GLInput::SINGLEKEYPRESS]) / sizeof(GLJoyStickLink); i++)
+    {
+        if (gamePadStick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->gamePadStickSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (gamePadStickSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(gamePadStick[0], (gamePadStick[0] + gamePadStickSize[GLInput::SINGLEKEYPRESS]), this->gamePadStick[0]);
+    }
+    // GamePad Trigger Initialization
+    for (int i = 0; i < sizeof(gamePadTrigger[GLInput::SINGLEKEYPRESS]) / sizeof(GLTriggerLink); i++)
+    {
+        if (gamePadTrigger[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->gamePadTriggerSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (gamePadTriggerSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(gamePadTrigger[0], (gamePadTrigger[0] + gamePadTriggerSize[GLInput::SINGLEKEYPRESS]), this->gamePadTrigger[0]);
+    }
+    // Keyboard Hold Initialization
+    for (int i = 0; i < sizeof(keyboardHold[GLInput::SINGLEKEYPRESS]) / sizeof(GLHoldLink); i++)
+    {
+        if (keyboardHold[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->keyboardHoldSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (keyboardHoldSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(keyboardHold[0], (keyboardHold[0] + keyboardHoldSize[GLInput::SINGLEKEYPRESS]), this->keyboardHold[0]);
+    }
+    for (int i = 0; i < sizeof(keyboardHold[1]) / sizeof(GLHoldLink); i++)
+    {
+        if (keyboardHold[GLInput::DOUBLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->keyboardHoldSize[GLInput::DOUBLEKEYPRESS]++;
+        }
+    }
+    if (keyboardHoldSize[GLInput::DOUBLEKEYPRESS] > 0)
+    {
+        std::copy(keyboardHold[1], (keyboardHold[1] + keyboardHoldSize[GLInput::DOUBLEKEYPRESS]), this->keyboardHold[1]);
+    }
+    // Keyboard Click Initialization
+    for (int i = 0; i < sizeof(keyboardClick[GLInput::SINGLEKEYPRESS]) / sizeof(GLClickLink); i++)
+    {
+        if (keyboardClick[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->keyboardClickSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (keyboardClickSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(keyboardClick[0], (keyboardClick[0] + keyboardClickSize[GLInput::SINGLEKEYPRESS]), this->keyboardClick[0]);
+    }
+    // Mouse Scroll Initialization
+    for (int i = 0; i < sizeof(mouseScroll[GLInput::SINGLEKEYPRESS]) / sizeof(GLScrollLink); i++)
+    {
+        if (mouseScroll[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->mouseScrollSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (mouseScrollSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(mouseScroll[0], (mouseScroll[0] + mouseScrollSize[GLInput::SINGLEKEYPRESS]), this->mouseScroll[0]);
+    }
+    // Mouse Movement Initialization
+    for (int i = 0; i < sizeof(mouseMovement[GLInput::SINGLEKEYPRESS]) / sizeof(GLMouseMovementLink); i++)
+    {
+        if (mouseMovement[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->mouseMovementSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (mouseMovementSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(mouseMovement[0], (mouseMovement[0] + mouseMovementSize[GLInput::SINGLEKEYPRESS]), this->mouseMovement[0]);
+    }
+
+}
+
+GLInput::~GLInput() 
+{
+    int currentArraySize;
+
+    currentArraySize = sizeof(gamePadClick) / sizeof(GLClickLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        gamePadClick[0][i] = GLClickLink();
+    }
+    gamePadClickSize[0] = 0;
+    currentArraySize = sizeof(gamePadStick) / sizeof(GLJoyStickLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        gamePadStick[0][i] = GLJoyStickLink();
+    }
+    gamePadStickSize[0] = 0;
+    currentArraySize = sizeof(gamePadTrigger) / sizeof(GLTriggerLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        gamePadTrigger[0][i] = GLTriggerLink();
+    }
+    gamePadTriggerSize[0] = 0;
+    currentArraySize = sizeof(keyboardHold) / sizeof(GLHoldLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        keyboardHold[0][i] = GLHoldLink();
+    }
+    keyboardHoldSize[0] = 0;
+    currentArraySize = sizeof(keyboardClick) / sizeof(GLClickLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        keyboardClick[0][i] = GLClickLink();
+    }
+    keyboardClickSize[0] = 0;
+    currentArraySize = sizeof(mouseScroll) / sizeof(GLScrollLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        mouseScroll[0][i] = GLScrollLink();
+    }
+    mouseScrollSize[0] = 0;
+    currentArraySize = sizeof(mouseMovement) / sizeof(GLMouseMovementLink);
+    for (int i = 0; i < currentArraySize; i++)
+    {
+        mouseMovement[0][i] = GLMouseMovementLink();
+    }
+    mouseMovementSize[0] = 0;
+
+    isGamePadClick = false; isGamePadStick = false; isGamePadTrigger = false;
+    isKeyboardHold = false; isKeyboardClick = false;
+    isMouseScroll = false; isMouseMovement = false;
+}
 
  /*============================================================================================================================================================================================
   * External Functionality

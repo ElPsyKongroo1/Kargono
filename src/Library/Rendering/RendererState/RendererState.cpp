@@ -7,11 +7,11 @@
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
-void RendererState::setDefaultValues(GLInput& input, Model* model, GLMesh& mesh, GLShader* shader, GLCamera& camera)
+void RendererState::setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera& camera)
 {
-	defaultInput = &input;
+	defaultInput = input;
 	defaultModel = model;
-	defaultMesh = &mesh;
+	defaultMesh = mesh;
 	defaultShader = shader;
 	currentInput = defaultInput;
 	currentCamera = &camera;

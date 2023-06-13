@@ -7,18 +7,18 @@ namespace DebugMenuFunctions
 {
     bool TOGGLE_MENU(GLInputLink* gamePadButton)
     {
-        if (Resources::currentRenderer->currentInput != &Resources::inputManager.debugMenuInput)
+        if (Resources::currentRenderer->currentInput != Resources::inputManager.debugMenuInput)
         {
             glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             updateType = true;
             typeChange[0] = Resources::currentRenderer->currentInput;
-            typeChange[1] = &Resources::inputManager.debugMenuInput;
+            typeChange[1] = Resources::inputManager.debugMenuInput;
             if (gamePadButton != nullptr) oldButton = gamePadButton;
             Resources::currentRenderer->currentCamera->firstMouse = true;
             Resources::windowManager.mainMenu.isRendering = true;
             Resources::currentRenderer->currentWindow = &Resources::windowManager.mainMenu;
         }
-        else if (Resources::currentRenderer->currentInput == &Resources::inputManager.debugMenuInput)
+        else if (Resources::currentRenderer->currentInput == Resources::inputManager.debugMenuInput)
         {
             glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;

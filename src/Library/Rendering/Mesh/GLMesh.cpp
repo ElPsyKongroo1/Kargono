@@ -6,6 +6,35 @@
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
 
+GLMesh::GLMesh(GLMesh::OUTPUTTYPE outputType, std::vector<unsigned int>& indices, std::vector<Vertex>& vertices)
+{
+    output = outputType;
+
+    this->indices = indices;
+    textures.push_back(Resources::textureManager.crate);
+    textures.push_back(Resources::textureManager.crateSpec);
+    textures.push_back(Resources::textureManager.smileyFace);
+    textures.push_back(Resources::textureManager.smileyFaceSpec);
+
+    this->vertices = vertices;
+
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbos[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
+}
+
 GLMesh::~GLMesh() 
 {
     glDeleteVertexArrays(1, &vao);
