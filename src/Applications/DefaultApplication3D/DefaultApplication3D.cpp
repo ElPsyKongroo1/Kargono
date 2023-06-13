@@ -1,11 +1,9 @@
 #include "../../Library/Rendering/Includes.h"
-#include "../../Library/Rendering/Initialization.h"
-#include "Rendering2.h"
 #include "../../Library/Rendering/Library.h"
 #include "../../Library/Rendering/Shaders/Shaders.h"
 #include "../../Library/Rendering/Mesh/Meshes.h"
 #include "../../Library/Rendering/Textures/Textures.h"
-#include "../../Library/Game/Objects/Objects.h"
+#include "../../Library/Application/Objects/Objects.h"
 #include "../../Library/Rendering/UserInterface/WindowFunctions.h"
 //#include <windows.h>
 
@@ -18,8 +16,7 @@ int DefaultApplication()
 
 {
     // Initialize GLFW context, Meshes, Shaders, and Textures
-    FInitializeRenderer();
-    FInitializeLibraryResources();
+    Resources::currentRenderer->init();
     Resources::currentRenderer->setDefaultValues(Resources::inputManager.default3DInput,
         Resources::modelManager.simpleBackpack,
         Resources::meshManager.cubeMesh,
@@ -118,28 +115,12 @@ int DefaultApplication()
     // Main running Loop
     while (!glfwWindowShouldClose(Resources::currentRenderer->window))
     {
-        // PreRendering
-        FPreRendering();
-
-        // Render
-        FRendering();
-        
-        FWindowRendering();
-
-        // Post Rendering
-        FPostRendering();
+        Resources::currentRenderer->render();
 
     }
     
 
-    FTerminateLibraryResources();
-    
-    //glfwSetWindowShouldClose(Resources::currentApplication->window, GL_FALSE);
-    //glfwSetWindowMonitor(Resources::currentApplication->window, NULL, 0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y, 0);
-    //glfwSetWindowShouldClose(Resources::currentApplication->window, GL_TRUE);
-    //Sleep(3000);
-    
-    FTerminateRenderer();
+    Resources::currentRenderer->close();
 
     return 0;
 }

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Applications\DefaultApplication\DefaultApplication.cpp">
+    <ClCompile Include="src\Applications\DefaultApplication3D\DefaultApplication3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Rendering\Library.cpp">
@@ -36,7 +36,7 @@
     <ClCompile Include="src\Library\Rendering\LightSource\LightSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\GLInput.cpp">
+    <ClCompile Include="src\Library\Application\Input\GLInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp">
@@ -63,28 +63,19 @@
     <ClCompile Include="src\EntryPoint\Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Application2D\Application2D.cpp">
+    <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Rendering\UserInterface\UIWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Application2D\Application2DRendering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\DefaultApplication\DefaultRendering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Initialization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Library\Rendering\Cameras\CameraManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\InputManager.cpp">
+    <ClCompile Include="src\Library\Application\Input\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\MiscFunctions.cpp">
+    <ClCompile Include="src\Library\Application\Input\MiscFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Rendering\Mesh\MeshManager.cpp">
@@ -102,12 +93,6 @@
     <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Termination.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\RuntimeFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Library\Rendering\Model\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,22 +108,37 @@
     <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Objects\ModelRenderer.cpp">
+    <ClCompile Include="src\Library\Application\Objects\ModelRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Objects\RenderableInterface.cpp">
+    <ClCompile Include="src\Library\Application\Objects\RenderableInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Objects\ShapeRenderer.cpp">
+    <ClCompile Include="src\Library\Application\Objects\ShapeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\Default3DFunctions.cpp">
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\Default2DFunctions.cpp">
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Game\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Game\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Breakout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\InputCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\DefaultApplication\DefaultApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -164,13 +164,13 @@
     <ClInclude Include="src\Library\Rendering\Cameras\Cameras.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Objects\Objects.h">
+    <ClInclude Include="src\Library\Application\Objects\Objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Rendering\LightSource\LightSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Input\Input.h">
+    <ClInclude Include="src\Library\Application\Input\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\External_Libraries\imgui\imconfig.h">
@@ -200,25 +200,13 @@
     <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\DefaultApplication\DefaultApplication.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\Application2D\Application2D.h">
+    <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Application2D\Rendering1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\DefaultApplication\Rendering2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Initialization.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Game\Input\MiscFunctions.h">
+    <ClInclude Include="src\Library\Application\Input\MiscFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Rendering\UserInterface\UIFunctions.h">
@@ -485,16 +473,34 @@
     <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Objects\RenderableInterface.h">
+    <ClInclude Include="src\Library\Application\Objects\RenderableInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\Default3DFunctions.h">
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\Default2DFunctions.h">
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Game\Input\Default-Input-Libraries\DebugMenuFunctions.h">
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Game\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Breakout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\InputCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\DefaultApplication\DefaultApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

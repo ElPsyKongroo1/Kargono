@@ -1,6 +1,6 @@
 #include "../Includes.h"
 #include "../Library.h"
-#include "../../Game/Input/Default-Input-Libraries/DebugMenuFunctions.h"
+#include "../../Application/Input/Default-Input-Libraries/DebugMenuFunctions.h"
 
 void renderMainMenu()
 {

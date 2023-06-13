@@ -1,5 +1,5 @@
-#include "../Applications/DefaultApplication/DefaultApplication.h"
-#include "../Applications/Application2D/Application2D.h"
+#include "../Applications/DefaultApplication3D/DefaultApplication3D.h"
+#include "../Applications/DefaultApplication2D/DefaultApplication2D.h"
 #include "../Library/Rendering/RendererState/RendererState.h"
 #include "../Library/Rendering/Library.h"
 

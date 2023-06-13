@@ -1,11 +1,10 @@
 #include "../../Library/Rendering/Includes.h"
-#include "../../Library/Rendering/Initialization.h"
-#include "Rendering1.h"
+
 #include "../../Library/Rendering/Library.h"
 #include "../../Library/Rendering/Shaders/Shaders.h"
 #include "../../Library/Rendering/Mesh/Meshes.h"
 #include "../../Library/Rendering/Textures/Textures.h"
-#include "../../Library/Game/Objects/Objects.h"
+#include "../../Library/Application/Objects/Objects.h"
 
 /*============================================================================================================================================================================================
  * Application Entry Point
@@ -17,8 +16,7 @@ int Application2D()
 {
 	// Initialize GLFW context, Meshes, Shaders, and Textures
 
-	FInitializeRenderer(); // GLFW, GLEW, and IMGui contexts
-	FInitializeLibraryResources();
+	Resources::currentRenderer->init();
 
 	Resources::currentRenderer->setDefaultValues(Resources::inputManager.default2DInput,
 		Resources::modelManager.simpleBackpack,
@@ -46,19 +44,10 @@ int Application2D()
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentRenderer->window))
 	{
-		// PreRendering
-		FPreRendering();
-
-		// Render
-		FRendering1();
-		FWindowRendering();
-
-		// Post Rendering
-		FPostRendering();
+		Resources::currentRenderer->render();
 	}
 
-	FTerminateLibraryResources();
-	FTerminateRenderer();
+	Resources::currentRenderer->close();
 
 	return 0;
 }

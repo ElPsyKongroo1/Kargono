@@ -1,8 +1,8 @@
 #pragma once
 #include "../Includes.h"
 #include "../Cameras/Cameras.h"
-#include "../../Game/Input/Input.h"
-#include "../../Game/Objects/Objects.h"
+#include "../../Application/Input/Input.h"
+#include "../../Application/Objects/Objects.h"
 #include "../Model/Model.h"
 #include "../UserInterface/WindowFunctions.h"
 
@@ -14,7 +14,22 @@
 class RendererState 
 {
 public:
+	void init();
+	void close();
+	void render();
 	void setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera);
+private:
+	
+	void InitializeDefaultResources();
+	void InitializeRenderer();
+
+	void PreRendering();
+	void WindowRendering();
+	void PostRendering();
+
+	void terminate();
+	void closeLibraryResources();
+	
 public:
 	GLFWwindow* window;
 	//ImGuiIO& io;
