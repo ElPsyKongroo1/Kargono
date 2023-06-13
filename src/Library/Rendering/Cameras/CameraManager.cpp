@@ -13,71 +13,72 @@
 
 void CameraManager::CreateCameras()
 {
-    CreateFlyCamera(flyCamera);
-    CreateStatic2DCamera(static2DCamera);
+    CreateFlyCamera();
+    CreateStatic2DCamera();
 }
 void CameraManager::DestroyCameras()
 {
-    DestroyCamera(flyCamera);
-    DestroyCamera(static2DCamera);
-}
-void CameraManager::DestroyCamera(GLCamera& camera)
-{
+    delete flyCamera;
+    delete static2DCamera;
+    flyCamera = nullptr;
+    static2DCamera = nullptr;
 }
 /*============================================================================================================================================================================================
  * Initializes GLCamera Structs with specified values
  *============================================================================================================================================================================================*/
-void CameraManager::CreateFlyCamera(GLCamera& camera)
+void CameraManager::CreateFlyCamera()
 {
-    camera.orientation = { glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
-    camera.eulerAngle.yaw = -90.0f;
-    camera.eulerAngle.pitch = 0.0f;
-    camera.eulerAngle.roll = 0.0f;
-    camera.defaultMovementSpeed = 4.0f;
-    camera.currentMovementSpeed = camera.defaultMovementSpeed;
-    camera.currentDiagonalMovementSpeed = sqrt(2 * camera.currentMovementSpeed * camera.currentMovementSpeed) / 2;
-    camera.projection = GLCamera::PERSPECTIVE;
-    camera.fov = 45.0f;
-    camera.lastX = 400.0f;
-    camera.lastY = 300.0f;
-    camera.firstMouse = true;
-    camera.defaultPanningSpeed = 0.1f;
-    camera.currentPanningSpeed = camera.defaultPanningSpeed;
-    camera.flashLight = LightSource();
-    camera.flashLight.lightType = LightSource::SPOT;
-    camera.flashLight.parentObject = LightSource::CAMERA;
-    camera.flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
-    if (Resources::currentRenderer->currentCamera == &camera)
+    flyCamera = new GLCamera();
+    flyCamera->orientation = { glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
+    flyCamera->eulerAngle.yaw = -90.0f;
+    flyCamera->eulerAngle.pitch = 0.0f;
+    flyCamera->eulerAngle.roll = 0.0f;
+    flyCamera->defaultMovementSpeed = 4.0f;
+    flyCamera->currentMovementSpeed = flyCamera->defaultMovementSpeed;
+    flyCamera->currentDiagonalMovementSpeed = sqrt(2 * flyCamera->currentMovementSpeed * flyCamera->currentMovementSpeed) / 2;
+    flyCamera->projection = GLCamera::PERSPECTIVE;
+    flyCamera->fov = 45.0f;
+    flyCamera->lastX = 400.0f;
+    flyCamera->lastY = 300.0f;
+    flyCamera->firstMouse = true;
+    flyCamera->defaultPanningSpeed = 0.1f;
+    flyCamera->currentPanningSpeed = flyCamera->defaultPanningSpeed;
+    flyCamera->flashLight = LightSource();
+    flyCamera->flashLight.lightType = LightSource::SPOT;
+    flyCamera->flashLight.parentObject = LightSource::CAMERA;
+    flyCamera->flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
+    if (Resources::currentRenderer->currentCamera == flyCamera)
     {
-        Resources::currentRenderer->lightSourceRenderBuffer.push_back(&camera.flashLight);
+        Resources::currentRenderer->lightSourceRenderBuffer.push_back(&flyCamera->flashLight);
     }
-    camera.isFlashLight = true;
+    flyCamera->isFlashLight = true;
 
 }
 
-void CameraManager::CreateStatic2DCamera(GLCamera& camera)
+void CameraManager::CreateStatic2DCamera()
 {
-    camera.orientation = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
-    camera.eulerAngle.yaw = -90.0f;
-    camera.eulerAngle.pitch = 0.0f;
-    camera.eulerAngle.roll = 0.0f;
-    camera.defaultMovementSpeed = 1.0f;
-    camera.currentMovementSpeed = camera.defaultMovementSpeed;
-    camera.currentDiagonalMovementSpeed = sqrt(2 * camera.currentMovementSpeed * camera.currentMovementSpeed) / 2;
-    camera.projection = GLCamera::ORTHOGRAPHIC;
-    camera.fov = 45.0f;
-    camera.lastX = 400.0f;
-    camera.lastY = 300.0f;
-    camera.firstMouse = true;
-    camera.defaultPanningSpeed = 0.1f;
-    camera.currentPanningSpeed = camera.defaultPanningSpeed;
-    camera.flashLight = LightSource();
-    camera.flashLight.lightType = LightSource::SPOT;
-    camera.flashLight.parentObject = LightSource::CAMERA;
-    camera.flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
-    if (Resources::currentRenderer->currentCamera == &camera)
+    static2DCamera = new GLCamera();
+    static2DCamera->orientation = { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f) };
+    static2DCamera->eulerAngle.yaw = -90.0f;
+    static2DCamera->eulerAngle.pitch = 0.0f;
+    static2DCamera->eulerAngle.roll = 0.0f;
+    static2DCamera->defaultMovementSpeed = 1.0f;
+    static2DCamera->currentMovementSpeed = static2DCamera->defaultMovementSpeed;
+    static2DCamera->currentDiagonalMovementSpeed = sqrt(2 * static2DCamera->currentMovementSpeed * static2DCamera->currentMovementSpeed) / 2;
+    static2DCamera->projection = GLCamera::ORTHOGRAPHIC;
+    static2DCamera->fov = 45.0f;
+    static2DCamera->lastX = 400.0f;
+    static2DCamera->lastY = 300.0f;
+    static2DCamera->firstMouse = true;
+    static2DCamera->defaultPanningSpeed = 0.1f;
+    static2DCamera->currentPanningSpeed = static2DCamera->defaultPanningSpeed;
+    static2DCamera->flashLight = LightSource();
+    static2DCamera->flashLight.lightType = LightSource::SPOT;
+    static2DCamera->flashLight.parentObject = LightSource::CAMERA;
+    static2DCamera->flashLight.attenuation = glm::vec3(1.0f, 0.0014f, 0.000007f);
+    if (Resources::currentRenderer->currentCamera == static2DCamera)
     {
-        Resources::currentRenderer->lightSourceRenderBuffer.push_back(&camera.flashLight);
+        Resources::currentRenderer->lightSourceRenderBuffer.push_back(&static2DCamera->flashLight);
     }
-    camera.isFlashLight = false;
+    static2DCamera->isFlashLight = false;
 }

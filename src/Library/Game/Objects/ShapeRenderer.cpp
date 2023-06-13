@@ -33,7 +33,9 @@ ShapeRenderer::ShapeRenderer(Orientation& orientation)
 
 ShapeRenderer::~ShapeRenderer()
 {
-
+	orientation = nullptr;
+	mesh = nullptr;
+	shader = nullptr;
 }
 
 /*============================================================================================================================================================================================

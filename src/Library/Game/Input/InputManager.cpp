@@ -23,7 +23,9 @@ void InputManager::CreateInputs()
 }
 void InputManager::DestroyInputs()
 {
-    
+    delete default3DInput;
+    delete debugMenuInput;
+    delete default2DInput;
 }
 /*============================================================================================================================================================================================
  * Initializes GLInput Structs with specified values

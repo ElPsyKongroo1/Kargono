@@ -58,6 +58,10 @@ public:
 		assert(renderer && "Object class failed to instantiate. Renderer is a nullptr");
 		renderer->orientation = &this->orientation;
 	}
+	~Object() 
+	{
+		renderer = nullptr;
+	}
 
 public:
 	Orientation orientation;

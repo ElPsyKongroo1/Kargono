@@ -14,7 +14,7 @@
 class RendererState 
 {
 public:
-	void setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera& camera);
+	void setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera);
 public:
 	GLFWwindow* window;
 	//ImGuiIO& io;

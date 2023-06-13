@@ -33,7 +33,9 @@ ModelRenderer::ModelRenderer(Orientation& orientation)
 
 ModelRenderer::~ModelRenderer()
 {
-	
+	orientation = nullptr;
+	model = nullptr;
+	shader = nullptr;
 }
 
 /*============================================================================================================================================================================================

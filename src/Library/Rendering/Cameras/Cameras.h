@@ -89,14 +89,13 @@ public:
 class CameraManager
 {
 public:
-	GLCamera flyCamera;
-	GLCamera static2DCamera;
+	GLCamera* flyCamera;
+	GLCamera* static2DCamera;
 public:
 	void CreateCameras();
 	void DestroyCameras();
 private:
-	void CreateFlyCamera(GLCamera& camera);
-	void CreateStatic2DCamera(GLCamera& camera);
-	void DestroyCamera(GLCamera& camera);
+	void CreateFlyCamera();
+	void CreateStatic2DCamera();
 
 };
