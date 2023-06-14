@@ -167,8 +167,9 @@
     <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
     <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp" />
+    <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp" />
     <ClCompile Include="src\Library\Application\DefaultApplication\DefaultApplication.cpp" />
-    <ClCompile Include="src\Library\Application\Game\Game.cpp" />
+    <ClCompile Include="src\Library\Application\GameApplication\Game.cpp" />
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.cpp" />
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.cpp" />
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp" />
@@ -193,7 +194,7 @@
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Library\Rendering\Library.cpp" />
+    <ClCompile Include="src\Library\Library.cpp" />
     <ClCompile Include="src\Library\Rendering\Mesh\GLMesh.cpp" />
     <ClCompile Include="src\Library\Application\Objects\RenderableInterface.cpp" />
     <ClCompile Include="src\Library\Application\Objects\ShapeRenderer.cpp" />
@@ -296,8 +297,9 @@
     <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h" />
     <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h" />
     <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h" />
+    <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h" />
     <ClInclude Include="src\Library\Application\DefaultApplication\DefaultApplication.h" />
-    <ClInclude Include="src\Library\Application\Game\Game.h" />
+    <ClInclude Include="src\Library\Application\GameApplication\Game.h" />
     <ClInclude Include="src\Library\Application\Input\InputCallback.h" />
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h" />
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.h" />
@@ -318,8 +320,8 @@
     <ClInclude Include="src\Library\External_Libraries\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\Library\External_Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="src\Library\External_Libraries\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\Library\Rendering\Includes.h" />
-    <ClInclude Include="src\Library\Rendering\Library.h" />
+    <ClInclude Include="src\Library\Includes.h" />
+    <ClInclude Include="src\Library\Library.h" />
     <ClInclude Include="src\Library\Rendering\Mesh\Meshes.h" />
     <ClInclude Include="src\Library\External_Libraries\stb_image.h" />
     <ClInclude Include="src\Library\Application\Objects\RenderableInterface.h" />
