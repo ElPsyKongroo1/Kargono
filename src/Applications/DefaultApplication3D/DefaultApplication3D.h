@@ -1,2 +1,2 @@
 #pragma once
-int DefaultApplication();
+int DefaultApplication3D();

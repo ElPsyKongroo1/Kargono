@@ -5,14 +5,14 @@
 #include "../../Library/Rendering/Textures/Textures.h"
 #include "../../Library/Application/Objects/Objects.h"
 #include "../../Library/Rendering/UserInterface/WindowFunctions.h"
-//#include <windows.h>
+
 
 /*============================================================================================================================================================================================
  * Application Entry Point
  *============================================================================================================================================================================================*/
 
 
-int DefaultApplication()
+int DefaultApplication3D()
 
 {
     // Initialize GLFW context, Meshes, Shaders, and Textures

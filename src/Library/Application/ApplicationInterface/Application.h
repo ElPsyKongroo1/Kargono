@@ -1,17 +1,19 @@
 #pragma once
 #include "../../Includes.h"
-#include "../../Library.h"
+#include "../Input/Input.h"
+#include "../../Rendering/RendererState/RendererState.h"
 
 class Application
 {
 protected:
-    Application() : renderer{ nullptr }, input{ nullptr }, Width{ 1 }, Height{1} {}
+    Application() : renderer{ nullptr }, input{ nullptr }, width{ 1 }, height{1} {}
+    Application(unsigned int width, unsigned int height) : renderer{ nullptr }, input{ nullptr }, width{ width }, height{ height } {};
 public:
     RendererState* renderer;
     GLInput* input;
-    unsigned int Width, Height;
+    unsigned int width, height;
     // constructor/destructor
-    ~Application() {}
+    ~Application();
     // initialize game state (load all shaders/textures/levels)
     virtual void Init() = 0;
     // game loop

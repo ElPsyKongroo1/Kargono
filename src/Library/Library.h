@@ -7,10 +7,13 @@
 #include "Application/Input/Input.h"
 #include "Rendering/LightSource/LightSource.h"
 #include "Rendering/RendererState/RendererState.h"
+
+#include "Application/ApplicationInterface/ApplicationManager.h"
 #include "Rendering/Model/Model.h"
 
 namespace Resources 
 {
+	extern ApplicationManager applicationManager;
 	extern InputManager inputManager;
 	extern TextureManager textureManager;
 	extern MeshManager meshManager;
@@ -21,6 +24,7 @@ namespace Resources
 	extern ModelManager modelManager;
 
 	extern RendererState* currentRenderer;
+	extern Application* currentApplication;
 
 	extern float currentFrame;
 	extern float deltaTime;

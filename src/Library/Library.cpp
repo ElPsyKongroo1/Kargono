@@ -9,7 +9,7 @@
 #include "Rendering/RendererState/RendererState.h"
 #include "Rendering/UserInterface/WindowFunctions.h"
 #include "Rendering/Model/Model.h"
-#include "Application/ApplicationInterface/Application.h"
+
 #include "Application/ApplicationInterface/ApplicationManager.h"
 
 namespace Resources 

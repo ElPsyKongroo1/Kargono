@@ -1,16 +1,14 @@
 #pragma once
 #include "../../Includes.h"
-#include "../../Library.h"
 #include "../ApplicationInterface/Application.h"
 
 class DefaultApplication : public Application
 {
-protected:
-    DefaultApplication(unsigned int width, unsigned int height) : renderer{ nullptr }, input{ nullptr }, Width{ 1 }, Height{ 1 } {}
 public:
-    RendererState* renderer;
-    GLInput* input;
-    unsigned int Width, Height;
+    DefaultApplication() {};
+public:
+    DefaultApplication(unsigned int width, unsigned int height) : Application(width, height) {}
+public:
     // constructor/destructor
     ~DefaultApplication() {}
     // initialize game state (load all shaders/textures/levels)
