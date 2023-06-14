@@ -1,5 +1,5 @@
 #include "../Input.h"
-#include "../../../Rendering/Library.h"
+#include "../../../Library.h"
 #include "../MiscFunctions.h"
 
 namespace Default2DFunctions 

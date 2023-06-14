@@ -1,5 +1,5 @@
-#include "../../Library/Rendering/Includes.h"
-#include "../../Library/Rendering/Library.h"
+#include "../../Library/Includes.h"
+#include "../../Library/Library.h"
 #include "../../Library/Rendering/Shaders/Shaders.h"
 #include "../../Library/Rendering/Mesh/Meshes.h"
 #include "../../Library/Rendering/Textures/Textures.h"

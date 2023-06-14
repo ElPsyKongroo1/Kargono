@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Rendering/Includes.h"
-#include "../../Rendering/Library.h"
+#include "../../Includes.h"
+#include "../../Library.h"
 #include "../ApplicationInterface/Application.h"
 
 class DefaultApplication : public Application

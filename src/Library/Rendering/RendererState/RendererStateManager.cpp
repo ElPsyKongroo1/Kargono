@@ -1,5 +1,5 @@
 #include "RendererState.h"
-#include "../Library.h"
+#include "../../Library.h"
 
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
@@ -12,66 +12,40 @@
   *============================================================================================================================================================================================*/
 void RendererStateManager::CreateDefaultRenderers()
 {
-	CreateSample3DRenderer(Sample3DRenderer);
-	CreateSample2DRenderer(Sample2DRenderer);
+	
+
+	CreateSample3DRenderer();
+	CreateSample2DRenderer();
 
 }
 
 void RendererStateManager::DestroyDefaultRenderers()
 {
-	DestroyRenderer(Sample3DRenderer);
-	DestroyRenderer(Sample2DRenderer);
+	delete Sample3DRenderer;
+	delete Sample2DRenderer;
+	Sample3DRenderer = nullptr;
+	Sample2DRenderer = nullptr;
 
 }
 
 void RendererStateManager::DestroyRenderer(RendererState& application)
 {
-	application.programName = "";
-	int GLFWVersionSize = sizeof(application.GLFWVersion) / sizeof(int);
-	for (int i = 0; i < GLFWVersionSize; i++)
-	{
-		application.GLFWVersion[i] = 0;
-	}
-	application.screenDimension = glm::vec3();
-	application.backgroundColor = glm::vec3();
 
-	application.objectRenderBuffer.clear();
-	application.lightSourceRenderBuffer.clear();
-	application.currentInput = nullptr;
-	application.currentCamera = nullptr;
-	application.defaultMesh = nullptr;
-	application.defaultModel = nullptr;
-	application.defaultShader = nullptr;
 }
 
 /*============================================================================================================================================================================================
  * Initializes RendererState Objects with specified values
  *============================================================================================================================================================================================*/
 
-void RendererStateManager::CreateSample3DRenderer(RendererState& application)
+void RendererStateManager::CreateSample3DRenderer()
 {
-	application.programName = "3D Renderer";
-	application.GLFWVersion[0] = 4;
-	application.GLFWVersion[1] = 6;
-	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
-	application.backgroundColor = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	application.objectRenderBuffer = std::vector<Object>();
-	application.lightSourceRenderBuffer = std::vector<LightSource*>();
-	application.currentWindow = nullptr;
-
+	int Version[2]{ 4, 6 };
+	Sample3DRenderer = new RendererState("3D Renderer", Version, glm::vec2{1920.0f, 1080.0f}, glm::vec3{0.0f, 0.0f, 0.0f});
 }
 
-void RendererStateManager::CreateSample2DRenderer(RendererState& application)
+void RendererStateManager::CreateSample2DRenderer()
 {
-	application.programName = "2D Renderer";
-	application.GLFWVersion[0] = 4;
-	application.GLFWVersion[1] = 6;
-	application.screenDimension = glm::vec2(1920.0f, 1080.0f);
-	application.backgroundColor = glm::vec3(0.0f, 0.11f, 0.1f);
-
-	application.objectRenderBuffer = std::vector<Object>();
-	application.lightSourceRenderBuffer = std::vector<LightSource*>();
-	application.currentWindow = nullptr;
+	int Version[2]{ 4, 6 };
+	Sample2DRenderer = new RendererState("2D Renderer", Version, glm::vec2{1920.0f, 1080.0f}, glm::vec3{0.0f, 0.11f, 0.1f});
 
 }

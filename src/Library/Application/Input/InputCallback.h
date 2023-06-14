@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Rendering/Includes.h"
-#include "../../Rendering/Library.h"
+#include "../../Includes.h"
+#include "../../Library.h"
 
 void UKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

@@ -1,6 +1,6 @@
-#include "../Includes.h"
+#include "../../Includes.h"
 #include "WindowFunctions.h"
-#include "../Library.h"
+#include "../../Library.h"
 #include "UIFunctions.h"
 
 

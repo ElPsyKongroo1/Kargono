@@ -1,9 +1,9 @@
 #pragma once
-#include "../../Rendering/Includes.h"
-#include "../../Rendering/Library.h"
+#include "../../Includes.h"
+#include "../../Library.h"
 #include "../ApplicationInterface/Application.h"
 
-class Game : public Application
+class GameApplication : public Application
 {
     enum GameState {
         GAME_ACTIVE,
@@ -15,8 +15,8 @@ public:
     // game state
     GameState    State;
     // constructor/destructor
-    Game(unsigned int width, unsigned int height) {}
-    ~Game() {}
+    GameApplication(unsigned int width, unsigned int height) {}
+    ~GameApplication() {}
     // initialize game state (load all shaders/textures/levels)
     void Init() {}
     // game loop

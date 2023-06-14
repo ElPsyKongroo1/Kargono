@@ -1,13 +1,13 @@
 #pragma once
-#include "Shaders/Shaders.h"
-#include "Mesh/Meshes.h"
-#include "Textures/Textures.h"
-#include "../Application/Objects/Objects.h"
-#include "Cameras/Cameras.h"
-#include "../Application/Input/Input.h"
-#include "LightSource/LightSource.h"
-#include "RendererState/RendererState.h"
-#include "Model/Model.h"
+#include "Rendering/Shaders/Shaders.h"
+#include "Rendering/Mesh/Meshes.h"
+#include "Rendering/Textures/Textures.h"
+#include "Application/Objects/Objects.h"
+#include "Rendering/Cameras/Cameras.h"
+#include "Application/Input/Input.h"
+#include "Rendering/LightSource/LightSource.h"
+#include "Rendering/RendererState/RendererState.h"
+#include "Rendering/Model/Model.h"
 
 namespace Resources 
 {
@@ -16,7 +16,7 @@ namespace Resources
 	extern MeshManager meshManager;
 	extern ShaderManager shaderManager;
 	extern CameraManager cameraManager;
-	extern RendererStateManager applicationManager;
+	extern RendererStateManager rendererManager;
 	extern WindowManager windowManager;
 	extern ModelManager modelManager;
 

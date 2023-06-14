@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "../../Rendering/Library.h"
+#include "../../Library.h"
 #include "MiscFunctions.h"
 #include "Default-Input-Libraries/Default3DFunctions.h"
 #include "Default-Input-Libraries/Default2DFunctions.h"

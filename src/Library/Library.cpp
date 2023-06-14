@@ -1,23 +1,28 @@
 #include "Includes.h"
-#include "Shaders/Shaders.h"
-#include "Mesh/Meshes.h"
-#include "Textures/Textures.h"
-#include "../Application/Objects/Objects.h"
-#include "Cameras/Cameras.h"
-#include "../Application/Input/Input.h"
-#include "LightSource/LightSource.h"
-#include "RendererState/RendererState.h"
-#include "UserInterface/WindowFunctions.h"
-#include "Model/Model.h"
+#include "Rendering/Shaders/Shaders.h"
+#include "Rendering/Mesh/Meshes.h"
+#include "Rendering/Textures/Textures.h"
+#include "Application/Objects/Objects.h"
+#include "Rendering/Cameras/Cameras.h"
+#include "Application/Input/Input.h"
+#include "Rendering/LightSource/LightSource.h"
+#include "Rendering/RendererState/RendererState.h"
+#include "Rendering/UserInterface/WindowFunctions.h"
+#include "Rendering/Model/Model.h"
+#include "Application/ApplicationInterface/Application.h"
+#include "Application/ApplicationInterface/ApplicationManager.h"
 
 namespace Resources 
 {
 /*============================================================================================================================================================================================
  * Static Resources
  *============================================================================================================================================================================================*/
-	RendererStateManager applicationManager = RendererStateManager();
-	RendererState* currentRenderer{nullptr};
+	
+	RendererState* currentRenderer{ nullptr };
+	Application* currentApplication{ nullptr };
 
+	ApplicationManager applicationManager = ApplicationManager();
+	RendererStateManager rendererManager = RendererStateManager();
 	ShaderManager shaderManager = ShaderManager();
 	MeshManager meshManager = MeshManager();
 	TextureManager textureManager = TextureManager();

@@ -18,7 +18,7 @@
     <ClCompile Include="src\Applications\DefaultApplication3D\DefaultApplication3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Library.cpp">
+    <ClCompile Include="src\Library\Library.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Rendering\Shaders\GLShader.cpp">
@@ -126,7 +126,7 @@
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Application\Game\Game.cpp">
+    <ClCompile Include="src\Library\Application\GameApplication\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp">
@@ -141,12 +141,15 @@
     <ClCompile Include="src\Library\Application\DefaultApplication\DefaultApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Library\Rendering\Library.h">
+    <ClInclude Include="src\Library\Library.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Includes.h">
+    <ClInclude Include="src\Library\Includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Rendering\Shaders\Shaders.h">
@@ -485,7 +488,7 @@
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Application\Game\Game.h">
+    <ClInclude Include="src\Library\Application\GameApplication\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Applications\Breakout\Breakout.h">
@@ -501,6 +504,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Application\DefaultApplication\DefaultApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

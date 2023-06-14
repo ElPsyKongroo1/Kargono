@@ -1,5 +1,5 @@
 #pragma once
-#include "../Includes.h"
+#include "../../Includes.h"
 #include "../Cameras/Cameras.h"
 #include "../../Application/Input/Input.h"
 #include "../../Application/Objects/Objects.h"
@@ -19,7 +19,6 @@ public:
 	void render();
 	void setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera);
 private:
-	
 	void InitializeDefaultResources();
 	void InitializeRenderer();
 
@@ -29,7 +28,10 @@ private:
 
 	void terminate();
 	void closeLibraryResources();
-	
+public:
+	RendererState() {}
+	RendererState(const char* programName, int GLFWVersion[2], glm::vec2 screenDimension, glm::vec3 backgroundColor);
+	~RendererState();
 public:
 	GLFWwindow* window;
 	//ImGuiIO& io;
@@ -56,15 +58,15 @@ public:
 
 class RendererStateManager {
 public:
-	RendererState Sample3DRenderer;
-	RendererState Sample2DRenderer;
+	RendererState* Sample3DRenderer;
+	RendererState* Sample2DRenderer;
 public:
 	void CreateDefaultRenderers();
 	void DestroyDefaultRenderers();
 
 private:
-	void CreateSample3DRenderer(RendererState& application);
-	void CreateSample2DRenderer(RendererState& application);
+	void CreateSample3DRenderer();
+	void CreateSample2DRenderer();
 	
 	void DestroyRenderer(RendererState& application);
 };

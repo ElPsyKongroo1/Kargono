@@ -1,7 +1,7 @@
 #include "../Applications/DefaultApplication3D/DefaultApplication3D.h"
 #include "../Applications/DefaultApplication2D/DefaultApplication2D.h"
 #include "../Library/Rendering/RendererState/RendererState.h"
-#include "../Library/Rendering/Library.h"
+#include "../Library/Library.h"
 
 /*============================================================================================================================================================================================
  * Entry Point of Projects
@@ -10,7 +10,7 @@
 
 int main()
 {
-	Resources::applicationManager.CreateDefaultRenderers();
+	Resources::rendererManager.CreateDefaultRenderers();
 	
 	int choice = 0;
 	while (choice != 3) {
@@ -28,12 +28,12 @@ int main()
 			switch (choice) {
 			case 1:
 				// Run Default Application
-				Resources::currentRenderer = &Resources::applicationManager.Sample3DRenderer;
+				Resources::currentRenderer = Resources::rendererManager.Sample3DRenderer;
 				DefaultApplication();
 				break;
 			case 2:
 				// Run Default Application
-				Resources::currentRenderer = &Resources::applicationManager.Sample2DRenderer;
+				Resources::currentRenderer = Resources::rendererManager.Sample2DRenderer;
 				Application2D();
 				break;
 			case 3:
@@ -49,5 +49,5 @@ int main()
 		}
 	}
 	
-	Resources::applicationManager.DestroyDefaultRenderers();
+	Resources::rendererManager.DestroyDefaultRenderers();
 }

@@ -1,11 +1,46 @@
 #include "RendererState.h"
-#include "../Library.h"
+#include "../../Library.h"
 #include "../../Application/Input/InputCallback.h"
 /*============================================================================================================================================================================================
  *============================================================================================================================================================================================
  * RendererState Class
  *============================================================================================================================================================================================
  *============================================================================================================================================================================================*/
+
+RendererState::RendererState(const char* programName, int GLFWVersion[2], glm::vec2 screenDimension, glm::vec3 backgroundColor)
+{
+    this->programName = programName;
+    this->GLFWVersion[0] = 4;
+    this->GLFWVersion[1] = 6;
+    this->screenDimension = screenDimension;
+    this->backgroundColor = backgroundColor;
+
+    this->objectRenderBuffer = std::vector<Object>();
+    this->lightSourceRenderBuffer = std::vector<LightSource*>();
+    this->currentWindow = nullptr;
+}
+RendererState::~RendererState() 
+{
+    programName = "";
+    int GLFWVersionSize = sizeof(GLFWVersion) / sizeof(int);
+    for (int i = 0; i < GLFWVersionSize; i++)
+    {
+        GLFWVersion[i] = 0;
+    }
+    screenDimension = glm::vec3();
+    backgroundColor = glm::vec3();
+
+    objectRenderBuffer.clear();
+    lightSourceRenderBuffer.clear();
+    currentInput = nullptr;
+    currentCamera = nullptr;
+    defaultMesh = nullptr;
+    defaultModel = nullptr;
+    defaultShader = nullptr;
+    window = nullptr;
+    currentWindow = nullptr;
+}
+
 
 void RendererState::init() 
 {
@@ -28,7 +63,6 @@ void RendererState::close()
 {
     closeLibraryResources();
     terminate();
-    
 }
 
 void RendererState::setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera)
