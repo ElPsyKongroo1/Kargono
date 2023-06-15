@@ -7,49 +7,49 @@ namespace DebugMenuFunctions
 {
     bool TOGGLE_MENU(GLInputLink* gamePadButton)
     {
-        if (Resources::currentRenderer->currentInput != Resources::inputManager.debugMenuInput)
+        if (Resources::currentApplication->currentInput != Resources::inputManager.debugMenuInput)
         {
-            glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             updateType = true;
-            typeChange[0] = Resources::currentRenderer->currentInput;
+            typeChange[0] = Resources::currentApplication->currentInput;
             typeChange[1] = Resources::inputManager.debugMenuInput;
             if (gamePadButton != nullptr) oldButton = gamePadButton;
-            Resources::currentRenderer->currentCamera->firstMouse = true;
+            Resources::currentApplication->renderer->currentCamera->firstMouse = true;
             Resources::windowManager.mainMenu.isRendering = true;
-            Resources::currentRenderer->currentWindow = &Resources::windowManager.mainMenu;
+            Resources::currentApplication->renderer->currentWindow = &Resources::windowManager.mainMenu;
         }
-        else if (Resources::currentRenderer->currentInput == Resources::inputManager.debugMenuInput)
+        else if (Resources::currentApplication->currentInput == Resources::inputManager.debugMenuInput)
         {
-            glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
-            typeChange[0] = Resources::currentRenderer->currentInput;
-            typeChange[1] = Resources::currentRenderer->defaultInput;
+            typeChange[0] = Resources::currentApplication->currentInput;
+            typeChange[1] = Resources::currentApplication->defaultInput;
             Resources::windowManager.mainMenu.closeChildren();
-            Resources::currentRenderer->currentWindow = nullptr;
+            Resources::currentApplication->renderer->currentWindow = nullptr;
         }
         return true;
     }
 
     bool CLOSE_CURRENT_WINDOW(GLInputLink* gamePadButton)
     {
-        Resources::currentRenderer->currentWindow->isRendering = false;
-        Resources::currentRenderer->currentWindow = Resources::currentRenderer->currentWindow->parent;
-        if (Resources::currentRenderer->currentWindow == nullptr)
+        Resources::currentApplication->renderer->currentWindow->isRendering = false;
+        Resources::currentApplication->renderer->currentWindow = Resources::currentApplication->renderer->currentWindow->parent;
+        if (Resources::currentApplication->renderer->currentWindow == nullptr)
         {
-            glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
-            typeChange[0] = Resources::currentRenderer->currentInput;
-            typeChange[1] = Resources::currentRenderer->defaultInput;
+            typeChange[0] = Resources::currentApplication->currentInput;
+            typeChange[1] = Resources::currentApplication->defaultInput;
 
             Resources::windowManager.mainMenu.closeChildren();
-            Resources::currentRenderer->currentWindow = nullptr;
+            Resources::currentApplication->renderer->currentWindow = nullptr;
         }
         return false;
     }
 
     bool EXIT_APPLICATION()
     {
-        glfwSetWindowShouldClose(Resources::currentRenderer->window, true);
+        glfwSetWindowShouldClose(Resources::currentApplication->renderer->window, true);
         return false;
     }
 }

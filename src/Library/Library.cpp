@@ -18,7 +18,6 @@ namespace Resources
  * Static Resources
  *============================================================================================================================================================================================*/
 	
-	RendererState* currentRenderer{ nullptr };
 	Application* currentApplication{ nullptr };
 
 	ApplicationManager applicationManager = ApplicationManager();

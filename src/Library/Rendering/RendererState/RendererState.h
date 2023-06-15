@@ -17,7 +17,7 @@ public:
 	void init();
 	void close();
 	void render();
-	void setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera);
+	void setDefaultValues(Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera);
 private:
 	void InitializeDefaultResources();
 	void InitializeRenderer();
@@ -42,8 +42,6 @@ public:
 public:
 	std::vector<Object> objectRenderBuffer;
 	std::vector<LightSource*> lightSourceRenderBuffer;
-	GLInput* currentInput;
-	GLInput* defaultInput;
 	GLCamera* currentCamera;
 	GLMesh* defaultMesh;
 	Model* defaultModel;

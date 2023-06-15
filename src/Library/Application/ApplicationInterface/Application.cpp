@@ -3,7 +3,8 @@
 Application::~Application() 
 {
     renderer = nullptr;
-    input = nullptr;
+    currentInput = nullptr;
+    defaultInput = nullptr;
     width = 0;
     height = 0;
 }

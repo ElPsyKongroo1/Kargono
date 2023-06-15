@@ -71,6 +71,7 @@ class MeshManager
 {
 public:
 	GLMesh* cubeMesh;
+	GLMesh* quadMesh;
 public:
 	void CreateMeshes();
 	void DestroyMeshes();

@@ -10,6 +10,11 @@
 class GLCamera
 {
 public:
+	enum ProjectionType
+	{
+		PERSPECTIVE, ORTHOGRAPHIC, NOPROJECTION
+	};
+public:
 	struct Orientation 
 	{
 		glm::vec3 cameraPosition;
@@ -22,17 +27,25 @@ public:
 		float pitch;
 		float roll;
 	};
-public:
-	enum ProjectionType
+
+	struct FrustrumDimensions
 	{
-		PERSPECTIVE, ORTHOGRAPHIC, NOPROJECTION
+		ProjectionType projection;
+		glm::vec2 depthDimension;
+		glm::vec2 widthDimension;
+		glm::vec2 heightDimension;
+		float fov;
+		float aspectRatio;
 	};
+
 
 public:
 	// Orientation
 	Orientation orientation;
 	// Euler Angles
 	EulerAngle eulerAngle;
+	// Dimensions for camera frustrum
+	FrustrumDimensions frustrumDimensions;
 
 	// Movement Speed
 	float currentMovementSpeed, defaultMovementSpeed, currentDiagonalMovementSpeed;
@@ -49,6 +62,11 @@ public:
 	bool firstMouse;
 
 public:
+	GLCamera() {}
+	GLCamera(glm::vec3 cameraPosition, glm::vec3 cameraFront, glm::vec3 cameraUp,
+		glm::vec3 eulerAngles, float movementSpeed, GLCamera::ProjectionType projection,
+		glm::vec2 frustWidth, glm::vec2 frustHeight, glm::vec2 frustDepth, float fov, float aspectRatio,
+		float panSpeed);
 	~GLCamera() 
 	{
 		eulerAngle.yaw = -1;
@@ -64,6 +82,12 @@ public:
 		currentPanningSpeed = -1;
 		defaultPanningSpeed = -1;
 
+		frustrumDimensions.projection = GLCamera::NOPROJECTION;
+		frustrumDimensions.widthDimension = glm::vec2();
+		frustrumDimensions.heightDimension = glm::vec2();
+		frustrumDimensions.depthDimension = glm::vec2();
+		frustrumDimensions.fov = -1.0f;
+		frustrumDimensions.aspectRatio = -1.0f;
 
 		fov = -1;
 		lastX = -1;

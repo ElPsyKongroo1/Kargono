@@ -23,7 +23,6 @@ namespace Resources
 	extern WindowManager windowManager;
 	extern ModelManager modelManager;
 
-	extern RendererState* currentRenderer;
 	extern Application* currentApplication;
 
 	extern float currentFrame;

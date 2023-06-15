@@ -32,7 +32,6 @@ RendererState::~RendererState()
 
     objectRenderBuffer.clear();
     lightSourceRenderBuffer.clear();
-    currentInput = nullptr;
     currentCamera = nullptr;
     defaultMesh = nullptr;
     defaultModel = nullptr;
@@ -65,13 +64,11 @@ void RendererState::close()
     terminate();
 }
 
-void RendererState::setDefaultValues(GLInput* input, Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera)
+void RendererState::setDefaultValues(Model* model, GLMesh* mesh, GLShader* shader, GLCamera* camera)
 {
-	defaultInput = input;
 	defaultModel = model;
 	defaultMesh = mesh;
 	defaultShader = shader;
-	currentInput = defaultInput;
 	currentCamera = camera;
 }
 
@@ -196,8 +193,8 @@ void RendererState::closeLibraryResources()
     Resources::meshManager.DestroyMeshes();
     Resources::shaderManager.DestroyShaders();
     Resources::textureManager.DestroyTextures();
-    Resources::currentRenderer->objectRenderBuffer.clear();
-    Resources::currentRenderer->lightSourceRenderBuffer.clear();
+    Resources::currentApplication->renderer->objectRenderBuffer.clear();
+    Resources::currentApplication->renderer->lightSourceRenderBuffer.clear();
     Resources::cameraManager.DestroyCameras();
     Resources::inputManager.DestroyInputs();
     Resources::windowManager.DestroyUIWindows();

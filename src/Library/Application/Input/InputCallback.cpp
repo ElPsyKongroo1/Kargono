@@ -9,17 +9,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    Resources::currentRenderer->currentInput->processMouseMovement(xpos, ypos);
+    Resources::currentApplication->currentInput->processMouseMovement(xpos, ypos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    Resources::currentRenderer->currentInput->processScroll(xoffset, yoffset);
+    Resources::currentApplication->currentInput->processScroll(xoffset, yoffset);
 }
 
 void FProcessInputHold(GLFWwindow* window)
 {
-    Resources::currentRenderer->currentInput->processKeyboardHold(window);
+    Resources::currentApplication->currentInput->processKeyboardHold(window);
     int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
     if (!present)
     {
@@ -27,12 +27,12 @@ void FProcessInputHold(GLFWwindow* window)
     }
     else
     {
-        Resources::currentRenderer->currentInput->processGamePad();
+        Resources::currentApplication->currentInput->processGamePad();
     }
 
 }
 
 void UKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    Resources::currentRenderer->currentInput->processKeyboardClick(window, key, scancode, action, mods);
+    Resources::currentApplication->currentInput->processKeyboardClick(window, key, scancode, action, mods);
 }

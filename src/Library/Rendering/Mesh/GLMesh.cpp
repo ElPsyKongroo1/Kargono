@@ -156,10 +156,10 @@ void GLMesh::Draw(void* objectRenderer)
         shader->setInt("material.nDiffuseTexture", diffuseNr);
         shader->setInt("material.nSpecularTexture", specularNr);
         shader->setFloat("material.shininess", 32.0f);
-        shader->setVec3("viewPosition", Resources::currentRenderer->currentCamera->orientation.cameraPosition);
+        shader->setVec3("viewPosition", Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition);
 
         int numPointLights = 0, numSpotLights = 0, numDirectionalLights = 0;
-        for (LightSource* lightSource : Resources::currentRenderer->lightSourceRenderBuffer)
+        for (LightSource* lightSource : Resources::currentApplication->renderer->lightSourceRenderBuffer)
         {
             if (lightSource->lightType == LightSource::POINT)
             {
@@ -182,8 +182,8 @@ void GLMesh::Draw(void* objectRenderer)
             {
                 if (lightSource->parentObject == LightSource::CAMERA)
                 {
-                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentRenderer->currentCamera->orientation.cameraPosition);
-                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentRenderer->currentCamera->orientation.cameraFront);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].position", Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition);
+                    shader->setVec3("spotLight[" + std::to_string(numSpotLights) + "].direction", Resources::currentApplication->renderer->currentCamera->orientation.cameraFront);
                 }
                 else if (lightSource->parentObject == LightSource::OBJECT)
                 {
@@ -221,7 +221,7 @@ void GLMesh::Draw(void* objectRenderer)
     }
 
         //Set up projection and view matrix
-    Resources::currentRenderer->currentCamera->processProjection(view, projection);
+    Resources::currentApplication->renderer->currentCamera->processProjection(view, projection);
         //Set up model matrix
     scale = glm::scale(renderer->orientation->scale);
     rotation = glm::rotate(glm::radians(renderer->orientation->rotation.w), glm::vec3(renderer->orientation->rotation.x, renderer->orientation->rotation.y, renderer->orientation->rotation.z));

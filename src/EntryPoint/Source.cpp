@@ -1,5 +1,6 @@
 #include "../Applications/DefaultApplication3D/DefaultApplication3D.h"
 #include "../Applications/DefaultApplication2D/DefaultApplication2D.h"
+#include "../Applications/Breakout/Breakout.h"
 #include "../Library/Rendering/RendererState/RendererState.h"
 #include "../Library/Library.h"
 
@@ -11,15 +12,17 @@
 int main()
 {
 	Resources::applicationManager.CreateApplications();
-	
+	Resources::rendererManager.CreateDefaultRenderers();
+	int Version[2]{ 4, 6 };
 	
 	int choice = 0;
-	while (choice != 3) {
+	while (choice != 4) {
 		std::cout << std::endl;
 		std::cout << "==============" << std::endl;
 		std::cout << "1. 3D Renderer" << std::endl;
 		std::cout << "2. 2D Renderer" << std::endl;
-		std::cout << "3. Exit" << std::endl;
+		std::cout << "3. Breakout" << std::endl;
+		std::cout << "4. Exit" << std::endl;
 		std::cout << "==============" << std::endl << std::endl;
 		try {
 			std::cin >> choice;
@@ -30,22 +33,31 @@ int main()
 			case 1:
 				// Run Default Application
 				Resources::currentApplication = Resources::applicationManager.default3DApplication;
-				Resources::rendererManager.CreateDefaultRenderers();
 				Resources::currentApplication->renderer = Resources::rendererManager.Sample3DRenderer;
-				Resources::currentRenderer = Resources::rendererManager.Sample3DRenderer;
 				DefaultApplication3D();
-				Resources::rendererManager.DestroyDefaultRenderers();
+				Resources::currentApplication->renderer = nullptr;
+				
 				break;
+			
 			case 2:
 				// Run Default Application
-				Resources::currentApplication = Resources::applicationManager.default2DApplication;
-				Resources::rendererManager.CreateDefaultRenderers();
+				Resources::currentApplication = Resources::applicationManager.breakout;
 				Resources::currentApplication->renderer = Resources::rendererManager.Sample2DRenderer;
-				Resources::currentRenderer = Resources::rendererManager.Sample2DRenderer;
 				Application2D();
-				Resources::rendererManager.DestroyDefaultRenderers();
+				Resources::currentApplication->renderer = nullptr;
 				break;
 			case 3:
+				// Run Default Application
+				Resources::currentApplication = Resources::applicationManager.default2DApplication;
+				Resources::currentApplication->renderer = new RendererState("Breakout", Version,
+					glm::vec2(Resources::currentApplication->width, Resources::currentApplication->height),
+					glm::vec3(0.0f, 0.0f, 0.0f));
+
+				BreakoutStart();
+				delete Resources::currentApplication->renderer;
+				Resources::currentApplication->renderer = nullptr;
+				break;
+			case 4:
 				break;
 			default:
 				std::cout << "Something went wrong!" << std::endl;
@@ -58,6 +70,6 @@ int main()
 		}
 	}
 	
-	
+	Resources::rendererManager.DestroyDefaultRenderers();
 	Resources::applicationManager.DestroyApplications();
 }

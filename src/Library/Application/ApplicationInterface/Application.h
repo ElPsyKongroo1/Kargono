@@ -6,11 +6,13 @@
 class Application
 {
 protected:
-    Application() : renderer{ nullptr }, input{ nullptr }, width{ 1 }, height{1} {}
-    Application(unsigned int width, unsigned int height) : renderer{ nullptr }, input{ nullptr }, width{ width }, height{ height } {};
+    Application() : renderer{ nullptr }, currentInput{ nullptr }, width{ 1 }, height{1} {}
+    Application(unsigned int width, unsigned int height) : renderer{ nullptr }, currentInput{ nullptr }, width{ width }, height{ height } {};
 public:
     RendererState* renderer;
-    GLInput* input;
+    GLInput* currentInput;
+    GLInput* defaultInput;
+
     unsigned int width, height;
     // constructor/destructor
     ~Application();

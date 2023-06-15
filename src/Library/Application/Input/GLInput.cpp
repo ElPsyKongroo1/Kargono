@@ -282,10 +282,10 @@ void GLInput::processKeyboardHold(GLFWwindow* window)
     if (shouldCalcDir > 0)
     {
         glm::vec3 direction;
-        direction.x = cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.y = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.z = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        Resources::currentRenderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
+        direction.x = cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.y = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.z = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
     }
     if (updateType)
     {
@@ -325,10 +325,10 @@ void GLInput::processGamePadStick(const float* axes)
     if (shouldCalcDir > 0)
     {
         glm::vec3 direction;
-        direction.x = cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.y = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.z = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        Resources::currentRenderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
+        direction.x = cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.y = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.z = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
     }
     if (updateType)
     {

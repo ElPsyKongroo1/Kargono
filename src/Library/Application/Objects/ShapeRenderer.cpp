@@ -26,8 +26,8 @@ ShapeRenderer::ShapeRenderer(Orientation& orientation,
 ShapeRenderer::ShapeRenderer(Orientation& orientation)
 {
 	this->orientation = &orientation;
-	this->mesh = Resources::currentRenderer->defaultMesh;
-	this->shader = Resources::currentRenderer->defaultShader;
+	this->mesh = Resources::currentApplication->renderer->defaultMesh;
+	this->shader = Resources::currentApplication->renderer->defaultShader;
 
 }
 
@@ -52,5 +52,5 @@ void ShapeRenderer::addLightSource(glm::vec3 color)
 	this->lightSource = LightSource(this->orientation->translation, color);
 	this->shader = Resources::shaderManager.lightSourceShader;
 	lightSource.parentObject = LightSource::OBJECT;
-	Resources::currentRenderer->lightSourceRenderBuffer.push_back(&lightSource);
+	Resources::currentApplication->renderer->lightSourceRenderBuffer.push_back(&lightSource);
 }

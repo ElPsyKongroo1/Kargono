@@ -12,14 +12,14 @@ GLInputLink* oldButton = nullptr;
 
 void updateInputType()
 {
-    Resources::currentRenderer->currentInput = typeChange[1];
+    Resources::currentApplication->currentInput = typeChange[1];
     if (oldButton != nullptr)
     {
-        for (int i = 0; i < Resources::currentRenderer->currentInput->gamePadClickSize[0]; i++)
+        for (int i = 0; i < Resources::currentApplication->currentInput->gamePadClickSize[0]; i++)
         {
-            if (oldButton->glfwValue == Resources::currentRenderer->currentInput->gamePadClick[0][i].glfwValue)
+            if (oldButton->glfwValue == Resources::currentApplication->currentInput->gamePadClick[0][i].glfwValue)
             {
-                Resources::currentRenderer->currentInput->gamePadClick[0][i].previousState = oldButton->previousState;
+                Resources::currentApplication->currentInput->gamePadClick[0][i].previousState = oldButton->previousState;
                 break;
             }
         }

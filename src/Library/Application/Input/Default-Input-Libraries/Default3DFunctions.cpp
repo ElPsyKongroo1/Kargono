@@ -10,43 +10,43 @@ namespace Default3DFunctions {
         float yoffset;
         glm::vec3 direction;
 
-        if (Resources::currentRenderer->currentCamera->firstMouse) // initially set to true
+        if (Resources::currentApplication->renderer->currentCamera->firstMouse) // initially set to true
         {
-            Resources::currentRenderer->currentCamera->lastX = xpos;
-            Resources::currentRenderer->currentCamera->lastY = ypos;
-            Resources::currentRenderer->currentCamera->firstMouse = false;
+            Resources::currentApplication->renderer->currentCamera->lastX = xpos;
+            Resources::currentApplication->renderer->currentCamera->lastY = ypos;
+            Resources::currentApplication->renderer->currentCamera->firstMouse = false;
         }
 
-        xoffset = xpos - Resources::currentRenderer->currentCamera->lastX;
-        yoffset = Resources::currentRenderer->currentCamera->lastY - ypos; // reversed since y-coordinates range from bottom to top
-        Resources::currentRenderer->currentCamera->lastX = xpos;
-        Resources::currentRenderer->currentCamera->lastY = ypos;
+        xoffset = xpos - Resources::currentApplication->renderer->currentCamera->lastX;
+        yoffset = Resources::currentApplication->renderer->currentCamera->lastY - ypos; // reversed since y-coordinates range from bottom to top
+        Resources::currentApplication->renderer->currentCamera->lastX = xpos;
+        Resources::currentApplication->renderer->currentCamera->lastY = ypos;
 
-        xoffset *= Resources::currentRenderer->currentCamera->currentPanningSpeed;
-        yoffset *= Resources::currentRenderer->currentCamera->currentPanningSpeed;
+        xoffset *= Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
+        yoffset *= Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
 
-        Resources::currentRenderer->currentCamera->eulerAngle.yaw += xoffset;
-        Resources::currentRenderer->currentCamera->eulerAngle.pitch += yoffset;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw += xoffset;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch += yoffset;
 
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = -89.0f;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = -89.0f;
 
 
-        direction.x = cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.y = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        direction.z = sin(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentRenderer->currentCamera->eulerAngle.pitch));
-        Resources::currentRenderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
+        direction.x = cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.y = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        direction.z = sin(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw)) * cos(glm::radians(Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch));
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraFront = glm::normalize(direction);
     }
     // Mouse Scroll Wheel
     void CAMERA_FOV_MOUSE(double xoffset, double yoffset) 
     {
-        Resources::currentRenderer->currentCamera->fov -= (float)yoffset;
-        if (Resources::currentRenderer->currentCamera->fov < 1.0f)
-            Resources::currentRenderer->currentCamera->fov = 1.0f;
-        if (Resources::currentRenderer->currentCamera->fov > 45.0f)
-            Resources::currentRenderer->currentCamera->fov = 45.0f;
+        Resources::currentApplication->renderer->currentCamera->fov -= (float)yoffset;
+        if (Resources::currentApplication->renderer->currentCamera->fov < 1.0f)
+            Resources::currentApplication->renderer->currentCamera->fov = 1.0f;
+        if (Resources::currentApplication->renderer->currentCamera->fov > 45.0f)
+            Resources::currentApplication->renderer->currentCamera->fov = 45.0f;
     }
     // Button/Keyboard Click
     bool TOGGLE_FLASHLIGHT(GLInputLink* gamePadButton)
@@ -55,7 +55,7 @@ namespace Default3DFunctions {
         bool decision;
         bool foundFlashLight;
 
-        currentFlash = Resources::currentRenderer->currentCamera->isFlashLight;
+        currentFlash = Resources::currentApplication->renderer->currentCamera->isFlashLight;
         if (currentFlash)
         {
             decision = false;
@@ -67,10 +67,10 @@ namespace Default3DFunctions {
         foundFlashLight = false;
         if (decision)
         {
-            Resources::currentRenderer->currentCamera->isFlashLight = true;
-            for (int i = 0; i < Resources::currentRenderer->lightSourceRenderBuffer.size(); i++)
+            Resources::currentApplication->renderer->currentCamera->isFlashLight = true;
+            for (int i = 0; i < Resources::currentApplication->renderer->lightSourceRenderBuffer.size(); i++)
             {
-                if (&Resources::currentRenderer->currentCamera->flashLight == Resources::currentRenderer->lightSourceRenderBuffer.at(i))
+                if (&Resources::currentApplication->renderer->currentCamera->flashLight == Resources::currentApplication->renderer->lightSourceRenderBuffer.at(i))
                 {
                     foundFlashLight = true;
                     break;
@@ -78,18 +78,18 @@ namespace Default3DFunctions {
             }
             if (!foundFlashLight)
             {
-                Resources::currentRenderer->lightSourceRenderBuffer.push_back(&Resources::currentRenderer->currentCamera->flashLight);
+                Resources::currentApplication->renderer->lightSourceRenderBuffer.push_back(&Resources::currentApplication->renderer->currentCamera->flashLight);
             }
         }
         else
         {
-            Resources::currentRenderer->currentCamera->isFlashLight = false;
-            for (int i = 0; i < Resources::currentRenderer->lightSourceRenderBuffer.size(); i++)
+            Resources::currentApplication->renderer->currentCamera->isFlashLight = false;
+            for (int i = 0; i < Resources::currentApplication->renderer->lightSourceRenderBuffer.size(); i++)
             {
-                if (&Resources::currentRenderer->currentCamera->flashLight == Resources::currentRenderer->lightSourceRenderBuffer.at(i))
+                if (&Resources::currentApplication->renderer->currentCamera->flashLight == Resources::currentApplication->renderer->lightSourceRenderBuffer.at(i))
                 {
                     foundFlashLight = true;
-                    Resources::currentRenderer->lightSourceRenderBuffer.erase(Resources::currentRenderer->lightSourceRenderBuffer.begin() + i);
+                    Resources::currentApplication->renderer->lightSourceRenderBuffer.erase(Resources::currentApplication->renderer->lightSourceRenderBuffer.begin() + i);
                     break;
                 }
             }
@@ -100,15 +100,15 @@ namespace Default3DFunctions {
 
     bool TOGGLE_DEVICE_MOUSE_MOVEMENT(GLInputLink* gamePadButton)
     {
-        if (Resources::currentRenderer->currentInput->isMouseMovement) { Resources::currentRenderer->currentInput->isMouseMovement = false; }
-        else { Resources::currentRenderer->currentInput->isMouseMovement = true; Resources::currentRenderer->currentCamera->firstMouse = true; }
+        if (Resources::currentApplication->currentInput->isMouseMovement) { Resources::currentApplication->currentInput->isMouseMovement = false; }
+        else { Resources::currentApplication->currentInput->isMouseMovement = true; Resources::currentApplication->renderer->currentCamera->firstMouse = true; }
         return false;
     }
 
     bool EXIT_APPLICATION(GLInputLink* gamePadButton)
     {
         //glfwSetWindowMonitor(Resources::currentApplication->window, NULL, 0, 0, Resources::currentApplication->screenDimension.x, Resources::currentApplication->screenDimension.y, NULL);
-        glfwSetWindowShouldClose(Resources::currentRenderer->window, true);
+        glfwSetWindowShouldClose(Resources::currentApplication->renderer->window, true);
         return false;
     }
 
@@ -145,163 +145,163 @@ namespace Default3DFunctions {
             b += 0.2f;
         }
         randomColor = glm::vec3(r, g, b);
-        Resources::currentRenderer->currentCamera->flashLight.ambientColor = randomColor * 0.1f;
-        Resources::currentRenderer->currentCamera->flashLight.diffuseColor = randomColor;
-        Resources::currentRenderer->currentCamera->flashLight.specularColor = randomColor;
+        Resources::currentApplication->renderer->currentCamera->flashLight.ambientColor = randomColor * 0.1f;
+        Resources::currentApplication->renderer->currentCamera->flashLight.diffuseColor = randomColor;
+        Resources::currentApplication->renderer->currentCamera->flashLight.specularColor = randomColor;
         return false;
     }
 
     bool TOGGLE_MENU(GLInputLink* gamePadButton)
     {
-        if (Resources::currentRenderer->currentInput != Resources::inputManager.debugMenuInput)
+        if (Resources::currentApplication->currentInput != Resources::inputManager.debugMenuInput)
         {
-            glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             updateType = true;
-            typeChange[0] = Resources::currentRenderer->currentInput;
+            typeChange[0] = Resources::currentApplication->currentInput;
             typeChange[1] = Resources::inputManager.debugMenuInput;
             if (gamePadButton != nullptr) oldButton = gamePadButton;
-            Resources::currentRenderer->currentCamera->firstMouse = true;
+            Resources::currentApplication->renderer->currentCamera->firstMouse = true;
             Resources::windowManager.mainMenu.isRendering = true;
-            Resources::currentRenderer->currentWindow = &Resources::windowManager.mainMenu;
+            Resources::currentApplication->renderer->currentWindow = &Resources::windowManager.mainMenu;
         }
-        else if (Resources::currentRenderer->currentInput == Resources::inputManager.debugMenuInput)
+        else if (Resources::currentApplication->currentInput == Resources::inputManager.debugMenuInput)
         {
-            glfwSetInputMode(Resources::currentRenderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
-            typeChange[0] = Resources::currentRenderer->currentInput;
-            typeChange[1] = Resources::currentRenderer->defaultInput;
+            typeChange[0] = Resources::currentApplication->currentInput;
+            typeChange[1] = Resources::currentApplication->defaultInput;
             Resources::windowManager.mainMenu.closeChildren();
-            Resources::currentRenderer->currentWindow = nullptr;
+            Resources::currentApplication->renderer->currentWindow = nullptr;
         }
         return true;
     }
 
     bool CAMERA_DEINCREMENT_SENSITIVITY(GLInputLink* gamePadButton)
     {
-        if ((Resources::currentRenderer->currentCamera->currentPanningSpeed - Resources::currentRenderer->currentCamera->defaultPanningSpeed) < Resources::currentRenderer->currentCamera->defaultPanningSpeed)
+        if ((Resources::currentApplication->renderer->currentCamera->currentPanningSpeed - Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed) < Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed)
             return false;
-        Resources::currentRenderer->currentCamera->currentPanningSpeed -= Resources::currentRenderer->currentCamera->defaultPanningSpeed;
+        Resources::currentApplication->renderer->currentCamera->currentPanningSpeed -= Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed;
         return false;
     }
 
     bool CAMERA_INCREMENT_SENSITIVITY(GLInputLink* gamePadButton)
     {
-        if ((Resources::currentRenderer->currentCamera->currentPanningSpeed + Resources::currentRenderer->currentCamera->defaultPanningSpeed) > (Resources::currentRenderer->currentCamera->defaultPanningSpeed * 10))
+        if ((Resources::currentApplication->renderer->currentCamera->currentPanningSpeed + Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed) > (Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed * 10))
             return false;
-        Resources::currentRenderer->currentCamera->currentPanningSpeed += Resources::currentRenderer->currentCamera->defaultPanningSpeed;
+        Resources::currentApplication->renderer->currentCamera->currentPanningSpeed += Resources::currentApplication->renderer->currentCamera->defaultPanningSpeed;
         return false;
     }
     bool CAMERA_DEINCREMENT_SPEED(GLInputLink* gamePadButton)
     {
-        if ((Resources::currentRenderer->currentCamera->currentMovementSpeed - Resources::currentRenderer->currentCamera->defaultMovementSpeed) < Resources::currentRenderer->currentCamera->defaultMovementSpeed)
+        if ((Resources::currentApplication->renderer->currentCamera->currentMovementSpeed - Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed) < Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed)
             return false;
-        Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->currentMovementSpeed - Resources::currentRenderer->currentCamera->defaultMovementSpeed);
+        Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->currentMovementSpeed - Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed);
         return false;
 
     }
     bool CAMERA_INCREMENT_SPEED(GLInputLink* gamePadButton)
     {
-        if ((Resources::currentRenderer->currentCamera->currentMovementSpeed + Resources::currentRenderer->currentCamera->defaultMovementSpeed) > (Resources::currentRenderer->currentCamera->defaultMovementSpeed * 50))
+        if ((Resources::currentApplication->renderer->currentCamera->currentMovementSpeed + Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed) > (Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 50))
             return false;
-        Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->currentMovementSpeed + Resources::currentRenderer->currentCamera->defaultMovementSpeed);
+        Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->currentMovementSpeed + Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed);
         return false;
     }
 
     bool MOVE_FORWARD_KEY()
     {
         float cameraSpeed;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition += cameraSpeed * Resources::currentRenderer->currentCamera->orientation.cameraFront;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition += cameraSpeed * Resources::currentApplication->renderer->currentCamera->orientation.cameraFront;
         return false;
     }
 
     bool MOVE_BACKWARD_KEY()
     {
         float cameraSpeed;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition -= cameraSpeed * Resources::currentRenderer->currentCamera->orientation.cameraFront;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition -= cameraSpeed * Resources::currentApplication->renderer->currentCamera->orientation.cameraFront;
         return false;
     }
 
     bool MOVE_LEFT_KEY () 
     {
         float cameraSpeed;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition -= glm::normalize(glm::cross(Resources::currentRenderer->currentCamera->orientation.cameraFront, Resources::currentRenderer->currentCamera->orientation.cameraUp)) * cameraSpeed;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition -= glm::normalize(glm::cross(Resources::currentApplication->renderer->currentCamera->orientation.cameraFront, Resources::currentApplication->renderer->currentCamera->orientation.cameraUp)) * cameraSpeed;
         return false;
     }
 
     bool MOVE_RIGHT_KEY () 
     {
         float cameraSpeed;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentRenderer->currentCamera->orientation.cameraFront, Resources::currentRenderer->currentCamera->orientation.cameraUp)) * cameraSpeed;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->renderer->currentCamera->orientation.cameraFront, Resources::currentApplication->renderer->currentCamera->orientation.cameraUp)) * cameraSpeed;
         return false;
     }
 
     bool CAMERA_PITCH_UP_KEY () 
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.pitch += Resources::currentRenderer->currentCamera->currentPanningSpeed;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = -89.0f;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch += Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
     }
         
 
     bool CAMERA_PITCH_DOWN_KEY () 
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.pitch -= Resources::currentRenderer->currentCamera->currentPanningSpeed;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = -89.0f;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch -= Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
     }
         
 
     bool CAMERA_YAW_LEFT_KEY () 
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.yaw -= Resources::currentRenderer->currentCamera->currentPanningSpeed;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw -= Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
         return true;
     }
         
 
     bool CAMERA_YAW_RIGHT_KEY () 
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.yaw += Resources::currentRenderer->currentCamera->currentPanningSpeed;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw += Resources::currentApplication->renderer->currentCamera->currentPanningSpeed;
         return true;
     }
    
     bool MOVE_LEFT_RIGHT_STICK (float axis)
     {
-        float cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentRenderer->currentCamera->orientation.cameraFront, Resources::currentRenderer->currentCamera->orientation.cameraUp)) * (cameraSpeed * axis);
+        float cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition += glm::normalize(glm::cross(Resources::currentApplication->renderer->currentCamera->orientation.cameraFront, Resources::currentApplication->renderer->currentCamera->orientation.cameraUp)) * (cameraSpeed * axis);
         return false;
     }
     bool MOVE_UP_DOWN_STICK (float axis)
     {
-        float cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        cameraSpeed = Resources::currentRenderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
-        Resources::currentRenderer->currentCamera->orientation.cameraPosition -= (cameraSpeed * axis) * Resources::currentRenderer->currentCamera->orientation.cameraFront;
+        float cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        cameraSpeed = Resources::currentApplication->renderer->currentCamera->currentMovementSpeed * Resources::deltaTime;
+        Resources::currentApplication->renderer->currentCamera->orientation.cameraPosition -= (cameraSpeed * axis) * Resources::currentApplication->renderer->currentCamera->orientation.cameraFront;
         return false;
     }
 
     bool CAMERA_YAW_STICK (float axis)
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.yaw += axis;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.yaw += axis;
         return true;
     }
         
     bool CAMERA_PITCH_STICK (float axis)
     {
-        Resources::currentRenderer->currentCamera->eulerAngle.pitch -= axis;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch > 89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = 89.0f;
-        if (Resources::currentRenderer->currentCamera->eulerAngle.pitch < -89.0f)
-            Resources::currentRenderer->currentCamera->eulerAngle.pitch = -89.0f;
+        Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch -= axis;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch > 89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = 89.0f;
+        if (Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch < -89.0f)
+            Resources::currentApplication->renderer->currentCamera->eulerAngle.pitch = -89.0f;
         return true;
     }
         
@@ -309,31 +309,31 @@ namespace Default3DFunctions {
     {
         if (axis < -0.15)
         {
-            Resources::currentRenderer->currentCamera->fov = 45.0f;
+            Resources::currentApplication->renderer->currentCamera->fov = 45.0f;
         }
         if (axis < -0.5f)
         {
-            Resources::currentRenderer->currentCamera->fov = 34.0f;
+            Resources::currentApplication->renderer->currentCamera->fov = 34.0f;
         }
         else if (axis < 0.0f)
         {
-            Resources::currentRenderer->currentCamera->fov = 23.0f;
+            Resources::currentApplication->renderer->currentCamera->fov = 23.0f;
         }
         else if (axis < 0.5f)
         {
-            Resources::currentRenderer->currentCamera->fov = 12.0f;
+            Resources::currentApplication->renderer->currentCamera->fov = 12.0f;
         }
         else if (axis < 0.75f)
         {
-            Resources::currentRenderer->currentCamera->fov = 6.5f;
+            Resources::currentApplication->renderer->currentCamera->fov = 6.5f;
         }
         else if (axis < 0.875f)
         {
-            Resources::currentRenderer->currentCamera->fov = 3.75f;
+            Resources::currentApplication->renderer->currentCamera->fov = 3.75f;
         }
         else
         {
-            Resources::currentRenderer->currentCamera->fov = 1.0f;
+            Resources::currentApplication->renderer->currentCamera->fov = 1.0f;
         }
     }
 
@@ -341,31 +341,31 @@ namespace Default3DFunctions {
     {
         if (axis < -0.15)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed);
         }
         if (axis < -0.5f)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 3.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 3.0f);
         }
         else if (axis < 0.0f)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 5.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 5.0f);
         }
         else if (axis < 0.5f)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 7.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 7.0f);
         }
         else if (axis < 0.75f)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 8.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 8.0f);
         }
         else if (axis < 0.875f)
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 9.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 9.0f);
         }
         else
         {
-            Resources::currentRenderer->currentCamera->setCurrentCameraSpeed(Resources::currentRenderer->currentCamera->defaultMovementSpeed * 10.0f);
+            Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed * 10.0f);
         }
     }
 
