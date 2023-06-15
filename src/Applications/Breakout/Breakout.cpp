@@ -12,14 +12,14 @@ void BreakoutStart()
 {
 	// Initialize GLFW context, Meshes, Shaders, and Textures
     initializeRenderer();
-    Resources::currentApplication->defaultInput = Resources::inputManager.default3DInput;
+    Resources::currentApplication->defaultInput = Resources::inputManager.default2DInput;
     Resources::currentApplication->currentInput = Resources::currentApplication->defaultInput;
 
 	Orientation orientation2{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
 							  glm::vec3(0.0f, 0.0f, -0.0f),
 							  glm::vec3(200.0f, 200.0f, 0.5f) };
 	ShapeRenderer renderer2{ ShapeRenderer(orientation2,
-		Resources::meshManager.cubeMesh,
+		Resources::meshManager.quadMesh,
 		Resources::currentApplication->renderer->defaultShader) };
 	Object object2{ orientation2, &renderer2 };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(object2);
@@ -41,7 +41,7 @@ void initializeRenderer()
     Resources::currentApplication->renderer->init();
     
 	Resources::currentApplication->renderer->currentCamera = new GLCamera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::PERSPECTIVE,
+		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::ORTHOGRAPHIC,
 		glm::vec2(-400.0f, 400.0f), glm::vec2(-300.0f, 300.0f), glm::vec2(-1.0f, 10.0f), 45.0f,
 		(float)Resources::currentApplication->renderer->screenDimension.x / (float)Resources::currentApplication->renderer->screenDimension.y,
 		0.1f);
