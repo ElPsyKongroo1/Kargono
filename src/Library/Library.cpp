@@ -19,6 +19,7 @@ namespace Resources
  *============================================================================================================================================================================================*/
 	
 	Application* currentApplication{ nullptr };
+	GameApplication* currentGame{ nullptr };
 
 	ApplicationManager applicationManager = ApplicationManager();
 	RendererStateManager rendererManager = RendererStateManager();

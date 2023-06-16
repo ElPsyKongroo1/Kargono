@@ -60,6 +60,7 @@ public:
 	}
 	~Object() 
 	{
+		delete renderer;
 		renderer = nullptr;
 	}
 

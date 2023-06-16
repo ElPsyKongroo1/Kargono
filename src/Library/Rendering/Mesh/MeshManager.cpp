@@ -12,6 +12,7 @@
 void MeshManager::CreateMeshes()
 {
     std::vector<unsigned int> indices {std::vector<unsigned int>()};
+    std::vector<Texture*> textures {std::vector<Texture*>()};
     std::vector<Vertex> vertices{
             Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)),
             Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)),
@@ -55,7 +56,11 @@ void MeshManager::CreateMeshes()
             Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)),
             Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f))
     };
-    cubeMesh = new GLMesh(GLMesh::DRAWARRAYS, indices, vertices);
+    textures.push_back(Resources::textureManager.crate);
+    textures.push_back(Resources::textureManager.crateSpec);
+    textures.push_back(Resources::textureManager.smileyFace);
+    textures.push_back(Resources::textureManager.smileyFaceSpec);
+    cubeMesh = new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS);
     vertices =
     {
             Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
@@ -65,7 +70,7 @@ void MeshManager::CreateMeshes()
             Vertex(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)),
             Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f))
     };
-    quadMesh = new GLMesh(GLMesh::DRAWARRAYS, indices, vertices);
+    quadMesh = new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS);
 }
 
 void MeshManager::DestroyMeshes()

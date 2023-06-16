@@ -1,7 +1,8 @@
 #pragma once
 #include "../../Includes.h"
-
 #include "../ApplicationInterface/Application.h"
+#include "../../../Applications/Breakout/Classes/ResourceManager.h"
+#include "../../../Applications/Breakout/Classes/GameObject.h"
 
 class GameApplication : public Application
 {
@@ -15,6 +16,8 @@ class GameApplication : public Application
 public:
     // game state
     GameState State;
+    ResourceManager* resourceManager = nullptr;
+    GameObject* focusedObject = nullptr;
     // constructor/destructor
     GameApplication() {}
     GameApplication(unsigned int width, unsigned int height) : Application(width, height), 

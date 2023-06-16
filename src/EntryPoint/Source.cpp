@@ -48,14 +48,15 @@ int main()
 				break;
 			case 3:
 				// Run Default Application
-				Resources::currentApplication = Resources::applicationManager.default2DApplication;
+				Resources::currentApplication = Resources::applicationManager.breakout;
 				Resources::currentApplication->renderer = new RendererState("Breakout", Version,
 					glm::vec2(Resources::currentApplication->width, Resources::currentApplication->height),
 					glm::vec3(0.0f, 0.0f, 0.0f));
-
+				Resources::currentGame = static_cast<GameApplication*>(Resources::currentApplication);
 				BreakoutStart();
 				delete Resources::currentApplication->renderer;
 				Resources::currentApplication->renderer = nullptr;
+				Resources::currentGame->renderer = nullptr;
 				break;
 			case 4:
 				break;

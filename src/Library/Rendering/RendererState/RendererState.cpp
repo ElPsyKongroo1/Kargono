@@ -15,7 +15,7 @@ RendererState::RendererState(const char* programName, int GLFWVersion[2], glm::v
     this->screenDimension = screenDimension;
     this->backgroundColor = backgroundColor;
 
-    this->objectRenderBuffer = std::vector<Object>();
+    this->objectRenderBuffer = std::vector<Object*>();
     this->lightSourceRenderBuffer = std::vector<LightSource*>();
     this->currentWindow = nullptr;
 }
@@ -29,7 +29,11 @@ RendererState::~RendererState()
     }
     screenDimension = glm::vec3();
     backgroundColor = glm::vec3();
-
+    for (Object* object : objectRenderBuffer) 
+    {
+        delete object;
+        object = nullptr;
+    }
     objectRenderBuffer.clear();
     lightSourceRenderBuffer.clear();
     currentCamera = nullptr;
@@ -50,9 +54,9 @@ void RendererState::init()
 void RendererState::render() 
 {
     PreRendering();
-    for (Object object : objectRenderBuffer)
+    for (Object* object : objectRenderBuffer)
     {
-        object.renderer->render();
+        object->renderer->render();
     }
     WindowRendering();
     PostRendering();

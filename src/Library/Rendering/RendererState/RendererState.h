@@ -40,7 +40,7 @@ public:
 	glm::vec2 screenDimension;
 	glm::vec3 backgroundColor;
 public:
-	std::vector<Object> objectRenderBuffer;
+	std::vector<Object*> objectRenderBuffer;
 	std::vector<LightSource*> lightSourceRenderBuffer;
 	GLCamera* currentCamera;
 	GLMesh* defaultMesh;

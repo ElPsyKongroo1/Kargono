@@ -24,6 +24,7 @@ namespace Resources
 	extern ModelManager modelManager;
 
 	extern Application* currentApplication;
+	extern GameApplication* currentGame;
 
 	extern float currentFrame;
 	extern float deltaTime;

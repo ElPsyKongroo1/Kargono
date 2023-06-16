@@ -46,7 +46,6 @@ public:
 	GLMesh() 
 	{
 	}
-	GLMesh(GLMesh::OUTPUTTYPE outputType, std::vector<unsigned int>& indices, std::vector<Vertex>& vertices);
 	~GLMesh();
 	GLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures, GLMesh::OUTPUTTYPE type)
 	{
