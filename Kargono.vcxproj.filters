@@ -144,6 +144,18 @@
     <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -509,6 +521,18 @@
     <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -582,11 +606,27 @@
     <Image Include="Resources\Default-Resources\Textures\SpecularMap\Metal_Box.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="C:\Users\Charles%27s PC\Desktop\PurpleBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Breakout\Textures\Original\PurpleBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Breakout\Textures\SpecularMap\SpecularBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Breakout\Textures\Original\BlueBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Breakout\Textures\Original\BasePaddle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
     <Text Include="imgui_log.txt" />
     <Text Include="Documentation\ToDO.txt" />
+    <Text Include="Resources\Breakout\Map\Level1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />

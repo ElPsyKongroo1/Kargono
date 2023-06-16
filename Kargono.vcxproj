@@ -164,6 +164,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp" />
     <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
     <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp" />
@@ -294,6 +298,10 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Applications\Breakout\Breakout.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h" />
     <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h" />
     <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h" />
     <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h" />
@@ -362,6 +370,11 @@
     <None Include="src\Library\External_Libraries\imgui\.gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="C:\Users\Charles%27s PC\Desktop\PurpleBlock.png" />
+    <Image Include="Resources\Breakout\Textures\Original\BasePaddle.png" />
+    <Image Include="Resources\Breakout\Textures\Original\BlueBlock.png" />
+    <Image Include="Resources\Breakout\Textures\Original\PurpleBlock.png" />
+    <Image Include="Resources\Breakout\Textures\SpecularMap\SpecularBlock.png" />
     <Image Include="Resources\Default-Resources\Textures\Original\awesomeface.png" />
     <Image Include="Resources\Default-Resources\Textures\Original\Metal_Box.png" />
     <Image Include="Resources\Default-Resources\Textures\SpecularMap\awesomeface.png" />
@@ -374,6 +387,7 @@
   <ItemGroup>
     <Text Include="Documentation\ToDO.txt" />
     <Text Include="imgui_log.txt" />
+    <Text Include="Resources\Breakout\Map\Level1.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
