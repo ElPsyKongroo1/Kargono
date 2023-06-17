@@ -115,9 +115,9 @@ void InputManager::Create3DInput()
     mouseMovement[GLInput::SINGLEKEYPRESS][0].glfwValue = 1;
     mouseMovement[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::CAMERA_YAW_PITCH_MOUSE;
 
-    this->default3DInput = new GLInput(isGamePadClick, isGamePadStick, isGamePadTrigger,
-        isKeyboardHold, isKeyboardClick, isMouseScroll,
-        isMouseMovement, gamePadClick, gamePadStick,
+    this->default3DInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
+        isGamePadStick, isKeyboardClick, isMouseMovement,
+        isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
         mouseScroll, mouseMovement);
     
@@ -209,9 +209,9 @@ void InputManager::Create2DInput()
     mouseScroll[GLInput::SINGLEKEYPRESS][0].glfwValue = 1;
     mouseScroll[GLInput::SINGLEKEYPRESS][0].functionReference = Default2DFunctions::CAMERA_FOV_MOUSE;
 
-    this->default2DInput = new GLInput(isGamePadClick, isGamePadStick, isGamePadTrigger,
-        isKeyboardHold, isKeyboardClick, isMouseScroll,
-        isMouseMovement, gamePadClick, gamePadStick,
+    this->default2DInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
+        isGamePadStick, isKeyboardClick, isMouseMovement,
+        isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
         mouseScroll, mouseMovement);
 
@@ -261,9 +261,9 @@ void InputManager::CreateMenuInput()
 
     // Mouse Movement Initialization
 
-    this->debugMenuInput = new GLInput(isGamePadClick, isGamePadStick, isGamePadTrigger,
-        isKeyboardHold, isKeyboardClick, isMouseScroll,
-        isMouseMovement, gamePadClick, gamePadStick,
+    this->debugMenuInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
+        isGamePadStick, isKeyboardClick, isMouseMovement,
+        isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
         mouseScroll, mouseMovement);
 

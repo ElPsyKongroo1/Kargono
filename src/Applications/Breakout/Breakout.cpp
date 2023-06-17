@@ -31,12 +31,23 @@ void BreakoutStart()
 				  glm::vec3(0.0f, -250.0f, 0.3f),
 				  glm::vec3(60.0f, 60.0f, 0.0f) };
 	ShapeRenderer* renderer = { new ShapeRenderer(orientation,
-		Resources::currentGame->resourceManager->applicationMeshes.at(2),
+		Resources::currentGame->resourceManager->applicationMeshes.at(3),
 		Resources::currentApplication->renderer->defaultShader) };
 	GameObject* paddle{ new GameObject(orientation, renderer) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(paddle);
     Resources::currentGame->focusedObject = paddle;
-    paddle->objectVelocity = 200.0f;
+    paddle->objectSpeed = 200.0f;
+
+    Orientation orientationBall = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+                  glm::vec3(0.0f, -200.0f, 0.0f),
+                  glm::vec3(15.0f, 15.0f, 0.0f) };
+    ShapeRenderer* rendererBall = { new ShapeRenderer(orientation,
+        Resources::currentGame->resourceManager->applicationMeshes.at(2),
+        Resources::currentApplication->renderer->defaultShader) };
+    GameBall* ball{ new GameBall(orientationBall, rendererBall) };
+    Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
+    ball->objectSpeed = 150.0f;
+
 	
 	
 
@@ -44,6 +55,7 @@ void BreakoutStart()
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
+        ball->Move();
 		Resources::currentApplication->renderer->render();
 	}
 
@@ -51,6 +63,9 @@ void BreakoutStart()
     Resources::currentGame->focusedObject = nullptr;
 	delete paddle;
 	paddle = nullptr;
+
+    delete ball;
+    ball = nullptr;
 
     delete Resources::currentApplication->defaultInput;
     Resources::currentApplication->currentInput = nullptr;
@@ -63,12 +78,13 @@ void BreakoutStart()
 	Resources::currentApplication->renderer->close();
 }
 
+
 void initializeRenderer() 
 {
     Resources::currentApplication->renderer->init();
     CreateBreakoutInput();
 	Resources::currentApplication->renderer->currentCamera = new GLCamera(glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::PERSPECTIVE,
+		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::ORTHOGRAPHIC,
 		glm::vec2(-400.0f, 400.0f), glm::vec2(-300.0f, 300.0f), glm::vec2(0.1f, 100.0f), 45.0f,
 		(float)Resources::currentApplication->renderer->screenDimension.x / (float)Resources::currentApplication->renderer->screenDimension.y,
 		0.1f);
@@ -142,11 +158,13 @@ void CreateBreakoutInput()
     mouseScroll[GLInput::SINGLEKEYPRESS][0].glfwValue = 1;
     mouseScroll[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::CAMERA_FOV_MOUSE;
 
-    Resources::currentApplication->defaultInput = new GLInput(isGamePadClick, isGamePadStick, isGamePadTrigger,
-        isKeyboardHold, isKeyboardClick, isMouseScroll,
-        isMouseMovement, gamePadClick, gamePadStick,
-        gamePadTrigger, keyboardHold, keyboardClick,
-        mouseScroll, mouseMovement);
+    
+
+    Resources::currentApplication->defaultInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
+                                                              isGamePadStick, isKeyboardClick, isMouseMovement,
+                                                              isGamePadTrigger, gamePadClick, gamePadStick,
+                                                              gamePadTrigger, keyboardHold, keyboardClick,
+                                                              mouseScroll, mouseMovement);
     Resources::currentApplication->currentInput = Resources::currentApplication->defaultInput;
 
     delete[] gamePadClick;

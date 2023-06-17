@@ -175,12 +175,32 @@ namespace BreakoutInputFunctions
     }
     bool MOVE_RIGHT_2D()
     {
-        Resources::currentGame->focusedObject->orientation.translation.x += Resources::currentGame->focusedObject->objectVelocity * Resources::deltaTime;
+        float maxBorder = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->focusedObject->renderer)->mesh->dimensions.x * Resources::currentGame->focusedObject->orientation.scale.x);
+
+        if (Resources::currentGame->focusedObject->orientation.translation.x >= maxBorder)
+        {
+            Resources::currentGame->focusedObject->orientation.translation.x = maxBorder;
+        }
+        else 
+        {
+            Resources::currentGame->focusedObject->orientation.translation.x += Resources::currentGame->focusedObject->objectSpeed * Resources::deltaTime;
+        }
+       
         return false;
     }
     bool MOVE_LEFT_2D()
     {
-        Resources::currentGame->focusedObject->orientation.translation.x -= Resources::currentGame->focusedObject->objectVelocity * Resources::deltaTime;
+        float minBorder = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->focusedObject->renderer)->mesh->dimensions.x * Resources::currentGame->focusedObject->orientation.scale.x));
+
+        if (Resources::currentGame->focusedObject->orientation.translation.x <= minBorder)
+        {
+            Resources::currentGame->focusedObject->orientation.translation.x = minBorder;
+        }
+        else 
+        {
+            Resources::currentGame->focusedObject->orientation.translation.x -= Resources::currentGame->focusedObject->objectSpeed * Resources::deltaTime;
+        }
+        
         return false;
     }
 

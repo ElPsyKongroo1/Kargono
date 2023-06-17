@@ -39,6 +39,7 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture*> textures;
+	glm::vec3 dimensions;
 	GLuint vao;
 	GLuint vbos[2];
 	OUTPUTTYPE output;
@@ -47,12 +48,13 @@ public:
 	{
 	}
 	~GLMesh();
-	GLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures, GLMesh::OUTPUTTYPE type)
+	GLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures, GLMesh::OUTPUTTYPE type, glm::vec3& dimensions)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
 		this->output = type;
+		this->dimensions = dimensions;
 
 		setupMesh();
 	}
@@ -77,5 +79,6 @@ public:
 	
 private:
 	void CreateCubeMesh(GLMesh& mesh);
+	void CreateSphereMesh();
 	void DestroyMesh(GLMesh& mesh);
 };

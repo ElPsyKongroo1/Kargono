@@ -100,8 +100,9 @@ GLMesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
             aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
+    glm::vec3 dimensions = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    GLMesh* outputMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWELEMENTS) };
+    GLMesh* outputMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWELEMENTS, dimensions) };
 
     return outputMesh;
 }

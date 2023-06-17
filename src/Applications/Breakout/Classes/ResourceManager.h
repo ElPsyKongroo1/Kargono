@@ -9,6 +9,7 @@ public:
 	std::vector<Texture*> applicationTextures;
 	std::vector<GLShader*> applicationShaders;
 	std::vector<GLMesh*> applicationMeshes;
+	float dimensionConversionFactor = 0.5;
 public:
 	ResourceManager() : applicationTextures{std::vector<Texture*>()}, 
 					    applicationShaders{ std::vector<GLShader*>() },
