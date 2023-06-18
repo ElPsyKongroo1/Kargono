@@ -178,7 +178,7 @@ void CreateBreakoutInput()
 
 void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks) 
 {
-    for (GameBrick* brick : bricks)
+    /*for (GameBrick* brick : bricks)*/
    
     
 }
