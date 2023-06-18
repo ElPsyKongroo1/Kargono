@@ -39,7 +39,6 @@ void GameLevel::init(int cameraViewWidth, int cameraViewHeight)
 		{
 			if (initMap.at((i * levelWidth) + j) == 0) 
 			{
-				currentMap.push_back(nullptr);
 				continue;
 			}
 			xLocation = xInitial + (j * (unitWidth + xSpace));
@@ -50,7 +49,22 @@ void GameLevel::init(int cameraViewWidth, int cameraViewHeight)
 			renderer2 = { new ShapeRenderer(orientation2,
 				Resources::currentGame->resourceManager->applicationMeshes.at(initMap.at((i * levelWidth) + j) - 1),
 				Resources::currentApplication->renderer->defaultShader) };
-			currentMap.push_back(new GameObject(orientation2, renderer2));
+			glm::ivec2 mapLocation{glm::ivec2(j, i)};
+			GameBrick* brick{ new GameBrick(orientation2, renderer2, mapLocation ) };
+			currentMapBricks.push_back(brick);
 		}
 	}
+}
+
+void GameLevel::RemoveBrick(GameBrick* brick) 
+{
+	if (brick)
+	{
+		std::vector<Object*>* outputBuffer = &Resources::currentApplication->renderer->objectRenderBuffer;
+		remove(currentMapBricks.begin(), currentMapBricks.end(), brick);
+		remove(outputBuffer->begin(), outputBuffer->end(), brick);
+		delete brick;
+		brick = nullptr;
+	}
+
 }

@@ -9,6 +9,11 @@
 //			((baseDimensions.z / Resources::currentGame->resourceManager->dimensionConversionFactor) * orientation.scale.z));
 //	}
 
+void GameBrick::remove() 
+{
+
+}
+
 void GameBall::Move()
 {
 	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * objectSpeed * Resources::deltaTime),

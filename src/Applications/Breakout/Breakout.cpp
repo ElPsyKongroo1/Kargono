@@ -21,7 +21,7 @@ void BreakoutStart()
 	Resources::currentGame->resourceManager->initializeResources();
 	GameLevel currentLevel{ GameLevel(25, 18) };
 	currentLevel.Load("Resources/Breakout/Map/Level1.txt");
-	for (GameObject* object : currentLevel.currentMap)
+	for (GameBrick* object : currentLevel.currentMapBricks)
 	{
 		if (!object) { continue; }
 		Resources::currentApplication->renderer->objectRenderBuffer.push_back(object);
@@ -33,7 +33,7 @@ void BreakoutStart()
 	ShapeRenderer* renderer = { new ShapeRenderer(orientation,
 		Resources::currentGame->resourceManager->applicationMeshes.at(3),
 		Resources::currentApplication->renderer->defaultShader) };
-	GameObject* paddle{ new GameObject(orientation, renderer) };
+	GamePaddle* paddle{ new GamePaddle(orientation, renderer) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(paddle);
     Resources::currentGame->focusedObject = paddle;
     paddle->objectSpeed = 200.0f;
@@ -48,7 +48,7 @@ void BreakoutStart()
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
     ball->objectSpeed = 150.0f;
 
-	
+    //currentLevel.RemoveBrick(currentLevel.currentMapBricks.at(0));
 	
 
 
@@ -85,7 +85,7 @@ void initializeRenderer()
     CreateBreakoutInput();
 	Resources::currentApplication->renderer->currentCamera = new GLCamera(glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f),
 		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::ORTHOGRAPHIC,
-		glm::vec2(-400.0f, 400.0f), glm::vec2(-300.0f, 300.0f), glm::vec2(0.1f, 100.0f), 45.0f,
+		glm::vec2(-400.0f, 400.0f), glm::vec2(-300.0f, 300.0f), glm::vec2(0.1f, 300.0f), 45.0f,
 		(float)Resources::currentApplication->renderer->screenDimension.x / (float)Resources::currentApplication->renderer->screenDimension.y,
 		0.1f);
     
@@ -174,4 +174,11 @@ void CreateBreakoutInput()
     delete[] keyboardClick;
     delete[] mouseScroll;
     delete[] mouseMovement;
+}
+
+void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks) 
+{
+    for (GameBrick* brick : bricks)
+   
+    
 }

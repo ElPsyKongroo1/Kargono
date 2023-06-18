@@ -5,7 +5,7 @@ class GameLevel
 {
 public:
     // level state
-    std::vector<GameObject*> currentMap;
+    std::vector<GameBrick*> currentMapBricks;
     int levelWidth;
     int levelHeight;
     
@@ -14,9 +14,8 @@ public:
     GameLevel(int width, int height) : levelWidth{ width }, levelHeight{height} { }
     // loads level from file
     void Load(const char* file);
-    // render level
-    void Draw();
     // check if the level is completed (all non-solid tiles are destroyed)
+    void RemoveBrick(GameBrick* brick);
     bool IsCompleted();
 private:
     // initialize level from tile data
