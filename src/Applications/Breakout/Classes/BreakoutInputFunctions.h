@@ -12,9 +12,17 @@ namespace BreakoutInputFunctions {
     bool CAMERA_INCREMENT_SENSITIVITY(GLInputLink* gamePadButton);
     bool CAMERA_DEINCREMENT_SPEED(GLInputLink* gamePadButton);
     bool CAMERA_INCREMENT_SPEED(GLInputLink* gamePadButton);
+
     // Keyboard Hold
     bool MOVE_RIGHT_2D();
     bool MOVE_LEFT_2D();
+    //Testing Hold Functions
+    bool INCREMENT_BALL_SPEED();
+    bool DEINCREMENT_BALL_SPEED();
+    bool MOVE_BALL_LEFT();
+    bool MOVE_BALL_RIGHT();
+    bool MOVE_BALL_UP();
+    bool MOVE_BALL_DOWN();
 
     // Joystick
     bool MOVE_LEFT_RIGHT_STICK_2D(float axis);

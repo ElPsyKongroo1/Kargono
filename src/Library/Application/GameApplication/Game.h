@@ -3,6 +3,7 @@
 #include "../ApplicationInterface/Application.h"
 #include "../../../Applications/Breakout/Classes/ResourceManager.h"
 #include "../../../Applications/Breakout/Classes/GameObject.h"
+#include "../../../Applications/Breakout/Classes/GameLevel.h"
 
 class GameApplication : public Application
 {
@@ -17,7 +18,9 @@ public:
     // game state
     GameState State;
     ResourceManager* resourceManager = nullptr;
-    GameObject* focusedObject = nullptr;
+    GameObject* paddle = nullptr;
+    GameBall* ball = nullptr;
+    GameLevel* currentLevel = nullptr;
     // constructor/destructor
     GameApplication() {}
     GameApplication(unsigned int width, unsigned int height) : Application(width, height), 

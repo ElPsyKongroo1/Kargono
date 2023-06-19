@@ -16,6 +16,7 @@ void GameBrick::remove()
 
 void GameBall::Move()
 {
+	if (Resources::deltaTime > 2.0f) { Resources::deltaTime = 0.0f; } // FIXME
 	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * objectSpeed * Resources::deltaTime),
 		orientation.translation.y + (direction.y * objectSpeed * Resources::deltaTime),
 		0.0f);

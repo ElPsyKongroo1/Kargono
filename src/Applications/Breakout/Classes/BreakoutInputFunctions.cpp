@@ -173,32 +173,65 @@ namespace BreakoutInputFunctions
         Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->currentMovementSpeed + Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed);
         return false;
     }
+    bool INCREMENT_BALL_SPEED()
+    {
+        Resources::currentGame->ball->objectSpeed += 300.0f * Resources::deltaTime;
+        
+        return false;
+    }
+    bool DEINCREMENT_BALL_SPEED()
+    {
+        Resources::currentGame->ball->objectSpeed -= 300.0f * Resources::deltaTime;
+        if (Resources::currentGame->ball->objectSpeed < 0.0f) { Resources::currentGame->ball->objectSpeed = 0; }
+        return false;
+    }
+    bool MOVE_BALL_RIGHT() 
+    {
+        Resources::currentGame->ball->orientation.translation.x += Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        return false;
+    }
+    bool MOVE_BALL_LEFT()
+    {
+        Resources::currentGame->ball->orientation.translation.x -= Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        return false;
+    }
+    bool MOVE_BALL_UP()
+    {
+        Resources::currentGame->ball->orientation.translation.y += Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        return false;
+    }
+    bool MOVE_BALL_DOWN()
+    {
+        Resources::currentGame->ball->orientation.translation.y -= Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        return false;
+    }
+
     bool MOVE_RIGHT_2D()
     {
-        float maxBorder = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->focusedObject->renderer)->mesh->dimensions.x * Resources::currentGame->focusedObject->orientation.scale.x);
+        float maxBorder = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->paddle->renderer)->mesh->dimensions.x * Resources::currentGame->paddle->orientation.scale.x);
 
-        if (Resources::currentGame->focusedObject->orientation.translation.x >= maxBorder)
+        if (Resources::currentGame->paddle->orientation.translation.x >= maxBorder)
         {
-            Resources::currentGame->focusedObject->orientation.translation.x = maxBorder;
+            Resources::currentGame->paddle->orientation.translation.x = maxBorder;
         }
         else 
         {
-            Resources::currentGame->focusedObject->orientation.translation.x += Resources::currentGame->focusedObject->objectSpeed * Resources::deltaTime;
+            Resources::currentGame->paddle->orientation.translation.x += Resources::currentGame->paddle->objectSpeed * Resources::deltaTime;
         }
        
         return false;
     }
     bool MOVE_LEFT_2D()
     {
-        float minBorder = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->focusedObject->renderer)->mesh->dimensions.x * Resources::currentGame->focusedObject->orientation.scale.x));
+        float minBorder = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->paddle->renderer)->mesh->dimensions.x * Resources::currentGame->paddle->orientation.scale.x));
 
-        if (Resources::currentGame->focusedObject->orientation.translation.x <= minBorder)
+        if (Resources::currentGame->paddle->orientation.translation.x <= minBorder)
         {
-            Resources::currentGame->focusedObject->orientation.translation.x = minBorder;
+            Resources::currentGame->paddle->orientation.translation.x = minBorder;
         }
         else 
         {
-            Resources::currentGame->focusedObject->orientation.translation.x -= Resources::currentGame->focusedObject->objectSpeed * Resources::deltaTime;
+            Resources::currentGame->paddle->orientation.translation.x -= Resources::currentGame->paddle->objectSpeed * Resources::deltaTime;
         }
         
         return false;

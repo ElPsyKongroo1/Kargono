@@ -44,13 +44,14 @@ void GameLevel::init(int cameraViewWidth, int cameraViewHeight)
 			xLocation = xInitial + (j * (unitWidth + xSpace));
 			yLocation = yInitial - (i * (unitHeight + ySpace));
 			orientation2 = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-						  glm::vec3(xLocation, yLocation, -0.5f),
+						  glm::vec3(xLocation, yLocation, 0.0f),
 						  glm::vec3(30.0f, 30.0f, 0.5f) };
 			renderer2 = { new ShapeRenderer(orientation2,
 				Resources::currentGame->resourceManager->applicationMeshes.at(initMap.at((i * levelWidth) + j) - 1),
 				Resources::currentApplication->renderer->defaultShader) };
 			glm::ivec2 mapLocation{glm::ivec2(j, i)};
 			GameBrick* brick{ new GameBrick(orientation2, renderer2, mapLocation ) };
+			
 			currentMapBricks.push_back(brick);
 		}
 	}

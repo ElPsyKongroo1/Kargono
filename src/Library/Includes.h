@@ -5,6 +5,7 @@
 #include <string>
 #include <cassert>
 #include <array>
+#include <limits>
 
 #include "External_Libraries/imgui/imgui.h"
 #include "External_Libraries/imgui/imgui_impl_glfw.h"
