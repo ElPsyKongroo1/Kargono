@@ -17,8 +17,8 @@ void GameBrick::remove()
 void GameBall::Move()
 {
 	if (Resources::deltaTime > 2.0f) { Resources::deltaTime = 0.0f; } // FIXME
-	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * objectSpeed * Resources::deltaTime),
-		orientation.translation.y + (direction.y * objectSpeed * Resources::deltaTime),
+	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * currentSpeed * Resources::deltaTime),
+		orientation.translation.y + (direction.y * currentSpeed * Resources::deltaTime),
 		0.0f);
 	float maxBorderX = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(renderer)->mesh->dimensions.x * orientation.scale.x);
 	float minBorderX = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(renderer)->mesh->dimensions.x * orientation.scale.x));
@@ -28,16 +28,19 @@ void GameBall::Move()
 	{
 		orientation.translation.x = maxBorderX;
 		direction.x = -direction.x;
+		direction = glm::normalize(glm::vec3(direction.x, direction.y * 1.25f, 0.0f));
 	}
 	if (orientation.translation.x <= minBorderX)
 	{
 		orientation.translation.x = minBorderX;
 		direction.x = -direction.x;
+		direction = glm::normalize(glm::vec3(direction.x, direction.y * 1.25f, 0.0f));
 	}
 	if (orientation.translation.y <= minBorderY)
 	{
 		orientation.translation.y = minBorderY;
 		direction.y = -direction.y;
+		
 	}
 	if (orientation.translation.y >= maxBorderY)
 	{

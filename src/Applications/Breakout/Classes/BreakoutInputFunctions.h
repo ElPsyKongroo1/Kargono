@@ -12,6 +12,16 @@ namespace BreakoutInputFunctions {
     bool CAMERA_INCREMENT_SENSITIVITY(GLInputLink* gamePadButton);
     bool CAMERA_DEINCREMENT_SPEED(GLInputLink* gamePadButton);
     bool CAMERA_INCREMENT_SPEED(GLInputLink* gamePadButton);
+    bool INCREASE_PADDLE_SPEED_TOGGLE(GLInputLink* gamePadButton);
+    bool MODIFY_PADDLE_DIRECTION_LEFT(GLInputLink* gamePadButton);
+    bool MODIFY_PADDLE_DIRECTION_RIGHT(GLInputLink* gamePadButton);
+
+
+
+    
+    // Button/Key Release Click
+    bool RESET_PADDLE_SPEED(GLInputLink* gamePadButton);
+    bool RESET_PADDLE_DIRECTION(GLInputLink* gamePadButton);
 
     // Keyboard Hold
     bool MOVE_RIGHT_2D();

@@ -173,36 +173,69 @@ namespace BreakoutInputFunctions
         Resources::currentApplication->renderer->currentCamera->setCurrentCameraSpeed(Resources::currentApplication->renderer->currentCamera->currentMovementSpeed + Resources::currentApplication->renderer->currentCamera->defaultMovementSpeed);
         return false;
     }
+    bool INCREASE_PADDLE_SPEED_TOGGLE(GLInputLink* gamePadButton) 
+    {
+        Resources::currentGame->paddle->currentSpeed = 1.7f * Resources::currentGame->paddle->baseSpeed;
+        std::cout << "Increase Paddle Speed Entered\n";
+        return false;
+    }
+    bool MODIFY_PADDLE_DIRECTION_LEFT(GLInputLink* gamePadButton) 
+    {
+        Resources::currentGame->paddle->direction = glm::vec3(-0.8f, 0.2f, 0.0f);
+        return false;
+    }
+    bool MODIFY_PADDLE_DIRECTION_RIGHT(GLInputLink* gamePadButton)
+    {
+        Resources::currentGame->paddle->direction = glm::vec3(0.8f, 0.2f, 0.0f);
+        return false;
+    }
+    
+
+
+    bool RESET_PADDLE_DIRECTION(GLInputLink* gamePadButton) 
+    {
+        Resources::currentGame->paddle->direction = glm::vec3(0.0f, 0.0f, 0.0f);
+        return false;
+    }
+    bool RESET_PADDLE_SPEED(GLInputLink* gamePadButton)
+    {
+        Resources::currentGame->paddle->currentSpeed = Resources::currentGame->paddle->baseSpeed;
+        std::cout << "Reset Paddle Speed Entered\n";
+        return false;
+    }
+
+
+
     bool INCREMENT_BALL_SPEED()
     {
-        Resources::currentGame->ball->objectSpeed += 300.0f * Resources::deltaTime;
+        Resources::currentGame->ball->currentSpeed += 300.0f * Resources::deltaTime;
         
         return false;
     }
     bool DEINCREMENT_BALL_SPEED()
     {
-        Resources::currentGame->ball->objectSpeed -= 300.0f * Resources::deltaTime;
-        if (Resources::currentGame->ball->objectSpeed < 0.0f) { Resources::currentGame->ball->objectSpeed = 0; }
+        Resources::currentGame->ball->currentSpeed -= 300.0f * Resources::deltaTime;
+        if (Resources::currentGame->ball->currentSpeed < 0.0f) { Resources::currentGame->ball->currentSpeed = 0; }
         return false;
     }
     bool MOVE_BALL_RIGHT() 
     {
-        Resources::currentGame->ball->orientation.translation.x += Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        Resources::currentGame->ball->orientation.translation.x += Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_LEFT()
     {
-        Resources::currentGame->ball->orientation.translation.x -= Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        Resources::currentGame->ball->orientation.translation.x -= Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_UP()
     {
-        Resources::currentGame->ball->orientation.translation.y += Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        Resources::currentGame->ball->orientation.translation.y += Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_DOWN()
     {
-        Resources::currentGame->ball->orientation.translation.y -= Resources::currentGame->ball->objectSpeed * Resources::deltaTime;
+        Resources::currentGame->ball->orientation.translation.y -= Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
         return false;
     }
 
@@ -216,7 +249,7 @@ namespace BreakoutInputFunctions
         }
         else 
         {
-            Resources::currentGame->paddle->orientation.translation.x += Resources::currentGame->paddle->objectSpeed * Resources::deltaTime;
+            Resources::currentGame->paddle->orientation.translation.x += Resources::currentGame->paddle->currentSpeed * Resources::deltaTime;
         }
        
         return false;
@@ -231,7 +264,7 @@ namespace BreakoutInputFunctions
         }
         else 
         {
-            Resources::currentGame->paddle->orientation.translation.x -= Resources::currentGame->paddle->objectSpeed * Resources::deltaTime;
+            Resources::currentGame->paddle->orientation.translation.x -= Resources::currentGame->paddle->currentSpeed * Resources::deltaTime;
         }
         
         return false;

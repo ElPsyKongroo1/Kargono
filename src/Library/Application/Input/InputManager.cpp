@@ -48,6 +48,7 @@ void InputManager::Create3DInput()
     auto keyboardClick{ new GLClickLink[2][128] };
     auto mouseScroll{ new GLScrollLink[2][2] };
     auto mouseMovement{ new GLMouseMovementLink[2][2] };
+    auto keyboardRelease{ new GLClickLink[2][128] };
 
     
 
@@ -115,11 +116,12 @@ void InputManager::Create3DInput()
     mouseMovement[GLInput::SINGLEKEYPRESS][0].glfwValue = 1;
     mouseMovement[GLInput::SINGLEKEYPRESS][0].functionReference = Default3DFunctions::CAMERA_YAW_PITCH_MOUSE;
 
+
     this->default3DInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
         isGamePadStick, isKeyboardClick, isMouseMovement,
         isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
-        mouseScroll, mouseMovement);
+        mouseScroll, mouseMovement, keyboardRelease);
     
     delete[] gamePadClick;
     delete[] gamePadStick;
@@ -128,6 +130,7 @@ void InputManager::Create3DInput()
     delete[] keyboardClick;
     delete[] mouseScroll;
     delete[] mouseMovement;
+    delete[] keyboardRelease;
 
     
 }
@@ -150,6 +153,8 @@ void InputManager::Create2DInput()
     auto keyboardClick{ new GLClickLink[2][128] };
     auto mouseScroll{ new GLScrollLink[2][2] };
     auto mouseMovement{ new GLMouseMovementLink[2][2] };
+    auto keyboardRelease{ new GLClickLink[2][128] };
+
 
     // GamePad Initialization
     gamePadClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_BUTTON_Y;
@@ -213,7 +218,7 @@ void InputManager::Create2DInput()
         isGamePadStick, isKeyboardClick, isMouseMovement,
         isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
-        mouseScroll, mouseMovement);
+        mouseScroll, mouseMovement, keyboardRelease);
 
     delete[] gamePadClick;
     delete[] gamePadStick;
@@ -222,6 +227,7 @@ void InputManager::Create2DInput()
     delete[] keyboardClick;
     delete[] mouseScroll;
     delete[] mouseMovement;
+    delete[] keyboardRelease;
 }
 
 void InputManager::CreateMenuInput()
@@ -242,6 +248,7 @@ void InputManager::CreateMenuInput()
     auto keyboardClick{ new GLClickLink[2][128] };
     auto mouseScroll{ new GLScrollLink[2][2] };
     auto mouseMovement{ new GLMouseMovementLink[2][2] };
+    auto keyboardRelease{ new GLClickLink[2][128] };
 
 
     // GamePad Initialization
@@ -265,7 +272,7 @@ void InputManager::CreateMenuInput()
         isGamePadStick, isKeyboardClick, isMouseMovement,
         isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
-        mouseScroll, mouseMovement);
+        mouseScroll, mouseMovement, keyboardRelease);
 
 
     delete[] gamePadClick;
@@ -275,6 +282,7 @@ void InputManager::CreateMenuInput()
     delete[] keyboardClick;
     delete[] mouseScroll;
     delete[] mouseMovement;
+    delete[] keyboardRelease;
 }
 
  /*============================================================================================================================================================================================

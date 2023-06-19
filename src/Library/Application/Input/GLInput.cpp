@@ -17,7 +17,8 @@ GLInput::GLInput(bool valPadClick, bool valKeyHold, bool valMouseScroll,
     bool valPadTrigger, GLClickLink gamePadClick[2][128],
     GLJoyStickLink gamePadStick[2][32], GLTriggerLink gamePadTrigger[2][8],
     GLHoldLink keyboardHold[2][128], GLClickLink keyboardClick[2][128],
-    GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2])
+    GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2],
+    GLClickLink keyboardRelease[2][128])
 {
 
     // Toggle Device Input
@@ -95,6 +96,18 @@ GLInput::GLInput(bool valPadClick, bool valKeyHold, bool valMouseScroll,
     if (keyboardClickSize[GLInput::SINGLEKEYPRESS] > 0)
     {
         std::copy(keyboardClick[0], (keyboardClick[0] + keyboardClickSize[GLInput::SINGLEKEYPRESS]), this->keyboardClick[0]);
+    }
+    // Keyboard Release Initialization
+    for (int i = 0; i < sizeof(keyboardRelease[GLInput::SINGLEKEYPRESS]) / sizeof(GLClickLink); i++)
+    {
+        if (keyboardRelease[GLInput::SINGLEKEYPRESS][i].glfwValue != -1)
+        {
+            this->keyboardReleaseSize[GLInput::SINGLEKEYPRESS]++;
+        }
+    }
+    if (keyboardReleaseSize[GLInput::SINGLEKEYPRESS] > 0)
+    {
+        std::copy(keyboardRelease[0], (keyboardRelease[0] + keyboardReleaseSize[GLInput::SINGLEKEYPRESS]), this->keyboardRelease[0]);
     }
     // Mouse Scroll Initialization
     for (int i = 0; i < sizeof(mouseScroll[GLInput::SINGLEKEYPRESS]) / sizeof(GLScrollLink); i++)
@@ -220,6 +233,10 @@ void GLInput::processKeyboardClick(GLFWwindow* window, int key, int scancode, in
         if (key == keyboardClick[0][i].glfwValue && action == GLFW_PRESS)
         {
             keyboardClick[0][i].functionReference(nullptr);
+        }
+        else if (key == keyboardRelease[0][i].glfwValue && action == GLFW_RELEASE) 
+        {
+            keyboardRelease[0][i].functionReference(nullptr);
         }
     }
     if (updateType)

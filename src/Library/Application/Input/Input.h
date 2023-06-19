@@ -98,7 +98,8 @@ public:
 		bool valPadTrigger, GLClickLink gamePadClick[2][128],
 		GLJoyStickLink gamePadStick[2][32], GLTriggerLink gamePadTrigger[2][8],
 		GLHoldLink keyboardHold[2][128], GLClickLink keyboardClick[2][128],
-		GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2]);
+		GLScrollLink mouseScroll[2][2], GLMouseMovementLink mouseMovement[2][2], 
+		GLClickLink keyboardRelease[2][128]);
 	~GLInput();
 public:
 	enum MaskNumber 
@@ -116,6 +117,8 @@ public:
 	int keyboardHoldSize[2] = { 0, 0 };
 	GLClickLink keyboardClick[2][128];
 	int keyboardClickSize[2] = { 0, 0 };
+	GLClickLink keyboardRelease[2][128];
+	int keyboardReleaseSize[2] = { 0, 0 };
 	GLScrollLink mouseScroll[2][2];
 	int mouseScrollSize[2] = { 0, 0 };
 	GLMouseMovementLink mouseMovement[2][2];
