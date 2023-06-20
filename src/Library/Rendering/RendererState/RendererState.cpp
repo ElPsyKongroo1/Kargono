@@ -149,6 +149,8 @@ void RendererState::PreRendering()
     Resources::framesPerSecond++;
     if (Resources::framesCounter > 1.0f)
     {
+        Resources::runtime++;
+        std::cout << Resources::runtime << " Runtime" << std::endl; //FIXME
         Resources::framesCounter -= 1.0f;
         //std::cout << Resources::framesPerSecond << "FPS" << std::endl; //FIXME
         Resources::framesPerSecond = 0;

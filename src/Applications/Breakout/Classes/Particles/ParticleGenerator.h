@@ -9,16 +9,18 @@ public:
     std::vector<GameParticle*> allParticles;
     float maxNumParticles;
     int numParticlesPerSecond;
+    long long  secondsPassed;
     
 private:
     glm::vec3* translation;
     bool hasOwner;
 public:
-    GameParticle particleTemplate;
+
 public:
-    ParticleGenerator(float maxNumParticles, int numParticlesPerSecond, GameParticle& particle) : 
-        maxNumParticles{ maxNumParticles }, numParticlesPerSecond{ numParticlesPerSecond }, particleTemplate{particle},
-        translation{ new glm::vec3(0.0f, 0.0f, 0.0f) }, hasOwner{ false }, allParticles{std::vector<GameParticle*>()}
+    ParticleGenerator(float maxNumParticles, int numParticlesPerSecond) : 
+        maxNumParticles{ maxNumParticles }, numParticlesPerSecond{ numParticlesPerSecond },
+        translation{ new glm::vec3(0.0f, 0.0f, 0.0f) }, hasOwner{ false }, allParticles{std::vector<GameParticle*>()},
+        secondsPassed{0}
 
     {
         

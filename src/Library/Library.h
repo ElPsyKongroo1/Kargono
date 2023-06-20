@@ -31,4 +31,5 @@ namespace Resources
 	extern float lastFrame;
 	extern int framesPerSecond;
 	extern float framesCounter;
+	extern long long runtime;
 }

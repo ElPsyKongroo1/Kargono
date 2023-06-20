@@ -10,6 +10,7 @@
 #include "Classes/GameObject.h"
 #include "Classes/GameLevel.h"
 #include "Classes/InputFunctions/BreakoutActiveFunctions.h"
+#include "Classes/Particles/ParticleGenerator.h"
 void initializeRenderer();
 void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level);
 void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level);
@@ -51,9 +52,13 @@ void BreakoutStart()
     Resources::currentGame->ball = ball;
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
 
+    //ParticleGenerator pgenerator{ ParticleGenerator(10, 1) };
+    //pgenerator.setOwner(&ball->orientation.translation);
+
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
+        //pgenerator.spawnParticles();
         if (Resources::currentGame->State == GameApplication::GAME_ACTIVE)
         {
             ball->Move();

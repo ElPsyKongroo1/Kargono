@@ -60,10 +60,18 @@ void GameLevel::init(int cameraViewWidth, int cameraViewHeight)
 void GameLevel::RemoveBrick(GameBrick* brick) 
 {
 	if (brick)
-	{
+	{	
 		std::vector<Object*>* outputBuffer = &Resources::currentApplication->renderer->objectRenderBuffer;
-		remove(currentMapBricks.begin(), currentMapBricks.end(), brick);
-		remove(outputBuffer->begin(), outputBuffer->end(), brick);
+		auto iter = (std::find(outputBuffer->begin(), outputBuffer->end(), brick));
+		if (iter != outputBuffer->end())
+		{
+			outputBuffer->erase(iter);
+		}
+		auto iter_2 = std::find(currentMapBricks.begin(), currentMapBricks.end(), brick);
+		if (iter_2 != currentMapBricks.end())
+		{
+			currentMapBricks.erase(iter_2);
+		}
 		delete brick;
 		brick = nullptr;
 	}

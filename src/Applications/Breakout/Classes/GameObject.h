@@ -27,7 +27,7 @@ class GameParticle : public GameObject
 {
 
 public:
-	GameParticle(Orientation orientation, ShapeRenderer* renderer, glm::ivec2& mapLocation, float baseSpeed) : GameObject(orientation, renderer, baseSpeed)
+	GameParticle(Orientation orientation, ShapeRenderer* renderer, float baseSpeed, float lifeTime) : GameObject(orientation, renderer, baseSpeed), lifeTime{lifeTime}
 	{
 		float Dimension_X = meshDimensions.x * orientation.scale.x;
 		float Dimension_Y = meshDimensions.y * orientation.scale.y;
