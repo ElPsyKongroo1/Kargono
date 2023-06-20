@@ -164,9 +164,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp" />
     <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
@@ -298,9 +300,11 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Applications\Breakout\Breakout.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h" />
     <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h" />
     <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h" />

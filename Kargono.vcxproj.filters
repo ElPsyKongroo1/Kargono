@@ -153,7 +153,13 @@
     <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.cpp">
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -530,7 +536,13 @@
     <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutInputFunctions.h">
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
