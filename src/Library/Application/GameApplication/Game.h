@@ -7,6 +7,7 @@
 
 class GameApplication : public Application
 {
+public:
     enum GameState {
         GAME_ACTIVE,
         GAME_MENU,
@@ -23,8 +24,8 @@ public:
     GameLevel* currentLevel = nullptr;
     // constructor/destructor
     GameApplication() {}
-    GameApplication(unsigned int width, unsigned int height) : Application(width, height), 
-                                                               State{GameApplication::NONE} {}
+    GameApplication(unsigned int width, unsigned int height, GameState state) : Application(width, height), 
+                                                               State{state} {}
     ~GameApplication() 
     {
         State = GameApplication::NONE;

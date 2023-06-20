@@ -1,11 +1,11 @@
 #include "../../../Library/Application/Input/Input.h"
 #include "../../../Library/Library.h"
 #include "../../../Library/Application/Input/MiscFunctions.h"
-#include "BreakoutInputFunctions.h"
-#include "GameObject.h"
+#include "BreakoutActiveFunctions.h"
+#include "../GameObject.h"
 
 
-namespace BreakoutInputFunctions
+namespace BreakoutActiveFunctions
 {
     // Mouse Scroll Wheel
     void CAMERA_FOV_MOUSE(double xoffset, double yoffset)
@@ -137,7 +137,7 @@ namespace BreakoutInputFunctions
             glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
             typeChange[0] = Resources::currentApplication->currentInput;
-            typeChange[1] = Resources::currentApplication->defaultInput;
+            typeChange[1] = Resources::currentApplication->recentInput;
             Resources::windowManager.mainMenu.closeChildren();
             Resources::currentApplication->renderer->currentWindow = nullptr;
         }
@@ -176,7 +176,6 @@ namespace BreakoutInputFunctions
     bool INCREASE_PADDLE_SPEED_TOGGLE(GLInputLink* gamePadButton) 
     {
         Resources::currentGame->paddle->currentSpeed = 1.7f * Resources::currentGame->paddle->baseSpeed;
-        std::cout << "Increase Paddle Speed Entered\n";
         return false;
     }
     bool MODIFY_PADDLE_DIRECTION_LEFT(GLInputLink* gamePadButton) 
@@ -200,7 +199,6 @@ namespace BreakoutInputFunctions
     bool RESET_PADDLE_SPEED(GLInputLink* gamePadButton)
     {
         Resources::currentGame->paddle->currentSpeed = Resources::currentGame->paddle->baseSpeed;
-        std::cout << "Reset Paddle Speed Entered\n";
         return false;
     }
 

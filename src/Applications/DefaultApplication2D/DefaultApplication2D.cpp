@@ -17,8 +17,8 @@ int Application2D()
 	// Initialize GLFW context, Meshes, Shaders, and Textures
 
 	Resources::currentApplication->renderer->init();
-	Resources::currentApplication->defaultInput = Resources::inputManager.default2DInput;
-	Resources::currentApplication->currentInput = Resources::currentApplication->defaultInput;
+	Resources::currentApplication->recentInput = Resources::inputManager.default2DInput;
+	Resources::currentApplication->currentInput = Resources::currentApplication->recentInput;
 	Resources::currentApplication->renderer->setDefaultValues(Resources::modelManager.simpleBackpack,
 		Resources::meshManager.cubeMesh,
 		Resources::shaderManager.lightingShader,

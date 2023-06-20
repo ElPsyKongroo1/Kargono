@@ -24,4 +24,5 @@ void updateInputType()
             }
         }
     }
+    Resources::currentApplication->recentInput = typeChange[0];
 }

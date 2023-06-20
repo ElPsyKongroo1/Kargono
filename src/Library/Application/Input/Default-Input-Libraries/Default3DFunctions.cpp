@@ -169,7 +169,7 @@ namespace Default3DFunctions {
             glfwSetInputMode(Resources::currentApplication->renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             updateType = true;
             typeChange[0] = Resources::currentApplication->currentInput;
-            typeChange[1] = Resources::currentApplication->defaultInput;
+            typeChange[1] = Resources::currentApplication->recentInput;
             Resources::windowManager.mainMenu.closeChildren();
             Resources::currentApplication->renderer->currentWindow = nullptr;
         }

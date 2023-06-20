@@ -1,5 +1,5 @@
 #pragma once
-namespace BreakoutInputFunctions {
+namespace BreakoutActiveFunctions {
     // Scroll Wheel
     void CAMERA_FOV_MOUSE(double xoffset, double yoffset);
     // Button/Key Click

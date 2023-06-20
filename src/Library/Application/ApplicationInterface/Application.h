@@ -11,7 +11,7 @@ protected:
 public:
     RendererState* renderer;
     GLInput* currentInput;
-    GLInput* defaultInput;
+    GLInput* recentInput;
 
     unsigned int width, height;
     // constructor/destructor

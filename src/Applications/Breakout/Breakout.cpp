@@ -9,9 +9,8 @@
 #include "Classes/ResourceManager.h"
 #include "Classes/GameObject.h"
 #include "Classes/GameLevel.h"
-#include "Classes/BreakoutInputFunctions.h"
+#include "Classes/InputFunctions/BreakoutActiveFunctions.h"
 void initializeRenderer();
-void CreateBreakoutInput();
 void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level);
 void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level);
 
@@ -21,6 +20,8 @@ void BreakoutStart()
 	initializeRenderer();
 	Resources::currentGame->resourceManager = new ResourceManager();
 	Resources::currentGame->resourceManager->initializeResources();
+    Resources::currentGame->recentInput = Resources::currentGame->resourceManager->applicationInputs.at(1);
+    Resources::currentGame->currentInput = Resources::currentGame->recentInput;
 	GameLevel* currentLevel{ new GameLevel(25, 18) };
 	currentLevel->Load("Resources/Breakout/Map/Level1.txt");
     Resources::currentGame->currentLevel = currentLevel;
@@ -31,8 +32,8 @@ void BreakoutStart()
 	}
 
 	Orientation orientation = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-				  glm::vec3(0.0f, -250.0f, 0.0f),
-				  glm::vec3(60.0f, 60.0f, 0.0f) };
+				  glm::vec3(0.0f, -260.0f, 0.0f),
+				  glm::vec3(120.0f, 120.0f, 0.0f) };
 	ShapeRenderer* renderer = { new ShapeRenderer(orientation,
 		Resources::currentGame->resourceManager->applicationMeshes.at(3),
 		Resources::currentApplication->renderer->defaultShader) };
@@ -41,7 +42,7 @@ void BreakoutStart()
     Resources::currentGame->paddle = paddle;
 
     Orientation orientationBall = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-                  glm::vec3(0.0f, 0.0f, 0.0f),
+                  glm::vec3(0.0f, -150.0f, 0.0f),
                   glm::vec3(15.0f, 15.0f, 0.0f) };
     ShapeRenderer* rendererBall = { new ShapeRenderer(orientation,
         Resources::currentGame->resourceManager->applicationMeshes.at(2),
@@ -53,9 +54,13 @@ void BreakoutStart()
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
-        ball->Move();
-        processBrickCollisions(ball, currentLevel->currentMapBricks, currentLevel);
-        processPaddleCollision(ball, paddle, currentLevel);
+        if (Resources::currentGame->State == GameApplication::GAME_ACTIVE)
+        {
+            ball->Move();
+            processBrickCollisions(ball, currentLevel->currentMapBricks, currentLevel);
+            processPaddleCollision(ball, paddle, currentLevel);
+        }
+        
 		Resources::currentApplication->renderer->render();
 
 	}
@@ -71,9 +76,9 @@ void BreakoutStart()
     delete currentLevel;
     currentLevel = nullptr;
 
-    delete Resources::currentApplication->defaultInput;
+    Resources::currentGame->State = GameApplication::GAME_MENU;
     Resources::currentApplication->currentInput = nullptr;
-    Resources::currentApplication->defaultInput = nullptr;
+    Resources::currentApplication->recentInput = nullptr;
 
 	delete Resources::currentGame->resourceManager;
 	Resources::currentGame->resourceManager = nullptr;
@@ -86,7 +91,6 @@ void BreakoutStart()
 void initializeRenderer() 
 {
     Resources::currentApplication->renderer->init();
-    CreateBreakoutInput();
 	Resources::currentApplication->renderer->currentCamera = new GLCamera(glm::vec3(0.0f, 0.0f, 50.0f), glm::normalize(glm::vec3(0.0f, 0.0, -1.0f)), glm::vec3(0.0f, 1.0f, 0.0f),
 		glm::vec3(-90.0f, 0.0f, 0.0f), 3.0f, GLCamera::ORTHOGRAPHIC,
 		glm::vec2(-400.0f, 400.0f), glm::vec2(-300.0f, 300.0f), glm::vec2(0.1f, 100.0f), 45.0f,
@@ -106,115 +110,12 @@ void initializeRenderer()
 		Resources::currentApplication->renderer->currentCamera);
 	
 }
-
-void CreateBreakoutInput()
+void calculateSlope() 
 {
-    // Toggle Device Input
-    bool isGamePadClick = false;
-    bool isGamePadStick = false;
-    bool isGamePadTrigger = false;
-    bool isKeyboardHold = true;
-    bool isKeyboardClick = true;
-    bool isMouseScroll = true;
-    bool isMouseMovement = true;
-
-    auto gamePadClick{ new GLClickLink[2][128] };
-    auto gamePadStick{ new GLJoyStickLink[2][32] };
-    auto gamePadTrigger{ new GLTriggerLink[2][8] };
-    auto keyboardHold{ new GLHoldLink[2][128] };
-    auto keyboardClick{ new GLClickLink[2][128] };
-    auto mouseScroll{ new GLScrollLink[2][2] };
-    auto mouseMovement{ new GLMouseMovementLink[2][2] };
-    auto keyboardRelease{ new GLClickLink[2][128] };
-
-    // GamePad Initialization
-    gamePadClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_BUTTON_Y;
-    gamePadClick[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::TOGGLE_FLASHLIGHT;
-    gamePadClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_BUTTON_B;
-    gamePadClick[GLInput::SINGLEKEYPRESS][1].functionReference = BreakoutInputFunctions::RANDOM_FLASHLIGHT_COLOR;
-    gamePadClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_GAMEPAD_BUTTON_START;
-    gamePadClick[GLInput::SINGLEKEYPRESS][2].functionReference = BreakoutInputFunctions::TOGGLE_MENU;
-
-    gamePadStick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_X;
-    gamePadStick[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::MOVE_LEFT_RIGHT_STICK_2D;
-    gamePadStick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_GAMEPAD_AXIS_LEFT_Y;
-    gamePadStick[GLInput::SINGLEKEYPRESS][1].functionReference = BreakoutInputFunctions::MOVE_UP_DOWN_STICK_2D;
-
-    gamePadTrigger[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-    gamePadTrigger[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::CAMERA_SPEED_TRIGGER;
-
-    // Keyboard Initialization
-    keyboardHold[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_D;
-    keyboardHold[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::MOVE_RIGHT_2D;
-    keyboardHold[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_A;
-    keyboardHold[GLInput::SINGLEKEYPRESS][1].functionReference = BreakoutInputFunctions::MOVE_LEFT_2D;
-    keyboardHold[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_UP;
-    keyboardHold[GLInput::SINGLEKEYPRESS][2].functionReference = BreakoutInputFunctions::MOVE_BALL_UP;
-    keyboardHold[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_DOWN;
-    keyboardHold[GLInput::SINGLEKEYPRESS][3].functionReference = BreakoutInputFunctions::MOVE_BALL_DOWN;
-    keyboardHold[GLInput::SINGLEKEYPRESS][4].glfwValue = GLFW_KEY_LEFT;
-    keyboardHold[GLInput::SINGLEKEYPRESS][4].functionReference = BreakoutInputFunctions::MOVE_BALL_LEFT;
-    keyboardHold[GLInput::SINGLEKEYPRESS][5].glfwValue = GLFW_KEY_RIGHT;
-    keyboardHold[GLInput::SINGLEKEYPRESS][5].functionReference = BreakoutInputFunctions::MOVE_BALL_RIGHT;
-    keyboardHold[GLInput::SINGLEKEYPRESS][6].glfwValue = GLFW_KEY_EQUAL;
-    keyboardHold[GLInput::SINGLEKEYPRESS][6].functionReference = BreakoutInputFunctions::INCREMENT_BALL_SPEED;
-    keyboardHold[GLInput::SINGLEKEYPRESS][7].glfwValue = GLFW_KEY_MINUS;
-    keyboardHold[GLInput::SINGLEKEYPRESS][7].functionReference = BreakoutInputFunctions::DEINCREMENT_BALL_SPEED;
-
-
-    // Double Key Press Location
-
-    keyboardClick[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_F;
-    keyboardClick[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::TOGGLE_FLASHLIGHT;
-    keyboardClick[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_F1;
-    keyboardClick[GLInput::SINGLEKEYPRESS][1].functionReference = BreakoutInputFunctions::TOGGLE_MENU;
-    keyboardClick[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_MINUS;
-    keyboardClick[GLInput::SINGLEKEYPRESS][2].functionReference = BreakoutInputFunctions::CAMERA_DEINCREMENT_SENSITIVITY;
-    keyboardClick[GLInput::SINGLEKEYPRESS][3].glfwValue = GLFW_KEY_EQUAL;
-    keyboardClick[GLInput::SINGLEKEYPRESS][3].functionReference = BreakoutInputFunctions::CAMERA_INCREMENT_SENSITIVITY;
-    keyboardClick[GLInput::SINGLEKEYPRESS][4].glfwValue = GLFW_KEY_LEFT_BRACKET;
-    keyboardClick[GLInput::SINGLEKEYPRESS][4].functionReference = BreakoutInputFunctions::CAMERA_DEINCREMENT_SPEED;
-    keyboardClick[GLInput::SINGLEKEYPRESS][5].glfwValue = GLFW_KEY_RIGHT_BRACKET;
-    keyboardClick[GLInput::SINGLEKEYPRESS][5].functionReference = BreakoutInputFunctions::CAMERA_INCREMENT_SPEED;
-    keyboardClick[GLInput::SINGLEKEYPRESS][6].glfwValue = GLFW_KEY_F9;
-    keyboardClick[GLInput::SINGLEKEYPRESS][6].functionReference = BreakoutInputFunctions::TOGGLE_DEVICE_MOUSE_MOVEMENT;
-    keyboardClick[GLInput::SINGLEKEYPRESS][7].glfwValue = GLFW_KEY_LEFT_SHIFT;
-    keyboardClick[GLInput::SINGLEKEYPRESS][7].functionReference = BreakoutInputFunctions::INCREASE_PADDLE_SPEED_TOGGLE;
-    keyboardClick[GLInput::SINGLEKEYPRESS][8].glfwValue = GLFW_KEY_A;
-    keyboardClick[GLInput::SINGLEKEYPRESS][8].functionReference = BreakoutInputFunctions::MODIFY_PADDLE_DIRECTION_LEFT;
-    keyboardClick[GLInput::SINGLEKEYPRESS][9].glfwValue = GLFW_KEY_D;
-    keyboardClick[GLInput::SINGLEKEYPRESS][9].functionReference = BreakoutInputFunctions::MODIFY_PADDLE_DIRECTION_RIGHT;
-
-    keyboardRelease[GLInput::SINGLEKEYPRESS][0].glfwValue = GLFW_KEY_LEFT_SHIFT;
-    keyboardRelease[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::RESET_PADDLE_SPEED;
-    keyboardRelease[GLInput::SINGLEKEYPRESS][1].glfwValue = GLFW_KEY_A;
-    keyboardRelease[GLInput::SINGLEKEYPRESS][1].functionReference = BreakoutInputFunctions::RESET_PADDLE_DIRECTION;
-    keyboardRelease[GLInput::SINGLEKEYPRESS][2].glfwValue = GLFW_KEY_D;
-    keyboardRelease[GLInput::SINGLEKEYPRESS][2].functionReference = BreakoutInputFunctions::RESET_PADDLE_DIRECTION;
-
-    // Mouse Scroll Initialization
-    mouseScroll[GLInput::SINGLEKEYPRESS][0].glfwValue = 1;
-    mouseScroll[GLInput::SINGLEKEYPRESS][0].functionReference = BreakoutInputFunctions::CAMERA_FOV_MOUSE;
-
     
-
-    Resources::currentApplication->defaultInput = new GLInput(isGamePadClick, isKeyboardHold, isMouseScroll,
-                                                              isGamePadStick, isKeyboardClick, isMouseMovement,
-                                                              isGamePadTrigger, gamePadClick, gamePadStick,
-                                                              gamePadTrigger, keyboardHold, keyboardClick,
-                                                              mouseScroll, mouseMovement, keyboardRelease);
-    Resources::currentApplication->currentInput = Resources::currentApplication->defaultInput;
-
-    delete[] gamePadClick;
-    delete[] gamePadStick;
-    delete[] gamePadTrigger;
-    delete[] keyboardHold;
-    delete[] keyboardClick;
-    delete[] mouseScroll;
-    delete[] mouseMovement;
-    delete[] keyboardRelease;
-
 }
+
+
 void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level)
 {
     if (glm::distance(paddle->orientation.translation, ball->orientation.translation) < (ball->radius + glm::length(paddle->currentDimensions)))
@@ -228,7 +129,7 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
 
         float slope;
         float y_intercept;
-        float paddleSlopeCutOff = paddle->currentDimensions.y / paddle->currentDimensions.x;
+        float paddleSlopeCutOff = (paddle->currentDimensions.y * 0.85f) / paddle->currentDimensions.x;
         if (delta_x == 0)
         {
             is_delta_x_0 = true;
@@ -264,8 +165,10 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
                 currentRelativeLocation = LEFT;
             }
         }
+        glm::vec2 ballTranslation = glm::vec2(ball->orientation.translation);
         // Calculate Closest Point on Brick to Circle
         glm::vec2 closestPointOnBrickToBall = glm::vec2();
+        
         switch (currentRelativeLocation)
         {
         case ABOVE:
@@ -288,33 +191,33 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
             std::cerr << "Invalid enumeration in Breakout.cpp::processBrickCollision::CalcClosestCircle\n";
             break;
         }
-
-        if (glm::distance(closestPointOnBrickToBall, glm::vec2(ball->orientation.translation)) < ball->radius)
+        if (glm::distance(closestPointOnBrickToBall, ballTranslation) < ball->radius)
         {
+            float buffer = 0.5f;
             switch (currentRelativeLocation)
             {
             case ABOVE:
                 ball->orientation.translation.y = paddle->orientation.translation.y +
                     (paddle->currentDimensions.y / 2) +
-                    ball->radius + 0.1f;
+                    ball->radius + buffer;
                 ball->direction.y = -ball->direction.y;
                 break;
             case BELOW:
                 ball->orientation.translation.y = paddle->orientation.translation.y -
                     (paddle->currentDimensions.y / 2) -
-                    ball->radius - 0.1f;
+                    ball->radius - buffer;
                 ball->direction.y = -ball->direction.y;
                 break;
             case LEFT:
                 ball->orientation.translation.x = paddle->orientation.translation.x -
                     (paddle->currentDimensions.x / 2) -
-                    ball->radius - 0.1f;
+                    ball->radius - buffer;
                 ball->direction.x = -ball->direction.x;
                 break;
             case RIGHT:
                 ball->orientation.translation.x = paddle->orientation.translation.x +
                     (paddle->currentDimensions.x / 2) +
-                    ball->radius + 0.1f;
+                    ball->radius + buffer;
                 ball->direction.x = -ball->direction.x;
                 break;
             default:
@@ -322,7 +225,6 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
                 break;
             }
             ball->direction = glm::normalize(ball->direction + (paddle->direction * 0.0035f * paddle->currentSpeed));
-            //((0.1f * paddle->currentSpeed) * paddle->direction)
         }
 
     }

@@ -29,5 +29,5 @@ void ApplicationManager::CreateDefault2DApplication()
 }
 void ApplicationManager::CreateBreakout()
 {
-	breakout = new GameApplication(1920.0f, 1080.0f);
+	breakout = new GameApplication(1920.0f, 1080.0f, GameApplication::GAME_MENU);
 }

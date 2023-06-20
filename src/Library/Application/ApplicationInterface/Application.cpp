@@ -4,7 +4,7 @@ Application::~Application()
 {
     renderer = nullptr;
     currentInput = nullptr;
-    defaultInput = nullptr;
+    recentInput = nullptr;
     width = 0;
     height = 0;
 }

@@ -150,7 +150,7 @@ void RendererState::PreRendering()
     if (Resources::framesCounter > 1.0f)
     {
         Resources::framesCounter -= 1.0f;
-        std::cout << Resources::framesPerSecond << "FPS" << std::endl;
+        //std::cout << Resources::framesPerSecond << "FPS" << std::endl; //FIXME
         Resources::framesPerSecond = 0;
     }
     //Clear and Reset Background Color
