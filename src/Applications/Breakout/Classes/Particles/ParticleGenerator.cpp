@@ -3,7 +3,6 @@
 
 void ParticleGenerator::spawnParticles() 
 {
-	std::cout << "Number of Particles Beginning: " << allParticles.size(); //FIXME
 	// Clear old Particles
 	std::vector<GameParticle*> particlesToDelete;
 	std::for_each(allParticles.rbegin(), allParticles.rend(), [&particlesToDelete](GameParticle* particle) mutable 
@@ -32,7 +31,6 @@ void ParticleGenerator::spawnParticles()
 			delete particle;
 		});
 	particlesToDelete.clear();
-	std::cout << " Number of Particles after Clear: " << allParticles.size(); //FIXME
 	if ((allParticles.size() + particleClusterSize - 1) < maxNumParticles && (secondsPassed + particleSpawnRate) < Resources::runtime)
 	{
 		secondsPassed = Resources::runtime;
@@ -40,12 +38,11 @@ void ParticleGenerator::spawnParticles()
 		{
 			Orientation orientation = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
 				  *translation,
-				  glm::vec3(10.0f, 10.0f, 0.0f) };
+				  glm::vec3(4.0f, 4.0f, 0.0f) };
 			ShapeRenderer* renderer{ new ShapeRenderer(orientation, Resources::currentGame->resourceManager->applicationMeshes.at(2), Resources::shaderManager.defaultShader) };
 			GameParticle* particle{ new GameParticle(orientation, renderer, 1.0f, 0.4f) };
 			allParticles.push_back(particle);
 			Resources::currentGame->renderer->objectRenderBuffer.push_back(particle);
 		}
 	}
-	std::cout << " Number of Particles after Addition: " << allParticles.size() << '\n'; //FIXME
 }

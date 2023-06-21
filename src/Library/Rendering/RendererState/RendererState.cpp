@@ -150,7 +150,7 @@ void RendererState::PreRendering()
     Resources::runtime += Resources::deltaTime;
     if (Resources::framesCounter > 1.0f)
     {
-        std::cout << Resources::runtime << " Runtime" << std::endl; //FIXME
+        //std::cout << Resources::runtime << " Runtime" << std::endl; //FIXME
         Resources::framesCounter -= 1.0f;
         //std::cout << Resources::framesPerSecond << "FPS" << std::endl; //FIXME
         Resources::framesPerSecond = 0;
