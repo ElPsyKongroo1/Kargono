@@ -52,13 +52,13 @@ void BreakoutStart()
     Resources::currentGame->ball = ball;
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
 
-    //ParticleGenerator pgenerator{ ParticleGenerator(10, 1) };
-    //pgenerator.setOwner(&ball->orientation.translation);
+    ParticleGenerator pgenerator{ ParticleGenerator(10, 1, 0.15f) };
+    pgenerator.setOwner(&ball->orientation.translation);
 
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
-        //pgenerator.spawnParticles();
+        pgenerator.spawnParticles();
         if (Resources::currentGame->State == GameApplication::GAME_ACTIVE)
         {
             ball->Move();

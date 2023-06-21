@@ -42,5 +42,5 @@ namespace Resources
 	float currentFrame;
 	int framesPerSecond{0};
 	float framesCounter{0.0f};
-	long long runtime{ 0 };
+	long double runtime{ 0 };
 }

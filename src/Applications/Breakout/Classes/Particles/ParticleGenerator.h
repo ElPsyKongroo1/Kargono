@@ -7,9 +7,10 @@ class ParticleGenerator
 public:
     // level state
     std::vector<GameParticle*> allParticles;
-    float maxNumParticles;
-    int numParticlesPerSecond;
-    long long  secondsPassed;
+    int maxNumParticles;
+    int particleClusterSize;
+    float particleSpawnRate;
+    long double secondsPassed;
     
 private:
     glm::vec3* translation;
@@ -17,10 +18,10 @@ private:
 public:
 
 public:
-    ParticleGenerator(float maxNumParticles, int numParticlesPerSecond) : 
-        maxNumParticles{ maxNumParticles }, numParticlesPerSecond{ numParticlesPerSecond },
+    ParticleGenerator(int maxNumParticles, int numParticlesPerSecond, float particleSpawnRate) : 
+        maxNumParticles{ maxNumParticles }, particleClusterSize{ numParticlesPerSecond },
         translation{ new glm::vec3(0.0f, 0.0f, 0.0f) }, hasOwner{ false }, allParticles{std::vector<GameParticle*>()},
-        secondsPassed{0}
+        secondsPassed{ 0.0 }, particleSpawnRate{particleSpawnRate}
 
     {
         
@@ -34,10 +35,11 @@ public:
     }
     void setOwner(glm::vec3* translation) 
     {
+        //std::cout << translation
         if (!hasOwner) 
         {
-            delete translation;
-            translation = nullptr;
+            delete this->translation;
+            this->translation = nullptr;
             hasOwner = true;
         }
         this->translation = translation;

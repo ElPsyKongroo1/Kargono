@@ -12,6 +12,17 @@ public:
     std::vector<int> initMap;
     // constructor
     GameLevel(int width, int height) : levelWidth{ width }, levelHeight{height} { }
+    ~GameLevel() 
+    {
+        levelWidth = -1;
+        levelHeight = -1;
+        initMap.clear();
+        std::for_each(currentMapBricks.begin(), currentMapBricks.end(), [](GameBrick* brick) 
+            {
+                delete brick;
+            });
+        currentMapBricks.clear();
+    }
     // loads level from file
     void Load(const char* file);
     // check if the level is completed (all non-solid tiles are destroyed)
