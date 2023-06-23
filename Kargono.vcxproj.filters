@@ -592,6 +592,7 @@
     <None Include="assimp-vc143-mtd.dll" />
     <None Include="Output\Release\binaries\Kargono.exe" />
     <None Include="Output\Release\binaries\Kargono.pdb" />
+    <None Include="..\..\..\..\BuildApplication\build\Debug\OpenAL32.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
