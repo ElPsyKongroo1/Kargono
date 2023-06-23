@@ -1,6 +1,43 @@
 #include "ParticleGenerator.h"
 #include "../../../Library/Library.h"
 
+ParticleGenerator::~ParticleGenerator() 
+{
+	
+
+	std::for_each(allParticles.begin(), allParticles.end(), [](GameParticle* particle) 
+		{
+
+			auto iter = std::find(Resources::currentGame->renderer->objectRenderBuffer.rbegin(), Resources::currentGame->renderer->objectRenderBuffer.rend(), static_cast<Object*>(particle));
+			if (iter != Resources::currentGame->renderer->objectRenderBuffer.rend())
+			{
+				Resources::currentGame->renderer->objectRenderBuffer.erase(std::next(iter).base());
+			}
+			delete particle;
+
+			particle = nullptr;
+		});
+	
+	allParticles.clear();
+	std::vector<GameParticle*> allParticles;
+	maxNumParticles = -1;
+	particleClusterSize = -1;
+	particleSpawnRate = -1;
+	secondsPassed = -1;
+
+	if (hasOwner) 
+	{
+		translation = nullptr;
+	}
+	else 
+	{
+		delete translation;
+		translation = nullptr;
+	}
+	hasOwner = false;
+	
+}
+
 void ParticleGenerator::spawnParticles() 
 {
 	// Clear old Particles
@@ -31,18 +68,27 @@ void ParticleGenerator::spawnParticles()
 			delete particle;
 		});
 	particlesToDelete.clear();
+
+
+	// Spawn Particles
 	if ((allParticles.size() + particleClusterSize - 1) < maxNumParticles && (secondsPassed + particleSpawnRate) < Resources::runtime)
 	{
 		secondsPassed = Resources::runtime;
-		for (int i{ 0 }; i < particleClusterSize; i++)
+		for (int i{ 0 }; i < spawnPattern.numParticles; i++)
 		{
 			Orientation orientation = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-				  *translation,
+				  (*translation) + spawnPattern.relativeTranslations.at(i),
 				  glm::vec3(4.0f, 4.0f, 0.0f) };
 			ShapeRenderer* renderer{ new ShapeRenderer(orientation, Resources::currentGame->resourceManager->applicationMeshes.at(2), Resources::shaderManager.defaultShader) };
-			GameParticle* particle{ new GameParticle(orientation, renderer, 1.0f, 0.4f) };
+			glm::vec3 particleDirection {spawnPattern.directions.at(i)};
+			GameParticle* particle{ new GameParticle(orientation, renderer, 100.0f, 0.4f, particleDirection) };
 			allParticles.push_back(particle);
 			Resources::currentGame->renderer->objectRenderBuffer.push_back(particle);
 		}
 	}
+}
+
+void ParticleGenerator::moveParticles() 
+{
+	std::for_each(allParticles.begin(), allParticles.end(), [](GameParticle* particle){ particle->Move();});
 }

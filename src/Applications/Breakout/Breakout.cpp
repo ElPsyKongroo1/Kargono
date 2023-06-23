@@ -52,19 +52,54 @@ void BreakoutStart()
     Resources::currentGame->ball = ball;
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
 
-    ParticleGenerator pgenerator{ ParticleGenerator(10, 1, 0.15f) };
-    pgenerator.setOwner(&ball->orientation.translation);
+    glm::vec3 defaultTranslation {glm::vec3(0.0f, 0.0f, 0.0f)};
+
+    ParticleGenerator* ballParticleGen{ new ParticleGenerator(10, 1, 0.15f, false, 0.0f, defaultTranslation) };
+    ballParticleGen->setOwner(&ball->orientation.translation);
+    currentLevel->currentParticleGenerators.push_back(ballParticleGen);
+
+    ParticleGenerator* paddleParticleGen{ new ParticleGenerator(10, 1, 0.15f, false, 0.0f, defaultTranslation ) };
+    paddleParticleGen->setOwner(&paddle->orientation.translation);
+    currentLevel->currentParticleGenerators.push_back(paddleParticleGen);
+    
 
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
-        pgenerator.spawnParticles();
+        std::cout << Resources::currentGame->renderer->objectRenderBuffer.size() << '\n';
+        std::vector<ParticleGenerator*> generatorsToDelete;
+        for (ParticleGenerator* pgenerator : currentLevel->currentParticleGenerators) 
+        {
+            pgenerator->spawnParticles();
+            pgenerator->moveParticles();
+            if (pgenerator->hasLifeTime) 
+            {
+                pgenerator->lifeTime -= Resources::deltaTime;
+                if (pgenerator->lifeTime < 0.0f)
+                {
+                    generatorsToDelete.push_back(pgenerator);
+                }
+            }
+        }
+        std::for_each(generatorsToDelete.rbegin(), generatorsToDelete.rend(), [&currentLevel](ParticleGenerator* particleGen) mutable
+            {
+                auto iter = std::find(currentLevel->currentParticleGenerators.rbegin(), currentLevel->currentParticleGenerators.rend(), particleGen);
+                if (iter != currentLevel->currentParticleGenerators.rend())
+                {
+                    currentLevel->currentParticleGenerators.erase(std::next(iter).base());
+                }
+                delete particleGen;
+            });
+        generatorsToDelete.clear();
+        
         if (Resources::currentGame->State == GameApplication::GAME_ACTIVE)
         {
             ball->Move();
             processBrickCollisions(ball, currentLevel->currentMapBricks, currentLevel);
             processPaddleCollision(ball, paddle, currentLevel);
         }
+
+        
         
 		Resources::currentApplication->renderer->render();
 
@@ -77,6 +112,12 @@ void BreakoutStart()
 
     delete ball;
     ball = nullptr;
+
+    for (ParticleGenerator* pgenerator : currentLevel->currentParticleGenerators)
+    {
+        if (pgenerator) { delete pgenerator; }
+        pgenerator = nullptr;
+    }
 
     delete currentLevel;
     currentLevel = nullptr;
@@ -341,6 +382,24 @@ void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, Game
                     std::cerr << "Invalid enumeration in Breakout.cpp::processBrickCollision::ChangeCircleDirection\n";
                     break;
                 }
+                ParticleGenerator* pgenerator = new ParticleGenerator(20, 2, 0.5, true, 0.5f, brick->orientation.translation);
+
+                std::vector<glm::vec3> relativeTranslations{std::vector<glm::vec3>()};
+                relativeTranslations.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+                relativeTranslations.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+                relativeTranslations.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+                relativeTranslations.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+
+                std::vector<glm::vec3> relativeDirections{std::vector<glm::vec3>()};
+                relativeDirections.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+                relativeDirections.push_back(glm::vec3(1.0f, -1.0f, 0.0f));
+                relativeDirections.push_back(glm::vec3(-1.0f, 1.0f, 0.0f));
+                relativeDirections.push_back(glm::vec3(-1.0f, -1.0f, 0.0f));
+
+                ParticleGenerator::SpawnPattern spawnPattern{4, relativeTranslations, relativeDirections};
+
+                pgenerator->spawnPattern = spawnPattern;
+                level->currentParticleGenerators.push_back(pgenerator);
                 level->RemoveBrick(brick);
             }
             

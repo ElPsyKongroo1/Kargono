@@ -9,14 +9,18 @@
 //			((baseDimensions.z / Resources::currentGame->resourceManager->dimensionConversionFactor) * orientation.scale.z));
 //	}
 
-void GameBrick::remove() 
+void GameParticle::Move()
 {
+	if (direction.length == 0) { return; }
+ 	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * currentSpeed * Resources::deltaTime),
+		orientation.translation.y + (direction.y * currentSpeed * Resources::deltaTime),
+		0.0f);
+	
 
 }
 
 void GameBall::Move()
 {
-	if (Resources::deltaTime > 2.0f) { Resources::deltaTime = 0.0f; } // FIXME
 	orientation.translation = glm::vec3(orientation.translation.x + (direction.x * currentSpeed * Resources::deltaTime),
 		orientation.translation.y + (direction.y * currentSpeed * Resources::deltaTime),
 		0.0f);

@@ -1,17 +1,20 @@
 #pragma once
 #include "../../../Library/Includes.h"
 #include "GameObject.h"
+#include "Particles/ParticleGenerator.h"
 class GameLevel
 {
 public:
     // level state
     std::vector<GameBrick*> currentMapBricks;
+    std::vector<ParticleGenerator*> currentParticleGenerators;
     int levelWidth;
     int levelHeight;
     
     std::vector<int> initMap;
     // constructor
-    GameLevel(int width, int height) : levelWidth{ width }, levelHeight{height} { }
+    GameLevel(int width, int height) : levelWidth{ width }, levelHeight{ height }, 
+        currentParticleGenerators{std::vector<ParticleGenerator*>()} { }
     ~GameLevel() 
     {
         levelWidth = -1;
