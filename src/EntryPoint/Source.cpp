@@ -3,6 +3,7 @@
 #include "../Applications/Breakout/Breakout.h"
 #include "../Library/Rendering/RendererState/RendererState.h"
 #include "../Library/Library.h"
+#include "AL/al.h"
 
 /*============================================================================================================================================================================================
  * Entry Point of Projects

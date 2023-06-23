@@ -108,7 +108,7 @@
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
@@ -127,7 +127,7 @@
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
@@ -168,7 +168,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>dotnetfx35setup.exe /q /norestart</Command>
@@ -229,7 +229,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>dotnetfx35setup.exe /q /norestart</Command>
@@ -439,6 +439,7 @@
     <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\BuildApplication\build\Debug\OpenAL32.dll" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="assimp-vc143-mtd.dll" />

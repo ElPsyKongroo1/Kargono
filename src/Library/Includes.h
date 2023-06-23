@@ -1,4 +1,6 @@
 #pragma once
+#pragma warning(push, 0)
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -23,4 +25,4 @@
 #include <Assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
+#pragma warning(pop)

@@ -66,7 +66,6 @@ void BreakoutStart()
 	// Main running Loop
 	while (!glfwWindowShouldClose(Resources::currentApplication->renderer->window))
 	{
-        std::cout << Resources::currentGame->renderer->objectRenderBuffer.size() << '\n';
         std::vector<ParticleGenerator*> generatorsToDelete;
         for (ParticleGenerator* pgenerator : currentLevel->currentParticleGenerators) 
         {
