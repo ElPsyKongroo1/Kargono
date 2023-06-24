@@ -162,6 +162,12 @@
     <ClCompile Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Library\External_Libraries\dr_wav_impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\External_Libraries\stb_imageImp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -545,6 +551,27 @@
     <ClInclude Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\al.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\alc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\alext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\efx-creative.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\efx-presets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResources\Includes\AL\efx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\External_Libraries\dr_wav.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -593,6 +620,11 @@
     <None Include="Output\Release\binaries\Kargono.exe" />
     <None Include="Output\Release\binaries\Kargono.pdb" />
     <None Include="..\..\..\..\BuildApplication\build\Debug\OpenAL32.dll" />
+    <None Include="OpenGLResources\Libraries\OpenAL\alrecord.exe" />
+    <None Include="OpenGLResources\Libraries\OpenAL\altonegen.exe" />
+    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.dll" />
+    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.exp" />
+    <None Include="OpenGLResources\Libraries\OpenAL\openal-info.exe" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -645,5 +677,8 @@
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
     <Library Include="glfw3.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />
   </ItemGroup>
 </Project>
