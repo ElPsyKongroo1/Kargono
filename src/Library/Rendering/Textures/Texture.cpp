@@ -1,5 +1,4 @@
 #include "Textures.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "../../External_Libraries/stb_image.h"
 
 Texture::Texture(const char* textureSource, const char* textureType) 

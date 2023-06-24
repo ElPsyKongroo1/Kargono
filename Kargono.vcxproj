@@ -121,7 +121,7 @@
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
@@ -209,7 +209,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -276,6 +276,8 @@
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.cpp" />
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp" />
     <ClCompile Include="src\Library\Application\Input\InputCallback.cpp" />
+    <ClCompile Include="src\Library\External_Libraries\dr_wav_impl.cpp" />
+    <ClCompile Include="src\Library\External_Libraries\stb_imageImp.cpp" />
     <ClCompile Include="src\Library\Rendering\RendererState\RendererStateManager.cpp" />
     <ClCompile Include="src\Library\Rendering\Cameras\CameraManager.cpp" />
     <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp" />
@@ -312,6 +314,12 @@
   <ItemGroup>
     <ClInclude Include="glfw3.h" />
     <ClInclude Include="glfw3native.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\al.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\alc.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\alext.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\efx-creative.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\efx-presets.h" />
+    <ClInclude Include="OpenGLResources\Includes\AL\efx.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\aabb.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\ai_assert.h" />
     <ClInclude Include="OpenGLResources\Includes\Assimp\anim.h" />
@@ -412,6 +420,7 @@
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h" />
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.h" />
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.h" />
+    <ClInclude Include="src\Library\External_Libraries\dr_wav.h" />
     <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h" />
     <ClInclude Include="src\Library\Rendering\Cameras\Cameras.h" />
     <ClInclude Include="src\Library\Application\Input\Input.h" />
@@ -458,6 +467,11 @@
     <None Include="OpenGLResources\Includes\Assimp\vector3.inl" />
     <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
     <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
+    <None Include="OpenGLResources\Libraries\OpenAL\alrecord.exe" />
+    <None Include="OpenGLResources\Libraries\OpenAL\altonegen.exe" />
+    <None Include="OpenGLResources\Libraries\OpenAL\openal-info.exe" />
+    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.dll" />
+    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.exp" />
     <None Include="Output\Release\binaries\Kargono.exe" />
     <None Include="Output\Release\binaries\Kargono.pdb" />
     <None Include="Resources\Default-Resources\Shaders\Lighting\shader.fs" />
@@ -495,6 +509,9 @@
     <Library Include="glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
+    <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
