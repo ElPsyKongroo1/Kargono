@@ -32,7 +32,7 @@ void AudioContext::init()
 		glm::vec3(1.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f));
 
-	defaultBuffer = new AudioBuffer("Resources/Breakout/Sounds/Manoria-Cathedral.wav");
+	defaultBuffer = new AudioBuffer("Resources/Breakout/Sounds/mechanist-theme.wav");
 	allAudioBuffers.push_back(defaultBuffer);
 
 	stereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
