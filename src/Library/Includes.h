@@ -29,4 +29,7 @@
 #include <assimp/postprocess.h>
 
 #include "External_Libraries/dr_wav.h"
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #pragma warning(pop)

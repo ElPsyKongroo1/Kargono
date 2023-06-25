@@ -225,7 +225,7 @@ void GLInput::processMouseMovement(double xpos, double ypos)
 
 void GLInput::processKeyboardClick(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (!isKeyboardClick) { return; }
+    if (!isKeyboardClick || key == -1) { return; }
     updateType = false;
 
     for (int i = 0; i < keyboardClickSize[0]; i++)

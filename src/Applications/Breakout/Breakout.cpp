@@ -23,6 +23,7 @@ void BreakoutStart()
 	Resources::currentGame->resourceManager->initializeResources();
     Resources::currentGame->recentInput = Resources::currentGame->resourceManager->applicationInputs.at(1);
     Resources::currentGame->currentInput = Resources::currentGame->recentInput;
+    Resources::currentGame->audioContext->stereoSource->play();
 	GameLevel* currentLevel{ new GameLevel(25, 18) };
 	currentLevel->Load("Resources/Breakout/Map/Level1.txt");
     Resources::currentGame->currentLevel = currentLevel;
@@ -124,6 +125,7 @@ void BreakoutStart()
     Resources::currentGame->State = GameApplication::GAME_MENU;
     Resources::currentApplication->currentInput = nullptr;
     Resources::currentApplication->recentInput = nullptr;
+    Resources::currentGame->audioContext->terminate();
 
 	delete Resources::currentGame->resourceManager;
 	Resources::currentGame->resourceManager = nullptr;

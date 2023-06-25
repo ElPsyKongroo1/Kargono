@@ -2,13 +2,15 @@
 #include "../../Includes.h"
 #include "../Input/Input.h"
 #include "../../Rendering/RendererState/RendererState.h"
+#include "../../../Applications/Breakout/Classes/Audio/AudioContext.h"
 
 class Application
 {
 protected:
     Application() : renderer{ nullptr }, currentInput{ nullptr }, width{ 1 }, height{1} {}
-    Application(unsigned int width, unsigned int height) : renderer{ nullptr }, currentInput{ nullptr }, width{ width }, height{ height } {};
+    Application(unsigned int width, unsigned int height) : renderer{ nullptr }, currentInput{ nullptr }, audioContext{nullptr}, width { width }, height{ height } {};
 public:
+    AudioContext* audioContext;
     RendererState* renderer;
     GLInput* currentInput;
     GLInput* recentInput;
