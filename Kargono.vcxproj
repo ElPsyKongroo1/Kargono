@@ -260,6 +260,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioBuffer.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioContext.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioListener.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioSource.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp" />
@@ -404,6 +408,8 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Applications\Breakout\Breakout.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioContext.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioMisc.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h" />
@@ -512,6 +518,10 @@
     <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Breakout\Sounds\Manoria-Cathedral.wav" />
+    <Media Include="Resources\Breakout\Sounds\test-song.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

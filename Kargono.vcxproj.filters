@@ -168,6 +168,18 @@
     <ClCompile Include="src\Library\External_Libraries\stb_imageImp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -572,6 +584,12 @@
     <ClInclude Include="src\Library\External_Libraries\dr_wav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioMisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -680,5 +698,13 @@
     <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Breakout\Sounds\test-song.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Resources\Breakout\Sounds\Manoria-Cathedral.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>
