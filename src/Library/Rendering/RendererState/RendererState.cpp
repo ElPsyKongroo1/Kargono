@@ -132,6 +132,7 @@ void RendererState::InitializeRenderer()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    io.IniFilename = "src/Library/External_Libraries/imgui/imgui.ini";
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     std::string version = "#version " + std::to_string(GLFWVersion[0]) + std::to_string(GLFWVersion[1]) + std::to_string(0);
     ImGui_ImplOpenGL3_Init(version.c_str());

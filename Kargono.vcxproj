@@ -171,7 +171,8 @@
       <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dotnetfx35setup.exe /q /norestart</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|Win32'">
@@ -232,7 +233,8 @@
       <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>dotnetfx35setup.exe /q /norestart</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|x64'">
@@ -316,8 +318,6 @@
     <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="glfw3.h" />
-    <ClInclude Include="glfw3native.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\al.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\alc.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\alext.h" />
@@ -454,13 +454,8 @@
     <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\BuildApplication\build\Debug\OpenAL32.dll" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="assimp-vc143-mtd.dll" />
-    <None Include="assimp-vc143-mtd.pdb" />
-    <None Include="glfw3.pdb" />
-    <None Include="imgui.ini" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
     <None Include="OpenGLResources\Includes\Assimp\color4.inl" />
     <None Include="OpenGLResources\Includes\Assimp\config.h.in" />
@@ -489,9 +484,9 @@
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
     <None Include="src\Library\External_Libraries\imgui\.gitattributes" />
     <None Include="src\Library\External_Libraries\imgui\.gitignore" />
+    <None Include="src\Library\External_Libraries\imgui\imgui.ini" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\Charles%27s PC\Desktop\PurpleBlock.png" />
     <Image Include="Resources\Breakout\Textures\Original\BasePaddle.png" />
     <Image Include="Resources\Breakout\Textures\Original\BlueBlock.png" />
     <Image Include="Resources\Breakout\Textures\Original\PurpleBlock.png" />
@@ -507,12 +502,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Documentation\ToDO.txt" />
-    <Text Include="imgui_log.txt" />
     <Text Include="Resources\Breakout\Map\Level1.txt" />
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
