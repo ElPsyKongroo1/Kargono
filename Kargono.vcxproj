@@ -521,6 +521,8 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Resources\Breakout\Sounds\Manoria-Cathedral.wav" />
+    <Media Include="Resources\Breakout\Sounds\mechanist-theme.wav" />
+    <Media Include="Resources\Breakout\Sounds\pop-sound.wav" />
     <Media Include="Resources\Breakout\Sounds\test-song.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
