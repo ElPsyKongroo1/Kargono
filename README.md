@@ -17,5 +17,5 @@ This project is currently a simple 2D and 3D renderer. The end goal of the proje
 
 ## Maintenance
 
--Ensure all objects are on the heap, and can delete themselves
--Edit class member syntax (member_t)
+- Ensure all objects are on the heap, and can delete themselves
+- Edit class member syntax (member_t)
