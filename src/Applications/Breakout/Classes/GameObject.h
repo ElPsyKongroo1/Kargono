@@ -10,7 +10,7 @@ public:
 protected:
 	glm::vec2 meshDimensions;
 public:
-	GameObject(Orientation orientation, Renderable* renderer, float baseSpeed, glm::vec3 direction) : Object(orientation, renderer), baseSpeed{ baseSpeed }, currentSpeed{ baseSpeed }, direction{direction}
+	GameObject(Orientation orientation, Renderable* renderer, float baseSpeed, glm::vec3 direction, AudioSource* audioSource) : Object(orientation, renderer, audioSource), baseSpeed{ baseSpeed }, currentSpeed{ baseSpeed }, direction{direction}
 	{
 		 
 		const float half_to_full_length_conversion = 2;
@@ -27,7 +27,7 @@ class GameParticle : public GameObject
 {
 
 public:
-	GameParticle(Orientation orientation, ShapeRenderer* renderer, float baseSpeed, float lifeTime, glm::vec3& direction) : GameObject(orientation, renderer, baseSpeed, direction), lifeTime{lifeTime}
+	GameParticle(Orientation orientation, ShapeRenderer* renderer, float baseSpeed, float lifeTime, glm::vec3& direction, AudioSource* audioSource) : GameObject(orientation, renderer, baseSpeed, direction, audioSource), lifeTime{lifeTime}
 	{
 		float Dimension_X = meshDimensions.x * orientation.scale.x;
 		float Dimension_Y = meshDimensions.y * orientation.scale.y;
@@ -46,7 +46,7 @@ class GameBrick : public GameObject
 {
 
 public:
-	GameBrick(Orientation orientation, ShapeRenderer* renderer, glm::ivec2& mapLocation, float baseSpeed) : GameObject(orientation, renderer, baseSpeed, glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f))), mapLocation{ mapLocation }
+	GameBrick(Orientation orientation, ShapeRenderer* renderer, glm::ivec2& mapLocation, float baseSpeed, AudioSource* audioSource) : GameObject(orientation, renderer, baseSpeed, glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f)), audioSource), mapLocation{ mapLocation }
 	{
 		float Dimension_X = meshDimensions.x * orientation.scale.x;
 		float Dimension_Y = meshDimensions.y * orientation.scale.y;
@@ -65,7 +65,7 @@ class GamePaddle : public GameObject
 {
 
 public:
-	GamePaddle(Orientation orientation, ShapeRenderer* renderer, float baseSpeed) : GameObject(orientation, renderer, baseSpeed, glm::vec3(0.0f, 1.0f, 0.0f))
+	GamePaddle(Orientation orientation, ShapeRenderer* renderer, float baseSpeed, AudioSource* audioSource) : GameObject(orientation, renderer, baseSpeed, glm::vec3(0.0f, 1.0f, 0.0f), audioSource)
 	{
 		float Dimension_X = meshDimensions.x * orientation.scale.x;
 		float Dimension_Y = meshDimensions.y * orientation.scale.y;
@@ -84,7 +84,7 @@ public:
 	float radius;
 	bool Stuck;
 public:
-	GameBall(Orientation orientation, ShapeRenderer* renderer, float baseSpeed) : GameObject(orientation, renderer, baseSpeed, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f))),
+	GameBall(Orientation orientation, ShapeRenderer* renderer, float baseSpeed, AudioSource* audioSource) : GameObject(orientation, renderer, baseSpeed, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), audioSource),
 		radius{ renderer->mesh->dimensions.x }, Stuck{true}
 	{
 		radius = glm::max(meshDimensions.x * orientation.scale.x, meshDimensions.y * orientation.scale.y) / 2;

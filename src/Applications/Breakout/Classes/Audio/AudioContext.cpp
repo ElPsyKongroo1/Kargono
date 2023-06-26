@@ -36,7 +36,7 @@ void AudioContext::init()
 	allAudioBuffers.push_back(defaultBuffer);
 
 	stereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-		1.0f, 1.0f, AL_FALSE, defaultBuffer);
+		1.0f, 0.2f, AL_TRUE, defaultBuffer);
 	allAudioSources.push_back(stereoSource);
 	
 }

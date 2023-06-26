@@ -11,6 +11,8 @@
 #include "Classes/GameLevel.h"
 #include "Classes/InputFunctions/BreakoutActiveFunctions.h"
 #include "Classes/Particles/ParticleGenerator.h"
+#include "Classes/Audio/AudioContext.h"
+
 void initializeRenderer();
 void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level);
 void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level);
@@ -24,6 +26,16 @@ void BreakoutStart()
     Resources::currentGame->recentInput = Resources::currentGame->resourceManager->applicationInputs.at(1);
     Resources::currentGame->currentInput = Resources::currentGame->recentInput;
     Resources::currentGame->audioContext->stereoSource->play();
+    AudioBuffer* popSound = new AudioBuffer("Resources/Breakout/Sounds/pop-sound.wav");
+    Resources::currentGame->audioContext->allAudioBuffers.push_back(popSound);
+    AudioSource* popSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+        1.0f, 1.0f, AL_FALSE, popSound);
+    Resources::currentApplication->audioContext->allAudioSources.push_back(popSource);
+    AudioSource* lowPopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+        0.5f, 0.4f, AL_FALSE, popSound);
+    Resources::currentApplication->audioContext->allAudioSources.push_back(lowPopSource);
+    
+    
 	GameLevel* currentLevel{ new GameLevel(25, 18) };
 	currentLevel->Load("Resources/Breakout/Map/Level1.txt");
     Resources::currentGame->currentLevel = currentLevel;
@@ -39,7 +51,7 @@ void BreakoutStart()
 	ShapeRenderer* renderer = { new ShapeRenderer(orientation,
 		Resources::currentGame->resourceManager->applicationMeshes.at(3),
 		Resources::currentApplication->renderer->defaultShader) };
-	GamePaddle* paddle{ new GamePaddle(orientation, renderer, 300.0f) };
+	GamePaddle* paddle{ new GamePaddle(orientation, renderer, 300.0f, lowPopSource) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(paddle);
     Resources::currentGame->paddle = paddle;
 
@@ -49,7 +61,7 @@ void BreakoutStart()
     ShapeRenderer* rendererBall = { new ShapeRenderer(orientation,
         Resources::currentGame->resourceManager->applicationMeshes.at(2),
         Resources::currentApplication->renderer->defaultShader) };
-    GameBall* ball{ new GameBall(orientationBall, rendererBall, 400.0f) };
+    GameBall* ball{ new GameBall(orientationBall, rendererBall, 400.0f, nullptr) };
     Resources::currentGame->ball = ball;
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
 
@@ -272,6 +284,7 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
                 break;
             }
             ball->direction = glm::normalize(ball->direction + (paddle->direction * 0.0035f * paddle->currentSpeed));
+            paddle->audioSource->play();
         }
 
     }
@@ -400,8 +413,10 @@ void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, Game
                 ParticleGenerator::SpawnPattern spawnPattern{4, relativeTranslations, relativeDirections};
 
                 pgenerator->spawnPattern = spawnPattern;
+                brick->audioSource->play();
                 level->currentParticleGenerators.push_back(pgenerator);
                 level->RemoveBrick(brick);
+                
             }
             
         }

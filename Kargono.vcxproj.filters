@@ -706,5 +706,11 @@
     <Media Include="Resources\Breakout\Sounds\Manoria-Cathedral.wav">
       <Filter>Resource Files</Filter>
     </Media>
+    <Media Include="Resources\Breakout\Sounds\mechanist-theme.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Resources\Breakout\Sounds\pop-sound.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

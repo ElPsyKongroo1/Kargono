@@ -29,7 +29,7 @@ int DefaultApplication3D()
                                     glm::vec3(2.0f, 0.0f, 0.0f),
                                     glm::vec3(2.0f, 2.0f, 2.0f) };
     ModelRenderer* renderer1{ new ModelRenderer(orientation1) };
-    Object* object1{ new Object(orientation1, renderer1) };
+    Object* object1{ new Object(orientation1, renderer1, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object1);
     
     
@@ -40,7 +40,7 @@ int DefaultApplication3D()
     ModelRenderer* renderer2{ new ModelRenderer(orientation2,
         Resources::currentApplication->renderer->defaultModel,
         Resources::currentApplication->renderer->defaultShader) };
-    Object* object2{ new Object(orientation2, renderer2) };
+    Object* object2{ new Object(orientation2, renderer2, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object2);
     
 
@@ -51,7 +51,7 @@ int DefaultApplication3D()
         Resources::currentApplication->renderer->defaultModel,
         Resources::currentApplication->renderer->defaultShader) };
     renderer4->addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
-    Object* object4{ new Object(orientation4, renderer4) };
+    Object* object4{ new Object(orientation4, renderer4, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object4);
     
 
@@ -62,7 +62,7 @@ int DefaultApplication3D()
         Resources::currentApplication->renderer->defaultModel,
         Resources::currentApplication->renderer->defaultShader) };
     renderer5->addLightSource(glm::vec3(0.9f, 0.8f, 0.5f));
-    Object* object5{ new Object(orientation5, renderer5) };
+    Object* object5{ new Object(orientation5, renderer5, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object5);
     
 
@@ -73,7 +73,7 @@ int DefaultApplication3D()
         Resources::modelManager.human,
         Resources::currentApplication->renderer->defaultShader) };
     renderer7->addLightSource(glm::vec3(0.6f, 0.5f, 0.85f));
-    Object* object7{ new Object(orientation7, renderer7) };
+    Object* object7{ new Object(orientation7, renderer7, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object7);
     
 
@@ -83,7 +83,7 @@ int DefaultApplication3D()
     ModelRenderer* renderer8{ new ModelRenderer(orientation8,
         Resources::modelManager.house,
         Resources::currentApplication->renderer->defaultShader) };
-    Object* object8{ new Object(orientation8, renderer8) };
+    Object* object8{ new Object(orientation8, renderer8, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object8);
     
 
@@ -93,14 +93,14 @@ int DefaultApplication3D()
     ModelRenderer* renderer9{ new ModelRenderer(orientation9,
         Resources::modelManager.house2,
         Resources::currentApplication->renderer->defaultShader) };
-    Object* object9{ new Object(orientation9, renderer9) };
+    Object* object9{ new Object(orientation9, renderer9, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object9);
 
     Orientation orientation10{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                               glm::vec3(0.0f, 10.0f, 0.0f),
                               glm::vec3(1.0f, 1.0f, 1.0f) };
     ShapeRenderer* renderer10{ new ShapeRenderer(orientation10) };
-    Object* object10{ new Object(orientation10, renderer10) };
+    Object* object10{ new Object(orientation10, renderer10, nullptr) };
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(object10);
 
     //Object object6 = Object(glm::vec4(0.0f, 1.0f, 0.0f, 45.0f),

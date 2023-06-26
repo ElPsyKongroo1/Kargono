@@ -30,14 +30,14 @@ int Application2D()
 	ModelRenderer* renderer2{ new ModelRenderer(orientation2,
 		Resources::currentApplication->renderer->defaultModel,
 		Resources::currentApplication->renderer->defaultShader) };
-	Object* object2{ new Object(orientation2, renderer2) };
+	Object* object2{ new Object(orientation2, renderer2, nullptr) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(object2);
 
 	Orientation orientation10{ glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
 							  glm::vec3(1.0f, 1.5f, -3.0f),
 							  glm::vec3(5.0f, 5.0f, 1.0f) };
 	ShapeRenderer* renderer10{ new ShapeRenderer(orientation10) };
-	Object* object10{ new Object(orientation10, renderer10) };
+	Object* object10{ new Object(orientation10, renderer10, nullptr) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(object10);
 
 

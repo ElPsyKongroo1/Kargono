@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderableInterface.h"
+#include "../../../Applications/Breakout/Classes/Audio/AudioContext.h"
 
 /*============================================================================================================================================================================================
  * Object Class
@@ -52,7 +53,7 @@ private:
 class Object 
 {
 public:
-	Object(Orientation orientation, Renderable* renderer) : orientation{ orientation }, renderer{renderer}
+	Object(Orientation orientation, Renderable* renderer, AudioSource* audioSource) : orientation{ orientation }, renderer{ renderer }, audioSource{audioSource}
 	{
 		
 		assert(renderer && "Object class failed to instantiate. Renderer is a nullptr");
@@ -67,4 +68,5 @@ public:
 public:
 	Orientation orientation;
 	Renderable* renderer;
+	AudioSource* audioSource;
 };
