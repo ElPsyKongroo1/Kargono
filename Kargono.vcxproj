@@ -101,40 +101,46 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes;</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
