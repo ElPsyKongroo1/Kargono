@@ -475,6 +475,7 @@
     <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.exp" />
     <None Include="Output\Release\binaries\Kargono.exe" />
     <None Include="Output\Release\binaries\Kargono.pdb" />
+    <None Include="README.md" />
     <None Include="Resources\Default-Resources\Shaders\Lighting\shader.fs" />
     <None Include="Resources\Default-Resources\Shaders\Lighting\shader.vs" />
     <None Include="Resources\Default-Resources\Shaders\LightSource\shader.fs" />
