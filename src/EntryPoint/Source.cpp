@@ -13,13 +13,19 @@
 
 int main()
 {
-	
+	AudioContext* menuAudio = new AudioContext("Resources/Breakout/Sounds/Manoria-Cathedral.wav");
+	menuAudio->stereoSource->play();
 	Resources::applicationManager.CreateApplications();
 	Resources::rendererManager.CreateDefaultRenderers();
 	int Version[2]{ 4, 6 };
 	
 	int choice = 0;
 	while (choice != 4) {
+		if (!menuAudio) 
+		{
+			menuAudio = new AudioContext("Resources/Breakout/Sounds/Manoria-Cathedral.wav");
+			menuAudio->stereoSource->play();
+		}
 		std::cout << std::endl;
 		std::cout << "==============" << std::endl;
 		std::cout << "1. 3D Renderer" << std::endl;
@@ -34,6 +40,9 @@ int main()
 			}
 			switch (choice) {
 			case 1:
+				menuAudio->terminate();
+				delete menuAudio;
+				menuAudio = nullptr;
 				// Run Default Application
 				Resources::currentApplication = Resources::applicationManager.default3DApplication;
 				Resources::currentApplication->renderer = Resources::rendererManager.Sample3DRenderer;
@@ -43,6 +52,9 @@ int main()
 				break;
 			
 			case 2:
+				menuAudio->terminate();
+				delete menuAudio;
+				menuAudio = nullptr;
 				// Run Default Application
 				Resources::currentApplication = Resources::applicationManager.breakout;
 				Resources::currentApplication->renderer = Resources::rendererManager.Sample2DRenderer;
@@ -50,13 +62,16 @@ int main()
 				Resources::currentApplication->renderer = nullptr;
 				break;
 			case 3:
+				menuAudio->terminate();
+				delete menuAudio;
+				menuAudio = nullptr;
 				// Run Default Application
 				Resources::currentApplication = Resources::applicationManager.breakout;
 				Resources::currentApplication->renderer = new RendererState("Breakout", Version,
 					glm::vec2(Resources::currentApplication->width, Resources::currentApplication->height),
 					glm::vec3(0.0f, 0.0f, 0.0f));
 				Resources::currentGame = static_cast<GameApplication*>(Resources::currentApplication);
-				Resources::currentGame->audioContext = new AudioContext();
+				Resources::currentGame->audioContext = new AudioContext("Resources/Breakout/Sounds/mechanist-theme.wav");
 				BreakoutStart();
 				delete Resources::currentGame->audioContext;
 				delete Resources::currentApplication->renderer;
@@ -64,6 +79,9 @@ int main()
 				Resources::currentGame->renderer = nullptr;
 				break;
 			case 4:
+				menuAudio->terminate();
+				delete menuAudio;
+				menuAudio = nullptr;
 				break;
 			default:
 				std::cout << "Something went wrong!" << std::endl;

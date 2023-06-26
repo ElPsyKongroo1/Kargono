@@ -1,7 +1,7 @@
 #include "AudioContext.h"
 #include "AudioMisc.h"
 
-void AudioContext::init() 
+void AudioContext::init(const char* initStereoAudio) 
 {
 	// Find default audio device
 	currentDeviceString = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
@@ -32,7 +32,7 @@ void AudioContext::init()
 		glm::vec3(1.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f));
 
-	defaultBuffer = new AudioBuffer("Resources/Breakout/Sounds/mechanist-theme.wav");
+	defaultBuffer = new AudioBuffer(initStereoAudio);
 	allAudioBuffers.push_back(defaultBuffer);
 
 	stereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),

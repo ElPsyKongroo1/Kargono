@@ -74,7 +74,7 @@ public:
 class AudioContext 
 {
 private:
-	void init();
+	void init(const char* initStereoAudio);
 public:
 	void terminate();
 public:
@@ -87,10 +87,10 @@ public:
 	std::vector<AudioBuffer*> allAudioBuffers;
 	std::vector<AudioSource*> allAudioSources;
 public:
-	AudioContext() : currentDeviceString{ nullptr }, device{ nullptr }, context{ nullptr },
+	AudioContext(const char* initStereoAudio) : currentDeviceString{ nullptr }, device{ nullptr }, context{ nullptr },
 		allAudioBuffers{ std::vector<AudioBuffer*>() }, allAudioSources{std::vector<AudioSource*>()}
 	{
-		init();
+		init(initStereoAudio);
 	}
 
 };
