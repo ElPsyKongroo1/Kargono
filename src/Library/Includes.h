@@ -1,5 +1,5 @@
 #pragma once
-#pragma warning(push, 0)
+
 
 #include <iostream>
 #include <cmath>
@@ -32,4 +32,4 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-#pragma warning(pop)
+

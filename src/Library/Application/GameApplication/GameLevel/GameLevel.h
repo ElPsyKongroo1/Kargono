@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../Library/Includes.h"
-#include "GameObject.h"
-#include "Particles/ParticleGenerator.h"
+#include "../../../Includes.h"
+#include "../GameObject/GameObject.h"
+#include "../../Particles/ParticleGenerator.h"
 class GameLevel
 {
 public:

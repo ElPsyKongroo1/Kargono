@@ -2,7 +2,7 @@
 #include "../../../Library/Library.h"
 #include "../../../Library/Application/Input/MiscFunctions.h"
 #include "BreakoutStartFunctions.h"
-#include "../GameObject.h"
+#include "../../../Library/Application/GameApplication/GameObject/GameObject.h"
 
 
 namespace BreakoutStartFunctions
@@ -53,20 +53,20 @@ namespace BreakoutStartFunctions
 
     bool TOGGLE_GAME_START(GLInputLink* gamePadButton)
     {
-        if (Resources::currentApplication->currentInput != Resources::currentGame->resourceManager->applicationInputs.at(1))
+        if (Resources::currentApplication->currentInput != Resources::currentGame->resourceManager->localInputs.at(1))
         {
             updateType = true;
             typeChange[0] = Resources::currentApplication->currentInput;
-            typeChange[1] = Resources::currentGame->resourceManager->applicationInputs.at(1);
+            typeChange[1] = Resources::currentGame->resourceManager->localInputs.at(1);
             if (gamePadButton != nullptr) oldButton = gamePadButton;
             Resources::currentApplication->renderer->currentCamera->firstMouse = true;
             Resources::currentGame->State = GameApplication::GAME_MENU;
         }
-        else if (Resources::currentApplication->currentInput == Resources::currentGame->resourceManager->applicationInputs.at(1))
+        else if (Resources::currentApplication->currentInput == Resources::currentGame->resourceManager->localInputs.at(1))
         {
             updateType = true;
             typeChange[0] = Resources::currentApplication->currentInput;
-            typeChange[1] = Resources::currentGame->resourceManager->applicationInputs.at(0);
+            typeChange[1] = Resources::currentGame->resourceManager->localInputs.at(0);
             Resources::currentGame->State = GameApplication::GAME_ACTIVE;
         }
         return true;

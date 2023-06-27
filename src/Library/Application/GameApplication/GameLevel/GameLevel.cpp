@@ -1,7 +1,7 @@
 #include "GameLevel.h"
-#include "../../../Library/Library.h"
-#include "ResourceManager.h"
-#include "Audio/AudioContext.h"
+#include "../../../Library.h"
+#include "../../ResourceManager/ResourceManager.h"
+#include "../../Audio/AudioContext.h"
 void GameLevel::Load(const char* file) 
 {
 	int tileCode;
@@ -48,7 +48,7 @@ void GameLevel::init(int cameraViewWidth, int cameraViewHeight)
 						  glm::vec3(xLocation, yLocation, 0.0f),
 						  glm::vec3(30.0f, 30.0f, 0.5f) };
 			renderer2 = { new ShapeRenderer(orientation2,
-				Resources::currentGame->resourceManager->applicationMeshes.at(initMap.at((i * levelWidth) + j) - 1),
+				Resources::currentGame->resourceManager->localMeshes.at(initMap.at((i * levelWidth) + j) - 1),
 				Resources::currentApplication->renderer->defaultShader) };
 			glm::ivec2 mapLocation{glm::ivec2(j, i)};
 			GameBrick* brick{ new GameBrick(orientation2, renderer2, mapLocation, 0.0f, Resources::currentGame->audioContext->allAudioSources.at(1)) };

@@ -1,6 +1,6 @@
 // dear imgui, v1.89.4 WIP
 // (widgets code)
-
+#pragma warning( push, 0 )
 /*
 
 Index of this file:
@@ -8552,3 +8552,5 @@ void ImGui::TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, 
 
 
 #endif // #ifndef IMGUI_DISABLE
+
+#pragma warning( pop )

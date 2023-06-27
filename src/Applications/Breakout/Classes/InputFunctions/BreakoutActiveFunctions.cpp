@@ -2,7 +2,7 @@
 #include "../../../Library/Library.h"
 #include "../../../Library/Application/Input/MiscFunctions.h"
 #include "BreakoutActiveFunctions.h"
-#include "../GameObject.h"
+#include "../../../Library/Application/GameApplication/GameObject/GameObject.h"
 
 
 namespace BreakoutActiveFunctions

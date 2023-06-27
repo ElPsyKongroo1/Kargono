@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../Library/Includes.h"
-#include "../GameObject.h"
+#include "../../Includes.h"
+#include "../GameApplication/GameObject/GameObject.h"
 
 class ParticleGenerator
 {

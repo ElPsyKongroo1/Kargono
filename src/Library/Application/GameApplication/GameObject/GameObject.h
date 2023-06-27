@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../Library/Includes.h"
-#include "../../../Library/Application/Objects/Objects.h"
+#include "../../../Includes.h"
+#include "../../Objects/Objects.h"
 class GameObject : public Object
 {
 public:

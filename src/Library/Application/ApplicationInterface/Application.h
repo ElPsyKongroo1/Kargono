@@ -2,7 +2,7 @@
 #include "../../Includes.h"
 #include "../Input/Input.h"
 #include "../../Rendering/RendererState/RendererState.h"
-#include "../../../Applications/Breakout/Classes/Audio/AudioContext.h"
+#include "../Audio/AudioContext.h"
 
 class Application
 {
