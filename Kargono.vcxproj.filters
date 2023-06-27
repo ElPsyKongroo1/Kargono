@@ -108,13 +108,13 @@
     <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Application\Objects\ModelRenderer.cpp">
+    <ClCompile Include="src\Library\Rendering\Renderable\ModelRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Application\Objects\RenderableInterface.cpp">
+    <ClCompile Include="src\Library\Rendering\Renderable\RenderableInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Library\Application\Objects\ShapeRenderer.cpp">
+    <ClCompile Include="src\Library\Rendering\Renderable\ShapeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp">
@@ -144,13 +144,13 @@
     <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp">
+    <ClCompile Include="src\Library\Application\GameApplication\GameLevel\GameLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp">
+    <ClCompile Include="src\Library\Application\GameApplication\GameObject\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp">
+    <ClCompile Include="src\Library\Application\ResourceManager\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp">
@@ -159,7 +159,7 @@
     <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.cpp">
+    <ClCompile Include="src\Library\Application\Particles\ParticleGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Library\External_Libraries\dr_wav_impl.cpp">
@@ -168,16 +168,16 @@
     <ClCompile Include="src\Library\External_Libraries\stb_imageImp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioContext.cpp">
+    <ClCompile Include="src\Library\Application\Audio\AudioContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioListener.cpp">
+    <ClCompile Include="src\Library\Application\Audio\AudioListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioBuffer.cpp">
+    <ClCompile Include="src\Library\Application\Audio\AudioBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioSource.cpp">
+    <ClCompile Include="src\Library\Application\Audio\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -503,16 +503,10 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glfw3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="glfw3native.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Application\Objects\RenderableInterface.h">
+    <ClInclude Include="src\Library\Rendering\Renderable\RenderableInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.h">
@@ -545,13 +539,13 @@
     <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h">
+    <ClInclude Include="src\Library\Application\GameApplication\GameLevel\GameLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h">
+    <ClInclude Include="src\Library\Application\GameApplication\GameObject\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h">
+    <ClInclude Include="src\Library\Application\ResourceManager\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h">
@@ -560,7 +554,7 @@
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.h">
+    <ClInclude Include="src\Library\Application\Particles\ParticleGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLResources\Includes\AL\al.h">
@@ -584,10 +578,10 @@
     <ClInclude Include="src\Library\External_Libraries\dr_wav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioContext.h">
+    <ClInclude Include="src\Library\Application\Audio\AudioContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioMisc.h">
+    <ClInclude Include="src\Library\Application\Audio\AudioMisc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -595,7 +589,6 @@
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
     <None Include="src\Library\External_Libraries\imgui\.gitattributes" />
     <None Include="src\Library\External_Libraries\imgui\.gitignore" />
-    <None Include="imgui.ini" />
     <None Include="Resources\Default-Resources\Shaders\Lighting\shader.fs" />
     <None Include="Resources\Default-Resources\Shaders\Lighting\shader.vs" />
     <None Include="Resources\Default-Resources\Shaders\LightSource\shader.fs" />
@@ -630,19 +623,17 @@
     </None>
     <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
     <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
-    <None Include="glfw3.pdb" />
-    <None Include="assimp-vc143-mtd.pdb" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="assimp-vc143-mtd.dll" />
     <None Include="Output\Release\binaries\Kargono.exe" />
     <None Include="Output\Release\binaries\Kargono.pdb" />
-    <None Include="..\..\..\..\BuildApplication\build\Debug\OpenAL32.dll" />
     <None Include="OpenGLResources\Libraries\OpenAL\alrecord.exe" />
     <None Include="OpenGLResources\Libraries\OpenAL\altonegen.exe" />
     <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.dll" />
     <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.exp" />
     <None Include="OpenGLResources\Libraries\OpenAL\openal-info.exe" />
+    <None Include="README.md" />
+    <None Include="src\Library\External_Libraries\imgui\imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
@@ -669,9 +660,6 @@
     <Image Include="Resources\Default-Resources\Textures\SpecularMap\Metal_Box.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="C:\Users\Charles%27s PC\Desktop\PurpleBlock.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Resources\Breakout\Textures\Original\PurpleBlock.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -687,14 +675,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
-    <Text Include="imgui_log.txt" />
-    <Text Include="Documentation\ToDO.txt" />
     <Text Include="Resources\Breakout\Map\Level1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
-    <Library Include="glfw3.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
     <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />

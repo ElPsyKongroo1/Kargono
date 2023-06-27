@@ -159,7 +159,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -168,6 +168,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)src\Resources\External_Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -221,7 +222,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -230,6 +231,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)src\Resources\External_Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -268,16 +270,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioBuffer.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioContext.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioListener.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\Audio\AudioSource.cpp" />
+    <ClCompile Include="src\Library\Application\Audio\AudioBuffer.cpp" />
+    <ClCompile Include="src\Library\Application\Audio\AudioContext.cpp" />
+    <ClCompile Include="src\Library\Application\Audio\AudioListener.cpp" />
+    <ClCompile Include="src\Library\Application\Audio\AudioSource.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\GameLevel.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\GameObject.cpp" />
+    <ClCompile Include="src\Library\Application\GameApplication\GameLevel\GameLevel.cpp" />
+    <ClCompile Include="src\Library\Application\GameApplication\GameObject\GameObject.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.cpp" />
-    <ClCompile Include="src\Applications\Breakout\Classes\ResourceManager.cpp" />
+    <ClCompile Include="src\Library\Application\Particles\ParticleGenerator.cpp" />
+    <ClCompile Include="src\Library\Application\ResourceManager\ResourceManager.cpp" />
     <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp" />
     <ClCompile Include="src\EntryPoint\Source.cpp" />
     <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp" />
@@ -301,7 +303,7 @@
     <ClCompile Include="src\Library\Rendering\Mesh\MeshManager.cpp" />
     <ClCompile Include="src\Library\Rendering\Model\Model.cpp" />
     <ClCompile Include="src\Library\Rendering\Model\ModelManager.cpp" />
-    <ClCompile Include="src\Library\Application\Objects\ModelRenderer.cpp" />
+    <ClCompile Include="src\Library\Rendering\Renderable\ModelRenderer.cpp" />
     <ClCompile Include="src\Library\External_Libraries\glad.c" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp" />
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_demo.cpp" />
@@ -312,8 +314,8 @@
     <ClCompile Include="src\Library\External_Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Library\Library.cpp" />
     <ClCompile Include="src\Library\Rendering\Mesh\GLMesh.cpp" />
-    <ClCompile Include="src\Library\Application\Objects\RenderableInterface.cpp" />
-    <ClCompile Include="src\Library\Application\Objects\ShapeRenderer.cpp" />
+    <ClCompile Include="src\Library\Rendering\Renderable\RenderableInterface.cpp" />
+    <ClCompile Include="src\Library\Rendering\Renderable\ShapeRenderer.cpp" />
     <ClCompile Include="src\Library\Rendering\Shaders\ShaderManager.cpp" />
     <ClCompile Include="src\Library\Rendering\Shaders\GLShader.cpp" />
     <ClCompile Include="src\Applications\DefaultApplication3D\DefaultApplication3D.cpp" />
@@ -414,14 +416,14 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Applications\Breakout\Breakout.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioContext.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\Audio\AudioMisc.h" />
+    <ClInclude Include="src\Library\Application\Audio\AudioContext.h" />
+    <ClInclude Include="src\Library\Application\Audio\AudioMisc.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\GameLevel.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\GameObject.h" />
+    <ClInclude Include="src\Library\Application\GameApplication\GameLevel\GameLevel.h" />
+    <ClInclude Include="src\Library\Application\GameApplication\GameObject\GameObject.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\Particles\ParticleGenerator.h" />
-    <ClInclude Include="src\Applications\Breakout\Classes\ResourceManager.h" />
+    <ClInclude Include="src\Library\Application\Particles\ParticleGenerator.h" />
+    <ClInclude Include="src\Library\Application\ResourceManager\ResourceManager.h" />
     <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h" />
     <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h" />
     <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h" />
@@ -453,7 +455,7 @@
     <ClInclude Include="src\Library\Library.h" />
     <ClInclude Include="src\Library\Rendering\Mesh\Meshes.h" />
     <ClInclude Include="src\Library\External_Libraries\stb_image.h" />
-    <ClInclude Include="src\Library\Application\Objects\RenderableInterface.h" />
+    <ClInclude Include="src\Library\Rendering\Renderable\RenderableInterface.h" />
     <ClInclude Include="src\Library\Rendering\Shaders\Shaders.h" />
     <ClInclude Include="src\Library\Rendering\Textures\Textures.h" />
     <ClInclude Include="src\Library\Rendering\UserInterface\UIFunctions.h" />
