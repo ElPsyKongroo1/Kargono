@@ -6,21 +6,21 @@
 #include "../../Library/Rendering/Mesh/Meshes.h"
 #include "../../Library/Rendering/Textures/Textures.h"
 #include "../../Library/Application/Objects/Objects.h"
-#include "../../Library/Application/ResourceManager/ResourceManager.h"
-#include "../../Library/Application/GameApplication/GameObject/GameObject.h"
-#include "../../Library/Application/GameApplication/GameLevel/GameLevel.h"
+#include "Classes/BreakoutResourceManager/BreakoutResourceManager.h"
+#include "Classes/BreakoutObject/BreakoutObject.h"
+#include "Classes/BreakoutLevel/BreakoutLevel.h"
 #include "../../Library/Application/Particles/ParticleGenerator.h"
 #include "../../Library/Application/Audio/AudioContext.h"
 
 void initializeRenderer();
-void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level);
+void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, BreakoutLevel* level);
 void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level);
 
 void BreakoutStart()
 {
 	// Initialize GLFW context, Meshes, Shaders, and Textures
 	initializeRenderer();
-	Resources::currentGame->resourceManager = new ResourceManager();
+	Resources::currentGame->resourceManager = new BreakoutResourceManager();
 	Resources::currentGame->resourceManager->initializeResources();
     Resources::currentGame->recentInput = Resources::currentGame->resourceManager->localInputs.at(1);
     Resources::currentGame->currentInput = Resources::currentGame->recentInput;
@@ -35,9 +35,9 @@ void BreakoutStart()
     Resources::currentApplication->audioContext->allAudioSources.push_back(lowPopSource);
     
     
-	GameLevel* currentLevel{ new GameLevel(25, 18) };
+	BreakoutLevel* currentLevel{ new BreakoutLevel(25, 18) };
 	currentLevel->Load("Resources/Breakout/Map/Level1.txt");
-    Resources::currentGame->currentLevel = currentLevel;
+    Resources::currentGame->resourceManager->currentLevel = currentLevel;
 	for (GameBrick* object : currentLevel->currentMapBricks)
 	{
 		if (!object) { continue; }
@@ -52,7 +52,7 @@ void BreakoutStart()
 		Resources::currentApplication->renderer->defaultShader) };
 	GamePaddle* paddle{ new GamePaddle(orientation, renderer, 300.0f, lowPopSource) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(paddle);
-    Resources::currentGame->paddle = paddle;
+    Resources::currentGame->resourceManager->currentLevel->paddle = paddle;
 
     Orientation orientationBall = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
                   glm::vec3(0.0f, -150.0f, 0.0f),
@@ -61,7 +61,7 @@ void BreakoutStart()
         Resources::currentGame->resourceManager->localMeshes.at(2),
         Resources::currentApplication->renderer->defaultShader) };
     GameBall* ball{ new GameBall(orientationBall, rendererBall, 400.0f, nullptr) };
-    Resources::currentGame->ball = ball;
+    Resources::currentGame->resourceManager->currentLevel->ball = ball;
     Resources::currentApplication->renderer->objectRenderBuffer.push_back(ball);
 
     glm::vec3 defaultTranslation {glm::vec3(0.0f, 0.0f, 0.0f)};
@@ -117,7 +117,7 @@ void BreakoutStart()
 	}
 
 
-    Resources::currentGame->paddle = nullptr;
+    Resources::currentGame->resourceManager->currentLevel->paddle = nullptr;
 	delete paddle;
 	paddle = nullptr;
 
@@ -290,7 +290,7 @@ void processPaddleCollision(GameBall* ball, GamePaddle* paddle, GameLevel* level
 }
 
 
-void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level) 
+void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, BreakoutLevel* level) 
 {
     for (GameBrick* brick : bricks) 
     {

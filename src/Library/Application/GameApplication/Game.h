@@ -1,9 +1,9 @@
 #pragma once
 #include "../../Includes.h"
 #include "../ApplicationInterface/Application.h"
-#include "../ResourceManager/ResourceManager.h"
-#include "GameObject/GameObject.h"
-#include "GameLevel/GameLevel.h"
+#include "../../../Applications/Breakout/Classes/BreakoutResourceManager/BreakoutResourceManager.h"
+#include "../../../Applications/Breakout/Classes/BreakoutObject/BreakoutObject.h"
+#include "../../../Applications/Breakout/Classes/BreakoutLevel/BreakoutLevel.h"
 
 class GameApplication : public Application
 {
@@ -18,10 +18,7 @@ public:
 public:
     // game state
     GameState State;
-    ResourceManager* resourceManager = nullptr;
-    GameObject* paddle = nullptr;
-    GameBall* ball = nullptr;
-    GameLevel* currentLevel = nullptr;
+    BreakoutResourceManager* resourceManager = nullptr;
     // constructor/destructor
     GameApplication() {}
     GameApplication(unsigned int width, unsigned int height, GameState state) : Application(width, height), 
