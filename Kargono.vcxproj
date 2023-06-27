@@ -102,21 +102,21 @@
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|Win32'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
@@ -124,21 +124,21 @@
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(With-Debugging-Enabled)|x64'">
     <OutDir>$(ProjectDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(ProjectDir)Output\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
-    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries</LibraryPath>
+    <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
