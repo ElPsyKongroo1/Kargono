@@ -270,6 +270,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.cpp" />
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.cpp" />
     <ClCompile Include="src\Library\Application\Audio\AudioBuffer.cpp" />
     <ClCompile Include="src\Library\Application\Audio\AudioContext.cpp" />
     <ClCompile Include="src\Library\Application\Audio\AudioListener.cpp" />
@@ -416,6 +419,9 @@
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h" />
     <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h" />
     <ClInclude Include="src\Applications\Breakout\Breakout.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.h" />
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.h" />
     <ClInclude Include="src\Library\Application\Audio\AudioContext.h" />
     <ClInclude Include="src\Library\Application\Audio\AudioMisc.h" />
     <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h" />
