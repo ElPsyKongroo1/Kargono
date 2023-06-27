@@ -180,6 +180,15 @@
     <ClCompile Include="src\Library\Application\Audio\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -582,6 +591,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Library\Application\Audio\AudioMisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

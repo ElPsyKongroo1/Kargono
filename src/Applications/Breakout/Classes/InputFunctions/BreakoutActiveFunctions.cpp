@@ -2,7 +2,7 @@
 #include "../../../Library/Library.h"
 #include "../../../Library/Application/Input/MiscFunctions.h"
 #include "BreakoutActiveFunctions.h"
-#include "../../../Library/Application/GameApplication/GameObject/GameObject.h"
+#include "../BreakoutObject/BreakoutObject.h"
 
 
 namespace BreakoutActiveFunctions
@@ -175,17 +175,20 @@ namespace BreakoutActiveFunctions
     }
     bool INCREASE_PADDLE_SPEED_TOGGLE(GLInputLink* gamePadButton) 
     {
-        Resources::currentGame->paddle->currentSpeed = 1.7f * Resources::currentGame->paddle->baseSpeed;
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        paddle->currentSpeed = 1.7f * paddle->baseSpeed;
         return false;
     }
     bool MODIFY_PADDLE_DIRECTION_LEFT(GLInputLink* gamePadButton) 
     {
-        Resources::currentGame->paddle->direction = glm::vec3(-0.8f, 0.2f, 0.0f);
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        paddle->direction = glm::vec3(-0.8f, 0.2f, 0.0f);
         return false;
     }
     bool MODIFY_PADDLE_DIRECTION_RIGHT(GLInputLink* gamePadButton)
     {
-        Resources::currentGame->paddle->direction = glm::vec3(0.8f, 0.2f, 0.0f);
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        paddle->direction = glm::vec3(0.8f, 0.2f, 0.0f);
         return false;
     }
     
@@ -193,12 +196,14 @@ namespace BreakoutActiveFunctions
 
     bool RESET_PADDLE_DIRECTION(GLInputLink* gamePadButton) 
     {
-        Resources::currentGame->paddle->direction = glm::vec3(0.0f, 0.0f, 0.0f);
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        paddle->direction = glm::vec3(0.0f, 0.0f, 0.0f);
         return false;
     }
     bool RESET_PADDLE_SPEED(GLInputLink* gamePadButton)
     {
-        Resources::currentGame->paddle->currentSpeed = Resources::currentGame->paddle->baseSpeed;
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        paddle->currentSpeed = paddle->baseSpeed;
         return false;
     }
 
@@ -206,63 +211,70 @@ namespace BreakoutActiveFunctions
 
     bool INCREMENT_BALL_SPEED()
     {
-        Resources::currentGame->ball->currentSpeed += 300.0f * Resources::deltaTime;
-        
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->currentSpeed += 300.0f * Resources::deltaTime;
         return false;
     }
     bool DEINCREMENT_BALL_SPEED()
     {
-        Resources::currentGame->ball->currentSpeed -= 300.0f * Resources::deltaTime;
-        if (Resources::currentGame->ball->currentSpeed < 0.0f) { Resources::currentGame->ball->currentSpeed = 0; }
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->currentSpeed -= 300.0f * Resources::deltaTime;
+        if (ball->currentSpeed < 0.0f) { ball->currentSpeed = 0; }
         return false;
     }
     bool MOVE_BALL_RIGHT() 
     {
-        Resources::currentGame->ball->orientation.translation.x += Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->orientation.translation.x += ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_LEFT()
     {
-        Resources::currentGame->ball->orientation.translation.x -= Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->orientation.translation.x -= ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_UP()
     {
-        Resources::currentGame->ball->orientation.translation.y += Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->orientation.translation.y += ball->currentSpeed * Resources::deltaTime;
         return false;
     }
     bool MOVE_BALL_DOWN()
     {
-        Resources::currentGame->ball->orientation.translation.y -= Resources::currentGame->ball->currentSpeed * Resources::deltaTime;
+        auto ball = Resources::currentGame->resourceManager->currentLevel->ball;
+        ball->orientation.translation.y -= ball->currentSpeed * Resources::deltaTime;
         return false;
     }
 
     bool MOVE_RIGHT_2D()
     {
-        float maxBorder = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->paddle->renderer)->mesh->dimensions.x * Resources::currentGame->paddle->orientation.scale.x);
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        float maxBorder = Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(paddle->renderer)->mesh->dimensions.x * paddle->orientation.scale.x);
 
-        if (Resources::currentGame->paddle->orientation.translation.x >= maxBorder)
+        if (paddle->orientation.translation.x >= maxBorder)
         {
-            Resources::currentGame->paddle->orientation.translation.x = maxBorder;
+            paddle->orientation.translation.x = maxBorder;
         }
         else 
         {
-            Resources::currentGame->paddle->orientation.translation.x += Resources::currentGame->paddle->currentSpeed * Resources::deltaTime;
+            paddle->orientation.translation.x += paddle->currentSpeed * Resources::deltaTime;
         }
        
         return false;
     }
     bool MOVE_LEFT_2D()
     {
-        float minBorder = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(Resources::currentGame->paddle->renderer)->mesh->dimensions.x * Resources::currentGame->paddle->orientation.scale.x));
+        auto paddle = Resources::currentGame->resourceManager->currentLevel->paddle;
+        float minBorder = -(Resources::currentGame->renderer->currentCamera->frustrumDimensions.widthDimension.y - (static_cast<ShapeRenderer*>(paddle->renderer)->mesh->dimensions.x * paddle->orientation.scale.x));
 
-        if (Resources::currentGame->paddle->orientation.translation.x <= minBorder)
+        if (paddle->orientation.translation.x <= minBorder)
         {
-            Resources::currentGame->paddle->orientation.translation.x = minBorder;
+            paddle->orientation.translation.x = minBorder;
         }
         else 
         {
-            Resources::currentGame->paddle->orientation.translation.x -= Resources::currentGame->paddle->currentSpeed * Resources::deltaTime;
+            paddle->orientation.translation.x -= paddle->currentSpeed * Resources::deltaTime;
         }
         
         return false;

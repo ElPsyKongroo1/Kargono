@@ -11,7 +11,7 @@ public:
 	std::vector<GLShader*> localShaders;
 	std::vector<GLMesh*> localMeshes;
 	std::vector<GLInput*> localInputs;
-	float dimensionConversionFactor = 0.5;
+	const float dimensionConversionFactor{0.5f};
 public:
 	ResourceManager() : localTextures{std::vector<Texture*>()}, 
 					    localShaders{ std::vector<GLShader*>() },
@@ -50,8 +50,8 @@ public:
 		localInputs.clear();
 	}
 public:
-	void initializeResources();
+	virtual void initializeResources() = 0;
 private:
-	void initializeInput();
+	virtual void initializeInput() = 0;
 
 };
