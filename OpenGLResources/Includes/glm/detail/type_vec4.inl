@@ -1,5 +1,6 @@
 /// @ref core
 /// @file glm/detail/type_tvec4.inl
+#pragma warning( push, 0 )
 
 namespace glm{
 namespace detail
@@ -967,3 +968,5 @@ namespace detail
 #if GLM_ARCH != GLM_ARCH_PURE && GLM_HAS_ALIGNED_TYPE
 #	include "type_vec4_simd.inl"
 #endif
+
+#pragma warning( pop )

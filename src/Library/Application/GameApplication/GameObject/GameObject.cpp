@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "../../../Library/Library.h"
+#include "../../../Library.h"
 //void GameObject::setBaseDimensions(glm::vec3 baseDimensions)
 //{
 //		objectBaseDimensions = baseDimensions;

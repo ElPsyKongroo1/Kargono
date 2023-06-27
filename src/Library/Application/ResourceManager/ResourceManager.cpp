@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
-#include "InputFunctions/BreakoutActiveFunctions.h"
-#include "InputFunctions/BreakoutStartFunctions.h"
+#include "../../../Applications/Breakout/Classes/InputFunctions/BreakoutActiveFunctions.h"
+#include "../../../Applications/Breakout/Classes/InputFunctions/BreakoutStartFunctions.h"
 
 void ResourceManager::initializeResources() 
 {
@@ -13,8 +13,8 @@ void ResourceManager::initializeResources()
     Texture* specBall = new Texture("Resources/Breakout/Textures/SpecularMap/specBall.png", "texture_specular");
 
 
-    this->applicationTextures.push_back(purpleBlock);
-    this->applicationTextures.push_back(specBlock);
+    this->localTextures.push_back(purpleBlock);
+    this->localTextures.push_back(specBlock);
 
     glm::vec3 dimensions = glm::vec3(0.5f, 0.5f, 0.0f);
 
@@ -32,13 +32,13 @@ void ResourceManager::initializeResources()
             Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f))
     };
     GLMesh* purpleMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS, dimensions) };
-    applicationMeshes.push_back(purpleMesh);
+    localMeshes.push_back(purpleMesh);
 
     textures.clear();
     textures.push_back(blueBlock);
     textures.push_back(specBlock);
     GLMesh* blueMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS, dimensions) };
-    applicationMeshes.push_back(blueMesh);
+    localMeshes.push_back(blueMesh);
 
 
     textures.clear();
@@ -46,7 +46,7 @@ void ResourceManager::initializeResources()
     textures.push_back(specBall);
 
     GLMesh* ballMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS, dimensions) };
-    applicationMeshes.push_back(ballMesh);
+    localMeshes.push_back(ballMesh);
 
 
     vertices = 
@@ -64,7 +64,7 @@ void ResourceManager::initializeResources()
     dimensions = glm::vec3(0.5f, 0.125f, 0.0f);
 
     GLMesh* paddleMesh{ new GLMesh(vertices, indices, textures, GLMesh::DRAWARRAYS, dimensions) };
-    applicationMeshes.push_back(paddleMesh);
+    localMeshes.push_back(paddleMesh);
     initializeInput();
 }
 
@@ -164,7 +164,7 @@ void ResourceManager::initializeInput()
         isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
         mouseScroll, mouseMovement, keyboardRelease);
-    applicationInputs.push_back(gameplayInput);
+    localInputs.push_back(gameplayInput);
 
     delete[] gamePadClick;
     delete[] gamePadStick;
@@ -204,7 +204,7 @@ void ResourceManager::initializeInput()
         isGamePadTrigger, gamePadClick, gamePadStick,
         gamePadTrigger, keyboardHold, keyboardClick,
         mouseScroll, mouseMovement, keyboardRelease);
-    applicationInputs.push_back(startMenuInput);
+    localInputs.push_back(startMenuInput);
 
     delete[] gamePadClick;
     delete[] gamePadStick;

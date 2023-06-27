@@ -1,9 +1,9 @@
 #pragma once
 #include "../../Includes.h"
 #include "../ApplicationInterface/Application.h"
-#include "../../../Applications/Breakout/Classes/ResourceManager.h"
-#include "../../../Applications/Breakout/Classes/GameObject.h"
-#include "../../../Applications/Breakout/Classes/GameLevel.h"
+#include "../ResourceManager/ResourceManager.h"
+#include "GameObject/GameObject.h"
+#include "GameLevel/GameLevel.h"
 
 class GameApplication : public Application
 {

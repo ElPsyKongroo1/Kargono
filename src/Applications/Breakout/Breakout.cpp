@@ -6,12 +6,11 @@
 #include "../../Library/Rendering/Mesh/Meshes.h"
 #include "../../Library/Rendering/Textures/Textures.h"
 #include "../../Library/Application/Objects/Objects.h"
-#include "Classes/ResourceManager.h"
-#include "Classes/GameObject.h"
-#include "Classes/GameLevel.h"
-#include "Classes/InputFunctions/BreakoutActiveFunctions.h"
-#include "Classes/Particles/ParticleGenerator.h"
-#include "Classes/Audio/AudioContext.h"
+#include "../../Library/Application/ResourceManager/ResourceManager.h"
+#include "../../Library/Application/GameApplication/GameObject/GameObject.h"
+#include "../../Library/Application/GameApplication/GameLevel/GameLevel.h"
+#include "../../Library/Application/Particles/ParticleGenerator.h"
+#include "../../Library/Application/Audio/AudioContext.h"
 
 void initializeRenderer();
 void processBrickCollisions(GameBall* ball, std::vector<GameBrick*> bricks, GameLevel* level);
@@ -23,7 +22,7 @@ void BreakoutStart()
 	initializeRenderer();
 	Resources::currentGame->resourceManager = new ResourceManager();
 	Resources::currentGame->resourceManager->initializeResources();
-    Resources::currentGame->recentInput = Resources::currentGame->resourceManager->applicationInputs.at(1);
+    Resources::currentGame->recentInput = Resources::currentGame->resourceManager->localInputs.at(1);
     Resources::currentGame->currentInput = Resources::currentGame->recentInput;
     Resources::currentGame->audioContext->stereoSource->play();
     AudioBuffer* popSound = new AudioBuffer("Resources/Breakout/Sounds/pop-sound.wav");
@@ -49,7 +48,7 @@ void BreakoutStart()
 				  glm::vec3(0.0f, -260.0f, 0.0f),
 				  glm::vec3(120.0f, 120.0f, 0.0f) };
 	ShapeRenderer* renderer = { new ShapeRenderer(orientation,
-		Resources::currentGame->resourceManager->applicationMeshes.at(3),
+		Resources::currentGame->resourceManager->localMeshes.at(3),
 		Resources::currentApplication->renderer->defaultShader) };
 	GamePaddle* paddle{ new GamePaddle(orientation, renderer, 300.0f, lowPopSource) };
 	Resources::currentApplication->renderer->objectRenderBuffer.push_back(paddle);
@@ -59,7 +58,7 @@ void BreakoutStart()
                   glm::vec3(0.0f, -150.0f, 0.0f),
                   glm::vec3(15.0f, 15.0f, 0.0f) };
     ShapeRenderer* rendererBall = { new ShapeRenderer(orientation,
-        Resources::currentGame->resourceManager->applicationMeshes.at(2),
+        Resources::currentGame->resourceManager->localMeshes.at(2),
         Resources::currentApplication->renderer->defaultShader) };
     GameBall* ball{ new GameBall(orientationBall, rendererBall, 400.0f, nullptr) };
     Resources::currentGame->ball = ball;

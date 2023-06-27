@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RenderableInterface.h"
-#include "../../../Applications/Breakout/Classes/Audio/AudioContext.h"
+#include "../../Rendering/Renderable/RenderableInterface.h"
+#include "../Audio/AudioContext.h"
 
 /*============================================================================================================================================================================================
  * Object Class

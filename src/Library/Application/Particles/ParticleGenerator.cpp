@@ -79,7 +79,7 @@ void ParticleGenerator::spawnParticles()
 			Orientation orientation = { glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
 				  (*translation) + spawnPattern.relativeTranslations.at(i),
 				  glm::vec3(4.0f, 4.0f, 0.0f) };
-			ShapeRenderer* renderer{ new ShapeRenderer(orientation, Resources::currentGame->resourceManager->applicationMeshes.at(2), Resources::shaderManager.defaultShader) };
+			ShapeRenderer* renderer{ new ShapeRenderer(orientation, Resources::currentGame->resourceManager->localMeshes.at(2), Resources::shaderManager.defaultShader) };
 			glm::vec3 particleDirection {spawnPattern.directions.at(i)};
 			GameParticle* particle{ new GameParticle(orientation, renderer, 100.0f, 0.4f, particleDirection, nullptr) };
 			allParticles.push_back(particle);
