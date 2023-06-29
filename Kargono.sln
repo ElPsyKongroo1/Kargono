@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Kargono", "Kargono/Kargono.vcxproj", "{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Breakout", "Breakout\Breakout.vcxproj", "{B889EC8E-6D12-4ADD-8215-DDA2BC608C8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Debug|x64.ActiveCfg = Release(With-Debugging-Enabled)|x64
+		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Debug|x64.Build.0 = Release(With-Debugging-Enabled)|x64
+		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Release|x64.ActiveCfg = Release|x64
+		{74F5C54E-5910-4686-B9D9-F42E5E29A3B2}.Release|x64.Build.0 = Release|x64
+		{B889EC8E-6D12-4ADD-8215-DDA2BC608C8E}.Debug|x64.ActiveCfg = Release|x64
+		{B889EC8E-6D12-4ADD-8215-DDA2BC608C8E}.Debug|x64.Build.0 = Release|x64
+		{B889EC8E-6D12-4ADD-8215-DDA2BC608C8E}.Release|x64.ActiveCfg = Release|x64
+		{B889EC8E-6D12-4ADD-8215-DDA2BC608C8E}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90D8120F-77AD-4752-A28A-DF9C03B4F5CA}
+	EndGlobalSection
+EndGlobal
