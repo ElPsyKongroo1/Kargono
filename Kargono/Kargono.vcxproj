@@ -45,14 +45,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Output\$(Configuration)\binaries\</OutDir>
-    <IntDir>$(SolutionDir)Output\$(Configuration)\intermediates\</IntDir>
+    <IntDir>$(SolutionDir)Output\$(Configuration)\$(ProjectName)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
     <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Output\$(Configuration)\binaries\</OutDir>
-    <IntDir>$(SolutionDir)Output\$(Configuration)\intermediates\</IntDir>
+    <IntDir>$(SolutionDir)Output\$(Configuration)\$(ProjectName)\intermediates\</IntDir>
     <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
     <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
