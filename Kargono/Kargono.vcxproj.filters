@@ -189,6 +189,9 @@
     <ClCompile Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="entry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Library\Library.h">
@@ -602,6 +605,9 @@
     <ClInclude Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="entry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
@@ -652,6 +658,8 @@
     <None Include="OpenGLResources\Libraries\OpenAL\openal-info.exe" />
     <None Include="README.md" />
     <None Include="src\Library\External_Libraries\imgui\imgui.ini" />
+    <None Include="assimp-vc143-mtd.dll" />
+    <None Include="OpenAL32.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
