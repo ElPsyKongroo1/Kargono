@@ -53,15 +53,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Output\$(Configuration)\binaries\</OutDir>
     <IntDir>$(SolutionDir)Output\$(Configuration)\intermediates\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)OpenGLResources\Includes</IncludePath>
+    <IncludePath>$(ProjectDir)OpenGLResources\Includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(ProjectDir)OpenGLResources\Libraries\OpenAL;$(ProjectDir)OpenGLResources\Libraries;$(LibraryPath)</LibraryPath>
-    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <ReferencePath>$(ReferencePath);$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KARGONO_EXPORTS;_WINDOWS;_USRDLL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)src\Resources\External_Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -69,7 +69,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KARGONO_EXPORTS;_WINDOWS;_USRDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)src\Resources\External_Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -90,7 +90,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);glfw3.lib;opengl32.Lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -98,6 +98,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="entry.cpp" />
     <ClCompile Include="src\Applications\Breakout\Breakout.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.cpp" />
     <ClCompile Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="entry.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\al.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\alc.h" />
     <ClInclude Include="OpenGLResources\Includes\AL\alext.h" />
@@ -299,6 +301,8 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="assimp-vc143-mtd.dll" />
+    <None Include="OpenAL32.dll" />
     <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
     <None Include="OpenGLResources\Includes\Assimp\color4.inl" />
     <None Include="OpenGLResources\Includes\Assimp\config.h.in" />
