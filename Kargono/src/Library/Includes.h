@@ -10,9 +10,9 @@
 #include <limits>
 #include <cstdint>
 
-#include "External_Libraries/imgui/imgui.h"
-#include "External_Libraries/imgui/imgui_impl_glfw.h"
-#include "External_Libraries/imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 
 #include <glad/glad.h>
@@ -28,7 +28,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "External_Libraries/dr_wav.h"
+#include "dr_libs/dr_wav.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 

@@ -1,727 +1,466 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Kargono">
+      <UniqueIdentifier>{361A9D7B-A2F9-1B17-AB11-A7ED17708278}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="dependencies">
+      <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="dependencies\implementation">
+      <UniqueIdentifier>{A17D43C7-0D8B-71AD-9671-6D98027E3D64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\implementation\dr_libs">
+      <UniqueIdentifier>{8F9369E2-FB4C-D48C-84AC-EE66F0648AFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\implementation\glad">
+      <UniqueIdentifier>{48FD14D9-344E-001B-5DB2-EEDC49629384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\implementation\stb">
+      <UniqueIdentifier>{79243792-E507-46D2-EE0A-740E5A6D0C23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\include">
+      <UniqueIdentifier>{FFA0974E-EB2F-2118-944E-351380BC31BE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\include\imgui">
+      <UniqueIdentifier>{A9315E2C-9541-0AFD-FEFA-6E1BEA29F995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications">
+      <UniqueIdentifier>{E360B5B1-CF59-D403-F88B-B988E4E3B30F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout">
+      <UniqueIdentifier>{0FA4117F-7B66-4509-C416-D49530181EE7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout\Classes">
+      <UniqueIdentifier>{ECB15D14-5820-B393-A109-6E930DB7A82F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout\Classes\BreakoutLevel">
+      <UniqueIdentifier>{301E3388-9C59-934B-A54E-10DB1109187C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout\Classes\BreakoutObject">
+      <UniqueIdentifier>{4F7F5995-3B28-C1C4-64BE-DC4350C6DB05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout\Classes\BreakoutResourceManager">
+      <UniqueIdentifier>{FB8C3922-67FF-7B3E-B093-B1C21C454637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\Breakout\Classes\InputFunctions">
+      <UniqueIdentifier>{A432D25A-90DB-398A-B971-5509A57954CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\DefaultApplication2D">
+      <UniqueIdentifier>{41D4A316-AD98-A206-76FE-D2D0E2813E3C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Applications\DefaultApplication3D">
+      <UniqueIdentifier>{62D4A316-CE98-A206-97FE-D2D003823E3C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\EntryPoint">
+      <UniqueIdentifier>{F8337006-E401-640C-CD95-D432B9024071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library">
+      <UniqueIdentifier>{31E15EE3-9D96-D7D8-268B-D1AF923FCEDC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application">
+      <UniqueIdentifier>{746EA659-E0A5-EEF0-E9AF-5214556615EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\ApplicationInterface">
+      <UniqueIdentifier>{E8E86F55-D4FB-6FAE-7DE5-4C9B69D70CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\Audio">
+      <UniqueIdentifier>{75032158-E11B-0882-AAC8-971B16A09C1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\DefaultApplication">
+      <UniqueIdentifier>{BC208A07-A888-50D5-11F4-64EBFD7A67C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\GameApplication">
+      <UniqueIdentifier>{710BEEE8-DD9A-AFD3-E696-90EB52A5EADF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\GameApplication\GameLevel">
+      <UniqueIdentifier>{F203478D-5ECA-A3A9-A725-320C132B120E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\GameApplication\GameObject">
+      <UniqueIdentifier>{511DEA3C-3DB1-DFE4-A675-399992281AD7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\Input">
+      <UniqueIdentifier>{7325AE58-DF3D-9582-A8EA-241C14C2291C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\Input\Default-Input-Libraries">
+      <UniqueIdentifier>{EECA53E0-5AE7-45D1-23BF-B23E8F9AAF92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\Objects">
+      <UniqueIdentifier>{2D4137EE-9924-462E-A227-746A0E8A0C7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\Particles">
+      <UniqueIdentifier>{4A54796C-B6C2-CEEB-FFAB-89EB6B59C487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Application\ResourceManager">
+      <UniqueIdentifier>{86BF5FEF-F24E-21DA-FB4A-02F267595CE6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering">
+      <UniqueIdentifier>{BE9BDE7A-2A08-9A75-F3FB-31D35F27BCDD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Cameras">
+      <UniqueIdentifier>{A99D6BB5-15B6-52DF-DE62-E2784A3AE778}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\LightSource">
+      <UniqueIdentifier>{36049CEB-A272-F16A-EB5B-AC6A5709E706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Mesh">
+      <UniqueIdentifier>{3A18EA43-2628-9614-8FE1-FA327B1085AD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Model">
+      <UniqueIdentifier>{7E5B32C1-EA68-60A7-734F-5C92DF5B2C5E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Renderable">
+      <UniqueIdentifier>{E166AF28-CDB7-9A6A-F61B-892CE2CB2DD4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\RendererState">
+      <UniqueIdentifier>{65053AAE-D1BE-A458-5A1E-BF32C6D65AC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Shaders">
+      <UniqueIdentifier>{979E8994-03B7-70BE-CC63-0058383B0558}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\Textures">
+      <UniqueIdentifier>{5183E161-3DA9-ABC8-26EF-309412B4D094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Library\Rendering\UserInterface">
+      <UniqueIdentifier>{5DE5D3C9-C99E-3E74-52FE-584EBEB6F4E3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Applications\DefaultApplication3D\DefaultApplication3D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Library.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Shaders\GLShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Mesh\GLMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Cameras\GLCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\LightSource\LightSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\GLInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EntryPoint\Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\UserInterface\UIWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Cameras\CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\MiscFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Mesh\MeshManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Shaders\ShaderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Textures\TextureManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\UserInterface\UIFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Model\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Textures\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Model\ModelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\RendererState\RendererStateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Renderable\ModelRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Renderable\RenderableInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Rendering\Renderable\ShapeRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\GameApplication\Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Breakout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Input\InputCallback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\DefaultApplication\DefaultApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\GameApplication\GameLevel\GameLevel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\GameApplication\GameObject\GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\ResourceManager\ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Particles\ParticleGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\dr_wav_impl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\External_Libraries\stb_imageImp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Audio\AudioContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Audio\AudioListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Audio\AudioBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Library\Application\Audio\AudioSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="entry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Library\Library.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Kargono.h" />
+    <ClInclude Include="Kargono\ApplicationV2.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Includes.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Kargono\Core.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Shaders\Shaders.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Kargono\EntryPoint.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Mesh\Meshes.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Kargono\Log.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\stb_image.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imconfig.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Textures\Textures.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imgui.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Cameras\Cameras.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imgui_impl_glfw.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Application\Objects\Objects.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Rendering\LightSource\LightSource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\Input.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imgui_internal.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imstb_rectpack.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imgui.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imstb_textedit.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_glfw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\imgui\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\MiscFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\UserInterface\UIFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Model\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\glad\glad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\aabb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ai_assert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\anim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\AssertHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Base64.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\BaseImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Bitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\BlobIOSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ByteSwapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\cexport.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\cfileio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\cimport.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ColladaMetaData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\color4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\commonMetaData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\CreateAnimMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\DefaultIOStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\DefaultIOSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\DefaultLogger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Exceptional.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Exporter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\fast_atof.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\GenericProperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\GltfMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Hash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Importer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\importerdesc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\IOStream.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\IOStreamBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\IOSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\LineSplitter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\LogAux.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Logger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\LogStream.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\MathFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\matrix3x3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\matrix4x4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\MemoryIOWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\metadata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\NullLogger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ObjMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ParsingUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\pbrmaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\postprocess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Profiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ProgressHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\qnan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\quaternion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\RemoveComments.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SceneCombiner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SGSpatialSort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SkeletonMeshBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SmallVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SmoothingGroups.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\SpatialSort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\StandardShapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\StreamReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\StreamWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\StringComparison.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\StringUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Subdivision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\TinyFormatter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\XmlParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\XMLTools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\ZipArchiveIOSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Compiler\poppack1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Compiler\pstdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\Assimp\Compiler\pushpack1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3native.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\GLFW\Old-Files\glfw3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Rendering\Renderable\RenderableInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\GameApplication\Game.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="dependencies\include\imgui\imstb_truetype.h">
+      <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
     <ClInclude Include="src\Applications\Breakout\Breakout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Input\InputCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\DefaultApplication\DefaultApplication.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\GameApplication\GameLevel\GameLevel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\GameApplication\GameObject\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\ResourceManager\ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Particles\ParticleGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\al.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\alc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\alext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\efx-creative.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\efx-presets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLResources\Includes\AL\efx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\External_Libraries\dr_wav.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Audio\AudioContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Library\Application\Audio\AudioMisc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>src\Applications\Breakout</Filter>
     </ClInclude>
     <ClInclude Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.h">
-      <Filter>Header Files</Filter>
+      <Filter>src\Applications\Breakout\Classes\BreakoutLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.h">
+      <Filter>src\Applications\Breakout\Classes\BreakoutObject</Filter>
     </ClInclude>
     <ClInclude Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>src\Applications\Breakout\Classes\BreakoutResourceManager</Filter>
     </ClInclude>
-    <ClInclude Include="entry.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.h">
+      <Filter>src\Applications\Breakout\Classes\InputFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.h">
+      <Filter>src\Applications\Breakout\Classes\InputFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\DefaultApplication2D\DefaultApplication2D.h">
+      <Filter>src\Applications\DefaultApplication2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Applications\DefaultApplication3D\DefaultApplication3D.h">
+      <Filter>src\Applications\DefaultApplication3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\ApplicationInterface\Application.h">
+      <Filter>src\Library\Application\ApplicationInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\ApplicationInterface\ApplicationManager.h">
+      <Filter>src\Library\Application\ApplicationInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Audio\AudioContext.h">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Audio\AudioMisc.h">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\DefaultApplication\DefaultApplication.h">
+      <Filter>src\Library\Application\DefaultApplication</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\GameApplication\Game.h">
+      <Filter>src\Library\Application\GameApplication</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\GameApplication\GameLevel\GameLevel.h">
+      <Filter>src\Library\Application\GameApplication\GameLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\GameApplication\GameObject\GameObject.h">
+      <Filter>src\Library\Application\GameApplication\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.h">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.h">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.h">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\Input.h">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\InputCallback.h">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Input\MiscFunctions.h">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Objects\Objects.h">
+      <Filter>src\Library\Application\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\Particles\ParticleGenerator.h">
+      <Filter>src\Library\Application\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Application\ResourceManager\ResourceManager.h">
+      <Filter>src\Library\Application\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Includes.h">
+      <Filter>src\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Library.h">
+      <Filter>src\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Cameras\Cameras.h">
+      <Filter>src\Library\Rendering\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\LightSource\LightSource.h">
+      <Filter>src\Library\Rendering\LightSource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Mesh\Meshes.h">
+      <Filter>src\Library\Rendering\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Model\Model.h">
+      <Filter>src\Library\Rendering\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Renderable\RenderableInterface.h">
+      <Filter>src\Library\Rendering\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\RendererState\RendererState.h">
+      <Filter>src\Library\Rendering\RendererState</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Shaders\Shaders.h">
+      <Filter>src\Library\Rendering\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\Textures\Textures.h">
+      <Filter>src\Library\Rendering\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\UserInterface\UIFunctions.h">
+      <Filter>src\Library\Rendering\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Library\Rendering\UserInterface\WindowFunctions.h">
+      <Filter>src\Library\Rendering\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Library\External_Libraries\imgui\.editorconfig" />
-    <None Include="src\Library\External_Libraries\imgui\.gitattributes" />
-    <None Include="src\Library\External_Libraries\imgui\.gitignore" />
-    <None Include="Resources\Default-Resources\Shaders\Lighting\shader.fs" />
-    <None Include="Resources\Default-Resources\Shaders\Lighting\shader.vs" />
-    <None Include="Resources\Default-Resources\Shaders\LightSource\shader.fs" />
-    <None Include="Resources\Default-Resources\Shaders\LightSource\shader.vs" />
-    <None Include="Resources\Default-Resources\Shaders\DefaultShader\shader.fs" />
-    <None Include="Resources\Default-Resources\Shaders\DefaultShader\shader.vs" />
-    <None Include="OpenGLResources\Includes\Assimp\.editorconfig" />
-    <None Include="OpenGLResources\Includes\Assimp\color4.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\config.h.in" />
-    <None Include="OpenGLResources\Includes\Assimp\material.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\matrix3x3.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\matrix4x4.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\quaternion.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\SmoothingGroups.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\vector2.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Includes\Assimp\vector3.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="OpenGLResources\Libraries\Old-Versions\glfw3.pdb" />
-    <None Include="OpenGLResources\Libraries\assimp-vc143-mtd.exp" />
-    <None Include=".gitattributes" />
-    <None Include=".gitignore" />
-    <None Include="Output\Release\binaries\Kargono.exe" />
-    <None Include="Output\Release\binaries\Kargono.pdb" />
-    <None Include="OpenGLResources\Libraries\OpenAL\alrecord.exe" />
-    <None Include="OpenGLResources\Libraries\OpenAL\altonegen.exe" />
-    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.dll" />
-    <None Include="OpenGLResources\Libraries\OpenAL\OpenAL32.exp" />
-    <None Include="OpenGLResources\Libraries\OpenAL\openal-info.exe" />
-    <None Include="README.md" />
-    <None Include="src\Library\External_Libraries\imgui\imgui.ini" />
-    <None Include="assimp-vc143-mtd.dll" />
-    <None Include="OpenAL32.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="src\Resources\Textures\Images\Original\Metal_Box.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="src\Resources\Textures\Images\Original\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="src\Resources\Textures\Images\SpecularMap\Metal_Box.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="src\Resources\Textures\Images\SpecularMap\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Default-Resources\Textures\Original\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Default-Resources\Textures\Original\Metal_Box.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Default-Resources\Textures\SpecularMap\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Default-Resources\Textures\SpecularMap\Metal_Box.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Breakout\Textures\Original\PurpleBlock.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Breakout\Textures\SpecularMap\SpecularBlock.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Breakout\Textures\Original\BlueBlock.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Resources\Breakout\Textures\Original\BasePaddle.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\Library\External_Libraries\imgui\LICENSE.txt" />
-    <Text Include="Resources\Breakout\Map\Level1.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="OpenGLResources\Libraries\Old-Versions\glfw3.lib" />
-    <Library Include="OpenGLResources\Libraries\assimp-vc143-mtd.lib" />
-    <Library Include="OpenGLResources\Libraries\OpenAL\common.lib" />
-    <Library Include="OpenGLResources\Libraries\OpenAL\ex-common.lib" />
-    <Library Include="OpenGLResources\Libraries\OpenAL\OpenAL32.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="Resources\Breakout\Sounds\test-song.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="Resources\Breakout\Sounds\Manoria-Cathedral.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="Resources\Breakout\Sounds\mechanist-theme.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="Resources\Breakout\Sounds\pop-sound.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
+    <ClCompile Include="Kargono\ApplicationV2.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\Log.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp">
+      <Filter>dependencies\implementation\dr_libs</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\implementation\glad\glad.cpp">
+      <Filter>dependencies\implementation\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\implementation\stb\stb_image.cpp">
+      <Filter>dependencies\implementation\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_demo.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_draw.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_impl_glfw.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_tables.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\include\imgui\imgui_widgets.cpp">
+      <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Breakout.cpp">
+      <Filter>src\Applications\Breakout</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutLevel\BreakoutLevel.cpp">
+      <Filter>src\Applications\Breakout\Classes\BreakoutLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutObject\BreakoutObject.cpp">
+      <Filter>src\Applications\Breakout\Classes\BreakoutObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\BreakoutResourceManager\BreakoutResourceManager.cpp">
+      <Filter>src\Applications\Breakout\Classes\BreakoutResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutActiveFunctions.cpp">
+      <Filter>src\Applications\Breakout\Classes\InputFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\Breakout\Classes\InputFunctions\BreakoutStartFunctions.cpp">
+      <Filter>src\Applications\Breakout\Classes\InputFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\DefaultApplication2D\DefaultApplication2D.cpp">
+      <Filter>src\Applications\DefaultApplication2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Applications\DefaultApplication3D\DefaultApplication3D.cpp">
+      <Filter>src\Applications\DefaultApplication3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntryPoint\Source.cpp">
+      <Filter>src\EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\ApplicationInterface\Application.cpp">
+      <Filter>src\Library\Application\ApplicationInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\ApplicationInterface\ApplicationManager.cpp">
+      <Filter>src\Library\Application\ApplicationInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Audio\AudioBuffer.cpp">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Audio\AudioContext.cpp">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Audio\AudioListener.cpp">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Audio\AudioSource.cpp">
+      <Filter>src\Library\Application\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\DefaultApplication\DefaultApplication.cpp">
+      <Filter>src\Library\Application\DefaultApplication</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\GameApplication\Game.cpp">
+      <Filter>src\Library\Application\GameApplication</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\GameApplication\GameLevel\GameLevel.cpp">
+      <Filter>src\Library\Application\GameApplication\GameLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\GameApplication\GameObject\GameObject.cpp">
+      <Filter>src\Library\Application\GameApplication\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\DebugMenuFunctions.cpp">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default2DFunctions.cpp">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\Default-Input-Libraries\Default3DFunctions.cpp">
+      <Filter>src\Library\Application\Input\Default-Input-Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\GLInput.cpp">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\InputCallback.cpp">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\InputManager.cpp">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Input\MiscFunctions.cpp">
+      <Filter>src\Library\Application\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\Particles\ParticleGenerator.cpp">
+      <Filter>src\Library\Application\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Application\ResourceManager\ResourceManager.cpp">
+      <Filter>src\Library\Application\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Library.cpp">
+      <Filter>src\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Cameras\CameraManager.cpp">
+      <Filter>src\Library\Rendering\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Cameras\GLCamera.cpp">
+      <Filter>src\Library\Rendering\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\LightSource\LightSource.cpp">
+      <Filter>src\Library\Rendering\LightSource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Mesh\GLMesh.cpp">
+      <Filter>src\Library\Rendering\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Mesh\MeshManager.cpp">
+      <Filter>src\Library\Rendering\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Model\Model.cpp">
+      <Filter>src\Library\Rendering\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Model\ModelManager.cpp">
+      <Filter>src\Library\Rendering\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Renderable\ModelRenderer.cpp">
+      <Filter>src\Library\Rendering\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Renderable\RenderableInterface.cpp">
+      <Filter>src\Library\Rendering\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Renderable\ShapeRenderer.cpp">
+      <Filter>src\Library\Rendering\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\RendererState\RendererState.cpp">
+      <Filter>src\Library\Rendering\RendererState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\RendererState\RendererStateManager.cpp">
+      <Filter>src\Library\Rendering\RendererState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Shaders\GLShader.cpp">
+      <Filter>src\Library\Rendering\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Shaders\ShaderManager.cpp">
+      <Filter>src\Library\Rendering\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Textures\Texture.cpp">
+      <Filter>src\Library\Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\Textures\TextureManager.cpp">
+      <Filter>src\Library\Rendering\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\UserInterface\UIFunctions.cpp">
+      <Filter>src\Library\Rendering\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\UserInterface\UIWindow.cpp">
+      <Filter>src\Library\Rendering\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Library\Rendering\UserInterface\WindowManager.cpp">
+      <Filter>src\Library\Rendering\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

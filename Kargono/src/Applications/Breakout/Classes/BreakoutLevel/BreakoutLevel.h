@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../Library/Application/GameApplication/GameLevel/GameLevel.h"
+#include "../../../../Library/Application/GameApplication/GameLevel/GameLevel.h"
 #include "../BreakoutObject/BreakoutObject.h"
-#include "../../../Library/Application/Particles/ParticleGenerator.h"
+#include "../../../../Library/Application/Particles/ParticleGenerator.h"
 
 class BreakoutLevel : public GameLevel
 {
