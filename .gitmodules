@@ -1,3 +1,0 @@
-[submodule "Kargono/Dependencies/spdlog"]
-	path = Kargono/Dependencies/spdlog
-	url = https://github.com/gabime/spdlog
