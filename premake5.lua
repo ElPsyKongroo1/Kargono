@@ -34,14 +34,14 @@ project "Kargono"
 
     includedirs 
     {
-        "%{wks.location}/Kargono/dependencies/include"
+        "Kargono/dependencies/include"
     }
 
     libdirs
     {
-        "%{wks.location}/Kargono/dependencies/libraries/GLFW",
-        "%{wks.location}/Kargono/dependencies/libraries/OpenAL",
-        "%{wks.location}/Kargono/dependencies/libraries/Assimp",
+        "Kargono/dependencies/libraries/GLFW",
+        "Kargono/dependencies/libraries/OpenAL",
+        "Kargono/dependencies/libraries/Assimp",
     }
 
     links 
