@@ -1,5 +1,5 @@
 #include "Textures.h"
-#include "../../External_Libraries/stb_image.h"
+#include "stb/stb_image.h"
 
 Texture::Texture(const char* textureSource, const char* textureType) 
 {

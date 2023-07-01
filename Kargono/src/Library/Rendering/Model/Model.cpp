@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "../../External_Libraries/stb_image.h"
+#include <stb/stb_image.h>
 
 unsigned int TextureFromFile(const char* path, const std::string& directory);
 

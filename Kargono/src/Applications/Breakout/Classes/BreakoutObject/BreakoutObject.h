@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../Library/Application/GameApplication/GameObject/GameObject.h"
+#include "../../../../Library/Application/GameApplication/GameObject/GameObject.h"
 
 class GameBrick : public GameObject
 {
