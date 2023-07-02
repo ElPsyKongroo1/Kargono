@@ -34,7 +34,8 @@ project "Kargono"
 
     includedirs 
     {
-        "Kargono/dependencies/include"
+        "Kargono/dependencies/include",
+        "Kargono"
     }
 
     libdirs
