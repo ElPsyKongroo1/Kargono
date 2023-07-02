@@ -2,10 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\Charlie\source\repos\Kargono\bin\Debug-windows-x86_64\Kargono\Kargono.dll</FullPath>
+      <FullPath>F:\Charles_Files\Personal Projects\Personal Games\bin\Debug-windows-x86_64\Kargono\Kargono.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\Charlie\source\repos\Kargono\bin\Debug-windows-x86_64\Breakout\Breakout.exe</FullPath>
+      <FullPath>F:\Charles_Files\Personal Projects\Personal Games\bin\Debug-windows-x86_64\Breakout\Breakout.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
