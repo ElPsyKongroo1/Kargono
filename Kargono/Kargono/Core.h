@@ -1,4 +1,5 @@
 #pragma once
+#include "kgpch.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 	#ifdef KG_BUILD_DLL

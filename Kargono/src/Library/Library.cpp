@@ -1,3 +1,4 @@
+#include "Kargono/kgpch.h"
 #include "Includes.h"
 #include "Rendering/Shaders/Shaders.h"
 #include "Rendering/Mesh/Meshes.h"

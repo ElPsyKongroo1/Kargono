@@ -1,3 +1,4 @@
+#include "Kargono/kgpch.h"
 #include "../Applications/DefaultApplication3D/DefaultApplication3D.h"
 #include "../Applications/DefaultApplication2D/DefaultApplication2D.h"
 #include "../Applications/Breakout/Breakout.h"

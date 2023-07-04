@@ -76,7 +76,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -103,7 +104,8 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -130,7 +132,8 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -160,7 +163,12 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <ClInclude Include="Kargono\ApplicationV2.h" />
     <ClInclude Include="Kargono\Core.h" />
     <ClInclude Include="Kargono\EntryPoint.h" />
+    <ClInclude Include="Kargono\Events\ApplicationEvent.h" />
+    <ClInclude Include="Kargono\Events\Event.h" />
+    <ClInclude Include="Kargono\Events\KeyEvent.h" />
+    <ClInclude Include="Kargono\Events\MouseEvent.h" />
     <ClInclude Include="Kargono\Log.h" />
+    <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="dependencies\include\imgui\imconfig.h" />
     <ClInclude Include="dependencies\include\imgui\imgui.h" />
     <ClInclude Include="dependencies\include\imgui\imgui_impl_glfw.h" />
@@ -211,6 +219,9 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   <ItemGroup>
     <ClCompile Include="Kargono\ApplicationV2.cpp" />
     <ClCompile Include="Kargono\Log.cpp" />
+    <ClCompile Include="Kargono\kgpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp" />
     <ClCompile Include="dependencies\implementation\glad\glad.cpp" />
     <ClCompile Include="dependencies\implementation\stb\stb_image.cpp" />

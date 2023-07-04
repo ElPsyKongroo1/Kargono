@@ -1,3 +1,4 @@
+#include "Kargono/kgpch.h"
 #include "Textures.h"
 #include "stb/stb_image.h"
 

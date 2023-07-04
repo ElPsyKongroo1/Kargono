@@ -1,9 +1,6 @@
 #pragma once
 #include <Kargono/Core.h>
 
-#include <string>
-#include <functional>
-
 namespace Kargono 
 {
 	enum class EventType
@@ -18,13 +15,19 @@ namespace Kargono
 	enum EventCategory 
 	{
 		None = 0,
-		EventCategoryApplication	= Bit(0),
-		EventCategoryInput			= Bit(1),
-		EventCategoryKeyboard		= Bit(2),
-		EventCategoryMouse			= Bit(3),
-		EventCategoryMouseButton	= Bit(4)
+		EventCategoryApplication	= BIT(0),
+		EventCategoryInput			= BIT(1),
+		EventCategoryKeyboard		= BIT(2),
+		EventCategoryMouse			= BIT(3),
+		EventCategoryMouseButton	= BIT(4)
 
 	};
+
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type;} \
+							    virtual EventType GetEventType() const override { return GetStaticType();}\
+								virtual const char* GetName() const override {return #type;}
+
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category;}
 
 	class KG_API Event 
 	{
@@ -42,5 +45,33 @@ namespace Kargono
 	protected:
 		bool m_Handled = false;
 	};
+
+	class EventDispatcher
+	{
+		template<typename K>
+		using EventFn = std::function<bool(K&)>;
+	public:
+		EventDispatcher(Event& event) : m_Event(event)
+		{
+		}
+
+		template<typename T>
+		bool Dispatch(EventFn<T> func)
+		{
+			if (m_Event.GetEventType() == T::GetStaticType())
+			{
+				m_Event.m_Handled = func(*(T*)&m_Event);
+				return true;
+			}
+			return false;
+		}
+	private:
+		Event& m_Event;
+	};
+
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
+	{
+		return os << e.ToString();
+	}
 	
 }

@@ -1,7 +1,9 @@
+#include "Kargono/kgpch.h"
 #include "Log.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace Karg{
+namespace Kargono
+{
 
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;

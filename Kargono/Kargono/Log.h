@@ -1,9 +1,11 @@
 #pragma once
 #include "Core.h"
 #include <spdlog/spdlog.h>
-#include <memory>
+#include "spdlog/fmt/ostr.h"
 
-namespace Karg{
+
+namespace Kargono
+{
 	class KG_API Log
 	{
 	public:
@@ -18,16 +20,16 @@ namespace Karg{
 }
 
 // Core Log Macros
-#define KG_CORE_ERROR(...)	::Karg::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define KG_CORE_WARN(...)	::Karg::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define KG_CORE_INFO(...)	::Karg::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define KG_CORE_TRACE(...)	::Karg::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define KG_CORE_FATAL(...)	::Karg::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define KG_CORE_ERROR(...)	::Kargono::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define KG_CORE_WARN(...)	::Kargono::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define KG_CORE_INFO(...)	::Kargono::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define KG_CORE_TRACE(...)	::Kargono::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define KG_CORE_FATAL(...)	::Kargono::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
 // Client Log Macros
-#define KG_ERROR(...) ::Karg::Log::GetClientLogger()->error(__VA_ARGS__)
-#define KG_WARN(...) ::Karg::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define KG_INFO(...) ::Karg::Log::GetClientLogger()->info(__VA_ARGS__)
-#define KG_TRACE(...) ::Karg::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define KG_FATAL(...) ::Karg::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define KG_ERROR(...) ::Kargono::Log::GetClientLogger()->error(__VA_ARGS__)
+#define KG_WARN(...) ::Kargono::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define KG_INFO(...) ::Kargono::Log::GetClientLogger()->info(__VA_ARGS__)
+#define KG_TRACE(...) ::Kargono::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define KG_FATAL(...) ::Kargono::Log::GetClientLogger()->fatal(__VA_ARGS__)
 

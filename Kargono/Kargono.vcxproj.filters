@@ -4,6 +4,9 @@
     <Filter Include="Kargono">
       <UniqueIdentifier>{361A9D7B-A2F9-1B17-AB11-A7ED17708278}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Kargono\Events">
+      <UniqueIdentifier>{5A6DF4F9-463B-E8FF-2FCF-58261B3CC464}</UniqueIdentifier>
+    </Filter>
     <Filter Include="dependencies">
       <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
     </Filter>
@@ -57,9 +60,6 @@
     </Filter>
     <Filter Include="src\EntryPoint">
       <UniqueIdentifier>{F8337006-E401-640C-CD95-D432B9024071}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Events">
-      <UniqueIdentifier>{7162C20E-5D1A-045C-C621-DDB7B2F89E4C}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Library">
       <UniqueIdentifier>{31E15EE3-9D96-D7D8-268B-D1AF923FCEDC}</UniqueIdentifier>
@@ -142,7 +142,22 @@
     <ClInclude Include="Kargono\EntryPoint.h">
       <Filter>Kargono</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Events\ApplicationEvent.h">
+      <Filter>Kargono\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Events\Event.h">
+      <Filter>Kargono\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Events\KeyEvent.h">
+      <Filter>Kargono\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Events\MouseEvent.h">
+      <Filter>Kargono\Events</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Log.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\kgpch.h">
       <Filter>Kargono</Filter>
     </ClInclude>
     <ClInclude Include="dependencies\include\imgui\imconfig.h">
@@ -289,6 +304,9 @@
       <Filter>Kargono</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\Log.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\kgpch.cpp">
       <Filter>Kargono</Filter>
     </ClCompile>
     <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp">
