@@ -1,5 +1,5 @@
 #pragma once
-#include <Kargono/Core.h>
+#include <src/Core.h>
 
 namespace Kargono 
 {

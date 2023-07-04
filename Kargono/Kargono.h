@@ -2,9 +2,9 @@
 
 // For use by Kargono applications
 
-#include "Kargono/ApplicationV2.h"
-#include "Kargono/Log.h"
+#include "src/ApplicationV2.h"
+#include "src/Log.h"
 
 // -----------Entry Point ---------------------
-#include "Kargono/EntryPoint.h"
+#include "src/EntryPoint.h"
 // --------------------------------------------

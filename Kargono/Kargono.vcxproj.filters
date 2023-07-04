@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Kargono">
-      <UniqueIdentifier>{361A9D7B-A2F9-1B17-AB11-A7ED17708278}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Kargono\Events">
-      <UniqueIdentifier>{5A6DF4F9-463B-E8FF-2FCF-58261B3CC464}</UniqueIdentifier>
-    </Filter>
     <Filter Include="dependencies">
       <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
     </Filter>
@@ -31,135 +25,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Applications">
-      <UniqueIdentifier>{E360B5B1-CF59-D403-F88B-B988E4E3B30F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout">
-      <UniqueIdentifier>{0FA4117F-7B66-4509-C416-D49530181EE7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout\Classes">
-      <UniqueIdentifier>{ECB15D14-5820-B393-A109-6E930DB7A82F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout\Classes\BreakoutLevel">
-      <UniqueIdentifier>{301E3388-9C59-934B-A54E-10DB1109187C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout\Classes\BreakoutObject">
-      <UniqueIdentifier>{4F7F5995-3B28-C1C4-64BE-DC4350C6DB05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout\Classes\BreakoutResourceManager">
-      <UniqueIdentifier>{FB8C3922-67FF-7B3E-B093-B1C21C454637}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\Breakout\Classes\InputFunctions">
-      <UniqueIdentifier>{A432D25A-90DB-398A-B971-5509A57954CB}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\DefaultApplication2D">
-      <UniqueIdentifier>{41D4A316-AD98-A206-76FE-D2D0E2813E3C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Applications\DefaultApplication3D">
-      <UniqueIdentifier>{62D4A316-CE98-A206-97FE-D2D003823E3C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\EntryPoint">
-      <UniqueIdentifier>{F8337006-E401-640C-CD95-D432B9024071}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library">
-      <UniqueIdentifier>{31E15EE3-9D96-D7D8-268B-D1AF923FCEDC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application">
-      <UniqueIdentifier>{746EA659-E0A5-EEF0-E9AF-5214556615EA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\ApplicationInterface">
-      <UniqueIdentifier>{E8E86F55-D4FB-6FAE-7DE5-4C9B69D70CFC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\Audio">
-      <UniqueIdentifier>{75032158-E11B-0882-AAC8-971B16A09C1B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\DefaultApplication">
-      <UniqueIdentifier>{BC208A07-A888-50D5-11F4-64EBFD7A67C1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\GameApplication">
-      <UniqueIdentifier>{710BEEE8-DD9A-AFD3-E696-90EB52A5EADF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\GameApplication\GameLevel">
-      <UniqueIdentifier>{F203478D-5ECA-A3A9-A725-320C132B120E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\GameApplication\GameObject">
-      <UniqueIdentifier>{511DEA3C-3DB1-DFE4-A675-399992281AD7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\Input">
-      <UniqueIdentifier>{7325AE58-DF3D-9582-A8EA-241C14C2291C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\Input\Default-Input-Libraries">
-      <UniqueIdentifier>{EECA53E0-5AE7-45D1-23BF-B23E8F9AAF92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\Objects">
-      <UniqueIdentifier>{2D4137EE-9924-462E-A227-746A0E8A0C7F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\Particles">
-      <UniqueIdentifier>{4A54796C-B6C2-CEEB-FFAB-89EB6B59C487}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Application\ResourceManager">
-      <UniqueIdentifier>{86BF5FEF-F24E-21DA-FB4A-02F267595CE6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering">
-      <UniqueIdentifier>{BE9BDE7A-2A08-9A75-F3FB-31D35F27BCDD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Cameras">
-      <UniqueIdentifier>{A99D6BB5-15B6-52DF-DE62-E2784A3AE778}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\LightSource">
-      <UniqueIdentifier>{36049CEB-A272-F16A-EB5B-AC6A5709E706}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Mesh">
-      <UniqueIdentifier>{3A18EA43-2628-9614-8FE1-FA327B1085AD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Model">
-      <UniqueIdentifier>{7E5B32C1-EA68-60A7-734F-5C92DF5B2C5E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Renderable">
-      <UniqueIdentifier>{E166AF28-CDB7-9A6A-F61B-892CE2CB2DD4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\RendererState">
-      <UniqueIdentifier>{65053AAE-D1BE-A458-5A1E-BF32C6D65AC8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Shaders">
-      <UniqueIdentifier>{979E8994-03B7-70BE-CC63-0058383B0558}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\Textures">
-      <UniqueIdentifier>{5183E161-3DA9-ABC8-26EF-309412B4D094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Library\Rendering\UserInterface">
-      <UniqueIdentifier>{5DE5D3C9-C99E-3E74-52FE-584EBEB6F4E3}</UniqueIdentifier>
+    <Filter Include="src\Events">
+      <UniqueIdentifier>{7162C20E-5D1A-045C-C621-DDB7B2F89E4C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="Kargono\ApplicationV2.h">
-      <Filter>Kargono</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Core.h">
-      <Filter>Kargono</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\EntryPoint.h">
-      <Filter>Kargono</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Events\ApplicationEvent.h">
-      <Filter>Kargono\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Events\Event.h">
-      <Filter>Kargono\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Events\KeyEvent.h">
-      <Filter>Kargono\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Events\MouseEvent.h">
-      <Filter>Kargono\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Log.h">
-      <Filter>Kargono</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\kgpch.h">
-      <Filter>Kargono</Filter>
-    </ClInclude>
     <ClInclude Include="dependencies\include\imgui\imconfig.h">
       <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
@@ -187,17 +58,35 @@
     <ClInclude Include="dependencies\include\imgui\imstb_truetype.h">
       <Filter>dependencies\include\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="src\ApplicationV2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntryPoint.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\ApplicationEvent.h">
+      <Filter>src\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\Event.h">
+      <Filter>src\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\KeyEvent.h">
+      <Filter>src\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Events\MouseEvent.h">
+      <Filter>src\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kgpch.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kargono\ApplicationV2.cpp">
-      <Filter>Kargono</Filter>
-    </ClCompile>
-    <ClCompile Include="Kargono\Log.cpp">
-      <Filter>Kargono</Filter>
-    </ClCompile>
-    <ClCompile Include="Kargono\kgpch.cpp">
-      <Filter>Kargono</Filter>
-    </ClCompile>
     <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp">
       <Filter>dependencies\implementation\dr_libs</Filter>
     </ClCompile>
@@ -227,6 +116,15 @@
     </ClCompile>
     <ClCompile Include="dependencies\include\imgui\imgui_widgets.cpp">
       <Filter>dependencies\include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ApplicationV2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kgpch.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
