@@ -1,6 +1,10 @@
+#include "Kargono/kgpch.h"
 #include "ApplicationV2.h"
+#include "Events/ApplicationEvent.h"
+#include "Log.h"
 
-namespace Karg
+
+namespace Kargono
 {
 
 	ApplicationV2::ApplicationV2()
@@ -14,6 +18,8 @@ namespace Karg
 
 	void ApplicationV2::Run()
 	{
+		WindowResizeEvent e(1280, 720);
+		KG_TRACE(e);
 		while (true);
 	}
 

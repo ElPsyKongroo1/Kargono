@@ -3,16 +3,16 @@
 
 #ifdef KG_PLATFORM_WINDOWS
 	
-	extern Karg::ApplicationV2* Karg::CreateApplication();
+	extern Kargono::ApplicationV2* Kargono::CreateApplication();
 
 	int main(int argc, char** argv)
 	{
-		Karg::Log::Init();
+		Kargono::Log::Init();
 		KG_CORE_WARN("Initialized Log!");
 		int a = 5;
 		KG_INFO("Hello! Var={0}", a);
 
-		auto app = Karg::CreateApplication();
+		auto app = Kargono::CreateApplication();
 		app->Run();
 		delete app;
 	}

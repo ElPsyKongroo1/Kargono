@@ -19,6 +19,9 @@ project "Kargono"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Kargono/kgpch.h"
+    pchsource "Kargono/Kargono/kgpch.cpp"
+    
     files 
     {
         "Kargono/Kargono/**.h",
