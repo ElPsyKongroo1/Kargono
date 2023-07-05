@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="dependencies">
-      <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\implementation">
-      <UniqueIdentifier>{A17D43C7-0D8B-71AD-9671-6D98027E3D64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\implementation\dr_libs">
-      <UniqueIdentifier>{8F9369E2-FB4C-D48C-84AC-EE66F0648AFC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\implementation\glad">
-      <UniqueIdentifier>{48FD14D9-344E-001B-5DB2-EEDC49629384}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\implementation\stb">
-      <UniqueIdentifier>{79243792-E507-46D2-EE0A-740E5A6D0C23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\include">
-      <UniqueIdentifier>{FFA0974E-EB2F-2118-944E-351380BC31BE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dependencies\include\imgui">
-      <UniqueIdentifier>{A9315E2C-9541-0AFD-FEFA-6E1BEA29F995}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -31,33 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="dependencies\include\imgui\imconfig.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imgui.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_glfw.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3_loader.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imgui_internal.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imstb_rectpack.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imstb_textedit.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\include\imgui\imstb_truetype.h">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="src\ApplicationV2.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -87,36 +39,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp">
-      <Filter>dependencies\implementation\dr_libs</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\implementation\glad\glad.cpp">
-      <Filter>dependencies\implementation\glad</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\implementation\stb\stb_image.cpp">
-      <Filter>dependencies\implementation\stb</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_demo.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_draw.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_impl_glfw.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_impl_opengl3.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_tables.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\include\imgui\imgui_widgets.cpp">
-      <Filter>dependencies\include\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="src\ApplicationV2.cpp">
       <Filter>src</Filter>
     </ClCompile>
