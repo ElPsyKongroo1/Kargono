@@ -1,52 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    <Filter Include="Kargono">
+      <UniqueIdentifier>{361A9D7B-A2F9-1B17-AB11-A7ED17708278}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Events">
-      <UniqueIdentifier>{7162C20E-5D1A-045C-C621-DDB7B2F89E4C}</UniqueIdentifier>
+    <Filter Include="Kargono\Events">
+      <UniqueIdentifier>{5A6DF4F9-463B-E8FF-2FCF-58261B3CC464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="src\ApplicationV2.h">
-      <Filter>src</Filter>
+    <ClInclude Include="Kargono\Application.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core.h">
-      <Filter>src</Filter>
+    <ClInclude Include="Kargono\Core.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\EntryPoint.h">
-      <Filter>src</Filter>
+    <ClInclude Include="Kargono\EntryPoint.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\Events\ApplicationEvent.h">
-      <Filter>src\Events</Filter>
+    <ClInclude Include="Kargono\Events\ApplicationEvent.h">
+      <Filter>Kargono\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Events\Event.h">
-      <Filter>src\Events</Filter>
+    <ClInclude Include="Kargono\Events\Event.h">
+      <Filter>Kargono\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Events\KeyEvent.h">
-      <Filter>src\Events</Filter>
+    <ClInclude Include="Kargono\Events\KeyEvent.h">
+      <Filter>Kargono\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Events\MouseEvent.h">
-      <Filter>src\Events</Filter>
+    <ClInclude Include="Kargono\Events\MouseEvent.h">
+      <Filter>Kargono\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Log.h">
-      <Filter>src</Filter>
+    <ClInclude Include="Kargono\Log.h">
+      <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="src\kgpch.h">
-      <Filter>src</Filter>
+    <ClInclude Include="Kargono\Window.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\kgpch.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ApplicationV2.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="Kargono\Application.cpp">
+      <Filter>Kargono</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="Kargono\Log.cpp">
+      <Filter>Kargono</Filter>
     </ClCompile>
-    <ClCompile Include="src\kgpch.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="Kargono\kgpch.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

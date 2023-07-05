@@ -1,0 +1,2 @@
+call doxywizard.exe
+PAUSE

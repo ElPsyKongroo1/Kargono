@@ -77,10 +77,10 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -89,6 +89,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Debug-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -100,10 +101,10 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -112,6 +113,7 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Release-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -123,10 +125,10 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -135,6 +137,7 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Dist-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -145,22 +148,30 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="src\ApplicationV2.h" />
-    <ClInclude Include="src\Core.h" />
-    <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Events\Event.h" />
-    <ClInclude Include="src\Events\KeyEvent.h" />
-    <ClInclude Include="src\Events\MouseEvent.h" />
-    <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\kgpch.h" />
+    <ClInclude Include="Kargono\Application.h" />
+    <ClInclude Include="Kargono\Core.h" />
+    <ClInclude Include="Kargono\EntryPoint.h" />
+    <ClInclude Include="Kargono\Events\ApplicationEvent.h" />
+    <ClInclude Include="Kargono\Events\Event.h" />
+    <ClInclude Include="Kargono\Events\KeyEvent.h" />
+    <ClInclude Include="Kargono\Events\MouseEvent.h" />
+    <ClInclude Include="Kargono\Log.h" />
+    <ClInclude Include="Kargono\Window.h" />
+    <ClInclude Include="Kargono\kgpch.h" />
+    <ClInclude Include="Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ApplicationV2.cpp" />
-    <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\kgpch.cpp">
+    <ClCompile Include="Kargono\Application.cpp" />
+    <ClCompile Include="Kargono\Log.cpp" />
+    <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="dependencies\GLFW\GLFW.vcxproj">
+      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
