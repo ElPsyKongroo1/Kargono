@@ -12,8 +12,9 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Kargono/dependencies/GLFW/include"
-IncludeDir["spdlog"] = "Kargono/dependencies/spdlog/include"
+IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
 
+include "Kargono/dependencies/GLFW"
 
 project "Kargono"
     location "Kargono"
@@ -23,16 +24,18 @@ project "Kargono"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "src/kgpch.h"
-    pchsource "Kargono/src/kgpch.cpp"
+    pchheader "Kargono/kgpch.h"
+    pchsource "Kargono/Kargono/kgpch.cpp"
     
     files 
     {
 		"Kargono/Kargono.h",
-		"Kargono/src/**.h",
-		"Kargono/src/**.cpp",
+		"Kargono/Kargono/**.h",
+		"Kargono/Kargono/**.cpp",
 		"Kargono/dependencies/implementation/**.h",
-		"Kargono/dependencies/implementation/**.cpp"
+		"Kargono/dependencies/implementation/**.cpp",
+        "Kargono/Platform/**.h",
+        "Kargono/Platform/**.cpp"
     }
 
     includedirs 
@@ -48,7 +51,9 @@ project "Kargono"
 
     links 
     { 
-        
+        "GLFW",
+        "opengl32.lib",
+        "dwmapi.lib"
     }
 
     filter "system:windows"
@@ -82,60 +87,6 @@ project "Kargono"
     filter "configurations:Dist"
         defines "KG_DIST"
         symbols "On"
-
-project "Breakout"
-    location "Breakout"
-    kind "ConsoleApp"
-    language "C++"
-    
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files 
-    {
-        "Breakout/src/**.h",
-        "Breakout/src/**.cpp"
-    }
-
-    includedirs 
-    {
-        "%{wks.location}/Kargono/dependencies",
-        "%{wks.location}/Kargono"
-    }
-
-    libdirs
-    {
-
-    }
-
-    links 
-    { 
-        "Kargono" 
-    }
-
-    filter "system:windows"
-        cppdialect "C++20"
-        staticruntime "Default"
-        systemversion "latest"
-
-        defines 
-        {
-            "KG_PLATFORM_WINDOWS"
-        }
-
-    filter "configurations:Debug"
-        defines "KG_DEBUG"
-        symbols "On"
-
-    filter "configurations:Release"
-        defines "KG_RELEASE"
-        symbols "On"
-
-    filter "configurations:Dist"
-        defines "KG_DIST"
-        symbols "On"
-
-
 project "Sandbox2D"
     location "Sandbox2D"
     kind "ConsoleApp"
@@ -152,7 +103,7 @@ project "Sandbox2D"
 
     includedirs 
     {
-        "%{wks.location}/Kargono/dependencies",
+        "%{IncludeDir.spdlog}",
         "%{wks.location}/Kargono"
     }
 
@@ -169,61 +120,6 @@ project "Sandbox2D"
     filter "system:windows"
         cppdialect "C++20"
         staticruntime "Default"
-        systemversion "latest"
-
-        defines 
-        {
-            "KG_PLATFORM_WINDOWS"
-        }
-
-    filter "configurations:Debug"
-        defines "KG_DEBUG"
-        symbols "On"
-
-    filter "configurations:Release"
-        defines "KG_RELEASE"
-        symbols "On"
-
-    filter "configurations:Dist"
-        defines "KG_DIST"
-        symbols "On"
-
-
-
-
-project "Sandbox3D"
-    location "Sandbox3D"
-    kind "ConsoleApp"
-    language "C++"
-    
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files 
-    {
-        "Sandbox3D/src/**.h",
-        "Sandbox3D/src/**.cpp"
-    }
-
-    includedirs 
-    {
-        "%{wks.location}/Kargono/dependencies",
-        "%{wks.location}/Kargono"
-    }
-
-    libdirs
-    {
-
-    }
-
-    links 
-    { 
-        "Kargono" 
-    }
-
-    filter "system:windows"
-        cppdialect "C++20"
-        staticruntime "On"
         systemversion "latest"
 
         defines 
