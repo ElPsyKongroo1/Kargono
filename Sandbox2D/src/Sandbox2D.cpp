@@ -1,6 +1,6 @@
 #include <Kargono.h>
 
-class Breakout : public Kargono::ApplicationV2 
+class Breakout : public Kargono::Application 
 {
 public:
 	Breakout() 
@@ -14,7 +14,7 @@ public:
 };
 
 
-Kargono::ApplicationV2* Kargono::CreateApplication()
+Kargono::Application* Kargono::CreateApplication()
 {
 	return new Breakout();
 }
