@@ -10,6 +10,10 @@ workspace "Kargono"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Kargono/dependencies/GLFW/include"
+IncludeDir["spdlog"] = "Kargono/dependencies/spdlog/include"
+
 
 project "Kargono"
     location "Kargono"
@@ -28,27 +32,23 @@ project "Kargono"
 		"Kargono/src/**.h",
 		"Kargono/src/**.cpp",
 		"Kargono/dependencies/implementation/**.h",
-		"Kargono/dependencies/implementation/**.cpp",
-		"Kargono/dependencies/include/imgui/**.cpp",
-		"Kargono/dependencies/include/imgui/**.h",
+		"Kargono/dependencies/implementation/**.cpp"
     }
 
     includedirs 
     {
-        "Kargono/dependencies/include",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.spdlog}",
         "Kargono"
     }
 
     libdirs
     {
-        "Kargono/dependencies/libraries/GLFW",
-        "Kargono/dependencies/libraries/OpenAL",
-        "Kargono/dependencies/libraries/Assimp",
     }
 
     links 
     { 
-        "glfw3", "opengl32", "assimp-vc143-mtd", "OpenAL32" 
+        
     }
 
     filter "system:windows"
@@ -61,10 +61,10 @@ project "Kargono"
             "KG_PLATFORM_WINDOWS",
             "KG_BUILD_DLL"
         }
-        prebuildcommands 
-        {
-            "{COPYDIR} \"%{wks.location}Kargono/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
-        } 
+        -- prebuildcommands 
+        -- {
+        --     "{COPYDIR} \"%{wks.location}Kargono/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
+        -- } 
         postbuildcommands 
         {
             "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
@@ -99,20 +99,18 @@ project "Breakout"
 
     includedirs 
     {
-        "%{wks.location}/Kargono/dependencies/include",
+        "%{wks.location}/Kargono/dependencies",
         "%{wks.location}/Kargono"
     }
 
     libdirs
     {
-        "%{wks.location}/Kargono/dependencies/libraries/GLFW",
-        "%{wks.location}/Kargono/dependencies/libraries/OpenAL",
-        "%{wks.location}/Kargono/dependencies/libraries/Assimp",
+
     }
 
     links 
     { 
-        "glfw3", "opengl32", "assimp-vc143-mtd", "OpenAL32", "Kargono" 
+        "Kargono" 
     }
 
     filter "system:windows"
@@ -154,20 +152,18 @@ project "Sandbox2D"
 
     includedirs 
     {
-        "%{wks.location}/Kargono/dependencies/include",
+        "%{wks.location}/Kargono/dependencies",
         "%{wks.location}/Kargono"
     }
 
     libdirs
     {
-        "%{wks.location}/Kargono/dependencies/libraries/GLFW",
-        "%{wks.location}/Kargono/dependencies/libraries/OpenAL",
-        "%{wks.location}/Kargono/dependencies/libraries/Assimp",
+
     }
 
     links 
     { 
-        "glfw3", "opengl32", "assimp-vc143-mtd", "OpenAL32", "Kargono"  
+        "Kargono"  
     }
 
     filter "system:windows"
@@ -211,20 +207,18 @@ project "Sandbox3D"
 
     includedirs 
     {
-        "%{wks.location}/Kargono/dependencies/include",
+        "%{wks.location}/Kargono/dependencies",
         "%{wks.location}/Kargono"
     }
 
     libdirs
     {
-        "%{wks.location}/Kargono/dependencies/libraries/GLFW",
-        "%{wks.location}/Kargono/dependencies/libraries/OpenAL",
-        "%{wks.location}/Kargono/dependencies/libraries/Assimp",
+
     }
 
     links 
     { 
-        "glfw3", "opengl32", "assimp-vc143-mtd", "OpenAL32", "Kargono" 
+        "Kargono" 
     }
 
     filter "system:windows"
