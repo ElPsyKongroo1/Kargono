@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -89,13 +89,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>dependencies\libraries\GLFW;dependencies\libraries\OpenAL;dependencies\libraries\Assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
-    <PreBuildEvent>
-      <Command>xcopy /Q /E /Y /I "$(SolutionDir)Kargono\dependencies\dynamic_libraries" "$(TargetDir)"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Breakout"
 xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox3D"
@@ -108,7 +103,7 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
       <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -117,13 +112,8 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>dependencies\libraries\GLFW;dependencies\libraries\OpenAL;dependencies\libraries\Assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
-    <PreBuildEvent>
-      <Command>xcopy /Q /E /Y /I "$(SolutionDir)Kargono\dependencies\dynamic_libraries" "$(TargetDir)"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Breakout"
 xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox3D"
@@ -136,7 +126,7 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
       <PrecompiledHeaderFile>src/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>dependencies\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\spdlog\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -145,13 +135,8 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mtd.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>dependencies\libraries\GLFW;dependencies\libraries\OpenAL;dependencies\libraries\Assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Dist-windows-x86_64\Kargono\Kargono.lib</ImportLibrary>
     </Link>
-    <PreBuildEvent>
-      <Command>xcopy /Q /E /Y /I "$(SolutionDir)Kargono\dependencies\dynamic_libraries" "$(TargetDir)"</Command>
-    </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Breakout"
 xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox3D"
@@ -160,15 +145,6 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="dependencies\include\imgui\imconfig.h" />
-    <ClInclude Include="dependencies\include\imgui\imgui.h" />
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="dependencies\include\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="dependencies\include\imgui\imgui_internal.h" />
-    <ClInclude Include="dependencies\include\imgui\imstb_rectpack.h" />
-    <ClInclude Include="dependencies\include\imgui\imstb_textedit.h" />
-    <ClInclude Include="dependencies\include\imgui\imstb_truetype.h" />
     <ClInclude Include="src\ApplicationV2.h" />
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\EntryPoint.h" />
@@ -180,16 +156,6 @@ xcopy /Q /E /Y /I "$(TargetDir)" "$(TargetDir)..\Sandbox2D"</Command>
     <ClInclude Include="src\kgpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dependencies\implementation\dr_libs\dr_wav_impl.cpp" />
-    <ClCompile Include="dependencies\implementation\glad\glad.cpp" />
-    <ClCompile Include="dependencies\implementation\stb\stb_image.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_demo.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_draw.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_tables.cpp" />
-    <ClCompile Include="dependencies\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\ApplicationV2.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\kgpch.cpp">
