@@ -7,10 +7,11 @@ import os
 import openai
 import json
 import sys
+import openai_keys
 
 def produce_comments(src_string):
 
-    openai.api_key = "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"
+    openai.api_key = openai_keys.openai_key
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
