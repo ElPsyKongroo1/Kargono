@@ -10,7 +10,7 @@ This project is currently a simple 2D and 3D renderer. The end goal of the proje
 
 # Documentation
 
-[Doxygen Documentation](https://rawcdn.githack.com/Charles-Breuer/Kargono/6ef4b4bc588f891d80fa99530be8615039c53592/doc/html/index.html)
+[Doxygen Documentation](https://raw.githack.com/Charles-Breuer/Kargono/Development-Branch/doc/html/index.html)
 
 # Dependencies
 
