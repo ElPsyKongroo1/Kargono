@@ -1,0 +1,8 @@
+Source Directory is invalid!Traceback (most recent call last):
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 88, in <module>
+    create_output()
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 20, in create_output
+    util_functions.push_directory(source_dir, working_dir)
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\util_functions.py", line 51, in push_directory
+    raise Exception("Source Directory is invalid!")
+Exception: Source Directory is invalid!
