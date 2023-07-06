@@ -6,8 +6,8 @@
 # User-specific files
 bin/
 bin-int/
-*openai_keys.py
-./dependencies/custom-documentation-generator/openai_keys.py
+# *openai_keys.py
+# ./dependencies/custom-documentation-generator/openai_keys.py
 *.rsuser
 *.suo
 *.user
