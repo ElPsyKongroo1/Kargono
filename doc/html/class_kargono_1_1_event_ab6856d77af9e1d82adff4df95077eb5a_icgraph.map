@@ -1,5 +1,5 @@
 <map id="Kargono::Event::ToString" name="Kargono::Event::ToString">
 <area shape="rect" id="Node000001" title=" " alt="" coords="194,5,359,32"/>
-<area shape="rect" id="Node000002" href="$namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4" title=" " alt="" coords="5,5,146,32"/>
+<area shape="rect" id="Node000002" href="$namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4" title="Overrides the &lt;&lt; operator for outputting the event as a string." alt="" coords="5,5,146,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,21,146,21,146,16,179,16"/>
 </map>

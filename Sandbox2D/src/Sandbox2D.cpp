@@ -1,13 +1,13 @@
 #include <Kargono.h>
 
-class Breakout : public Kargono::Application 
+class Sandbox2D : public Kargono::Application 
 {
 public:
-	Breakout() 
+	Sandbox2D() 
 	{
 		
 	}
-	~Breakout() 
+	~Sandbox2D() 
 	{
 		
 	}
@@ -16,5 +16,5 @@ public:
 
 Kargono::Application* Kargono::CreateApplication()
 {
-	return new Breakout();
+	return new Sandbox2D();
 }

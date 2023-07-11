@@ -100,7 +100,7 @@ Inheritance diagram for Kargono::Event:</div>
 <area shape="poly" title=" " alt="" coords="128,201,204,182,205,187,130,207"/>
 <area shape="rect" href="class_kargono_1_1_mouse_button_event.html" title=" " alt="" coords="167,208,354,235"/>
 <area shape="poly" title=" " alt="" coords="129,219,167,219,167,224,129,224"/>
-<area shape="rect" href="class_kargono_1_1_mouse_moved_event.html" title=" " alt="" coords="168,259,353,285"/>
+<area shape="rect" href="class_kargono_1_1_mouse_moved_event.html" title="Represents a mouse moved event." alt="" coords="168,259,353,285"/>
 <area shape="poly" title=" " alt="" coords="130,236,205,255,204,261,128,241"/>
 <area shape="rect" href="class_kargono_1_1_mouse_scrolled_event.html" title=" " alt="" coords="163,309,358,336"/>
 <area shape="poly" title=" " alt="" coords="88,243,123,270,164,295,193,306,192,311,161,300,120,274,85,247"/>
@@ -108,7 +108,7 @@ Inheritance diagram for Kargono::Event:</div>
 <area shape="poly" title=" " alt="" coords="78,246,113,298,137,324,164,346,187,357,185,362,161,350,133,328,109,301,73,249"/>
 <area shape="rect" href="class_kargono_1_1_window_resize_event.html" title=" " alt="" coords="163,411,358,437"/>
 <area shape="poly" title=" " alt="" coords="72,248,85,282,104,322,131,363,164,397,184,408,181,412,161,401,126,366,100,325,80,284,67,250"/>
-<area shape="rect" href="class_kargono_1_1_key_pressed_event.html" title=" " alt="" coords="420,103,600,129"/>
+<area shape="rect" href="class_kargono_1_1_key_pressed_event.html" title="Class representing a key press event in the game engine." alt="" coords="420,103,600,129"/>
 <area shape="poly" title=" " alt="" coords="338,151,445,127,447,133,339,156"/>
 <area shape="rect" href="class_kargono_1_1_key_released_event.html" title=" " alt="" coords="417,153,603,180"/>
 <area shape="poly" title=" " alt="" coords="341,167,416,165,416,171,341,172"/>
@@ -130,6 +130,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab6856d77af9e1d82adff4df95077eb5a"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a">ToString</a> () const</td></tr>
 <tr class="separator:ab6856d77af9e1d82adff4df95077eb5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2496150316915791413ea1f74a64b19"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab2496150316915791413ea1f74a64b19">IsInCategory</a> (<a class="el" href="namespace_kargono.html#a298cd03a46b41d882ccf39312a877dae">EventCategory</a> category)</td></tr>
+<tr class="memdesc:ab2496150316915791413ea1f74a64b19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the event is in a specific category.  <br /></td></tr>
 <tr class="separator:ab2496150316915791413ea1f74a64b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
@@ -144,7 +145,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00032">32</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00037">37</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a723c390c60ecda0ae90960ac5b578e8a" name="a723c390c60ecda0ae90960ac5b578e8a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a723c390c60ecda0ae90960ac5b578e8a">&#9670;&#160;</a></span>GetCategoryFlags()</h2>
@@ -255,7 +256,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00041">41</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p>Checks if the event is in a specific category. </p>
+
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00048">48</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 
 </div>
 </div>
@@ -284,14 +287,14 @@ Here is the caller graph for this function:</div>
 
 <p>Reimplemented in <a class="el" href="class_kargono_1_1_window_resize_event.html#ae28045370465221e6f47628fbe91a125">Kargono::WindowResizeEvent</a>, <a class="el" href="class_kargono_1_1_key_pressed_event.html#aca8d61678cb5f55e13577388b88cc915">Kargono::KeyPressedEvent</a>, <a class="el" href="class_kargono_1_1_key_released_event.html#a027f8be1c24144caee8a43e40aa48ed9">Kargono::KeyReleasedEvent</a>, <a class="el" href="class_kargono_1_1_mouse_moved_event.html#ac73c99e3a51eff272bf2af49f2987229">Kargono::MouseMovedEvent</a>, <a class="el" href="class_kargono_1_1_mouse_scrolled_event.html#a3df9ba099d644526701e19ef04ebd092">Kargono::MouseScrolledEvent</a>, <a class="el" href="class_kargono_1_1_mouse_button_pressed_event.html#a57e3d7571edf23af4e94962f43256556">Kargono::MouseButtonPressedEvent</a>, and <a class="el" href="class_kargono_1_1_mouse_button_released_event.html#a995beae797ae3d4806c95e6ba9af266d">Kargono::MouseButtonReleasedEvent</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00039">39</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00045">45</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_kargono_1_1_event_ab6856d77af9e1d82adff4df95077eb5a_icgraph.png" border="0" usemap="#aclass_kargono_1_1_event_ab6856d77af9e1d82adff4df95077eb5a_icgraph" alt=""/></div>
 <map name="aclass_kargono_1_1_event_ab6856d77af9e1d82adff4df95077eb5a_icgraph" id="aclass_kargono_1_1_event_ab6856d77af9e1d82adff4df95077eb5a_icgraph">
 <area shape="rect" title=" " alt="" coords="194,5,359,32"/>
-<area shape="rect" href="namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4" title=" " alt="" coords="5,5,146,32"/>
+<area shape="rect" href="namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4" title="Overrides the &lt;&lt; operator for outputting the event as a string." alt="" coords="5,5,146,32"/>
 <area shape="poly" title=" " alt="" coords="179,21,146,21,146,16,179,16"/>
 </map>
 </div>
@@ -319,7 +322,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00034">34</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00040">40</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +347,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00046">46</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00053">53</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 
 </div>
 </div>

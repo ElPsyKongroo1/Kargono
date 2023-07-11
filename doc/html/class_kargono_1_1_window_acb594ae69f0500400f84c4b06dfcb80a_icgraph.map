@@ -1,5 +1,5 @@
 <map id="Kargono::Window::Create" name="Kargono::Window::Create">
-<area shape="rect" id="Node000001" title=" " alt="" coords="195,13,364,40"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title=" " alt="" coords="5,5,147,48"/>
+<area shape="rect" id="Node000001" title="Static function for creating a window with specified properties in the Kargono Engine." alt="" coords="195,13,364,40"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Default constructor for the Application class." alt="" coords="5,5,147,48"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,29,147,29,147,24,180,24"/>
 </map>

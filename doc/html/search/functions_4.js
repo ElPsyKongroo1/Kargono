@@ -1,8 +1,8 @@
 var searchData=
 [
   ['getcategoryflags_0',['GetCategoryFlags',['../class_kargono_1_1_event.html#a723c390c60ecda0ae90960ac5b578e8a',1,'Kargono::Event']]],
-  ['getclientlogger_1',['GetClientLogger',['../class_kargono_1_1_log.html#a13b2e73269860e59da188190ce350df9',1,'Kargono::Log']]],
-  ['getcorelogger_2',['GetCoreLogger',['../class_kargono_1_1_log.html#a6eecdc6a3c78f4bd193e9eb5ea6f0fd4',1,'Kargono::Log']]],
+  ['getclientlogger_1',['GetClientLogger',['../class_kargono_1_1_log.html#a637834ec7f4e5807e21a8faef39758fa',1,'Kargono::Log']]],
+  ['getcorelogger_2',['GetCoreLogger',['../class_kargono_1_1_log.html#a6ff86992223f6ffb8a0199624499b7ce',1,'Kargono::Log']]],
   ['geteventtype_3',['GetEventType',['../class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500',1,'Kargono::Event']]],
   ['getheight_4',['GetHeight',['../class_kargono_1_1_window_resize_event.html#a3088a254634ca5d5422ce52d8d4eca12',1,'Kargono::WindowResizeEvent::GetHeight()'],['../class_kargono_1_1_window.html#aa8d7908c70995e8fb6fd3a4691708079',1,'Kargono::Window::GetHeight()'],['../class_kargono_1_1_windows_window.html#a05528b9f8ad06870f69cc4cf614edfdb',1,'Kargono::WindowsWindow::GetHeight()']]],
   ['getkeycode_5',['GetKeyCode',['../class_kargono_1_1_key_event.html#a3032ca50a5873ac6721d906bdd692116',1,'Kargono::KeyEvent']]],

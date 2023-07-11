@@ -1,19 +1,14 @@
-Expecting ':' delimiter: line 1 column 32 (char 31)Traceback (most recent call last):
-  File "c:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\driver.py", line 88, in <module>
+Expecting ':' delimiter: line 1 column 9 (char 8)Traceback (most recent call last):
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 88, in <module>
     create_output()
-  File "c:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\driver.py", line 57, in create_output
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 57, in create_output
     comment_list = util_functions.produce_comments(data)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "c:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\util_functions.py", line 44, in produce_comments
+  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\util_functions.py", line 44, in produce_comments
     return json.loads(response.choices[0].message.content)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Charlie\AppData\Local\Programs\Python\Python311\Lib\json\__init__.py", line 346, in loads
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\__init__.py", line 346, in loads
     return _default_decoder.decode(s)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Charlie\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 337, in decode
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\decoder.py", line 337, in decode
     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Charlie\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 353, in raw_decode
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\decoder.py", line 353, in raw_decode
     obj, end = self.scan_once(s, idx)
-               ^^^^^^^^^^^^^^^^^^^^^^
-json.decoder.JSONDecodeError: Expecting ':' delimiter: line 1 column 32 (char 31)
+json.decoder.JSONDecodeError: Expecting ':' delimiter: line 1 column 9 (char 8)

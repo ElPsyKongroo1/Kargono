@@ -9,9 +9,9 @@ import json
 import sys
 import openai_keys
 
-def produce_comments(src_string):
 
-    openai.api_key = openai_keys.openai_key
+def produce_comments(src_string):
+    openai.api_key = openai_keys.openai_key1
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -28,14 +28,14 @@ def produce_comments(src_string):
                                           'Responses should be longer!'},
             {"role": "user", "content": 'I am going to provide you a file from my game engine directory. Please provide'
                                         "comments that are compatible with the Doxygen API. Return me a list where"
-                                        "the line number of the comment is the key, and the comment is the value."
+                                        "the few first words of the line being referenced is the key, and the comment is the value."
                                         "Please add documentation like @param, @return, @source, and your interpretation of the objects in the source code."
                                         "This should include comments for functions, enumerations, classes, methods, parameters, and return values. "
                                         "To ensure the c++ files still compile, ensure you add /// before each comment."
                                         "Ensure that each number is a location in the CURRENT file!"
                                         "Also note that each line from the input is separated by a newline character"
                                         "The next input will be the file itself."
-                                        },
+             },
             {"role": "user", "content": src_string}
 
         ]
@@ -44,9 +44,7 @@ def produce_comments(src_string):
     return json.loads(response.choices[0].message.content)
 
 
-
-
-def push_directory(src, dest):
+def push_directory(src, dest, ignore_directories=''):
     # Remove any current directory and replace with new
     if not os.path.exists(src):
         raise Exception("Source Directory is invalid!")
@@ -55,7 +53,7 @@ def push_directory(src, dest):
         os.mkdir(dest)
 
     shutil.rmtree(dest)
-    destination = shutil.copytree(src, dest)
+    shutil.copytree(src, dest, ignore=shutil.ignore_patterns(*ignore_directories))
 
 
 def remove_directory(src):
@@ -76,9 +74,7 @@ def push_file(src, dest):
     shutil.copyfile(src, dest)
 
 
-
-def compare_hash(filename_1, filename_2 ):
-
+def compare_hash(filename_1, filename_2):
     if not os.path.exists(filename_1):
         raise Exception("Input file does not exist. I don't know this would happen.")
     if not os.path.exists(filename_2):
@@ -93,21 +89,20 @@ def compare_hash(filename_1, filename_2 ):
 
 
 def hash_file(filename):
-   """"This function returns the SHA-1 hash
+    """"This function returns the SHA-1 hash
    of the file passed into it"""
 
-   # make a hash object
-   h = hashlib.sha1()
+    # make a hash object
+    h = hashlib.sha1()
 
-   # open file for reading in binary mode
-   with open(filename,'rb') as file:
+    # open file for reading in binary mode
+    with open(filename, 'rb') as file:
+        # loop till the end of the file
+        chunk = 0
+        while chunk != b'':
+            # read only 1024 bytes at a time
+            chunk = file.read(1024)
+            h.update(chunk)
 
-       # loop till the end of the file
-       chunk = 0
-       while chunk != b'':
-           # read only 1024 bytes at a time
-           chunk = file.read(1024)
-           h.update(chunk)
-
-   # return the hex representation of digest
-   return h.hexdigest()
+    # return the hex representation of digest
+    return h.hexdigest()

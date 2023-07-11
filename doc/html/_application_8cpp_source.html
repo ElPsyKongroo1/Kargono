@@ -70,50 +70,51 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_79f96d99a25c92e434563e7da667e6e3.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_7421d105ec79c430276e0e4e27dedf0d.html">Kargono</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_9d56de3d28d79a62985fced3e4389eef.html">custom-documentation-generator</a></li><li class="navelem"><a class="el" href="dir_03b531d8545c2ef8382988e6e9a4b6f4.html">directories</a></li><li class="navelem"><a class="el" href="dir_7a557d28c60085938fbe3d8650b42dc4.html">Kargono-output-dir</a></li><li class="navelem"><a class="el" href="dir_7e5cb1b5695315adb194a974e0500647.html">Kargono</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">Application.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="_application_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">Kargono/kgpch.h</a>&quot;</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="_application_8h.html">Application.h</a>&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="_application_event_8h.html">Events/ApplicationEvent.h</a>&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="_log_8h.html">Log.h</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="namespace_kargono.html">    7</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_kargono.html">Kargono</a></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
+<a href="_application_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">Kargono/kgpch.h</a>&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="_application_8h.html">Application.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="_application_event_8h.html">Events/ApplicationEvent.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="_log_8h.html">Log.h</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">   10</a></span>    <a class="code hl_function" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Application::Application</a>()</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        m_Window = std::unique_ptr&lt;Window&gt;(<a class="code hl_function" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a">Window::Create</a>());</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    }</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">   14</a></span>    <a class="code hl_function" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">Application::~Application</a>()</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">   19</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Application::Run</a>()</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keywordflow">while</span> (m_Running)</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        {</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>            m_Window-&gt;OnUpdate();</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        }</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>}</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="namespace_kargono.html">   11</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_kargono.html">Kargono</a></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">   15</a></span>    <a class="code hl_function" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Application::Application</a>()</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        m_Window = std::unique_ptr&lt;Window&gt;(<a class="code hl_function" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a">Window::Create</a>());</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    }</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">   21</a></span>    <a class="code hl_function" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">Application::~Application</a>()</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">   27</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Application::Run</a>()</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordflow">while</span> (m_Running)</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            m_Window-&gt;OnUpdate();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
 <div class="ttc" id="a_application_8h_html"><div class="ttname"><a href="_application_8h.html">Application.h</a></div></div>
 <div class="ttc" id="a_application_event_8h_html"><div class="ttname"><a href="_application_event_8h.html">ApplicationEvent.h</a></div></div>
 <div class="ttc" id="a_log_8h_html"><div class="ttname"><a href="_log_8h.html">Log.h</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_application_html_a2c5f0f2d3a2cf27c183531a8a588e632"><div class="ttname"><a href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">Kargono::Application::~Application</a></div><div class="ttdeci">virtual ~Application()</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00014">Application.cpp:14</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_application_html_a5013d2d9b4b8a49b26a35a640faee54b"><div class="ttname"><a href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Kargono::Application::Application</a></div><div class="ttdeci">Application()</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00010">Application.cpp:10</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_application_html_ae901aff5d0fcd5fa0c50fed446f52415"><div class="ttname"><a href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Kargono::Application::Run</a></div><div class="ttdeci">void Run()</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00019">Application.cpp:19</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_window_html_acb594ae69f0500400f84c4b06dfcb80a"><div class="ttname"><a href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a">Kargono::Window::Create</a></div><div class="ttdeci">static Window * Create(const WindowProps &amp;props=WindowProps())</div><div class="ttdef"><b>Definition</b> <a href="_windows_window_8cpp_source.html#l00009">WindowsWindow.cpp:9</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_application_html_a2c5f0f2d3a2cf27c183531a8a588e632"><div class="ttname"><a href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">Kargono::Application::~Application</a></div><div class="ttdeci">virtual ~Application()</div><div class="ttdoc">Virtual destructor for the Application class.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00021">Application.cpp:21</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_application_html_a5013d2d9b4b8a49b26a35a640faee54b"><div class="ttname"><a href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Kargono::Application::Application</a></div><div class="ttdeci">Application()</div><div class="ttdoc">Default constructor for the Application class.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00015">Application.cpp:15</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_application_html_ae901aff5d0fcd5fa0c50fed446f52415"><div class="ttname"><a href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Kargono::Application::Run</a></div><div class="ttdeci">void Run()</div><div class="ttdoc">Runs the main game loop.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00027">Application.cpp:27</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_window_html_acb594ae69f0500400f84c4b06dfcb80a"><div class="ttname"><a href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a">Kargono::Window::Create</a></div><div class="ttdeci">static Window * Create(const WindowProps &amp;props=WindowProps())</div><div class="ttdoc">Static function for creating a window with specified properties in the Kargono Engine.</div><div class="ttdef"><b>Definition</b> <a href="_windows_window_8cpp_source.html#l00009">WindowsWindow.cpp:9</a></div></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00007">Application.cpp:8</a></div></div>
+<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdoc">Include the precompiled header file.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00011">Application.cpp:12</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
