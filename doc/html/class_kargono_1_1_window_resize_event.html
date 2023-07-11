@@ -106,12 +106,16 @@ Collaboration diagram for Kargono::WindowResizeEvent:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a25149bb361e0ab83657df548fc1dba74"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window_resize_event.html#a25149bb361e0ab83657df548fc1dba74">WindowResizeEvent</a> (unsigned int width, unsigned int height)</td></tr>
+<tr class="memdesc:a25149bb361e0ab83657df548fc1dba74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="class_kargono_1_1_window_resize_event.html">WindowResizeEvent</a> class.  <br /></td></tr>
 <tr class="separator:a25149bb361e0ab83657df548fc1dba74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6ecc720edc6bc38d77b3db08d1ee8ab"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window_resize_event.html#ad6ecc720edc6bc38d77b3db08d1ee8ab">GetWidth</a> () const</td></tr>
+<tr class="memdesc:ad6ecc720edc6bc38d77b3db08d1ee8ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the width of the window.  <br /></td></tr>
 <tr class="separator:ad6ecc720edc6bc38d77b3db08d1ee8ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3088a254634ca5d5422ce52d8d4eca12"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window_resize_event.html#a3088a254634ca5d5422ce52d8d4eca12">GetHeight</a> () const</td></tr>
+<tr class="memdesc:a3088a254634ca5d5422ce52d8d4eca12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the height of the window.  <br /></td></tr>
 <tr class="separator:a3088a254634ca5d5422ce52d8d4eca12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae28045370465221e6f47628fbe91a125"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window_resize_event.html#ae28045370465221e6f47628fbe91a125">ToString</a> () const override</td></tr>
+<tr class="memdesc:ae28045370465221e6f47628fbe91a125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the event to a string representation.  <br /></td></tr>
 <tr class="separator:ae28045370465221e6f47628fbe91a125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_kargono_1_1_event"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_kargono_1_1_event')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_kargono_1_1_event.html">Kargono::Event</a></td></tr>
 <tr class="memitem:a6014e784c8f866e782b978283cde1500 inherit pub_methods_class_kargono_1_1_event"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespace_kargono.html#a915b717e402771208083b14141930a27">EventType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500">GetEventType</a> () const =0</td></tr>
@@ -123,6 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab6856d77af9e1d82adff4df95077eb5a inherit pub_methods_class_kargono_1_1_event"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a">ToString</a> () const</td></tr>
 <tr class="separator:ab6856d77af9e1d82adff4df95077eb5a inherit pub_methods_class_kargono_1_1_event"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab2496150316915791413ea1f74a64b19">IsInCategory</a> (<a class="el" href="namespace_kargono.html#a298cd03a46b41d882ccf39312a877dae">EventCategory</a> category)</td></tr>
+<tr class="memdesc:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the event is in a specific category.  <br /></td></tr>
 <tr class="separator:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -133,7 +138,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00008">8</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00009">9</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a25149bb361e0ab83657df548fc1dba74" name="a25149bb361e0ab83657df548fc1dba74"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a25149bb361e0ab83657df548fc1dba74">&#9670;&#160;</a></span>WindowResizeEvent()</h2>
@@ -169,7 +174,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00011">11</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
+<p>Constructor for <a class="el" href="class_kargono_1_1_window_resize_event.html">WindowResizeEvent</a> class. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00013">13</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
 
 </div>
 </div>
@@ -197,7 +204,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00015">15</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
+<p>Get the height of the window. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00019">19</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
 
 </div>
 </div>
@@ -224,7 +233,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00014">14</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
+<p>Get the width of the window. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00017">17</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
 
 </div>
 </div>
@@ -251,9 +262,11 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Convert the event to a string representation. </p>
+
 <p>Reimplemented from <a class="el" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a">Kargono::Event</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00017">17</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_event_8h_source.html#l00022">22</a> of file <a class="el" href="_application_event_8h_source.html">ApplicationEvent.h</a>.</p>
 
 </div>
 </div>

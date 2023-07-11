@@ -81,20 +81,28 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Class representing the main application.  
+ <a href="class_kargono_1_1_application.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_application_8h_source.html">Application.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5013d2d9b4b8a49b26a35a640faee54b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Application</a> ()</td></tr>
+<tr class="memdesc:a5013d2d9b4b8a49b26a35a640faee54b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class.  <br /></td></tr>
 <tr class="separator:a5013d2d9b4b8a49b26a35a640faee54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">~Application</a> ()</td></tr>
+<tr class="memdesc:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class.  <br /></td></tr>
 <tr class="separator:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae901aff5d0fcd5fa0c50fed446f52415"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Run</a> ()</td></tr>
+<tr class="memdesc:ae901aff5d0fcd5fa0c50fed446f52415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main game loop.  <br /></td></tr>
 <tr class="separator:ae901aff5d0fcd5fa0c50fed446f52415"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00008">8</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
+<div class="textblock"><p>Class representing the main application. </p>
+<p>This class is responsible for creating and managing the application window and running the game loop </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00011">11</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5013d2d9b4b8a49b26a35a640faee54b" name="a5013d2d9b4b8a49b26a35a640faee54b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5013d2d9b4b8a49b26a35a640faee54b">&#9670;&#160;</a></span>Application()</h2>
@@ -111,14 +119,18 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00010">10</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p>Default constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
+<p>Constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
+<p>Create a unique_ptr for the <a class="el" href="class_kargono_1_1_window.html">Window</a> object and assign the result of <a class="el" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window with specified properties in the Kargono Engine.">Window::Create()</a></p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00015">15</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph" alt=""/></div>
 <map name="aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph" id="aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,147,48"/>
-<area shape="rect" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title=" " alt="" coords="195,13,364,40"/>
+<area shape="rect" title="Default constructor for the Application class." alt="" coords="5,5,147,48"/>
+<area shape="rect" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window with specified properties in the Kargono Engine." alt="" coords="195,13,364,40"/>
 <area shape="poly" title=" " alt="" coords="147,24,180,24,180,29,147,29"/>
 </map>
 </div>
@@ -148,7 +160,10 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00014">14</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p>Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
+<p>Destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00021">21</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 
 </div>
 </div>
@@ -168,7 +183,13 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00019">19</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p>Runs the main game loop. </p>
+<p>Run the application.</p>
+<p>This function continuously updates and renders the game until the application is closed </p>
+<p>Execute the loop while the application is running</p>
+<p>Update the window</p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00027">27</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 
 </div>
 </div>

@@ -106,10 +106,13 @@ Collaboration diagram for Kargono::MouseScrolledEvent:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acbbdf8d5970b72154f88cb721351d315"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_mouse_scrolled_event.html#acbbdf8d5970b72154f88cb721351d315">MouseScrolledEvent</a> (float xOffset, float yOffset)</td></tr>
+<tr class="memdesc:acbbdf8d5970b72154f88cb721351d315"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a mouse scrolled event.  <br /></td></tr>
 <tr class="separator:acbbdf8d5970b72154f88cb721351d315"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79afeeeccca382afeba611f08149b1ed"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_mouse_scrolled_event.html#a79afeeeccca382afeba611f08149b1ed">GetXOffset</a> () const</td></tr>
+<tr class="memdesc:a79afeeeccca382afeba611f08149b1ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the horizontal offset value of the scroll.  <br /></td></tr>
 <tr class="separator:a79afeeeccca382afeba611f08149b1ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad842f7d3411dde0594f3dfd24812cc27"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_mouse_scrolled_event.html#ad842f7d3411dde0594f3dfd24812cc27">GetYOffset</a> () const</td></tr>
+<tr class="memdesc:ad842f7d3411dde0594f3dfd24812cc27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the vertical offset value of the scroll.  <br /></td></tr>
 <tr class="separator:ad842f7d3411dde0594f3dfd24812cc27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3df9ba099d644526701e19ef04ebd092"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_mouse_scrolled_event.html#a3df9ba099d644526701e19ef04ebd092">ToString</a> () const override</td></tr>
 <tr class="separator:a3df9ba099d644526701e19ef04ebd092"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,6 +126,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab6856d77af9e1d82adff4df95077eb5a inherit pub_methods_class_kargono_1_1_event"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a">ToString</a> () const</td></tr>
 <tr class="separator:ab6856d77af9e1d82adff4df95077eb5a inherit pub_methods_class_kargono_1_1_event"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_event.html#ab2496150316915791413ea1f74a64b19">IsInCategory</a> (<a class="el" href="namespace_kargono.html#a298cd03a46b41d882ccf39312a877dae">EventCategory</a> category)</td></tr>
+<tr class="memdesc:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the event is in a specific category.  <br /></td></tr>
 <tr class="separator:ab2496150316915791413ea1f74a64b19 inherit pub_methods_class_kargono_1_1_event"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -133,7 +137,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00030">30</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00040">40</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acbbdf8d5970b72154f88cb721351d315" name="acbbdf8d5970b72154f88cb721351d315"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbbdf8d5970b72154f88cb721351d315">&#9670;&#160;</a></span>MouseScrolledEvent()</h2>
@@ -169,7 +173,16 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00033">33</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
+<p>Construct a mouse scrolled event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">xOffset</td><td>The offset value to scroll horizontally </td></tr>
+    <tr><td class="paramname">yOffset</td><td>The offset value to scroll vertically </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00046">46</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
 
 </div>
 </div>
@@ -197,7 +210,10 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00036">36</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
+<p>Get the horizontal offset value of the scroll. </p>
+<dl class="section return"><dt>Returns</dt><dd>The horizontal offset value of the scroll </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00051">51</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
 
 </div>
 </div>
@@ -224,7 +240,10 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00037">37</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
+<p>Get the vertical offset value of the scroll. </p>
+<dl class="section return"><dt>Returns</dt><dd>The vertical offset value of the scroll </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00054">54</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
 
 </div>
 </div>
@@ -253,7 +272,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a">Kargono::Event</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00039">39</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mouse_event_8h_source.html#l00056">56</a> of file <a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>.</p>
 
 </div>
 </div>

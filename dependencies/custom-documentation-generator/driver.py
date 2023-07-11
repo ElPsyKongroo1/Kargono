@@ -11,13 +11,14 @@ def create_output():
     MAX_NUM_UPLOAD = 1
 
     folder_name = "Kargono"
-    source_dir = "./../../Kargono/Kargono"
+    source_dir = "./../../Kargono"
+    ignore_directories = ['dependencies*']
     working_dir = "./directories/" + folder_name + "-working-dir"
     cache_dir = "./directories/" + folder_name + "-cache-dir"
     output_dir = "./directories/" + folder_name + "-output-dir"
 
     # Move source code to initial working directory
-    util_functions.push_directory(source_dir, working_dir)
+    util_functions.push_directory(source_dir, working_dir, ignore_directories)
 
     # Check if code has been modified
     working_files = glob.glob(working_dir + '/**/*.cpp', recursive=True) + glob.glob(working_dir + '/**/*.h', recursive=True)
@@ -43,7 +44,6 @@ def create_output():
     # Create list of comments w/ line numbers that follow query requirements from output document
     modified_files = [i.replace("-working-dir", "-output-dir", 1) for i in modified_files]
     print(modified_files)
-
 
     # Add queries to output document
     l = 0
