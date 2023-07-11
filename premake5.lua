@@ -78,14 +78,17 @@ project "Kargono"
         }
     filter "configurations:Debug"
         defines "KG_DEBUG"
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "KG_RELEASE"
+        buildoptions "/MD"
         symbols "On"
 
     filter "configurations:Dist"
         defines "KG_DIST"
+        buildoptions "/MD"
         symbols "On"
 project "Sandbox2D"
     location "Sandbox2D"
@@ -129,12 +132,15 @@ project "Sandbox2D"
 
     filter "configurations:Debug"
         defines "KG_DEBUG"
+        buildoptions "/MDd"
         symbols "On"
 
     filter "configurations:Release"
         defines "KG_RELEASE"
+        buildoptions "/MD"
         symbols "On"
 
     filter "configurations:Dist"
         defines "KG_DIST"
+        buildoptions "/MD"
         symbols "On"
