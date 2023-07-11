@@ -139,9 +139,6 @@ namespace Kargono
 
 	void WindowsWindow::OnUpdate() 
 	{
-		//FIXME
-		glClearColor(1, 0, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
 	}
