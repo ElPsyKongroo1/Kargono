@@ -37,6 +37,12 @@
     <ClInclude Include="Kargono\Events\MouseEvent.h">
       <Filter>Kargono\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Layer.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\LayerStack.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Log.h">
       <Filter>Kargono</Filter>
     </ClInclude>
@@ -52,6 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Application.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\Layer.cpp">
+      <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\LayerStack.cpp">
       <Filter>Kargono</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\Log.cpp">

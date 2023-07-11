@@ -1,4 +1,6 @@
-F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Application.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Application.obj
-F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Log.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Log.obj
-F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\kgpch.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\kgpch.obj
-F:\Charles_Files\Personal Projects\Personal Games\Kargono\Platform\Windows\WindowsWindow.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\WindowsWindow.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Kargono\Application.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\Application.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Kargono\Layer.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\Layer.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Kargono\LayerStack.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\LayerStack.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Kargono\Log.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\Log.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Kargono\kgpch.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\kgpch.obj
+C:\Users\Charlie\source\repos\Kargono\Kargono\Platform\Windows\WindowsWindow.cpp;C:\Users\Charlie\source\repos\Kargono\bin-int\Debug-windows-x86_64\Kargono\WindowsWindow.obj
