@@ -1,0 +1,5 @@
+<map id="Kargono::Application::PushLayer" name="Kargono::Application::PushLayer">
+<area shape="rect" id="Node000001" title="Add a layer to the layer stack." alt="" coords="5,5,147,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_layer_stack.html#ab869c6bcb10a95144f56c5cc0c02a3f5" title="Pushes a layer onto the layer stack." alt="" coords="195,5,338,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,24,180,24,180,29,147,29"/>
+</map>

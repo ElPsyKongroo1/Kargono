@@ -22,6 +22,7 @@ public:
 	Sandbox2D() 
 	{
 		PushLayer(new ExampleLayer()); 
+		PushOverlay(new Kargono::ImGuiLayer());
 	}
 	~Sandbox2D() 
 	{

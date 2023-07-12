@@ -1,0 +1,5 @@
+<map id="Kargono::Application::PushOverlay" name="Kargono::Application::PushOverlay">
+<area shape="rect" id="Node000001" title="Add an overlay layer to the layer stack." alt="" coords="5,5,147,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9" title="Pushes an overlay onto the layer stack." alt="" coords="195,5,338,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,24,180,24,180,29,147,29"/>
+</map>
