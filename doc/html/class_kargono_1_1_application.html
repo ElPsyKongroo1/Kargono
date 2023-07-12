@@ -81,28 +81,32 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing the main application.  
- <a href="class_kargono_1_1_application.html#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="_application_8h_source.html">Application.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5013d2d9b4b8a49b26a35a640faee54b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b">Application</a> ()</td></tr>
-<tr class="memdesc:a5013d2d9b4b8a49b26a35a640faee54b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class.  <br /></td></tr>
+<tr class="memdesc:a5013d2d9b4b8a49b26a35a640faee54b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="class_kargono_1_1_application.html">Application</a> class.  <br /></td></tr>
 <tr class="separator:a5013d2d9b4b8a49b26a35a640faee54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632">~Application</a> ()</td></tr>
-<tr class="memdesc:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class.  <br /></td></tr>
+<tr class="memdesc:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html">Application</a> class.  <br /></td></tr>
 <tr class="separator:a2c5f0f2d3a2cf27c183531a8a588e632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae901aff5d0fcd5fa0c50fed446f52415"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415">Run</a> ()</td></tr>
-<tr class="memdesc:ae901aff5d0fcd5fa0c50fed446f52415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main game loop.  <br /></td></tr>
+<tr class="memdesc:ae901aff5d0fcd5fa0c50fed446f52415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start running the application.  <br /></td></tr>
 <tr class="separator:ae901aff5d0fcd5fa0c50fed446f52415"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f497f8c27bef5277d194eefc63481e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2">OnEvent</a> (<a class="el" href="class_kargono_1_1_event.html">Event</a> &amp;e)</td></tr>
+<tr class="memdesc:a0f497f8c27bef5277d194eefc63481e2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_kargono_1_1_event.html">Event</a> handler for events that occur within the application.  <br /></td></tr>
+<tr class="separator:a0f497f8c27bef5277d194eefc63481e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3de0bf9286cb7ab75fcce597b9f272aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a3de0bf9286cb7ab75fcce597b9f272aa">PushLayer</a> (<a class="el" href="class_kargono_1_1_layer.html">Layer</a> *layer)</td></tr>
+<tr class="memdesc:a3de0bf9286cb7ab75fcce597b9f272aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a layer to the layer stack.  <br /></td></tr>
+<tr class="separator:a3de0bf9286cb7ab75fcce597b9f272aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84914a37f547e6758bb7086b1b2b7449"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449">PushOverlay</a> (<a class="el" href="class_kargono_1_1_layer.html">Layer</a> *layer)</td></tr>
+<tr class="memdesc:a84914a37f547e6758bb7086b1b2b7449"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an overlay layer to the layer stack.  <br /></td></tr>
+<tr class="separator:a84914a37f547e6758bb7086b1b2b7449"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing the main application. </p>
-<p>This class is responsible for creating and managing the application window and running the game loop </p>
-
-<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00011">11</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
+<div class="textblock">
+<p class="definition">Definition at line <a class="el" href="_application_8h_source.html#l00014">14</a> of file <a class="el" href="_application_8h_source.html">Application.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5013d2d9b4b8a49b26a35a640faee54b" name="a5013d2d9b4b8a49b26a35a640faee54b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5013d2d9b4b8a49b26a35a640faee54b">&#9670;&#160;</a></span>Application()</h2>
@@ -119,20 +123,13 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Default constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
-<p>Constructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
-<p>Create a unique_ptr for the <a class="el" href="class_kargono_1_1_window.html">Window</a> object and assign the result of <a class="el" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window with specified properties in the Kargono Engine.">Window::Create()</a></p>
+<p>Constructor for the <a class="el" href="class_kargono_1_1_application.html">Application</a> class. </p>
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00015">15</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00014">14</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph" alt=""/></div>
-<map name="aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph" id="aclass_kargono_1_1_application_a5013d2d9b4b8a49b26a35a640faee54b_cgraph">
-<area shape="rect" title="Default constructor for the Application class." alt="" coords="5,5,147,48"/>
-<area shape="rect" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window with specified properties in the Kargono Engine." alt="" coords="195,13,364,40"/>
-<area shape="poly" title=" " alt="" coords="147,24,180,24,180,29,147,29"/>
-</map>
 </div>
 
 </div>
@@ -160,14 +157,103 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
-<p>Destructor for the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> class. </p>
+<p>Virtual destructor for the <a class="el" href="class_kargono_1_1_application.html">Application</a> class. </p>
+<p>Destructor for the <a class="el" href="class_kargono_1_1_application.html">Application</a> class. </p>
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00021">21</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00020">20</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0f497f8c27bef5277d194eefc63481e2" name="a0f497f8c27bef5277d194eefc63481e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f497f8c27bef5277d194eefc63481e2">&#9670;&#160;</a></span>OnEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Application::OnEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_kargono_1_1_event.html">Event</a> &amp;&#160;</td>
+          <td class="paramname"><em>e</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="class_kargono_1_1_event.html">Event</a> handler for events that occur within the application. </p>
+<p>Called when an event occurs in the application. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00039">39</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_application_a0f497f8c27bef5277d194eefc63481e2_cgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a0f497f8c27bef5277d194eefc63481e2_cgraph" alt=""/></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_application_a0f497f8c27bef5277d194eefc63481e2_icgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a0f497f8c27bef5277d194eefc63481e2_icgraph" alt=""/></div>
+</div>
+
+</div>
+</div>
+<a id="a3de0bf9286cb7ab75fcce597b9f272aa" name="a3de0bf9286cb7ab75fcce597b9f272aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3de0bf9286cb7ab75fcce597b9f272aa">&#9670;&#160;</a></span>PushLayer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Application::PushLayer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_kargono_1_1_layer.html">Layer</a> *&#160;</td>
+          <td class="paramname"><em>layer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a layer to the layer stack. </p>
+<p>Pushes a layer onto the layer stack. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00026">26</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_application_a3de0bf9286cb7ab75fcce597b9f272aa_cgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a3de0bf9286cb7ab75fcce597b9f272aa_cgraph" alt=""/></div>
+</div>
+
+</div>
+</div>
+<a id="a84914a37f547e6758bb7086b1b2b7449" name="a84914a37f547e6758bb7086b1b2b7449"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84914a37f547e6758bb7086b1b2b7449">&#9670;&#160;</a></span>PushOverlay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Application::PushOverlay </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_kargono_1_1_layer.html">Layer</a> *&#160;</td>
+          <td class="paramname"><em>layer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an overlay layer to the layer stack. </p>
+<p>Pushes an overlay onto the layer stack. </p>
+
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00032">32</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_application_a84914a37f547e6758bb7086b1b2b7449_cgraph.png" border="0" usemap="#aclass_kargono_1_1_application_a84914a37f547e6758bb7086b1b2b7449_cgraph" alt=""/></div>
+</div>
+
+</div>
+</div>
 <a id="ae901aff5d0fcd5fa0c50fed446f52415" name="ae901aff5d0fcd5fa0c50fed446f52415"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae901aff5d0fcd5fa0c50fed446f52415">&#9670;&#160;</a></span>Run()</h2>
 
@@ -183,13 +269,10 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Runs the main game loop. </p>
-<p>Run the application.</p>
-<p>This function continuously updates and renders the game until the application is closed </p>
-<p>Execute the loop while the application is running</p>
-<p>Update the window</p>
+<p>Start running the application. </p>
+<p>The main game loop of the application. </p>
 
-<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00027">27</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_application_8cpp_source.html#l00056">56</a> of file <a class="el" href="_application_8cpp_source.html">Application.cpp</a>.</p>
 
 </div>
 </div>

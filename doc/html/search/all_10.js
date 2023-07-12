@@ -1,17 +1,5 @@
 var searchData=
 [
-  ['width_0',['Width',['../struct_kargono_1_1_window_props.html#a7d5532059a5605610519e755d6cc8698',1,'Kargono::WindowProps']]],
-  ['window_1',['Window',['../class_kargono_1_1_window.html',1,'Kargono']]],
-  ['window_2eh_2',['Window.h',['../_window_8h.html',1,'']]],
-  ['windowclose_3',['WindowClose',['../namespace_kargono.html#a915b717e402771208083b14141930a27ac984201d37197ab297a14d19efee4b07',1,'Kargono']]],
-  ['windowcloseevent_4',['WindowCloseEvent',['../class_kargono_1_1_window_close_event.html',1,'Kargono::WindowCloseEvent'],['../class_kargono_1_1_window_close_event.html#a97f87e6c241b61cc16804f9702c63b8e',1,'Kargono::WindowCloseEvent::WindowCloseEvent()']]],
-  ['windowfocus_5',['WindowFocus',['../namespace_kargono.html#a915b717e402771208083b14141930a27a1c68d5453b28d52622bf5486a5fd95ca',1,'Kargono']]],
-  ['windowlostfocus_6',['WindowLostFocus',['../namespace_kargono.html#a915b717e402771208083b14141930a27a1c2119b9d61e623975f13f1029f1d97c',1,'Kargono']]],
-  ['windowmoved_7',['WindowMoved',['../namespace_kargono.html#a915b717e402771208083b14141930a27ab94473d9dfc85f8fdbf5cb3b1d992bda',1,'Kargono']]],
-  ['windowprops_8',['WindowProps',['../struct_kargono_1_1_window_props.html',1,'Kargono::WindowProps'],['../struct_kargono_1_1_window_props.html#a6c490e6cd83cf3e4fb68fdb2df017f14',1,'Kargono::WindowProps::WindowProps()']]],
-  ['windowresize_9',['WindowResize',['../namespace_kargono.html#a915b717e402771208083b14141930a27a9f8f27bff2915738c4fe1b970e12f89c',1,'Kargono']]],
-  ['windowresizeevent_10',['WindowResizeEvent',['../class_kargono_1_1_window_resize_event.html',1,'Kargono::WindowResizeEvent'],['../class_kargono_1_1_window_resize_event.html#a25149bb361e0ab83657df548fc1dba74',1,'Kargono::WindowResizeEvent::WindowResizeEvent()']]],
-  ['windowswindow_11',['WindowsWindow',['../class_kargono_1_1_windows_window.html',1,'Kargono::WindowsWindow'],['../class_kargono_1_1_windows_window.html#abc53f73a619b07ffca7cfa2e306ec361',1,'Kargono::WindowsWindow::WindowsWindow()']]],
-  ['windowswindow_2ecpp_12',['WindowsWindow.cpp',['../_windows_window_8cpp.html',1,'']]],
-  ['windowswindow_2eh_13',['WindowsWindow.h',['../_windows_window_8h.html',1,'']]]
+  ['title_0',['Title',['../struct_kargono_1_1_window_props.html#a15041108829f07d670cb1baa10010f95',1,'Kargono::WindowProps']]],
+  ['tostring_1',['ToString',['../class_kargono_1_1_window_resize_event.html#ae28045370465221e6f47628fbe91a125',1,'Kargono::WindowResizeEvent::ToString()'],['../class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a',1,'Kargono::Event::ToString()'],['../class_kargono_1_1_key_pressed_event.html#aca8d61678cb5f55e13577388b88cc915',1,'Kargono::KeyPressedEvent::ToString()'],['../class_kargono_1_1_key_released_event.html#a027f8be1c24144caee8a43e40aa48ed9',1,'Kargono::KeyReleasedEvent::ToString()'],['../class_kargono_1_1_mouse_moved_event.html#ac73c99e3a51eff272bf2af49f2987229',1,'Kargono::MouseMovedEvent::ToString()'],['../class_kargono_1_1_mouse_scrolled_event.html#a3df9ba099d644526701e19ef04ebd092',1,'Kargono::MouseScrolledEvent::ToString()'],['../class_kargono_1_1_mouse_button_pressed_event.html#a57e3d7571edf23af4e94962f43256556',1,'Kargono::MouseButtonPressedEvent::ToString()'],['../class_kargono_1_1_mouse_button_released_event.html#a995beae797ae3d4806c95e6ba9af266d',1,'Kargono::MouseButtonReleasedEvent::ToString()']]]
 ];

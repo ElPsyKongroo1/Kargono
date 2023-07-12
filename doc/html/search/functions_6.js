@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['keyevent_0',['KeyEvent',['../class_kargono_1_1_key_event.html#a24dfe4b2d0679b68e449ff6b702d2e75',1,'Kargono::KeyEvent']]],
-  ['keypressedevent_1',['KeyPressedEvent',['../class_kargono_1_1_key_pressed_event.html#a1964d98a723d7a11930aa21787055aa7',1,'Kargono::KeyPressedEvent']]],
-  ['keyreleasedevent_2',['KeyReleasedEvent',['../class_kargono_1_1_key_released_event.html#a68cf4d9430f58e3a62bd9f530c712f7d',1,'Kargono::KeyReleasedEvent']]]
+  ['init_0',['Init',['../class_kargono_1_1_log.html#a12722783a432e0f50f826a68904c68b1',1,'Kargono::Log']]],
+  ['isincategory_1',['IsInCategory',['../class_kargono_1_1_event.html#ab2496150316915791413ea1f74a64b19',1,'Kargono::Event']]],
+  ['isvsync_2',['IsVSync',['../class_kargono_1_1_window.html#af1e612778c7af1f430811d8a485e9c63',1,'Kargono::Window::IsVSync()'],['../class_kargono_1_1_windows_window.html#aadf063e04658ce43b8f3d8bca15d6fe2',1,'Kargono::WindowsWindow::IsVSync()']]]
 ];

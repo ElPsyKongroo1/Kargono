@@ -12,9 +12,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Kargono/dependencies/GLFW/include"
+IncludeDir["GLAD"] = "Kargono/dependencies/GLAD/include"
 IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
 
 include "Kargono/dependencies/GLFW"
+include "Kargono/dependencies/GLAD"
 
 project "Kargono"
     location "Kargono"
@@ -41,6 +43,7 @@ project "Kargono"
     includedirs 
     {
         "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}",
         "%{IncludeDir.spdlog}",
         "Kargono"
     }
@@ -52,6 +55,7 @@ project "Kargono"
     links 
     { 
         "GLFW",
+        "GLAD",
         "opengl32.lib",
         "dwmapi.lib"
     }
@@ -64,7 +68,8 @@ project "Kargono"
         defines 
         {
             "KG_PLATFORM_WINDOWS",
-            "KG_BUILD_DLL"
+            "KG_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
         -- prebuildcommands 
         -- {

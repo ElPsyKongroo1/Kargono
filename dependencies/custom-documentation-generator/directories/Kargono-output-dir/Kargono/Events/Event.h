@@ -30,45 +30,48 @@ namespace Kargono
 							    virtual EventType GetEventType() const override { return GetStaticType();}\
 								virtual const char* GetName() const override {return #type;}
 
-/// @brief Macro for defining the event class category
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category;}
 
 /// @class Event
 	class KG_API Event 
 	{
-/// @class EventDispatcher
-		friend class EventDispatcher;
 	public:
+		
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-/// @brief Checks if the event is in a specific category
+/// @return The category flags of the event
 		inline bool IsInCategory(EventCategory category)
 		{
 			return GetCategoryFlags() & category;
 		}
-	protected:
-		bool m_Handled = false;
+/// @brief Boolean indicating if the event has been handled or not
+		bool Handled = false;
 	};
 
+/// @class EventDispatcher
 	class EventDispatcher
 	{
-/// @tparam K - type of the event
+/// @tparam K The type of event handler function
 		template<typename K>
+/// @typedef EventFn
 		using EventFn = std::function<bool(K&)>;
 	public:
+/// @brief Constructor for the EventDispatcher class
 		EventDispatcher(Event& event) : m_Event(event)
 		{
 		}
 
+/// @tparam T The type of event handler function
 		template<typename T>
+/// @brief Dispatches the event to the appropriate event handler
 		bool Dispatch(EventFn<T> func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(*(T*)&m_Event);
 				return true;
 			}
 			return false;
@@ -77,7 +80,7 @@ namespace Kargono
 		Event& m_Event;
 	};
 
-/// @brief Overrides the << operator for outputting the event as a string
+/// @brief Overloaded output stream operator
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();

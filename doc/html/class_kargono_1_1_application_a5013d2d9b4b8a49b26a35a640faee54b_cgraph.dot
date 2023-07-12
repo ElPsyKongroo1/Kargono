@@ -1,0 +1,22 @@
+digraph "Kargono::Application::Application"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="Kargono::Application\l::Application",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Constructor for the Application class."];
+  Node1 -> Node2 [id="edge1_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="Kargono::Window::Create",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a",tooltip="Static function for creating a window with specified properties in the Kargono Engine."];
+  Node1 -> Node3 [id="edge2_Node000001_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="Kargono::Application\l::OnEvent",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2",tooltip="Event handler for events that occur within the application."];
+  Node3 -> Node4 [id="edge3_Node000003_Node000004",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="Kargono::LayerStack\l::begin",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_layer_stack.html#ab791703b90827da4d4a42e33b50adeea",tooltip="Returns an iterator pointing to the beginning of the layer stack."];
+  Node3 -> Node5 [id="edge4_Node000003_Node000005",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="Kargono::EventDispatcher\l::Dispatch",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_event_dispatcher.html#a072a578e4607d69c0c4c0f92dacf2731",tooltip="Dispatches the event to the appropriate event handler."];
+  Node5 -> Node6 [id="edge5_Node000005_Node000006",color="steelblue1",style="solid",tooltip=" "];
+  Node6 [id="Node000006",label="Kargono::Event::GetEventType",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500",tooltip=" "];
+  Node3 -> Node7 [id="edge6_Node000003_Node000007",color="steelblue1",style="solid",tooltip=" "];
+  Node7 [id="Node000007",label="Kargono::LayerStack::end",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_kargono_1_1_layer_stack.html#ab17d815cd920a20c9f98d6ee0149d09e",tooltip="Returns an iterator pointing to the end of the layer stack."];
+  Node3 -> Node3 [id="edge7_Node000003_Node000003",color="steelblue1",style="solid",tooltip=" "];
+}
