@@ -1,0 +1,16 @@
+<map id="Kargono::Application::Application" name="Kargono::Application::Application">
+<area shape="rect" id="Node000001" title="Constructor for the Application class." alt="" coords="5,39,147,81"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window with specified properties in the Kargono Engine." alt="" coords="195,5,364,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,43,196,33,197,38,147,48"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2" title="Event handler for events that occur within the application." alt="" coords="209,80,350,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="147,72,195,81,193,87,146,77"/>
+<area shape="poly" id="edge7_Node000003_Node000003" title=" " alt="" coords="240,80,239,70,245,61,259,55,279,53,302,56,315,63,313,68,301,61,279,59,260,61,249,65,244,71,246,79"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_layer_stack.html#ab791703b90827da4d4a42e33b50adeea" title="Returns an iterator pointing to the beginning of the layer stack." alt="" coords="427,13,570,56"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="349,77,411,58,413,63,351,82"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_event_dispatcher.html#a072a578e4607d69c0c4c0f92dacf2731" title="Dispatches the event to the appropriate event handler." alt="" coords="413,80,584,123"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="350,99,397,99,397,104,350,104"/>
+<area shape="rect" id="Node000007" href="$class_kargono_1_1_layer_stack.html#ab17d815cd920a20c9f98d6ee0149d09e" title="Returns an iterator pointing to the end of the layer stack." alt="" coords="412,147,584,173"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="351,118,432,140,431,145,350,123"/>
+<area shape="rect" id="Node000006" href="$class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500" title=" " alt="" coords="632,88,831,115"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="584,99,617,99,617,104,584,104"/>
+</map>

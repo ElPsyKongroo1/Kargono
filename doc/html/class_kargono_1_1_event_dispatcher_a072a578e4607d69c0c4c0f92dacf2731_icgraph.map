@@ -1,0 +1,8 @@
+<map id="Kargono::EventDispatcher::Dispatch" name="Kargono::EventDispatcher::Dispatch">
+<area shape="rect" id="Node000001" title="Dispatches the event to the appropriate event handler." alt="" coords="384,29,555,72"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2" title="Event handler for events that occur within the application." alt="" coords="195,29,336,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="369,53,336,53,336,48,369,48"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="296,17,285,10,265,8,248,10,237,15,233,21,234,28,229,29,227,19,234,10,246,5,265,3,287,5,299,12"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Constructor for the Application class." alt="" coords="5,29,147,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="180,53,147,53,147,48,180,48"/>
+</map>

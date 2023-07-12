@@ -1,0 +1,12 @@
+<map id="Kargono::Application::OnEvent" name="Kargono::Application::OnEvent">
+<area shape="rect" id="Node000001" title="Event handler for events that occur within the application." alt="" coords="5,72,147,115"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="37,72,35,62,42,53,56,47,76,45,99,48,112,55,110,60,98,53,76,51,57,53,45,57,40,63,42,71"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_layer_stack.html#ab791703b90827da4d4a42e33b50adeea" title="Returns an iterator pointing to the beginning of the layer stack." alt="" coords="209,5,353,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,69,198,51,200,56,144,74"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_event_dispatcher.html#a072a578e4607d69c0c4c0f92dacf2731" title="Dispatches the event to the appropriate event handler." alt="" coords="195,72,367,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="147,91,180,91,180,96,147,96"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_layer_stack.html#ab17d815cd920a20c9f98d6ee0149d09e" title="Returns an iterator pointing to the end of the layer stack." alt="" coords="195,139,367,165"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="148,111,219,132,217,137,146,116"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500" title=" " alt="" coords="415,80,613,107"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="367,91,400,91,400,96,367,96"/>
+</map>

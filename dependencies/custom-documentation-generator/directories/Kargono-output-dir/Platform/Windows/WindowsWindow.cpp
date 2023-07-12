@@ -1,3 +1,4 @@
+/// @brief Include statements for the various header files
 #include "Kargono/kgpch.h"
 #include "WindowsWindow.h"
 #include "Kargono/Log.h"
@@ -5,35 +6,38 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
+#include "glad/glad.h"
 
+
+/// @brief The namespace where the game engine code is defined
 namespace Kargono 
 {
-/// @brief Static boolean variable to track whether GLFW is initialized or not.
+/// @brief Static boolean variable to check if GLFW is initialized
 	static bool s_GLFWInitialized = false;
 
-/// @brief Error callback function for GLFW. Prints out the error and description.
+/// @brief Error callback function for GLFW
 	static void GLFWErrorCallback(int error, const char* description)
 	{
 		KG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-/// @brief Create function to create a new window
+/// @brief Function to create a window
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new WindowsWindow(props);
 	}
 
-/// @brief Constructor for the WindowsWindow class.
+/// @brief Constructor for the WindowsWindow class
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		Init(props);
 	}
-/// @brief Destructor for the WindowsWindow class.
+/// @brief Destructor for the WindowsWindow class
 	WindowsWindow::~WindowsWindow()
 	{
 	}
 
-/// @brief Initialize function for the WindowsWindow class.
+/// @brief Function to initialize the WindowsWindow class
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
@@ -52,11 +56,12 @@ namespace Kargono
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		KG_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
 		// Set GLFW callbacks
-/// @brief GLFW callback function for window size events.
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -68,7 +73,6 @@ namespace Kargono
 			
 			});
 
-/// @brief GLFW callback function for window close events.
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -76,7 +80,6 @@ namespace Kargono
 				data.EventCallback(event);
 			});
 
-/// @brief GLFW callback function for key events.
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -103,7 +106,6 @@ namespace Kargono
 					}
 			});
 
-/// @brief GLFW callback function for mouse button events.
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -125,7 +127,6 @@ namespace Kargono
 					}
 			});
 
-/// @brief GLFW callback function for scroll events.
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -133,7 +134,6 @@ namespace Kargono
 				MouseScrolledEvent event((float)xOffset, (float)yOffset);
 				data.EventCallback(event);
 			});
-/// @brief GLFW callback function for cursor position events.
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) 
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -144,20 +144,20 @@ namespace Kargono
 
 	}
 
-/// @brief Shutdown function for the WindowsWindow class.
+/// @brief Function to shutdown the WindowsWindow class
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 	}
 
-/// @brief Update function for the WindowsWindow class.
+/// @brief Function to update the WindowsWindow class
 	void WindowsWindow::OnUpdate() 
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
 	}
 
-/// @brief SetVSync function for the WindowsWindow class.
+/// @brief Function to set the vertical sync of the WindowsWindow class
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		if (enabled)	{ glfwSwapInterval(1); }
@@ -165,7 +165,7 @@ namespace Kargono
 		m_Data.VSync = enabled;
 	}
 
-/// @brief IsVSync function for the WindowsWindow class.
+/// @brief Function to check if vertical sync is enabled
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;

@@ -1,0 +1,16 @@
+<map id="Layer.h" name="Layer.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="89,5,154,32"/>
+<area shape="rect" id="Node000002" href="$_kargono_8h.html" title=" " alt="" coords="5,229,86,256"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,44,85,62,73,81,59,122,52,164,48,229,43,229,46,163,54,120,68,79,81,58,95,41"/>
+<area shape="rect" id="Node000003" href="$_layer_8cpp.html" title=" " alt="" coords="82,80,161,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="124,47,124,80,119,80,119,47"/>
+<area shape="rect" id="Node000004" href="$_layer_stack_8h.html" title=" " alt="" coords="184,80,283,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="154,38,215,77,212,82,152,42"/>
+<area shape="rect" id="Node000005" href="$_application_8h.html" title=" " alt="" coords="100,155,196,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="209,118,165,156,161,152,206,114"/>
+<area shape="rect" id="Node000007" href="$_layer_stack_8cpp.html" title=" " alt="" coords="220,155,332,181"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="251,118,271,153,267,156,246,121"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="120,192,65,231,62,227,117,188"/>
+<area shape="rect" id="Node000006" href="$_application_8cpp.html" title=" " alt="" coords="110,229,221,256"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="157,195,165,228,160,230,152,197"/>
+</map>

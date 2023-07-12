@@ -83,6 +83,11 @@ def create_output():
         util_functions.push_file(modified_files[index].replace("-output-dir", "-working-dir", 1), modified_files[index].replace("-output-dir", "-cache-dir", 1))
 
     util_functions.remove_directory(working_dir)
+    
+    if os.path.exists('error_log.txt'):
+        os.remove('error_log.txt')
+    with open('error_log.txt', 'a') as f:
+        f.write("No errors for recent run!")
 
 try:
     create_output()
