@@ -14,9 +14,12 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Kargono/dependencies/GLFW/include"
 IncludeDir["GLAD"] = "Kargono/dependencies/GLAD/include"
 IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
+IncludeDir["imGui"] = "Kargono/dependencies/imgui"
+
 
 include "Kargono/dependencies/GLFW"
 include "Kargono/dependencies/GLAD"
+include "Kargono/dependencies/imGui"
 
 project "Kargono"
     location "Kargono"
@@ -45,6 +48,8 @@ project "Kargono"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.imGui}",
+
         "Kargono"
     }
 
@@ -57,6 +62,7 @@ project "Kargono"
         "GLFW",
         "GLAD",
         "opengl32.lib",
+        "imGui",
         "dwmapi.lib"
     }
 
