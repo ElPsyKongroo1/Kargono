@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['onupdate_0',['OnUpdate',['../class_kargono_1_1_window.html#a62520eb89b08f4da5874efeba32f2f81',1,'Kargono::Window::OnUpdate()'],['../class_kargono_1_1_windows_window.html#a4ec37168499710223a68a2b6489299ae',1,'Kargono::WindowsWindow::OnUpdate()']]],
-  ['operator_3c_3c_1',['operator&lt;&lt;',['../namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4',1,'Kargono']]]
+  ['layer_0',['Layer',['../class_kargono_1_1_layer.html#aeb43b43e57041263b6cc364266cf7844',1,'Kargono::Layer']]],
+  ['layerstack_1',['LayerStack',['../class_kargono_1_1_layer_stack.html#aad93fc0f1dbfe438dddba21104f47940',1,'Kargono::LayerStack']]]
 ];

@@ -78,13 +78,12 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Include the precompiled header file.  
+<p>Namespace for the game engine.  
 <a href="namespace_kargono.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_application.html">Application</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the main application.  <a href="class_kargono_1_1_application.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_app_render_event.html">AppRenderEvent</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -102,6 +101,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing a key press event in the game engine.  <a href="class_kargono_1_1_key_pressed_event.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_key_released_event.html">KeyReleasedEvent</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html">Layer</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer_stack.html">LayerStack</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_log.html">Log</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for logging in the game engine.  <a href="class_kargono_1_1_log.html#details">More...</a><br /></td></tr>
@@ -171,15 +174,11 @@ Functions</h2></td></tr>
 <tr class="memitem:ae3f1e5a8092698872bd906362b8c2e7e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_kargono_1_1_application.html">Application</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_kargono.html#ae3f1e5a8092698872bd906362b8c2e7e">CreateApplication</a> ()</td></tr>
 <tr class="separator:ae3f1e5a8092698872bd906362b8c2e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90ac168f28eac069a53cf408be9300f4"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="class_kargono_1_1_event.html">Event</a> &amp;e)</td></tr>
-<tr class="memdesc:a90ac168f28eac069a53cf408be9300f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overrides the &lt;&lt; operator for outputting the event as a string.  <br /></td></tr>
+<tr class="memdesc:a90ac168f28eac069a53cf408be9300f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overloaded output stream operator.  <br /></td></tr>
 <tr class="separator:a90ac168f28eac069a53cf408be9300f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Include the precompiled header file. </p>
-<p>Namespace for the game engine.</p>
-<p>Include the <a class="el" href="class_kargono_1_1_application.html" title="Class representing the main application.">Application</a> header file</p>
-<p>Include the ApplicationEvent header file</p>
-<p>Include the <a class="el" href="class_kargono_1_1_log.html" title="Class for logging in the game engine.">Log</a> header file </p>
+<div class="textblock"><p>Namespace for the game engine. </p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a298cd03a46b41d882ccf39312a877dae" name="a298cd03a46b41d882ccf39312a877dae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a298cd03a46b41d882ccf39312a877dae">&#9670;&#160;</a></span>EventCategory</h2>
@@ -302,18 +301,13 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Overrides the &lt;&lt; operator for outputting the event as a string. </p>
+<p>Overloaded output stream operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00081">81</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_event_8h_source.html#l00084">84</a> of file <a class="el" href="_event_8h_source.html">Event.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="namespace_kargono_a90ac168f28eac069a53cf408be9300f4_cgraph.png" border="0" usemap="#anamespace_kargono_a90ac168f28eac069a53cf408be9300f4_cgraph" alt=""/></div>
-<map name="anamespace_kargono_a90ac168f28eac069a53cf408be9300f4_cgraph" id="anamespace_kargono_a90ac168f28eac069a53cf408be9300f4_cgraph">
-<area shape="rect" title="Overrides the &lt;&lt; operator for outputting the event as a string." alt="" coords="5,5,146,32"/>
-<area shape="rect" href="class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a" title=" " alt="" coords="194,5,359,32"/>
-<area shape="poly" title=" " alt="" coords="146,16,179,16,179,21,146,21"/>
-</map>
 </div>
 
 </div>

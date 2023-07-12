@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['eventdispatcher_0',['EventDispatcher',['../class_kargono_1_1_event_dispatcher.html#a3ede5b886d5f3d7bd3e71112561a1ff2',1,'Kargono::EventDispatcher']]]
+  ['dispatch_0',['Dispatch',['../class_kargono_1_1_event_dispatcher.html#a072a578e4607d69c0c4c0f92dacf2731',1,'Kargono::EventDispatcher']]]
 ];

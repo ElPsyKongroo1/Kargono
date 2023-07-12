@@ -7,7 +7,7 @@ var searchData=
   ['getheight_4',['GetHeight',['../class_kargono_1_1_window_resize_event.html#a3088a254634ca5d5422ce52d8d4eca12',1,'Kargono::WindowResizeEvent::GetHeight()'],['../class_kargono_1_1_window.html#aa8d7908c70995e8fb6fd3a4691708079',1,'Kargono::Window::GetHeight()'],['../class_kargono_1_1_windows_window.html#a05528b9f8ad06870f69cc4cf614edfdb',1,'Kargono::WindowsWindow::GetHeight()']]],
   ['getkeycode_5',['GetKeyCode',['../class_kargono_1_1_key_event.html#a3032ca50a5873ac6721d906bdd692116',1,'Kargono::KeyEvent']]],
   ['getmousebutton_6',['GetMouseButton',['../class_kargono_1_1_mouse_button_event.html#aba5c8abf98b72f5349d90d4ceb4557dc',1,'Kargono::MouseButtonEvent']]],
-  ['getname_7',['GetName',['../class_kargono_1_1_event.html#adbba2c728ca17bef2ba9ea3245fbd990',1,'Kargono::Event']]],
+  ['getname_7',['GetName',['../class_kargono_1_1_event.html#adbba2c728ca17bef2ba9ea3245fbd990',1,'Kargono::Event::GetName()'],['../class_kargono_1_1_layer.html#a6c52b40a67562076cea1cf1b83828001',1,'Kargono::Layer::GetName()']]],
   ['getrepeatcount_8',['GetRepeatCount',['../class_kargono_1_1_key_pressed_event.html#adc9831e31b0f3f5962213080f3149ad3',1,'Kargono::KeyPressedEvent']]],
   ['getwidth_9',['GetWidth',['../class_kargono_1_1_window_resize_event.html#ad6ecc720edc6bc38d77b3db08d1ee8ab',1,'Kargono::WindowResizeEvent::GetWidth()'],['../class_kargono_1_1_window.html#a3bdcf0ccae837c8c29f9dbf85c16807c',1,'Kargono::Window::GetWidth()'],['../class_kargono_1_1_windows_window.html#a1be0e9c346416e627023530c7cbe7582',1,'Kargono::WindowsWindow::GetWidth()']]],
   ['getx_10',['GetX',['../class_kargono_1_1_mouse_moved_event.html#a623c7894aa2b3d8445d35cf78f8f173d',1,'Kargono::MouseMovedEvent']]],

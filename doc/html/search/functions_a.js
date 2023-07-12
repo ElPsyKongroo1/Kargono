@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['seteventcallback_0',['SetEventCallback',['../class_kargono_1_1_window.html#aec5e97a9a8aa6d8b9b992ce80cc8a5d3',1,'Kargono::Window::SetEventCallback()'],['../class_kargono_1_1_windows_window.html#a10f82d5ce0f7bc2abc1efa58f85d63e5',1,'Kargono::WindowsWindow::SetEventCallback()']]],
-  ['setvsync_1',['SetVSync',['../class_kargono_1_1_window.html#adbb13b0e0db5a9dd68b918657fa9d8a5',1,'Kargono::Window::SetVSync()'],['../class_kargono_1_1_windows_window.html#a057a2588aa27fbefff82d6a927ab19b9',1,'Kargono::WindowsWindow::SetVSync()']]]
+  ['onattach_0',['OnAttach',['../class_kargono_1_1_layer.html#accb85f4d10097eb0c978b8095107d76f',1,'Kargono::Layer']]],
+  ['ondetach_1',['OnDetach',['../class_kargono_1_1_layer.html#a5dcb5d3e36d1df7724eb58ec18306c58',1,'Kargono::Layer']]],
+  ['onevent_2',['OnEvent',['../class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2',1,'Kargono::Application::OnEvent()'],['../class_kargono_1_1_layer.html#abb4512f074145ec806d2cd2abfdd6521',1,'Kargono::Layer::OnEvent(Event &amp;event)']]],
+  ['onupdate_3',['OnUpdate',['../class_kargono_1_1_layer.html#a16af6f659453e4654050c98efe26cf62',1,'Kargono::Layer::OnUpdate()'],['../class_kargono_1_1_window.html#a62520eb89b08f4da5874efeba32f2f81',1,'Kargono::Window::OnUpdate()'],['../class_kargono_1_1_windows_window.html#a4ec37168499710223a68a2b6489299ae',1,'Kargono::WindowsWindow::OnUpdate()']]],
+  ['operator_3c_3c_4',['operator&lt;&lt;',['../namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4',1,'Kargono']]]
 ];

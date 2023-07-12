@@ -1,14 +1,23 @@
-Expecting ':' delimiter: line 1 column 9 (char 8)Traceback (most recent call last):
-  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 88, in <module>
+{'id': 'chatcmpl-7bHB3cY4rx9UCfcTxbOUaz0ZI7S5W', 'object': 'chat.completion', 'created': 1689118521, 'model': 'gpt-3.5-turbo-0613', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '[{"Layer::Layer(const std::string& debugName) : m_DebugName(debugName)": "/// @brief Constructor for the Layer class\\n/// @param debugName The debug name of the layer"},\n{"Layer::~Layer()": "/// @brief Destructor for the Layer class"}]'}, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 451, 'completion_tokens': 59, 'total_tokens': 510}} is not of type 'string' - 'messages.2.content'Traceback (most recent call last):
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\driver.py", line 88, in <module>
     create_output()
-  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\driver.py", line 57, in create_output
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\driver.py", line 57, in create_output
     comment_list = util_functions.produce_comments(data)
-  File "F:\Charles_Files\Personal Projects\Personal Games\dependencies\custom-documentation-generator\util_functions.py", line 44, in produce_comments
-    return json.loads(response.choices[0].message.content)
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\decoder.py", line 337, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.10_3.10.2288.0_x64__qbz5n2kfra8p0\lib\json\decoder.py", line 353, in raw_decode
-    obj, end = self.scan_once(s, idx)
-json.decoder.JSONDecodeError: Expecting ':' delimiter: line 1 column 9 (char 8)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\util_functions.py", line 46, in produce_comments
+    is_output_clean = openai.ChatCompletion.create(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\venv\Lib\site-packages\openai\api_resources\chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\venv\Lib\site-packages\openai\api_resources\abstract\engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\venv\Lib\site-packages\openai\api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\venv\Lib\site-packages\openai\api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "C:\Users\Charlie\source\repos\Kargono\dependencies\custom-documentation-generator\venv\Lib\site-packages\openai\api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.InvalidRequestError: {'id': 'chatcmpl-7bHB3cY4rx9UCfcTxbOUaz0ZI7S5W', 'object': 'chat.completion', 'created': 1689118521, 'model': 'gpt-3.5-turbo-0613', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '[{"Layer::Layer(const std::string& debugName) : m_DebugName(debugName)": "/// @brief Constructor for the Layer class\\n/// @param debugName The debug name of the layer"},\n{"Layer::~Layer()": "/// @brief Destructor for the Layer class"}]'}, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 451, 'completion_tokens': 59, 'total_tokens': 510}} is not of type 'string' - 'messages.2.content'
