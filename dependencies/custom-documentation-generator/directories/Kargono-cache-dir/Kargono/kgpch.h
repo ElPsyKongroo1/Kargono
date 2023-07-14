@@ -22,6 +22,9 @@
 
 // P_ISSUE: Used to disable .dll export warning for shared_ptr's
 #pragma warning(disable: 4251)
+#pragma warning(disable: 4996)
+
+#pragma warning(disable: 4013)
 
 
 #ifdef KG_PLATFORM_WINDOWS

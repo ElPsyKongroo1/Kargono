@@ -19,6 +19,8 @@
         https://glad.dav1d.de/#profile=compatibility&language=c&specification=gl&loader=on&api=gl%3D4.6
 */
 
+#pragma warning(disable : 4005) // KG_WARNING_DISABLE 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

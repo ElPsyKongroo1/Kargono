@@ -7,12 +7,18 @@ public:
 
 	void OnUpdate() override
 	{
-		KG_INFO("ExampleLayer::Update");
+		if (Kargono::Input::IsKeyPressed(KG_KEY_TAB)) { KG_TRACE("Tab key is pressed!"); }
 	}
 
 	void OnEvent(Kargono::Event& event) override 
 	{
-		KG_TRACE("{0}", event);
+		Kargono::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Kargono::KeyTypedEvent>([](Kargono::KeyTypedEvent& newEvent)
+		{
+			KG_TRACE("{0}", (char)newEvent.GetKeyCode());
+			return true;
+		});
+		//KG_TRACE("{0}", event); FIXME
 	}
 };
 
@@ -22,7 +28,6 @@ public:
 	Sandbox2D() 
 	{
 		PushLayer(new ExampleLayer()); 
-		PushOverlay(new Kargono::ImGuiLayer());
 	}
 	~Sandbox2D() 
 	{

@@ -11,33 +11,46 @@
 
 namespace Kargono
 {
+/// @class Application
 	class KG_API Application
 	{
+/// @public
 	public:
-/// @brief Constructor for the Application class
 		Application();
-/// @brief Virtual destructor for the Application class
+/// @brief Destructor for the Application class
 		virtual ~Application();
-/// @brief Start running the application
+/// @brief Function to run the application
 		void Run();
 
-/// @brief Event handler for events that occur within the application
+/// @brief Function to handle events in the application
 		void OnEvent(Event& e);
 
-/// @brief Add a layer to the layer stack
+/// @brief Function to push a layer onto the layer stack
 		void PushLayer(Layer* layer);
-/// @brief Add an overlay layer to the layer stack
+/// @brief Function to push an overlay onto the layer stack
 		void PushOverlay(Layer* layer);
+
+/// @brief Static function to get the instance of the Application
+		inline static Application& Get() { return *s_Instance; }
+/// @brief Function to get the application window
+		inline Window& GetWindow() { return *m_Window; }
 	private:
-/// @brief Event handler for the window close event
+/// @brief Function called when the window is closed
 		bool OnWindowClose(WindowCloseEvent& e);
 
+/// @brief The unique pointer to the Window object
 		std::unique_ptr<Window> m_Window;
+/// @brief Flag to indicate if the application is running
 		bool m_Running = true;
+/// @brief The layer stack object
 		LayerStack m_LayerStack;
+	private:
+/// @brief The static instance of the Application class
+		static Application* s_Instance;
 	};
 
 	// To be defined in client
+/// @brief Function to create the application object
 	Application* CreateApplication();
 }
 
