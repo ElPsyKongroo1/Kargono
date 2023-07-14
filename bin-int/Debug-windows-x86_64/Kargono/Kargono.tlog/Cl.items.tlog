@@ -1,8 +1,11 @@
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Application.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Application.obj
+F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\ImGui\ImGuiBuild.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\ImGuiBuild.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\ImGui\ImGuiLayer.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\ImGuiLayer.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Layer.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Layer.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\LayerStack.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\LayerStack.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Log.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Log.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\kgpch.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\kgpch.obj
-F:\Charles_Files\Personal Projects\Personal Games\Kargono\Platform\OpenGL\imgui_impl_opengl3.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\imgui_impl_opengl3.obj
+F:\Charles_Files\Personal Projects\Personal Games\Kargono\Kargono\Renderer\Shader.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\Shader.obj
+F:\Charles_Files\Personal Projects\Personal Games\Kargono\Platform\OpenGL\OpenGLContext.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\OpenGLContext.obj
+F:\Charles_Files\Personal Projects\Personal Games\Kargono\Platform\Windows\WindowsInput.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\WindowsInput.obj
 F:\Charles_Files\Personal Projects\Personal Games\Kargono\Platform\Windows\WindowsWindow.cpp;F:\Charles_Files\Personal Projects\Personal Games\bin-int\Debug-windows-x86_64\Kargono\WindowsWindow.obj

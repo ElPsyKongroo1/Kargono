@@ -1,49 +1,55 @@
-/// @brief Prevents multiple inclusion of this file in the same translation unit.
+/// @brief Guard for preventing multiple inclusion of header files
 #pragma once
 
 
-/// @brief Include the header for smart pointers.
+/// @brief Provides classes and functions for managing dynamic memory
 #include <memory>
-/// @brief Include the header for utility functions.
+/// @brief Provides utilities for working with pairs and tuples
 #include <utility>
-/// @brief Include the header for algorithms.
+/// @brief Provides a collection of algorithms for working with sequences
 #include <algorithm>
-/// @brief Include the header for function objects.
+/// @brief Provides a collection of function objects
 #include <functional>
 
-/// @brief Include the header for strings.
+/// @brief Provides classes and functions for working with strings
 #include <string>
-/// @brief Include the header for string streams.
+/// @brief Provides classes and functions for working with string streams
 #include <sstream>
-/// @brief Include the header for vectors.
+/// @brief Provides a dynamic array-like container
+/// @brief Provides mathematical functions and constants
 #include <vector>
-/// @brief Include the header for unordered maps.
+/// @brief Provides a hash-based map container
 #include <unordered_map>
-/// @brief Include the header for unordered sets.
+/// @brief Provides a hash-based set container
 #include <unordered_set>
 
-/// @brief Include the header for mathematical functions.
+/// @brief Provides mathematical functions and constants
 #include <cmath>
 #include <vector>
-/// @brief Include the header for assertions.
+/// @brief Provides macro for assertion
 #include <cassert>
-/// @brief Include the header for arrays.
+/// @brief Provides a fixed-size array-like container
 #include <array>
-/// @brief Include the header for numeric limits.
+/// @brief Provides numeric limits
 #include <limits>
-/// @brief Include the header for fixed-size integer types.
+/// @brief Provides fixed-width integer types
 #include <cstdint>
-/// @brief Include the header for file streams.
+/// @brief Provides classes and functions for working with files
 #include <fstream>
 
 // P_ISSUE: Used to disable .dll export warning for shared_ptr's
-/// @brief Disable the warning for shared_ptr's usage within .dll export.
+/// @brief Disables warning related to DLL export for shared_ptr's
 #pragma warning(disable: 4251)
+/// @brief Disables warning related to deprecated functions
+#pragma warning(disable: 4996)
+
+/// @brief Disables warning related to missing prototypes
+#pragma warning(disable: 4013)
 
 
-/// @brief Preprocessor directive for Windows platform.
+/// @brief Platform-specific code for Windows operating system
 #ifdef KG_PLATFORM_WINDOWS
-/// @brief Include the header for Windows API.
+/// @brief Provides WinAPI functions and types
 	#include <Windows.h>
 #endif
 

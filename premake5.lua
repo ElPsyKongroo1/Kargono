@@ -1,6 +1,6 @@
 workspace "Kargono"
+    startproject "Sandbox2D"
     architecture "x64"
-
     configurations
     {
         "Debug",
@@ -15,7 +15,7 @@ IncludeDir["GLFW"] = "Kargono/dependencies/GLFW/include"
 IncludeDir["GLAD"] = "Kargono/dependencies/GLAD/include"
 IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
 IncludeDir["imGui"] = "Kargono/dependencies/imgui"
-
+IncludeDir["glm"] = "Kargono/dependencies/glm"
 
 include "Kargono/dependencies/GLFW"
 include "Kargono/dependencies/GLAD"
@@ -23,8 +23,11 @@ include "Kargono/dependencies/imGui"
 
 project "Kargono"
     location "Kargono"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
+    cppdialect "C++20"
+    staticruntime "on"
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006" }
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -49,6 +52,8 @@ project "Kargono"
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.imGui}",
+        "%{IncludeDir.glm}",
+
 
         "Kargono"
     }
@@ -67,8 +72,6 @@ project "Kargono"
     }
 
     filter "system:windows"
-        cppdialect "C++20"
-        staticruntime "Default"
         systemversion "latest"
 
         defines 
@@ -81,30 +84,33 @@ project "Kargono"
         -- {
         --     "{COPYDIR} \"%{wks.location}Kargono/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
         -- } 
-        postbuildcommands 
-        {
-            "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
-            "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
-            "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox2D\""
-        }
+        -- postbuildcommands 
+        -- {
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox2D\""
+        -- }
     filter "configurations:Debug"
         defines "KG_DEBUG"
-        buildoptions "/MDd"
-        symbols "On"
+        runtime "Debug"
+        symbols "on"
 
     filter "configurations:Release"
         defines "KG_RELEASE"
-        buildoptions "/MD"
-        symbols "On"
+        runtime "Release"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "KG_DIST"
-        buildoptions "/MD"
-        symbols "On"
+        runtime "Release"
+        optimize "on"
 project "Sandbox2D"
     location "Sandbox2D"
     kind "ConsoleApp"
     language "C++"
+    cppdialect "C++20"
+    staticruntime "on"
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006" }
     
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -118,7 +124,9 @@ project "Sandbox2D"
     includedirs 
     {
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.glm}",
         "%{wks.location}/Kargono"
+
     }
 
     libdirs
@@ -132,8 +140,7 @@ project "Sandbox2D"
     }
 
     filter "system:windows"
-        cppdialect "C++20"
-        staticruntime "Default"
+        
         systemversion "latest"
 
         defines 
@@ -143,15 +150,15 @@ project "Sandbox2D"
 
     filter "configurations:Debug"
         defines "KG_DEBUG"
-        buildoptions "/MDd"
-        symbols "On"
+        runtime "Debug"
+        symbols "on"
 
     filter "configurations:Release"
         defines "KG_RELEASE"
-        buildoptions "/MD"
-        symbols "On"
+        runtime "Release"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "KG_DIST"
-        buildoptions "/MD"
-        symbols "On"
+        runtime "Release"
+        optimize "on"

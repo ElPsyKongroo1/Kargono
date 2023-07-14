@@ -6,14 +6,20 @@
 #include <glad/glad.h>
 
 
-/// @brief Namespace for the Kargono game engine
+/// @namespace Kargono
 namespace Kargono
 {
+/// @brief Macro for binding an event to a member function of the Application class
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+/// @brief Static pointer to the instance of the Application class
+	Application* Application::s_Instance = nullptr;
 
 /// @brief Constructor for the Application class
 	Application::Application()
 	{
+		KG_CORE_ASSERT(!s_Instance, "Applicatino already exists!");
+		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
@@ -23,17 +29,22 @@ namespace Kargono
 	
 	}
 
+/// @brief Pushes a layer onto the layer stack
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
+/// @brief Pushes an overlay onto the layer stack
 	void Application::PushOverlay(Layer* layer)
 	{
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 
+/// @brief Handles events from the window
 	void Application::OnEvent(Event& e) 
 	{
 
@@ -50,6 +61,7 @@ namespace Kargono
 
 	
 
+/// @brief Runs the game engine
 	void Application::Run()
 	{
 		while (m_Running)
@@ -65,6 +77,7 @@ namespace Kargono
 		}
 	}
 
+/// @brief Handles the window close event
 	bool Application::OnWindowClose(WindowCloseEvent& e) 
 	{
 		m_Running = false;
