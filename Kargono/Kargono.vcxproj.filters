@@ -76,6 +76,10 @@
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Kargono\Renderer\Shader.h" />
+    <ClInclude Include="Kargono\Renderer\Buffer.h" />
+    <ClInclude Include="Kargono\Renderer\Textures.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="Kargono\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Application.cpp">
@@ -107,5 +111,8 @@
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Kargono\Renderer\Shader.cpp" />
+    <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Kargono\Renderer\Renderer.cpp" />
   </ItemGroup>
 </Project>

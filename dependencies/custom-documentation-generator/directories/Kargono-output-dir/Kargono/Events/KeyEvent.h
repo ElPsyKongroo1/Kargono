@@ -4,34 +4,37 @@
 
 namespace Kargono
 {
+/// @class KeyEvent
+/// @brief Base class for keyboard events in the game engine
+/// @details This class is used as a base class for handling keyboard events
+/// @inherits Event
 	class KG_API KeyEvent : public Event
 	{
 	public:
-/// @brief Get the key code of the keyboard event
-/// @return The key code as an integer value
 		inline int GetKeyCode() const { return m_KeyCode; }
 
-/// @brief Define the category of the KeyEvent as a combination of EventCategoryKeyboard and EventCategoryInput flags
+/// @brief Macro for defining the event class category for keyboard events
+/// @note This macro allows for categorizing keyboard events as both keyboard and input events
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-/// @brief Construct a KeyEvent object with the specified key code
-/// @param keycode The key code as an integer value
+/// @brief Constructor for KeyEvent class
+/// @param keycode The key code associated with the keyboard event
 		KeyEvent(int keycode) : m_KeyCode(keycode) {}
 		int m_KeyCode;
  	};
 
 /// @class KeyPressedEvent
-/// @brief Class representing a key press event in the game engine
+/// @brief Class for handling key pressed events in the game engine
+/// @inherits KeyEvent
 	class KG_API KeyPressedEvent : public KeyEvent 
 	{
 	public:
-/// @brief Construct a KeyPressedEvent object with the specified key code and repeat count
-/// @param keycode The key code as an integer value
-/// @param repeatCount The count of key repeats as an integer value
+/// @brief Constructor for KeyPressedEvent class
+/// @param keycode The key code associated with the key pressed event
+/// @param repeatCount The number of times the key was repeatedly pressed
 		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-/// @brief Get the count of key repeats in the KeyPressedEvent
-/// @return The repeat count as an integer value
+/// @brief Getter method for the repeat count of the key
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 
 		std::string ToString() const override 
@@ -41,18 +44,20 @@ namespace Kargono
 			return ss.str();
 		}
 
-/// @brief Set the event type of the KeyPressedEvent to KeyPressed
+/// @brief Macro for defining the event type for key pressed events
 		EVENT_CLASS_TYPE(KeyPressed)
 	private:
-/// @brief The count of key repeats in the KeyPressedEvent
 		int m_RepeatCount;
 	};
 
+/// @class KeyReleasedEvent
+/// @brief Class for handling key released events in the game engine
+/// @inherits KeyEvent
 	class KG_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
-/// @brief Construct a KeyReleasedEvent object with the specified key code
-/// @param keycode The key code as an integer value
+/// @brief Constructor for KeyReleasedEvent class
+/// @param keycode The key code associated with the key released event
 		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
 		std::string ToString() const override
@@ -62,7 +67,28 @@ namespace Kargono
 			return ss.str();
 		}
 
-/// @brief Set the event type of the KeyReleasedEvent to KeyReleased
+/// @brief Macro for defining the event type for key released events
 		EVENT_CLASS_TYPE(KeyReleased)
+	};
+
+/// @class KeyTypedEvent
+/// @brief Class for handling key typed events in the game engine
+/// @inherits KeyEvent
+	class KG_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+/// @brief Constructor for KeyTypedEvent class
+/// @param keycode The key code associated with the key typed event
+		KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+
+/// @brief Macro for defining the event type for key typed events
+		EVENT_CLASS_TYPE(KeyTyped)
 	};
 }

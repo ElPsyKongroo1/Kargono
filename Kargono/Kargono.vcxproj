@@ -160,14 +160,18 @@
     <ClInclude Include="Kargono\LayerStack.h" />
     <ClInclude Include="Kargono\Log.h" />
     <ClInclude Include="Kargono\MouseButtonCodes.h" />
+    <ClInclude Include="Kargono\Renderer\Buffer.h" />
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
     <ClInclude Include="Kargono\Renderer\Shader.h" />
+    <ClInclude Include="Kargono\Renderer\Textures.h" />
     <ClInclude Include="Kargono\Window.h" />
     <ClInclude Include="Kargono\input.h" />
     <ClInclude Include="Kargono\kgpch.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="Kargono\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Application.cpp" />
@@ -179,10 +183,13 @@
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
     <ClCompile Include="Kargono\Renderer\Shader.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Kargono\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="dependencies\GLFW\GLFW.vcxproj">

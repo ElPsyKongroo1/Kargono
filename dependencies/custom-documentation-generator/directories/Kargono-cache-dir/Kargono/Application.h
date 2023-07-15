@@ -7,6 +7,9 @@
 #include "Kargono/Window.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/ImGui/ImGuiLayer.h"
+#include "Kargono/Renderer/Shader.h"
+#include "Renderer/Buffer.h"
 
 
 namespace Kargono
@@ -29,8 +32,14 @@ namespace Kargono
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+		unsigned int m_VertexArray;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
 	private:
 		static Application* s_Instance;
 	};

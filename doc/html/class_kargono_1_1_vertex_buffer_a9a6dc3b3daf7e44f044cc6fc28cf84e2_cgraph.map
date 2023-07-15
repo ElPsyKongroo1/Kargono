@@ -1,0 +1,5 @@
+<map id="Kargono::VertexBuffer::Create" name="Kargono::VertexBuffer::Create">
+<area shape="rect" id="Node000001" title="Factory method to create a vertex buffer." alt="" coords="5,5,154,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_renderer.html#a08a6a50924fa8ffcec61539daa558c94" title="Get the current renderer API." alt="" coords="202,5,339,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,24,187,24,187,29,154,29"/>
+</map>

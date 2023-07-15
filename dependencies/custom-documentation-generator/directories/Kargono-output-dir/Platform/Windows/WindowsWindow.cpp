@@ -1,4 +1,3 @@
-/// @brief Include statements for the various header files
 #include "Kargono/kgpch.h"
 #include "WindowsWindow.h"
 #include "Kargono/Log.h"
@@ -6,22 +5,24 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
+
 #include "glad/glad.h"
 
 
-/// @brief The namespace where the game engine code is defined
+/// @brief Namespace for the Kargono game engine
 namespace Kargono 
 {
-/// @brief Static boolean variable to check if GLFW is initialized
+/// @brief Indicates whether the GLFW library has been initialized
 	static bool s_GLFWInitialized = false;
 
-/// @brief Error callback function for GLFW
+/// @brief Error callback function for GLFW library errors
 	static void GLFWErrorCallback(int error, const char* description)
 	{
 		KG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-/// @brief Function to create a window
+/// @brief Factory method for creating a window
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new WindowsWindow(props);
@@ -37,14 +38,17 @@ namespace Kargono
 	{
 	}
 
-/// @brief Function to initialize the WindowsWindow class
+/// @brief Initializes the Windows window
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
+		
+
 		KG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+
 
 		if (!s_GLFWInitialized)
 		{
@@ -55,9 +59,11 @@ namespace Kargono
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		KG_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
+		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -106,6 +112,14 @@ namespace Kargono
 					}
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(keycode);
+				data.EventCallback(event);
+
+			});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -144,20 +158,21 @@ namespace Kargono
 
 	}
 
-/// @brief Function to shutdown the WindowsWindow class
+/// @brief Shuts down the Windows window
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 	}
 
-/// @brief Function to update the WindowsWindow class
+/// @brief Updates the Windows window
 	void WindowsWindow::OnUpdate() 
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
+		
 	}
 
-/// @brief Function to set the vertical sync of the WindowsWindow class
+/// @brief Sets the vertical synchronization
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		if (enabled)	{ glfwSwapInterval(1); }
@@ -165,7 +180,7 @@ namespace Kargono
 		m_Data.VSync = enabled;
 	}
 
-/// @brief Function to check if vertical sync is enabled
+/// @brief Checks if the vertical synchronization is enabled
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;

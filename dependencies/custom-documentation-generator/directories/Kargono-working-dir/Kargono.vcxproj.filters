@@ -13,9 +13,6 @@
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform\OpenGL">
-      <UniqueIdentifier>{1E7D2C1D-8A08-9AE1-9319-1DD6FF23F6E1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Platform\Windows">
       <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
     </Filter>
@@ -46,6 +43,9 @@
     <ClInclude Include="Kargono\ImGui\ImGuiLayer.h">
       <Filter>Kargono\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\KeyCodes.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Layer.h">
       <Filter>Kargono</Filter>
     </ClInclude>
@@ -55,22 +55,38 @@
     <ClInclude Include="Kargono\Log.h">
       <Filter>Kargono</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\MouseButtonCodes.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Window.h">
+      <Filter>Kargono</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\input.h">
       <Filter>Kargono</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\kgpch.h">
       <Filter>Kargono</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\imgui_impl_opengl3.h">
-      <Filter>Platform\OpenGL</Filter>
+    <ClInclude Include="Platform\Windows\WindowsInput.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Kargono\Renderer\Shader.h" />
+    <ClInclude Include="Kargono\Renderer\Buffer.h" />
+    <ClInclude Include="Kargono\Renderer\Textures.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="Kargono\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Application.cpp">
       <Filter>Kargono</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\ImGui\ImGuiBuild.cpp">
+      <Filter>Kargono\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\ImGui\ImGuiLayer.cpp">
       <Filter>Kargono\ImGui</Filter>
@@ -87,11 +103,16 @@
     <ClCompile Include="Kargono\kgpch.cpp">
       <Filter>Kargono</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\imgui_impl_opengl3.cpp">
-      <Filter>Platform\OpenGL</Filter>
+    <ClCompile Include="Platform\Windows\WindowsInput.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Kargono\Renderer\Shader.cpp" />
+    <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Kargono\Renderer\Renderer.cpp" />
   </ItemGroup>
 </Project>

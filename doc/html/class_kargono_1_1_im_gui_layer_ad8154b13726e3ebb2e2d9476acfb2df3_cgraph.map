@@ -1,0 +1,9 @@
+<map id="Kargono::ImGuiLayer::OnDetach" name="Kargono::ImGuiLayer::OnDetach">
+<area shape="rect" id="Node000001" title="Function that is called when the layer is detached from the application." alt="" coords="5,5,149,48"/>
+<area shape="rect" id="Node000002" href="$imgui__impl__opengl3_8cpp.html#acbd53376e6135ad71e7bcd9879278e37" title=" " alt="" coords="197,13,402,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,24,182,24,182,29,149,29"/>
+<area shape="rect" id="Node000003" href="$imgui__impl__opengl3_8cpp.html#a605e340c346791d9c9e927add2392d0e" title=" " alt="" coords="450,5,643,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="403,24,435,24,435,29,403,29"/>
+<area shape="rect" id="Node000004" href="$imgui__impl__opengl3_8cpp.html#a539aaad4aa185838297fb13b2409c405" title=" " alt="" coords="691,5,885,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="644,24,677,24,677,29,644,29"/>
+</map>
