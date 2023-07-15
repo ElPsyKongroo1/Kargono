@@ -1,4 +1,12 @@
 var searchData=
 [
-  ['none_0',['None',['../namespace_kargono.html#a298cd03a46b41d882ccf39312a877daeabdec5e5aae7bda52d026a23f78af0c08',1,'Kargono::None'],['../namespace_kargono.html#a915b717e402771208083b14141930a27a6adf97f83acf6453d4a6a4b1070f3754',1,'Kargono::None']]]
+  ['layer_0',['Layer',['../class_kargono_1_1_layer.html',1,'Kargono::Layer'],['../class_kargono_1_1_layer.html#aeb43b43e57041263b6cc364266cf7844',1,'Kargono::Layer::Layer()']]],
+  ['layer_2ecpp_1',['Layer.cpp',['../_layer_8cpp.html',1,'']]],
+  ['layer_2eh_2',['Layer.h',['../_layer_8h.html',1,'']]],
+  ['layerstack_3',['LayerStack',['../class_kargono_1_1_layer_stack.html',1,'Kargono::LayerStack'],['../class_kargono_1_1_layer_stack.html#aad93fc0f1dbfe438dddba21104f47940',1,'Kargono::LayerStack::LayerStack()']]],
+  ['layerstack_2ecpp_4',['LayerStack.cpp',['../_layer_stack_8cpp.html',1,'']]],
+  ['layerstack_2eh_5',['LayerStack.h',['../_layer_stack_8h.html',1,'']]],
+  ['log_6',['Log',['../class_kargono_1_1_log.html',1,'Kargono']]],
+  ['log_2ecpp_7',['Log.cpp',['../_log_8cpp.html',1,'']]],
+  ['log_2eh_8',['Log.h',['../_log_8h.html',1,'']]]
 ];

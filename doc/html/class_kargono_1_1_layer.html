@@ -82,35 +82,58 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Base class for all layers in the game engine.  
+ <a href="class_kargono_1_1_layer.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_layer_8h_source.html">Layer.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Kargono::Layer:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_layer__inherit__graph.png" border="0" usemap="#a_kargono_1_1_layer_inherit__map" alt="Inheritance graph"/></div>
+<map name="a_kargono_1_1_layer_inherit__map" id="a_kargono_1_1_layer_inherit__map">
+<area shape="rect" title="Base class for all layers in the game engine." alt="" coords="22,5,132,32"/>
+<area shape="rect" href="class_kargono_1_1_im_gui_layer.html" title="Represents an ImGui layer that inherits from the Layer class." alt="" coords="5,80,149,107"/>
+<area shape="poly" title=" " alt="" coords="80,47,80,80,74,80,74,47"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aeb43b43e57041263b6cc364266cf7844"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#aeb43b43e57041263b6cc364266cf7844">Layer</a> (const std::string &amp;name=&quot;Layer&quot;)</td></tr>
-<tr class="memdesc:aeb43b43e57041263b6cc364266cf7844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a layer object.  <br /></td></tr>
+<tr class="memdesc:aeb43b43e57041263b6cc364266cf7844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public member functions of the layer class.  <br /></td></tr>
 <tr class="separator:aeb43b43e57041263b6cc364266cf7844"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d857ef0e736903e1389e74a2191484a"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a6d857ef0e736903e1389e74a2191484a">~Layer</a> ()</td></tr>
-<tr class="memdesc:a6d857ef0e736903e1389e74a2191484a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for the <a class="el" href="class_kargono_1_1_layer.html">Layer</a> class.  <br /></td></tr>
+<tr class="memdesc:a6d857ef0e736903e1389e74a2191484a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for the <a class="el" href="class_kargono_1_1_layer.html" title="Base class for all layers in the game engine.">Layer</a> class.  <br /></td></tr>
 <tr class="separator:a6d857ef0e736903e1389e74a2191484a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accb85f4d10097eb0c978b8095107d76f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#accb85f4d10097eb0c978b8095107d76f">OnAttach</a> ()</td></tr>
+<tr class="memdesc:accb85f4d10097eb0c978b8095107d76f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the layer is attached to the application.  <br /></td></tr>
 <tr class="separator:accb85f4d10097eb0c978b8095107d76f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dcb5d3e36d1df7724eb58ec18306c58"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a5dcb5d3e36d1df7724eb58ec18306c58">OnDetach</a> ()</td></tr>
+<tr class="memdesc:a5dcb5d3e36d1df7724eb58ec18306c58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the layer is detached from the application.  <br /></td></tr>
 <tr class="separator:a5dcb5d3e36d1df7724eb58ec18306c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16af6f659453e4654050c98efe26cf62"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a16af6f659453e4654050c98efe26cf62">OnUpdate</a> ()</td></tr>
+<tr class="memdesc:a16af6f659453e4654050c98efe26cf62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called to update the layer.  <br /></td></tr>
 <tr class="separator:a16af6f659453e4654050c98efe26cf62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06a2fb9f9e569f34142a73c46ad5151a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a06a2fb9f9e569f34142a73c46ad5151a">OnImGuiRender</a> ()</td></tr>
+<tr class="memdesc:a06a2fb9f9e569f34142a73c46ad5151a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called to render the ImGui for the layer.  <br /></td></tr>
+<tr class="separator:a06a2fb9f9e569f34142a73c46ad5151a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb4512f074145ec806d2cd2abfdd6521"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#abb4512f074145ec806d2cd2abfdd6521">OnEvent</a> (<a class="el" href="class_kargono_1_1_event.html">Event</a> &amp;event)</td></tr>
+<tr class="memdesc:abb4512f074145ec806d2cd2abfdd6521"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when an event occurs in the layer.  <br /></td></tr>
 <tr class="separator:abb4512f074145ec806d2cd2abfdd6521"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c52b40a67562076cea1cf1b83828001"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a6c52b40a67562076cea1cf1b83828001">GetName</a> () const</td></tr>
+<tr class="memdesc:a6c52b40a67562076cea1cf1b83828001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the name of the layer.  <br /></td></tr>
 <tr class="separator:a6c52b40a67562076cea1cf1b83828001"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a49b2bbb054c9341854070ca7d96e87fc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_layer.html#a49b2bbb054c9341854070ca7d96e87fc">m_DebugName</a></td></tr>
+<tr class="memdesc:a49b2bbb054c9341854070ca7d96e87fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected member functions of the layer class.  <br /></td></tr>
 <tr class="separator:a49b2bbb054c9341854070ca7d96e87fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00009">9</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<div class="textblock"><p>Base class for all layers in the game engine. </p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00010">10</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aeb43b43e57041263b6cc364266cf7844" name="aeb43b43e57041263b6cc364266cf7844"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeb43b43e57041263b6cc364266cf7844">&#9670;&#160;</a></span>Layer()</h2>
@@ -128,10 +151,11 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Constructs a layer object. </p>
-<p>Constructor for the <a class="el" href="class_kargono_1_1_layer.html">Layer</a> class.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Public member functions of the layer class. </p>
+<p>Constructor for the <a class="el" href="class_kargono_1_1_layer.html" title="Base class for all layers in the game engine.">Layer</a> class.</p>
+<p>Constructor for the <a class="el" href="class_kargono_1_1_layer.html" title="Base class for all layers in the game engine.">Layer</a> class </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the layer</td></tr>
     <tr><td class="paramname">debugName</td><td>The debug name of the layer </td></tr>
   </table>
   </dd>
@@ -164,7 +188,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destructor for the <a class="el" href="class_kargono_1_1_layer.html">Layer</a> class. </p>
+<p>Virtual destructor for the <a class="el" href="class_kargono_1_1_layer.html" title="Base class for all layers in the game engine.">Layer</a> class. </p>
+<p>Destructor for the <a class="el" href="class_kargono_1_1_layer.html" title="Base class for all layers in the game engine.">Layer</a> class. </p>
 
 <p class="definition">Definition at line <a class="el" href="_layer_8cpp_source.html#l00013">13</a> of file <a class="el" href="_layer_8cpp_source.html">Layer.cpp</a>.</p>
 
@@ -194,7 +219,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00021">21</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Returns the name of the layer. </p>
+<dl class="section return"><dt>Returns</dt><dd>The name of the layer </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00034">34</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 
 </div>
 </div>
@@ -221,7 +249,25 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00016">16</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Called when the layer is attached to the application. </p>
+
+<p>Reimplemented in <a class="el" href="class_kargono_1_1_im_gui_layer.html#a892c9827e2139b14269911cc62b7f87e">Kargono::ImGuiLayer</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00021">21</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_layer_accb85f4d10097eb0c978b8095107d76f_icgraph.png" border="0" usemap="#aclass_kargono_1_1_layer_accb85f4d10097eb0c978b8095107d76f_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_layer_accb85f4d10097eb0c978b8095107d76f_icgraph" id="aclass_kargono_1_1_layer_accb85f4d10097eb0c978b8095107d76f_icgraph">
+<area shape="rect" title="Called when the layer is attached to the application." alt="" coords="384,47,556,73"/>
+<area shape="rect" href="class_kargono_1_1_application.html#a3de0bf9286cb7ab75fcce597b9f272aa" title="Function to add a layer to the layer stack." alt="" coords="195,5,336,48"/>
+<area shape="poly" title=" " alt="" coords="369,46,336,41,337,35,370,41"/>
+<area shape="rect" href="class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449" title="Function to add an overlay to the layer stack." alt="" coords="195,72,336,115"/>
+<area shape="poly" title=" " alt="" coords="370,79,337,85,336,79,369,74"/>
+<area shape="rect" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public access specifier." alt="" coords="5,72,147,115"/>
+<area shape="poly" title=" " alt="" coords="180,96,147,96,147,91,180,91"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -248,7 +294,11 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00017">17</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Called when the layer is detached from the application. </p>
+
+<p>Reimplemented in <a class="el" href="class_kargono_1_1_im_gui_layer.html#ad8154b13726e3ebb2e2d9476acfb2df3">Kargono::ImGuiLayer</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00023">23</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 
 </div>
 </div>
@@ -276,7 +326,46 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00019">19</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Called when an event occurs in the layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event</td><td>The event that occurred </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00030">30</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+
+</div>
+</div>
+<a id="a06a2fb9f9e569f34142a73c46ad5151a" name="a06a2fb9f9e569f34142a73c46ad5151a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06a2fb9f9e569f34142a73c46ad5151a">&#9670;&#160;</a></span>OnImGuiRender()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Layer::OnImGuiRender </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Called to render the ImGui for the layer. </p>
+
+<p>Reimplemented in <a class="el" href="class_kargono_1_1_im_gui_layer.html#a0902c93ca508f6204ed82ebefdf0aa60">Kargono::ImGuiLayer</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00027">27</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 
 </div>
 </div>
@@ -303,7 +392,9 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00018">18</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Called to update the layer. </p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00025">25</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +419,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00023">23</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
+<p>Protected member functions of the layer class. </p>
+<p>The debug name of the layer </p>
+
+<p class="definition">Definition at line <a class="el" href="_layer_8h_source.html#l00038">38</a> of file <a class="el" href="_layer_8h_source.html">Layer.h</a>.</p>
 
 </div>
 </div>

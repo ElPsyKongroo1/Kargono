@@ -1,0 +1,19 @@
+<map id="Kargono::Application::Get" name="Kargono::Application::Get">
+<area shape="rect" id="Node000001" title="Static function to get the instance of the Application class." alt="" coords="462,131,632,157"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_im_gui_layer.html#aab784e68f15f8bd5c2bba4dff601cd8b" title="Function that ends ImGui rendering." alt="" coords="233,5,407,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="519,122,472,83,413,46,384,35,386,30,415,42,475,79,523,118"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_windows_input.html#af132cce8b0dae11d7a6c7062e6d82b88" title="Implementation of the GetMousePositionImpl function." alt="" coords="240,56,400,99"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="484,128,394,102,396,97,486,123"/>
+<area shape="rect" id="Node000007" href="$class_kargono_1_1_windows_input.html#aa3cde89716f1f9916a2da78be19e36f3" title="Access specifier for the following member functions and variables." alt="" coords="241,123,399,165"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="447,147,400,147,400,141,447,141"/>
+<area shape="rect" id="Node000008" href="$class_kargono_1_1_windows_input.html#a4a64b96e4a7b4a96ef4356b59cfbe63e" title="Implementation of the IsMouseButtonPressedImpl function." alt="" coords="226,189,414,232"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="486,165,396,191,394,186,484,160"/>
+<area shape="rect" id="Node000009" href="$class_kargono_1_1_im_gui_layer.html#a892c9827e2139b14269911cc62b7f87e" title="Function that is called when the layer is attached to the application." alt="" coords="248,256,392,299"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="521,170,474,208,415,246,391,258,389,253,413,242,471,204,518,166"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,5,178,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="218,21,178,21,178,16,218,16"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_windows_input.html#a9ad9d75b5b07d9e50ac01f5189e37ccb" title="Implementation of the GetMouseXImpl function." alt="" coords="12,56,171,99"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="225,80,171,80,171,75,225,75"/>
+<area shape="rect" id="Node000006" href="$class_kargono_1_1_windows_input.html#a984bfe7b50216af631308ceb7da820b1" title="Implementation of the GetMouseYImpl function." alt="" coords="12,123,171,165"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="232,106,168,125,167,119,230,101"/>
+</map>

@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['window_0',['Window',['../class_kargono_1_1_window.html',1,'Kargono']]],
-  ['windowcloseevent_1',['WindowCloseEvent',['../class_kargono_1_1_window_close_event.html',1,'Kargono']]],
-  ['windowprops_2',['WindowProps',['../struct_kargono_1_1_window_props.html',1,'Kargono']]],
-  ['windowresizeevent_3',['WindowResizeEvent',['../class_kargono_1_1_window_resize_event.html',1,'Kargono']]],
-  ['windowswindow_4',['WindowsWindow',['../class_kargono_1_1_windows_window.html',1,'Kargono']]]
+  ['keyevent_0',['KeyEvent',['../class_kargono_1_1_key_event.html',1,'Kargono']]],
+  ['keypressedevent_1',['KeyPressedEvent',['../class_kargono_1_1_key_pressed_event.html',1,'Kargono']]],
+  ['keyreleasedevent_2',['KeyReleasedEvent',['../class_kargono_1_1_key_released_event.html',1,'Kargono']]],
+  ['keytypedevent_3',['KeyTypedEvent',['../class_kargono_1_1_key_typed_event.html',1,'Kargono']]]
 ];

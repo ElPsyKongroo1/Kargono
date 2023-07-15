@@ -103,7 +103,7 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a61da2126d002d1bc3adfb72af8fcdd72"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#a61da2126d002d1bc3adfb72af8fcdd72">~Window</a> ()</td></tr>
-<tr class="memdesc:a61da2126d002d1bc3adfb72af8fcdd72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor for the <a class="el" href="class_kargono_1_1_window.html">Window</a> class.  <br /></td></tr>
+<tr class="memdesc:a61da2126d002d1bc3adfb72af8fcdd72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor for the <a class="el" href="class_kargono_1_1_window.html">Window</a> class.  <br /></td></tr>
 <tr class="separator:a61da2126d002d1bc3adfb72af8fcdd72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62520eb89b08f4da5874efeba32f2f81"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#a62520eb89b08f4da5874efeba32f2f81">OnUpdate</a> ()=0</td></tr>
 <tr class="memdesc:a62520eb89b08f4da5874efeba32f2f81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for updating the window.  <br /></td></tr>
@@ -115,24 +115,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa8d7908c70995e8fb6fd3a4691708079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for getting the height of the window.  <br /></td></tr>
 <tr class="separator:aa8d7908c70995e8fb6fd3a4691708079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec5e97a9a8aa6d8b9b992ce80cc8a5d3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#aec5e97a9a8aa6d8b9b992ce80cc8a5d3">SetEventCallback</a> (const <a class="el" href="class_kargono_1_1_window.html#aa72550635b91f0c16bb8e463fa2abad3">EventCallbackFn</a> &amp;callback)=0</td></tr>
-<tr class="memdesc:aec5e97a9a8aa6d8b9b992ce80cc8a5d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for setting the event callback function for the window.  <br /></td></tr>
+<tr class="memdesc:aec5e97a9a8aa6d8b9b992ce80cc8a5d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for setting the event callback function.  <br /></td></tr>
 <tr class="separator:aec5e97a9a8aa6d8b9b992ce80cc8a5d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#adbb13b0e0db5a9dd68b918657fa9d8a5">SetVSync</a> (bool enabled)=0</td></tr>
-<tr class="memdesc:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for setting vertical synchronization for the window.  <br /></td></tr>
+<tr class="memdesc:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for setting the vertical synchronization.  <br /></td></tr>
 <tr class="separator:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1e612778c7af1f430811d8a485e9c63"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#af1e612778c7af1f430811d8a485e9c63">IsVSync</a> () const =0</td></tr>
-<tr class="memdesc:af1e612778c7af1f430811d8a485e9c63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for checking if vertical synchronization is enabled for the window.  <br /></td></tr>
+<tr class="memdesc:af1e612778c7af1f430811d8a485e9c63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for checking if vertical synchronization is enabled.  <br /></td></tr>
 <tr class="separator:af1e612778c7af1f430811d8a485e9c63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a121261ab4a48b50ac94931dea2cf7d"><td class="memItemLeft" align="right" valign="top">virtual void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#a8a121261ab4a48b50ac94931dea2cf7d">GetNativeWindow</a> () const =0</td></tr>
+<tr class="memdesc:a8a121261ab4a48b50ac94931dea2cf7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pure virtual function for getting the native window.  <br /></td></tr>
+<tr class="separator:a8a121261ab4a48b50ac94931dea2cf7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:acb594ae69f0500400f84c4b06dfcb80a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_kargono_1_1_window.html">Window</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a">Create</a> (const <a class="el" href="struct_kargono_1_1_window_props.html">WindowProps</a> &amp;props=<a class="el" href="struct_kargono_1_1_window_props.html">WindowProps</a>())</td></tr>
-<tr class="memdesc:acb594ae69f0500400f84c4b06dfcb80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static function for creating a window with specified properties in the <a class="el" href="namespace_kargono.html" title="Namespace for the Kargono game engine.">Kargono</a> Engine.  <br /></td></tr>
+<tr class="memdesc:acb594ae69f0500400f84c4b06dfcb80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static function for creating a window.  <br /></td></tr>
 <tr class="separator:acb594ae69f0500400f84c4b06dfcb80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00022">22</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00030">30</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="aa72550635b91f0c16bb8e463fa2abad3" name="aa72550635b91f0c16bb8e463fa2abad3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa72550635b91f0c16bb8e463fa2abad3">&#9670;&#160;</a></span>EventCallbackFn</h2>
@@ -146,7 +149,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00025">25</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00033">33</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
 
 </div>
 </div>
@@ -174,9 +177,9 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destructor for the <a class="el" href="class_kargono_1_1_window.html">Window</a> class. </p>
+<p>Virtual destructor for the <a class="el" href="class_kargono_1_1_window.html">Window</a> class. </p>
 
-<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00027">27</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_window_8h_source.html#l00035">35</a> of file <a class="el" href="_window_8h_source.html">Window.h</a>.</p>
 
 </div>
 </div>
@@ -205,17 +208,17 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Static function for creating a window with specified properties in the <a class="el" href="namespace_kargono.html" title="Namespace for the Kargono game engine.">Kargono</a> Engine. </p>
-<p>Function to create a window. </p>
+<p>Static function for creating a window. </p>
+<p>Factory method for creating a window. </p>
 
-<p class="definition">Definition at line <a class="el" href="_windows_window_8cpp_source.html#l00025">25</a> of file <a class="el" href="_windows_window_8cpp_source.html">WindowsWindow.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_windows_window_8cpp_source.html#l00026">26</a> of file <a class="el" href="_windows_window_8cpp_source.html">WindowsWindow.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_kargono_1_1_window_acb594ae69f0500400f84c4b06dfcb80a_icgraph.png" border="0" usemap="#aclass_kargono_1_1_window_acb594ae69f0500400f84c4b06dfcb80a_icgraph" alt=""/></div>
 <map name="aclass_kargono_1_1_window_acb594ae69f0500400f84c4b06dfcb80a_icgraph" id="aclass_kargono_1_1_window_acb594ae69f0500400f84c4b06dfcb80a_icgraph">
-<area shape="rect" title="Static function for creating a window with specified properties in the Kargono Engine." alt="" coords="195,13,364,40"/>
-<area shape="rect" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Constructor for the Application class." alt="" coords="5,5,147,48"/>
+<area shape="rect" title="Static function for creating a window." alt="" coords="195,13,364,40"/>
+<area shape="rect" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public access specifier." alt="" coords="5,5,147,48"/>
 <area shape="poly" title=" " alt="" coords="180,29,147,29,147,24,180,24"/>
 </map>
 </div>
@@ -248,6 +251,67 @@ Here is the caller graph for this function:</div>
 <p>Pure virtual function for getting the height of the window. </p>
 
 <p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#a05528b9f8ad06870f69cc4cf614edfdb">Kargono::WindowsWindow</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_window_aa8d7908c70995e8fb6fd3a4691708079_icgraph.png" border="0" usemap="#aclass_kargono_1_1_window_aa8d7908c70995e8fb6fd3a4691708079_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_window_aa8d7908c70995e8fb6fd3a4691708079_icgraph" id="aclass_kargono_1_1_window_aa8d7908c70995e8fb6fd3a4691708079_icgraph">
+<area shape="rect" title="Pure virtual function for getting the height of the window." alt="" coords="448,5,637,32"/>
+<area shape="rect" href="class_kargono_1_1_im_gui_layer.html#aab784e68f15f8bd5c2bba4dff601cd8b" title="Function that ends ImGui rendering." alt="" coords="226,5,400,32"/>
+<area shape="poly" title=" " alt="" coords="433,21,400,21,400,16,433,16"/>
+<area shape="rect" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,5,178,32"/>
+<area shape="poly" title=" " alt="" coords="210,21,178,21,178,16,210,16"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a8a121261ab4a48b50ac94931dea2cf7d" name="a8a121261ab4a48b50ac94931dea2cf7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a121261ab4a48b50ac94931dea2cf7d">&#9670;&#160;</a></span>GetNativeWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void * Kargono::Window::GetNativeWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pure virtual function for getting the native window. </p>
+
+<p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#a96f61fb94e4b70e5c1110acc2a995b04">Kargono::WindowsWindow</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_window_a8a121261ab4a48b50ac94931dea2cf7d_icgraph.png" border="0" usemap="#aclass_kargono_1_1_window_a8a121261ab4a48b50ac94931dea2cf7d_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_window_a8a121261ab4a48b50ac94931dea2cf7d_icgraph" id="aclass_kargono_1_1_window_a8a121261ab4a48b50ac94931dea2cf7d_icgraph">
+<area shape="rect" title="Pure virtual function for getting the native window." alt="" coords="448,139,635,181"/>
+<area shape="rect" href="class_kargono_1_1_windows_input.html#af132cce8b0dae11d7a6c7062e6d82b88" title="Implementation of the GetMousePositionImpl function." alt="" coords="226,39,386,81"/>
+<area shape="poly" title=" " alt="" coords="483,134,399,96,370,84,372,79,401,91,485,129"/>
+<area shape="rect" href="class_kargono_1_1_windows_input.html#aa3cde89716f1f9916a2da78be19e36f3" title="Access specifier for the following member functions and variables." alt="" coords="227,105,385,148"/>
+<area shape="poly" title=" " alt="" coords="433,147,385,140,386,135,434,142"/>
+<area shape="rect" href="class_kargono_1_1_windows_input.html#a4a64b96e4a7b4a96ef4356b59cfbe63e" title="Implementation of the IsMouseButtonPressedImpl function." alt="" coords="212,172,400,215"/>
+<area shape="poly" title=" " alt="" coords="434,178,401,183,400,177,433,173"/>
+<area shape="rect" href="class_kargono_1_1_im_gui_layer.html#a892c9827e2139b14269911cc62b7f87e" title="Function that is called when the layer is attached to the application." alt="" coords="234,239,378,281"/>
+<area shape="poly" title=" " alt="" coords="485,191,401,229,372,241,370,236,399,224,483,186"/>
+<area shape="rect" href="class_kargono_1_1_windows_input.html#a9ad9d75b5b07d9e50ac01f5189e37ccb" title="Implementation of the GetMouseXImpl function." alt="" coords="5,5,164,48"/>
+<area shape="poly" title=" " alt="" coords="211,48,164,41,165,36,212,43"/>
+<area shape="rect" href="class_kargono_1_1_windows_input.html#a984bfe7b50216af631308ceb7da820b1" title="Implementation of the GetMouseYImpl function." alt="" coords="5,72,164,115"/>
+<area shape="poly" title=" " alt="" coords="212,77,165,84,164,79,211,72"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -277,6 +341,18 @@ Here is the caller graph for this function:</div>
 <p>Pure virtual function for getting the width of the window. </p>
 
 <p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#a1be0e9c346416e627023530c7cbe7582">Kargono::WindowsWindow</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_window_a3bdcf0ccae837c8c29f9dbf85c16807c_icgraph.png" border="0" usemap="#aclass_kargono_1_1_window_a3bdcf0ccae837c8c29f9dbf85c16807c_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_window_a3bdcf0ccae837c8c29f9dbf85c16807c_icgraph" id="aclass_kargono_1_1_window_a3bdcf0ccae837c8c29f9dbf85c16807c_icgraph">
+<area shape="rect" title="Pure virtual function for getting the width of the window." alt="" coords="448,5,634,32"/>
+<area shape="rect" href="class_kargono_1_1_im_gui_layer.html#aab784e68f15f8bd5c2bba4dff601cd8b" title="Function that ends ImGui rendering." alt="" coords="226,5,400,32"/>
+<area shape="poly" title=" " alt="" coords="433,21,401,21,401,16,433,16"/>
+<area shape="rect" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,5,178,32"/>
+<area shape="poly" title=" " alt="" coords="210,21,178,21,178,16,210,16"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -303,7 +379,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Pure virtual function for checking if vertical synchronization is enabled for the window. </p>
+<p>Pure virtual function for checking if vertical synchronization is enabled. </p>
 
 <p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#aadf063e04658ce43b8f3d8bca15d6fe2">Kargono::WindowsWindow</a>.</p>
 
@@ -362,7 +438,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Pure virtual function for setting the event callback function for the window. </p>
+<p>Pure virtual function for setting the event callback function. </p>
 
 <p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#a10f82d5ce0f7bc2abc1efa58f85d63e5">Kargono::WindowsWindow</a>.</p>
 
@@ -392,7 +468,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Pure virtual function for setting vertical synchronization for the window. </p>
+<p>Pure virtual function for setting the vertical synchronization. </p>
 
 <p>Implemented in <a class="el" href="class_kargono_1_1_windows_window.html#a057a2588aa27fbefff82d6a927ab19b9">Kargono::WindowsWindow</a>.</p>
 

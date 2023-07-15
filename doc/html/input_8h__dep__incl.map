@@ -1,0 +1,11 @@
+<map id="input.h" name="input.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="150,5,211,32"/>
+<area shape="rect" id="Node000002" href="$_application_8cpp.html" title=" " alt="" coords="5,80,116,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,42,83,82,80,77,146,38"/>
+<area shape="rect" id="Node000003" href="$_kargono_8h.html" title=" " alt="" coords="140,80,221,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="183,47,183,80,178,80,178,47"/>
+<area shape="rect" id="Node000004" href="$_windows_input_8h.html" title=" " alt="" coords="245,80,359,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="215,38,282,77,279,82,213,42"/>
+<area shape="rect" id="Node000005" href="$_windows_input_8cpp.html" title=" " alt="" coords="238,155,366,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="305,122,305,154,299,154,299,122"/>
+</map>

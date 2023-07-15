@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['_7eapplication_0',['~Application',['../class_kargono_1_1_application.html#a2c5f0f2d3a2cf27c183531a8a588e632',1,'Kargono::Application']]],
-  ['_7elayer_1',['~Layer',['../class_kargono_1_1_layer.html#a6d857ef0e736903e1389e74a2191484a',1,'Kargono::Layer']]],
-  ['_7elayerstack_2',['~LayerStack',['../class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88',1,'Kargono::LayerStack']]],
-  ['_7ewindow_3',['~Window',['../class_kargono_1_1_window.html#a61da2126d002d1bc3adfb72af8fcdd72',1,'Kargono::Window']]],
-  ['_7ewindowswindow_4',['~WindowsWindow',['../class_kargono_1_1_windows_window.html#aa9a4cbcecdc93821e5d51aa589261719',1,'Kargono::WindowsWindow']]]
+  ['windowcloseevent_0',['WindowCloseEvent',['../class_kargono_1_1_window_close_event.html#a97f87e6c241b61cc16804f9702c63b8e',1,'Kargono::WindowCloseEvent']]],
+  ['windowprops_1',['WindowProps',['../struct_kargono_1_1_window_props.html#a6c490e6cd83cf3e4fb68fdb2df017f14',1,'Kargono::WindowProps']]],
+  ['windowresizeevent_2',['WindowResizeEvent',['../class_kargono_1_1_window_resize_event.html#a25149bb361e0ab83657df548fc1dba74',1,'Kargono::WindowResizeEvent']]],
+  ['windowswindow_3',['WindowsWindow',['../class_kargono_1_1_windows_window.html#abc53f73a619b07ffca7cfa2e306ec361',1,'Kargono::WindowsWindow']]]
 ];

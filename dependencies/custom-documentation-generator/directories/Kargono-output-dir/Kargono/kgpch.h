@@ -1,55 +1,51 @@
-/// @brief Guard for preventing multiple inclusion of header files
+/// @brief Ensures that this header file is only included once in the compilation process
 #pragma once
 
 
-/// @brief Provides classes and functions for managing dynamic memory
+/// @brief Includes the memory library, which provides features for managing dynamic memory
 #include <memory>
-/// @brief Provides utilities for working with pairs and tuples
+/// @brief Includes the utility library, which provides various utility functions and classes
 #include <utility>
-/// @brief Provides a collection of algorithms for working with sequences
+/// @brief Includes the algorithm library, which provides a collection of functions for working with ranges of elements
 #include <algorithm>
-/// @brief Provides a collection of function objects
+/// @brief Includes the functional library, which provides function objects and function adaptors
 #include <functional>
 
-/// @brief Provides classes and functions for working with strings
+/// @brief Includes the string library, which provides classes and functions for working with strings
 #include <string>
-/// @brief Provides classes and functions for working with string streams
+/// @brief Includes the sstream library, which provides classes and functions for string streams
 #include <sstream>
-/// @brief Provides a dynamic array-like container
-/// @brief Provides mathematical functions and constants
+/// @brief Includes the vector library, which provides dynamic array-like functionality
 #include <vector>
-/// @brief Provides a hash-based map container
+/// @brief Includes the unordered_map library, which provides an associative container that stores elements formed by the combination of a key and a mapped value
 #include <unordered_map>
-/// @brief Provides a hash-based set container
+/// @brief Includes the unordered_set library, which provides an associative container that contains a set of unique objects
 #include <unordered_set>
 
-/// @brief Provides mathematical functions and constants
+/// @brief Includes the cmath library, which provides mathematical operations and functions
 #include <cmath>
 #include <vector>
-/// @brief Provides macro for assertion
+/// @brief Includes the cassert library, which provides macro functions for debugging and testing assertions
 #include <cassert>
-/// @brief Provides a fixed-size array-like container
+/// @brief Includes the array library, which provides a container that encapsulates arrays of a fixed size
 #include <array>
-/// @brief Provides numeric limits
+/// @brief Includes the limits library, which provides functions for working with implementation-dependent limits of fundamental integral types
 #include <limits>
-/// @brief Provides fixed-width integer types
+/// @brief Includes the cstdint library, which provides types with fixed sizes and defined behavior across different platforms
 #include <cstdint>
-/// @brief Provides classes and functions for working with files
+/// @brief Includes the fstream library, which provides classes and functions for file input and output
 #include <fstream>
 
 // P_ISSUE: Used to disable .dll export warning for shared_ptr's
-/// @brief Disables warning related to DLL export for shared_ptr's
-#pragma warning(disable: 4251)
-/// @brief Disables warning related to deprecated functions
-#pragma warning(disable: 4996)
-
-/// @brief Disables warning related to missing prototypes
-#pragma warning(disable: 4013)
+//#pragma warning(disable: 4251)
+//#pragma warning(disable: 4996)
+//
+//#pragma warning(disable: 4013)
 
 
-/// @brief Platform-specific code for Windows operating system
+/// @brief Checks if the Windows platform is being used
 #ifdef KG_PLATFORM_WINDOWS
-/// @brief Provides WinAPI functions and types
+/// @brief Includes the Windows.h header, which contains declarations for all of the functions in the Windows API
 	#include <Windows.h>
 #endif
 

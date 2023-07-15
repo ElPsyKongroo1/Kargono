@@ -1,5 +1,5 @@
 <map id="Kargono::operator&lt;&lt;" name="Kargono::operator&lt;&lt;">
-<area shape="rect" id="Node000001" title="Overloaded output stream operator." alt="" coords="5,5,146,32"/>
+<area shape="rect" id="Node000001" title="Overloaded stream insertion operator for printing events." alt="" coords="5,5,146,32"/>
 <area shape="rect" id="Node000002" href="$class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a" title=" " alt="" coords="194,5,359,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,16,179,16,179,21,146,21"/>
 </map>

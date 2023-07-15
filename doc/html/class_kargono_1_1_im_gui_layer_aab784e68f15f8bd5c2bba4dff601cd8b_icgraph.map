@@ -1,0 +1,5 @@
+<map id="Kargono::ImGuiLayer::End" name="Kargono::ImGuiLayer::End">
+<area shape="rect" id="Node000001" title="Function that ends ImGui rendering." alt="" coords="226,5,400,32"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,5,178,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,21,178,21,178,16,210,16"/>
+</map>

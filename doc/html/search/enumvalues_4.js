@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['none_0',['None',['../namespace_kargono.html#a298cd03a46b41d882ccf39312a877daeabdec5e5aae7bda52d026a23f78af0c08',1,'Kargono::None'],['../namespace_kargono.html#a915b717e402771208083b14141930a27a6adf97f83acf6453d4a6a4b1070f3754',1,'Kargono::None']]]
+  ['int_0',['Int',['../namespace_kargono.html#a24004580b6930106c56f416ed9de5f02a1686a6c336b71b36d77354cea19a8b52',1,'Kargono']]],
+  ['int2_1',['Int2',['../namespace_kargono.html#a24004580b6930106c56f416ed9de5f02a4c6bc90f2bbdf35523e29c414a57bad3',1,'Kargono']]],
+  ['int3_2',['Int3',['../namespace_kargono.html#a24004580b6930106c56f416ed9de5f02a56bf1b0e694b442bf4145a04b82ea943',1,'Kargono']]],
+  ['int4_3',['Int4',['../namespace_kargono.html#a24004580b6930106c56f416ed9de5f02a1a44f12c3427b3e11c171d09632bad8d',1,'Kargono']]]
 ];

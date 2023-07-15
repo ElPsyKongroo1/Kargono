@@ -2,14 +2,23 @@
 #include "Kargono/kgpch.h"
 
 #ifdef KG_PLATFORM_WINDOWS
-	#ifdef KG_BUILD_DLL
-		#define KG_API __declspec(dllexport)	
+	#if KG_DYNAMIC_LINK
+		#ifdef KG_BUILD_DLL
+			#define KG_API __declspec(dllexport)	
+		#else
+			#define KG_API __declspec(dllimport)
+		#endif
 	#else
-		#define KG_API __declspec(dllimport)
+		#define KG_API
 	#endif
 #else
 	#error Kargono currently only supports Windows
 #endif
+
+#ifdef KG_DEBUG
+	#define KG_ENABLE_ASSERTS
+#endif
+
 
 #ifdef KG_ENABLE_ASSERTS
 	#define KG_ASSERT(x, ...) {if (!(x)) {KG_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak();}}
@@ -20,3 +29,5 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+#define KG_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)

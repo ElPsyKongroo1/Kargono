@@ -1,0 +1,5 @@
+<map id="Kargono::GraphicsContext::SwapBuffers" name="Kargono::GraphicsContext::SwapBuffers">
+<area shape="rect" id="Node000001" title="Swaps the front and back buffers to display the rendered frame." alt="" coords="230,5,404,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_windows_window.html#a4ec37168499710223a68a2b6489299ae" title="Updates the Windows window." alt="" coords="5,5,182,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,29,182,29,182,24,215,24"/>
+</map>

@@ -1,19 +1,21 @@
+/// @brief Include guard to ensure this file is only included once
 #pragma once
+/// @brief Include the core header file from the Kargono namespace
 #include <Kargono/Core.h>
 
 namespace Kargono 
 {
-/// @brief Enumeration defining different event types in the game engine
+/// @brief An enumeration defining the different types of events in the Kargono engine
 	enum class EventType
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
-/// @brief Enumeration defining different event categories in the game engine
+/// @brief An enumeration defining the different categories of events in the Kargono engine
 	enum EventCategory 
 	{
 		None = 0,
@@ -25,14 +27,15 @@ namespace Kargono
 
 	};
 
-/// @brief Macro for defining the event class category and its members
+/// @brief Macro for defining the event class type and its members
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type;} \
 							    virtual EventType GetEventType() const override { return GetStaticType();}\
 								virtual const char* GetName() const override {return #type;}
 
+/// @brief Macro for defining the event class category and its members
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category;}
 
-/// @class Event
+/// @brief The base class for all events in the Kargono engine
 	class KG_API Event 
 	{
 	public:
@@ -42,31 +45,24 @@ namespace Kargono
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-/// @return The category flags of the event
 		inline bool IsInCategory(EventCategory category)
 		{
 			return GetCategoryFlags() & category;
 		}
-/// @brief Boolean indicating if the event has been handled or not
 		bool Handled = false;
 	};
 
-/// @class EventDispatcher
+/// @brief Class for dispatching events in the Kargono engine
 	class EventDispatcher
 	{
-/// @tparam K The type of event handler function
 		template<typename K>
-/// @typedef EventFn
 		using EventFn = std::function<bool(K&)>;
 	public:
-/// @brief Constructor for the EventDispatcher class
 		EventDispatcher(Event& event) : m_Event(event)
 		{
 		}
 
-/// @tparam T The type of event handler function
 		template<typename T>
-/// @brief Dispatches the event to the appropriate event handler
 		bool Dispatch(EventFn<T> func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
@@ -80,7 +76,7 @@ namespace Kargono
 		Event& m_Event;
 	};
 
-/// @brief Overloaded output stream operator
+/// @brief Overloaded stream insertion operator for printing events
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();

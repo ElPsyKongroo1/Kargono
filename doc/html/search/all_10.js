@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['title_0',['Title',['../struct_kargono_1_1_window_props.html#a15041108829f07d670cb1baa10010f95',1,'Kargono::WindowProps']]],
-  ['tostring_1',['ToString',['../class_kargono_1_1_window_resize_event.html#ae28045370465221e6f47628fbe91a125',1,'Kargono::WindowResizeEvent::ToString()'],['../class_kargono_1_1_event.html#ab6856d77af9e1d82adff4df95077eb5a',1,'Kargono::Event::ToString()'],['../class_kargono_1_1_key_pressed_event.html#aca8d61678cb5f55e13577388b88cc915',1,'Kargono::KeyPressedEvent::ToString()'],['../class_kargono_1_1_key_released_event.html#a027f8be1c24144caee8a43e40aa48ed9',1,'Kargono::KeyReleasedEvent::ToString()'],['../class_kargono_1_1_mouse_moved_event.html#ac73c99e3a51eff272bf2af49f2987229',1,'Kargono::MouseMovedEvent::ToString()'],['../class_kargono_1_1_mouse_scrolled_event.html#a3df9ba099d644526701e19ef04ebd092',1,'Kargono::MouseScrolledEvent::ToString()'],['../class_kargono_1_1_mouse_button_pressed_event.html#a57e3d7571edf23af4e94962f43256556',1,'Kargono::MouseButtonPressedEvent::ToString()'],['../class_kargono_1_1_mouse_button_released_event.html#a995beae797ae3d4806c95e6ba9af266d',1,'Kargono::MouseButtonReleasedEvent::ToString()']]]
+  ['renderer_0',['Renderer',['../class_kargono_1_1_renderer.html',1,'Kargono']]],
+  ['renderer_2ecpp_1',['Renderer.cpp',['../_renderer_8cpp.html',1,'']]],
+  ['renderer_2eh_2',['Renderer.h',['../_renderer_8h.html',1,'']]],
+  ['rendererapi_3',['RendererAPI',['../namespace_kargono.html#a116fecc4e1baac554b58fd38f6159f16',1,'Kargono']]],
+  ['run_4',['Run',['../class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415',1,'Kargono::Application']]]
 ];

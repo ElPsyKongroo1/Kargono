@@ -1,0 +1,11 @@
+<map id="ImGui_ImplOpenGL3_CreateFontsTexture" name="ImGui_ImplOpenGL3_CreateFontsTexture">
+<area shape="rect" id="Node000001" title=" " alt="" coords="910,5,1096,48"/>
+<area shape="rect" id="Node000002" href="$imgui__impl__opengl3_8cpp.html#ab27f12289d6fe9fcd412f92af280b398" title=" " alt="" coords="675,5,862,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="895,29,862,29,862,24,895,24"/>
+<area shape="rect" id="Node000003" href="$imgui__impl__opengl3_8cpp.html#a900e74add4e56e74f97a210eb329aa91" title=" " alt="" coords="417,13,627,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="660,29,628,29,628,24,660,24"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_im_gui_layer.html#a624b1ac351516ffb06dfc8236a9f78fe" title="Function that begins ImGui rendering." alt="" coords="226,5,369,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="403,29,370,29,370,24,403,24"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
+</map>

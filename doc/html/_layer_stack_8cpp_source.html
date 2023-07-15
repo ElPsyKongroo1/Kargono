@@ -84,60 +84,60 @@ $(function() {
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>{</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#aad93fc0f1dbfe438dddba21104f47940">    7</a></span>    <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#aad93fc0f1dbfe438dddba21104f47940">LayerStack::LayerStack</a>() </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    {</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        m_LayerInsert = m_Layers.begin();</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    }</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">   13</a></span>    <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">LayerStack::~LayerStack</a>()</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <span class="keywordflow">for</span> (<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* layer : m_Layers)</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            <span class="keywordflow">if</span> (layer) </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>                <span class="keyword">delete</span> layer;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>                layer = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            }</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        }</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    }</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    }</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">   12</a></span>    <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">LayerStack::~LayerStack</a>()</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    {</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <span class="keywordflow">for</span> (<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* layer : m_Layers)</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            <span class="keywordflow">if</span> (layer) </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>                <span class="keyword">delete</span> layer;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>                layer = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            }</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        }</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    }</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#ab869c6bcb10a95144f56c5cc0c02a3f5">   27</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#ab869c6bcb10a95144f56c5cc0c02a3f5">LayerStack::PushLayer</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* layer)</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    }</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">   34</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">LayerStack::PushOverlay</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* overlay)</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        m_Layers.emplace_back(overlay);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">   41</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">LayerStack::PopLayer</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* layer)</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keyword">auto</span> location = std::find(m_Layers.begin(), m_Layers.end(), layer);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">if</span> (location != m_Layers.end())</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            m_Layers.erase(location);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            m_LayerInsert--;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">   53</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">LayerStack::PopOverlay</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* overlay)</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keyword">auto</span> location = std::find(m_Layers.begin(), m_Layers.end(), overlay);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">if</span> (location != m_Layers.end())</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            m_Layers.erase(location);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        m_LayerInsertIndex++;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">   36</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">LayerStack::PushOverlay</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* overlay)</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        m_Layers.emplace_back(overlay);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">   44</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">LayerStack::PopLayer</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* layer)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keyword">auto</span> location = std::find(m_Layers.begin(), m_Layers.end(), layer);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">if</span> (location != m_Layers.end())</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            m_Layers.erase(location);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            m_LayerInsertIndex--;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">   57</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">LayerStack::PopOverlay</a>(<a class="code hl_class" href="class_kargono_1_1_layer.html">Layer</a>* overlay)</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">auto</span> location = std::find(m_Layers.begin(), m_Layers.end(), overlay);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">if</span> (location != m_Layers.end())</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            m_Layers.erase(location);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
 <div class="ttc" id="a_layer_stack_8h_html"><div class="ttname"><a href="_layer_stack_8h.html">LayerStack.h</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_layer_html"><div class="ttname"><a href="class_kargono_1_1_layer.html">Kargono::Layer</a></div><div class="ttdef"><b>Definition</b> <a href="_layer_8h_source.html#l00009">Layer.h:10</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a1bd6a2b876384e4adab055a3b804ce88"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">Kargono::LayerStack::~LayerStack</a></div><div class="ttdeci">~LayerStack()</div><div class="ttdoc">Destructor for the LayerStack class.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00013">LayerStack.cpp:13</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a1cb87e1d7e0ce852f01f85725fc8e5a9"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">Kargono::LayerStack::PushOverlay</a></div><div class="ttdeci">void PushOverlay(Layer *overlay)</div><div class="ttdoc">Pushes an overlay onto the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00034">LayerStack.cpp:34</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a3d5957716b747bebce719cbc5bba8b10"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">Kargono::LayerStack::PopOverlay</a></div><div class="ttdeci">void PopOverlay(Layer *overlay)</div><div class="ttdoc">Pops an overlay from the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00053">LayerStack.cpp:53</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a40a2779e2f8ad36b8d0bd0c47750312f"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">Kargono::LayerStack::PopLayer</a></div><div class="ttdeci">void PopLayer(Layer *layer)</div><div class="ttdoc">Pops a layer from the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00041">LayerStack.cpp:41</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_layer_html"><div class="ttname"><a href="class_kargono_1_1_layer.html">Kargono::Layer</a></div><div class="ttdoc">Base class for all layers in the game engine.</div><div class="ttdef"><b>Definition</b> <a href="_layer_8h_source.html#l00010">Layer.h:11</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a1bd6a2b876384e4adab055a3b804ce88"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a1bd6a2b876384e4adab055a3b804ce88">Kargono::LayerStack::~LayerStack</a></div><div class="ttdeci">~LayerStack()</div><div class="ttdoc">Destructor for the LayerStack class.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00012">LayerStack.cpp:12</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a1cb87e1d7e0ce852f01f85725fc8e5a9"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9">Kargono::LayerStack::PushOverlay</a></div><div class="ttdeci">void PushOverlay(Layer *overlay)</div><div class="ttdoc">Pushes an overlay onto the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00036">LayerStack.cpp:36</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a3d5957716b747bebce719cbc5bba8b10"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a3d5957716b747bebce719cbc5bba8b10">Kargono::LayerStack::PopOverlay</a></div><div class="ttdeci">void PopOverlay(Layer *overlay)</div><div class="ttdoc">Pops an overlay from the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00057">LayerStack.cpp:57</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_layer_stack_html_a40a2779e2f8ad36b8d0bd0c47750312f"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#a40a2779e2f8ad36b8d0bd0c47750312f">Kargono::LayerStack::PopLayer</a></div><div class="ttdeci">void PopLayer(Layer *layer)</div><div class="ttdoc">Pops a layer from the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00044">LayerStack.cpp:44</a></div></div>
 <div class="ttc" id="aclass_kargono_1_1_layer_stack_html_aad93fc0f1dbfe438dddba21104f47940"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#aad93fc0f1dbfe438dddba21104f47940">Kargono::LayerStack::LayerStack</a></div><div class="ttdeci">LayerStack()</div><div class="ttdoc">Default constructor for the LayerStack class.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00007">LayerStack.cpp:7</a></div></div>
 <div class="ttc" id="aclass_kargono_1_1_layer_stack_html_ab869c6bcb10a95144f56c5cc0c02a3f5"><div class="ttname"><a href="class_kargono_1_1_layer_stack.html#ab869c6bcb10a95144f56c5cc0c02a3f5">Kargono::LayerStack::PushLayer</a></div><div class="ttdeci">void PushLayer(Layer *layer)</div><div class="ttdoc">Pushes a layer onto the layer stack.</div><div class="ttdef"><b>Definition</b> <a href="_layer_stack_8cpp_source.html#l00027">LayerStack.cpp:27</a></div></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdoc">Namespace for the Kargono game engine.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00010">Application.cpp:11</a></div></div>
+<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdoc">Preprocessor directive to ensure header file is only included once.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00011">Application.cpp:12</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,7 +1,7 @@
 <map id="Kargono::KeyPressedEvent" name="Kargono::KeyPressedEvent">
-<area shape="rect" id="Node000001" title="Class representing a key press event in the game engine." alt="" coords="5,155,186,181"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_key_event.html" title=" " alt="" coords="29,80,162,107"/>
+<area shape="rect" id="Node000001" title="Class for handling key pressed events in the game engine @inherits KeyEvent." alt="" coords="5,155,186,181"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_key_event.html" title="Base class for keyboard events in the game engine." alt="" coords="29,80,162,107"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,122,98,154,93,154,93,122"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title=" " alt="" coords="41,5,150,32"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title="The base class for all events in the Kargono engine." alt="" coords="41,5,150,32"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,47,98,80,93,80,93,47"/>
 </map>

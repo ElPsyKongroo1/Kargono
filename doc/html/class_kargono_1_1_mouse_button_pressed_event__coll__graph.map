@@ -1,7 +1,7 @@
 <map id="Kargono::MouseButtonPressedEvent" name="Kargono::MouseButtonPressedEvent">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,155,208,197"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_mouse_button_event.html" title=" " alt="" coords="13,80,200,107"/>
+<area shape="rect" id="Node000001" title="Event class representing the mouse button pressed event." alt="" coords="5,155,208,197"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_mouse_button_event.html" title="Base event class for mouse button events." alt="" coords="13,80,200,107"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,122,109,154,104,154,104,122"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title=" " alt="" coords="52,5,161,32"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title="The base class for all events in the Kargono engine." alt="" coords="52,5,161,32"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="109,47,109,80,104,80,104,47"/>
 </map>

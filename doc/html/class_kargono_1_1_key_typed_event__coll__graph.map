@@ -1,0 +1,7 @@
+<map id="Kargono::KeyTypedEvent" name="Kargono::KeyTypedEvent">
+<area shape="rect" id="Node000001" title="Class for handling key typed events in the game engine @inherits KeyEvent." alt="" coords="5,155,173,181"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_key_event.html" title="Base class for keyboard events in the game engine." alt="" coords="23,80,155,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,122,92,154,86,154,86,122"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title="The base class for all events in the Kargono engine." alt="" coords="34,5,144,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="92,47,92,80,86,80,86,47"/>
+</map>

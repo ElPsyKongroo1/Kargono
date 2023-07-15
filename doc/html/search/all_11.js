@@ -1,17 +1,12 @@
 var searchData=
 [
-  ['width_0',['Width',['../struct_kargono_1_1_window_props.html#a7d5532059a5605610519e755d6cc8698',1,'Kargono::WindowProps']]],
-  ['window_1',['Window',['../class_kargono_1_1_window.html',1,'Kargono']]],
-  ['window_2eh_2',['Window.h',['../_window_8h.html',1,'']]],
-  ['windowclose_3',['WindowClose',['../namespace_kargono.html#a915b717e402771208083b14141930a27ac984201d37197ab297a14d19efee4b07',1,'Kargono']]],
-  ['windowcloseevent_4',['WindowCloseEvent',['../class_kargono_1_1_window_close_event.html',1,'Kargono::WindowCloseEvent'],['../class_kargono_1_1_window_close_event.html#a97f87e6c241b61cc16804f9702c63b8e',1,'Kargono::WindowCloseEvent::WindowCloseEvent()']]],
-  ['windowfocus_5',['WindowFocus',['../namespace_kargono.html#a915b717e402771208083b14141930a27a1c68d5453b28d52622bf5486a5fd95ca',1,'Kargono']]],
-  ['windowlostfocus_6',['WindowLostFocus',['../namespace_kargono.html#a915b717e402771208083b14141930a27a1c2119b9d61e623975f13f1029f1d97c',1,'Kargono']]],
-  ['windowmoved_7',['WindowMoved',['../namespace_kargono.html#a915b717e402771208083b14141930a27ab94473d9dfc85f8fdbf5cb3b1d992bda',1,'Kargono']]],
-  ['windowprops_8',['WindowProps',['../struct_kargono_1_1_window_props.html',1,'Kargono::WindowProps'],['../struct_kargono_1_1_window_props.html#a6c490e6cd83cf3e4fb68fdb2df017f14',1,'Kargono::WindowProps::WindowProps()']]],
-  ['windowresize_9',['WindowResize',['../namespace_kargono.html#a915b717e402771208083b14141930a27a9f8f27bff2915738c4fe1b970e12f89c',1,'Kargono']]],
-  ['windowresizeevent_10',['WindowResizeEvent',['../class_kargono_1_1_window_resize_event.html',1,'Kargono::WindowResizeEvent'],['../class_kargono_1_1_window_resize_event.html#a25149bb361e0ab83657df548fc1dba74',1,'Kargono::WindowResizeEvent::WindowResizeEvent()']]],
-  ['windowswindow_11',['WindowsWindow',['../class_kargono_1_1_windows_window.html',1,'Kargono::WindowsWindow'],['../class_kargono_1_1_windows_window.html#abc53f73a619b07ffca7cfa2e306ec361',1,'Kargono::WindowsWindow::WindowsWindow()']]],
-  ['windowswindow_2ecpp_12',['WindowsWindow.cpp',['../_windows_window_8cpp.html',1,'']]],
-  ['windowswindow_2eh_13',['WindowsWindow.h',['../_windows_window_8h.html',1,'']]]
+  ['seteventcallback_0',['SetEventCallback',['../class_kargono_1_1_window.html#aec5e97a9a8aa6d8b9b992ce80cc8a5d3',1,'Kargono::Window::SetEventCallback()'],['../class_kargono_1_1_windows_window.html#a10f82d5ce0f7bc2abc1efa58f85d63e5',1,'Kargono::WindowsWindow::SetEventCallback()']]],
+  ['setvsync_1',['SetVSync',['../class_kargono_1_1_window.html#adbb13b0e0db5a9dd68b918657fa9d8a5',1,'Kargono::Window::SetVSync()'],['../class_kargono_1_1_windows_window.html#a057a2588aa27fbefff82d6a927ab19b9',1,'Kargono::WindowsWindow::SetVSync()']]],
+  ['shader_2',['Shader',['../class_kargono_1_1_shader.html',1,'Kargono::Shader'],['../class_kargono_1_1_shader.html#a417aa0612d91ca3bea95c57a1c680316',1,'Kargono::Shader::Shader()']]],
+  ['shader_2ecpp_3',['Shader.cpp',['../_shader_8cpp.html',1,'']]],
+  ['shader_2eh_4',['Shader.h',['../_shader_8h.html',1,'']]],
+  ['shaderdatatype_5',['ShaderDataType',['../namespace_kargono.html#a24004580b6930106c56f416ed9de5f02',1,'Kargono']]],
+  ['shaderhandle_6',['ShaderHandle',['../struct_im_gui___impl_open_g_l3___data.html#ab3fde53e314b2d7e6192c2bdb33c1a2c',1,'ImGui_ImplOpenGL3_Data']]],
+  ['size_7',['Size',['../struct_kargono_1_1_buffer_element.html#a146498a25e51edc3379b7806ddcc5e4d',1,'Kargono::BufferElement']]],
+  ['swapbuffers_8',['SwapBuffers',['../class_kargono_1_1_graphics_context.html#a0e430887b74942cb8680b558d73ac4ae',1,'Kargono::GraphicsContext::SwapBuffers()'],['../class_kargono_1_1_open_g_l_context.html#a4df2bfac154dfe331cc516d2a6810498',1,'Kargono::OpenGLContext::SwapBuffers()']]]
 ];
