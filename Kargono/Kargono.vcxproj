@@ -162,6 +162,7 @@
     <ClInclude Include="Kargono\MouseButtonCodes.h" />
     <ClInclude Include="Kargono\Renderer\Buffer.h" />
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Kargono\Renderer\RenderCommand.h" />
     <ClInclude Include="Kargono\Renderer\Renderer.h" />
     <ClInclude Include="Kargono\Renderer\RendererAPI.h" />
@@ -171,11 +172,10 @@
     <ClInclude Include="Kargono\Window.h" />
     <ClInclude Include="Kargono\input.h" />
     <ClInclude Include="Kargono\kgpch.h" />
-    <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
@@ -187,19 +187,19 @@
     <ClCompile Include="Kargono\LayerStack.cpp" />
     <ClCompile Include="Kargono\Log.cpp" />
     <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
+    <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Kargono\Renderer\RenderCommand.cpp" />
     <ClCompile Include="Kargono\Renderer\Renderer.cpp" />
     <ClCompile Include="Kargono\Renderer\RendererrAPI.cpp" />
     <ClCompile Include="Kargono\Renderer\Shader.cpp" />
+    <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />
-    <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
