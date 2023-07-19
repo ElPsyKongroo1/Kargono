@@ -70,13 +70,25 @@
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h">
       <Filter>Kargono\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Renderer\OrthographicCamera.h">
+      <Filter>Kargono\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Renderer\RenderCommand.h">
+      <Filter>Kargono\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Renderer\Renderer.h">
+      <Filter>Kargono\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Renderer\RendererAPI.h">
       <Filter>Kargono\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Renderer\Shader.h">
       <Filter>Kargono\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Renderer\Textures.h">
+      <Filter>Kargono\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Kargono\Renderer\VertexArray.h">
       <Filter>Kargono\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Window.h">
@@ -94,18 +106,18 @@
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Platform\Windows\WindowsInput.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Renderer\VertexArray.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="Kargono\Renderer\RendererAPI.h" />
-    <ClInclude Include="Kargono\Renderer\RenderCommand.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Application.cpp">
@@ -129,10 +141,22 @@
     <ClCompile Include="Kargono\Renderer\Buffer.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp">
+      <Filter>Kargono\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\Renderer\RenderCommand.cpp">
+      <Filter>Kargono\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\Renderer\Renderer.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Renderer\RendererrAPI.cpp">
+      <Filter>Kargono\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\Renderer\Shader.cpp">
+      <Filter>Kargono\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\Renderer\VertexArray.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\kgpch.cpp">
@@ -144,17 +168,17 @@
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLVertexArray.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsInput.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="Kargono\Renderer\RendererrAPI.cpp" />
-    <ClCompile Include="Kargono\Renderer\RenderCommand.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp" />
   </ItemGroup>
 </Project>
