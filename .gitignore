@@ -4,9 +4,14 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # User-specific files
+/bin/
+/bin-int/
 bin/
 bin-int/
-*openai_keys.py
+*openai_keys.py]
+*.vcxproj
+*.vcxproj.filters
+
 *.rsuser
 *.suo
 *.user
