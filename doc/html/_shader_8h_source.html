@@ -78,29 +78,34 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="_shader_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_kargono.html">Kargono</a></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>{</div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno"><a class="line" href="class_kargono_1_1_shader.html">    5</a></span>    <span class="keyword">class </span><a class="code hl_class" href="class_kargono_1_1_shader.html">Shader</a></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>    {</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <a class="code hl_class" href="class_kargono_1_1_shader.html">Shader</a>(<span class="keyword">const</span> std::string&amp; vertexSrc, <span class="keyword">const</span> std::string&amp; fragmentSrc);</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <a class="code hl_function" href="class_kargono_1_1_shader.html#a6a9b9adffddd1231e4f649d5f8a70338">~Shader</a>();</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_shader.html#a773fa834fe3a462db97e8a3afbd93074">Bind</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_shader.html#a1ac74aeef6efa012fd90aceea24f5a97">Unbind</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;glm/glm.hpp&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_kargono.html">Kargono</a></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="class_kargono_1_1_shader.html">    8</a></span>    <span class="keyword">class </span><a class="code hl_class" href="class_kargono_1_1_shader.html">Shader</a></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    {</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        <a class="code hl_class" href="class_kargono_1_1_shader.html">Shader</a>(<span class="keyword">const</span> std::string&amp; vertexSrc, <span class="keyword">const</span> std::string&amp; fragmentSrc);</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <a class="code hl_function" href="class_kargono_1_1_shader.html#a6a9b9adffddd1231e4f649d5f8a70338">~Shader</a>();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_shader.html#a773fa834fe3a462db97e8a3afbd93074">Bind</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_shader.html#a1ac74aeef6efa012fd90aceea24f5a97">Unbind</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="class_kargono_1_1_shader.html#a1c2e46879bb04e85e643592a523170a5">UploadUniformMat4</a>(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> glm::mat4&amp; matrix);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">private</span>:</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        uint32_t m_RendererID;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    };</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
-<div class="ttc" id="aclass_kargono_1_1_shader_html"><div class="ttname"><a href="class_kargono_1_1_shader.html">Kargono::Shader</a></div><div class="ttdef"><b>Definition</b> <a href="_shader_8h_source.html#l00005">Shader.h:6</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_shader_html_a1ac74aeef6efa012fd90aceea24f5a97"><div class="ttname"><a href="class_kargono_1_1_shader.html#a1ac74aeef6efa012fd90aceea24f5a97">Kargono::Shader::Unbind</a></div><div class="ttdeci">void Unbind() const</div><div class="ttdoc">Unbind the shader.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00147">Shader.cpp:147</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_shader_html_a6a9b9adffddd1231e4f649d5f8a70338"><div class="ttname"><a href="class_kargono_1_1_shader.html#a6a9b9adffddd1231e4f649d5f8a70338">Kargono::Shader::~Shader</a></div><div class="ttdeci">~Shader()</div><div class="ttdoc">Destructor for Shader class.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00137">Shader.cpp:137</a></div></div>
-<div class="ttc" id="aclass_kargono_1_1_shader_html_a773fa834fe3a462db97e8a3afbd93074"><div class="ttname"><a href="class_kargono_1_1_shader.html#a773fa834fe3a462db97e8a3afbd93074">Kargono::Shader::Bind</a></div><div class="ttdeci">void Bind() const</div><div class="ttdoc">Bind the shader.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00142">Shader.cpp:142</a></div></div>
-<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdoc">Preprocessor directive to ensure header file is only included once.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00011">Application.cpp:12</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_shader_html"><div class="ttname"><a href="class_kargono_1_1_shader.html">Kargono::Shader</a></div><div class="ttdef"><b>Definition</b> <a href="_shader_8h_source.html#l00008">Shader.h:9</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_shader_html_a1ac74aeef6efa012fd90aceea24f5a97"><div class="ttname"><a href="class_kargono_1_1_shader.html#a1ac74aeef6efa012fd90aceea24f5a97">Kargono::Shader::Unbind</a></div><div class="ttdeci">void Unbind() const</div><div class="ttdoc">Unbinds the shader.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00135">Shader.cpp:135</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_shader_html_a1c2e46879bb04e85e643592a523170a5"><div class="ttname"><a href="class_kargono_1_1_shader.html#a1c2e46879bb04e85e643592a523170a5">Kargono::Shader::UploadUniformMat4</a></div><div class="ttdeci">void UploadUniformMat4(const std::string &amp;name, const glm::mat4 &amp;matrix)</div><div class="ttdoc">Uploads a 4x4 matrix uniform to the shader.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00145">Shader.cpp:145</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_shader_html_a6a9b9adffddd1231e4f649d5f8a70338"><div class="ttname"><a href="class_kargono_1_1_shader.html#a6a9b9adffddd1231e4f649d5f8a70338">Kargono::Shader::~Shader</a></div><div class="ttdeci">~Shader()</div><div class="ttdoc">Destructor for the Shader class.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00125">Shader.cpp:125</a></div></div>
+<div class="ttc" id="aclass_kargono_1_1_shader_html_a773fa834fe3a462db97e8a3afbd93074"><div class="ttname"><a href="class_kargono_1_1_shader.html#a773fa834fe3a462db97e8a3afbd93074">Kargono::Shader::Bind</a></div><div class="ttdeci">void Bind() const</div><div class="ttdoc">Binds the shader for rendering.</div><div class="ttdef"><b>Definition</b> <a href="_shader_8cpp_source.html#l00130">Shader.cpp:130</a></div></div>
+<div class="ttc" id="anamespace_kargono_html"><div class="ttname"><a href="namespace_kargono.html">Kargono</a></div><div class="ttdoc">Include guard to ensure this file is only included once.</div><div class="ttdef"><b>Definition</b> <a href="_application_8cpp_source.html#l00013">Application.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -81,17 +81,229 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Class defining a buffer layout for vertex buffers.  
+ <a href="class_kargono_1_1_buffer_layout.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_buffer_8h_source.html">Buffer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a96b64f090292093f3b4672e0804c7991"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#a96b64f090292093f3b4672e0804c7991">BufferLayout</a> ()</td></tr>
+<tr class="memdesc:a96b64f090292093f3b4672e0804c7991"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for the <a class="el" href="class_kargono_1_1_buffer_layout.html" title="Class defining a buffer layout for vertex buffers.">BufferLayout</a> class.  <br /></td></tr>
+<tr class="separator:a96b64f090292093f3b4672e0804c7991"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42ea57d95f826d70ae3200b3f89c2699"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#a42ea57d95f826d70ae3200b3f89c2699">BufferLayout</a> (const std::initializer_list&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt; &amp;elements)</td></tr>
+<tr class="memdesc:a42ea57d95f826d70ae3200b3f89c2699"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="class_kargono_1_1_buffer_layout.html" title="Class defining a buffer layout for vertex buffers.">BufferLayout</a> class.  <br /></td></tr>
+<tr class="separator:a42ea57d95f826d70ae3200b3f89c2699"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9e1b255281efe142e9b9d86a19ed660"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#ae9e1b255281efe142e9b9d86a19ed660">GetElements</a> () const</td></tr>
+<tr class="memdesc:ae9e1b255281efe142e9b9d86a19ed660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the elements of the buffer layout.  <br /></td></tr>
 <tr class="separator:ae9e1b255281efe142e9b9d86a19ed660"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03ffdd546247acfb8cbc25e6d38d12e6"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#a03ffdd546247acfb8cbc25e6d38d12e6">GetStride</a> () const</td></tr>
+<tr class="memdesc:a03ffdd546247acfb8cbc25e6d38d12e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the stride (in bytes) of the buffer layout.  <br /></td></tr>
+<tr class="separator:a03ffdd546247acfb8cbc25e6d38d12e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a472eca76a7e708e0783f6f0b8387bd83"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#a472eca76a7e708e0783f6f0b8387bd83">begin</a> ()</td></tr>
+<tr class="memdesc:a472eca76a7e708e0783f6f0b8387bd83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an iterator to the beginning of the elements in the buffer layout.  <br /></td></tr>
+<tr class="separator:a472eca76a7e708e0783f6f0b8387bd83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8f40f42b5e2b57f14a7a7a896d50805"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#ab8f40f42b5e2b57f14a7a7a896d50805">end</a> ()</td></tr>
+<tr class="memdesc:ab8f40f42b5e2b57f14a7a7a896d50805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an iterator to the end of the elements in the buffer layout.  <br /></td></tr>
+<tr class="separator:ab8f40f42b5e2b57f14a7a7a896d50805"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad90b50fd864dd980e71a6b2430a03147"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#ad90b50fd864dd980e71a6b2430a03147">begin</a> () const</td></tr>
+<tr class="memdesc:ad90b50fd864dd980e71a6b2430a03147"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a const iterator to the beginning of the elements in the buffer layout.  <br /></td></tr>
+<tr class="separator:ad90b50fd864dd980e71a6b2430a03147"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64d3eba1aa1ebd30c4af194bfb2aa53a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_buffer_layout.html#a64d3eba1aa1ebd30c4af194bfb2aa53a">end</a> () const</td></tr>
+<tr class="memdesc:a64d3eba1aa1ebd30c4af194bfb2aa53a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a const iterator to the end of the elements in the buffer layout.  <br /></td></tr>
+<tr class="separator:a64d3eba1aa1ebd30c4af194bfb2aa53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00050">50</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<div class="textblock"><p>Class defining a buffer layout for vertex buffers. </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00092">92</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a96b64f090292093f3b4672e0804c7991" name="a96b64f090292093f3b4672e0804c7991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96b64f090292093f3b4672e0804c7991">&#9670;&#160;</a></span>BufferLayout() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Kargono::BufferLayout::BufferLayout </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor for the <a class="el" href="class_kargono_1_1_buffer_layout.html" title="Class defining a buffer layout for vertex buffers.">BufferLayout</a> class. </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00096">96</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="a42ea57d95f826d70ae3200b3f89c2699" name="a42ea57d95f826d70ae3200b3f89c2699"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42ea57d95f826d70ae3200b3f89c2699">&#9670;&#160;</a></span>BufferLayout() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Kargono::BufferLayout::BufferLayout </td>
+          <td>(</td>
+          <td class="paramtype">const std::initializer_list&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>elements</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor for the <a class="el" href="class_kargono_1_1_buffer_layout.html" title="Class defining a buffer layout for vertex buffers.">BufferLayout</a> class. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">elements</td><td>The initializer list of BufferElements that make up the layout </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00100">100</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a472eca76a7e708e0783f6f0b8387bd83" name="a472eca76a7e708e0783f6f0b8387bd83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a472eca76a7e708e0783f6f0b8387bd83">&#9670;&#160;</a></span>begin() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::iterator Kargono::BufferLayout::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets an iterator to the beginning of the elements in the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>An iterator to the beginning of the elements in the buffer layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00115">115</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="ad90b50fd864dd980e71a6b2430a03147" name="ad90b50fd864dd980e71a6b2430a03147"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad90b50fd864dd980e71a6b2430a03147">&#9670;&#160;</a></span>begin() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::const_iterator Kargono::BufferLayout::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a const iterator to the beginning of the elements in the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>A const iterator to the beginning of the elements in the buffer layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00121">121</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="ab8f40f42b5e2b57f14a7a7a896d50805" name="ab8f40f42b5e2b57f14a7a7a896d50805"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8f40f42b5e2b57f14a7a7a896d50805">&#9670;&#160;</a></span>end() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::iterator Kargono::BufferLayout::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets an iterator to the end of the elements in the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>An iterator to the end of the elements in the buffer layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00118">118</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="a64d3eba1aa1ebd30c4af194bfb2aa53a" name="a64d3eba1aa1ebd30c4af194bfb2aa53a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64d3eba1aa1ebd30c4af194bfb2aa53a">&#9670;&#160;</a></span>end() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_kargono_1_1_buffer_element.html">BufferElement</a> &gt;::const_iterator Kargono::BufferLayout::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a const iterator to the end of the elements in the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>A const iterator to the end of the elements in the buffer layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00124">124</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
 <a id="ae9e1b255281efe142e9b9d86a19ed660" name="ae9e1b255281efe142e9b9d86a19ed660"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae9e1b255281efe142e9b9d86a19ed660">&#9670;&#160;</a></span>GetElements()</h2>
 
@@ -115,7 +327,40 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00053">53</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p>Gets the elements of the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>The elements of the buffer layout as a const std::vector&lt;BufferElement&gt;&amp; </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00108">108</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="a03ffdd546247acfb8cbc25e6d38d12e6" name="a03ffdd546247acfb8cbc25e6d38d12e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03ffdd546247acfb8cbc25e6d38d12e6">&#9670;&#160;</a></span>GetStride()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Kargono::BufferLayout::GetStride </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the stride (in bytes) of the buffer layout. </p>
+<dl class="section return"><dt>Returns</dt><dd>The stride (in bytes) of the buffer layout </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00111">111</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>

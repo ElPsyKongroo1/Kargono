@@ -82,31 +82,48 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Structure defining a buffer element.  
+ <a href="struct_kargono_1_1_buffer_element.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_buffer_8h_source.html">Buffer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a254353474409f1e5db5787f569de5b54"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#a254353474409f1e5db5787f569de5b54">BufferElement</a> (const std::string &amp;name, <a class="el" href="namespace_kargono.html#a24004580b6930106c56f416ed9de5f02">ShaderDataType</a> type)</td></tr>
-<tr class="memdesc:a254353474409f1e5db5787f569de5b54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer element with a given name and shader data type.  <br /></td></tr>
-<tr class="separator:a254353474409f1e5db5787f569de5b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae60b5e1caba8dbe9d1d3b73a531ae0af"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#ae60b5e1caba8dbe9d1d3b73a531ae0af">BufferElement</a> ()</td></tr>
+<tr class="memdesc:ae60b5e1caba8dbe9d1d3b73a531ae0af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for the <a class="el" href="struct_kargono_1_1_buffer_element.html" title="Structure defining a buffer element.">BufferElement</a> struct.  <br /></td></tr>
+<tr class="separator:ae60b5e1caba8dbe9d1d3b73a531ae0af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a961a65f0c95a396b81138bcc0ae3611a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#a961a65f0c95a396b81138bcc0ae3611a">BufferElement</a> (<a class="el" href="namespace_kargono.html#a24004580b6930106c56f416ed9de5f02">ShaderDataType</a> type, const std::string &amp;name, bool normalized=false)</td></tr>
+<tr class="memdesc:a961a65f0c95a396b81138bcc0ae3611a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="struct_kargono_1_1_buffer_element.html" title="Structure defining a buffer element.">BufferElement</a> struct.  <br /></td></tr>
+<tr class="separator:a961a65f0c95a396b81138bcc0ae3611a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2fab05ba5e49ad2df6d09106583706d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#aa2fab05ba5e49ad2df6d09106583706d">GetComponentCount</a> () const</td></tr>
+<tr class="memdesc:aa2fab05ba5e49ad2df6d09106583706d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of components in the buffer element.  <br /></td></tr>
+<tr class="separator:aa2fab05ba5e49ad2df6d09106583706d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a4db31a11e63af2f6b5b0fd16594d9221"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#a4db31a11e63af2f6b5b0fd16594d9221">Name</a></td></tr>
+<tr class="memdesc:a4db31a11e63af2f6b5b0fd16594d9221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the buffer element.  <br /></td></tr>
 <tr class="separator:a4db31a11e63af2f6b5b0fd16594d9221"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf791ee697859ed055333bbfa639a294"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_kargono.html#a24004580b6930106c56f416ed9de5f02">ShaderDataType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#adf791ee697859ed055333bbfa639a294">Type</a></td></tr>
+<tr class="memdesc:adf791ee697859ed055333bbfa639a294"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the buffer element.  <br /></td></tr>
 <tr class="separator:adf791ee697859ed055333bbfa639a294"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a146498a25e51edc3379b7806ddcc5e4d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#a146498a25e51edc3379b7806ddcc5e4d">Size</a></td></tr>
+<tr class="memdesc:a146498a25e51edc3379b7806ddcc5e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size (in bytes) of the buffer element.  <br /></td></tr>
 <tr class="separator:a146498a25e51edc3379b7806ddcc5e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adadd8d35f68c23ccede6928651a4a49c"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#adadd8d35f68c23ccede6928651a4a49c">Offset</a></td></tr>
+<tr class="memdesc:adadd8d35f68c23ccede6928651a4a49c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset (in bytes) of the buffer element.  <br /></td></tr>
 <tr class="separator:adadd8d35f68c23ccede6928651a4a49c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae7196aeba86ac70cc6c47b647346948"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_kargono_1_1_buffer_element.html#aae7196aeba86ac70cc6c47b647346948">Normalized</a></td></tr>
+<tr class="memdesc:aae7196aeba86ac70cc6c47b647346948"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalized flag of the buffer element.  <br /></td></tr>
+<tr class="separator:aae7196aeba86ac70cc6c47b647346948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00032">32</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<div class="textblock"><p>Structure defining a buffer element. </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00037">37</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a254353474409f1e5db5787f569de5b54" name="a254353474409f1e5db5787f569de5b54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a254353474409f1e5db5787f569de5b54">&#9670;&#160;</a></span>BufferElement()</h2>
+<a id="ae60b5e1caba8dbe9d1d3b73a531ae0af" name="ae60b5e1caba8dbe9d1d3b73a531ae0af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae60b5e1caba8dbe9d1d3b73a531ae0af">&#9670;&#160;</a></span>BufferElement() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -117,14 +134,49 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">Kargono::BufferElement::BufferElement </td>
           <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor for the <a class="el" href="struct_kargono_1_1_buffer_element.html" title="Structure defining a buffer element.">BufferElement</a> struct. </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00057">57</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="a961a65f0c95a396b81138bcc0ae3611a" name="a961a65f0c95a396b81138bcc0ae3611a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a961a65f0c95a396b81138bcc0ae3611a">&#9670;&#160;</a></span>BufferElement() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Kargono::BufferElement::BufferElement </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespace_kargono.html#a24004580b6930106c56f416ed9de5f02">ShaderDataType</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespace_kargono.html#a24004580b6930106c56f416ed9de5f02">ShaderDataType</a>&#160;</td>
-          <td class="paramname"><em>type</em>&#160;</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>normalized</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -139,16 +191,48 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Construct a buffer element with a given name and shader data type. </p>
+<p>Constructor for the <a class="el" href="struct_kargono_1_1_buffer_element.html" title="Structure defining a buffer element.">BufferElement</a> struct. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">type</td><td>The type of the buffer element </td></tr>
     <tr><td class="paramname">name</td><td>The name of the buffer element </td></tr>
-    <tr><td class="paramname">type</td><td>The shader data type of the buffer element </td></tr>
+    <tr><td class="paramname">normalized</td><td>The normalized flag of the buffer element (default: false) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00043">43</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00063">63</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa2fab05ba5e49ad2df6d09106583706d" name="aa2fab05ba5e49ad2df6d09106583706d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2fab05ba5e49ad2df6d09106583706d">&#9670;&#160;</a></span>GetComponentCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Kargono::BufferElement::GetComponentCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the number of components in the buffer element. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of components in the buffer element </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00070">70</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>
@@ -165,7 +249,29 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00034">34</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p>Name of the buffer element. </p>
+<p>The Name member variable stores the name of the buffer element as a std::string </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00042">42</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+
+</div>
+</div>
+<a id="aae7196aeba86ac70cc6c47b647346948" name="aae7196aeba86ac70cc6c47b647346948"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae7196aeba86ac70cc6c47b647346948">&#9670;&#160;</a></span>Normalized</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::BufferElement::Normalized</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Normalized flag of the buffer element. </p>
+<p>The Normalized member variable stores the normalized flag of the buffer element as a bool </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00054">54</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>
@@ -181,7 +287,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00037">37</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p>Offset (in bytes) of the buffer element. </p>
+<p>The Offset member variable stores the offset (in bytes) of the buffer element as a uint32_t </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00051">51</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>
@@ -197,7 +306,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00036">36</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p>Size (in bytes) of the buffer element. </p>
+<p>The Size member variable stores the size (in bytes) of the buffer element as a uint32_t </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00048">48</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +325,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00035">35</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
+<p>Type of the buffer element. </p>
+<p>The Type member variable stores the type of the buffer element as a ShaderDataType </p>
+
+<p class="definition">Definition at line <a class="el" href="_buffer_8h_source.html#l00045">45</a> of file <a class="el" href="_buffer_8h_source.html">Buffer.h</a>.</p>
 
 </div>
 </div>

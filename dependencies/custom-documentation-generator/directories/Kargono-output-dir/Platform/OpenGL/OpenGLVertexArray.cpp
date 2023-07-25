@@ -3,8 +3,12 @@
 
 #include <glad/glad.h>
 
+/// @brief Namespace containing all classes and functions related to Kargono game engine
 namespace Kargono
 {
+/// @brief Converts a ShaderDataType to its corresponding OpenGL base type
+/// @param type The ShaderDataType to convert
+/// @return The corresponding OpenGL base type
 	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	{
 		switch (type)
@@ -25,22 +29,28 @@ namespace Kargono
 			return -1;
 		}
 
+/// @brief Constructor for OpenGLVertexArray class
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
 		glCreateVertexArrays(1, &m_RendererID);
 	}
+/// @brief Destructor for OpenGLVertexArray class
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
+/// @brief Binds the vertex array
 	void OpenGLVertexArray::Bind() const
 	{
 		glBindVertexArray(m_RendererID);
 	}
+/// @brief Unbinds the vertex array
 	void OpenGLVertexArray::Unbind() const
 	{
 		glBindVertexArray(0);
 	}
+/// @brief Adds a vertex buffer to the vertex array
+/// @param vertexBuffer The vertex buffer to add
 	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
 		KG_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
@@ -64,6 +74,8 @@ namespace Kargono
 		m_VertexBuffers.push_back(vertexBuffer);
 
 	}
+/// @brief Sets the index buffer
+/// @param indexBuffer The index buffer to set
 	void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);

@@ -1,0 +1,13 @@
+<map id="Kargono::Renderer::GetAPI" name="Kargono::Renderer::GetAPI">
+<area shape="rect" id="Node000001" title="Retrieves the current API used for rendering." alt="" coords="391,72,528,115"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_vertex_array.html#ab4c4362831bd6fcc57e611ef6a303cb3" title="Creates a new VertexArray object." alt="" coords="196,5,342,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="382,69,331,51,333,46,384,64"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_vertex_buffer.html#a9a6dc3b3daf7e44f044cc6fc28cf84e2" title="Creates a new vertex buffer." alt="" coords="195,72,343,115"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="376,96,343,96,343,91,376,91"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_index_buffer.html#a32fb9cc6c5b5d6766fa7a515cd530c30" title="Creates a new index buffer." alt="" coords="198,139,340,181"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="384,122,333,141,331,136,382,117"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public section of the application class." alt="" coords="5,72,147,115"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="193,56,141,74,139,69,191,51"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="180,96,147,96,147,91,180,91"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="191,136,139,118,141,113,193,131"/>
+</map>

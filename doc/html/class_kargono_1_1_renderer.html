@@ -81,20 +81,33 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>This class is responsible for rendering functionality in the game engine.  
+ <a href="class_kargono_1_1_renderer.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_renderer_8h_source.html">Renderer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a08a6a50924fa8ffcec61539daa558c94"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespace_kargono.html#a116fecc4e1baac554b58fd38f6159f16">RendererAPI</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_renderer.html#a08a6a50924fa8ffcec61539daa558c94">GetAPI</a> ()</td></tr>
-<tr class="memdesc:a08a6a50924fa8ffcec61539daa558c94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current renderer API.  <br /></td></tr>
-<tr class="separator:a08a6a50924fa8ffcec61539daa558c94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab05978ac7d8c0098ca86e53597876a59"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_renderer.html#ab05978ac7d8c0098ca86e53597876a59">BeginScene</a> ()</td></tr>
+<tr class="memdesc:ab05978ac7d8c0098ca86e53597876a59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins a new render scene.  <br /></td></tr>
+<tr class="separator:ab05978ac7d8c0098ca86e53597876a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8410d064f7afe739dd8cf84ae7fa954"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_renderer.html#ac8410d064f7afe739dd8cf84ae7fa954">EndScene</a> ()</td></tr>
+<tr class="memdesc:ac8410d064f7afe739dd8cf84ae7fa954"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends the current render scene.  <br /></td></tr>
+<tr class="separator:ac8410d064f7afe739dd8cf84ae7fa954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8fbef62ce94099a017349de2ce4ead7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_renderer.html#aa8fbef62ce94099a017349de2ce4ead7">Submit</a> (const std::shared_ptr&lt; <a class="el" href="class_kargono_1_1_vertex_array.html">VertexArray</a> &gt; &amp;vertexArray)</td></tr>
+<tr class="memdesc:aa8fbef62ce94099a017349de2ce4ead7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Submits a vertex array for rendering.  <br /></td></tr>
+<tr class="separator:aa8fbef62ce94099a017349de2ce4ead7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e5099a2139b1557ef14b5a51cdca537"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_kargono_1_1_renderer_a_p_i.html#abcfdd38f32e49e4d46dccdec80199e3d">RendererAPI::API</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_kargono_1_1_renderer.html#a1e5099a2139b1557ef14b5a51cdca537">GetAPI</a> ()</td></tr>
+<tr class="memdesc:a1e5099a2139b1557ef14b5a51cdca537"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the current API used for rendering.  <br /></td></tr>
+<tr class="separator:a1e5099a2139b1557ef14b5a51cdca537"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_renderer_8h_source.html#l00012">12</a> of file <a class="el" href="_renderer_8h_source.html">Renderer.h</a>.</p>
+<div class="textblock"><p>This class is responsible for rendering functionality in the game engine. </p>
+
+<p class="definition">Definition at line <a class="el" href="_renderer_8h_source.html#l00009">9</a> of file <a class="el" href="_renderer_8h_source.html">Renderer.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a08a6a50924fa8ffcec61539daa558c94" name="a08a6a50924fa8ffcec61539daa558c94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08a6a50924fa8ffcec61539daa558c94">&#9670;&#160;</a></span>GetAPI()</h2>
+<a id="ab05978ac7d8c0098ca86e53597876a59" name="ab05978ac7d8c0098ca86e53597876a59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab05978ac7d8c0098ca86e53597876a59">&#9670;&#160;</a></span>BeginScene()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -103,7 +116,87 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="namespace_kargono.html#a116fecc4e1baac554b58fd38f6159f16">RendererAPI</a> Kargono::Renderer::GetAPI </td>
+          <td class="memname">void Kargono::Renderer::BeginScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Begins a new render scene. </p>
+<p>Begins a new rendering scene. </p>
+
+<p class="definition">Definition at line <a class="el" href="_renderer_8cpp_source.html#l00010">10</a> of file <a class="el" href="_renderer_8cpp_source.html">Renderer.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_renderer_ab05978ac7d8c0098ca86e53597876a59_icgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_ab05978ac7d8c0098ca86e53597876a59_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_ab05978ac7d8c0098ca86e53597876a59_icgraph" id="aclass_kargono_1_1_renderer_ab05978ac7d8c0098ca86e53597876a59_icgraph">
+<area shape="rect" title="Begins a new render scene." alt="" coords="226,5,363,48"/>
+<area shape="rect" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ac8410d064f7afe739dd8cf84ae7fa954" name="ac8410d064f7afe739dd8cf84ae7fa954"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8410d064f7afe739dd8cf84ae7fa954">&#9670;&#160;</a></span>EndScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Renderer::EndScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ends the current render scene. </p>
+<p>Ends the current rendering scene. </p>
+
+<p class="definition">Definition at line <a class="el" href="_renderer_8cpp_source.html#l00014">14</a> of file <a class="el" href="_renderer_8cpp_source.html">Renderer.cpp</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_renderer_ac8410d064f7afe739dd8cf84ae7fa954_icgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_ac8410d064f7afe739dd8cf84ae7fa954_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_ac8410d064f7afe739dd8cf84ae7fa954_icgraph" id="aclass_kargono_1_1_renderer_ac8410d064f7afe739dd8cf84ae7fa954_icgraph">
+<area shape="rect" title="Ends the current render scene." alt="" coords="226,5,363,48"/>
+<area shape="rect" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a1e5099a2139b1557ef14b5a51cdca537" name="a1e5099a2139b1557ef14b5a51cdca537"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e5099a2139b1557ef14b5a51cdca537">&#9670;&#160;</a></span>GetAPI()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_kargono_1_1_renderer_a_p_i.html#abcfdd38f32e49e4d46dccdec80199e3d">RendererAPI::API</a> Kargono::Renderer::GetAPI </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -116,23 +209,94 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get the current renderer API. </p>
-<dl class="section return"><dt>Returns</dt><dd>The current renderer API of the game engine </dd></dl>
+<p>Retrieves the current API used for rendering. </p>
+<dl class="section return"><dt>Returns</dt><dd>The current renderer API </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_renderer_8h_source.html#l00017">17</a> of file <a class="el" href="_renderer_8h_source.html">Renderer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_renderer_8h_source.html#l00021">21</a> of file <a class="el" href="_renderer_8h_source.html">Renderer.h</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_cgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_cgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_cgraph" id="aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_cgraph">
+<area shape="rect" title="Retrieves the current API used for rendering." alt="" coords="5,5,143,48"/>
+<area shape="rect" href="class_kargono_1_1_renderer_a_p_i.html#afe9a26ebf7eab09c9b716d6d33924827" title="Get the current rendering API." alt="" coords="191,5,341,48"/>
+<area shape="poly" title=" " alt="" coords="143,24,176,24,176,29,143,29"/>
+</map>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_kargono_1_1_renderer_a08a6a50924fa8ffcec61539daa558c94_icgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_a08a6a50924fa8ffcec61539daa558c94_icgraph" alt=""/></div>
-<map name="aclass_kargono_1_1_renderer_a08a6a50924fa8ffcec61539daa558c94_icgraph" id="aclass_kargono_1_1_renderer_a08a6a50924fa8ffcec61539daa558c94_icgraph">
-<area shape="rect" title="Get the current renderer API." alt="" coords="391,39,528,81"/>
-<area shape="rect" href="class_kargono_1_1_vertex_buffer.html#a9a6dc3b3daf7e44f044cc6fc28cf84e2" title="Factory method to create a vertex buffer." alt="" coords="195,5,343,48"/>
-<area shape="poly" title=" " alt="" coords="376,48,343,42,344,37,377,43"/>
-<area shape="rect" href="class_kargono_1_1_index_buffer.html#a32fb9cc6c5b5d6766fa7a515cd530c30" title="Factory method to create an index buffer." alt="" coords="198,72,340,115"/>
-<area shape="poly" title=" " alt="" coords="377,77,340,84,339,78,376,72"/>
-<area shape="rect" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public access specifier." alt="" coords="5,39,147,81"/>
-<area shape="poly" title=" " alt="" coords="181,45,148,50,147,45,180,39"/>
-<area shape="poly" title=" " alt="" coords="183,81,147,75,148,70,184,76"/>
+<div class="center"><img src="class_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_icgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_icgraph" id="aclass_kargono_1_1_renderer_a1e5099a2139b1557ef14b5a51cdca537_icgraph">
+<area shape="rect" title="Retrieves the current API used for rendering." alt="" coords="391,72,528,115"/>
+<area shape="rect" href="class_kargono_1_1_vertex_array.html#ab4c4362831bd6fcc57e611ef6a303cb3" title="Creates a new VertexArray object." alt="" coords="196,5,342,48"/>
+<area shape="poly" title=" " alt="" coords="382,69,331,51,333,46,384,64"/>
+<area shape="rect" href="class_kargono_1_1_vertex_buffer.html#a9a6dc3b3daf7e44f044cc6fc28cf84e2" title="Creates a new vertex buffer." alt="" coords="195,72,343,115"/>
+<area shape="poly" title=" " alt="" coords="376,96,343,96,343,91,376,91"/>
+<area shape="rect" href="class_kargono_1_1_index_buffer.html#a32fb9cc6c5b5d6766fa7a515cd530c30" title="Creates a new index buffer." alt="" coords="198,139,340,181"/>
+<area shape="poly" title=" " alt="" coords="384,122,333,141,331,136,382,117"/>
+<area shape="rect" href="class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public section of the application class." alt="" coords="5,72,147,115"/>
+<area shape="poly" title=" " alt="" coords="193,56,141,74,139,69,191,51"/>
+<area shape="poly" title=" " alt="" coords="180,96,147,96,147,91,180,91"/>
+<area shape="poly" title=" " alt="" coords="191,136,139,118,141,113,193,131"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aa8fbef62ce94099a017349de2ce4ead7" name="aa8fbef62ce94099a017349de2ce4ead7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8fbef62ce94099a017349de2ce4ead7">&#9670;&#160;</a></span>Submit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Renderer::Submit </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_kargono_1_1_vertex_array.html">VertexArray</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vertexArray</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Submits a vertex array for rendering. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vertexArray</td><td>The vertex array to be rendered </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_renderer_8cpp_source.html#l00019">19</a> of file <a class="el" href="_renderer_8cpp_source.html">Renderer.cpp</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_cgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_cgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_cgraph" id="aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_cgraph">
+<area shape="rect" title="Submits a vertex array for rendering." alt="" coords="5,5,143,48"/>
+<area shape="rect" href="class_kargono_1_1_render_command.html#a1f16a342e1781bb7b99f428b53940be1" title="Draws geometry using the specified vertex array." alt="" coords="191,5,368,48"/>
+<area shape="poly" title=" " alt="" coords="143,24,176,24,176,29,143,29"/>
+<area shape="rect" href="class_kargono_1_1_renderer_a_p_i.html#a256e52ec91313dcbb12bf5afed291709" title="Draw the vertices of a vertex array with indices." alt="" coords="416,5,566,48"/>
+<area shape="poly" title=" " alt="" coords="368,24,402,24,402,29,368,29"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_icgraph.png" border="0" usemap="#aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_icgraph" alt=""/></div>
+<map name="aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_icgraph" id="aclass_kargono_1_1_renderer_aa8fbef62ce94099a017349de2ce4ead7_icgraph">
+<area shape="rect" title="Submits a vertex array for rendering." alt="" coords="226,5,363,48"/>
+<area shape="rect" href="class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
 </map>
 </div>
 

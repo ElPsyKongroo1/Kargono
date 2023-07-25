@@ -7,6 +7,8 @@ var searchData=
   ['onupdate_4',['OnUpdate',['../class_kargono_1_1_layer.html#a16af6f659453e4654050c98efe26cf62',1,'Kargono::Layer::OnUpdate()'],['../class_kargono_1_1_window.html#a62520eb89b08f4da5874efeba32f2f81',1,'Kargono::Window::OnUpdate()'],['../class_kargono_1_1_windows_window.html#a4ec37168499710223a68a2b6489299ae',1,'Kargono::WindowsWindow::OnUpdate()']]],
   ['openglcontext_5',['OpenGLContext',['../class_kargono_1_1_open_g_l_context.html#ae18b430c120a452f517a54b3f9703a8c',1,'Kargono::OpenGLContext']]],
   ['openglindexbuffer_6',['OpenGLIndexBuffer',['../class_kargono_1_1_open_g_l_index_buffer.html#aa59266ea97458fe51bc3ea80d6f192cf',1,'Kargono::OpenGLIndexBuffer']]],
-  ['openglvertexbuffer_7',['OpenGLVertexBuffer',['../class_kargono_1_1_open_g_l_vertex_buffer.html#a007c31e0198585f4d624825957d7ef3f',1,'Kargono::OpenGLVertexBuffer']]],
-  ['operator_3c_3c_8',['operator&lt;&lt;',['../namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4',1,'Kargono']]]
+  ['openglvertexarray_7',['OpenGLVertexArray',['../class_kargono_1_1_open_g_l_vertex_array.html#a801c52731b1291c8dc61daf978d9d092',1,'Kargono::OpenGLVertexArray']]],
+  ['openglvertexbuffer_8',['OpenGLVertexBuffer',['../class_kargono_1_1_open_g_l_vertex_buffer.html#a007c31e0198585f4d624825957d7ef3f',1,'Kargono::OpenGLVertexBuffer']]],
+  ['operator_3c_3c_9',['operator&lt;&lt;',['../namespace_kargono.html#a90ac168f28eac069a53cf408be9300f4',1,'Kargono']]],
+  ['orthographiccamera_10',['OrthographicCamera',['../class_kargono_1_1_orthographic_camera.html#a4367568fe0ff9f4b4770036ee9831d1e',1,'Kargono::OrthographicCamera']]]
 ];

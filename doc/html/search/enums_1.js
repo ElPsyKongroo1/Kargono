@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['rendererapi_0',['RendererAPI',['../namespace_kargono.html#a116fecc4e1baac554b58fd38f6159f16',1,'Kargono']]]
+  ['eventcategory_0',['EventCategory',['../namespace_kargono.html#a298cd03a46b41d882ccf39312a877dae',1,'Kargono']]],
+  ['eventtype_1',['EventType',['../namespace_kargono.html#a915b717e402771208083b14141930a27',1,'Kargono']]]
 ];

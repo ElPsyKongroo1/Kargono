@@ -1,0 +1,7 @@
+<map id="Kargono::RenderCommand::DrawIndexed" name="Kargono::RenderCommand::DrawIndexed">
+<area shape="rect" id="Node000001" title="Draws geometry using the specified vertex array." alt="" coords="411,5,588,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_renderer.html#aa8fbef62ce94099a017349de2ce4ead7" title="Submits a vertex array for rendering." alt="" coords="226,5,363,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="396,29,363,29,363,24,396,24"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
+</map>

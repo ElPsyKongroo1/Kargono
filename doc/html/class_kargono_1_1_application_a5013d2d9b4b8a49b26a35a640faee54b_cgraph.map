@@ -1,29 +1,21 @@
 <map id="Kargono::Application::Application" name="Kargono::Application::Application">
-<area shape="rect" id="Node000001" title="Public access specifier." alt="" coords="5,123,147,165"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window." alt="" coords="195,5,364,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,120,138,80,193,42,206,35,209,40,196,46,142,85,99,124"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_vertex_buffer.html#a9a6dc3b3daf7e44f044cc6fc28cf84e2" title="Factory method to create a vertex buffer." alt="" coords="205,56,354,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="142,120,197,101,199,106,144,125"/>
-<area shape="rect" id="Node000005" href="$class_kargono_1_1_index_buffer.html#a32fb9cc6c5b5d6766fa7a515cd530c30" title="Factory method to create an index buffer." alt="" coords="209,123,350,165"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="147,141,194,141,194,147,147,147"/>
-<area shape="rect" id="Node000006" href="$class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2" title="Event handler function." alt="" coords="209,213,350,256"/>
-<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="127,164,217,204,215,209,125,168"/>
-<area shape="rect" id="Node000011" href="$class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449" title="Function to add an overlay to the layer stack." alt="" coords="209,316,350,359"/>
-<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="98,164,197,266,241,304,237,308,193,270,95,168"/>
-<area shape="rect" id="Node000004" href="$class_kargono_1_1_renderer.html#a08a6a50924fa8ffcec61539daa558c94" title="Get the current renderer API." alt="" coords="430,68,567,111"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="354,79,415,82,415,87,354,84"/>
-<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="350,124,414,107,416,113,351,129"/>
-<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="240,213,239,203,245,194,259,189,279,187,302,189,315,196,313,201,301,194,279,192,260,194,249,199,244,205,246,212"/>
-<area shape="rect" id="Node000007" href="$class_kargono_1_1_layer_stack.html#ab791703b90827da4d4a42e33b50adeea" title="Returns an iterator pointing to the beginning of the layer stack." alt="" coords="427,140,570,183"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="344,210,417,185,419,191,346,215"/>
-<area shape="rect" id="Node000008" href="$class_kargono_1_1_event_dispatcher.html#a072a578e4607d69c0c4c0f92dacf2731" title=" " alt="" coords="413,207,584,249"/>
-<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="350,230,397,228,397,234,350,235"/>
-<area shape="rect" id="Node000010" href="$class_kargono_1_1_layer_stack.html#ab17d815cd920a20c9f98d6ee0149d09e" title="Returns an iterator pointing to the end of the layer stack." alt="" coords="412,273,584,300"/>
-<area shape="poly" id="edge10_Node000006_Node000010" title=" " alt="" coords="351,249,425,267,424,272,350,254"/>
-<area shape="rect" id="Node000009" href="$class_kargono_1_1_event.html#a6014e784c8f866e782b978283cde1500" title=" " alt="" coords="632,215,831,241"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="584,225,617,225,617,231,584,231"/>
-<area shape="rect" id="Node000012" href="$class_kargono_1_1_layer.html#accb85f4d10097eb0c978b8095107d76f" title="Called when the layer is attached to the application." alt="" coords="412,324,584,351"/>
-<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="350,335,397,335,397,340,350,340"/>
-<area shape="rect" id="Node000013" href="$class_kargono_1_1_layer_stack.html#a1cb87e1d7e0ce852f01f85725fc8e5a9" title="Pushes an overlay onto the layer stack." alt="" coords="427,375,570,417"/>
-<area shape="poly" id="edge14_Node000011_Node000013" title=" " alt="" coords="351,354,413,370,411,376,350,359"/>
+<area shape="rect" id="Node000001" title="Public section of the application class." alt="" coords="5,156,147,199"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_vertex_array.html#ab4c4362831bd6fcc57e611ef6a303cb3" title="Creates a new VertexArray object." alt="" coords="206,5,353,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,154,135,106,163,81,193,58,201,53,204,57,196,62,166,85,139,110,96,157"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_window.html#acb594ae69f0500400f84c4b06dfcb80a" title="Static function for creating a window." alt="" coords="195,72,364,99"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="110,153,149,130,194,108,211,101,213,106,196,113,152,135,113,158"/>
+<area shape="rect" id="Node000006" href="$class_kargono_1_1_vertex_buffer.html#a9a6dc3b3daf7e44f044cc6fc28cf84e2" title="Creates a new vertex buffer." alt="" coords="205,123,354,165"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="147,163,190,156,191,161,147,168"/>
+<area shape="rect" id="Node000007" href="$class_kargono_1_1_index_buffer.html#a32fb9cc6c5b5d6766fa7a515cd530c30" title="Creates a new index buffer." alt="" coords="209,189,350,232"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="147,186,194,194,194,199,147,192"/>
+<area shape="rect" id="Node000008" href="$class_kargono_1_1_application.html#a0f497f8c27bef5277d194eefc63481e2" title="Function to handle events in the application." alt="" coords="209,256,350,299"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="114,197,196,242,208,247,206,252,193,246,111,201"/>
+<area shape="rect" id="Node000009" href="$class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449" title="Function to push an overlay onto the layer stack." alt="" coords="209,323,350,365"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="94,197,136,252,164,282,196,309,203,313,200,317,193,313,161,286,132,256,89,201"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_renderer.html#a1e5099a2139b1557ef14b5a51cdca537" title="Retrieves the current API used for rendering." alt="" coords="412,123,549,165"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="342,46,365,58,407,84,444,111,441,115,404,88,363,62,340,51"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_renderer_a_p_i.html#afe9a26ebf7eab09c9b716d6d33924827" title="Get the current rendering API." alt="" coords="597,123,748,165"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="550,141,582,141,582,147,550,147"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="354,141,397,141,397,147,354,147"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="345,186,399,168,401,173,347,191"/>
 </map>

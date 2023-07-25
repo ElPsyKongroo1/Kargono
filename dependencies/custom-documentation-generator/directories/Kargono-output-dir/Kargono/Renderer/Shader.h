@@ -1,27 +1,27 @@
 #pragma once
+#include <string>
+#include <glm/glm.hpp>
 
 namespace Kargono
 {
+/// @class Shader
 	class Shader
 	{
-/// @brief Public member functions
-/// @brief Public member functions
 	public:
-/// @brief Constructor for Shader class
-/// @param vertexSrc Source code of the vertex shader
-/// @param fragmentSrc Source code of the fragment shader
+/// @brief Constructor for the Shader class
 		Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-/// @brief Destructor for Shader class
+/// @brief Destructor for the Shader class
 		~Shader();
 
 	public:
-/// @brief Bind the shader
+/// @brief Binds the shader for rendering
 		void Bind() const;
-/// @brief Unbind the shader
+/// @brief Unbinds the shader
 		void Unbind() const;
-/// @brief Private member variables
+
+/// @brief Uploads a 4x4 matrix uniform to the shader
+		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 	private:
-/// @brief ID of the shader renderer
 		uint32_t m_RendererID;
 
 	};

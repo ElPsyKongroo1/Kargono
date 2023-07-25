@@ -3,5 +3,6 @@
 
 namespace Kargono
 {
+/// @brief The currently active graphics API in the renderer
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 }
