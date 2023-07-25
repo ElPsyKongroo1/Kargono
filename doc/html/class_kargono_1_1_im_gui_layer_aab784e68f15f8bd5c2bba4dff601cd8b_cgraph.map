@@ -1,12 +1,12 @@
 <map id="Kargono::ImGuiLayer::End" name="Kargono::ImGuiLayer::End">
 <area shape="rect" id="Node000001" title="Function that ends ImGui rendering." alt="" coords="5,107,180,133"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Static function to get the instance of the Application class." alt="" coords="237,5,408,32"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Function to get the instance of the application." alt="" coords="237,5,408,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,104,163,73,227,42,246,34,248,39,229,46,166,78,116,108"/>
 <area shape="rect" id="Node000003" href="$class_kargono_1_1_window.html#aa8d7908c70995e8fb6fd3a4691708079" title="Pure virtual function for getting the height of the window." alt="" coords="228,56,417,83"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="156,103,244,84,245,89,157,109"/>
 <area shape="rect" id="Node000004" href="$class_kargono_1_1_window.html#a3bdcf0ccae837c8c29f9dbf85c16807c" title="Pure virtual function for getting the width of the window." alt="" coords="229,107,416,133"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,117,214,117,214,123,180,123"/>
-<area shape="rect" id="Node000005" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application window." alt="" coords="252,157,393,200"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application&#39;s window." alt="" coords="252,157,393,200"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="148,131,238,154,237,160,147,136"/>
 <area shape="rect" id="Node000006" href="$imgui__impl__opengl3_8cpp.html#ad215190229f4f300593911aa7b3821de" title=" " alt="" coords="228,224,417,267"/>
 <area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="112,132,163,169,229,210,241,215,239,220,226,214,160,174,109,136"/>

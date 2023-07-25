@@ -1,9 +1,9 @@
 <map id="Kargono::WindowsInput::IsKeyPressedImpl" name="Kargono::WindowsInput::IsKeyPressedImpl">
 <area shape="rect" id="Node000001" title="Access specifier for the following member functions and variables." alt="" coords="5,56,164,99"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Static function to get the instance of the Application class." alt="" coords="220,5,391,32"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Function to get the instance of the application." alt="" coords="220,5,391,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,54,237,34,239,39,165,59"/>
 <area shape="rect" id="Node000003" href="$class_kargono_1_1_window.html#a8a121261ab4a48b50ac94931dea2cf7d" title="Pure virtual function for getting the native window." alt="" coords="212,56,399,99"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="164,75,197,75,197,80,164,80"/>
-<area shape="rect" id="Node000004" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application window." alt="" coords="235,123,376,165"/>
+<area shape="rect" id="Node000004" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application&#39;s window." alt="" coords="235,123,376,165"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="158,97,222,116,220,121,156,102"/>
 </map>

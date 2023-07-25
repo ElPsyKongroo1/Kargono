@@ -1,13 +1,24 @@
-/// @source Includes the precompiled header file for the Kargono engine.
 #include "Kargono/kgpch.h"
-/// @source Includes the Renderer header file for the Kargono engine.
 #include "Kargono/Renderer/Renderer.h"
+#include "Renderer.h"
+
+#include "RenderCommand.h"
 
 namespace Kargono
 {
-/// @var Renderer::s_RendererAPI
-/// @brief Defines the static variable s_RendererAPI of type RendererAPI. It is set to OpenGL.
-/// @details Used to determine the current rendering API used in the Renderer class.
-	RendererAPI Renderer::s_RendererAPI = RendererAPI::OpenGL;
-
+/// @brief Begins a new rendering scene
+	void Renderer::BeginScene()
+	{
+	}
+/// @brief Ends the current rendering scene
+	void Kargono::Renderer::EndScene()
+	{
+	}
+/// @brief Submits a vertex array for rendering
+/// @param vertexArray The vertex array to be rendered
+	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray)
+	{
+		vertexArray->Bind();
+		RenderCommand::DrawIndexed(vertexArray);
+	}
 }

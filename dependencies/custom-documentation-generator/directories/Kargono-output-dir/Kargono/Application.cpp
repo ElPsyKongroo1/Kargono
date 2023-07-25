@@ -3,112 +3,155 @@
 
 #include "Log.h"
 
-#include <glad/glad.h>
-
 #include "Input.h"
+#include "Renderer/Renderer.h"
+#include "Kargono/Renderer/Renderer.h"
+#include "Renderer/RenderCommand.h"
+
 
 
 namespace Kargono
 {
-/// @brief Macro to bind an event function to the Application class.
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-/// @brief Static instance of the Application class.
 	Application* Application::s_Instance = nullptr;
 
 /// @brief Constructor for the Application class.
 	Application::Application()
+		:m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 	{
-/// @brief Asserts that the application instance does not already exist.
 		KG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-/// @brief Creates a unique pointer to a Window object.
 		m_Window = std::unique_ptr<Window>(Window::Create());
-/// @brief Sets the callback function for the window events.
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-/// @brief Creates a new ImGuiLayer object.
 		m_ImGuiLayer = new ImGuiLayer();
-/// @brief Adds the ImGuiLayer as an overlay to the application layers stack.
 		PushOverlay(m_ImGuiLayer);
 
-/// @brief Generates a vertex array object.
-		glGenVertexArrays(1, &m_VertexArray);
-/// @brief Binds the vertex array object.
-/// @brief Binds the vertex array object for rendering.
-		glBindVertexArray(m_VertexArray);
+		m_VertexArray.reset(VertexArray::Create());
 
+		float vertices[3 * 7] =
+		{
+			//  X      Y      Z
+				-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+				0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+				0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+		};
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		float vertices[3 * 3] =
+		BufferLayout layout = {
+			{ShaderDataType::Float3,  "a_Position"},
+			{ShaderDataType::Float4,  "a_Color"}
+		};
+
+		vertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
+
+		unsigned int indices[3] = { 0, 1, 2 };
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->SetIndexBuffer(indexBuffer);
+
+		m_SquareVA.reset(VertexArray::Create());
+
+		float squareVertices[3 * 4] =
 		{
 			//  X      Y      Z
 				-0.5f, -0.5f, 0.0f,
 				0.5f, -0.5f, 0.0f,
-				0.0f, 0.5f, 0.0f
+				0.5f, 0.5f, 0.0f,
+				-0.5, 0.5f, 0.0f
 		};
-/// @brief Resets the vertex buffer with the vertex positions.
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		BufferLayout layout = {
-			{ShaderDataType::Float3,  "a_Position"},
-			
-		}
-		m_VertexBuffer->SetLayout(layout);
+		std::shared_ptr<VertexBuffer> squareVB(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVB->SetLayout({
+			{ShaderDataType::Float3,  "a_Position"}
+			});
+		m_SquareVA->AddVertexBuffer(squareVB);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		std::shared_ptr<IndexBuffer> squareIB (IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		m_SquareVA->SetIndexBuffer(squareIB);
 
-
-/// @brief Defines an array of indices for the mesh.
-		unsigned int indices[3] = { 0, 1, 2 };
-/// @brief Resets the index buffer with the mesh indices.
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-
-/// @brief Defines the source code of the vertex shader.
 		std::string vertexSrc = R"(
 			#version 450 core
 		
 			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
+
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
+			out vec4 v_Color;
 	
 			void main ()
 			{
+				v_Color = a_Color;
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0f);
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
 			}
 		)";
 
-/// @brief Defines the source code of the fragment shader.
 		std::string fragmentSrc = R"(
 			#version 450 core
 		
 			layout(location = 0) out vec4 color;
 			in vec3 v_Position;
+			in vec4 v_Color;
 	
 			void main ()
 			{
 				color = vec4(v_Position * 0.5 + 0.5, 1.0f);
+				color = v_Color;
 			}
 		)";
 
 
-/// @brief Resets the shader with the vertex and fragment shaders.
 		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+		std::string blueShaderVertexSrc = R"(
+			#version 450 core
+		
+			layout(location = 0) in vec3 a_Position;
+			out vec3 v_Position;
+	
+			uniform mat4 u_ViewProjection;
+			void main ()
+			{
+				v_Position = a_Position;
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
+			}
+		)";
+
+		std::string blueShaderFragmentSrc = R"(
+			#version 450 core
+		
+			layout(location = 0) out vec4 color;
+			in vec3 v_Position;
+			in vec4 v_Color;
+	
+			void main ()
+			{
+				color = vec4(0.2f, 0.3f, 0.5f, 1.0f);
+			}
+		)";
+
+
+		m_BlueShader.reset(new Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
 	}
-/// @brief Destructor for the Application class.
 	Application::~Application()
 	{
 	
 	}
 
-/// @brief Pushes a layer to the layers stack and attaches it.
+/// @brief Pushes a layer onto the layer stack.
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-/// @brief Pushes an overlay layer to the layers stack and attaches it.
 	void Application::PushOverlay(Layer* layer)
 	{
 		m_LayerStack.PushOverlay(layer);
@@ -116,21 +159,15 @@ namespace Kargono
 	}
 
 
-/// @brief Handles an event by dispatching it to the relevant functions.
 	void Application::OnEvent(Event& e) 
 	{
 
-/// @brief Creates an event dispatcher for the given event.
 		EventDispatcher dispatcher(e);
-/// @brief Dispatches the WindowCloseEvent to the OnWindowClose function.
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-/// @brief Iterates through the layers stack in reverse order.
 		for (auto location = m_LayerStack.end(); location != m_LayerStack.begin();)
 		{
-/// @brief Calls the OnEvent function of each layer.
 			(*--location)->OnEvent(e);
-/// @brief Checks if the event has been handled and breaks the loop if true.
 			if (e.Handled)
 				break;
 		}
@@ -143,44 +180,39 @@ namespace Kargono
 	{
 		while (m_Running)
 		{
-/// @brief Clears the color buffer with a specified color.
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-/// @brief Clears the color buffer.
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
+			RenderCommand::Clear();
+			Renderer::BeginScene();
 
-/// @brief Binds the shader for rendering.
+			m_BlueShader->Bind();
+			m_BlueShader->UploadUniformMat4("u_ViewProjection", m_Camera.GetViewProjectionMatrix());
+			Renderer::Submit(m_SquareVA);
+
 			m_Shader->Bind();
-			glBindVertexArray(m_VertexArray);
-/// @brief Draws the elements of the mesh.
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Shader->UploadUniformMat4("u_ViewProjection", m_Camera.GetViewProjectionMatrix());
+			Renderer::Submit(m_VertexArray);
 
-/// @brief Iterates through the layers stack.
+			Renderer::EndScene();
+
+
 			for (Layer* layer : m_LayerStack)
 			{
-/// @brief Calls the OnUpdate function of each layer.
 				layer->OnUpdate();
 			}
-/// @brief Begins the ImGui rendering.
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
 			{
-/// @brief Calls the OnImGuiRender function of each layer.
 				layer->OnImGuiRender();
 			}
-/// @brief Ends the ImGui rendering.
 			m_ImGuiLayer->End();
 
-/// @brief Updates the window.
 			m_Window->OnUpdate();
 		}
 	}
 
-/// @brief Handles the window close event.
 	bool Application::OnWindowClose(WindowCloseEvent& e) 
 	{
-/// @brief Sets the running state of the application to false.
 		m_Running = false;
-/// @brief Returns true to indicate that the event was handled.
 		return true;
 	}
 

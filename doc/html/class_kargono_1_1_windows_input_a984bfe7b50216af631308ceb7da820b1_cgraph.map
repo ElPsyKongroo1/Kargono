@@ -2,10 +2,10 @@
 <area shape="rect" id="Node000001" title="Implementation of the GetMouseYImpl function." alt="" coords="5,56,164,99"/>
 <area shape="rect" id="Node000002" href="$class_kargono_1_1_windows_input.html#af132cce8b0dae11d7a6c7062e6d82b88" title="Implementation of the GetMousePositionImpl function." alt="" coords="212,56,372,99"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,75,197,75,197,80,164,80"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Static function to get the instance of the Application class." alt="" coords="429,5,599,32"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Function to get the instance of the application." alt="" coords="429,5,599,32"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="372,54,446,34,447,39,373,59"/>
 <area shape="rect" id="Node000004" href="$class_kargono_1_1_window.html#a8a121261ab4a48b50ac94931dea2cf7d" title="Pure virtual function for getting the native window." alt="" coords="420,56,607,99"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="372,75,405,75,405,80,372,80"/>
-<area shape="rect" id="Node000005" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application window." alt="" coords="443,123,584,165"/>
+<area shape="rect" id="Node000005" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application&#39;s window." alt="" coords="443,123,584,165"/>
 <area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="366,97,430,116,428,121,364,102"/>
 </map>

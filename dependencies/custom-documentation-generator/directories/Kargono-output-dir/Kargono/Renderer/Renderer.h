@@ -1,21 +1,23 @@
 #pragma once
+#include "RendererAPI.h"
 
 namespace Kargono
 {
-/// @brief Enumeration defining different renderer APIs supported by the game engine
-/// @brief Class representing the renderer in the game engine
-	enum class RendererAPI
-	{
-		None = 0, OpenGL = 1
-	};
 	
+/// @class Renderer
+/// @brief This class is responsible for rendering functionality in the game engine
 	class Renderer
 	{
 	public:
-/// @brief Get the current renderer API
-/// @return The current renderer API of the game engine
-		inline static RendererAPI GetAPI() { return s_RendererAPI; }
-	private:
-		static RendererAPI s_RendererAPI;
+/// @brief Begins a new render scene
+		static void BeginScene();
+/// @brief Ends the current render scene
+		static void EndScene();
+
+/// @brief Submits a vertex array for rendering
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+/// @brief Retrieves the current API used for rendering
+/// @return The current renderer API
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	};
 }

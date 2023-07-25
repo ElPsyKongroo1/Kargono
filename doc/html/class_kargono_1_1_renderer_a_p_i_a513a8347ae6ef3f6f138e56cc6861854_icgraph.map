@@ -1,0 +1,7 @@
+<map id="Kargono::RendererAPI::SetClearColor" name="Kargono::RendererAPI::SetClearColor">
+<area shape="rect" id="Node000001" title="Set the clear color for the rendering context." alt="" coords="451,5,601,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_render_command.html#ab469fe8d868d7dc0cd077a5a624a6b26" title="Sets the clear color for the renderer." alt="" coords="226,5,403,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="436,29,403,29,403,24,436,24"/>
+<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,29,178,29,178,24,211,24"/>
+</map>

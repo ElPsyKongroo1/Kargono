@@ -1,5 +1,5 @@
 <map id="Kargono::Application::GetWindow" name="Kargono::Application::GetWindow">
-<area shape="rect" id="Node000001" title="Function to get the application window." alt="" coords="462,123,603,165"/>
+<area shape="rect" id="Node000001" title="Function to get the application&#39;s window." alt="" coords="462,123,603,165"/>
 <area shape="rect" id="Node000002" href="$class_kargono_1_1_im_gui_layer.html#aab784e68f15f8bd5c2bba4dff601cd8b" title="Function that ends ImGui rendering." alt="" coords="233,5,407,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="500,114,460,78,413,46,385,35,388,30,415,42,463,74,503,110"/>
 <area shape="rect" id="Node000004" href="$class_kargono_1_1_windows_input.html#af132cce8b0dae11d7a6c7062e6d82b88" title="Implementation of the GetMousePositionImpl function." alt="" coords="240,56,400,99"/>

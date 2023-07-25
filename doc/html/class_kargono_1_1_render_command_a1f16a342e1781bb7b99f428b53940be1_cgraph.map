@@ -1,0 +1,5 @@
+<map id="Kargono::RenderCommand::DrawIndexed" name="Kargono::RenderCommand::DrawIndexed">
+<area shape="rect" id="Node000001" title="Draws geometry using the specified vertex array." alt="" coords="5,5,183,48"/>
+<area shape="rect" id="Node000002" href="$class_kargono_1_1_renderer_a_p_i.html#a256e52ec91313dcbb12bf5afed291709" title="Draw the vertices of a vertex array with indices." alt="" coords="231,5,381,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,24,216,24,216,29,183,29"/>
+</map>
