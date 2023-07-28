@@ -1,6 +1,8 @@
 #pragma once
 #include "Kargono/kgpch.h"
 
+#include <memory>
+
 #ifdef KG_PLATFORM_WINDOWS
 	#if KG_DYNAMIC_LINK
 		#ifdef KG_BUILD_DLL
@@ -12,7 +14,7 @@
 		#define KG_API
 	#endif
 #else
-	#error Kargono currently only supports Windows
+	#error Kargono currenatly only supports Windows
 #endif
 
 #ifdef KG_DEBUG
@@ -31,3 +33,14 @@
 #define BIT(x) (1 << x)
 
 #define KG_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Kargono
+{
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+
+
+}
