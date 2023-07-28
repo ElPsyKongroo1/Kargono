@@ -16,6 +16,7 @@ IncludeDir["GLAD"] = "Kargono/dependencies/GLAD/include"
 IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
 IncludeDir["imGui"] = "Kargono/dependencies/imgui"
 IncludeDir["glm"] = "Kargono/dependencies/glm"
+IncludeDir["stb_image"] = "Kargono/dependencies/stb_image"
 
 include "Kargono/dependencies/GLFW"
 include "Kargono/dependencies/GLAD"
@@ -40,8 +41,8 @@ project "Kargono"
 		"Kargono/Kargono.h",
 		"Kargono/Kargono/**.h",
 		"Kargono/Kargono/**.cpp",
-		"Kargono/dependencies/implementation/**.h",
-		"Kargono/dependencies/implementation/**.cpp",
+        "Kargono/dependencies/stb_image/**.cpp",
+        "Kargono/dependencies/stb_image/**.h",
         "Kargono/Platform/**.h",
         "Kargono/Platform/**.cpp"
     }
@@ -53,8 +54,7 @@ project "Kargono"
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.glm}",
-
-
+        "%{IncludeDir.stb_image}",
         "Kargono"
     }
 
