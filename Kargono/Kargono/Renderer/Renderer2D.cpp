@@ -19,6 +19,8 @@ namespace Kargono
 
 	void Renderer2D::Init()
 	{
+		KG_PROFILE_FUNCTION();
+
 		s_Data = new Renderer2DStorage();
 		s_Data->QuadVertexArray = (VertexArray::Create());
 
@@ -52,15 +54,21 @@ namespace Kargono
 	}
 	void Renderer2D::Shutdown()
 	{
+		KG_PROFILE_FUNCTION();
+
 		delete s_Data;
 	}
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		KG_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->Bind();
 		s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 	void Renderer2D::EndScene()
 	{
+		KG_PROFILE_FUNCTION();
+
 	}
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
@@ -68,6 +76,8 @@ namespace Kargono
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		KG_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->Bind();
 		s_Data->TextureShader->SetFloat4("u_Color", color);
 		// Bind white texture
@@ -85,6 +95,8 @@ namespace Kargono
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
 	{
+		KG_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->Bind();
 		texture->Bind();
 		s_Data->TextureShader->SetFloat4("u_Color", {1.0f, 1.0f, 1.0f, 1.0f});

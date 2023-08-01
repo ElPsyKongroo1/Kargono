@@ -13,6 +13,7 @@ namespace Kargono
 {
 	static GLenum ShaderTypeFromString(const std::string& type)
 	{
+
 		if (type == "vertex") { return GL_VERTEX_SHADER; }
 		if (type == "fragment" || type == "pixel") { return GL_FRAGMENT_SHADER; }
 
@@ -22,6 +23,8 @@ namespace Kargono
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
+		KG_PROFILE_FUNCTION();
+
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -37,6 +40,8 @@ namespace Kargono
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name{name}
 	{
+		KG_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -44,30 +49,44 @@ namespace Kargono
 	}
 	OpenGLShader::~OpenGLShader()
 	{
+		KG_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_RendererID);
 	}
 	void OpenGLShader::Bind() const
 	{
+		KG_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererID);
 	}
 	void OpenGLShader::Unbind() const
 	{
+		KG_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
+		KG_PROFILE_FUNCTION();
+
 		UploadUniformMat4(name, value);
 	}
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
+		KG_PROFILE_FUNCTION();
+
 		UploadUniformFloat3(name, value);
 	}
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
+		KG_PROFILE_FUNCTION();
+
 		UploadUniformFloat4(name, value);
 	}
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
+		KG_PROFILE_FUNCTION();
+
 		UploadUniformInt(name, value);
 	}
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)
@@ -109,6 +128,7 @@ namespace Kargono
 	}
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
+		KG_PROFILE_FUNCTION();
 
 		std::ifstream t(filepath);
 		std::stringstream buffer;
@@ -117,6 +137,8 @@ namespace Kargono
 	}
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		KG_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -142,6 +164,8 @@ namespace Kargono
 	}
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		KG_PROFILE_FUNCTION();
+
 		GLuint program = glCreateProgram();
 		KG_CORE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now");
 		std::array<GLenum, 2> glShaderIDs;

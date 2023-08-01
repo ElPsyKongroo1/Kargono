@@ -6,8 +6,7 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
 #include "Platform/OpenGL/OpenGLContext.h"
-
-#include "glad/glad.h"
+#include "Kargono/Renderer/Renderer.h"
 
 
 namespace Kargono 
@@ -32,6 +31,7 @@ namespace Kargono
 	WindowsWindow::~WindowsWindow()
 	{
 		KG_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
@@ -50,14 +50,20 @@ namespace Kargono
 
 		if (s_GLFWWindowCount == 0)
 		{
+			KG_PROFILE_SCOPE("glfwInit");
 			KG_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			KG_CORE_ASSERT(success, "Could not initialize GLFW");
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
-
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		++s_GLFWWindowCount;
+		{
+			KG_PROFILE_SCOPE("glfwCreateWindow");
+			#if defined(KG_DEBUG)
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL) { glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); }
+			#endif
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+			++s_GLFWWindowCount;
+		}
 
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
