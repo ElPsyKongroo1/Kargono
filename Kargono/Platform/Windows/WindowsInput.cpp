@@ -6,8 +6,6 @@
 
 namespace Kargono
 {
-	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
-
 	bool Kargono::WindowsInput::IsKeyPressedImpl(KeyCode key)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -30,13 +28,13 @@ namespace Kargono
 
 		return { (float)xpos, (float)ypos };
 	}
-	bool WindowsInput::GetMouseXImpl()
+	float WindowsInput::GetMouseXImpl()
 	{
 		auto [x, y] = GetMousePositionImpl();
 		return x;
 	}
 
-	bool WindowsInput::GetMouseYImpl()
+	float WindowsInput::GetMouseYImpl()
 	{
 		auto [x, y] = GetMousePositionImpl();
 		return y;

@@ -161,7 +161,7 @@
     <ClInclude Include="Kargono\Core\MouseCodes.h" />
     <ClInclude Include="Kargono\Core\Timestep.h" />
     <ClInclude Include="Kargono\Core\Window.h" />
-    <ClInclude Include="Kargono\Core\input.h" />
+    <ClInclude Include="Kargono\Core\Input.h" />
     <ClInclude Include="Kargono\Debug\Instrumentor.h" />
     <ClInclude Include="Kargono\Events\ApplicationEvent.h" />
     <ClInclude Include="Kargono\Events\Event.h" />
@@ -192,9 +192,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp" />
+    <ClCompile Include="Kargono\Core\Input.cpp" />
     <ClCompile Include="Kargono\Core\Layer.cpp" />
     <ClCompile Include="Kargono\Core\LayerStack.cpp" />
     <ClCompile Include="Kargono\Core\Log.cpp" />
+    <ClCompile Include="Kargono\Core\Window.cpp" />
     <ClCompile Include="Kargono\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Kargono\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Kargono\Renderer\Buffer.cpp" />

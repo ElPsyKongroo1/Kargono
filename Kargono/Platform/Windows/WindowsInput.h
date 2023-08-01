@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/input.h"
+#include "Kargono/Core/Input.h"
 
 namespace Kargono
 {
@@ -10,8 +10,8 @@ namespace Kargono
 
 		virtual bool IsMouseButtonPressedImpl(MouseCode button) override;
 		virtual std::pair<float, float> GetMousePositionImpl() override;
-		virtual bool GetMouseXImpl() override;
-		virtual bool GetMouseYImpl() override;
+		virtual float GetMouseXImpl() override;
+		virtual float GetMouseYImpl() override;
 
 
 	};

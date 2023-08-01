@@ -1,7 +1,7 @@
 #include "Kargono/kgpch.h"
 #include "OrthographicCameraController.h"
 
-#include "Kargono/Core/input.h"
+#include "Kargono/Core/Input.h"
 #include "Kargono/Core/KeyCodes.h"
 
 namespace Kargono

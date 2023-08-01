@@ -1,7 +1,9 @@
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\Application.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Application.obj
+F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\Input.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Input.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\Layer.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Layer.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\LayerStack.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\LayerStack.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\Log.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Log.obj
+F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Core\Window.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Window.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\ImGui\ImGuiBuild.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\ImGuiBuild.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\ImGui\ImGuiLayer.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\ImGuiLayer.obj
 F:\Charles_Files\Personal_Projects\Personal Games\Kargono\Kargono\Kargono\Renderer\Buffer.cpp;F:\Charles_Files\Personal_Projects\Personal Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Buffer.obj

@@ -67,7 +67,7 @@
     <ClInclude Include="Kargono\Core\Window.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Core\input.h">
+    <ClInclude Include="Kargono\Core\Input.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Debug\Instrumentor.h">
@@ -234,5 +234,7 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Core\Input.cpp" />
+    <ClCompile Include="Kargono\Core\Window.cpp" />
   </ItemGroup>
 </Project>

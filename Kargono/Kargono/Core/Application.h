@@ -12,7 +12,7 @@
 
 #include "Kargono/Core/Timestep.h"
 
-
+int main(int argc, char** argv);
 
 namespace Kargono
 {
@@ -21,7 +21,7 @@ namespace Kargono
 	public:
 		Application();
 		virtual ~Application();
-		void Run();
+		
 
 		void OnEvent(Event& e);
 
@@ -31,6 +31,7 @@ namespace Kargono
 		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
 	private:
+		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
@@ -43,6 +44,7 @@ namespace Kargono
 
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
 	// To be defined in client

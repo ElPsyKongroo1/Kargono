@@ -9,7 +9,7 @@
 #include "Kargono/Core/Log.h"
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Core/input.h"
+#include "Kargono/Core/Input.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Renderer/OrthographicCameraController.h"
