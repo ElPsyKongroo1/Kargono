@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Events/Event.h"
-#include "Kargono/Core/input.h"
+#include "Kargono/Core/Input.h"
 
 namespace Kargono
 {
