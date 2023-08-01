@@ -1,5 +1,5 @@
 #include "Kargono/kgpch.h"
-#include "OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include <glad/glad.h>
 
@@ -9,17 +9,17 @@ namespace Kargono
 	{
 		switch (type)
 		{
-			case Kargono::ShaderDataType::Float:	return GL_FLOAT;
-			case Kargono::ShaderDataType::Float2:	return GL_FLOAT;
-			case Kargono::ShaderDataType::Float3:	return GL_FLOAT;
-			case Kargono::ShaderDataType::Float4:	return GL_FLOAT;
-			case Kargono::ShaderDataType::Mat3:		return GL_FLOAT;
-			case Kargono::ShaderDataType::Mat4:		return GL_FLOAT;
-			case Kargono::ShaderDataType::Int:		return GL_INT;
-			case Kargono::ShaderDataType::Int2:		return GL_INT;
-			case Kargono::ShaderDataType::Int3:		return GL_INT;
-			case Kargono::ShaderDataType::Int4:		return GL_INT;
-			case Kargono::ShaderDataType::Bool:		return GL_BOOL;
+			case ShaderDataType::Float:	return GL_FLOAT;
+			case ShaderDataType::Float2:	return GL_FLOAT;
+			case ShaderDataType::Float3:	return GL_FLOAT;
+			case ShaderDataType::Float4:	return GL_FLOAT;
+			case ShaderDataType::Mat3:		return GL_FLOAT;
+			case ShaderDataType::Mat4:		return GL_FLOAT;
+			case ShaderDataType::Int:		return GL_INT;
+			case ShaderDataType::Int2:		return GL_INT;
+			case ShaderDataType::Int3:		return GL_INT;
+			case ShaderDataType::Int4:		return GL_INT;
+			case ShaderDataType::Bool:		return GL_BOOL;
 			}
 			KG_CORE_ASSERT(false, "Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
 			return -1;
@@ -51,14 +51,14 @@ namespace Kargono
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex,
 				static_cast<GLint>(element.GetComponentCount()),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				static_cast<GLint>(layout.GetStride()),
-				(const void*)element.Offset);
-			index++;
+				(const void*)(intptr_t)element.Offset); //FIXME
+			m_VertexBufferIndex++;
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

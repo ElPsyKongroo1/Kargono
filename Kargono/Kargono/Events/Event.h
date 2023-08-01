@@ -1,5 +1,8 @@
 #pragma once
-#include <Kargono/Core.h>
+#include <Kargono/Core/Core.h>
+#include <string>
+#include <functional>
+
 
 namespace Kargono 
 {
@@ -23,13 +26,13 @@ namespace Kargono
 
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type;} \
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 							    virtual EventType GetEventType() const override { return GetStaticType();}\
 								virtual const char* GetName() const override {return #type;}
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category;}
 
-	class KG_API Event 
+	class Event 
 	{
 	public:
 		

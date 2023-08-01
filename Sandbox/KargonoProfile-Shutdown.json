@@ -1,0 +1,1 @@
+{"otherData": {},"traceEvents":[{"cat":"function","dur":28685,"name":"void __cdecl Kargono::WindowsWindow::Shutdown(void)","ph":"X","pid":0,"tid":1544906780,"ts":125379746510},{"cat":"function","dur":28785,"name":"__cdecl Kargono::WindowsWindow::~WindowsWindow(void)","ph":"X","pid":0,"tid":1544906780,"ts":125379746510}]}

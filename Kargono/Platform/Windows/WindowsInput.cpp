@@ -1,12 +1,12 @@
 #include "Kargono/kgpch.h"
-#include "WindowsInput.h"
+#include "Platform/Windows/WindowsInput.h"
 
-#include "Kargono/Application.h"
+#include "Kargono/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Kargono
 {
-	Input* Input::s_Instance = new WindowsInput();
+	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
 	bool Kargono::WindowsInput::IsKeyPressedImpl(int keycode)
 	{

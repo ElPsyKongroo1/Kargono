@@ -1,5 +1,5 @@
 workspace "Kargono"
-    startproject "Sandbox2D"
+    startproject "Sandbox"
     architecture "x64"
     configurations
     {
@@ -7,6 +7,11 @@ workspace "Kargono"
         "Release",
         "Dist"
     }
+
+    flags
+	{
+		"MultiProcessorCompile"
+	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -76,7 +81,6 @@ project "Kargono"
 
         defines 
         {
-            "KG_PLATFORM_WINDOWS",
             "KG_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
@@ -88,7 +92,7 @@ project "Kargono"
         -- {
         --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
         --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox2D\""
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox\""
         -- }
     filter "configurations:Debug"
         defines "KG_DEBUG"
@@ -104,8 +108,8 @@ project "Kargono"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
-project "Sandbox2D"
-    location "Sandbox2D"
+project "Sandbox"
+    location "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
@@ -117,8 +121,8 @@ project "Sandbox2D"
 
     files 
     {
-        "Sandbox2D/src/**.h",
-        "Sandbox2D/src/**.cpp"
+        "Sandbox/src/**.h",
+        "Sandbox/src/**.cpp"
     }
 
     includedirs 
@@ -142,11 +146,6 @@ project "Sandbox2D"
     filter "system:windows"
         
         systemversion "latest"
-
-        defines 
-        {
-            "KG_PLATFORM_WINDOWS"
-        }
 
     filter "configurations:Debug"
         defines "KG_DEBUG"

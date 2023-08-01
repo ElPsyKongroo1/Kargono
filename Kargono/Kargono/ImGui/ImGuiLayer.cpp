@@ -1,12 +1,12 @@
 #include "Kargono/kgpch.h"
-#include "ImGuiLayer.h"
+#include "Kargono/ImGui/ImGuiLayer.h"
 
 #include "imgui.h"
 
 #define IMGUI_IMPL_API
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "Kargono/Application.h"
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include "Kargono/Core/Application.h"
 
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
@@ -17,10 +17,7 @@ namespace Kargono
 	{
 	
 	}
-	ImGuiLayer::~ImGuiLayer() 
-	{
 
-	}
 
 	void ImGuiLayer::OnAttach()
 	{
@@ -64,10 +61,6 @@ namespace Kargono
 
     void ImGuiLayer::OnImGuiRender()
     {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-
-        
     }
 
     void ImGuiLayer::Begin()

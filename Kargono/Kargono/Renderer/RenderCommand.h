@@ -1,5 +1,5 @@
 #pragma once
-#include "RendererAPI.h"
+#include "Kargono/Renderer/RendererAPI.h"
 
 namespace Kargono
 {
@@ -27,6 +27,6 @@ namespace Kargono
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 	private:
-		static RendererAPI* s_RendererAPI;
+		static Scope<RendererAPI> s_RendererAPI;
 	};
 }
