@@ -16,11 +16,14 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
+	KG_PROFILE_FUNCTION();
+
 	m_CheckerboardTexture = Kargono::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Sandbox2D::OnDetach()
 {
+	KG_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnUpdate(Kargono::Timestep ts)
@@ -28,10 +31,9 @@ void Sandbox2D::OnUpdate(Kargono::Timestep ts)
 	KG_PROFILE_FUNCTION();
 
 	// Update
-	{
-		KG_PROFILE_SCOPE("CameraController::OnUpdate");
-		m_CameraController.OnUpdate(ts);
-	}
+
+	m_CameraController.OnUpdate(ts);
+
 
 	//Render
 	{

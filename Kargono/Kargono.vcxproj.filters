@@ -174,6 +174,9 @@
     <ClCompile Include="Kargono\Renderer\Buffer.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Renderer\GraphicsContext.cpp">
+      <Filter>Kargono\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
@@ -231,6 +234,5 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Kargono\Renderer\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>
