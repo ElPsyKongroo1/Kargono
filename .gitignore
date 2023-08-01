@@ -9,6 +9,9 @@
 !vendor/bin/premake/
 bin-int/
 *openai_keys.py
+
+# Kargono files
+*.log
 # Visual Studio files and folder
 .vs/
 **.sln
