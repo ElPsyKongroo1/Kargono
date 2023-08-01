@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Window.h"
+#include "Kargono/Core/Window.h"
 #include "Kargono/Renderer/GraphicsContext.h"
 #include "GLFW/glfw3.h"
 
@@ -28,7 +28,7 @@ namespace Kargono {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
+		Scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{

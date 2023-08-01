@@ -1,12 +1,12 @@
 #include "Kargono/kgpch.h"
 #include "Kargono/Renderer/VertexArray.h"
 
-#include "Renderer.h"
+#include "Kargono/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Kargono {
 
-	VertexArray* VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -16,7 +16,7 @@ namespace Kargono {
 			break;
 
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return CreateRef<OpenGLVertexArray>();
 			break;
 		}
 		KG_CORE_ASSERT(false, "RendererAPI:: Unknown RendererAPI!");

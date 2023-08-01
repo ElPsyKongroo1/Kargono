@@ -76,11 +76,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -98,7 +100,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -106,6 +108,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -124,7 +127,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>KG_PLATFORM_WINDOWS;KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KG_BUILD_DLL;GLFW_INCLUDE_NONE;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -132,6 +135,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -147,32 +151,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
-    <ClInclude Include="Kargono\Application.h" />
-    <ClInclude Include="Kargono\Core.h" />
+    <ClInclude Include="Kargono\Core\Application.h" />
+    <ClInclude Include="Kargono\Core\Core.h" />
+    <ClInclude Include="Kargono\Core\EntryPoint.h" />
+    <ClInclude Include="Kargono\Core\KeyCodes.h" />
+    <ClInclude Include="Kargono\Core\Layer.h" />
+    <ClInclude Include="Kargono\Core\LayerStack.h" />
+    <ClInclude Include="Kargono\Core\Log.h" />
+    <ClInclude Include="Kargono\Core\MouseButtonCodes.h" />
     <ClInclude Include="Kargono\Core\Timestep.h" />
-    <ClInclude Include="Kargono\EntryPoint.h" />
+    <ClInclude Include="Kargono\Core\Window.h" />
+    <ClInclude Include="Kargono\Core\input.h" />
+    <ClInclude Include="Kargono\Debug\Instrumentor.h" />
     <ClInclude Include="Kargono\Events\ApplicationEvent.h" />
     <ClInclude Include="Kargono\Events\Event.h" />
     <ClInclude Include="Kargono\Events\KeyEvent.h" />
     <ClInclude Include="Kargono\Events\MouseEvent.h" />
     <ClInclude Include="Kargono\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="Kargono\KeyCodes.h" />
-    <ClInclude Include="Kargono\Layer.h" />
-    <ClInclude Include="Kargono\LayerStack.h" />
-    <ClInclude Include="Kargono\Log.h" />
-    <ClInclude Include="Kargono\MouseButtonCodes.h" />
-    <ClInclude Include="Kargono\OrthographicCameraController.h" />
     <ClInclude Include="Kargono\Renderer\Buffer.h" />
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
     <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="Kargono\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="Kargono\Renderer\RenderCommand.h" />
     <ClInclude Include="Kargono\Renderer\Renderer.h" />
+    <ClInclude Include="Kargono\Renderer\Renderer2D.h" />
     <ClInclude Include="Kargono\Renderer\RendererAPI.h" />
     <ClInclude Include="Kargono\Renderer\Shader.h" />
     <ClInclude Include="Kargono\Renderer\Texture.h" />
     <ClInclude Include="Kargono\Renderer\VertexArray.h" />
-    <ClInclude Include="Kargono\Window.h" />
-    <ClInclude Include="Kargono\input.h" />
     <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
@@ -185,18 +191,20 @@
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kargono\Application.cpp" />
+    <ClCompile Include="Kargono\Core\Application.cpp" />
+    <ClCompile Include="Kargono\Core\Layer.cpp" />
+    <ClCompile Include="Kargono\Core\LayerStack.cpp" />
+    <ClCompile Include="Kargono\Core\Log.cpp" />
     <ClCompile Include="Kargono\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Kargono\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="Kargono\Layer.cpp" />
-    <ClCompile Include="Kargono\LayerStack.cpp" />
-    <ClCompile Include="Kargono\Log.cpp" />
-    <ClCompile Include="Kargono\OrthographicCameraController.cpp" />
     <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
+    <ClCompile Include="Kargono\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="Kargono\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="Kargono\Renderer\RenderCommand.cpp" />
     <ClCompile Include="Kargono\Renderer\Renderer.cpp" />
-    <ClCompile Include="Kargono\Renderer\RendererrAPI.cpp" />
+    <ClCompile Include="Kargono\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="Kargono\Renderer\RendererAPI.cpp" />
     <ClCompile Include="Kargono\Renderer\Shader.cpp" />
     <ClCompile Include="Kargono\Renderer\Texture.cpp" />
     <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />

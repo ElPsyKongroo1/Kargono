@@ -1,5 +1,5 @@
 #include "Kargono/kgpch.h"
-#include "OrthographicCamera.h"
+#include "Kargono/Renderer/OrthographicCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

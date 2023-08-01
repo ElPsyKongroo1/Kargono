@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Layer.h"
+#include "Kargono/Core/Layer.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
@@ -8,11 +8,11 @@
 
 namespace Kargono 
 {
-	class KG_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();
-		~ImGuiLayer();
+		~ImGuiLayer() = default;
 
 
 		virtual void OnAttach() override;

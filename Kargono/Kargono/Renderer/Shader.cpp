@@ -1,7 +1,7 @@
 #include "Kargono/kgpch.h"
 #include "Kargono/Renderer/Shader.h"
 
-#include "Renderer.h"
+#include "Kargono/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Kargono {
@@ -14,7 +14,7 @@ namespace Kargono {
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(filepath);
+			return CreateRef<OpenGLShader>(filepath);
 		}
 
 		KG_CORE_ASSERT(false, "RendererAPI:: Unknown RendererAPI!");
@@ -30,7 +30,7 @@ namespace Kargono {
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 		}
 
 		KG_CORE_ASSERT(false, "RendererAPI:: Unknown RendererAPI!");

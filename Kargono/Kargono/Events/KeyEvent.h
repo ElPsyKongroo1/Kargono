@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Event.h"
+#include "Kargono/Events/Event.h"
 
 namespace Kargono
 {
-	class KG_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -15,7 +15,7 @@ namespace Kargono
 		int m_KeyCode;
  	};
 
-	class KG_API KeyPressedEvent : public KeyEvent 
+	class KeyPressedEvent : public KeyEvent 
 	{
 	public:
 		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
@@ -34,7 +34,7 @@ namespace Kargono
 		int m_RepeatCount;
 	};
 
-	class KG_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
@@ -49,7 +49,7 @@ namespace Kargono
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class KG_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode) : KeyEvent(keycode) {}

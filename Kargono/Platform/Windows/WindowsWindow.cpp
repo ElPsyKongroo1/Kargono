@@ -1,6 +1,6 @@
 #include "Kargono/kgpch.h"
-#include "WindowsWindow.h"
-#include "Kargono/Log.h"
+#include "Platform/Windows/WindowsWindow.h"
+#include "Kargono/Core/Core.h"
 
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
@@ -12,28 +12,33 @@
 
 namespace Kargono 
 {
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
 		KG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window* Window::Create(const WindowProps& props)
+	Scope<Window> Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return CreateScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		KG_PROFILE_FUNCTION();
 		Init(props);
 	}
 	WindowsWindow::~WindowsWindow()
 	{
+		KG_PROFILE_FUNCTION();
+		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		KG_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -43,17 +48,18 @@ namespace Kargono
 		KG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
+			KG_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			KG_CORE_ASSERT(success, "Could not initialize GLFW");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		++s_GLFWWindowCount;
 
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		
@@ -153,11 +159,20 @@ namespace Kargono
 
 	void WindowsWindow::Shutdown()
 	{
+		KG_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
+		--s_GLFWWindowCount;
+
+		if (s_GLFWWindowCount == 0)
+		{
+			glfwTerminate();
+		}
 	}
 
 	void WindowsWindow::OnUpdate() 
 	{
+		KG_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 		
@@ -165,6 +180,8 @@ namespace Kargono
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		KG_PROFILE_FUNCTION();
+
 		if (enabled)	{ glfwSwapInterval(1); }
 		else			{ glfwSwapInterval(0); }
 		m_Data.VSync = enabled;

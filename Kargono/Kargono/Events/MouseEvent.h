@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Event.h"
+#include "Kargono/Events/Event.h"
 
 namespace Kargono 
 {
-	class KG_API MouseMovedEvent : public Event 
+	class MouseMovedEvent : public Event 
 	{
 	public:
 		MouseMovedEvent(float x, float y)
@@ -27,7 +27,7 @@ namespace Kargono
 		float m_MouseX, m_MouseY;
 	};
 
-	class KG_API MouseScrolledEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
@@ -51,7 +51,7 @@ namespace Kargono
 		float m_YOffset;
 	};
 
-	class KG_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() const { return m_Button; }
@@ -65,7 +65,7 @@ namespace Kargono
 		int m_Button;
 	};
 
-	class KG_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 
@@ -83,7 +83,7 @@ namespace Kargono
 
 	};
 
-	class KG_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 
