@@ -58,7 +58,7 @@
     <ClInclude Include="Kargono\Core\Log.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Core\MouseButtonCodes.h">
+    <ClInclude Include="Kargono\Core\MouseCodes.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Core\Timestep.h">

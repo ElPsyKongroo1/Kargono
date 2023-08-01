@@ -158,7 +158,7 @@
     <ClInclude Include="Kargono\Core\Layer.h" />
     <ClInclude Include="Kargono\Core\LayerStack.h" />
     <ClInclude Include="Kargono\Core\Log.h" />
-    <ClInclude Include="Kargono\Core\MouseButtonCodes.h" />
+    <ClInclude Include="Kargono\Core\MouseCodes.h" />
     <ClInclude Include="Kargono\Core\Timestep.h" />
     <ClInclude Include="Kargono\Core\Window.h" />
     <ClInclude Include="Kargono\Core\input.h" />

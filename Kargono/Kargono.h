@@ -11,7 +11,7 @@
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/input.h"
 #include "Kargono/Core/KeyCodes.h"
-#include "Kargono/Core/MouseButtonCodes.h"
+#include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Renderer/OrthographicCameraController.h"
 
 #include "Kargono/Core/Layer.h"
