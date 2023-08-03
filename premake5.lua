@@ -52,6 +52,11 @@ project "Kargono"
         "Kargono/Platform/**.cpp"
     }
 
+    defines 
+    {
+        "_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
+    }
     includedirs 
     {
         "%{IncludeDir.GLFW}",
@@ -81,8 +86,7 @@ project "Kargono"
 
         defines 
         {
-            "KG_BUILD_DLL",
-            "GLFW_INCLUDE_NONE"
+
         }
         -- prebuildcommands 
         -- {
