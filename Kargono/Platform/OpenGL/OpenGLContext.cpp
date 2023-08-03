@@ -3,7 +3,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 
 

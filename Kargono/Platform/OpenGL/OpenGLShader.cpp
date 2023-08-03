@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <fstream>
 
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 
 #include <glm/gtc/type_ptr.hpp>

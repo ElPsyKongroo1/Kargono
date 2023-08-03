@@ -19,6 +19,8 @@
 # Visual Studio files and folder
 .vs/
 **.sln
+*.sln
+*.vcxproj*
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user

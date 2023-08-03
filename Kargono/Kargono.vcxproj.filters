@@ -40,7 +40,7 @@
     <ClInclude Include="Kargono\Core\Application.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Core\Core.h">
+    <ClInclude Include="Kargono\Core\Base.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Core\EntryPoint.h">

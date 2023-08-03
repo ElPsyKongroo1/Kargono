@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 

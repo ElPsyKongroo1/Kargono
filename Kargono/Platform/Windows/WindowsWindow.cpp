@@ -1,6 +1,6 @@
 #include "Kargono/kgpch.h"
 #include "Platform/Windows/WindowsWindow.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"

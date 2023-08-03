@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 
 namespace Kargono
@@ -57,8 +57,8 @@ namespace Kargono
 			case ShaderDataType::Int2:		return 2;
 			case ShaderDataType::Int3:		return 3;
 			case ShaderDataType::Int4:		return 4;
-			case ShaderDataType::Mat3:		return 3 * 3;
-			case ShaderDataType::Mat4:		return 4 * 4;
+			case ShaderDataType::Mat3:		return 3; // 3* float3
+			case ShaderDataType::Mat4:		return 4; // 4* float4
 			case ShaderDataType::Bool:		return 1;
 			}
 			KG_CORE_ASSERT(false, "Unknown ShaderDataType!");
