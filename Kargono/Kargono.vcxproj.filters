@@ -46,6 +46,9 @@
     <ClInclude Include="Kargono\Core\EntryPoint.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Core\Input.h">
+      <Filter>Kargono\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Core\KeyCodes.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
@@ -65,9 +68,6 @@
       <Filter>Kargono\Core</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Core\Window.h">
-      <Filter>Kargono\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Kargono\Core\Input.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
     <ClInclude Include="Kargono\Debug\Instrumentor.h">
@@ -156,6 +156,9 @@
     <ClCompile Include="Kargono\Core\Application.cpp">
       <Filter>Kargono\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Core\Input.cpp">
+      <Filter>Kargono\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\Core\Layer.cpp">
       <Filter>Kargono\Core</Filter>
     </ClCompile>
@@ -163,6 +166,9 @@
       <Filter>Kargono\Core</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\Core\Log.cpp">
+      <Filter>Kargono\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Kargono\Core\Window.cpp">
       <Filter>Kargono\Core</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\ImGui\ImGuiBuild.cpp">
@@ -234,7 +240,5 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Kargono\Core\Input.cpp" />
-    <ClCompile Include="Kargono\Core\Window.cpp" />
   </ItemGroup>
 </Project>
