@@ -3,11 +3,9 @@
 
 #include "Kargono/Core/Log.h"
 
-#include "Kargono/Core/Input.h"
 #include "GLFW/glfw3.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/RenderCommand.h"
+
 
 
 
