@@ -63,11 +63,10 @@ namespace Kargono
 		dispatcher.Dispatch<WindowCloseEvent>(KG_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(KG_BIND_EVENT_FN(Application::OnWindowResize));
 
-		for (auto location = m_LayerStack.rbegin(); location != m_LayerStack.rend(); ++ location)
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++ it)
 		{
-			(*location)->OnEvent(e);
-			if (e.Handled)
-				break;
+			if (e.Handled) { break; }
+			(*it)->OnEvent(e);
 		}
 	}
 

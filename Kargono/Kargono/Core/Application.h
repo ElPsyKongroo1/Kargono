@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 
 #include "Kargono/Core/LayerStack.h"
 #include "Kargono/Core/Window.h"

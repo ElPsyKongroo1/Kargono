@@ -1,7 +1,7 @@
 #include "Kargono/kgpch.h"
 #include "Kargono/Renderer/Buffer.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 

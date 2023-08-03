@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Renderer/RendererAPI.h"
 #include "Kargono/Renderer/VertexArray.h"
 namespace Kargono {

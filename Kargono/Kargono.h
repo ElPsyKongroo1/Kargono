@@ -2,7 +2,7 @@
 
 // For use by Kargono applications
 
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 
 #include "Kargono/Core/Application.h"
 

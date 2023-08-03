@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono/Renderer/OrthographicCamera.h"
 #include "Kargono/Renderer/Texture.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 
 namespace Kargono
 {

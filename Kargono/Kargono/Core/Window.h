@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/kgpch.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/Base.h"
 #include "Kargono/Events/Event.h"
 
 namespace Kargono 

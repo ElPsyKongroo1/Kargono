@@ -152,7 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Kargono.h" />
     <ClInclude Include="Kargono\Core\Application.h" />
-    <ClInclude Include="Kargono\Core\Core.h" />
+    <ClInclude Include="Kargono\Core\Base.h" />
     <ClInclude Include="Kargono\Core\EntryPoint.h" />
     <ClInclude Include="Kargono\Core\Input.h" />
     <ClInclude Include="Kargono\Core\KeyCodes.h" />
