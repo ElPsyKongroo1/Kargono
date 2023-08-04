@@ -19,7 +19,7 @@ namespace Kargono
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Kargono App");
 		virtual ~Application();
 		
 

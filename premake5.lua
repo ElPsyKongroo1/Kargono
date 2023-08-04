@@ -1,5 +1,5 @@
 workspace "Kargono"
-    startproject "Sandbox"
+    startproject "Kargono-Editor"
     architecture "x86_64"
     configurations
     {
@@ -23,9 +23,11 @@ IncludeDir["imGui"] = "Kargono/dependencies/imgui"
 IncludeDir["glm"] = "Kargono/dependencies/glm"
 IncludeDir["stb_image"] = "Kargono/dependencies/stb_image"
 
-include "Kargono/dependencies/GLFW"
-include "Kargono/dependencies/GLAD"
-include "Kargono/dependencies/imGui"
+group "Dependencies"
+    include "Kargono/dependencies/GLFW"
+    include "Kargono/dependencies/GLAD"
+    include "Kargono/dependencies/imGui"
+group ""
 
 project "Kargono"
     location "Kargono"
@@ -112,6 +114,7 @@ project "Kargono"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
+
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
@@ -127,6 +130,60 @@ project "Sandbox"
     {
         "Sandbox/src/**.h",
         "Sandbox/src/**.cpp"
+    }
+
+    includedirs 
+    {
+        "%{IncludeDir.spdlog}",
+        "%{IncludeDir.glm}",
+        "%{wks.location}/Kargono"
+
+    }
+
+    libdirs
+    {
+
+    }
+
+    links 
+    { 
+        "Kargono"  
+    }
+
+    filter "system:windows"
+        
+        systemversion "latest"
+
+    filter "configurations:Debug"
+        defines "KG_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "KG_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "KG_DIST"
+        runtime "Release"
+        optimize "on"
+
+project "Kargono-Editor"
+    location "Kargono-Editor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+    staticruntime "on"
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006" }
+    
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files 
+    {
+        "Kargono-Editor/src/**.h",
+        "Kargono-Editor/src/**.cpp"
     }
 
     includedirs 
