@@ -18,6 +18,7 @@ private:
 	// Temp
 	Kargono::Ref<Kargono::Shader> m_FlatColorShader;
 	Kargono::Ref<Kargono::VertexArray> m_SquareVA;
+	Kargono::Ref<Kargono::Framebuffer> m_Framebuffer;
 
 	Kargono::Ref<Kargono::Texture2D> m_CheckerboardTexture;
 
