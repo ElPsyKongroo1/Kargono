@@ -72,6 +72,11 @@ namespace Kargono
 
 	
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	void Application::Run()
 	{
 		KG_PROFILE_FUNCTION();
