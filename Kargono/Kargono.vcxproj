@@ -169,6 +169,7 @@
     <ClInclude Include="Kargono\Events\MouseEvent.h" />
     <ClInclude Include="Kargono\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Kargono\Renderer\Buffer.h" />
+    <ClInclude Include="Kargono\Renderer\Framebuffer.h" />
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
     <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Kargono\Renderer\OrthographicCameraController.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLTexture.h" />
@@ -200,6 +202,7 @@
     <ClCompile Include="Kargono\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Kargono\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Kargono\Renderer\Buffer.cpp" />
+    <ClCompile Include="Kargono\Renderer\Framebuffer.cpp" />
     <ClCompile Include="Kargono\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Kargono\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Kargono\Renderer\OrthographicCameraController.cpp" />
@@ -215,6 +218,7 @@
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />

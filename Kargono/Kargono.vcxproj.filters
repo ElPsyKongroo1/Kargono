@@ -151,6 +151,8 @@
     <ClInclude Include="dependencies\stb_image\stb_image.h">
       <Filter>dependencies\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Renderer\Framebuffer.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
@@ -240,5 +242,7 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Renderer\Framebuffer.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLFramebuffer.cpp" />
   </ItemGroup>
 </Project>

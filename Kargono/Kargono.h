@@ -24,6 +24,7 @@
 
 #include "Kargono/Renderer/Buffer.h"
 #include "Kargono/Renderer/Shader.h"
+#include "Kargono/Renderer/Framebuffer.h"
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Renderer/VertexArray.h"
 
