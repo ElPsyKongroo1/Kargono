@@ -11,7 +11,7 @@
 # Binaries
 **/bin/
 !vendor/bin/premake/
-**bin-int/
+**/bin-int/
 *openai_keys.py
 
 # Kargono files
