@@ -13,11 +13,11 @@
 		auto app = Kargono::CreateApplication();
 		KG_PROFILE_END_SESSION();
 
-		KG_PROFILE_BEGIN_SESSION("Startup", "KargonoProfile-Runtime.json");
+		KG_PROFILE_BEGIN_SESSION("Runtime", "KargonoProfile-Runtime.json");
 		app->Run();
 		KG_PROFILE_END_SESSION();
 
-		KG_PROFILE_BEGIN_SESSION("Startup", "KargonoProfile-Shutdown.json");
+		KG_PROFILE_BEGIN_SESSION("Shutdown", "KargonoProfile-Shutdown.json");
 		delete app;
 		KG_PROFILE_END_SESSION();
 	}
