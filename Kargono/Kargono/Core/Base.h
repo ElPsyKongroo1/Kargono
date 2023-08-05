@@ -58,6 +58,7 @@
 #define KG_DEBUGBREAK()
 #endif
 
+// TODO: Make this macro able to take in no arguments except exception
 #ifdef KG_ENABLE_ASSERTS
 	#define KG_ASSERT(x, ...) { if(!(x)) { KG_ERROR("Assertion Failed: {0}", __VA_ARGS__); KG_DEBUGBREAK(); } }
 	#define KG_CORE_ASSERT(x, ...) { if(!(x)) { KG_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); KG_DEBUGBREAK(); } }
