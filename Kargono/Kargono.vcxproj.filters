@@ -148,9 +148,6 @@
     <ClInclude Include="Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\Windows\WindowsInput.h">
-      <Filter>Platform\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
@@ -160,9 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
-      <Filter>Kargono\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Kargono\Core\Input.cpp">
       <Filter>Kargono\Core</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\Core\Layer.cpp">
