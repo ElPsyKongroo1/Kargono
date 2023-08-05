@@ -39,8 +39,10 @@ namespace Kargono {
 		KG_PROFILE_FUNCTION();
 
 		// Update
-
-		m_CameraController.OnUpdate(ts);
+		if (m_ViewportFocused)
+		{
+			m_CameraController.OnUpdate(ts);
+		}
 
 
 		//Render
@@ -156,13 +158,14 @@ namespace Kargono {
 		ImGui::Text("Quads: %d:", stats.QuadCount);
 		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
-
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-		
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize)
 		{
