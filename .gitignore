@@ -16,7 +16,7 @@
 
 # Kargono files
 *.log
-*imgui.ini
+**imgui.ini
 # Visual Studio files and folder
 .vs/
 **.sln
