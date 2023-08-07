@@ -22,6 +22,7 @@ IncludeDir["spdlog"] = "Kargono/dependencies/spdlog"
 IncludeDir["imGui"] = "Kargono/dependencies/imgui"
 IncludeDir["glm"] = "Kargono/dependencies/glm"
 IncludeDir["stb_image"] = "Kargono/dependencies/stb_image"
+IncludeDir["entt"] = "Kargono/dependencies/entt/include"
 
 group "Dependencies"
     include "Kargono/dependencies/GLFW"
@@ -61,13 +62,14 @@ project "Kargono"
     }
     includedirs 
     {
+        "Kargono",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
-        "Kargono"
+        "%{IncludeDir.entt}"
     }
 
     libdirs
@@ -136,6 +138,7 @@ project "Sandbox"
     {
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
         "%{wks.location}/Kargono"
 
     }
@@ -190,6 +193,7 @@ project "Kargono-Editor"
     {
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
         "%{wks.location}/Kargono"
 
     }
