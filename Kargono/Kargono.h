@@ -17,6 +17,9 @@
 #include "Kargono/Core/Layer.h"
 #include "Kargono/ImGui/ImGuiLayer.h"
 
+#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scene/Components.h"
+
 // ----Renderer--------------------------------
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/Renderer2D.h"
