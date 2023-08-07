@@ -181,6 +181,7 @@
     <ClInclude Include="Kargono\Renderer\Texture.h" />
     <ClInclude Include="Kargono\Renderer\VertexArray.h" />
     <ClInclude Include="Kargono\kgpch.h" />
+    <ClInclude Include="Kargono\Scene\Scene.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
