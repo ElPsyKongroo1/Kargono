@@ -185,6 +185,7 @@
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Scene\Scene.h" />
     <ClInclude Include="Kargono\kgpch.h" />
+    <ClInclude Include="Kargono\Scene\SceneCamera.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Kargono\Scene\SceneCamera.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFramebuffer.cpp" />

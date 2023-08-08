@@ -165,6 +165,7 @@
     </ClInclude>
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Renderer\Camera.h" />
+    <ClInclude Include="Kargono\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
@@ -261,5 +262,6 @@
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="Kargono\Scene\Entity.cpp" />
+    <ClCompile Include="Kargono\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

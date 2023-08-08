@@ -1,9 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
-#include "Kargono/Renderer/Camera.h"
+#include "Kargono/Scene/SceneCamera.h"
 
-#include "Kargono/Renderer/OrthographicCamera.h"
 
 namespace Kargono
 {
@@ -42,12 +41,11 @@ namespace Kargono
 
 	struct CameraComponent
 	{
-		Kargono::Camera Camera;
+		SceneCamera Camera;
 		bool Primary = true; // TODO: Think about moving to scene
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection) {}
 	};
 }
