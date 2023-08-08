@@ -38,6 +38,9 @@ namespace Kargono {
 
 		m_SquareEntity = square;
 
+		/*m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));*/
+
 	}
 
 	void EditorLayer::OnDetach()
@@ -74,13 +77,7 @@ namespace Kargono {
 
 		// Update Scene
 
-
-
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
-
 		m_ActiveScene->OnUpdate(ts);
-
-		Renderer2D::EndScene();
 
 		m_Framebuffer->Unbind();
 
@@ -163,10 +160,13 @@ namespace Kargono {
 		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
 
-		ImGui::Separator();
-		ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
-		auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+		if (m_SquareEntity)
+		{
+			ImGui::Separator();
+			ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
+			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+		}
 
 		ImGui::End();
 
