@@ -32,6 +32,22 @@ namespace Kargono
 	void Scene::OnUpdate(Timestep ts)
 	{
 
+		// Update Scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			{
+				// TODO: Move to Scene::OnScenePlay
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->m_Entity = Entity{entity, this};
+					nsc.Instance->OnCreate();
+				}
+
+				nsc.Instance->OnUpdate(ts);
+			});
+		}
+
 		// Render 2D
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
@@ -39,7 +55,7 @@ namespace Kargono
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
 			{
-				const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.Primary)
 				{

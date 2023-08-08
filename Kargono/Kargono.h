@@ -20,6 +20,7 @@
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scene/Entity.h"
+#include "Kargono/Scene/ScriptableEntity.h"
 
 // ----Renderer--------------------------------
 #include "Kargono/Renderer/Renderer.h"

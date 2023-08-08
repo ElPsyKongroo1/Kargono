@@ -166,6 +166,7 @@
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Renderer\Camera.h" />
     <ClInclude Include="Kargono\Scene\SceneCamera.h" />
+    <ClInclude Include="Kargono\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">

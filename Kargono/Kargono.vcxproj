@@ -186,6 +186,7 @@
     <ClInclude Include="Kargono\Scene\Scene.h" />
     <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Kargono\Scene\SceneCamera.h" />
+    <ClInclude Include="Kargono\Scene\ScriptableEntity.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
