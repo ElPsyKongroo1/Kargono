@@ -180,6 +180,7 @@
     <ClInclude Include="Kargono\Renderer\Shader.h" />
     <ClInclude Include="Kargono\Renderer\Texture.h" />
     <ClInclude Include="Kargono\Renderer\VertexArray.h" />
+    <ClInclude Include="Kargono\Renderer\Camera.h" />
     <ClInclude Include="Kargono\Scene\Components.h" />
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Scene\Scene.h" />
