@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
+
+#include "Kargono/Scene/ScriptableEntity.h"
 #include "Kargono/Scene/SceneCamera.h"
 
 
@@ -47,5 +49,20 @@ namespace Kargono
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity* (*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 }
