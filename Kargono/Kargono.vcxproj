@@ -181,6 +181,7 @@
     <ClInclude Include="Kargono\Renderer\Texture.h" />
     <ClInclude Include="Kargono\Renderer\VertexArray.h" />
     <ClInclude Include="Kargono\Scene\Components.h" />
+    <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Scene\Scene.h" />
     <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
@@ -213,10 +214,11 @@
     <ClCompile Include="Kargono\Renderer\Shader.cpp" />
     <ClCompile Include="Kargono\Renderer\Texture.cpp" />
     <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />
+    <ClCompile Include="Kargono\Scene\Entity.cpp" />
+    <ClCompile Include="Kargono\Scene\Scene.cpp" />
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Kargono\Scene\Scene.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFramebuffer.cpp" />

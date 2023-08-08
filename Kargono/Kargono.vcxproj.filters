@@ -127,6 +127,9 @@
     <ClInclude Include="Kargono\Renderer\VertexArray.h">
       <Filter>Kargono\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Scene\Components.h">
+      <Filter>Kargono\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Scene\Scene.h">
       <Filter>Kargono\Scene</Filter>
     </ClInclude>
@@ -160,7 +163,7 @@
     <ClInclude Include="dependencies\stb_image\stb_image.h">
       <Filter>dependencies\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Scene\Components.h" />
+    <ClInclude Include="Kargono\Scene\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
@@ -220,6 +223,9 @@
     <ClCompile Include="Kargono\Renderer\VertexArray.cpp">
       <Filter>Kargono\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Scene\Scene.cpp">
+      <Filter>Kargono\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\kgpch.cpp">
       <Filter>Kargono</Filter>
     </ClCompile>
@@ -253,6 +259,6 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Kargono\Scene\Scene.cpp" />
+    <ClCompile Include="Kargono\Scene\Entity.cpp" />
   </ItemGroup>
 </Project>

@@ -27,15 +27,9 @@ namespace Kargono {
 
 	class Instrumentor
 	{
-	private:
-		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
-		std::ofstream m_OutputStream;
 	public:
-		Instrumentor()
-			: m_CurrentSession(nullptr)
-		{
-		}
+		Instrumentor(const Instrumentor&) = delete;
+		Instrumentor(Instrumentor&&) = delete;
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
@@ -105,6 +99,16 @@ namespace Kargono {
 
 	private:
 
+		Instrumentor()
+			: m_CurrentSession(nullptr)
+		{
+		}
+
+		~Instrumentor()
+		{
+			EndSession();
+		}
+
 		void WriteHeader()
 		{
 			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
@@ -129,7 +133,10 @@ namespace Kargono {
 				m_CurrentSession = nullptr;
 			}
 		}
-
+		private:
+			std::mutex m_Mutex;
+			InstrumentationSession* m_CurrentSession;
+			std::ofstream m_OutputStream;
 	};
 
 	class InstrumentationTimer
@@ -218,8 +225,10 @@ namespace Kargono {
 
 #define KG_PROFILE_BEGIN_SESSION(name, filepath) ::Kargono::Instrumentor::Get().BeginSession(name, filepath)
 #define KG_PROFILE_END_SESSION() ::Kargono::Instrumentor::Get().EndSession()
-#define KG_PROFILE_SCOPE(name) constexpr auto fixedName = ::Kargono::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-									::Kargono::InstrumentationTimer timer##__LINE__(fixedName.Data)
+#define KG_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Kargono::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+											   ::Kargono::InstrumentationTimer timer##line(fixedName##line.Data)
+#define KG_PROFILE_SCOPE_LINE(name, line) KG_PROFILE_SCOPE_LINE2(name, line)
+#define KG_PROFILE_SCOPE(name) KG_PROFILE_SCOPE_LINE(name, __LINE__)
 #define KG_PROFILE_FUNCTION() KG_PROFILE_SCOPE(KG_FUNC_SIG)
 #else
 #define KG_PROFILE_BEGIN_SESSION(name, filepath)

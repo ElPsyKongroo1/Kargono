@@ -29,9 +29,14 @@ namespace Kargono {
 
 		m_ActiveScene = CreateRef<Scene>();
 
-		auto square = m_ActiveScene->CreateEntity();
-		m_ActiveScene->Reg().emplace<TransformComponent>(square);
-		m_ActiveScene->Reg().emplace<SpriteRendererComponent>(square, glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+		
+
+		auto square = m_ActiveScene->CreateEntity("Square");
+		auto squar2e = m_ActiveScene->CreateEntity("Square");
+
+		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+
+		m_SquareEntity = square;
 
 	}
 
@@ -157,7 +162,12 @@ namespace Kargono {
 		ImGui::Text("Quads: %d:", stats.QuadCount);
 		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+		ImGui::Separator();
+		ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
+		auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
