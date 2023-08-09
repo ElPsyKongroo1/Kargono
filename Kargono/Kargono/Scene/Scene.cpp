@@ -7,14 +7,10 @@
 
 namespace Kargono
 {
-	static void DoMath(const glm::mat4& transform)
-	{
 
-	}
 
 	Scene::Scene()
 	{
-
 	}
 
 	Scene::~Scene()
