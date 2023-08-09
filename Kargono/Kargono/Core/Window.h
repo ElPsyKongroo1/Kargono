@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/kgpch.h"
+#include <sstream>
 #include "Kargono/Core/Base.h"
 #include "Kargono/Events/Event.h"
 
