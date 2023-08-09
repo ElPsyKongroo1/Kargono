@@ -3,6 +3,8 @@
 #include <string>
 #include <functional>
 
+#include "Kargono/Debug/Instrumentor.h"
+
 
 namespace Kargono 
 {

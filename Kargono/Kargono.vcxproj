@@ -159,6 +159,7 @@
     <ClInclude Include="Kargono\Core\LayerStack.h" />
     <ClInclude Include="Kargono\Core\Log.h" />
     <ClInclude Include="Kargono\Core\MouseCodes.h" />
+    <ClInclude Include="Kargono\Core\PlatformDetection.h" />
     <ClInclude Include="Kargono\Core\Timestep.h" />
     <ClInclude Include="Kargono\Core\Window.h" />
     <ClInclude Include="Kargono\Core\input.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Kargono\Events\MouseEvent.h" />
     <ClInclude Include="Kargono\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Kargono\Renderer\Buffer.h" />
+    <ClInclude Include="Kargono\Renderer\Camera.h" />
     <ClInclude Include="Kargono\Renderer\Framebuffer.h" />
     <ClInclude Include="Kargono\Renderer\GraphicsContext.h" />
     <ClInclude Include="Kargono\Renderer\OrthographicCamera.h" />
@@ -180,13 +182,12 @@
     <ClInclude Include="Kargono\Renderer\Shader.h" />
     <ClInclude Include="Kargono\Renderer\Texture.h" />
     <ClInclude Include="Kargono\Renderer\VertexArray.h" />
-    <ClInclude Include="Kargono\Renderer\Camera.h" />
     <ClInclude Include="Kargono\Scene\Components.h" />
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Scene\Scene.h" />
-    <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Kargono\Scene\SceneCamera.h" />
     <ClInclude Include="Kargono\Scene\ScriptableEntity.h" />
+    <ClInclude Include="Kargono\kgpch.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -219,10 +220,10 @@
     <ClCompile Include="Kargono\Renderer\VertexArray.cpp" />
     <ClCompile Include="Kargono\Scene\Entity.cpp" />
     <ClCompile Include="Kargono\Scene\Scene.cpp" />
+    <ClCompile Include="Kargono\Scene\SceneCamera.cpp" />
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Kargono\Scene\SceneCamera.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFramebuffer.cpp" />
