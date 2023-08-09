@@ -32,7 +32,7 @@ namespace Kargono {
 		
 
 		auto square = m_ActiveScene->CreateEntity("Square");
-		auto squar2e = m_ActiveScene->CreateEntity("Square");
+		//auto squar2e = m_ActiveScene->CreateEntity("Square");
 
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 
