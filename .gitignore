@@ -10,8 +10,8 @@
 # User-specific files
 # Binaries
 **/bin/
-!vendor/bin/premake/
-**/bin-int/
+!dependencies/premake/bin/
+bin-int/
 *openai_keys.py
 
 # Kargono files
