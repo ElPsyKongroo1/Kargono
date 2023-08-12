@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "imgui_internal.h"
 #include "Kargono/Scene/Components.h"
 
 namespace Kargono
@@ -52,6 +53,19 @@ namespace Kargono
 			ImGui::TreePop();
 		}
 	}
+
+	static void DrawVec3Control(const std::string& label, glm::vec3& values, 
+		float resetValue = 0.0f, float columnWidth = 100.0f)
+	{
+		ImGui::Columns(2);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+
+		ImGui::SetColumnWidth(0, columnWidth);
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
@@ -71,8 +85,8 @@ namespace Kargono
 		{
 			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
 			{
-				auto& transform = entity.GetComponent<TransformComponent>().Transform;
-				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+				auto& tc = entity.GetComponent<TransformComponent>();
+				ImGui::DragFloat3("Position", glm::value_ptr(tc.Translation), 0.1f);
 
 				ImGui::TreePop();
 			}
