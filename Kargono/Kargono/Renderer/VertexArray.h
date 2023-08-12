@@ -6,7 +6,7 @@ namespace Kargono
 	class VertexArray
 	{
 	public:
-		virtual ~VertexArray() {}
+		virtual ~VertexArray() = default;
 	public:
 
 		virtual void Bind() const = 0;
