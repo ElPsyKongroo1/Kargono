@@ -3,12 +3,12 @@
 // For use by Kargono applications
 
 #include "Kargono/Core/Base.h"
-
 #include "Kargono/Core/Application.h"
-
 #include "Kargono/Core/Log.h"
+#include "Kargono/Core/Assert.h"
 
 #include "Kargono/Core/Timestep.h"
+
 #include "Kargono/Core/Input.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
