@@ -15,6 +15,12 @@ namespace Kargono {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& event) override;
 	private:
+		bool OnKeyPressed(KeyPressedEvent event);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+	private:
 
 		OrthographicCameraController m_CameraController;
 

@@ -20,6 +20,7 @@ F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\Render
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\Scene\Entity.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Entity.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\Scene\Scene.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\Scene.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\Scene\SceneCamera.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\SceneCamera.obj
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\Scene\SceneSerializer.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\SceneSerializer.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Kargono\kgpch.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\kgpch.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\OpenGL\OpenGLBuffer.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\OpenGLBuffer.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\OpenGL\OpenGLContext.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\OpenGLContext.obj
@@ -29,5 +30,6 @@ F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\OpenG
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\OpenGL\OpenGLTexture.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\OpenGLTexture.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\OpenGL\OpenGLVertexArray.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\OpenGLVertexArray.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\Windows\WindowsInput.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\WindowsInput.obj
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\Windows\WindowsPlatformUtils.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\WindowsPlatformUtils.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\Platform\Windows\WindowsWindow.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\WindowsWindow.obj
 F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\Kargono\dependencies\stb_image\stb_image.cpp;F:\Charles_Files\Personal_Projects\Personal_Games\Kargono\bin-int\Debug-windows-x86_64\Kargono\stb_image.obj

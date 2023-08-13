@@ -36,7 +36,8 @@ project "Kargono"
         "%{IncludeDir.imGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
-        "%{IncludeDir.entt}"
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.yaml_cpp}"
     }
 
     libdirs
@@ -49,7 +50,8 @@ project "Kargono"
         "GLAD",
         "opengl32.lib",
         "imGui",
-        "dwmapi.lib"
+        "dwmapi.lib",
+        "yaml-cpp"
     }
 
     filter "system:windows"

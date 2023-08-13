@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;KG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;dependencies\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -101,7 +101,7 @@
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;KG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;dependencies\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -128,7 +128,7 @@
       <PrecompiledHeaderFile>Kargono/kgpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;KG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;dependencies\GLFW\include;dependencies\GLAD\include;dependencies\spdlog;dependencies\imgui;dependencies\glm;dependencies\stb_image;dependencies\entt\include;dependencies\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -187,8 +187,10 @@
     <ClInclude Include="Kargono\Scene\Entity.h" />
     <ClInclude Include="Kargono\Scene\Scene.h" />
     <ClInclude Include="Kargono\Scene\SceneCamera.h" />
+    <ClInclude Include="Kargono\Scene\SceneSerializer.h" />
     <ClInclude Include="Kargono\Scene\ScriptableEntity.h" />
     <ClInclude Include="Kargono\kgpch.h" />
+    <ClInclude Include="Kargono\Utils\PlatformUtils.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFramebuffer.h" />
@@ -222,6 +224,7 @@
     <ClCompile Include="Kargono\Scene\Entity.cpp" />
     <ClCompile Include="Kargono\Scene\Scene.cpp" />
     <ClCompile Include="Kargono\Scene\SceneCamera.cpp" />
+    <ClCompile Include="Kargono\Scene\SceneSerializer.cpp" />
     <ClCompile Include="Kargono\kgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -233,6 +236,7 @@
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
   </ItemGroup>
@@ -245,6 +249,9 @@
     </ProjectReference>
     <ProjectReference Include="dependencies\imGui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="dependencies\yaml-cpp\yaml-cpp.vcxproj">
+      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

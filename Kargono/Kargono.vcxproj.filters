@@ -43,6 +43,9 @@
     <ClInclude Include="Kargono\Core\Application.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Core\Assert.h">
+      <Filter>Kargono\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Core\Base.h">
       <Filter>Kargono\Core</Filter>
     </ClInclude>
@@ -145,6 +148,9 @@
     <ClInclude Include="Kargono\Scene\SceneCamera.h">
       <Filter>Kargono\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Scene\SceneSerializer.h">
+      <Filter>Kargono\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\Scene\ScriptableEntity.h">
       <Filter>Kargono\Scene</Filter>
     </ClInclude>
@@ -178,7 +184,7 @@
     <ClInclude Include="dependencies\stb_image\stb_image.h">
       <Filter>dependencies\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Core\Assert.h" />
+    <ClInclude Include="Kargono\Utils\PlatformUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
@@ -247,6 +253,9 @@
     <ClCompile Include="Kargono\Scene\SceneCamera.cpp">
       <Filter>Kargono\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Kargono\Scene\SceneSerializer.cpp">
+      <Filter>Kargono\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Kargono\kgpch.cpp">
       <Filter>Kargono</Filter>
     </ClCompile>
@@ -280,5 +289,6 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsPlatformUtils.cpp" />
   </ItemGroup>
 </Project>
