@@ -396,3 +396,5 @@ imgui.ini
 /bin-int/Debug-windows-x86_64/Kargono/Application.obj
 /bin-int/Debug-windows-x86_64/Kargono/kgpch.obj
 /bin-int/Debug-windows-x86_64/Kargono/Log.obj
+/Kargono/Kargono.vcxproj
+/Kargono/Kargono.vcxproj.filters
