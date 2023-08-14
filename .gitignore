@@ -9,11 +9,14 @@
 **Sandbox/KargonoProfile-Startup.json
 # User-specific files
 # Binaries
-**/bin/
+**/bin
+bin/**
 !dependencies/premake/bin/
-bin-int/
+**/bin-int
+bin-int/**
 *openai_keys.py
-
+*.tlog
+**.tlog
 # Kargono files
 *.log
 **imgui.ini
@@ -385,3 +388,7 @@ imgui.ini
 
 # # Fody - auto-generated XML schema
 # FodyWeavers.xsd
+/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.command.1.tlog
+/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.read.1.tlog
+/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.write.1.tlog
+/Kargono-Editor/imgui.ini
