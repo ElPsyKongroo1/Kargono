@@ -2,19 +2,46 @@ Scene: Untitled
 Entities:
   - Entity: 1283719283720
     TagComponent:
-      Tag: Empty Entity
+      Tag: Square 2
     TransformComponent:
-      Translation: [0.400000006, 0.699999988, -4.0999999]
-      Rotation: [0.373500437, 0.937241793, 0]
+      Translation: [2.0735414, -0.476128787, -0.730127573]
+      Rotation: [1.5760324, 0.448549628, 0]
+      Scale: [0.600000024, 0.600000024, 1]
+    SpriteRendererComponent:
+      Color: [0.260341972, 0.335730553, 0.455598474, 1]
+  - Entity: 1283719283720
+    TagComponent:
+      Tag: Square 2
+    TransformComponent:
+      Translation: [2.30593991, -0.810748875, -0.819930911]
+      Rotation: [0.00523598772, 0.453785598, 0]
+      Scale: [0.600000024, 0.600000024, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 1283719283720
+    TagComponent:
+      Tag: Square 2
+    TransformComponent:
+      Translation: [1.89999998, -0.800000012, -0.899999976]
+      Rotation: [0, -1.20253181, 0]
+      Scale: [0.600000024, 0.600000024, 1]
+    SpriteRendererComponent:
+      Color: [0.594594598, 0.0619847588, 0.0619847588, 1]
+  - Entity: 1283719283720
+    TagComponent:
+      Tag: Square 1
+    TransformComponent:
+      Translation: [0.410927355, 0.617109656, -2.67318916]
+      Rotation: [0.116937056, 0.937241793, 0]
       Scale: [4.5, 3, 1]
     SpriteRendererComponent:
       Color: [0.108764067, 0.320088923, 0.494208515, 1]
   - Entity: 1283719283720
     TagComponent:
-      Tag: White Square
+      Tag: Square 1
     TransformComponent:
-      Translation: [-1.60000002, 0, -2.9000001]
-      Rotation: [0.373500437, 2.49931145, 0]
+      Translation: [-2.20219612, 0.721671343, -2.06323528]
+      Rotation: [0.115191728, 2.49931145, 0]
       Scale: [3.0999999, 3.20000005, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -36,3 +63,12 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+  - Entity: 1283719283720
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [0.103964724, -1.13782239, -1.79449725]
+      Rotation: [-1.63537347, -0.628318548, 0]
+      Scale: [9.30000019, 17.8999996, 1]
+    SpriteRendererComponent:
+      Color: [0.295779526, 0.144005001, 0.32432431, 1]

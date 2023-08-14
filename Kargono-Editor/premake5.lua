@@ -20,6 +20,7 @@ project "Kargono-Editor"
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.imGui}",
+        "%{IncludeDir.ImGuizmo}",
         "%{wks.location}/Kargono"
 
     }

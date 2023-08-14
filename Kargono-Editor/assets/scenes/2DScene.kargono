@@ -2,13 +2,22 @@ Scene: Untitled
 Entities:
   - Entity: 1283719283720
     TagComponent:
-      Tag: Stupid Square
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [0, 0, -2.5]
+      Translation: [-0.694214463, -0.152016014, -3.29999995]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [25.1000004, 11.6999998, 1]
     SpriteRendererComponent:
-      Color: [0.602316618, 0.111626245, 0.111626245, 1]
+      Color: [1, 1, 1, 1]
+  - Entity: 1283719283720
+    TagComponent:
+      Tag: Blue Square
+    TransformComponent:
+      Translation: [0.400000006, 0, -2.9000001]
+      Rotation: [0, 0, 0]
+      Scale: [5.5999999, 2.29999995, 1]
+    SpriteRendererComponent:
+      Color: [0.0438723303, 0.420849442, 0.416482896, 1]
   - Entity: 1283719283720
     TagComponent:
       Tag: Camera
@@ -29,10 +38,10 @@ Entities:
       FixedAspectRatio: false
   - Entity: 1283719283720
     TagComponent:
-      Tag: Blue Square
+      Tag: Stupid Square
     TransformComponent:
-      Translation: [0.400000006, 0, -2.9000001]
+      Translation: [0, 0, -2.5]
       Rotation: [0, 0, 0]
-      Scale: [5.5999999, 2.29999995, 1]
+      Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.0438723303, 0.420849442, 0.416482896, 1]
+      Color: [0.602316618, 0.111626245, 0.111626245, 1]
