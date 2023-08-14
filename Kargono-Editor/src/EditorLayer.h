@@ -1,6 +1,7 @@
 #pragma once
 #include "Kargono.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Kargono/Renderer/EditorCamera.h"
 
 namespace Kargono {
 
@@ -35,6 +36,8 @@ namespace Kargono {
 		Entity m_SecondCamera;
 
 		bool m_PrimaryCamera = true;
+
+		EditorCamera m_EditorCamera;
 
 		Ref<Texture2D> m_CheckerboardTexture;
 
