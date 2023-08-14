@@ -31,6 +31,7 @@ IncludeDir["glm"] = "%{wks.location}/Kargono/dependencies/glm"
 IncludeDir["stb_image"] = "%{wks.location}/Kargono/dependencies/stb_image"
 IncludeDir["entt"] = "%{wks.location}/Kargono/dependencies/entt/include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/Kargono/dependencies/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "%{wks.location}/Kargono/dependencies/ImGuizmo"
 
 group "Dependencies"
     include "dependencies/premake"
