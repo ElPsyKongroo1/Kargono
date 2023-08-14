@@ -18,6 +18,8 @@ project "Kargono"
 		"Kargono/**.cpp",
         "dependencies/stb_image/**.cpp",
         "dependencies/stb_image/**.h",
+        "dependencies/ImGuizmo/ImGuizmo.h",
+        "dependencies/ImGuizmo/ImGuizmo.cpp",
         "Platform/**.h",
         "Platform/**.cpp"
     }
@@ -37,7 +39,8 @@ project "Kargono"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.yaml_cpp}"
+        "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.ImGuizmo}"
     }
 
     libdirs
@@ -53,6 +56,9 @@ project "Kargono"
         "dwmapi.lib",
         "yaml-cpp"
     }
+
+    filter "files:dependencies/ImGuizmo/**.cpp"
+    flags{ "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"

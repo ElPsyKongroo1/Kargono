@@ -22,6 +22,9 @@
     <Filter Include="Kargono\Scene">
       <UniqueIdentifier>{D3D70918-3F98-854E-08D3-CECB7452CA2A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Kargono\Utils">
+      <UniqueIdentifier>{166C3718-822C-B34E-4B67-FCCBB7E6F72A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
     </Filter>
@@ -33,6 +36,9 @@
     </Filter>
     <Filter Include="dependencies">
       <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\ImGuizmo">
+      <UniqueIdentifier>{6C1DA30B-D889-5E06-A17D-F6630DA9806E}</UniqueIdentifier>
     </Filter>
     <Filter Include="dependencies\stb_image">
       <UniqueIdentifier>{26BD49FD-12B7-724F-FB23-0960E7BCD8BB}</UniqueIdentifier>
@@ -154,6 +160,9 @@
     <ClInclude Include="Kargono\Scene\ScriptableEntity.h">
       <Filter>Kargono\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Kargono\Utils\PlatformUtils.h">
+      <Filter>Kargono\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="Kargono\kgpch.h">
       <Filter>Kargono</Filter>
     </ClInclude>
@@ -181,10 +190,13 @@
     <ClInclude Include="Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="dependencies\ImGuizmo\ImGuizmo.h">
+      <Filter>dependencies\ImGuizmo</Filter>
+    </ClInclude>
     <ClInclude Include="dependencies\stb_image\stb_image.h">
       <Filter>dependencies\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Kargono\Utils\PlatformUtils.h" />
+    <ClInclude Include="Kargono\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kargono\Core\Application.cpp">
@@ -283,12 +295,18 @@
     <ClCompile Include="Platform\Windows\WindowsInput.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\ImGuizmo\ImGuizmo.cpp">
+      <Filter>dependencies\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="dependencies\stb_image\stb_image.cpp">
       <Filter>dependencies\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\Windows\WindowsPlatformUtils.cpp" />
+    <ClCompile Include="Kargono\Math\Math.cpp" />
   </ItemGroup>
 </Project>
