@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <optional>
 
 namespace Kargono
 {
@@ -7,7 +8,7 @@ namespace Kargono
 	{
 	public:
 		// These return empty string if cancelled
-		static std::string OpenFile(const char* filter);
-		static std::string SaveFile(const char* filter);
+		static std::optional<std::string> OpenFile(const char* filter);
+		static std::optional<std::string> SaveFile(const char* filter);
 	};
 }
