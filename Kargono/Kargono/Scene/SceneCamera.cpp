@@ -30,6 +30,7 @@ namespace Kargono
 	}
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
 	{
+		KG_CORE_ASSERT(width > 0 && height > 0, "Attempt to set viewport size to negative value!");
 		m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
 		RecalculateProjection();
 		

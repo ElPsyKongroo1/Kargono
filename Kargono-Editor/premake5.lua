@@ -2,7 +2,7 @@ project "Kargono-Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
-    staticruntime "on"
+    staticruntime "off"
     linkoptions { "-IGNORE:4098", "-IGNORE:4006" }
     
     targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")

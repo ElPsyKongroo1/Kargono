@@ -16,10 +16,23 @@ int main(int argc, char** argv);
 
 namespace Kargono
 {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			KG_CORE_ASSERT(index < Count, "Invalid attempt to access command line arguments");
+			return Args[index];
+		}
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Kargono App");
+		Application(const std::string& name = "Kargono App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 		
 
@@ -29,6 +42,9 @@ namespace Kargono
 		void PushOverlay(Layer* layer);
 
 		static Application& Get() { return *s_Instance; }
+
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+
 		Window& GetWindow() { return *m_Window; }
 
 		void Close();
@@ -39,6 +55,7 @@ namespace Kargono
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
@@ -52,6 +69,6 @@ namespace Kargono
 	};
 
 	// To be defined in client
-	Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 }
 
