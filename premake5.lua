@@ -1,5 +1,5 @@
 include "./dependencies/premake/premake_customization/solution_items.lua"
-
+include "Dependencies.lua"
 workspace "Kargono"
     startproject "Kargono-Editor"
     architecture "x86_64"
@@ -22,16 +22,6 @@ workspace "Kargono"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-IncludeDir = {}
-IncludeDir["GLFW"] = "%{wks.location}/Kargono/dependencies/GLFW/include"
-IncludeDir["GLAD"] = "%{wks.location}/Kargono/dependencies/GLAD/include"
-IncludeDir["spdlog"] = "%{wks.location}/Kargono/dependencies/spdlog"
-IncludeDir["imGui"] = "%{wks.location}/Kargono/dependencies/imgui"
-IncludeDir["glm"] = "%{wks.location}/Kargono/dependencies/glm"
-IncludeDir["stb_image"] = "%{wks.location}/Kargono/dependencies/stb_image"
-IncludeDir["entt"] = "%{wks.location}/Kargono/dependencies/entt/include"
-IncludeDir["yaml_cpp"] = "%{wks.location}/Kargono/dependencies/yaml-cpp/include"
-IncludeDir["ImGuizmo"] = "%{wks.location}/Kargono/dependencies/ImGuizmo"
 
 group "Dependencies"
     include "dependencies/premake"
