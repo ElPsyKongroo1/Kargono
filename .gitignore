@@ -32,6 +32,10 @@ imgui.ini
 **.vcxproj.filters
 **.vcxproj.user
 
+Kargono/dependencies/VulkanSDK
+KargonoEditor/assets/cache
+scripts/__pycache__
+
 # *.rsuser
 # *.suo
 # *.userosscache
