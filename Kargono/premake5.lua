@@ -34,6 +34,7 @@ project "Kargono"
         "",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
+        "%{IncludeDir.Box2D}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.glm}",
@@ -51,6 +52,7 @@ project "Kargono"
     links 
     { 
         "GLFW",
+        "Box2D",
         "GLAD",
         "opengl32.lib",
         "imGui",
