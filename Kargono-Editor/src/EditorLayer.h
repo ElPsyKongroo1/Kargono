@@ -1,7 +1,9 @@
 #pragma once
 #include "Kargono.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 #include "Kargono/Renderer/EditorCamera.h"
+#include <filesystem>
 
 namespace Kargono {
 
@@ -21,6 +23,7 @@ namespace Kargono {
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 	private:
 
@@ -54,6 +57,7 @@ namespace Kargono {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 
 }
