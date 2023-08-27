@@ -1,0 +1,60 @@
+Scene: Untitled
+Entities:
+  - Entity: 8503901849058678268
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 11.7154942]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 17055319346590925538
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [0, -1.98746812, 0]
+      Rotation: [0, 0, 0]
+      Scale: [5.9477396, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.038237337, 0.66023165, 0.638617814, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11925232612098458245
+    TagComponent:
+      Tag: Falling Box
+    TransformComponent:
+      Translation: [-0.163497314, 3.14892888, 0]
+      Rotation: [0, 0, -2.03758073]
+      Scale: [0.70000124, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.517374516, 0.183777809, 0.183777809, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.479999989
+      RestitutionThreshold: 0.5
