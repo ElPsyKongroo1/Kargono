@@ -5,6 +5,7 @@ VULKAN_SDK = os.getenv("VULKAN_SDK")
 IncludeDir = {}
 IncludeDir["GLFW"] = "%{wks.location}/Kargono/dependencies/GLFW/include"
 IncludeDir["GLAD"] = "%{wks.location}/Kargono/dependencies/GLAD/include"
+IncludeDir["Box2D"] = "%{wks.location}/Kargono/dependencies/Box2D/include"
 IncludeDir["spdlog"] = "%{wks.location}/Kargono/dependencies/spdlog"
 IncludeDir["imGui"] = "%{wks.location}/Kargono/dependencies/imgui"
 IncludeDir["glm"] = "%{wks.location}/Kargono/dependencies/glm"
