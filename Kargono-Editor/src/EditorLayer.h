@@ -25,6 +25,12 @@ namespace Kargono {
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
+
+		void OnScenePlay();
+		void OnSceneStop();
+
+		// UI Panels
+		void UI_Toolbar();
 	private:
 
 		OrthographicCameraController m_CameraController;
@@ -55,9 +61,19 @@ namespace Kargono {
 
 		int m_GizmoType = -1;
 
+		enum class SceneState
+		{
+			Edit = 0, Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
+
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		// Editor Resources
+		Ref<Texture2D> m_IconPlay, m_IconStop;
 	};
 
 }

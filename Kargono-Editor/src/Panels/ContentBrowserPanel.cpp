@@ -66,6 +66,7 @@ namespace Kargono
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
+
 			ImGui::PopID();
 			
 		}
