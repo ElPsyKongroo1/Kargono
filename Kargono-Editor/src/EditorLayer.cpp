@@ -39,6 +39,7 @@ namespace Kargono {
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
+		m_EditorScene = m_ActiveScene;
 
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.Count > 1)
@@ -96,7 +97,7 @@ namespace Kargono {
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 #endif
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		
 
 		
 	}
@@ -251,7 +252,6 @@ namespace Kargono {
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 				{
 					SaveSceneAs();
-					
 				}
 
 				if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
@@ -291,7 +291,7 @@ namespace Kargono {
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+		Application::Get().GetImGuiLayer()->AllowEvents(!(m_ViewportFocused || m_ViewportHovered));
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		//KG_WARN("Viewport Size: {0}, {1}", viewportPanelSize.x, viewportPanelSize.y);
@@ -358,6 +358,7 @@ namespace Kargono {
 			}
 		}
 		UI_Toolbar();
+		ImGui::ShowDemoWindow();
 
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -421,9 +422,23 @@ namespace Kargono {
 			}
 			case Key::S:
 			{
-				if (control && shift){SaveSceneAs();}
+				if (control)
+				{
+					if (shift){SaveSceneAs();}
+					else { SaveScene(); }
+				}
 				break;
 			}
+
+			// Scene Commands
+
+			case Key::D:
+			{
+				if (control) { OnDuplicateEntity(); }
+				break;
+			}
+
+			// Gizmos
 			case Key::Q:
 				{
 				if (!ImGuizmo::IsUsing()) { m_GizmoType = -1; }
@@ -466,6 +481,7 @@ namespace Kargono {
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_EditorScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -479,6 +495,11 @@ namespace Kargono {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		if (m_SceneState != SceneState::Edit)
+		{
+			OnSceneStop();
+		}
+
 		if (path.extension().string() != ".kargono")
 		{
 			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -489,10 +510,19 @@ namespace Kargono {
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_ActiveScene = newScene;
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_EditorScene = newScene;
+			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_EditorScene);
+
+			m_ActiveScene = m_EditorScene;
+			m_EditorScenePath = path;
 		}
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		if (!m_EditorScenePath.empty()){ SerializeScene(m_ActiveScene, m_EditorScenePath);}
+		else { SaveSceneAs(); }
 	}
 
 	void EditorLayer::SaveSceneAs()
@@ -500,20 +530,48 @@ namespace Kargono {
 		std::string filepath = FileDialogs::SaveFile("Kargono Scene (*.kargono)\0*.kargono\0");
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(filepath);
+			SerializeScene(m_ActiveScene, filepath);
+			m_EditorScenePath = filepath;
 		}
+	}
+
+	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
 	}
 
 	void EditorLayer::OnScenePlay()
 	{
-		m_ActiveScene->OnRuntimeStart();
 		m_SceneState = SceneState::Play;
+
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnRuntimeStart();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+
 	}
 	void EditorLayer::OnSceneStop()
 	{
-		m_ActiveScene->OnRuntimeStop();
 		m_SceneState = SceneState::Edit;
+
+		m_ActiveScene->OnRuntimeStop();
+		m_ActiveScene = m_EditorScene;
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+		{
+			m_EditorScene->DuplicateEntity(selectedEntity);
+		}
 	}
 
 }

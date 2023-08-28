@@ -23,10 +23,18 @@ namespace Kargono
 			return component;
 		}
 
+		template<typename T, typename... Args>
+		T& AddOrReplaceComponent(Args&&... args)
+		{
+			T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
+
 		template<typename T>
 		T& GetComponent()
 		{
-			KG_CORE_ASSERT(HasComponent<T>(), "Entity does not have the component!");
+			KG_CORE_ASSERT(HasComponent<T>(), "Entity does not have the component!")
 
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
@@ -51,6 +59,7 @@ namespace Kargono
 		operator uint64_t() const { return static_cast<uint64_t>(m_EntityHandle); }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
 		bool operator==(const Entity& other) const
 		{
