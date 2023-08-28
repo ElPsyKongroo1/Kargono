@@ -32,21 +32,25 @@ namespace Kargono
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.each([&](auto entityID)
+		if (m_Context)
 		{
-			Entity entity{entityID, m_Context.get()};
-			DrawEntityNode(entity);
-		});
 
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) { m_SelectionContext = {}; }
+			m_Context->m_Registry.each([&](auto entityID)
+				{
+					Entity entity{ entityID, m_Context.get() };
+					DrawEntityNode(entity);
+				});
 
-		// Right-click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
-		{
-			if (ImGui::MenuItem("Create Empty Entity")) { m_Context->CreateEntity("Empty Entity"); }
-			ImGui::EndPopup();
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) { m_SelectionContext = {}; }
+
+			// Right-click on blank space
+			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+			{
+				if (ImGui::MenuItem("Create Empty Entity")) { m_Context->CreateEntity("Empty Entity"); }
+				ImGui::EndPopup();
+			}
+
 		}
-
 		ImGui::End();
 
 		ImGui::Begin("Properties");
@@ -250,6 +254,15 @@ namespace Kargono
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
+			{
+				if (ImGui::MenuItem("Circle Renderer"))
+				{
+					m_SelectionContext.AddComponent<CircleRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
 			{
 				if (ImGui::MenuItem("Rigidbody 2D"))
@@ -331,8 +344,16 @@ namespace Kargono
 				}
 			});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
 		{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
+				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+		});
+
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
 				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
@@ -353,7 +374,7 @@ namespace Kargono
 				}
 				// Texture
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
-		});
+			});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
 			{

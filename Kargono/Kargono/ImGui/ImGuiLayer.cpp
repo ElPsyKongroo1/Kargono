@@ -76,7 +76,7 @@ namespace Kargono
 
     void ImGuiLayer::OnEvent(Event& e)
     {
-        if (m_BlockEvents)
+        if (m_AllowEvents)
         {
             ImGuiIO& io = ImGui::GetIO();
             e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
