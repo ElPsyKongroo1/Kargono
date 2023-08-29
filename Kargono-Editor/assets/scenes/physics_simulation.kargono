@@ -61,18 +61,18 @@ Entities:
     TagComponent:
       Tag: Falling Circle
     TransformComponent:
-      Translation: [1.30427372, 2.40927911, 0]
-      Rotation: [0, 0, -2.03758073]
-      Scale: [1, 1, 1]
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1.38, 1.38, 1.38]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 0.275000006
       Fade: 0.0529999994
     Rigidbody2DComponent:
       BodyType: Dynamic
-      FixedRotation: false
+      FixedRotation: true
     CircleCollider2DComponent:
-      Offset: [0, 0]
+      Offset: [-1, 2]
       Radius: 0.5
       Density: 1
       Friction: 0.5

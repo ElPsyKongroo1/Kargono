@@ -20,6 +20,7 @@ namespace Kargono {
 	private:
 		bool OnKeyPressed(KeyPressedEvent event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent event);
+		void OnOverlayRender();
 
 		void NewScene();
 		void OpenScene();
@@ -67,6 +68,8 @@ namespace Kargono {
 		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
 		int m_GizmoType = -1;
+
+		bool m_ShowPhysicsColliders = false;
 
 		enum class SceneState
 		{
