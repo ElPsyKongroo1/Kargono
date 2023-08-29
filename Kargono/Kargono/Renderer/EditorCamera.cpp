@@ -86,9 +86,12 @@ namespace Kargono {
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
-		float delta = e.GetYOffset() * 0.1f;
-		MouseZoom(delta);
-		UpdateView();
+		if (Input::IsKeyPressed(Key::LeftAlt))
+		{
+			float delta = e.GetYOffset() * 0.1f;
+			MouseZoom(delta);
+			UpdateView();
+		}
 		return false;
 	}
 

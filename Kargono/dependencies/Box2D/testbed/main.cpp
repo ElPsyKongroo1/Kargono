@@ -45,6 +45,7 @@ static Test* s_test = nullptr;
 static Settings s_settings;
 static bool s_rightMouseDown = false;
 static b2Vec2 s_clickPointWS = b2Vec2_zero;
+static float s_displayScale = 1.0f;
 
 void glfwErrorCallback(int error, const char* description)
 {
@@ -65,6 +66,12 @@ static inline bool CompareTests(const TestEntry& a, const TestEntry& b)
 static void SortTests()
 {
 	std::sort(g_testEntries, g_testEntries + g_testCount, CompareTests);
+}
+
+static void RestartTest()
+{
+	delete s_test;
+	s_test = g_testEntries[s_settings.m_testIndex].createFcn();
 }
 
 static void CreateUI(GLFWwindow* window, const char* glslVersion = NULL)
@@ -107,7 +114,7 @@ static void CreateUI(GLFWwindow* window, const char* glslVersion = NULL)
 
 	if (fontPath)
 	{
-		ImGui::GetIO().Fonts->AddFontFromFileTTF(fontPath, 13.0f);
+		ImGui::GetIO().Fonts->AddFontFromFileTTF(fontPath, 14.0f * s_displayScale);
 	}
 }
 
@@ -189,9 +196,7 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			break;
 
 		case GLFW_KEY_HOME:
-			// Reset view
-			g_camera.m_zoom = 1.0f;
-			g_camera.m_center.Set(0.0f, 20.0f);
+			g_camera.ResetView();
 			break;
 
 		case GLFW_KEY_Z:
@@ -205,9 +210,7 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			break;
 
 		case GLFW_KEY_R:
-			// Reset test
-			delete s_test;
-			s_test = g_testEntries[s_settings.m_testIndex].createFcn();
+			RestartTest();
 			break;
 
 		case GLFW_KEY_SPACE:
@@ -346,19 +349,13 @@ static void ScrollCallback(GLFWwindow* window, double dx, double dy)
 	}
 }
 
-static void RestartTest()
-{
-	delete s_test;
-	s_test = g_testEntries[s_settings.m_testIndex].createFcn();
-}
-
 static void UpdateUI()
 {
-	int menuWidth = 180;
+	float menuWidth = 180.0f * s_displayScale;
 	if (g_debugDraw.m_showUI)
 	{
-		ImGui::SetNextWindowPos(ImVec2((float)g_camera.m_width - menuWidth - 10, 10));
-		ImGui::SetNextWindowSize(ImVec2((float)menuWidth, (float)g_camera.m_height - 20));
+		ImGui::SetNextWindowPos({g_camera.m_width - menuWidth - 10.0f, 10.0f});
+		ImGui::SetNextWindowSize({menuWidth, g_camera.m_height - 20.0f});
 
 		ImGui::Begin("Tools", &g_debugDraw.m_showUI, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
@@ -442,9 +439,6 @@ static void UpdateUI()
 							ImGui::TreeNodeEx((void*)(intptr_t)i, leafNodeFlags | selectionFlags, "%s", g_testEntries[i].name);
 							if (ImGui::IsItemClicked())
 							{
-								delete s_test;
-								s_settings.m_testIndex = i;
-								s_test = g_testEntries[i].createFcn();
 								s_testSelection = i;
 							}
 							++i;
@@ -530,6 +524,8 @@ int main(int, char**)
 		return -1;
 	}
 
+	glfwGetWindowContentScale(g_mainWindow, &s_displayScale, &s_displayScale);
+
 	glfwMakeContextCurrent(g_mainWindow);
 
 	// Load OpenGL functions using glad
@@ -537,7 +533,6 @@ int main(int, char**)
 	printf("GL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 	printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	glfwSetScrollCallback(g_mainWindow, ScrollCallback);
 	glfwSetWindowSizeCallback(g_mainWindow, ResizeWindowCallback);
 	glfwSetKeyCallback(g_mainWindow, KeyCallback);
 	glfwSetCharCallback(g_mainWindow, CharCallback);
@@ -613,8 +608,7 @@ int main(int, char**)
 			s_settings.m_testIndex = s_testSelection;
 			delete s_test;
 			s_test = g_testEntries[s_settings.m_testIndex].createFcn();
-			g_camera.m_zoom = 1.0f;
-			g_camera.m_center.Set(0.0f, 20.0f);
+			g_camera.ResetView();
 		}
 
 		glfwPollEvents();

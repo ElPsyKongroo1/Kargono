@@ -155,8 +155,7 @@ namespace Kargono
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
-				circleShape.m_radius = cc2d.Radius;
-
+				circleShape.m_radius = transform.Scale.x * cc2d.Radius;
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;

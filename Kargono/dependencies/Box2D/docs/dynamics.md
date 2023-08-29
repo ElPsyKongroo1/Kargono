@@ -637,7 +637,7 @@ too strong.
 
 ### Joint Definition
 Each joint type has a definition that derives from b2JointDef. All
-joints are connected between two different bodies. One body may static.
+joints are connected between two different bodies. One body may be static.
 Joints between static and/or kinematic bodies are allowed, but have no
 effect and use some processing time.
 
@@ -1064,11 +1064,6 @@ Instead it is better to create breakable bodies starting with a single
 body with multiple fixtures. When the body breaks, you can destroy a
 fixture and recreate it on a new body. See the Breakable example in the
 testbed.
-
-### Rope Joint
-The rope joint restricts the maximum distance between two points. This
-can be useful to prevent chains of bodies from stretching, even under
-high load. See b2RopeJoint.h and rope_joint.cpp for details.
 
 ### Friction Joint
 The friction joint is used for top-down friction. The joint provides 2D
