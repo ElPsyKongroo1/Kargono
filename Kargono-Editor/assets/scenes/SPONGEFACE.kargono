@@ -9,6 +9,7 @@ Entities:
       Scale: [0.389400005, 0.389400005, 0.389400005]
     SpriteRendererComponent:
       Color: [0.706563711, 0.229155794, 0.229155794, 1]
+      TilingFactor: 1
   - Entity: 9005808808947667602
     TagComponent:
       Tag: Left Eye Ball
@@ -18,6 +19,7 @@ Entities:
       Scale: [0.420000017, 0.420000017, 0.378522366]
     SpriteRendererComponent:
       Color: [0.552123547, 0.166276589, 0.166276589, 1]
+      TilingFactor: 1
   - Entity: 2280200278291677296
     TagComponent:
       Tag: Mouth
@@ -27,6 +29,8 @@ Entities:
       Scale: [3.79999995, 1.10000002, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\camera.png
+      TilingFactor: 1
   - Entity: 12843635752814483140
     TagComponent:
       Tag: Left Eye
@@ -36,6 +40,8 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\Checkerboard.png
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
@@ -55,6 +61,7 @@ Entities:
       Scale: [5.12182999, 5.53630257, 0.999967337]
     SpriteRendererComponent:
       Color: [0.127905056, 0.509652495, 0.505230665, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
@@ -73,7 +80,8 @@ Entities:
       Rotation: [-2.26708031, 0, 0]
       Scale: [5.10637903, 5.37712288, 0.999800146]
     SpriteRendererComponent:
-      Color: [0.831372559, 0.827450991, 0.247058824, 1]
+      Color: [0.536848009, 0.590733588, 0.109479584, 1]
+      TilingFactor: 1
   - Entity: 3568549142667202624
     TagComponent:
       Tag: Right Eye
@@ -83,6 +91,8 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\Checkerboard.png
+      TilingFactor: 1
   - Entity: 9629059954231359543
     TagComponent:
       Tag: Main Camera
@@ -103,3 +113,4 @@ Entities:
       FixedAspectRatio: false
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TilingFactor: 1
