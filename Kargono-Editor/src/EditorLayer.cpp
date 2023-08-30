@@ -447,7 +447,7 @@ namespace Kargono {
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent event)
 	{
-		if (event.GetRepeatCount() > 0) { return false; }
+		if (event.IsRepeat() > 0) { return false; }
 
 		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
@@ -527,8 +527,6 @@ namespace Kargono {
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
 			if (!camera) { return; }
 			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
-			
-			
 		}
 		else
 		{
