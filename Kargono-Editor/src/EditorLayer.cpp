@@ -36,6 +36,7 @@ namespace Kargono {
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
 		m_IconPlay = Texture2D::Create("resources/icons/play_icon.png");
+		m_IconSimulate = Texture2D::Create("resources/icons/simulate_icon.png");
 		m_IconStop = Texture2D::Create("resources/icons/stop_icon.png");
 
 		FramebufferSpecification fbSpec;
@@ -150,6 +151,13 @@ namespace Kargono {
 				m_EditorCamera.OnUpdate(ts);
 
 				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				break;
+			}
+			case SceneState::Simulate:
+			{
+				m_EditorCamera.OnUpdate(ts);
+
+				m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
 				break;
 			}
 			case SceneState::Play:
@@ -391,14 +399,37 @@ namespace Kargono {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
 		ImGui::Begin("##toolbar", nullptr, 0);
+
+		bool toolbarEnabled = (bool)m_ActiveScene;
+
+		ImVec4 tintColor = ImVec4(1, 1, 1, 1);
+
+		if (!toolbarEnabled) { tintColor.w = 0.5f; }
+
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+
 		{
-			if (m_SceneState == SceneState::Edit) { OnScenePlay(); }
-			else if (m_SceneState == SceneState::Play) { OnSceneStop(); }
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor )
+				&& toolbarEnabled)
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) { OnScenePlay(); }
+				else if (m_SceneState == SceneState::Play) { OnSceneStop(); }
+			}
 		}
+		ImGui::SameLine();
+		{
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 },ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
+				&& toolbarEnabled)
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) { OnSceneSimulate(); }
+				else if (m_SceneState == SceneState::Simulate) { OnSceneStop(); }
+			}
+		}
+
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
@@ -494,14 +525,10 @@ namespace Kargono {
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
-			if (camera)
-			{
-				Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
-			}
-			else
-			{
-				return;
-			}
+			if (!camera) { return; }
+			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+			
+			
 		}
 		else
 		{
@@ -536,6 +563,7 @@ namespace Kargono {
 					auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
 
 					glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset.x, cc2d.Offset.y, 0.001f);
+
 					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
 
 					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
@@ -617,24 +645,42 @@ namespace Kargono {
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (m_SceneState == SceneState::Simulate) { OnSceneStop(); }
+
 		m_SceneState = SceneState::Play;
 
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
 
+	void EditorLayer::OnSceneSimulate()
+	{
+		if (m_SceneState == SceneState::Play) { OnSceneStop(); }
 
+		m_SceneState = SceneState::Simulate;
+
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnSimulationStart();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 	void EditorLayer::OnSceneStop()
 	{
+		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Givent to OnSceneStop")
+
+		if (m_SceneState == SceneState::Play) { m_ActiveScene->OnRuntimeStop(); }
+		else if (m_SceneState == SceneState::Simulate) { m_ActiveScene->OnSimulationStop(); }
+
 		m_SceneState = SceneState::Edit;
 
-		m_ActiveScene->OnRuntimeStop();
 		m_ActiveScene = m_EditorScene;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
+
+	
 
 	void EditorLayer::OnDuplicateEntity()
 	{
