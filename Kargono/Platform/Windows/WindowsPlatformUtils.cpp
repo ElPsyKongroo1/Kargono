@@ -8,7 +8,13 @@
 
 #include "Kargono/Core/Application.h"
 
-namespace Kargono {
+namespace Kargono
+{
+
+	float Time::GetTime()
+	{
+		return glfwGetTime();
+	}
 
 	std::string FileDialogs::OpenFile(const char* filter)
 	{

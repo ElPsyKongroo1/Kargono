@@ -5,7 +5,8 @@
 class Sandbox : public Kargono::Application 
 {
 public:
-	Sandbox() 
+	Sandbox(const Kargono::ApplicationSpecification& specification)
+		: Kargono::Application(specification)
 	{
 		//PushLayer(new ExampleLayer()); 
 		PushLayer(new Sandbox2D()); 
@@ -16,7 +17,12 @@ public:
 	}
 };
 
-Kargono::Application* Kargono::CreateApplication()
+Kargono::Application* Kargono::CreateApplication(Kargono::ApplicationCommandLineArgs args)
 {
-	return new Sandbox();
+	ApplicationSpecification spec;
+	spec.Name = "Sandbox";
+	spec.WorkingDirectory = "../Kargono-Editor";
+	spec.CommandLineArgs = args;
+
+	return new Sandbox(spec);
 }

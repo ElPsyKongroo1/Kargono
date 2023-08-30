@@ -7,8 +7,8 @@ namespace Kargono {
 	class KargonoEditor : public Application
 	{
 	public:
-		KargonoEditor(ApplicationCommandLineArgs args)
-			: Application("Kargono Editor", args)
+		KargonoEditor(const ApplicationSpecification& spec)
+			: Application(spec)
 		{
 			//PushLayer(new ExampleLayer()); 
 			PushLayer(new EditorLayer());
@@ -21,6 +21,10 @@ namespace Kargono {
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new KargonoEditor(args);
+		ApplicationSpecification spec;
+		spec.Name = "Hazelnut";
+		spec.CommandLineArgs = args;
+
+		return new KargonoEditor(spec);
 	}
 }
