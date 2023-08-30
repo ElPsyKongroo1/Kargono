@@ -382,6 +382,7 @@ namespace Kargono
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		KG_CRITICAL("Adding a component has an unsupported type");
+		static_assert(sizeof(T) == 0);
 	}
 
 	template<>

@@ -1,9 +1,11 @@
 #include "Kargono/kgpch.h"
 #include "Kargono/Core/Application.h"
 
+#include <filesystem>
+
 #include "Kargono/Core/Log.h"
 
-#include "GLFW/glfw3.h"
+#include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Renderer/Renderer.h"
 
 
@@ -15,15 +17,19 @@ namespace Kargono
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-		: m_CommandLineArgs(args)
+	Application::Application(const ApplicationSpecification& specification)
+		: m_Specification(specification)
 		
 	{
 		KG_PROFILE_FUNCTION();
 
 		KG_CORE_ASSERT(!s_Instance, "Application already exists!")
 		s_Instance = this;
-		m_Window = Window::Create(WindowProps(name));
+		// Set working directory here
+		if (!m_Specification.WorkingDirectory.empty())
+			std::filesystem::current_path(m_Specification.WorkingDirectory);
+
+		m_Window = Window::Create(WindowProps(m_Specification.Name));
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
@@ -86,7 +92,7 @@ namespace Kargono
 		{
 			KG_PROFILE_SCOPE("RunLoop");
 
-			float time = (float)glfwGetTime(); // Platform::GetTime()
+			float time = Time::GetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

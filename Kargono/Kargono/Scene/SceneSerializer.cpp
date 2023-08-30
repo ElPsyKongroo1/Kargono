@@ -281,6 +281,7 @@ namespace Kargono
 		}
 		catch (YAML::ParserException e)
 		{
+			KG_CORE_ERROR("Failed to load .kargono file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 
