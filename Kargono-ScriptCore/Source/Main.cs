@@ -3,14 +3,47 @@ using System.Runtime.CompilerServices;
 
 namespace Kargono
 {
-	public class Main
+	public struct Vector3
 	{
+		public float X, Y, Z;
+
+		public Vector3(float x, float y, float z)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+		}
+	}
+
+	public static class InternalCalls
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void NativeLog(string text, int parameter);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void NativeLog_Vector(ref Vector3 parameter, out Vector3 result);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static float NativeLog_VectorDot(ref Vector3 parameter);
+	}
+
+	public class Entity
+	{
+		// C#
+		// struct -> stack allocated
+		// class -> heap allocated (+ GC)
+
 		public float FloatVar { get; set; }
 
-		public Main()
+		public Entity()
 		{
 			Console.WriteLine("Main Constructor");
-			NativeLog("AAstroPhysiC", 8058);
+			Log("AAstroPhysiC", 8058);
+
+			Vector3 pos = new Vector3(5, 2.5f, 1);
+			Vector3 result = Log(pos);
+			Console.WriteLine($"{result.X}, {result.Y}, {result.Z} ");
+			Console.WriteLine("{0}", InternalCalls.NativeLog_VectorDot(ref pos));
 		}
 
 		public void PrintMessage()
@@ -33,7 +66,15 @@ namespace Kargono
 			Console.WriteLine($"C# says: {message}");
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void NativeLog(string text, int parameter);
+		private void Log(string text, int parameter)
+		{
+			InternalCalls.NativeLog(text, parameter);
+		}
+
+		private Vector3 Log(Vector3 parameter)
+		{
+			InternalCalls.NativeLog_Vector(ref parameter, out Vector3 result);
+			return result;
+		}
 	}
 }
