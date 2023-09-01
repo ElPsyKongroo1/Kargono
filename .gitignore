@@ -403,3 +403,5 @@ scripts/__pycache__
 /Kargono/Kargono.vcxproj.filters
 /bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/Kargono.lastbuildstate
 /Kargono/dependencies/mono/include/mono/cil/opcode.def
+/Kargono-Editor/resources/Scripts/Kargono-ScriptCore.dll
+/Kargono-Editor/resources/Scripts/Kargono-ScriptCore.pdb
