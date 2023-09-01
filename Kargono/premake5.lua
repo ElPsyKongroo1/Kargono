@@ -40,6 +40,7 @@ project "Kargono"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
+        "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.VulkanSDK}"
@@ -57,7 +58,9 @@ project "Kargono"
         "opengl32.lib",
         "imGui",
         "dwmapi.lib",
-        "yaml-cpp"
+        "yaml-cpp",
+        "%{Library.mono}",
+
     }
 
     filter "files:dependencies/ImGuizmo/**.cpp"
@@ -70,16 +73,14 @@ project "Kargono"
         {
 
         }
-        -- prebuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{wks.location}Kargono/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
-        -- } 
-        -- postbuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox\""
-        -- }
+
+        links 
+        {
+            "%{Library.WinSock}",
+            "%{Library.WinMM}",
+            "%{Library.WinVersion}",
+            "%{Library.BCrypt}"
+        }
     filter "configurations:Debug"
         defines "KG_DEBUG"
         runtime "Debug"

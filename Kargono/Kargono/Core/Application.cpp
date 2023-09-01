@@ -7,8 +7,7 @@
 
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Renderer/Renderer.h"
-
-
+#include "Kargono/Scripting/ScriptEngine.h"
 
 
 namespace Kargono
@@ -33,6 +32,7 @@ namespace Kargono
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -42,7 +42,9 @@ namespace Kargono
 	{
 		KG_PROFILE_FUNCTION();
 
+		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
+		
 	}
 
 	void Application::PushLayer(Layer* layer)
