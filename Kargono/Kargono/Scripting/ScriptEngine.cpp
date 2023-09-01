@@ -100,6 +100,13 @@ namespace Kargono
 		}
 	}
 
+	static void NativeLog(MonoString* string, int parameter)
+	{
+		char* cStr = mono_string_to_utf8(string);
+		std::string str(cStr);
+		mono_free(cStr);
+		std::cout << str << ", " << parameter << '\n';
+	}
 
 	void ScriptEngine::InitMono()
 	{
@@ -116,12 +123,13 @@ namespace Kargono
 		s_Data->AppDomain = mono_domain_create_appdomain((char*)"KargonoScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
+		mono_add_internal_call("Kargono.Main::NativeLog", NativeLog);
+
 		// Move this maybe
 		s_Data->CoreAssembly =  LoadCSharpAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
 		PrintAssemblyTypes(s_Data->CoreAssembly);
 
-		
-		
+
 
 		// 1. Create an Object (and call constructor)
 		MonoImage* assemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
@@ -160,7 +168,7 @@ namespace Kargono
 		MonoMethod* printCustomMessageFunc = mono_class_get_method_from_name(monoClass, "PrintCustomMessage", 1);
 		mono_runtime_invoke(printCustomMessageFunc, instance, &stringParam, nullptr);
 
-		//KG_CORE_ASSERT(false, "AHHH")
+		KG_CORE_ASSERT(false, "AHHH")
 
 
 	}

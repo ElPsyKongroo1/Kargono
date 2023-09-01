@@ -33,8 +33,8 @@ group "Dependencies"
 group ""
 
 group "Core"
-    include "Kargono"
     include "Kargono-ScriptCore" 
+    include "Kargono"
 group ""
 
 group "Misc"

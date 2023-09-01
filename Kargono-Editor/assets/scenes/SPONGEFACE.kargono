@@ -47,8 +47,8 @@ Entities:
     TagComponent:
       Tag: Jaw
     TransformComponent:
-      Translation: [3.08336575e-06, -0.632429481, 0.479364812]
-      Rotation: [1.57079637, 2.27373675e-13, 4.87547823e-06]
+      Translation: [9.97904936e-05, -19.9228039, 0.479364812]
+      Rotation: [1.57079637, 2.27373675e-13, 0.00731142284]
       Scale: [5.12182999, 5.53630257, 0.999967337]
     SpriteRendererComponent:
       Color: [0.127905056, 0.509652495, 0.505230665, 1]
@@ -67,8 +67,8 @@ Entities:
     TagComponent:
       Tag: Left Eye
     TransformComponent:
-      Translation: [-1.27999997, 1.84000003, 1.27510798]
-      Rotation: [0, 0, 0]
+      Translation: [-1.28274238, -16.6489449, 1.27510798]
+      Rotation: [0, 0, 0.00731060235]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -93,7 +93,6 @@ Entities:
       Scale: [3.79999995, 1.10000002, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\ChernoLogo.png
       TilingFactor: 1
   - Entity: 9005808808947667602
     TagComponent:
