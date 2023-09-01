@@ -11,6 +11,7 @@
 # Binaries
 **/bin
 bin/**
+Intermediates/
 !dependencies/premake/bin/
 **/bin-int
 bin-int/**
@@ -28,6 +29,7 @@ bin-int/**
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**.csproj
 
 Kargono/dependencies/VulkanSDK
 KargonoEditor/assets/cache
@@ -400,3 +402,4 @@ scripts/__pycache__
 /Kargono/Kargono.vcxproj
 /Kargono/Kargono.vcxproj.filters
 /bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/Kargono.lastbuildstate
+/Kargono/dependencies/mono/include/mono/cil/opcode.def
