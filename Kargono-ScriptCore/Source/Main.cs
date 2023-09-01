@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Kargono
 {
@@ -9,6 +10,7 @@ namespace Kargono
 		public Main()
 		{
 			Console.WriteLine("Main Constructor");
+			NativeLog("AAstroPhysiC", 8058);
 		}
 
 		public void PrintMessage()
@@ -30,5 +32,8 @@ namespace Kargono
 		{
 			Console.WriteLine($"C# says: {message}");
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void NativeLog(string text, int parameter);
 	}
 }

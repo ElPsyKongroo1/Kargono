@@ -60,7 +60,7 @@ project "Kargono"
         "dwmapi.lib",
         "yaml-cpp",
         "%{Library.mono}",
-
+        "Kargono-ScriptCore"
     }
 
     filter "files:dependencies/ImGuizmo/**.cpp"
