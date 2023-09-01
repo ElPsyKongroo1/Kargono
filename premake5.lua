@@ -32,6 +32,15 @@ group "Dependencies"
     include "Kargono/dependencies/yaml-cpp"
 group ""
 
-include "Kargono"
-include "Sandbox"
-include "Kargono-Editor"
+group "Core"
+    include "Kargono"
+    include "Kargono-ScriptCore" 
+group ""
+
+group "Misc"
+    include "Sandbox"
+group ""
+
+group "Tools"
+    include "Kargono-Editor"
+group ""
