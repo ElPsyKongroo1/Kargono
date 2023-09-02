@@ -6,12 +6,29 @@ namespace Kargono
 	public struct Vector3
 	{
 		public float X, Y, Z;
+		public static Vector3 Zero => new Vector3(0.0f);
+
+		public Vector3(float scalar)
+		{
+			X = scalar;
+			Y = scalar;
+			Z = scalar;
+		}
 
 		public Vector3(float x, float y, float z)
 		{
 			X = x;
 			Y = y;
 			Z = z;
+		}
+
+		public static Vector3 operator +(Vector3 a, Vector3 b)
+		{
+			return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+		public static Vector3 operator*(Vector3 vector, float scalar)
+		{
+			return new Vector3(vector.X * scalar, vector.Y * scalar, vector.Z * scalar);
 		}
 	}
 
@@ -25,56 +42,41 @@ namespace Kargono
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static float NativeLog_VectorDot(ref Vector3 parameter);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Entity_GetTranslation(ulong entityID, out Vector3 parameter);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Entity_SetTranslation(ulong entityID, ref Vector3 parameter);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool Input_IsKeyDown(KeyCode keycode);
 	}
 
 	public class Entity
 	{
-		// C#
-		// struct -> stack allocated
-		// class -> heap allocated (+ GC)
+		protected Entity() { ID = 0;}
 
-		public float FloatVar { get; set; }
-
-		public Entity()
+		internal Entity(ulong id)
 		{
-			Console.WriteLine("Main Constructor");
-			Log("AAstroPhysiC", 8058);
-
-			Vector3 pos = new Vector3(5, 2.5f, 1);
-			Vector3 result = Log(pos);
-			Console.WriteLine($"{result.X}, {result.Y}, {result.Z} ");
-			Console.WriteLine("{0}", InternalCalls.NativeLog_VectorDot(ref pos));
+			ID = id;
 		}
 
-		public void PrintMessage()
+		public readonly ulong ID;
+
+		public Vector3 Translation
 		{
-			Console.WriteLine("Hello World from C#!");
+			get
+			{
+				InternalCalls.Entity_GetTranslation(ID, out Vector3 translation);
+				return translation;
+			}
+
+			set
+			{
+				InternalCalls.Entity_SetTranslation(ID, ref value);
+			}
 		}
 
-		public void PrintInt(int value)
-		{
-			Console.WriteLine($"C# says: {value}");
-		}
-
-		public void PrintInts(int value1, int value2)
-		{
-			Console.WriteLine($"C# says: {value1} and {value2}");
-		}
-
-		public void PrintCustomMessage(string message)
-		{
-			Console.WriteLine($"C# says: {message}");
-		}
-
-		private void Log(string text, int parameter)
-		{
-			InternalCalls.NativeLog(text, parameter);
-		}
-
-		private Vector3 Log(Vector3 parameter)
-		{
-			InternalCalls.NativeLog_Vector(ref parameter, out Vector3 result);
-			return result;
-		}
 	}
 }

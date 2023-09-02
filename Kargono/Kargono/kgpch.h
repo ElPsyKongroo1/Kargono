@@ -32,6 +32,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Debug/Instrumentor.h"
+#include "Kargono/Core/UUID.h"
 
 // P_ISSUE: Used to disable .dll export warning for shared_ptr's
 //#pragma warning(disable: 4251)

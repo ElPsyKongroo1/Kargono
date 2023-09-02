@@ -11,6 +11,7 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
+#include "Kargono/Scripting/ScriptEngine.h"
 
 namespace Kargono
 {
@@ -113,22 +114,40 @@ namespace Kargono
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		m_EntityMap[uuid] = entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::OnRuntimeStart()
 	{
 		OnPhysics2DStart();
+
+		// Scripts
+		ScriptEngine::OnRuntimeStart(this);
+		// Instantiate all script entities
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+
+			ScriptEngine::OnCreateEntity(entity);
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+
+		// Script
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -147,6 +166,13 @@ namespace Kargono
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		// TODO: Maybe should be an assert
+		if (m_EntityMap.find(uuid) != m_EntityMap.end()) { return { m_EntityMap.at(uuid), this }; }
+		return {};
+	}
+
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
@@ -158,6 +184,15 @@ namespace Kargono
 
 		// Update Scripts
 		{
+			// C# Entity
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+
+				ScriptEngine::OnUpdateEntity(entity, ts);
+			}
+
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
 				// TODO: Move to Scene::OnScenePlay
@@ -436,6 +471,12 @@ namespace Kargono
 
 	template<>
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 
 	}
