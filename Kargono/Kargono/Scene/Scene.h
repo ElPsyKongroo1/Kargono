@@ -30,6 +30,8 @@ namespace Kargono
 
 		void DuplicateEntity(Entity entity);
 
+		Entity GetEntityByUUID(UUID uuid);
+
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
@@ -55,6 +57,8 @@ namespace Kargono
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
 		friend class SceneSerializer;

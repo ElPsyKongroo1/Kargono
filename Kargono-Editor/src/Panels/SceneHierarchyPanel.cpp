@@ -4,6 +4,7 @@
 
 #include "imgui_internal.h"
 #include "Kargono/Scene/Components.h"
+#include "Kargono/Scripting/ScriptEngine.h"
 #include <cstring>
 #include <filesystem>
 #include "Kargono/Renderer/Texture.h"
@@ -237,6 +238,7 @@ namespace Kargono
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
+			DisplayAddComponentEntry<ScriptComponent>("Script");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
@@ -304,10 +306,25 @@ namespace Kargono
 				}
 			});
 
+		DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+		{
+			const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
+
+			static char buffer[64];
+			strcpy(buffer, component.ClassName.c_str());
+
+			if (!scriptClassExists) { ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f)); }
+			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			{
+				component.ClassName = buffer;
+			}
+
+			if (!scriptClassExists) { ImGui::PopStyleColor(); }
+		});
+
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
 		{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-
 				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
 		});
