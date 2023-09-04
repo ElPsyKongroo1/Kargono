@@ -590,7 +590,7 @@ namespace Kargono {
 
 	void EditorLayer::SaveScene()
 	{
-		if (!m_EditorScenePath.empty()){ SerializeScene(m_ActiveScene, m_EditorScenePath);}
+		if (!m_EditorScenePath.empty()){ SerializeScene(m_EditorScene, m_EditorScenePath);}
 		else { SaveSceneAs(); }
 	}
 
@@ -599,7 +599,7 @@ namespace Kargono {
 		std::string filepath = FileDialogs::SaveFile("Kargono Scene (*.kargono)\0*.kargono\0");
 		if (!filepath.empty())
 		{
-			SerializeScene(m_ActiveScene, filepath);
+			SerializeScene(m_EditorScene, filepath);
 			m_EditorScenePath = filepath;
 		}
 	}
