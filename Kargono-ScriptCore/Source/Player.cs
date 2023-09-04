@@ -11,9 +11,14 @@ namespace Sandbox
 {
 	public class Player : Entity
 	{
+		private TransformComponent m_Transform;
+
 		void OnCreate()
 		{
 			Console.WriteLine($"Player.OnCreate - {ID}");
+
+			m_Transform = GetComponent<TransformComponent>();
+			m_Transform.Translation = new Vector3(0.0f);
 		}
 
 		void OnUpdate(float ts)
@@ -30,6 +35,7 @@ namespace Sandbox
 			else if (Input.IsKeyDown(KeyCode.D)) { velocity.X = 1.0f; }
 
 			velocity *= speed;
+
 
 			Vector3 translation = Translation;
 			translation += velocity * ts;
