@@ -9,6 +9,7 @@ extern "C"
 	typedef struct _MonoObject MonoObject;
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
+	typedef struct _MonoImage MonoImage;
 }
 
 
@@ -36,6 +37,7 @@ namespace Kargono
 
 
 		static Scene* GetSceneContext();
+		static MonoImage* GetCoreAssemblyImage();
 
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 	private:
@@ -45,7 +47,9 @@ namespace Kargono
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 
+
 		friend class ScriptClass;
+		friend class ScriptGlue;
 	};
 
 	class ScriptClass

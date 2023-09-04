@@ -115,6 +115,7 @@ namespace Kargono
 		LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("Kargono", "Entity");
@@ -271,6 +272,11 @@ namespace Kargono
 
 			KG_CORE_TRACE("{}.{}", nameSpace, name);
 		}
+	}
+
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
