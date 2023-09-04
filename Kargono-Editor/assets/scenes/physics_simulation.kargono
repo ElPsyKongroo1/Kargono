@@ -183,11 +183,13 @@ Entities:
       Color: [1, 1, 1, 1]
       TexturePath: assets\textures\camera.png
       TilingFactor: 1
+    ScriptComponent:
+      ClassName: Sandbox.Player
   - Entity: 3278810721866741448
     TagComponent:
       Tag: Falling Box
     TransformComponent:
-      Translation: [-0.163497314, 3.14892888, 0]
+      Translation: [-2.55653787, 4.63857412, 0]
       Rotation: [0, 0, -2.03758073]
       Scale: [0.70000124, 1, 1]
     SpriteRendererComponent:
