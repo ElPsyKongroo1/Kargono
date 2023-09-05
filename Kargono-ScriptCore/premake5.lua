@@ -3,8 +3,8 @@ project "Kargono-ScriptCore"
     language "C#"
     dotnetframework "4.7.2"
     
-    targetdir ("%{wks.location}/Kargono-Editor/Resources/Scripts")
-    objdir ("%{wks.location}/Kargono-Editor/Resources/Scripts/Intermediates")
+    targetdir ("../Kargono-Editor/Resources/Scripts")
+    objdir ("../Kargono-Editor/Resources/Scripts/Intermediates")
     
     files 
     {
