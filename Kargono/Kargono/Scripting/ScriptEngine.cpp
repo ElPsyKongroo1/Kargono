@@ -339,13 +339,17 @@ namespace Kargono
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+		if (m_OnCreateMethod) { m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);}
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		void* param = &ts;
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+		if (m_OnUpdateMethod)
+		{
+			void* param = &ts;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+		}
+		
 	}
 
 }
