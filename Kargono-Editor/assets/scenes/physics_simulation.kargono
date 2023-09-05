@@ -184,7 +184,7 @@ Entities:
       TexturePath: assets\textures\camera.png
       TilingFactor: 1
     ScriptComponent:
-      ClassName: Sandbox.Player
+      ClassName: Sandbox.Camera
   - Entity: 3278810721866741448
     TagComponent:
       Tag: Falling Box
@@ -205,6 +205,8 @@ Entities:
       Friction: 0.5
       Restitution: 0.479999989
       RestitutionThreshold: 0.5
+    ScriptComponent:
+      ClassName: Sandbox.Player
   - Entity: 14651794984863265900
     TagComponent:
       Tag: Falling Box
