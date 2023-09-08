@@ -405,3 +405,5 @@ scripts/__pycache__
 /Kargono/dependencies/mono/include/mono/cil/opcode.def
 /Kargono-Editor/resources/Scripts/Kargono-ScriptCore.dll
 /Kargono-Editor/resources/Scripts/Kargono-ScriptCore.pdb
+/Kargono-Editor/SandboxProject/Assets/Scripts/Binaries/Sandbox.dll
+/Kargono-Editor/SandboxProject/Assets/Scripts/Binaries/Sandbox.pdb
