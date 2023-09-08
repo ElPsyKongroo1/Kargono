@@ -22,7 +22,7 @@ namespace Kargono {
 	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
 		ApplicationSpecification spec;
-		spec.Name = "Hazelnut";
+		spec.Name = "Kargono Editor";
 		spec.CommandLineArgs = args;
 
 		return new KargonoEditor(spec);

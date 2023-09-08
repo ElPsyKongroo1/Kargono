@@ -306,7 +306,7 @@ namespace Kargono
 				}
 			});
 
-		DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
 		{
 			const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
@@ -317,6 +317,26 @@ namespace Kargono
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 			{
 				component.ClassName = buffer;
+			}
+
+			// Fields
+			Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+			if (scriptInstance)
+			{
+				const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+
+
+				for (const auto& [name, field] : fields)
+				{
+					if (field.Type == ScriptFieldType::Float)
+					{
+						float data = scriptInstance->GetFieldValue<float>(name);
+						if (ImGui::DragFloat(name.c_str(), &data))
+						{
+							scriptInstance->SetFieldValue(name, data);
+						}
+					}
+				}
 			}
 
 			if (!scriptClassExists) { ImGui::PopStyleColor(); }

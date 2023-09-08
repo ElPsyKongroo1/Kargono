@@ -11,6 +11,7 @@ namespace Sandbox
 {
 	public class Camera : Entity
 	{
+		public Entity OtherEntity;
 
 		void OnUpdate(float ts)
 		{

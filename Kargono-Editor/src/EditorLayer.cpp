@@ -612,6 +612,7 @@ namespace Kargono {
 
 	void EditorLayer::OnScenePlay()
 	{
+		m_HoveredEntity = {};
 		if (m_SceneState == SceneState::Simulate) { OnSceneStop(); }
 
 		m_SceneState = SceneState::Play;
@@ -624,6 +625,7 @@ namespace Kargono {
 
 	void EditorLayer::OnSceneSimulate()
 	{
+		m_HoveredEntity = {};
 		if (m_SceneState == SceneState::Play) { OnSceneStop(); }
 
 		m_SceneState = SceneState::Simulate;
@@ -635,6 +637,7 @@ namespace Kargono {
 	}
 	void EditorLayer::OnSceneStop()
 	{
+		m_HoveredEntity = {};
 		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Givent to OnSceneStop")
 
 		if (m_SceneState == SceneState::Play) { m_ActiveScene->OnRuntimeStop(); }
