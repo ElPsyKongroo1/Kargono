@@ -165,6 +165,7 @@ namespace Kargono
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
 		// Runtime
 		Scene* SceneContext = nullptr;
@@ -288,8 +289,20 @@ namespace Kargono
 		const auto& sc = entity.GetComponent<ScriptComponent>();
 		if (ScriptEngine::EntityClassExists(sc.ClassName))
 		{
+			UUID entityID = entity.GetUUID();
+
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_ScriptData->EntityClasses[sc.ClassName], entity);
 			s_ScriptData->EntityInstances[entity.GetUUID()] = instance;
+
+			// Copy field values
+			if (s_ScriptData->EntityScriptFields.find(entityID) != s_ScriptData->EntityScriptFields.end())
+			{
+				const ScriptFieldMap& fieldMap = s_ScriptData->EntityScriptFields.at(entityID);
+				for (const auto& [name, fieldInstance] : fieldMap)
+				{
+					instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+				}
+			}
 
 			instance->InvokeOnCreate();
 		}
@@ -390,9 +403,25 @@ namespace Kargono
 		return s_ScriptData->SceneContext;
 	}
 
+	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string& name)
+	{
+		if (s_ScriptData->EntityClasses.find(name) == s_ScriptData->EntityClasses.end()) { return nullptr; }
+
+		return s_ScriptData->EntityClasses.at(name);
+	}
+
 	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
 	{
 		return s_ScriptData->EntityClasses;
+	}
+
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
+	{
+		KG_CORE_ASSERT(entity)
+		UUID entityID = entity.GetUUID();
+		//KG_CORE_ASSERT(s_ScriptData->EntityScriptFields.find(entity.GetUUID()) != s_ScriptData->EntityScriptFields.end())
+
+		return s_ScriptData->EntityScriptFields[entityID];
 	}
 
 	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore)

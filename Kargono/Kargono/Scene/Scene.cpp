@@ -128,6 +128,7 @@ namespace Kargono
 
 	void Scene::OnRuntimeStart()
 	{
+		m_IsRunning = true;
 		OnPhysics2DStart();
 
 		// Scripts
@@ -144,6 +145,7 @@ namespace Kargono
 
 	void Scene::OnRuntimeStop()
 	{
+		m_IsRunning = false;
 		OnPhysics2DStop();
 
 		// Script
