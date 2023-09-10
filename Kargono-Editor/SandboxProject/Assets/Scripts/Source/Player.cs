@@ -24,7 +24,6 @@ namespace Sandbox
 			m_Transform = GetComponent<TransformComponent>();
 			m_Rigidbody = GetComponent<Rigidbody2DComponent>();
 
-			Speed = 0.25f;
 		}
 
 		void OnUpdate(float ts)
@@ -41,7 +40,7 @@ namespace Sandbox
 			if (Input.IsKeyDown(KeyCode.A)) { velocity.X = -1.0f; }
 			else if (Input.IsKeyDown(KeyCode.D)) { velocity.X = 1.0f; }
 
-			velocity *= speed;
+			velocity *= speed * ts;
 
 			m_Rigidbody.ApplyLinearImpulse(velocity.XY, true);
 

@@ -126,10 +126,11 @@ Entities:
       Tag: Falling Box
     TransformComponent:
       Translation: [-2.35901427, 13.7568874, 0]
-      Rotation: [0, 0, -1.10320985]
+      Rotation: [0, 0, -1.10320973]
       Scale: [0.70000118, 0.981089234, 1]
     SpriteRendererComponent:
-      Color: [0.517374516, 0.183777809, 0.183777809, 1]
+      Color: [0.980392158, 0.929411769, 0.984313726, 1]
+      TexturePath: assets\textures\camera.png
       TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
@@ -293,9 +294,10 @@ Entities:
     TransformComponent:
       Translation: [3.35383368, 15.1640387, 0]
       Rotation: [0, 0, -2.03758073]
-      Scale: [0.70000124, 1, 1]
+      Scale: [2.86396837, 3.12765217, 1]
     SpriteRendererComponent:
-      Color: [0.517374516, 0.183777809, 0.183777809, 1]
+      Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\rock.png
       TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
@@ -307,3 +309,5 @@ Entities:
       Friction: 0.5
       Restitution: 0.829999983
       RestitutionThreshold: 0.5
+    ScriptComponent:
+      ClassName: Sandbox.Player

@@ -306,7 +306,7 @@ namespace Kargono
 				}
 			});
 
-		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
+		DrawComponent<ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
 		{
 			const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
@@ -320,26 +320,70 @@ namespace Kargono
 			}
 
 			// Fields
-			Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-			if (scriptInstance)
+			
+
+			bool sceneRunning = m_Context->IsRunning();
+			if (sceneRunning)
 			{
-				const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-
-
-				for (const auto& [name, field] : fields)
+				Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+			   if (scriptInstance)
+			   {
+				   const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+				   for (const auto& [name, field] : fields)
+				   {
+					   if (field.Type == ScriptFieldType::Float)
+					   {
+						   float data = scriptInstance->GetFieldValue<float>(name);
+						   if (ImGui::DragFloat(name.c_str(), &data))
+						   {
+							   scriptInstance->SetFieldValue(name, data);
+						   }
+					   }
+				   }
+			   }
+			}
+			else
+			{
+				if (scriptClassExists)
 				{
-					if (field.Type == ScriptFieldType::Float)
+					Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(component.ClassName);
+					const auto& fields = entityClass->GetFields();
+
+					auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+					for (const auto& [name, field] : fields)
 					{
-						float data = scriptInstance->GetFieldValue<float>(name);
-						if (ImGui::DragFloat(name.c_str(), &data))
+						// Field has been set in editor
+						if (entityFields.find(name) != entityFields.end())
 						{
-							scriptInstance->SetFieldValue(name, data);
+							ScriptFieldInstance& scriptField = entityFields.at(name);
+							// Display control to set it maybe
+							if (field.Type == ScriptFieldType::Float)
+							{
+								float data = scriptField.GetValue<float>();
+								if (ImGui::DragFloat(name.c_str(), &data)){scriptField.SetValue<float>(data);}
+							}
+						}
+						else
+						{
+							// Display control to set it maybe
+							if (field.Type == ScriptFieldType::Float)
+							{
+								float data = 0.0f;
+								if (ImGui::DragFloat(name.c_str(), &data))
+								{
+									ScriptFieldInstance& fieldInstance = entityFields[name];
+									fieldInstance.Field = field;
+									fieldInstance.SetValue(data);
+								}
+							}
 						}
 					}
 				}
 			}
 
+
 			if (!scriptClassExists) { ImGui::PopStyleColor(); }
+
 		});
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
