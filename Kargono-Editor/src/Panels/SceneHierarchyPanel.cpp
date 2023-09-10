@@ -352,7 +352,7 @@ namespace Kargono
 					auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
 					for (const auto& [name, field] : fields)
 					{
-						// Field has been set in editor
+							// Field has been set in editor
 						if (entityFields.find(name) != entityFields.end())
 						{
 							ScriptFieldInstance& scriptField = entityFields.at(name);
