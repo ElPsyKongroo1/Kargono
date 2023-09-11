@@ -8,6 +8,8 @@
 #include "mono/metadata/tabledefs.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Core/UUID.h"
+#include "FileWatch.hpp"
+#include "Kargono/Core/Application.h"
 
 namespace Kargono
 {
@@ -146,6 +148,9 @@ namespace Kargono
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+		bool m_AssemblyReloadPending = false;
+
 		// Runtime
 		Scene* SceneContext = nullptr;
 	};
@@ -165,6 +170,7 @@ namespace Kargono
 		ScriptGlue::RegisterComponents();
 
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
+
 
 
 #if 0
@@ -248,6 +254,23 @@ namespace Kargono
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 	}
 
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_ScriptData->m_AssemblyReloadPending && change_type == filewatch::Event::modified )
+		{
+			s_ScriptData->m_AssemblyReloadPending = true;
+			using namespace std::chrono_literals;
+			std::this_thread::sleep_for(500ms);
+			// reload assembly
+			// add reload to main thread queue
+			Application::Get().SubmitToMainThread([]()
+			{
+				s_ScriptData->AppAssemblyFileWatcher.reset();
+				ScriptEngine::ReloadAssembly();
+			});
+		}
+	}
+
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		// Move this maybe
@@ -255,6 +278,10 @@ namespace Kargono
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath);
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
+
+		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
+			filepath.string(), OnAppAssemblyFileSystemEvent);
+		s_ScriptData->m_AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::ReloadAssembly()

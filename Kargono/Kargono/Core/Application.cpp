@@ -86,6 +86,13 @@ namespace Kargono
 		m_Running = false;
 	}
 
+	void Application::SubmitToMainThread(const std::function<void()>& function)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		m_MainThreadQueue.emplace_back(function);
+	}
+
 	void Application::Run()
 	{
 		KG_PROFILE_FUNCTION();
@@ -97,6 +104,8 @@ namespace Kargono
 			float time = Time::GetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
+
+			ExecuteMainThreadQueue();
 
 			if (!m_Minimized)
 			{
@@ -142,6 +151,20 @@ namespace Kargono
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
+	}
+
+	void Application::ExecuteMainThreadQueue()
+	{
+		std::vector<std::function<void()>> copy;
+		{
+			std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+			copy = m_MainThreadQueue;
+			m_MainThreadQueue.clear();
+		}
+		
+
+		for (auto& func : copy) { func(); }
+		m_MainThreadQueue.clear();
 	}
 
 }
