@@ -34,6 +34,7 @@ project "Kargono"
         "",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
+        "%{IncludeDir.filewatch}",
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.imGui}",

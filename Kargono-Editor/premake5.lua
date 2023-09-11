@@ -19,6 +19,7 @@ project "Kargono-Editor"
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
+        "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
         "%{wks.location}/Kargono"

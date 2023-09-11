@@ -39,7 +39,7 @@ namespace Sandbox
 			else if (Input.IsKeyDown(KeyCode.Right)) { velocity.X = 1.0f; }
 
 			velocity *= speed;
-			//DistanceFromPlayer += ts;
+			
 
 			Vector3 translation = Translation;
 			translation += velocity * ts;

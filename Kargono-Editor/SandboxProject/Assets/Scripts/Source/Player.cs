@@ -31,7 +31,7 @@ namespace Sandbox
 			Time += ts;
 			//Console.WriteLine($"Player.OnUpdate: {ts}");
 
-			float speed = Speed;
+			float speed = Speed * 100.0f;
 			Vector3 velocity = Vector3.Zero;
 
 			if (Input.IsKeyDown(KeyCode.W)) { velocity.Y = 1.0f; }
