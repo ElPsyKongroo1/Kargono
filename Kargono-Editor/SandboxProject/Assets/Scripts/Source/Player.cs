@@ -48,8 +48,6 @@ namespace Sandbox
 				else if (Input.IsKeyDown(KeyCode.E)) { camera.DistanceFromPlayer -= speed * ts; }
 			}
 
-			
-
 			velocity *= speed * ts;
 
 			m_Rigidbody.ApplyLinearImpulse(velocity.XY, true);
