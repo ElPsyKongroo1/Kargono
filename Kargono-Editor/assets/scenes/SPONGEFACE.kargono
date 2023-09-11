@@ -1,68 +1,41 @@
 Scene: Untitled
 Entities:
-  - Entity: 9629059954231359543
-    TagComponent:
-      Tag: Main Camera
-    TransformComponent:
-      Translation: [4.61204433, 0.600000024, 9.58965874]
-      Rotation: [0, 0.375901908, 0]
-      Scale: [0.379999936, 0.379999995, 0.379999936]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\camera.png
-      TilingFactor: 1
-  - Entity: 3568549142667202624
+  - Entity: 13312400099126907237
     TagComponent:
       Tag: Right Eye
     TransformComponent:
-      Translation: [1.13171577, 1.83875751, 1.26694453]
+      Translation: [1.12337852, 1.86657417, 1.28999996]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [0.389400005, 0.389400005, 0.389400005]
+    SpriteRendererComponent:
+      Color: [0.706563711, 0.229155794, 0.229155794, 1]
+      TilingFactor: 1
+  - Entity: 9005808808947667602
+    TagComponent:
+      Tag: Left Eye Ball
+    TransformComponent:
+      Translation: [-1.2529062, 1.84471858, 1.28999996]
+      Rotation: [0, 0, 0]
+      Scale: [0.420000017, 0.420000017, 0.378522366]
+    SpriteRendererComponent:
+      Color: [0.552123547, 0.166276589, 0.166276589, 1]
+      TilingFactor: 1
+  - Entity: 2280200278291677296
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [-0.126086295, -0.00991278887, 1.9484725]
+      Rotation: [0, 0, 0]
+      Scale: [3.79999995, 1.10000002, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\Checkerboard.png
       TilingFactor: 1
-  - Entity: 16174215705759248973
-    TagComponent:
-      Tag: Skin
-    TransformComponent:
-      Translation: [-0.00346535607, 1.09013605, -0.225422427]
-      Rotation: [-2.26708031, 0, 0]
-      Scale: [5.10637903, 5.37712288, 0.999800146]
-    SpriteRendererComponent:
-      Color: [0.536848009, 0.590733588, 0.109479584, 1]
-      TilingFactor: 1
-  - Entity: 3921191868361261735
-    TagComponent:
-      Tag: Jaw
-    TransformComponent:
-      Translation: [0.0386665463, -0.551110327, 0.623959601]
-      Rotation: [1.57079637, 0, 0.00731141958]
-      Scale: [5.12182999, 5.53630257, 0.999967337]
-    SpriteRendererComponent:
-      Color: [0.127905056, 0.509652495, 0.505230665, 1]
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
+    ScriptComponent:
+      ClassName: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: Float
+          Data: 8
   - Entity: 12843635752814483140
     TagComponent:
       Tag: Left Eye
@@ -84,35 +57,72 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 2280200278291677296
+  - Entity: 3921191868361261735
     TagComponent:
-      Tag: Mouth
+      Tag: Jaw
     TransformComponent:
-      Translation: [-0.126086295, -0.00991278887, 1.9484725]
-      Rotation: [0, 0, 0]
-      Scale: [3.79999995, 1.10000002, 1]
+      Translation: [0.0386665463, -0.551110327, 0.623959601]
+      Rotation: [1.57079637, 0, 0.00731141958]
+      Scale: [5.12182999, 5.53630257, 0.999967337]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [0.127905056, 0.509652495, 0.505230665, 1]
       TilingFactor: 1
-    ScriptComponent:
-      ClassName: Sandbox.Player
-  - Entity: 9005808808947667602
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 16174215705759248973
     TagComponent:
-      Tag: Left Eye Ball
+      Tag: Skin
     TransformComponent:
-      Translation: [-1.2529062, 1.84471858, 1.28999996]
-      Rotation: [0, 0, 0]
-      Scale: [0.420000017, 0.420000017, 0.378522366]
+      Translation: [-0.00346535607, 1.09013605, -0.225422427]
+      Rotation: [-2.26708031, 0, 0]
+      Scale: [5.10637903, 5.37712288, 0.999800146]
     SpriteRendererComponent:
-      Color: [0.552123547, 0.166276589, 0.166276589, 1]
+      Color: [0.536848009, 0.590733588, 0.109479584, 1]
       TilingFactor: 1
-  - Entity: 13312400099126907237
+  - Entity: 3568549142667202624
     TagComponent:
       Tag: Right Eye
     TransformComponent:
-      Translation: [1.12337852, 1.86657417, 1.28999996]
+      Translation: [1.13171577, 1.83875751, 1.26694453]
       Rotation: [0, 0, 0]
-      Scale: [0.389400005, 0.389400005, 0.389400005]
+      Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.706563711, 0.229155794, 0.229155794, 1]
+      Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\Checkerboard.png
       TilingFactor: 1
+  - Entity: 9629059954231359543
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [4.61204433, 0.600000024, 9.58965874]
+      Rotation: [0, 0.375901908, 0]
+      Scale: [0.379999936, 0.379999995, 0.379999936]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: assets\textures\camera.png
+      TilingFactor: 1
+    ScriptComponent:
+      ClassName: Sandbox.Camera
+      ScriptFields:
+        - Name: DistanceFromPlayer
+          Type: Float
+          Data: 5

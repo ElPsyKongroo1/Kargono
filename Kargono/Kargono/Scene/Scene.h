@@ -30,6 +30,7 @@ namespace Kargono
 
 		void DuplicateEntity(Entity entity);
 
+		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);
 
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);

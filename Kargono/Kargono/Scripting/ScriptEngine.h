@@ -96,6 +96,8 @@ namespace Kargono
 		static Scene* GetSceneContext();
 		static MonoImage* GetCoreAssemblyImage();
 
+		static MonoObject* GetManagedInstance(UUID uuid);
+
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
@@ -163,6 +165,9 @@ namespace Kargono
 
 			SetFieldValueInternal(name, &value);
 		}
+
+		MonoObject* GetManagedObject() { return m_Instance; }
+
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);

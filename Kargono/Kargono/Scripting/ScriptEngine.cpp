@@ -367,6 +367,14 @@ namespace Kargono
 		return s_ScriptData->CoreAssemblyImage;
 	}
 
+	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
+	{
+		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(uuid))
+		return s_ScriptData->EntityInstances.at(uuid)->GetManagedObject();
+
+
+	}
+
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{
 		MonoObject* instance = mono_object_new(s_ScriptData->AppDomain, monoClass);
@@ -450,6 +458,7 @@ namespace Kargono
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
+		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!")
 		if (m_OnUpdateMethod)
 		{
 			void* param = &ts;

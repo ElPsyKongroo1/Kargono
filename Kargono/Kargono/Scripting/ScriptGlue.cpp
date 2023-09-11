@@ -54,6 +54,27 @@ namespace Kargono
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
 
+	static uint64_t Entity_FindEntityByName(MonoString* name)
+	{
+		char* cStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		KG_CORE_ASSERT(scene)
+		Entity entity = scene->FindEntityByName(cStr);
+		mono_free(cStr);
+
+		if (!entity) { return 0; }
+
+		return entity.GetUUID();
+	}
+
+	static MonoObject* GetScriptInstance(UUID entityID)
+	{
+		return ScriptEngine::GetManagedInstance(entityID);
+	}
+
+	
+
 	static void TransformComponent_GetTranslation(UUID entityID, glm::vec3* outTranslation)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -138,6 +159,9 @@ namespace Kargono
 		//KG_ADD_INTERNAL_CALL(NativeLog_VectorDot);
 
 		KG_ADD_INTERNAL_CALL(Entity_HasComponent);
+		KG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+		KG_ADD_INTERNAL_CALL(GetScriptInstance);
+
 		KG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		KG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
 
