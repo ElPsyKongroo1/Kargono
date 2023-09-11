@@ -137,6 +137,9 @@ namespace Kargono
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
 
+		std::filesystem::path CoreAssemblyFilepath;
+		std::filesystem::path AppAssemblyFilepath;
+
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -154,12 +157,12 @@ namespace Kargono
 	{
 		s_ScriptData = new ScriptEngineData();
 		InitMono();
+		ScriptGlue::RegisterFunctions();
+
 		LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
 		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
 		LoadAssemblyClasses();
-
 		ScriptGlue::RegisterComponents();
-		ScriptGlue::RegisterFunctions();
 
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
 
@@ -224,19 +227,22 @@ namespace Kargono
 	void ScriptEngine::ShutdownMono()
 	{
 		// ugh mono
-		//mono_domain_unload(s_ScriptData->AppDomain);
+		mono_domain_set(mono_get_root_domain(), false);
+		mono_domain_unload(s_ScriptData->AppDomain);
 		s_ScriptData->AppDomain = nullptr;
-		//mono_jit_cleanup(s_ScriptData->RootDomain);
+		mono_jit_cleanup(s_ScriptData->RootDomain);
 		s_ScriptData->RootDomain = nullptr;
 	}
 
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
+
 		// Create an App Domain
 		s_ScriptData->AppDomain = mono_domain_create_appdomain((char*)"KargonoScriptRuntime", nullptr);
 		mono_domain_set(s_ScriptData->AppDomain, true);
 
 		// Move this maybe
+		s_ScriptData->CoreAssemblyFilepath = filepath;
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
@@ -245,9 +251,27 @@ namespace Kargono
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		// Move this maybe
+		s_ScriptData->AppAssemblyFilepath = filepath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath);
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		mono_domain_set(mono_get_root_domain(), false);
+
+		//mono_domain_unload(s_ScriptData->AppDomain, false);
+		mono_domain_unload(s_ScriptData->AppDomain);
+		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
+		LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
+
+		LoadAssemblyClasses();
+
+		// Retrieve and instantiate class
+		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
+
+		ScriptGlue::RegisterComponents();
 	}
 
 	void ScriptEngine::OnRuntimeStart(Scene* scene)

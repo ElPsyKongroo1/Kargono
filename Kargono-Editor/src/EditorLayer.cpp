@@ -17,6 +17,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "dependencies/Box2D/include/box2d/b2_body.h"
+#include "Kargono/Scripting/ScriptEngine.h"
 
 namespace Kargono {
 
@@ -231,7 +232,18 @@ namespace Kargono {
 
 				if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
 				ImGui::EndMenu();
+
 			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload Assembly", "Ctrl+R"))
+				{
+					ScriptEngine::ReloadAssembly();
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
@@ -461,6 +473,11 @@ namespace Kargono {
 			}
 			case Key::R:
 			{
+				if (control)
+				{
+					ScriptEngine::ReloadAssembly();
+				}
+
 				if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::SCALE; }
 				break;
 			}
