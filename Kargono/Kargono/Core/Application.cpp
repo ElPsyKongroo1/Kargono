@@ -155,15 +155,7 @@ namespace Kargono
 
 	void Application::ExecuteMainThreadQueue()
 	{
-		std::vector<std::function<void()>> copy;
-		{
-			std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
-			copy = m_MainThreadQueue;
-			m_MainThreadQueue.clear();
-		}
-		
-
-		for (auto& func : copy) { func(); }
+		for (auto& func : m_MainThreadQueue) { func(); }
 		m_MainThreadQueue.clear();
 	}
 

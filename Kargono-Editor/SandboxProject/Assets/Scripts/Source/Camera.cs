@@ -26,17 +26,11 @@ namespace Sandbox
 		{
 			if (m_Player != null)
 			{
-				Translation = new Vector3(m_Player.Translation.XY, DistanceFromPlayer);
+				Translation = new Vector3(m_Player.Translation.X, m_Player.Translation.Y + 1.25f, DistanceFromPlayer);
 			}
 
 			float speed = 1.0f;
 			Vector3 velocity = Vector3.Zero;
-
-			if (Input.IsKeyDown(KeyCode.Up)) { velocity.Y = 1.0f; }
-			else if (Input.IsKeyDown(KeyCode.Down)) { velocity.Y = -1.0f; }
-
-			if (Input.IsKeyDown(KeyCode.Left)) { velocity.X = -1.0f; }
-			else if (Input.IsKeyDown(KeyCode.Right)) { velocity.X = 1.0f; }
 
 			velocity *= speed;
 			
