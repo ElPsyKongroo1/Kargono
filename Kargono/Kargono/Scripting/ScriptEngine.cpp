@@ -6,6 +6,8 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
+#include "mono/metadata/mono-debug.h"
+#include "mono/metadata/threads.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Core/UUID.h"
 #include "FileWatch.hpp"
@@ -67,7 +69,7 @@ namespace Kargono
 			return buffer;
 		}
 
-		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath)
+		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
 			uint32_t fileSize = 0;
 			char* fileData = ReadBytes(assemblyPath, &fileSize);
@@ -81,6 +83,22 @@ namespace Kargono
 				const char* errorMessage = mono_image_strerror(status);
 				// Log some error message using the errorMessage data
 				return nullptr;
+			}
+
+			if (loadPDB)
+			{
+				std::filesystem::path pdbPath = assemblyPath;
+				pdbPath.replace_extension(".pdb");
+
+				if (std::filesystem::exists(pdbPath))
+				{
+					uint32_t pdbFileSize = 0;
+					char* pdbFileData = ReadBytes(pdbPath, &pdbFileSize);
+
+					mono_debug_open_image_from_memory(image, (const mono_byte*)pdbFileData, pdbFileSize);
+					KG_CORE_INFO("Loaded PDB {}", pdbPath);
+					delete[] pdbFileData;
+				}
 			}
 
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.string().c_str(), &status, 0);
@@ -149,7 +167,10 @@ namespace Kargono
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
-		bool m_AssemblyReloadPending = false;
+		bool AssemblyReloadPending = false;
+
+		bool EnableDebugging = true;
+
 
 		// Runtime
 		Scene* SceneContext = nullptr;
@@ -159,9 +180,9 @@ namespace Kargono
 
 	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
 	{
-		if (!s_ScriptData->m_AssemblyReloadPending && change_type == filewatch::Event::modified)
+		if (!s_ScriptData->AssemblyReloadPending && change_type == filewatch::Event::modified)
 		{
-			s_ScriptData->m_AssemblyReloadPending = true;
+			s_ScriptData->AssemblyReloadPending = true;
 			//using namespace std::chrono_literals;
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
@@ -238,12 +259,34 @@ namespace Kargono
 	{
 		mono_set_assemblies_path("mono/lib");
 
+		if (s_ScriptData->EnableDebugging)
+		{
+
+			const char* argv[2] =
+			{
+				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+				"--soft-breakpoints"
+			};
+
+			mono_jit_parse_options(2, (char**)argv);
+			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+
+			
+		}
+
 		MonoDomain* rootDomain = mono_jit_init("KargonoJITRuntime");
 
 		KG_CORE_ASSERT(rootDomain, "Mono Domain not loaded correctly!")
 
 		// Store the root domain pointer
 		s_ScriptData->RootDomain = rootDomain;
+
+		if (s_ScriptData->EnableDebugging)
+		{
+			mono_debug_domain_create(s_ScriptData->RootDomain);
+		}
+
+		mono_thread_set_main(mono_thread_current());
 
 
 	}
@@ -266,7 +309,7 @@ namespace Kargono
 
 		// Move this maybe
 		s_ScriptData->CoreAssemblyFilepath = filepath;
-		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
+		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 	}
@@ -277,13 +320,13 @@ namespace Kargono
 	{
 		// Move this maybe
 		s_ScriptData->AppAssemblyFilepath = filepath;
-		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath);
+		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
 
 		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filepath.string(), OnAppAssemblyFileSystemEvent);
-		s_ScriptData->m_AssemblyReloadPending = false;
+		s_ScriptData->AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::ReloadAssembly()
