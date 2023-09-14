@@ -31,21 +31,28 @@ namespace Sandbox
 			Time += ts;
 			//Console.WriteLine($"Player.OnUpdate: {ts}");
 
-			float speed = Speed * 100.0f;
+			float speed = Speed;
 			Vector3 velocity = Vector3.Zero;
 
-			if (Input.IsKeyDown(KeyCode.W)) { velocity.Y = 1.0f; }
-			else if (Input.IsKeyDown(KeyCode.S)) { velocity.Y = -1.0f; }
+			if (Input.IsKeyDown(KeyCode.I)) { velocity.Y = 1.0f; }
+			else if (Input.IsKeyDown(KeyCode.K)) { velocity.Y = -1.0f; }
 
-			if (Input.IsKeyDown(KeyCode.A)) { velocity.X = -1.0f; }
-			else if (Input.IsKeyDown(KeyCode.D)) { velocity.X = 1.0f; }
+			if (Input.IsKeyDown(KeyCode.J)) { velocity.X = -1.0f; }
+			else if (Input.IsKeyDown(KeyCode.L)) { velocity.X = 1.0f; }
 
 			Entity cameraEntity = FindEntityByName("Camera");
 			if (cameraEntity != null)
 			{
 				Camera camera = cameraEntity.As<Camera>();
-				if (Input.IsKeyDown(KeyCode.Q)) { camera.DistanceFromPlayer += speed * ts; }
-				else if (Input.IsKeyDown(KeyCode.E)) { camera.DistanceFromPlayer -= speed * ts; }
+				
+				if (Input.IsKeyDown(KeyCode.U) && camera.DistanceFromPlayer < 3.868f)
+				{
+					camera.DistanceFromPlayer += speed * ts;
+				}
+				else if (Input.IsKeyDown(KeyCode.O) && (camera.DistanceFromPlayer - speed * ts) > 0.0f)
+				{
+					camera.DistanceFromPlayer -= speed * ts;
+				}
 			}
 
 			velocity *= speed * ts;

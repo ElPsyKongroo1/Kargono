@@ -157,6 +157,23 @@ namespace Kargono
 
 	static ScriptEngineData* s_ScriptData = nullptr;
 
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_ScriptData->m_AssemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_ScriptData->m_AssemblyReloadPending = true;
+			//using namespace std::chrono_literals;
+			//std::this_thread::sleep_for(500ms);
+			// reload assembly
+			// add reload to main thread queue
+			Application::Get().SubmitToMainThread([]()
+				{
+					s_ScriptData->AppAssemblyFileWatcher.reset();
+					ScriptEngine::ReloadAssembly();
+				});
+		}
+	}
+
 
 	void ScriptEngine::Init()
 	{
@@ -254,22 +271,7 @@ namespace Kargono
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 	}
 
-	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
-	{
-		if (!s_ScriptData->m_AssemblyReloadPending && change_type == filewatch::Event::modified )
-		{
-			s_ScriptData->m_AssemblyReloadPending = true;
-			using namespace std::chrono_literals;
-			std::this_thread::sleep_for(500ms);
-			// reload assembly
-			// add reload to main thread queue
-			Application::Get().SubmitToMainThread([]()
-			{
-				s_ScriptData->AppAssemblyFileWatcher.reset();
-				ScriptEngine::ReloadAssembly();
-			});
-		}
-	}
+	
 
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{

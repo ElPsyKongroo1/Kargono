@@ -33,6 +33,7 @@ namespace Kargono {
 		void OnScenePlay();
 		void OnSceneSimulate();
 		void OnSceneStop();
+		void OnScenePause();
 
 
 		void OnDuplicateEntity();
@@ -85,7 +86,7 @@ namespace Kargono {
 		ContentBrowserPanel m_ContentBrowserPanel;
 
 		// Editor Resources
-		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconSimulate;
+		Ref<Texture2D> m_IconPlay,m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
 	};
 
 }
