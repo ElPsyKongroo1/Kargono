@@ -417,7 +417,7 @@ namespace Kargono {
 			{
 				Ref<Texture2D> icon = m_IconPause;
 				//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
+				if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 					&& toolbarEnabled)
 				{
 					m_ActiveScene->SetPaused(!isPaused);
@@ -430,7 +430,7 @@ namespace Kargono {
 					Ref<Texture2D> icon = m_IconStep;
 					bool isPaused = m_ActiveScene->IsPaused();
 					//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
+					if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 						&& toolbarEnabled)
 					{
 						m_ActiveScene->Step(1);
@@ -459,7 +459,7 @@ namespace Kargono {
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent event)
 	{
-		if (event.IsRepeat() > 0) { return false; }
+		if (event.IsRepeat() == 1) { return false; }
 
 		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
@@ -525,7 +525,7 @@ namespace Kargono {
 				break;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent event)
