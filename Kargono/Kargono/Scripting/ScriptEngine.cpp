@@ -1,4 +1,5 @@
 #include "Kargono/kgpch.h"
+#include "Kargono/Core/Buffer.h"
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Scripting/ScriptGlue.h"
@@ -12,6 +13,7 @@
 #include "Kargono/Core/UUID.h"
 #include "FileWatch.hpp"
 #include "Kargono/Core/Application.h"
+#include "Kargono/Core/FileSystem.h"
 
 namespace Kargono
 {
@@ -40,43 +42,15 @@ namespace Kargono
 
 	namespace Utils
 	{
-		// TODO: move to FileSystem class
-		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
-		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
-			if (!stream)
-			{
-				// Failed to open the file
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint64_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = (uint32_t)size;
-			return buffer;
-		}
 
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
-			uint32_t fileSize = 0;
-			char* fileData = ReadBytes(assemblyPath, &fileSize);
+			Buffer fileData = FileSystem::ReadFileBinary(assemblyPath);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size, 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -92,12 +66,11 @@ namespace Kargono
 
 				if (std::filesystem::exists(pdbPath))
 				{
-					uint32_t pdbFileSize = 0;
-					char* pdbFileData = ReadBytes(pdbPath, &pdbFileSize);
+					ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
 
-					mono_debug_open_image_from_memory(image, (const mono_byte*)pdbFileData, pdbFileSize);
+					mono_debug_open_image_from_memory(image,pdbFileData.As<mono_byte>(), pdbFileData.Size());
 					KG_CORE_INFO("Loaded PDB {}", pdbPath);
-					delete[] pdbFileData;
+
 				}
 			}
 
@@ -105,7 +78,7 @@ namespace Kargono
 			mono_image_close(image);
 
 			// Don't forget to free the file data
-			delete[] fileData;
+			fileData.Release();
 
 			return assembly;
 		}
@@ -202,8 +175,18 @@ namespace Kargono
 		InitMono();
 		ScriptGlue::RegisterFunctions();
 
-		LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
-		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		bool status = LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
+			return;
+		}
+		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			return;
+		}
 		LoadAssemblyClasses();
 		ScriptGlue::RegisterComponents();
 
@@ -300,33 +283,36 @@ namespace Kargono
 		s_ScriptData->RootDomain = nullptr;
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
 
 		// Create an App Domain
 		s_ScriptData->AppDomain = mono_domain_create_appdomain((char*)"KargonoScriptRuntime", nullptr);
 		mono_domain_set(s_ScriptData->AppDomain, true);
-
 		// Move this maybe
 		s_ScriptData->CoreAssemblyFilepath = filepath;
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
+		if (s_ScriptData->CoreAssembly == nullptr) { return false; }
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
+		return true;
 	}
 
 	
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		// Move this maybe
 		s_ScriptData->AppAssemblyFilepath = filepath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
+		if (s_ScriptData->AppAssembly == nullptr){return false;}
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
 
 		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filepath.string(), OnAppAssemblyFileSystemEvent);
 		s_ScriptData->AssemblyReloadPending = false;
+		return true;
 	}
 
 	void ScriptEngine::ReloadAssembly()
@@ -384,11 +370,18 @@ namespace Kargono
 	{
 
 		UUID entityUUID = entity.GetUUID();
-		KG_CORE_ASSERT(s_ScriptData->EntityInstances.find(entityUUID) != s_ScriptData->EntityInstances.end())
+		if (s_ScriptData->EntityInstances.contains(entityUUID))
+		{
+			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 
-		Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
+			instance->InvokeOnUpdate(ts);
+		}
+		else
+		{
+			KG_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
+		}
 
-		instance->InvokeOnUpdate(ts);
+		
 	}
 
 	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
@@ -524,7 +517,8 @@ namespace Kargono
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		return mono_runtime_invoke(method, instance, params, nullptr);
+		MonoObject* exception = nullptr;
+		return mono_runtime_invoke(method, instance, params, &exception);
 	}
 
 	
@@ -569,7 +563,6 @@ namespace Kargono
 		if (it == fields.end()) { return false; }
 
 		const ScriptField& field = it->second;
-		void* result;
 		mono_field_get_value(m_Instance, field.ClassField, buffer);
 		return true;
 
@@ -582,7 +575,6 @@ namespace Kargono
 		if (it == fields.end()) { return false; }
 
 		const ScriptField& field = it->second;
-		void* result;
 		mono_field_set_value(m_Instance, field.ClassField, (void*)value);
 		return true;
 

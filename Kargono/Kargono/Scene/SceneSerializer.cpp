@@ -439,41 +439,44 @@ namespace Kargono
 					{
 
 						Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(sc.ClassName);
-						KG_CORE_ASSERT(entityClass);
-						const auto& fields = entityClass->GetFields();
-
-						auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
-
-						for (auto scriptField : scriptFields)
+						if (entityClass)
 						{
-							std::string name = scriptField["Name"].as<std::string>();
-							std::string typeString = scriptField["Type"].as<std::string>();
-							ScriptFieldType type = Utils::ScriptFieldTypeFromString(typeString);
+							KG_CORE_ASSERT(entityClass);
+							const auto& fields = entityClass->GetFields();
 
-							ScriptFieldInstance& fieldInstance = entityFields[name];
-							// TODO(): Turn into Log Message
-							KG_CORE_ASSERT(fields.contains(name))
-							if (!fields.contains(name)) { continue; }
-							fieldInstance.Field = fields.at(name);
+							auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
 
-							switch (type)
+							for (auto scriptField : scriptFields)
 							{
-								READ_SCRIPT_FIELD(ScriptFieldType::Float, float);
-								READ_SCRIPT_FIELD(ScriptFieldType::Double, double);
-								READ_SCRIPT_FIELD(ScriptFieldType::Bool, bool);
-								READ_SCRIPT_FIELD(ScriptFieldType::Char, char);
-								READ_SCRIPT_FIELD(ScriptFieldType::Byte, int8_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::Short, int16_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::Int, int32_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::Long, int64_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::UByte, uint8_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::UShort, uint16_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::UInt, uint32_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::ULong, uint64_t);
-								READ_SCRIPT_FIELD(ScriptFieldType::Vector2, glm::vec2);
-								READ_SCRIPT_FIELD(ScriptFieldType::Vector3, glm::vec3);
-								READ_SCRIPT_FIELD(ScriptFieldType::Vector4, glm::vec4);
-								READ_SCRIPT_FIELD(ScriptFieldType::Entity, UUID);
+								std::string name = scriptField["Name"].as<std::string>();
+								std::string typeString = scriptField["Type"].as<std::string>();
+								ScriptFieldType type = Utils::ScriptFieldTypeFromString(typeString);
+
+								ScriptFieldInstance& fieldInstance = entityFields[name];
+								// TODO(): Turn into Log Message
+								KG_CORE_ASSERT(fields.contains(name))
+									if (!fields.contains(name)) { continue; }
+								fieldInstance.Field = fields.at(name);
+
+								switch (type)
+								{
+									READ_SCRIPT_FIELD(ScriptFieldType::Float, float);
+									READ_SCRIPT_FIELD(ScriptFieldType::Double, double);
+									READ_SCRIPT_FIELD(ScriptFieldType::Bool, bool);
+									READ_SCRIPT_FIELD(ScriptFieldType::Char, char);
+									READ_SCRIPT_FIELD(ScriptFieldType::Byte, int8_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::Short, int16_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::Int, int32_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::Long, int64_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::UByte, uint8_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::UShort, uint16_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::UInt, uint32_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::ULong, uint64_t);
+									READ_SCRIPT_FIELD(ScriptFieldType::Vector2, glm::vec2);
+									READ_SCRIPT_FIELD(ScriptFieldType::Vector3, glm::vec3);
+									READ_SCRIPT_FIELD(ScriptFieldType::Vector4, glm::vec4);
+									READ_SCRIPT_FIELD(ScriptFieldType::Entity, UUID);
+								}
 							}
 						}
 					}
