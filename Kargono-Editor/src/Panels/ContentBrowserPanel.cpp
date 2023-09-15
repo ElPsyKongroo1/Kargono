@@ -4,16 +4,14 @@
 #include <filesystem>
 #include <imgui.h>
 
+#include "Kargono/Project/Project.h"
 
 
 namespace Kargono
 {
-	// Once we have projects, change this
-	extern const std::filesystem::path g_AssetsPath = "assets";
-
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_CurrentDirectory(g_AssetsPath)
+		: m_BaseDirectory(Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/content_browser/directory_icon.png");
 		m_GenericFileIcon = Texture2D::Create("resources/icons/content_browser/generic_file_icon.png");
@@ -23,7 +21,7 @@ namespace Kargono
 	{
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != std::filesystem::path(g_AssetsPath))
+		if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -52,7 +50,7 @@ namespace Kargono
 
 			if (ImGui::BeginDragDropSource())
 			{
-				auto relativePath = std::filesystem::relative(path, g_AssetsPath);
+				std::filesystem::path relativePath(path);
 				const wchar_t* itemPath = relativePath.c_str();
 				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 				ImGui::EndDragDropSource();

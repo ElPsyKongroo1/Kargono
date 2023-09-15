@@ -9,7 +9,7 @@ Entities:
       Scale: [10, 8, 1]
     SpriteRendererComponent:
       Color: [0.7945171, 0.912380278, 0.922779918, 1]
-      TexturePath: assets\textures\empty_scene_textures\bridge.png
+      TexturePath: Textures\empty_scene_textures\bridge.png
       TilingFactor: 1
   - Entity: 16497254390317518610
     TagComponent:
@@ -20,7 +20,7 @@ Entities:
       Scale: [20, 12, 1]
     SpriteRendererComponent:
       Color: [0.7945171, 0.912380278, 0.922779918, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_1.png
+      TexturePath: Textures\empty_scene_textures\mountain_1.png
       TilingFactor: 1
   - Entity: 8491172520020854555
     TagComponent:
@@ -31,7 +31,7 @@ Entities:
       Scale: [50, 25, 1]
     SpriteRendererComponent:
       Color: [0.752941191, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\castle.png
+      TexturePath: Textures\empty_scene_textures\castle.png
       TilingFactor: 1
   - Entity: 9999760903825331671
     TagComponent:
@@ -42,7 +42,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 4940925500749755710
     TagComponent:
@@ -53,7 +53,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 1176406883374496696
     TagComponent:
@@ -64,7 +64,7 @@ Entities:
       Scale: [20, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.843137264]
-      TexturePath: assets\textures\empty_scene_textures\cloud_2.png
+      TexturePath: Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
   - Entity: 9176933547837144378
     TagComponent:
@@ -75,7 +75,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 165108369484516618
     TagComponent:
@@ -86,7 +86,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 9202412756351606160
     TagComponent:
@@ -97,7 +97,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 11250424333613624584
     TagComponent:
@@ -115,7 +115,7 @@ Entities:
       Scale: [20, 5, 1]
     SpriteRendererComponent:
       Color: [0.788235307, 1, 1, 0.815686285]
-      TexturePath: assets\textures\empty_scene_textures\cloud_2.png
+      TexturePath: Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
   - Entity: 3244255151288916114
     TagComponent:
@@ -126,7 +126,7 @@ Entities:
       Scale: [20, 5, 1]
     SpriteRendererComponent:
       Color: [0.788235307, 1, 1, 0.0156862754]
-      TexturePath: assets\textures\empty_scene_textures\cloud_2.png
+      TexturePath: Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
   - Entity: 3448296047212542173
     TagComponent:
@@ -137,7 +137,7 @@ Entities:
       Scale: [138.387741, 100, 1]
     SpriteRendererComponent:
       Color: [0.792156875, 0.643137276, 0.75686276, 0.56078434]
-      TexturePath: assets\textures\empty_scene_textures\atmosphere.png
+      TexturePath: Textures\empty_scene_textures\atmosphere.png
       TilingFactor: 1
   - Entity: 10894870893529471880
     TagComponent:
@@ -148,7 +148,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 6337398763326236372
     TagComponent:
@@ -159,7 +159,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 8966093407196168747
     TagComponent:
@@ -170,7 +170,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 12842046634017884822
     TagComponent:
@@ -181,7 +181,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 14843209312186063744
     TagComponent:
@@ -192,7 +192,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 18261765960412964801
     TagComponent:
@@ -203,7 +203,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 14470545676816017541
     TagComponent:
@@ -214,7 +214,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 10603270118461090189
     TagComponent:
@@ -225,7 +225,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 5980731597213076784
     TagComponent:
@@ -236,7 +236,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 16714838255178927062
     TagComponent:
@@ -247,7 +247,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 16204714205944278421
     TagComponent:
@@ -258,7 +258,7 @@ Entities:
       Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\boulder_1.png
+      TexturePath: Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
   - Entity: 11541659662495606140
     TagComponent:
@@ -269,7 +269,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 13550271212884189528
     TagComponent:
@@ -280,7 +280,7 @@ Entities:
       Scale: [56.6099701, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 11305261500944675927
     TagComponent:
@@ -325,7 +325,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.776470602]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 17089508316881455249
     TagComponent:
@@ -336,7 +336,7 @@ Entities:
       Scale: [20.0000114, 5, 1]
     SpriteRendererComponent:
       Color: [0.788235307, 1, 1, 0.815686285]
-      TexturePath: assets\textures\empty_scene_textures\cloud_2.png
+      TexturePath: Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
   - Entity: 182551701600881149
     TagComponent:
@@ -347,7 +347,7 @@ Entities:
       Scale: [20, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.843137264]
-      TexturePath: assets\textures\empty_scene_textures\cloud_2.png
+      TexturePath: Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
   - Entity: 494945015114845270
     TagComponent:
@@ -358,7 +358,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.80392158]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 16055172307293065181
     TagComponent:
@@ -386,7 +386,7 @@ Entities:
       Scale: [10, 5, 1]
     SpriteRendererComponent:
       Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: assets\textures\empty_scene_textures\cloud_1.png
+      TexturePath: Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
   - Entity: 1213254814679500788
     TagComponent:
@@ -418,7 +418,7 @@ Entities:
       FixedAspectRatio: false
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\camera.png
+      TexturePath: Textures\camera.png
       TilingFactor: 1
     ScriptComponent:
       ClassName: Sandbox.Camera
@@ -435,7 +435,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\marshman.png
+      TexturePath: Textures\empty_scene_textures\marshman.png
       TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
@@ -472,7 +472,7 @@ Entities:
       Scale: [70, 23.6057816, 1]
     SpriteRendererComponent:
       Color: [0.308880329, 0.261499107, 0.0584368221, 1]
-      TexturePath: assets\textures\empty_scene_textures\dirt.png
+      TexturePath: Textures\empty_scene_textures\dirt.png
       TilingFactor: 4
     Rigidbody2DComponent:
       BodyType: Static
@@ -493,7 +493,7 @@ Entities:
       Scale: [72.9321899, 0.999923646, 0.999809921]
     SpriteRendererComponent:
       Color: [0.555984557, 0.555984557, 0.555984557, 1]
-      TexturePath: assets\textures\empty_scene_textures\dirt.png
+      TexturePath: Textures\empty_scene_textures\dirt.png
       TilingFactor: 9.89999962
   - Entity: 7562460056716753967
     TagComponent:
@@ -528,7 +528,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 1242276924143954553
     TagComponent:
@@ -539,7 +539,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 1033205328720227495
     TagComponent:
@@ -550,7 +550,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 15770393508544689144
     TagComponent:
@@ -561,7 +561,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 6412895350353286330
     TagComponent:
@@ -572,7 +572,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 10657477765109477758
     TagComponent:
@@ -583,7 +583,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 2244518969620201522
     TagComponent:
@@ -594,7 +594,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 6378408106021816491
     TagComponent:
@@ -605,7 +605,7 @@ Entities:
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\mountain_2.png
+      TexturePath: Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
   - Entity: 5829521914014726300
     TagComponent:
@@ -616,7 +616,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 18273716516379590876
     TagComponent:
@@ -627,7 +627,7 @@ Entities:
       Scale: [5, 5, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\tree_1.png
+      TexturePath: Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
   - Entity: 1168201773845479879
     TagComponent:
@@ -638,5 +638,5 @@ Entities:
       Scale: [70, 23.6021557, 0.999886394]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: assets\textures\empty_scene_textures\dirt.png
+      TexturePath: Textures\empty_scene_textures\dirt.png
       TilingFactor: 6.19999981
