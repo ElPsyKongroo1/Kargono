@@ -28,7 +28,7 @@ namespace Kargono
 		void OnSimulationStart();
 		void OnSimulationStop();
 
-		void DuplicateEntity(Entity entity);
+		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);

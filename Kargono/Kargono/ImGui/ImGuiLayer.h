@@ -23,11 +23,13 @@ namespace Kargono
 		void Begin();
 		void End();
 		
-		void AllowEvents(bool allow) { m_AllowEvents = allow; }
+		void BlockEvents(bool block) { m_BlockEvents = block; }
 
 		void SetDarkThemeColors();
+
+		uint32_t GetActiveWidgetID() const;
 	private:
-		bool m_AllowEvents = true;
+		bool m_BlockEvents = true;
 
 	};
 }
