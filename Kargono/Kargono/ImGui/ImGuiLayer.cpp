@@ -12,6 +12,7 @@
 #include "glad/glad.h"
 
 #include "ImGuizmo.h"
+#include "imgui_internal.h"
 
 namespace Kargono 
 {
@@ -75,7 +76,7 @@ namespace Kargono
 
     void ImGuiLayer::OnEvent(Event& e)
     {
-        if (m_AllowEvents)
+        if (m_BlockEvents)
         {
             ImGuiIO& io = ImGui::GetIO();
             e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
@@ -146,6 +147,11 @@ namespace Kargono
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
+	}
+
+	uint32_t ImGuiLayer::GetActiveWidgetID() const
+	{
+		return GImGui->ActiveId;
 	}
 	
 }

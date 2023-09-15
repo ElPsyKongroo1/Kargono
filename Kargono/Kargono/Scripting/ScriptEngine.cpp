@@ -14,6 +14,7 @@
 #include "FileWatch.hpp"
 #include "Kargono/Core/Application.h"
 #include "Kargono/Core/FileSystem.h"
+#include "Kargono/Project/Project.h"
 
 namespace Kargono
 {
@@ -185,7 +186,10 @@ namespace Kargono
 			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
 			return;
 		}
-		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+
+
+		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
 			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
@@ -196,43 +200,6 @@ namespace Kargono
 
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
 
-
-
-#if 0
-		// Retrieve and instantiate Class (with constructor)
-
-		MonoObject* instance = s_ScriptData->EntityClass.Instantiate();
-		// 2. Call Method
-		MonoMethod* printMessageFunc = s_ScriptData->EntityClass.GetMethod("PrintMessage", 0);
-		s_ScriptData->EntityClass.InvokeMethod(instance, printMessageFunc, nullptr);
-
-		// 3. Call Method with Parameters
-		MonoMethod* printIntFunc = s_ScriptData->EntityClass.GetMethod("PrintInt", 1);
-
-		int value = 5;
-		int value2 = 8;
-		void* param = &value;
-
-		void* params[2] =
-		{
-			&value,
-			&value2
-		};
-
-		MonoString* monoString = mono_string_new(s_ScriptData->AppDomain, "Hello World from C++!");
-		void* stringParam = monoString;
-
-		s_ScriptData->EntityClass.InvokeMethod(instance, printIntFunc, &param);
-
-		MonoMethod* printIntsFunc = s_ScriptData->EntityClass.GetMethod("PrintInts", 2);
-
-		s_ScriptData->EntityClass.InvokeMethod(instance, printIntsFunc, params);
-
-		MonoMethod* printCustomMessageFunc = s_ScriptData->EntityClass.GetMethod("PrintCustomMessage", 1);
-		s_ScriptData->EntityClass.InvokeMethod(instance, printCustomMessageFunc, &stringParam);
-
-		//KG_CORE_ASSERT(false, "AHHH")
-#endif
 
 	}
 	void ScriptEngine::Shutdown()

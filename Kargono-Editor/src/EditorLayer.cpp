@@ -283,7 +283,8 @@ namespace Kargono {
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->AllowEvents(!(m_ViewportFocused || m_ViewportHovered));
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		//KG_WARN("Viewport Size: {0}, {1}", viewportPanelSize.x, viewportPanelSize.y);
@@ -519,6 +520,20 @@ namespace Kargono {
 				if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::SCALE; }
 				break;
 			}
+		case Key::Delete:
+			{
+			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+			{
+				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+				if (selectedEntity)
+				{
+					m_EditorScene->DestroyEntity(selectedEntity);
+					m_SceneHierarchyPanel.SetSelectedEntity({});
+				}
+			}
+				break;
+
+			}
 			default:
 			{
 				break;
@@ -618,6 +633,7 @@ namespace Kargono {
 	{
 		if (Project::Load(path))
 		{
+			ScriptEngine::Init();
 			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
@@ -753,9 +769,11 @@ namespace Kargono {
 			return;
 
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		KG_CORE_WARN("Trying to duplicate Entity: {} ({})", selectedEntity.GetName(), selectedEntity.GetUUID());
 		if (selectedEntity)
 		{
-			m_EditorScene->DuplicateEntity(selectedEntity);
+			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 		}
 	}
 
