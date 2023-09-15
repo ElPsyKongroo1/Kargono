@@ -62,7 +62,13 @@ namespace Kargono {
 		else
 		{
 			// TODO: prompt the user to select a directory
-			NewProject();
+			//NewProject();
+
+			// If no project is opened, close Editor
+			// TODO: this is while we don't have a new project path
+			if (!OpenProject()) { Application::Get().Close(); }
+
+
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -215,25 +221,15 @@ namespace Kargono {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				if (ImGui::MenuItem("New", "Ctrl+N"))
-				{
-					NewScene();
-				}
+				if (ImGui::MenuItem("Open Project ...", "Ctrl+O")) { OpenProject(); }
 
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-				{
-					OpenScene();
-					
-				}
+				ImGui::Separator();
 
-				if (ImGui::MenuItem("Save", "Ctrl+S")) { SaveScene(); }
+				if (ImGui::MenuItem("New Scene", "Ctrl+N")){NewScene();}
 
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-				{
-					SaveSceneAs();
-				}
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) { SaveScene(); }
+
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { SaveSceneAs(); }
 
 				if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
 				ImGui::EndMenu();
@@ -476,7 +472,7 @@ namespace Kargono {
 			}
 			case Key::O:
 			{
-				if (control) { OpenScene(); }
+				if (control) { OpenProject(); }
 				break;
 			}
 			case Key::S:
@@ -608,6 +604,16 @@ namespace Kargono {
 		Project::New();
 	}
 
+	bool EditorLayer::OpenProject()
+	{
+		m_HoveredEntity = {};
+		std::string filepath = FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
+		if (filepath.empty()) { return false; }
+
+		OpenProject(filepath);
+		return true;
+	}
+
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
 		if (Project::Load(path))
@@ -625,6 +631,7 @@ namespace Kargono {
 
 	void EditorLayer::NewScene()
 	{
+		m_HoveredEntity = {};
 		m_ActiveScene = CreateRef<Scene>();
 		//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_EditorScene = m_ActiveScene;
@@ -643,6 +650,8 @@ namespace Kargono {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+
+
 		if (m_SceneState != SceneState::Edit)
 		{
 			OnSceneStop();

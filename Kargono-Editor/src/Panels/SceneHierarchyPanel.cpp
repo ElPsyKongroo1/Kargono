@@ -5,6 +5,7 @@
 #include "imgui_internal.h"
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+#include "Kargono/UI/UI.h"
 #include <cstring>
 #include <filesystem>
 #include "Kargono/Renderer/Texture.h"
@@ -218,7 +219,7 @@ namespace Kargono
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 			char buffer[256] = {};
-			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+			strncpy_s(buffer, tag.c_str(), sizeof(buffer));
 
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
@@ -310,12 +311,14 @@ namespace Kargono
 			const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
 			static char buffer[64];
-			strcpy(buffer, component.ClassName.c_str());
+			strcpy_s(buffer, component.ClassName.c_str());
 
-			if (!scriptClassExists) { ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f)); }
+			UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
+
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 			{
 				component.ClassName = buffer;
+				return;
 			}
 
 			// Fields
@@ -379,9 +382,6 @@ namespace Kargono
 					}
 				}
 			}
-
-
-			if (!scriptClassExists) { ImGui::PopStyleColor(); }
 
 		});
 
