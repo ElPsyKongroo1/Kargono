@@ -18,7 +18,6 @@
 
 namespace Kargono
 {
-	extern const std::filesystem::path g_AssetsPath;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> context)
 	{
@@ -403,7 +402,7 @@ namespace Kargono
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
+						std::filesystem::path texturePath(path);
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 							component.Texture = texture;

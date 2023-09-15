@@ -50,7 +50,7 @@ namespace Kargono
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), (uint32_t)fileData.Size, 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -68,7 +68,7 @@ namespace Kargono
 				{
 					ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
 
-					mono_debug_open_image_from_memory(image,pdbFileData.As<mono_byte>(), pdbFileData.Size());
+					mono_debug_open_image_from_memory(image,pdbFileData.As<mono_byte>(), (uint32_t)pdbFileData.Size());
 					KG_CORE_INFO("Loaded PDB {}", pdbPath);
 
 				}

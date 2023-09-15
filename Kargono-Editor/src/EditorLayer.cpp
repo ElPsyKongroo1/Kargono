@@ -21,8 +21,6 @@
 
 namespace Kargono {
 
-	extern const std::filesystem::path g_AssetsPath;
-
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f, true), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
@@ -58,8 +56,13 @@ namespace Kargono {
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			OpenScene(sceneFilePath);
+			auto projectFilePath = commandLineArgs[1];
+			OpenProject(projectFilePath);
+		}
+		else
+		{
+			// TODO: prompt the user to select a directory
+			NewProject();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -250,7 +253,7 @@ namespace Kargono {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 
@@ -296,7 +299,7 @@ namespace Kargono {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				OpenScene(std::filesystem::path(g_AssetsPath) / path);
+				OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 			
@@ -388,7 +391,7 @@ namespace Kargono {
 		if (hasPlayButton)
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor )
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor )
 				&& toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) { OnScenePlay(); }
@@ -401,7 +404,7 @@ namespace Kargono {
 			
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
 			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) { OnSceneSimulate(); }
@@ -598,6 +601,26 @@ namespace Kargono {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void EditorLayer::NewProject()
+	{
+		Project::New();
+	}
+
+	void EditorLayer::OpenProject(const std::filesystem::path& path)
+	{
+		if (Project::Load(path))
+		{
+			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
+			OpenScene(startScenePath);
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		}
+	}
+
+	void EditorLayer::SaveProject()
+	{
+		//Project::SaveActive();
 	}
 
 	void EditorLayer::NewScene()

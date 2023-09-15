@@ -22,6 +22,9 @@
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Scene/ScriptableEntity.h"
 
+
+#include "Kargono/Project/Project.h"
+
 // ----Renderer--------------------------------
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/Renderer2D.h"

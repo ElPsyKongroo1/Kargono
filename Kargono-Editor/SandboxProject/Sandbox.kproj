@@ -1,0 +1,5 @@
+Project:
+  Name: Sandbox
+  StartScene: "Scenes/empty_scene.kargono"
+  AssetDirectory: "Assets"
+  ScriptModulePath: "Scripts/Binaries/Sandbox.dll"
