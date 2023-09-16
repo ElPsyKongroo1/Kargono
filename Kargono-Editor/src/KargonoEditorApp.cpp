@@ -10,13 +10,9 @@ namespace Kargono {
 		KargonoEditor(const ApplicationSpecification& spec)
 			: Application(spec)
 		{
-			//PushLayer(new ExampleLayer()); 
 			PushLayer(new EditorLayer());
 		}
-		~KargonoEditor()
-		{
-
-		}
+		~KargonoEditor() = default;
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)

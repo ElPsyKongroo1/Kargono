@@ -10,7 +10,7 @@
 	{
 		Kargono::Log::Init();
 
-		auto app = Kargono::CreateApplication({ argc, argv });
+		Kargono::Application* app = Kargono::CreateApplication({ argc, argv });
 
 		app->Run();
 

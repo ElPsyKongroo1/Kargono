@@ -97,8 +97,6 @@ namespace Kargono
 
     void ImGuiLayer::End()
     {
-        
-
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));

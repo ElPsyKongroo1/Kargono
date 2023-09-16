@@ -42,8 +42,6 @@ namespace Kargono
 
 	void Application::PushLayer(Layer* layer)
 	{
-		
-
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
