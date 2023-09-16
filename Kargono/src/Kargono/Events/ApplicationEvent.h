@@ -2,6 +2,7 @@
 
 #include "Kargono/Events/Event.h"
 
+#include <sstream>
 
 namespace Kargono
 {
