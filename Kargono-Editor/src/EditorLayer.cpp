@@ -1,23 +1,18 @@
 #include "EditorLayer.h"
-
-#include <iostream>
-#include <chrono>
-
 #include "Kargono/Scene/SceneSerializer.h"
-#include "dependencies/imgui/imgui.h"
+#include "Kargono/Math/Math.h"
+#include "Kargono/Utils/PlatformUtils.h"
+#include "Kargono/Scripting/ScriptEngine.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-#include "Kargono/Utils/PlatformUtils.h"
-
+#include "imgui.h"
 #include "ImGuizmo.h"
-#include "Kargono/Math/Math.h"
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "dependencies/Box2D/include/box2d/b2_body.h"
-#include "Kargono/Scripting/ScriptEngine.h"
+#include "box2d/b2_body.h"
+#include <iostream>
+#include <chrono>
 
 namespace Kargono {
 
@@ -27,10 +22,8 @@ namespace Kargono {
 
 	}
 
-
 	void EditorLayer::OnAttach()
 	{
-		KG_PROFILE_FUNCTION();
 
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
@@ -78,12 +71,12 @@ namespace Kargono {
 
 	void EditorLayer::OnDetach()
 	{
-		KG_PROFILE_FUNCTION();
+		
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
-		KG_PROFILE_FUNCTION();
+		
 
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
@@ -159,7 +152,7 @@ namespace Kargono {
 
 	void EditorLayer::OnImGuiRender()
 	{
-		KG_PROFILE_FUNCTION();
+		
 
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;

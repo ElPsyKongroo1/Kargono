@@ -1,14 +1,13 @@
-#include "SceneHierarchyPanel.h"
-#include <imgui.h>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "imgui_internal.h"
+#include "Panels/SceneHierarchyPanel.h"
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scripting/ScriptEngine.h"
-#include "Kargono/UI/UI.h"
-#include <cstring>
-#include <filesystem>
 #include "Kargono/Renderer/Texture.h"
+#include "Kargono/UI/UI.h"
+
+#include <imgui.h>
+#include "imgui_internal.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().

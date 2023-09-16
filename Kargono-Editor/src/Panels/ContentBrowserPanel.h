@@ -1,6 +1,8 @@
 #pragma once
-#include <filesystem>
+
 #include "Kargono/Renderer/Texture.h"
+
+#include <filesystem>
 
 namespace Kargono
 {
