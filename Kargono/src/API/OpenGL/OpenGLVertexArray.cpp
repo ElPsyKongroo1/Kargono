@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "API/OpenGL/OpenGLVertexArray.h"
 
 #include <glad/glad.h>
 

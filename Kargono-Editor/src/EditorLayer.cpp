@@ -3,7 +3,6 @@
 #include "Kargono/Math/Math.h"
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Scripting/ScriptEngine.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 
 #include "imgui.h"
 #include "ImGuizmo.h"
@@ -17,15 +16,13 @@
 namespace Kargono {
 
 	EditorLayer::EditorLayer()
-		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f, true), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
+		: Layer("EditorLayer")
 	{
 
 	}
 
 	void EditorLayer::OnAttach()
 	{
-
-		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
 		m_IconPlay = Texture2D::Create("resources/icons/play_icon.png");
 		m_IconPause = Texture2D::Create("resources/icons/pause_icon.png");
@@ -87,7 +84,6 @@ namespace Kargono {
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 		
@@ -105,10 +101,6 @@ namespace Kargono {
 		{
 			case SceneState::Edit:
 			{
-				if (m_ViewportFocused)
-				{
-					m_CameraController.OnUpdate(ts);
-				}
 				m_EditorCamera.OnUpdate(ts);
 
 				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
@@ -152,8 +144,6 @@ namespace Kargono {
 
 	void EditorLayer::OnImGuiRender()
 	{
-		
-
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
@@ -439,7 +429,6 @@ namespace Kargono {
 
 	void EditorLayer::OnEvent(Event& event)
 	{
-		m_CameraController.OnEvent(event);
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnEvent(event);

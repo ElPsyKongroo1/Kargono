@@ -5,8 +5,8 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "Platform/Windows/WindowsWindow.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "API/Windows/WindowsWindow.h"
+#include "API/OpenGL/OpenGLContext.h"
 
 
 namespace Kargono 

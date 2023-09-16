@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Log.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "API/OpenGL/OpenGLContext.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

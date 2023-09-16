@@ -5,7 +5,7 @@
 #include "Kargono/Renderer/Buffer.h"
 #include "Kargono/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/OpenGLBuffer.h"
+#include "API/OpenGL/OpenGLBuffer.h"
 
 
 namespace Kargono {

@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "API/OpenGL/OpenGLShader.h"
 
 namespace Kargono {
 	Ref<Shader> Shader::Create(const std::string& filepath)
