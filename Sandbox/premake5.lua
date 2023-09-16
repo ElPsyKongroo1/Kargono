@@ -3,7 +3,7 @@ project "Sandbox"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
-    linkoptions { "-IGNORE:4098", "-IGNORE:4006" }
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099"  }
     
     targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")

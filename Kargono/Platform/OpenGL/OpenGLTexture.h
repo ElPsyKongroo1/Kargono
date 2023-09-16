@@ -15,7 +15,7 @@ namespace Kargono
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 
-		virtual const std::string& GetPath() const override
+		virtual std::string GetPath() const override
 		{
 			if (!m_Path.empty()) { return m_Path; }
 			else { return {}; }

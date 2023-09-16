@@ -244,7 +244,7 @@ namespace filewatch {
 		std::atomic<bool> _destory = { false };
 		bool _watching_single_file = { false };
 
-#pragma mark "Platform specific data"
+//#pragma mark "Platform specific data"
 #ifdef _WIN32
 		HANDLE _directory = { nullptr };
 		HANDLE _close_event = { nullptr };
