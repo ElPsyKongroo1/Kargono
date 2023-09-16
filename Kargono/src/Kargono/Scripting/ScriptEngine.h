@@ -89,6 +89,8 @@ namespace Kargono
 
 		static void ReloadAssembly();
 
+		static void InitialAssemblyLoad();
+
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
 

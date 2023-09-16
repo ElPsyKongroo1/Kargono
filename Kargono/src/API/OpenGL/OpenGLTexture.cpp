@@ -11,8 +11,6 @@ namespace Kargono
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
 		: m_Width(width), m_Height(height)
 	{
-		
-
 		GLenum internalFormat = GL_RGBA8, dataFormat = GL_RGBA;
 
 		m_InternalFormat = internalFormat;
@@ -31,7 +29,6 @@ namespace Kargono
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		:m_Path(path)
 	{
-		
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);

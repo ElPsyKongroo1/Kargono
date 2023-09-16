@@ -15,7 +15,6 @@ namespace Kargono
 		: m_Specification(specification)
 		
 	{
-
 		KG_CORE_ASSERT(!s_Instance, "Application already exists!")
 		s_Instance = this;
 		// Set working directory here
@@ -26,7 +25,6 @@ namespace Kargono
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
-		
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -48,8 +46,6 @@ namespace Kargono
 
 	void Application::PushOverlay(Layer* layer)
 	{
-		
-
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
 	}
@@ -57,8 +53,6 @@ namespace Kargono
 
 	void Application::OnEvent(Event& e) 
 	{
-		
-
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(KG_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(KG_BIND_EVENT_FN(Application::OnWindowResize));
@@ -86,8 +80,6 @@ namespace Kargono
 
 	void Application::Run()
 	{
-		
-
 		while (m_Running)
 		{
 			float time = Time::GetTime();

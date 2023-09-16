@@ -24,6 +24,8 @@ namespace Kargono {
 	void EditorLayer::OnAttach()
 	{
 
+		ScriptEngine::Init();
+
 		m_IconPlay = Texture2D::Create("resources/icons/play_icon.png");
 		m_IconPause = Texture2D::Create("resources/icons/pause_icon.png");
 		m_IconSimulate = Texture2D::Create("resources/icons/simulate_icon.png");
@@ -56,10 +58,15 @@ namespace Kargono {
 
 			// If no project is opened, close Editor
 			// TODO: this is while we don't have a new project path
-			if (!OpenProject()) { Application::Get().Close(); }
-
+			if (!OpenProject())
+			{
+				Application::Get().Close();
+				return;
+			}
 
 		}
+
+		ScriptEngine::InitialAssemblyLoad();
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
@@ -615,7 +622,6 @@ namespace Kargono {
 	{
 		if (Project::Load(path))
 		{
-			ScriptEngine::Init();
 			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();

@@ -182,27 +182,6 @@ namespace Kargono
 		InitMono();
 		ScriptGlue::RegisterFunctions();
 
-		bool status = LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
-		if (!status)
-		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
-			return;
-		}
-
-
-		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
-		status = LoadAppAssembly(scriptModulePath);
-		if (!status)
-		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
-			return;
-		}
-		LoadAssemblyClasses();
-		ScriptGlue::RegisterComponents();
-
-		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
-
-
 	}
 	void ScriptEngine::Shutdown()
 	{
@@ -226,8 +205,6 @@ namespace Kargono
 
 			mono_jit_parse_options(2, (char**)argv);
 			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
-
-			
 		}
 
 		MonoDomain* rootDomain = mono_jit_init("KargonoJITRuntime");
@@ -248,11 +225,20 @@ namespace Kargono
 	}
 	void ScriptEngine::ShutdownMono()
 	{
-		// ugh mono
+		KG_CORE_ASSERT(s_ScriptData->RootDomain, "Mono Shutdown Initiated without valid root domain present!")
+		KG_CORE_WARN("Shutting down Mono. Root Domain is {}. App Domain is {}", static_cast<bool>(s_ScriptData->RootDomain), static_cast<bool>(s_ScriptData->AppDomain));
+
 		mono_domain_set(mono_get_root_domain(), false);
-		mono_domain_unload(s_ScriptData->AppDomain);
+		if (s_ScriptData->AppDomain)
+		{
+			mono_domain_unload(s_ScriptData->AppDomain);
+		}
 		s_ScriptData->AppDomain = nullptr;
-		mono_jit_cleanup(s_ScriptData->RootDomain);
+		if (s_ScriptData->RootDomain)
+		{
+			mono_jit_cleanup(s_ScriptData->RootDomain);
+		}
+		
 		s_ScriptData->RootDomain = nullptr;
 	}
 
@@ -291,18 +277,39 @@ namespace Kargono
 	void ScriptEngine::ReloadAssembly()
 	{
 		mono_domain_set(mono_get_root_domain(), false);
-
-		//mono_domain_unload(s_ScriptData->AppDomain, false);
 		mono_domain_unload(s_ScriptData->AppDomain);
+
 		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
 		LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
-
 		LoadAssemblyClasses();
 
 		// Retrieve and instantiate class
+		ScriptGlue::RegisterComponents();
+
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
 
+	}
+
+	void ScriptEngine::InitialAssemblyLoad()
+	{
+		bool status = LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
+			return;
+		}
+
+		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		status = LoadAppAssembly(scriptModulePath);
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			return;
+		}
+		LoadAssemblyClasses();
 		ScriptGlue::RegisterComponents();
+
+		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
 	}
 
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
