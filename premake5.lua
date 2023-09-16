@@ -37,10 +37,6 @@ group "Core"
     include "Kargono"
 group ""
 
-group "Misc"
-    include "Sandbox"
-group ""
-
 group "Tools"
     include "Kargono-Editor"
 group ""
