@@ -3,7 +3,7 @@
 #include "Kargono/Renderer/GraphicsContext.h"
 #include "Kargono/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "API/OpenGL/OpenGLContext.h"
 
 namespace Kargono {
 	Scope<Kargono::GraphicsContext> GraphicsContext::Create(void* window)

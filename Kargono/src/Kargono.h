@@ -12,7 +12,6 @@
 #include "Kargono/Core/Input.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
-#include "Kargono/Renderer/OrthographicCameraController.h"
 
 #include "Kargono/Core/Layer.h"
 #include "Kargono/ImGui/ImGuiLayer.h"

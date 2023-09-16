@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Window.h"
 #ifdef KG_PLATFORM_WINDOWS
-#include "Platform/Windows/WindowsWindow.h"
+#include "API/Windows/WindowsWindow.h"
 #endif
 
 namespace Kargono

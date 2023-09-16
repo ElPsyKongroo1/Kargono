@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Renderer/RendererAPI.h"
-#include "Platform/OpenGL/OpenGLRendererAPI.h"
+#include "API/OpenGL/OpenGLRendererAPI.h"
 
 namespace Kargono {
 

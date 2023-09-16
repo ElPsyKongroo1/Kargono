@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Timer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "API/OpenGL/OpenGLShader.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>

@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/VertexArray.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "API/OpenGL/OpenGLVertexArray.h"
 
 namespace Kargono {
 

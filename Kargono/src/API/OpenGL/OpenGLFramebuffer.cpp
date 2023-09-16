@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "API/OpenGL/OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
 

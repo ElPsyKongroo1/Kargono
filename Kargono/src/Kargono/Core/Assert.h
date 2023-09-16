@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Log.h"
 
 #ifdef KG_ENABLE_ASSERTS
 

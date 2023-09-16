@@ -20,8 +20,8 @@ project "Kargono"
         "dependencies/stb_image/**.h",
         "dependencies/ImGuizmo/ImGuizmo.h",
         "dependencies/ImGuizmo/ImGuizmo.cpp",
-        "src/Platform/**.h",
-        "src/Platform/**.cpp"
+        "src/API/**.h",
+        "src/API/**.cpp"
     }
 
     defines

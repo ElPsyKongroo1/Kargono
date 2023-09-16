@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/Texture.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
+#include "API/OpenGL/OpenGLTexture.h"
 
 namespace Kargono {
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
