@@ -1,8 +1,11 @@
 #pragma once
 #include "Kargono.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Renderer/EditorCamera.h"
+
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
-#include "Kargono/Renderer/EditorCamera.h"
+
 #include <filesystem>
 
 namespace Kargono {

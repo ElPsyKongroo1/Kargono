@@ -21,7 +21,9 @@ project "Kargono-Editor"
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
-        "%{wks.location}/Kargono"
+        "%{IncludeDir.Box2D}",
+        "%{wks.location}/Kargono/src",
+        "%{wks.location}/Kargono-Editor/src"
 
     }
 
@@ -38,6 +40,11 @@ project "Kargono-Editor"
     filter "system:windows"
         
         systemversion "latest"
+
+        defines 
+        {
+            "KG_PLATFORM_WINDOWS"
+        }
 
     filter "configurations:Debug"
         defines "KG_DEBUG"

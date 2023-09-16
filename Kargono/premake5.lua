@@ -8,30 +8,31 @@ project "Kargono"
     targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "Kargono/kgpch.h"
-    pchsource "Kargono/kgpch.cpp"
+    pchheader "kgpch.h"
+    pchsource "src/Kargono/kgpch.cpp"
     
     files 
     {
-		"Kargono.h",
-		"Kargono/**.h",
-		"Kargono/**.cpp",
+		"src/Kargono.h",
+		"src/Kargono/**.h",
+		"src/Kargono/**.cpp",
         "dependencies/stb_image/**.cpp",
         "dependencies/stb_image/**.h",
         "dependencies/ImGuizmo/ImGuizmo.h",
         "dependencies/ImGuizmo/ImGuizmo.cpp",
-        "Platform/**.h",
-        "Platform/**.cpp"
+        "src/Platform/**.h",
+        "src/Platform/**.cpp"
     }
 
-    defines 
+    defines
     {
         "_CRT_SECURE_NO_WARNINGS",
 		"GLFW_INCLUDE_NONE"
+        
     }
     includedirs 
     {
-        "",
+        "src",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.filewatch}",
@@ -65,14 +66,14 @@ project "Kargono"
     }
 
     filter "files:dependencies/ImGuizmo/**.cpp"
-    flags{ "NoPCH" }
+        flags{ "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"
 
         defines 
         {
-
+            "KG_PLATFORM_WINDOWS"
         }
 
         links 

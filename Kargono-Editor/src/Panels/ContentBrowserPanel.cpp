@@ -1,10 +1,8 @@
-#include "Kargono/kgpch.h"
-#include "ContentBrowserPanel.h"
+#include "Kargono/Project/Project.h"
+#include "Panels/ContentBrowserPanel.h"
 
-#include <filesystem>
 #include <imgui.h>
 
-#include "Kargono/Project/Project.h"
 
 
 namespace Kargono
