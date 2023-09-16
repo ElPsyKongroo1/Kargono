@@ -15,5 +15,8 @@
 		app->Run();
 
 		delete app;
+
+		KG_CORE_WARN("Application Shut Down Successfully!");
+		return 0;
 	}
 #endif
