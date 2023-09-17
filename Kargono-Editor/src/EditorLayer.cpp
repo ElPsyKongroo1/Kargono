@@ -625,6 +625,8 @@ namespace Kargono {
 			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+
+			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
 		}
 	}
 
@@ -654,8 +656,6 @@ namespace Kargono {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
-
-
 		if (m_SceneState != SceneState::Edit)
 		{
 			OnSceneStop();
@@ -698,6 +698,7 @@ namespace Kargono {
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
 	{
+		KG_WARN("Serializing scene into path {}", path.string());
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
 	}
@@ -730,7 +731,7 @@ namespace Kargono {
 	void EditorLayer::OnSceneStop()
 	{
 		m_HoveredEntity = {};
-		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Givent to OnSceneStop")
+		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
 		if (m_SceneState == SceneState::Play) { m_ActiveScene->OnRuntimeStop(); }
 		else if (m_SceneState == SceneState::Simulate) { m_ActiveScene->OnSimulationStop(); }
@@ -748,8 +749,6 @@ namespace Kargono {
 
 		m_ActiveScene->SetPaused(true);
 	}
-
-	
 
 	void EditorLayer::OnDuplicateEntity()
 	{

@@ -1,0 +1,130 @@
+Scene: Untitled
+Entities:
+  - Entity: 5974950966135629051
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [-0.112352729, 1.66806841, -0.00848388672]
+      Rotation: [0, 0, 0]
+      Scale: [3.6908741, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.42104286, 0.301739693, 0.451737463, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+    ScriptComponent:
+      ClassName: Breakout.Player
+      ScriptFields:
+        - Name: Speed
+          Type: Float
+          Data: 30
+  - Entity: 10916641239843411435
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [-7.4505806e-09, 11.6767263, 43.7930717]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Textures\camera.png
+      TilingFactor: 1
+  - Entity: 10024416772323704999
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [0, -1.97349513, 0]
+      Rotation: [0, 0, 0]
+      Scale: [27.2863331, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.830115795, 0.169869229, 0.169869229, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 15512424703014763540
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [-13.1079817, 11.254735, 0]
+      Rotation: [0, 0, 1.57079637]
+      Scale: [27.2849255, 0.999956012, 1]
+    SpriteRendererComponent:
+      Color: [0.830115795, 0.169869229, 0.169869229, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 1968395899000860286
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [13.1850414, 11.254735, 0]
+      Rotation: [0, 0, 1.57079637]
+      Scale: [27.2840271, 0.999927938, 1]
+    SpriteRendererComponent:
+      Color: [0.830115795, 0.169869229, 0.169869229, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 7848530179990213640
+    TagComponent:
+      Tag: Ceiling
+    TransformComponent:
+      Translation: [0, 24.9708939, 0]
+      Rotation: [0, 0, 0]
+      Scale: [27.2863331, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.830115795, 0.169869229, 0.169869229, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5

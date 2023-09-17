@@ -1,265 +1,148 @@
 Scene: Untitled
 Entities:
-  - Entity: 17473884856681341648
+  - Entity: 1168201773845479879
     TagComponent:
-      Tag: Bridge
+      Tag: Floor
     TransformComponent:
-      Translation: [21.0640945, 3.78861952, -9.89694977]
-      Rotation: [0, 0, 0]
-      Scale: [10, 8, 1]
+      Translation: [5.96046448e-08, -0.17881906, -11.8236313]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [70, 23.6021557, 0.999886394]
     SpriteRendererComponent:
-      Color: [0.7945171, 0.912380278, 0.922779918, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\bridge.png
-      TilingFactor: 1
-  - Entity: 8491172520020854555
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
+      TilingFactor: 6.19999981
+  - Entity: 18273716516379590876
     TagComponent:
-      Tag: Castle
+      Tag: Tree
     TransformComponent:
-      Translation: [3.81361294, 14.4102726, -26.7415962]
+      Translation: [-5.32358742, 2.07875633, -11.3799438]
       Rotation: [0, 0, 0]
-      Scale: [50, 25, 1]
+      Scale: [5, 5, 1]
     SpriteRendererComponent:
-      Color: [0.752941191, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\castle.png
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
-  - Entity: 9999760903825331671
+  - Entity: 5829521914014726300
     TagComponent:
-      Tag: Cloud
+      Tag: Tree
     TransformComponent:
-      Translation: [-5.40007401, 19.6994953, -23.5686989]
+      Translation: [-7.23366737, 2.07875633, -3.48333812]
       Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
+      Scale: [5, 5, 1]
     SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
       TilingFactor: 1
-  - Entity: 4940925500749755710
+  - Entity: 6378408106021816491
     TagComponent:
       Tag: Mountain
     TransformComponent:
-      Translation: [7.10679245, 3.27214909, -22.6747265]
+      Translation: [-9.75401306, 2.97784901, -13.6942234]
       Rotation: [0, 0, 0]
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
-  - Entity: 1176406883374496696
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [5.7929039, 20.1258011, -29.7710285]
-      Rotation: [0, 0, 0]
-      Scale: [20, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.843137264]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
-      TilingFactor: 1
-  - Entity: 9176933547837144378
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [21.5340881, 18.6998806, -19.7429314]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
-  - Entity: 165108369484516618
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-5.40007401, 25.4331589, -19.7429314]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
-  - Entity: 9202412756351606160
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [15.075532, 10.1541405, -19.7429314]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
-  - Entity: 4765666814120401609
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-37.6539993, 10.1077194, -17.6355171]
-      Rotation: [0, 0, 0]
-      Scale: [20, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.788235307, 1, 1, 0.815686285]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
-      TilingFactor: 1
-  - Entity: 3448296047212542173
-    TagComponent:
-      Tag: Background Specks
-    TransformComponent:
-      Translation: [-3.14378452, 4.92804241, -31.6024761]
-      Rotation: [0, 0, 0]
-      Scale: [138.387741, 100, 1]
-    SpriteRendererComponent:
-      Color: [0.792156875, 0.643137276, 0.75686276, 0.56078434]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\atmosphere.png
-      TilingFactor: 1
-  - Entity: 10894870893529471880
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [6.92450619, 0.836481392, -10.2433825]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 6337398763326236372
+  - Entity: 2244518969620201522
     TagComponent:
       Tag: Mountain
     TransformComponent:
-      Translation: [3.41279292, 2.97784901, -17.8584328]
+      Translation: [-25.1560707, 4.59730625, -16.3850727]
       Rotation: [0, 0, 0]
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
-  - Entity: 8966093407196168747
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-11.9886532, 0.836481392, -7.32900238]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 12842046634017884822
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-25.4046879, 0.836481392, -1.55659175]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 14843209312186063744
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [13.6075068, 0.836481392, -1.66790509]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 18261765960412964801
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-31.3494396, 0.836481392, -11.8761826]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 14470545676816017541
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [3.10226178, 2.07875633, -9.79721451]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 10603270118461090189
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [19.9112053, 2.07875633, -12.8934021]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 5980731597213076784
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [11.3173923, 2.07875633, -0.717684984]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 16714838255178927062
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [11.3173923, 2.07875633, -5.98312092]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 16204714205944278421
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-1.48718548, 0.843289137, -12.897357]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
-      TilingFactor: 1
-  - Entity: 11541659662495606140
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-14.975668, 2.07875633, -9.65156364]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 13550271212884189528
+  - Entity: 10657477765109477758
     TagComponent:
       Tag: Mountain
     TransformComponent:
-      Translation: [33.7699356, 7.78729391, -27.1984539]
-      Rotation: [-3.14159226, 0, -3.14159226]
-      Scale: [56.6099701, 20, 1]
+      Translation: [23.5700569, 0.362224579, -15.0095339]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
-  - Entity: 11305261500944675927
+  - Entity: 6412895350353286330
     TagComponent:
-      Tag: Invisible Wall
+      Tag: Tree
     TransformComponent:
-      Translation: [30.5755177, 5.40768433, -5.5]
+      Translation: [-18.913744, 1.97888577, -3.89743781]
       Rotation: [0, 0, 0]
-      Scale: [13.4200001, 13.4200001, 1]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 15770393508544689144
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-22.6684341, 2.10522985, -9.40295219]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 1033205328720227495
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-27.1674118, 1.55531049, -6.77818966]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 1242276924143954553
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [26.851738, 2.07875633, -8.37090683]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 4568510293557288313
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [-17.4952354, 7.78745937, -26.5062542]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
+      TilingFactor: 1
+  - Entity: 629720744589222482
+    TagComponent:
+      Tag: Road
+    TransformComponent:
+      Translation: [0.0923185349, -0.169999942, -5.5]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [72.9321899, 0.999923646, 0.999809921]
+    SpriteRendererComponent:
+      Color: [0.555984557, 0.555984557, 0.555984557, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
+      TilingFactor: 9.89999962
+  - Entity: 2782608401036276757
+    TagComponent:
+      Tag: Ground
+    TransformComponent:
+      Translation: [5.96046448e-08, -11.9580364, 0]
+      Rotation: [0, 0, 0]
+      Scale: [70, 23.6057816, 1]
+    SpriteRendererComponent:
+      Color: [0.308880329, 0.261499107, 0.0584368221, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
+      TilingFactor: 4
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: true
@@ -267,98 +150,46 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 1
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 8908532272188604100
+  - Entity: 808996595957977349
     TagComponent:
-      Tag: Invisible Wall
+      Tag: Background
     TransformComponent:
-      Translation: [-2.38418579e-07, 13.5254583, -5.5]
+      Translation: [-1.22032881, 19.3329506, -93.2756958]
       Rotation: [0, 0, 0]
-      Scale: [70, 3, 1]
+      Scale: [300, 300, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0.98841691, 1]
+      TilingFactor: 1
+  - Entity: 1186017404151072087
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [3.16649675e-08, 4.30546093, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\marshman.png
+      TilingFactor: 1
     Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Radius: 0.389999986
       Density: 1
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 7410225871885274200
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-27.3842335, 21.3187943, -19.2777596]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.776470602]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
-  - Entity: 17089508316881455249
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-6.08324146, 12.5030775, -19.2891293]
-      Rotation: [-3.14159226, 0, -3.14159226]
-      Scale: [20.0000114, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.788235307, 1, 1, 0.815686285]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
-      TilingFactor: 1
-  - Entity: 182551701600881149
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [24.0845318, 11.2899628, -17.1091042]
-      Rotation: [0, 0, 0]
-      Scale: [20, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.843137264]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
-      TilingFactor: 1
-  - Entity: 494945015114845270
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-28.1750851, 9.5802269, -15.9158783]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.80392158]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
-  - Entity: 16055172307293065181
-    TagComponent:
-      Tag: Invisible Wall
-    TransformComponent:
-      Translation: [-25.7045383, 5.46857071, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [13.4200001, 13.4220304, 1]
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 2522364574559682528
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [30.3782959, 15.6242561, -9.65813637]
-      Rotation: [0, 0, 0]
-      Scale: [10, 5, 1]
-    SpriteRendererComponent:
-      Color: [0.784313738, 1, 1, 0.670588255]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
-      TilingFactor: 1
+    ScriptComponent:
+      ClassName: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: Float
+          Data: 13
   - Entity: 8293775937860125679
     TagComponent:
       Tag: Camera
@@ -387,54 +218,24 @@ Entities:
         - Name: DistanceFromPlayer
           Type: Float
           Data: 2.5
-  - Entity: 1186017404151072087
+  - Entity: 2522364574559682528
     TagComponent:
-      Tag: Player
+      Tag: Cloud
     TransformComponent:
-      Translation: [3.16649675e-08, 4.30546093, -5.5]
+      Translation: [30.3782959, 15.6242561, -9.65813637]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [10, 5, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\marshman.png
+      Color: [0.784313738, 1, 1, 0.670588255]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.389999986
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-    ScriptComponent:
-      ClassName: Sandbox.Player
-      ScriptFields:
-        - Name: Speed
-          Type: Float
-          Data: 13
-  - Entity: 808996595957977349
+  - Entity: 16055172307293065181
     TagComponent:
-      Tag: Background
+      Tag: Invisible Wall
     TransformComponent:
-      Translation: [-1.22032881, 19.3329506, -93.2756958]
+      Translation: [-25.7045383, 5.46857071, -5.5]
       Rotation: [0, 0, 0]
-      Scale: [300, 300, 1]
-    SpriteRendererComponent:
-      Color: [0, 1, 0.98841691, 1]
-      TilingFactor: 1
-  - Entity: 2782608401036276757
-    TagComponent:
-      Tag: Ground
-    TransformComponent:
-      Translation: [5.96046448e-08, -11.9580364, 0]
-      Rotation: [0, 0, 0]
-      Scale: [70, 23.6057816, 1]
-    SpriteRendererComponent:
-      Color: [0.308880329, 0.261499107, 0.0584368221, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
-      TilingFactor: 4
+      Scale: [13.4200001, 13.4220304, 1]
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: true
@@ -442,138 +243,337 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 1
+      Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 629720744589222482
+  - Entity: 494945015114845270
     TagComponent:
-      Tag: Road
+      Tag: Cloud
     TransformComponent:
-      Translation: [0.0923185349, -0.169999942, -5.5]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [72.9321899, 0.999923646, 0.999809921]
+      Translation: [-28.1750851, 9.5802269, -15.9158783]
+      Rotation: [0, 0, 0]
+      Scale: [10, 5, 1]
     SpriteRendererComponent:
-      Color: [0.555984557, 0.555984557, 0.555984557, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
-      TilingFactor: 9.89999962
-  - Entity: 4568510293557288313
+      Color: [0.784313738, 1, 1, 0.80392158]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
+      TilingFactor: 1
+  - Entity: 182551701600881149
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [24.0845318, 11.2899628, -17.1091042]
+      Rotation: [0, 0, 0]
+      Scale: [20, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.784313738, 1, 1, 0.843137264]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
+      TilingFactor: 1
+  - Entity: 17089508316881455249
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [-6.08324146, 12.5030775, -19.2891293]
+      Rotation: [-3.14159226, 0, -3.14159226]
+      Scale: [20.0000114, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.788235307, 1, 1, 0.815686285]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
+      TilingFactor: 1
+  - Entity: 7410225871885274200
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [-27.3842335, 21.3187943, -19.2777596]
+      Rotation: [0, 0, 0]
+      Scale: [10, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.784313738, 1, 1, 0.776470602]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
+      TilingFactor: 1
+  - Entity: 8908532272188604100
+    TagComponent:
+      Tag: Invisible Wall
+    TransformComponent:
+      Translation: [-2.38418579e-07, 13.5254583, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [70, 3, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11305261500944675927
+    TagComponent:
+      Tag: Invisible Wall
+    TransformComponent:
+      Translation: [30.5755177, 5.40768433, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [13.4200001, 13.4200001, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 13550271212884189528
     TagComponent:
       Tag: Mountain
     TransformComponent:
-      Translation: [-17.4952354, 7.78745937, -26.5062542]
+      Translation: [33.7699356, 7.78729391, -27.1984539]
+      Rotation: [-3.14159226, 0, -3.14159226]
+      Scale: [56.6099701, 20, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
+      TilingFactor: 1
+  - Entity: 11541659662495606140
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-14.975668, 2.07875633, -9.65156364]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 16204714205944278421
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-1.48718548, 0.843289137, -12.897357]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
+      TilingFactor: 1
+  - Entity: 16714838255178927062
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [11.3173923, 2.07875633, -5.98312092]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 5980731597213076784
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [11.3173923, 2.07875633, -0.717684984]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 10603270118461090189
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [19.9112053, 2.07875633, -12.8934021]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 14470545676816017541
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [3.10226178, 2.07875633, -9.79721451]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1
+  - Entity: 18261765960412964801
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-31.3494396, 0.836481392, -11.8761826]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
+      TilingFactor: 1
+  - Entity: 14843209312186063744
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [13.6075068, 0.836481392, -1.66790509]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
+      TilingFactor: 1
+  - Entity: 12842046634017884822
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-25.4046879, 0.836481392, -1.55659175]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
+      TilingFactor: 1
+  - Entity: 8966093407196168747
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-11.9886532, 0.836481392, -7.32900238]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
+      TilingFactor: 1
+  - Entity: 6337398763326236372
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [3.41279292, 2.97784901, -17.8584328]
       Rotation: [0, 0, 0]
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
-  - Entity: 1242276924143954553
+  - Entity: 10894870893529471880
     TagComponent:
-      Tag: Tree
+      Tag: Rock
     TransformComponent:
-      Translation: [26.851738, 2.07875633, -8.37090683]
+      Translation: [6.92450619, 0.836481392, -10.2433825]
       Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
+      Scale: [4.45906639, 3, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\boulder_1.png
       TilingFactor: 1
-  - Entity: 1033205328720227495
+  - Entity: 3448296047212542173
     TagComponent:
-      Tag: Tree
+      Tag: Background Specks
     TransformComponent:
-      Translation: [-27.1674118, 1.55531049, -6.77818966]
+      Translation: [-3.14378452, 4.92804241, -31.6024761]
       Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
+      Scale: [138.387741, 100, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      Color: [0.792156875, 0.643137276, 0.75686276, 0.56078434]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\atmosphere.png
       TilingFactor: 1
-  - Entity: 15770393508544689144
+  - Entity: 4765666814120401609
     TagComponent:
-      Tag: Tree
+      Tag: Cloud
     TransformComponent:
-      Translation: [-22.6684341, 2.10522985, -9.40295219]
+      Translation: [-37.6539993, 10.1077194, -17.6355171]
       Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
+      Scale: [20, 5, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      Color: [0.788235307, 1, 1, 0.815686285]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
       TilingFactor: 1
-  - Entity: 6412895350353286330
+  - Entity: 9202412756351606160
     TagComponent:
-      Tag: Tree
+      Tag: Cloud
     TransformComponent:
-      Translation: [-18.913744, 1.97888577, -3.89743781]
+      Translation: [15.075532, 10.1541405, -19.7429314]
       Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
+      Scale: [10, 5, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      Color: [0.784313738, 1, 1, 0.670588255]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
-  - Entity: 10657477765109477758
+  - Entity: 165108369484516618
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [-5.40007401, 25.4331589, -19.7429314]
+      Rotation: [0, 0, 0]
+      Scale: [10, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.784313738, 1, 1, 0.670588255]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
+      TilingFactor: 1
+  - Entity: 9176933547837144378
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [21.5340881, 18.6998806, -19.7429314]
+      Rotation: [0, 0, 0]
+      Scale: [10, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.784313738, 1, 1, 0.670588255]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
+      TilingFactor: 1
+  - Entity: 1176406883374496696
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [5.7929039, 20.1258011, -29.7710285]
+      Rotation: [0, 0, 0]
+      Scale: [20, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.784313738, 1, 1, 0.843137264]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_2.png
+      TilingFactor: 1
+  - Entity: 4940925500749755710
     TagComponent:
       Tag: Mountain
     TransformComponent:
-      Translation: [23.5700569, 0.362224579, -15.0095339]
+      Translation: [7.10679245, 3.27214909, -22.6747265]
       Rotation: [0, 0, 0]
       Scale: [56.6100006, 20, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
       TilingFactor: 1
-  - Entity: 2244518969620201522
+  - Entity: 9999760903825331671
     TagComponent:
-      Tag: Mountain
+      Tag: Cloud
     TransformComponent:
-      Translation: [-25.1560707, 4.59730625, -16.3850727]
+      Translation: [-5.40007401, 19.6994953, -23.5686989]
       Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
+      Scale: [10, 5, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
+      Color: [0.784313738, 1, 1, 0.670588255]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\cloud_1.png
       TilingFactor: 1
-  - Entity: 6378408106021816491
+  - Entity: 8491172520020854555
     TagComponent:
-      Tag: Mountain
+      Tag: Castle
     TransformComponent:
-      Translation: [-9.75401306, 2.97784901, -13.6942234]
+      Translation: [3.81361294, 14.4102726, -26.7415962]
       Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
+      Scale: [50, 25, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\mountain_2.png
+      Color: [0.752941191, 1, 1, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\castle.png
       TilingFactor: 1
-  - Entity: 5829521914014726300
+  - Entity: 17473884856681341648
     TagComponent:
-      Tag: Tree
+      Tag: Bridge
     TransformComponent:
-      Translation: [-7.23366737, 2.07875633, -3.48333812]
+      Translation: [21.0640945, 3.78861952, -9.89694977]
       Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
+      Scale: [10, 8, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
+      Color: [0.7945171, 0.912380278, 0.922779918, 1]
+      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\bridge.png
       TilingFactor: 1
-  - Entity: 18273716516379590876
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-5.32358742, 2.07875633, -11.3799438]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\tree_1.png
-      TilingFactor: 1
-  - Entity: 1168201773845479879
-    TagComponent:
-      Tag: Floor
-    TransformComponent:
-      Translation: [5.96046448e-08, -0.17881906, -11.8236313]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [70, 23.6021557, 0.999886394]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Facerun\Assets\Textures\empty_scene_textures\dirt.png
-      TilingFactor: 6.19999981
