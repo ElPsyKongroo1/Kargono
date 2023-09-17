@@ -280,7 +280,9 @@ namespace Kargono
 		mono_domain_unload(s_ScriptData->AppDomain);
 
 		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
-		LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
+
+		const auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		LoadAppAssembly(scriptModulePath);
 		LoadAssemblyClasses();
 
 		// Retrieve and instantiate class
@@ -320,6 +322,11 @@ namespace Kargono
 	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
 	{
 		return s_ScriptData->EntityClasses.find(fullClassName) != s_ScriptData->EntityClasses.end();
+	}
+
+	bool ScriptEngine::AppDomainExists()
+	{
+		return static_cast<bool>(s_ScriptData->AppDomain);
 	}
 
 	void ScriptEngine::OnCreateEntity(Entity entity)

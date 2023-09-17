@@ -117,7 +117,7 @@ namespace Kargono
 		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
-
+	
 	void Scene::OnRuntimeStart()
 	{
 		m_IsRunning = true;

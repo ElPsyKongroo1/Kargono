@@ -95,6 +95,7 @@ namespace Kargono
 		static void OnRuntimeStop();
 
 		static bool EntityClassExists(const std::string& fullClassName);
+		static bool AppDomainExists();
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
 
