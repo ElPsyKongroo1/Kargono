@@ -75,13 +75,14 @@ namespace Kargono {
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+		AudioContext* m_EditorAudio = nullptr;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
 
 		// Editor Resources
-		Ref<Texture2D> m_IconPlay,m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
+		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
 	};
 
 }

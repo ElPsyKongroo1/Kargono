@@ -16,6 +16,8 @@ IncludeDir["yaml_cpp"] = "%{wks.location}/Kargono/dependencies/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/Kargono/dependencies/ImGuizmo"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["mono"] = "%{wks.location}/Kargono/dependencies/mono/include"
+IncludeDir["OpenALSoft"] = "%{wks.location}/Kargono/dependencies/OpenAL/include"
+IncludeDir["dr_wav"] = "%{wks.location}/Kargono/dependencies/dr_wav/include"
 
 LibraryDir = {}
 
@@ -24,6 +26,9 @@ LibraryDir["mono"] = "%{wks.location}/Kargono/dependencies/mono/lib/%{cfg.buildc
 
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
+Library["OpenALSoft_Debug"] = "%{wks.location}/Kargono/dependencies/OpenAL/bin/debug/OpenAL32.lib"
+Library["OpenALSoft_Release"] = "%{wks.location}/Kargono/dependencies/OpenAL/bin/release/OpenAL32.lib"
+Library["OpenALSoft_Dist"] = "%{wks.location}/Kargono/dependencies/OpenAL/bin/dist/OpenAL32.lib"
 
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK}/VkLayer_utils.lib"

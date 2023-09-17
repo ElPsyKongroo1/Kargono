@@ -22,6 +22,8 @@ project "Kargono-Editor"
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.Box2D}",
+        "%{IncludeDir.dr_wav}",
+        "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Kargono/src",
         "%{wks.location}/Kargono-Editor/src"
 

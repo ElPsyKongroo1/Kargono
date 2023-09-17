@@ -68,9 +68,13 @@ namespace Kargono
 
 		entity.GetComponent<TransformComponent>().Translation = *translation;
 
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->SetTransform({ translation->x, translation->y }, body->GetAngle());
+		if (entity.HasComponent<Rigidbody2DComponent>())
+		{
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			body->SetTransform({ translation->x, translation->y }, body->GetAngle());
+		}
+		
 	}
 
 	static void Rigidbody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
