@@ -40,20 +40,20 @@ namespace Sandbox
 			if (Input.IsKeyDown(KeyCode.J)) { velocity.X = -1.0f; }
 			else if (Input.IsKeyDown(KeyCode.L)) { velocity.X = 1.0f; }
 
-			//Entity cameraEntity = FindEntityByName("Camera");
-			//if (cameraEntity != null)
-			//{
-			//	Camera camera = cameraEntity.As<Camera>();
-				
-			//	if (Input.IsKeyDown(KeyCode.U) && camera.DistanceFromPlayer < 3.868f)
-			//	{
-			//		camera.DistanceFromPlayer += speed * ts;
-			//	}
-			//	else if (Input.IsKeyDown(KeyCode.O) && (camera.DistanceFromPlayer - speed * ts) > 0.0f)
-			//	{
-			//		camera.DistanceFromPlayer -= speed * ts;
-			//	}
-			//}
+			Entity cameraEntity = FindEntityByName("Camera");
+			if (cameraEntity != null)
+			{
+				Camera camera = cameraEntity.As<Camera>();
+
+				if (Input.IsKeyDown(KeyCode.U) && camera.DistanceFromPlayer < 3.868f)
+				{
+					camera.DistanceFromPlayer += speed * ts;
+				}
+				else if (Input.IsKeyDown(KeyCode.O) && (camera.DistanceFromPlayer - speed * ts) > 0.0f)
+				{
+					camera.DistanceFromPlayer -= speed * ts;
+				}
+			}
 
 			velocity *= speed * ts;
 

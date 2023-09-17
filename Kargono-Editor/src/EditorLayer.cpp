@@ -23,8 +23,8 @@ namespace Kargono {
 
 	void EditorLayer::OnAttach()
 	{
-
-		ScriptEngine::Init();
+		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
+		m_EditorAudio->stereoSource->play();
 
 		m_IconPlay = Texture2D::Create("resources/icons/play_icon.png");
 		m_IconPause = Texture2D::Create("resources/icons/pause_icon.png");
@@ -66,8 +66,6 @@ namespace Kargono {
 
 		}
 
-		ScriptEngine::InitialAssemblyLoad();
-
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 		Renderer2D::SetLineWidth(4.0f);
@@ -75,6 +73,12 @@ namespace Kargono {
 
 	void EditorLayer::OnDetach()
 	{
+		if (m_EditorAudio)
+		{
+			m_EditorAudio->terminate();
+			delete m_EditorAudio;
+			m_EditorAudio = nullptr;
+		}
 		
 	}
 
@@ -623,10 +627,16 @@ namespace Kargono {
 		if (Project::Load(path))
 		{
 			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
+
+			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
+			else { ScriptEngine::InitialAssemblyLoad(); }
+			if (m_EditorScene)
+			{
+				m_EditorScene->DestroyAllEntities();
+			}
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 
-			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
 		}
 	}
 
@@ -738,6 +748,7 @@ namespace Kargono {
 
 		m_SceneState = SceneState::Edit;
 
+		m_ActiveScene->DestroyAllEntities();
 		m_ActiveScene = m_EditorScene;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);

@@ -117,6 +117,16 @@ namespace Kargono
 		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
+
+	void Scene::DestroyAllEntities()
+	{
+		if (m_EntityMap.empty()) { return; }
+		for (auto& [uuid, entity] : m_EntityMap)
+		{
+			m_Registry.destroy(entity);
+		}
+		m_EntityMap.clear();
+	}
 	
 	void Scene::OnRuntimeStart()
 	{

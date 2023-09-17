@@ -45,7 +45,10 @@ project "Kargono"
         "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.ImGuizmo}",
-        "%{IncludeDir.VulkanSDK}"
+        "%{IncludeDir.VulkanSDK}",
+        "%{IncludeDir.OpenALSoft}",
+        "%{IncludeDir.dr_wav}"
+
     }
 
     libdirs
@@ -92,7 +95,8 @@ project "Kargono"
 		{
 			"%{Library.ShaderC_Debug}",
 			"%{Library.SPIRV_Cross_Debug}",
-			"%{Library.SPIRV_Cross_GLSL_Debug}"
+			"%{Library.SPIRV_Cross_GLSL_Debug}",
+			"%{Library.OpenALSoft_Debug}"
 		}
 
 
@@ -105,7 +109,8 @@ project "Kargono"
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}"
+			"%{Library.SPIRV_Cross_GLSL_Release}",
+			"%{Library.OpenALSoft_Release}"
 		}
 
     filter "configurations:Dist"
@@ -117,5 +122,6 @@ project "Kargono"
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}"
+			"%{Library.SPIRV_Cross_GLSL_Release}",
+			"%{Library.OpenALSoft_Dist}"
 		}

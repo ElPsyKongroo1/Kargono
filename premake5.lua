@@ -24,7 +24,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 
 group "Dependencies"
-    include "dependencies/premake"
     include "Kargono/dependencies/GLFW"
     include "Kargono/dependencies/Box2D"
     include "Kargono/dependencies/GLAD"

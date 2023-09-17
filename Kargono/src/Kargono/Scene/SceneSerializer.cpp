@@ -382,7 +382,7 @@ namespace Kargono
 		if (!data["Scene"]) { return false; }
 
 		std::string sceneName = data["Scene"].as<std::string>();
-		KG_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+		KG_CORE_TRACE("Deserializing scene '{0}' at {1}", sceneName, filepath);
 
 		auto entities = data["Entities"];
 		if (entities)
