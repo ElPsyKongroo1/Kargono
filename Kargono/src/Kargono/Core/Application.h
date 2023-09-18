@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <mutex>
+#include <filesystem>
 
 int main(int argc, char** argv);
 
@@ -31,7 +32,7 @@ namespace Kargono
 	struct ApplicationSpecification
 	{
 		std::string Name = "Kargono Application";
-		std::string WorkingDirectory;
+		std::filesystem::path WorkingDirectory;
 		ApplicationCommandLineArgs CommandLineArgs;
 	};
 
@@ -52,6 +53,8 @@ namespace Kargono
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
 		Window& GetWindow() { return *m_Window; }
+
+		const std::filesystem::path& GetWorkingDirectory() const { return m_Specification.WorkingDirectory; }
 
 		void Close();
 

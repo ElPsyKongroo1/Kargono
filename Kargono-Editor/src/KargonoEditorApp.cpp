@@ -1,5 +1,6 @@
 #include <Kargono.h>
 #include "Kargono/Core/EntryPoint.h"
+
 #include "EditorLayer.h"
 
 namespace Kargono {
@@ -20,6 +21,7 @@ namespace Kargono {
 		ApplicationSpecification spec;
 		spec.Name = "Kargono Editor";
 		spec.CommandLineArgs = args;
+		spec.WorkingDirectory = std::filesystem::current_path();
 
 		return new KargonoEditor(spec);
 	}
