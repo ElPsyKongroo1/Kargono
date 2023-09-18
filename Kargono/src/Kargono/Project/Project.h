@@ -35,7 +35,7 @@ namespace Kargono
 
 		
 
-		static std::filesystem::path GetAssetFileSystemPath(const std::filesystem::path& path)
+		static std::filesystem::path AppendToAssetDirPath(const std::filesystem::path& path)
 		{
 			KG_CORE_ASSERT(s_ActiveProject);
 			return GetAssetDirectory() / path;
