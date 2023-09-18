@@ -626,7 +626,7 @@ namespace Kargono {
 	{
 		if (Project::Load(path))
 		{
-			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
+			auto startScenePath = Project::AppendToAssetDirPath(Project::GetActive()->GetConfig().StartScene);
 
 			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
 			else { ScriptEngine::InitialAssemblyLoad(); }

@@ -226,7 +226,7 @@ namespace Kargono
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			if (spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << FileSystem:: spriteRendererComponent.Texture->GetPath();
+				out << YAML::Key << "TexturePath" << YAML::Value << FileSystem::GetRelativePath(Project::GetAssetDirectory(), spriteRendererComponent.Texture->GetPath()).string() ;
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			out << YAML::EndMap; // Component Map
@@ -491,7 +491,7 @@ namespace Kargono
 					if (spriteRendererComponent["TexturePath"])
 					{
 						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						auto path = Project::GetAssetFileSystemPath(texturePath);
+						auto path = Project::AppendToAssetDirPath(texturePath);
 						src.Texture = Texture2D::Create(path.string());
 					}
 
