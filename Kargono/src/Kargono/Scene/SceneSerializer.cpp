@@ -5,6 +5,8 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Project/Project.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+#include "Kargono/Core/FileSystem.h"
+
 
 #include <yaml-cpp/yaml.h>
 
@@ -224,7 +226,7 @@ namespace Kargono
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			if (spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+				out << YAML::Key << "TexturePath" << YAML::Value << FileSystem:: spriteRendererComponent.Texture->GetPath();
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			out << YAML::EndMap; // Component Map

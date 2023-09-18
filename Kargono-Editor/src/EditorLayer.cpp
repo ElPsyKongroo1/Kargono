@@ -26,11 +26,11 @@ namespace Kargono {
 		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
 		m_EditorAudio->stereoSource->play();
 
-		m_IconPlay = Texture2D::Create("resources/icons/play_icon.png");
-		m_IconPause = Texture2D::Create("resources/icons/pause_icon.png");
-		m_IconSimulate = Texture2D::Create("resources/icons/simulate_icon.png");
-		m_IconStop = Texture2D::Create("resources/icons/stop_icon.png");
-		m_IconStep = Texture2D::Create("resources/icons/step_icon.png");
+		m_IconPlay = Texture2D::Create( (Application::Get().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
+		m_IconPause = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
+		m_IconSimulate = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
+		m_IconStop = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
+		m_IconStep = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8,FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };

@@ -21,8 +21,10 @@ namespace Kargono {
 		KG_CORE_ASSERT(false, "RendererAPI:: Unknown RendererAPI!");
 		return nullptr;
 	}
-	Ref<Kargono::Texture2D> Texture2D::Create(const std::string& path)
+	Ref<Kargono::Texture2D> Texture2D::Create(const std::filesystem::path& path)
 	{
+		KG_CORE_ASSERT(path.is_absolute(), "Path provided to texture create function is not an absolute path!")
+
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:
@@ -31,7 +33,7 @@ namespace Kargono {
 
 
 		case RendererAPI::API::OpenGL:
-			return CreateRef<OpenGLTexture2D>(path);
+			return CreateRef<OpenGLTexture2D>(path.string());
 
 		}
 		KG_CORE_ASSERT(false, "RendererAPI:: Unknown RendererAPI!");

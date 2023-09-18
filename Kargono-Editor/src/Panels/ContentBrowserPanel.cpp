@@ -1,4 +1,5 @@
 #include "Kargono/Project/Project.h"
+#include "Kargono/Core/Application.h"
 #include "Panels/ContentBrowserPanel.h"
 
 #include <imgui.h>
@@ -11,8 +12,9 @@ namespace Kargono
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/content_browser/directory_icon.png");
-		m_GenericFileIcon = Texture2D::Create("resources/icons/content_browser/generic_file_icon.png");
+
+		m_DirectoryIcon = Texture2D::Create(Application::Get().GetWorkingDirectory() / "resources/icons/content_browser/directory_icon.png");
+		m_GenericFileIcon = Texture2D::Create(Application::Get().GetWorkingDirectory() / "resources/icons/content_browser/generic_file_icon.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
