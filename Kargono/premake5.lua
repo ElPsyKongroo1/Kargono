@@ -90,7 +90,8 @@ project "Kargono"
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-
+        --filter { "system:windows" }
+            --prebuildcommands { "copy default.config bin\\project.config" }
         links
 		{
 			"%{Library.ShaderC_Debug}",
