@@ -49,16 +49,28 @@ project "Kargono-Editor"
         }
 
     filter "configurations:Debug"
+        links 
+        {
+            "%{Library.OpenALSoft_Debug}"
+        }
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
 
     filter "configurations:Release"
+        links 
+        {
+            "%{Library.OpenALSoft_Release}"
+        }
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
 
     filter "configurations:Dist"
+        links 
+        {
+            "%{Library.OpenALSoft_Dist}"
+        }
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
