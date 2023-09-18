@@ -24,6 +24,17 @@ project "Kargono"
         "src/API/**.cpp"
     }
 
+    -- prebuildcommands 
+        -- {
+        --     "{COPYDIR} \"%{wks.location}Kargono/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
+        -- } 
+        -- postbuildcommands 
+        -- {
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
+        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox\""
+        -- }
+
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
@@ -90,8 +101,9 @@ project "Kargono"
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-        --filter { "system:windows" }
-            --prebuildcommands { "copy default.config bin\\project.config" }
+        -- FIXME: No other platform support for moving .dll files.
+        filter { "system:windows", "configurations:Debug" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
         links
 		{
 			"%{Library.ShaderC_Debug}",
@@ -105,6 +117,9 @@ project "Kargono"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
+        -- FIXME: No other platform support for moving .dll files.
+        filter { "system:windows", "configurations:Release" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
 
         links
 		{
@@ -119,6 +134,9 @@ project "Kargono"
         runtime "Release"
         optimize "on"
 
+        -- FIXME: No other platform support for moving .dll files.
+        filter { "system:windows", "configurations:Dist" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
         links
 		{
 			"%{Library.ShaderC_Release}",

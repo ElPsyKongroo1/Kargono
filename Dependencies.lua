@@ -2,6 +2,7 @@
 
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
+-- Include Directories: Header files for external dependencies
 IncludeDir = {}
 IncludeDir["GLFW"] = "%{wks.location}/Kargono/dependencies/GLFW/include"
 IncludeDir["GLAD"] = "%{wks.location}/Kargono/dependencies/GLAD/include"
@@ -19,11 +20,14 @@ IncludeDir["mono"] = "%{wks.location}/Kargono/dependencies/mono/include"
 IncludeDir["OpenALSoft"] = "%{wks.location}/Kargono/dependencies/OpenAL/include"
 IncludeDir["dr_wav"] = "%{wks.location}/Kargono/dependencies/dr_wav/include"
 
+-- Include Directories: Points to a directory with a variable number if library files.
+-- Linker will check these paths when finding external libraries.
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["mono"] = "%{wks.location}/Kargono/dependencies/mono/lib/%{cfg.buildcfg}"
 
+-- Library Locations: Points to a specific library file for Linker to link to final .exe
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
 Library["OpenALSoft_Debug"] = "%{wks.location}/Kargono/dependencies/OpenAL/lib/debug/OpenAL32.lib"
@@ -47,3 +51,11 @@ Library["WinSock"] = "Ws2_32.lib"
 Library["WinMM"] = "Winmm.lib"
 Library["WinVersion"] = "Version.lib"
 Library["BCrypt"] = "Bcrypt.lib"
+
+-- Dynamic Library Location: Points to a specific .dll file to link associate with .exe.
+-- These files are usually copied to final working directory of .exe in a pre-build command.
+DynamicLibrary = {}
+
+DynamicLibrary["OpenALSoft_Debug"] = "%{wks.location}Kargono\\dependencies\\OpenAL\\lib\\debug\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Release"] = "%{wks.location}Kargono\\dependencies\\OpenAL\\lib\\release\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Dist"] = "%{wks.location}Kargono\\dependencies\\OpenAL\\lib\\dist\\OpenAL32.dll"
