@@ -245,6 +245,7 @@ namespace Kargono {
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		m_ConsolePanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 
