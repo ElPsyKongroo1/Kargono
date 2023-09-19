@@ -44,6 +44,7 @@ namespace Kargono {
 		m_SceneState = SceneState::Edit;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_ConsolePanel = CreateScope<ConsolePanel>();
 
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
