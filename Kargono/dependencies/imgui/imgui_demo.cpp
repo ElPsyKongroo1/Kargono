@@ -7091,17 +7091,17 @@ static void ShowExampleAppConsole(bool* p_open)
 //-----------------------------------------------------------------------------
 
 // Usage:
-//  static ExampleAppLog my_log;
+//  static ImGuiLog my_log;
 //  my_log.AddLog("Hello %d world\n", 123);
 //  my_log.Draw("title");
-struct ExampleAppLog
+struct ImGuiLog
 {
     ImGuiTextBuffer     Buf;
     ImGuiTextFilter     Filter;
     ImVector<int>       LineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
     bool                AutoScroll;  // Keep scrolling if already at the bottom.
 
-    ExampleAppLog()
+    ImGuiLog()
     {
         AutoScroll = true;
         Clear();
@@ -7220,7 +7220,7 @@ struct ExampleAppLog
 // Demonstrate creating a simple log window with basic filtering.
 static void ShowExampleAppLog(bool* p_open)
 {
-    static ExampleAppLog log;
+    static ImGuiLog log;
 
     // For the demo: add a debug button _BEFORE_ the normal log window contents
     // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.

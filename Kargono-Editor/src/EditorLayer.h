@@ -5,8 +5,10 @@
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
 
 #include <filesystem>
+
 
 namespace Kargono {
 
@@ -80,6 +82,7 @@ namespace Kargono {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
+		Scope<ConsolePanel>  m_ConsolePanel;
 
 		// Editor Resources
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
