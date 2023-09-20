@@ -3,10 +3,13 @@
 #include "Kargono/Core/Application.h"
 
 #ifdef KG_PLATFORM_WINDOWS
+
+#include <Windows.h>
+#include <shellapi.h>
 	
 	extern Kargono::Application* Kargono::CreateApplication(ApplicationCommandLineArgs args);
 
-	int main(int argc, char** argv)
+	void EntryPoint (int argc, char** argv)
 	{
 		Kargono::Log::Init();
 
@@ -15,8 +18,28 @@
 		app->Run();
 
 		delete app;
+	}
+
+	int main(int argc, char** argv)
+	{
+		EntryPoint(argc, argv);
+		KG_CORE_WARN("Application Shut Down Successfully!");
+		return 0;
+	}
+
+	int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+	{
+		// Get Command Line Arguments in the form of argc and argv line int main(char**, int)
+		LPWSTR* argv;
+		int argc;
+		argv = CommandLineToArgvW(GetCommandLine(), &argc);
+
+		EntryPoint(argc, (char**)argv);
+
+		LocalFree(argv);
 
 		KG_CORE_WARN("Application Shut Down Successfully!");
 		return 0;
+
 	}
 #endif
