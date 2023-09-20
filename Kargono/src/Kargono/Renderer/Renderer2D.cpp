@@ -193,43 +193,24 @@ namespace Kargono
 	}
 	void Renderer2D::Shutdown()
 	{
-		
-
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
-		
-
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-
 		StartBatch();
 	}
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
-		
-
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-
 		StartBatch();
 	}
-	void Renderer2D::BeginScene(const OrthographicCamera& camera)
-	{
-		
 
-		s_Data.QuadShader->Bind();
-		s_Data.QuadShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-		StartBatch();
-	}
 	void Renderer2D::EndScene()
 	{
-		
-
 		Flush();
-
 	}
 	void Renderer2D::StartBatch()
 	{
