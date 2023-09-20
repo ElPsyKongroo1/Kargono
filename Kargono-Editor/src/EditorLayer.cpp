@@ -685,10 +685,9 @@ namespace Kargono {
 	void EditorLayer::NewScene()
 	{
 		m_HoveredEntity = {};
-		m_ActiveScene = CreateRef<Scene>();
-		//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		m_EditorScene = m_ActiveScene;
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_EditorScene = CreateRef<Scene>();
+		m_ActiveScene = m_EditorScene;
+		m_SceneHierarchyPanel.SetContext(m_EditorScene);
 		m_EditorScenePath = std::filesystem::path();
 	}
 

@@ -46,7 +46,6 @@ namespace Kargono
 	namespace Utils
 	{
 
-
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
 			Buffer fileData = FileSystem::ReadFileBinary(assemblyPath);

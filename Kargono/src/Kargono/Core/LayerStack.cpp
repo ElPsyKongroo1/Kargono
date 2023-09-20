@@ -7,15 +7,7 @@ namespace Kargono
 
 	LayerStack::~LayerStack()
 	{
-		for (Layer* layer : m_Layers)
-		{
-			if (layer) 
-			{
-				layer->OnDetach();
-				delete layer;
-				layer = nullptr;
-			}
-		}
+		
 	}
 
 	void LayerStack::PushLayer(Layer* layer)
