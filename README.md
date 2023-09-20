@@ -1,8 +1,21 @@
 # About Project
 
-This project is currently a simple 2D and 3D renderer. The end goal of the project is game engine!
+This project is currently a simple 2D and 3D renderer. The end goal of the project is game engine! Currently there is an editor for creating projects. There is also a runtime project to simulate final product.
 
-# Current Game Projects
+# Quickstart
+
+## Requirements
+- Currently only supports Windows
+- Visual Studio with C++ and C# support for projects. My build is vs2022, with a code standard of C++ 20.
+- Vulkan SDK with Debug Binaries. Version should be 3.0 or above.
+## Instructions
+- Clone repository. No need to use recursive.
+- For Windows (Only Support Currently for Editor and Runtime), run .bat file inside scripts directory.
+- Open .sln built in central directory.
+- Choose either Kargono-Editor or Runtime in Tools virtual directory as Set up Project.
+- Build and Run!
+
+# Current Game Projects Ideas
 
 - Breakout Clone
 - Multiplayer Slap Game
