@@ -50,7 +50,20 @@ namespace Kargono {
 
 		// UI Panels
 		void UI_Toolbar();
+		void UI_Settings();
+		void UI_Stats();
+		void UI_Viewport();
 	private:
+
+		// Booleans to display UI Windows
+		bool m_ShowSceneHierarchy = true;
+		bool m_ShowContentBrowser = true;
+		bool m_ShowLog = false;
+		bool m_ShowStats = false;
+		bool m_ShowSettings = true;
+		bool m_ShowViewport = true;
+		bool m_ShowToolbar = true;
+		bool m_ShowDemoWindow = false;
 
 		Ref<Framebuffer> m_Framebuffer;
 
@@ -82,7 +95,7 @@ namespace Kargono {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
-		Scope<ConsolePanel>  m_ConsolePanel;
+		Scope<ConsolePanel>  m_LogPanel;
 
 		// Editor Resources
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
