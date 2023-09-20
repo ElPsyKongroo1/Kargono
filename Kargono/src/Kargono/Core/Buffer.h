@@ -1,5 +1,7 @@
 #pragma once
+
 #include <stdint.h>
+#include <cstring>
 
 namespace Kargono
 {
@@ -20,7 +22,7 @@ namespace Kargono
 		static Buffer Copy(Buffer other)
 		{
 			Buffer result(other.Size);
-			memcpy(result.Data, other.Data, other.Size);
+			std::memcpy(result.Data, other.Data, other.Size);
 			return result;
 		}
 

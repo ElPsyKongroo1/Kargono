@@ -5,7 +5,7 @@
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
-#include "Panels/ConsolePanel.h"
+#include "Panels/LogPanel.h"
 
 #include <filesystem>
 
@@ -65,6 +65,10 @@ namespace Kargono {
 		bool m_ShowToolbar = true;
 		bool m_ShowDemoWindow = false;
 
+		// Settings UI Booleans
+		bool m_ShowPhysicsColliders = false;
+		bool m_RuntimeFullscreen = false;
+
 		Ref<Framebuffer> m_Framebuffer;
 
 		Ref<Scene> m_ActiveScene;
@@ -82,7 +86,6 @@ namespace Kargono {
 
 		int m_GizmoType = -1;
 
-		bool m_ShowPhysicsColliders = false;
 
 		enum class SceneState
 		{
@@ -95,7 +98,7 @@ namespace Kargono {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
-		Scope<ConsolePanel>  m_LogPanel;
+		Scope<LogPanel>  m_LogPanel;
 
 		// Editor Resources
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
