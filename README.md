@@ -1,6 +1,6 @@
 # About Project
 
-This project is currently a simple 2D and 3D renderer. The end goal of the project is game engine!
+This project is currently a simple 2D and 3D renderer. The end goal of the project is game engine! Currently there is an editor for creating projects. There is also a runtime project to simulate final product.
 
 # Quickstart
 
