@@ -44,7 +44,7 @@ namespace Kargono {
 		m_SceneState = SceneState::Edit;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		m_ConsolePanel = CreateScope<ConsolePanel>();
+		m_LogPanel = CreateScope<ConsolePanel>();
 
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
@@ -192,7 +192,7 @@ namespace Kargono {
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		ImGui::Begin("DockSpace", &dockspaceOpen, window_flags);
 		if (!opt_padding)
 			ImGui::PopStyleVar();
 
@@ -212,6 +212,7 @@ namespace Kargono {
 
 		style.WindowMinSize.x = minWinSizeX;
 
+		// Set up Menu Toolbar
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -220,7 +221,7 @@ namespace Kargono {
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("New Scene", "Ctrl+N")){NewScene();}
+				if (ImGui::MenuItem("New Scene", "Ctrl+N")){ NewScene();}
 
 				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) { SaveScene(); }
 
@@ -240,117 +241,30 @@ namespace Kargono {
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Panels"))
+			{
+				if (ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchy)){}
+				if (ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser)){}
+				if (ImGui::MenuItem("Log", NULL, &m_ShowLog)){}
+				if (ImGui::MenuItem("Stats", NULL, &m_ShowStats)){}
+				if (ImGui::MenuItem("Settings", NULL, &m_ShowSettings)){}
+				if (ImGui::MenuItem("Viewport", NULL, &m_ShowViewport)){}
+				if (ImGui::MenuItem("Toolbar", NULL, &m_ShowToolbar)){}
+				if (ImGui::MenuItem("Demo Window", NULL, &m_ShowDemoWindow)){}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
-		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel->OnImGuiRender();
-		m_ConsolePanel->OnImGuiRender();
-
-		ImGui::Begin("Stats");
-
-		std::string name = "None";
-		if (m_HoveredEntity)
-		{
-			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-		}
-		ImGui::Text("Hovered Entity: %s", name.c_str() );
-
-		auto stats = Renderer2D::GetStats();
-		ImGui::Text("Renderer2D Stats:");
-		ImGui::Text("Draw Calls: %d:", stats.DrawCalls);
-		ImGui::Text("Quads: %d:", stats.QuadCount);
-		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
-		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
-
-		ImGui::End();
-
-		ImGui::Begin("Settings");
-		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
-		ImGui::End();
-
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::Begin("Viewport");
-		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-		auto viewportOffset = ImGui::GetWindowPos();
-		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-		m_ViewportFocused = ImGui::IsWindowFocused();
-		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
-
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		//KG_WARN("Viewport Size: {0}, {1}", viewportPanelSize.x, viewportPanelSize.y);
-		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
-		             ImVec2{1, 0});
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
-				OpenScene(path);
-			}
-			ImGui::EndDragDropTarget();
-			
-		}
-
-		// Gizmos
-		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity && m_GizmoType != -1)
-		{
-			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
-			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
-				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
-				m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-			// Camera
-
-			// Runtime camera from entity
-			/*auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>();
-			const glm::mat4& cameraProjection = camera.Camera.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
-
-			// Editor Camera
-			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-
-			// Entity Transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
-			glm::mat4 transform = tc.GetTransform();
-
-			// Snapping
-			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = 0.5f;
-			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
-
-			float snapValues[3] = {snapValue, snapValue, snapValue};
-
-			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-			                     (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-			                     nullptr, snap ? snapValues : nullptr);
-
-			if (ImGuizmo::IsUsing())
-			{
-				glm::vec3 translation, rotation, scale;
-				Math::DecomposeTransform(transform, translation, rotation, scale);
-
-				glm::vec3 deltaRotation = rotation - tc.Rotation;
-				tc.Translation = translation;
-				tc.Rotation += deltaRotation;
-				tc.Scale = scale;
-			}
-		}
-		UI_Toolbar();
-		ImGui::ShowDemoWindow();
-
-		ImGui::End();
-		ImGui::PopStyleVar();
+		if (m_ShowSceneHierarchy) { m_SceneHierarchyPanel.OnImGuiRender(); }
+		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnImGuiRender(); }
+		if (m_ShowLog) { m_LogPanel->OnImGuiRender(); }
+		if (m_ShowStats) { UI_Stats(); }
+		if (m_ShowSettings) { UI_Settings(); }
+		if (m_ShowViewport) { UI_Viewport(); }
+		if (m_ShowToolbar) { UI_Toolbar(); }
+		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
 		ImGui::End();
 	}
@@ -439,6 +353,118 @@ namespace Kargono {
 		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
+
+	void EditorLayer::UI_Settings()
+	{
+		ImGui::Begin("Settings");
+		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		ImGui::End();
+	}
+
+	void EditorLayer::UI_Stats()
+	{
+		ImGui::Begin("Stats");
+
+		std::string name = "None";
+		if (m_HoveredEntity)
+		{
+			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+		}
+		ImGui::Text("Hovered Entity: %s", name.c_str());
+
+		auto stats = Renderer2D::GetStats();
+		ImGui::Text("Renderer2D Stats:");
+		ImGui::Text("Draw Calls: %d:", stats.DrawCalls);
+		ImGui::Text("Quads: %d:", stats.QuadCount);
+		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
+		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
+
+		ImGui::End();
+	}
+
+	void EditorLayer::UI_Viewport()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+
+		ImGui::Begin("Viewport");
+		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();
+		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 },
+			ImVec2{ 1, 0 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				OpenScene(path);
+			}
+			ImGui::EndDragDropTarget();
+
+		}
+
+		// Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+				m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+			// Camera
+
+			// Runtime camera from entity
+			/*auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>();
+			const glm::mat4& cameraProjection = camera.Camera.GetProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
+
+			// Editor Camera
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+			// Entity Transform
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransform();
+
+			// Snapping
+			bool snap = Input::IsKeyPressed(Key::LeftControl);
+			float snapValue = 0.5f;
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.Translation = translation;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale;
+			}
+		}
+
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
+	
 
 	void EditorLayer::OnEvent(Event& event)
 	{
