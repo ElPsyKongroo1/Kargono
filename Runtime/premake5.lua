@@ -1,5 +1,4 @@
 project "Runtime"
-    kind "WindowedApp"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -49,6 +48,7 @@ project "Runtime"
         }
 
     filter "configurations:Debug"
+        kind "ConsoleApp"
         links 
         {
             "%{Library.OpenALSoft_Debug}"
@@ -63,6 +63,7 @@ project "Runtime"
         symbols "on"
 
     filter "configurations:Release"
+        kind "ConsoleApp"
         links 
         {
             "%{Library.OpenALSoft_Release}"
@@ -76,6 +77,7 @@ project "Runtime"
         optimize "on"
 
     filter "configurations:Dist"
+        kind "WindowedApp"
         links 
         {
             "%{Library.OpenALSoft_Dist}"
