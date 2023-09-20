@@ -5,6 +5,7 @@ This project is currently a simple 2D and 3D renderer. The end goal of the proje
 # Quickstart
 
 ## Requirements
+- Currently only supports Windows
 - Visual Studio with C++ and C# support for projects. My build is vs2022, with a code standard of C++ 20.
 - Vulkan SDK with Debug Binaries. Version should be 3.0 or above.
 ## Instructuions
