@@ -61,8 +61,8 @@ namespace Kargono
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		void SubmitToMainThread(const std::function<void()>& function);
-	private:
 		void Run();
+	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
