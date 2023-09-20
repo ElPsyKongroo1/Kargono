@@ -23,41 +23,27 @@ namespace Kargono {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& event) override;
 	private:
-		bool OnKeyPressed(KeyPressedEvent event);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent event);
 		void OnOverlayRender();
 
 		void NewProject();
 		bool OpenProject();
 		void OpenProject(const std::filesystem::path& path);
-		void SaveProject();
 
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
-		void SaveScene();
-		void SaveSceneAs();
-
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
-		void OnSceneSimulate();
 		void OnSceneStop();
-		void OnScenePause();
-
-
-		void OnDuplicateEntity();
 
 		// UI Panels
-		void UI_Toolbar();
 		void UI_Viewport();
 	private:
 
 		Ref<Framebuffer> m_Framebuffer;
 
 		Ref<Scene> m_ActiveScene;
-		Ref<Scene> m_EditorScene;
-		std::filesystem::path m_EditorScenePath;
+		std::filesystem::path m_ScenePath;
 
 		Entity m_HoveredEntity;
 
@@ -70,12 +56,6 @@ namespace Kargono {
 
 		int m_GizmoType = -1;
 
-		enum class SceneState
-		{
-			Edit = 0, Play = 1, Simulate = 2
-		};
-
-		SceneState m_SceneState = SceneState::Edit;
 		AudioContext* m_EditorAudio = nullptr;
 
 		// Panels

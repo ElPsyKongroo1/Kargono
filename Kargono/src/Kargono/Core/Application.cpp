@@ -34,6 +34,16 @@ namespace Kargono
 	Application::~Application()
 	{
 
+		for (Layer* layer : m_LayerStack.GetLayers())
+		{
+			if (layer)
+			{
+				layer->OnDetach();
+				delete layer;
+				layer = nullptr;
+			}
+		}
+
 		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
 		
