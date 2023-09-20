@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Kargono/Core/FileSystem.h"
 
 #include "imgui.h"
 
@@ -19,23 +20,25 @@ namespace Kargono
 
 		void Clear();
 
-		void AddLog(const char* fmt, ...) IM_FMTARGS(2);
+		void AddLog(const char* line);
 
 		void Draw(const char* title, bool* p_open = NULL);
 	public:
 		ImGuiTextBuffer     Buf;
-		ImGuiTextFilter     Filter;
 		ImVector<int>       LineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
 		bool                AutoScroll;  // Keep scrolling if already at the bottom.
 	};
 
-	class ConsolePanel
+	class LogPanel
 	{
 	public:
-		ConsolePanel();
+		LogPanel();
 
 		void OnImGuiRender();
+		void LoadBuffer();
 	private:
 		ImGuiLog m_Log;
+		std::filesystem::path m_LogPathRelative = "log/Kargono.log";
+		Buffer m_Buffer;
 	};
 }

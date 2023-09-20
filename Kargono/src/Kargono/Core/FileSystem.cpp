@@ -11,6 +11,7 @@ namespace Kargono
 		if (!stream)
 		{
 			// Failed to open the file
+			KG_CORE_ERROR("Failed to open file in ReadFileBinary!");
 			return {};
 		}
 

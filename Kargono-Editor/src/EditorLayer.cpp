@@ -33,7 +33,7 @@ namespace Kargono {
 		m_IconStep = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
 
 		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8,FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -44,7 +44,7 @@ namespace Kargono {
 		m_SceneState = SceneState::Edit;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		m_LogPanel = CreateScope<ConsolePanel>();
+		m_LogPanel = CreateScope<LogPanel>();
 
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
@@ -212,6 +212,14 @@ namespace Kargono {
 
 		style.WindowMinSize.x = minWinSizeX;
 
+		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Simulate || m_SceneState == SceneState::Play))
+		{
+			if (m_ShowViewport) { UI_Viewport(); }
+			if (m_ShowToolbar) { UI_Toolbar(); }
+			ImGui::End();
+			return;
+		}
+
 		// Set up Menu Toolbar
 		if (ImGui::BeginMenuBar())
 		{
@@ -358,6 +366,7 @@ namespace Kargono {
 	{
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		ImGui::Checkbox("Fullscreen While Running or Simulating", &m_RuntimeFullscreen);
 		ImGui::End();
 	}
 
