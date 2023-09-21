@@ -16,8 +16,6 @@ namespace Kargono
 	}
 	void OpenGLContext::Init()
 	{
-		
-
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		KG_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -30,8 +28,6 @@ namespace Kargono
 	}
 	void OpenGLContext::SwapBuffers()
 	{
-		
-
 		glfwSwapBuffers(m_WindowHandle);
 	}
 }

@@ -48,7 +48,14 @@ namespace Kargono
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
-		static Application& Get() { return *s_Instance; }
+		static Application& GetCurrentApp() { return *s_Instance; }
+
+		void AddImGuiLayer()
+		{
+			KG_CORE_ASSERT(!m_ImGuiLayer, "An ImGui Layer already exists!");
+			m_ImGuiLayer = new ImGuiLayer();
+			PushOverlay(m_ImGuiLayer);
+		}
 
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
@@ -58,7 +65,11 @@ namespace Kargono
 
 		void Close();
 
-		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+		ImGuiLayer* GetImGuiLayer()
+		{
+			if (!m_ImGuiLayer) { KG_CORE_ERROR("Getting application ImGui Layer, but there is not ImGui Context!"); }
+			return m_ImGuiLayer;
+		}
 
 		void SubmitToMainThread(const std::function<void()>& function);
 		void Run();
@@ -70,7 +81,7 @@ namespace Kargono
 	private:
 		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
-		ImGuiLayer* m_ImGuiLayer;
+		ImGuiLayer* m_ImGuiLayer = nullptr;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;

@@ -53,7 +53,7 @@ namespace Kargono
 
 		SetDarkThemeColors();
 
-        Application& app = Application::Get();
+        Application& app = Application::GetCurrentApp();
         GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
         // Setup Platform/Renderer backends
@@ -98,7 +98,7 @@ namespace Kargono
     void ImGuiLayer::End()
     {
         ImGuiIO& io = ImGui::GetIO();
-        Application& app = Application::Get();
+        Application& app = Application::GetCurrentApp();
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
         ImGui::Render();
