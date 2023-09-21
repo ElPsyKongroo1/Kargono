@@ -38,6 +38,12 @@ project "Kargono-Editor"
         "Kargono"  
     }
 
+
+    defines 
+    {
+        "KG_EDITOR"
+    }
+
     filter "system:windows"
         
         systemversion "latest"

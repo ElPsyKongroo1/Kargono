@@ -18,7 +18,7 @@ namespace Kargono {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
-
+		Application::GetCurrentApp().AddImGuiLayer();
 	}
 
 	void EditorLayer::OnAttach()
@@ -26,11 +26,11 @@ namespace Kargono {
 		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
 		m_EditorAudio->stereoSource->play();
 
-		m_IconPlay = Texture2D::Create( (Application::Get().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
-		m_IconPause = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
-		m_IconSimulate = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
-		m_IconStop = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
-		m_IconStep = Texture2D::Create((Application::Get().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
+		m_IconPlay = Texture2D::Create( (Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
+		m_IconPause = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
+		m_IconSimulate = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
+		m_IconStop = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
+		m_IconStep = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };
@@ -46,7 +46,7 @@ namespace Kargono {
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_LogPanel = CreateScope<LogPanel>();
 
-		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
+		auto commandLineArgs = Application::GetCurrentApp().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
 			auto projectFilePath = commandLineArgs[1];
@@ -61,7 +61,7 @@ namespace Kargono {
 			// TODO: this is while we don't have a new project path
 			if (!OpenProject())
 			{
-				Application::Get().Close();
+				Application::GetCurrentApp().Close();
 				return;
 			}
 
@@ -235,7 +235,7 @@ namespace Kargono {
 
 				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { SaveSceneAs(); }
 
-				if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
+				if (ImGui::MenuItem("Exit")) { Application::GetCurrentApp().Close(); }
 				ImGui::EndMenu();
 
 			}
@@ -404,7 +404,7 @@ namespace Kargono {
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+		Application::GetCurrentApp().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -552,7 +552,7 @@ namespace Kargono {
 			}
 		case Key::Delete:
 			{
-			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+			if (Application::GetCurrentApp().GetImGuiLayer()->GetActiveWidgetID() == 0)
 			{
 				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 				if (selectedEntity)

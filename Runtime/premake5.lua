@@ -38,6 +38,11 @@ project "Runtime"
         "Kargono"  
     }
 
+    defines 
+        {
+            "KG_RUNTIME"
+        }
+
     filter "system:windows"
         
         systemversion "latest"

@@ -27,8 +27,6 @@ namespace Kargono
 		Renderer::Init();
 		ScriptEngine::Init();
 
-		m_ImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -107,14 +105,18 @@ namespace Kargono
 						layer->OnUpdate(timestep);
 					}
 				}
-				m_ImGuiLayer->Begin();
+				if (m_ImGuiLayer)
 				{
-					for (Layer* layer : m_LayerStack)
+					m_ImGuiLayer->Begin();
 					{
-						layer->OnImGuiRender();
+						for (Layer* layer : m_LayerStack)
+						{
+							layer->OnImGuiRender();
+						}
 					}
+					m_ImGuiLayer->End();
 				}
-				m_ImGuiLayer->End();
+				
 			}
 
 			m_Window->OnUpdate();
