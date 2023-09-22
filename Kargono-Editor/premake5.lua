@@ -1,5 +1,4 @@
 project "Kargono-Editor"
-    kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -39,6 +38,12 @@ project "Kargono-Editor"
         "Kargono"  
     }
 
+
+    defines 
+    {
+        "KG_EDITOR"
+    }
+
     filter "system:windows"
         
         systemversion "latest"
@@ -49,6 +54,7 @@ project "Kargono-Editor"
         }
 
     filter "configurations:Debug"
+        kind "ConsoleApp"
         links 
         {
             "%{Library.OpenALSoft_Debug}"
@@ -63,6 +69,7 @@ project "Kargono-Editor"
         symbols "on"
 
     filter "configurations:Release"
+        kind "ConsoleApp"
         links 
         {
             "%{Library.OpenALSoft_Release}"
@@ -76,6 +83,7 @@ project "Kargono-Editor"
         optimize "on"
 
     filter "configurations:Dist"
+        kind "WindowedApp"
         links 
         {
             "%{Library.OpenALSoft_Dist}"
