@@ -586,3 +586,14 @@ Entities:
       Color: [0.7945171, 0.912380278, 0.922779918, 1]
       TexturePath: Textures\empty_scene_textures\bridge.png
       TilingFactor: 1
+  - Entity: 10755858033960690501
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-11.8250513, 2.19748998, -0.889979959]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: Textures\empty_scene_textures\tree_1.png
+      TilingFactor: 1

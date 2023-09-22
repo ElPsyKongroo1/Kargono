@@ -38,7 +38,6 @@ namespace Kargono
 		KG_CORE_ASSERT(!(full.root_path() != base.root_path()) && std::equal(base.begin(), base.end(), full.begin()), "Get Relative Path Failed. Base is not a subpath of full!")
 
 		auto subPath = relative(full, base);
-		KG_CORE_WARN("Running relative path check. The base path is {} and the full path is {}. The final path is {}", base.string(), full.string(), subPath.string());
 		return relative(full, base);
 	}
 }
