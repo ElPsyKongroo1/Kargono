@@ -21,7 +21,7 @@ namespace Kargono {
 	void RuntimeLayer::OnAttach()
 	{
 		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
-		m_EditorAudio->stereoSource->play();
+		m_EditorAudio->m_DefaultStereoSource->play();
 
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
