@@ -38,4 +38,5 @@ group ""
 
 group "Tools"
     include "Kargono-Editor"
+    include "Runtime"
 group ""

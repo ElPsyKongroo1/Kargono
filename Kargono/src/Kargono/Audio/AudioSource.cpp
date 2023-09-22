@@ -9,7 +9,7 @@ void AudioSource::init()
 	alec(alSource3f(sourceID, AL_VELOCITY, Velocity.x, Velocity.y, Velocity.z));
 	alec(alSourcef(sourceID, AL_PITCH, Pitch));
 	alec(alSourcef(sourceID, AL_GAIN, Gain));
-	alec(alSourcei(sourceID, AL_LOOPING, isLooping));
+	alec(alSourcei(sourceID, AL_LOOPING, static_cast<ALint>(isLooping) ));
 	alec(alSourcei(sourceID, AL_BUFFER, currentBuffer->bufferID));
 }
 

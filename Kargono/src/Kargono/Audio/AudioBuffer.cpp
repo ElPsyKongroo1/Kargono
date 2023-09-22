@@ -24,6 +24,6 @@ void AudioBuffer::init(const char* fileLocation)
 	drwav_free(pSampleData, nullptr);
 
 	alec(alGenBuffers(1, &bufferID));
-	alec(alBufferData(bufferID, channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, pcmData.data(), pcmData.size() * 2 /*Two bytes per sample*/, sampleRate));
+	alec(alBufferData(bufferID, channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, pcmData.data(), static_cast<ALsizei>(pcmData.size() * 2) /*Two bytes per sample*/, sampleRate));
 
 }

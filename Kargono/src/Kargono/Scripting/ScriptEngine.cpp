@@ -46,7 +46,6 @@ namespace Kargono
 	namespace Utils
 	{
 
-
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
 			Buffer fileData = FileSystem::ReadFileBinary(assemblyPath);
@@ -167,7 +166,7 @@ namespace Kargono
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
 			// add reload to main thread queue
-			Application::Get().SubmitToMainThread([]()
+			Application::GetCurrentApp().SubmitToMainThread([]()
 				{
 					s_ScriptData->AppAssemblyFileWatcher.reset();
 					ScriptEngine::ReloadAssembly();
