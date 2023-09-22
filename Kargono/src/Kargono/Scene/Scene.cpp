@@ -9,11 +9,13 @@
 #include "Kargono/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
+#include "box2d/Box2d.h"
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
+#include "Kargono/Core/Application.h"
 
 
 namespace Kargono
@@ -363,6 +365,9 @@ namespace Kargono
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
+		m_ContactListener = ContactListener();
+		Application::GetCurrentApp().RegisterCollisionEventListener(m_ContactListener);
+		m_PhysicsWorld->SetContactListener(&m_ContactListener);
 		auto view = m_Registry.view<Rigidbody2DComponent>();
 		for (auto e : view)
 		{
@@ -377,6 +382,8 @@ namespace Kargono
 
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
 			body->SetFixedRotation(rb2d.FixedRotation);
+			b2BodyUserData& bodyUser = body->GetUserData();
+			bodyUser.UUID = entity.GetUUID();
 			rb2d.RuntimeBody = body;
 
 			if (entity.HasComponent<BoxCollider2DComponent>())
@@ -415,8 +422,10 @@ namespace Kargono
 	}
 	void Scene::OnPhysics2DStop()
 	{
+		m_ContactListener = {};
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
+		
 	}
 	void Scene::RenderScene(EditorCamera& camera)
 	{

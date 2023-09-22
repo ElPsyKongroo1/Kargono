@@ -24,7 +24,14 @@ namespace Kargono {
 	void EditorLayer::OnAttach()
 	{
 		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
-		m_EditorAudio->stereoSource->play();
+		m_PopSound = new AudioBuffer("resources/audio/pop-sound.wav");
+		m_EditorAudio->allAudioBuffers.push_back(m_PopSound);
+		m_PopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			1.0f, 1.0f, AL_FALSE, m_PopSound);
+		m_EditorAudio->allAudioSources.push_back(m_PopSource);
+		m_LowPopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			0.5f, 0.4f, AL_FALSE, m_PopSound);
+		m_EditorAudio->allAudioSources.push_back(m_LowPopSource);
 
 		m_IconPlay = Texture2D::Create( (Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
 		m_IconPause = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
@@ -70,6 +77,8 @@ namespace Kargono {
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 		Renderer2D::SetLineWidth(4.0f);
+
+		m_EditorAudio->m_DefaultStereoSource->play();
 	}
 
 	void EditorLayer::OnDetach()
@@ -85,7 +94,6 @@ namespace Kargono {
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
-		
 
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
@@ -368,6 +376,13 @@ namespace Kargono {
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
 		ImGui::Checkbox("Fullscreen While Running or Simulating", &m_RuntimeFullscreen);
+		static float musicVolume = 10.0f;
+		ImGui::Separator();
+		if(ImGui::DragFloat("Music Volume", &musicVolume, 0.5f, 0.0f, 100.0f))
+		{
+			m_EditorAudio->m_DefaultStereoSource->SetGain(musicVolume);
+		}
+
 		ImGui::End();
 	}
 
@@ -384,10 +399,10 @@ namespace Kargono {
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
-		ImGui::Text("Draw Calls: %d:", stats.DrawCalls);
-		ImGui::Text("Quads: %d:", stats.QuadCount);
-		ImGui::Text("Vertices: %d:", stats.GetTotalVertexCount());
-		ImGui::Text("Indices: %d:", stats.GetTotalIndexCount());
+		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+		ImGui::Text("Quads: %d", stats.QuadCount);
+		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
 		ImGui::End();
 	}
@@ -482,14 +497,16 @@ namespace Kargono {
 
 	void EditorLayer::OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnEvent(event);
 
-			EventDispatcher dispatcher(event);
 			dispatcher.Dispatch<KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 			dispatcher.Dispatch<MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+
 		}
+		dispatcher.Dispatch<PhysicsCollisionEvent>(KG_BIND_EVENT_FN(EditorLayer::OnPhysicsCollision));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent event)
@@ -585,6 +602,16 @@ namespace Kargono {
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt)) { m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity); }
 		}
 		return false;
+	}
+
+	bool EditorLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
+	{
+		m_PopSource->play();
+		return false;
+	}
+
+	void EditorLayer::OnUpdateParticles()
+	{
 	}
 
 	void EditorLayer::OnOverlayRender()

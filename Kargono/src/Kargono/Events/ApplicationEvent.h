@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Kargono/Events/Event.h"
+#include "Kargono/Core/UUID.h"
 
 #include <sstream>
 
@@ -61,6 +62,24 @@ namespace Kargono
 		EVENT_CLASS_TYPE(AppRender)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
+
+	class PhysicsCollisionEvent : public Event
+	{
+	public:
+		PhysicsCollisionEvent(UUID entityOne, UUID entityTwo)
+			: m_EntityOne(entityOne), m_EntityTwo(entityTwo){}
+
+		UUID GetEntityOne() const { return m_EntityOne; }
+		UUID GetEntityTwo() const { return m_EntityTwo; }
+
+		EVENT_CLASS_TYPE(PhysicsCollision)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	private:
+		UUID m_EntityOne;
+		UUID m_EntityTwo;
+	};
+
+
 
 
 }

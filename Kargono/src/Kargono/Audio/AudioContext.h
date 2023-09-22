@@ -55,21 +55,23 @@ public:
 	glm::vec3 Position;
 	glm::vec3 Velocity;
 	ALfloat Pitch;
-	ALfloat Gain;
+	ALfloat m_Gain;
 	ALfloat isLooping;
 	AudioBuffer* currentBuffer;
 public: 
 	void init();
 	void play();
+
+	void SetGain(float gain);
 public:
 	AudioSource() : sourceID{ 0 }, Position{}, Velocity{},
-		Pitch{}, Gain{}, isLooping{}, currentBuffer{nullptr} 
+		Pitch{}, m_Gain{}, isLooping{}, currentBuffer{nullptr} 
 	{
 	
 	}
 	AudioSource(glm::vec3 Position, glm::vec3 Velocity,
 		ALfloat Pitch, ALfloat Gain, ALfloat isLooping, AudioBuffer* currentBuffer ) : Position{Position},
-		Velocity{ Velocity }, Pitch{ Pitch }, Gain{ Gain }, isLooping{isLooping}, currentBuffer{currentBuffer}
+		Velocity{ Velocity }, Pitch{ Pitch }, m_Gain{ Gain }, isLooping{isLooping}, currentBuffer{currentBuffer}
 	{
 		init();
 	}
@@ -86,12 +88,12 @@ public:
 	ALCdevice* device;
 	ALCcontext* context;
 	AudioListener* defaultListener;
-	AudioSource* stereoSource;
+	AudioSource* m_DefaultStereoSource;
 	AudioBuffer* defaultBuffer;
 	std::vector<AudioBuffer*> allAudioBuffers;
 	std::vector<AudioSource*> allAudioSources;
 public:
-	AudioContext(const char* initStereoAudio) : currentDeviceString{ nullptr }, device{ nullptr }, context{ nullptr },
+	AudioContext(const char* initStereoAudio = nullptr) : currentDeviceString{ nullptr }, device{ nullptr }, context{ nullptr },
 		allAudioBuffers{ std::vector<AudioBuffer*>() }, allAudioSources{std::vector<AudioSource*>()}
 	{
 		init(initStereoAudio);
