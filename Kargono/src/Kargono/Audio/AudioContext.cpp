@@ -33,12 +33,19 @@ void AudioContext::init(const char* initStereoAudio)
 		glm::vec3(1.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f));
 
-	defaultBuffer = new AudioBuffer(initStereoAudio);
-	allAudioBuffers.push_back(defaultBuffer);
-
-	stereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-		1.0f, 0.2f, AL_TRUE, defaultBuffer);
-	allAudioSources.push_back(stereoSource);
+	if (initStereoAudio)
+	{
+		defaultBuffer = new AudioBuffer(initStereoAudio);
+		allAudioBuffers.push_back(defaultBuffer);
+		m_DefaultStereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			1.0f, 0.2f, AL_TRUE, defaultBuffer);
+	}
+	else
+	{
+		m_DefaultStereoSource = new AudioSource(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			1.0f, 0.2f, AL_TRUE, nullptr);
+	}
+	allAudioSources.push_back(m_DefaultStereoSource);
 	
 }
 
@@ -75,7 +82,7 @@ void AudioContext::terminate()
 	delete defaultListener;
 	defaultListener = nullptr;
 	defaultBuffer = nullptr;
-	stereoSource = nullptr;
+	m_DefaultStereoSource = nullptr;
 }
 
 

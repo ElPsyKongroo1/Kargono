@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Kargono/Scene/Components.h"
+#include "Kargono/Events/ApplicationEvent.h"
 
 #include "box2d/b2_body.h"
+#include "box2d/b2_world_callbacks.h"
 
 namespace Kargono::Utils
 {
@@ -29,4 +31,20 @@ namespace Kargono::Utils
 		KG_CORE_ASSERT(false, "Unknown body type");
 		return Rigidbody2DComponent::BodyType::Static;
 	}
+}
+
+namespace Kargono
+{
+	class ContactListener : public b2ContactListener
+	{
+	public:
+		using EventCallbackFn = std::function<void(Event&)>;
+		ContactListener();
+		virtual void BeginContact(b2Contact* contact) override;
+
+		void SetEventCallback(const EventCallbackFn& callback) { m_CallbackFunc = callback; }
+
+	private:
+		EventCallbackFn m_CallbackFunc;
+	};
 }

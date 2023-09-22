@@ -3,6 +3,7 @@
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Physics/Physics2D.h"
 
 #include "entt.hpp"
 
@@ -70,6 +71,8 @@ namespace Kargono
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
+		ContactListener m_ContactListener;
+
 
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;

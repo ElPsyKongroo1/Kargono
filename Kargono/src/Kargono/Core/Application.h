@@ -12,6 +12,8 @@
 #include <mutex>
 #include <filesystem>
 
+#include "Kargono/Physics/Physics2D.h"
+
 int main(int argc, char** argv);
 
 namespace Kargono
@@ -41,7 +43,6 @@ namespace Kargono
 	public:
 		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
-		
 
 		void OnEvent(Event& e);
 
@@ -49,6 +50,11 @@ namespace Kargono
 		void PushOverlay(Layer* layer);
 
 		static Application& GetCurrentApp() { return *s_Instance; }
+
+		void RegisterCollisionEventListener (ContactListener& contactListener)
+		{
+			contactListener.SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
+		}
 
 		void AddImGuiLayer()
 		{

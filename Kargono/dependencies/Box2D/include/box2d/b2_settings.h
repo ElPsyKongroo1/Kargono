@@ -64,6 +64,7 @@ struct B2_API b2BodyUserData
 
 	/// For legacy compatibility
 	uintptr_t pointer;
+	uint64_t UUID;
 };
 
 /// You can define this to inject whatever data you want in b2Fixture

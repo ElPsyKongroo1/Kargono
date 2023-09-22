@@ -4,6 +4,7 @@
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+#include "Kargono/Physics/Physics2D.h"
 
 namespace Kargono
 {
