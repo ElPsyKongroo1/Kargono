@@ -25,6 +25,7 @@ namespace Kargono
 		void Draw(const char* title, bool* p_open = NULL);
 	public:
 		ImGuiTextBuffer     Buf;
+		ImGuiTextFilter     Filter;
 		ImVector<int>       LineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
 		bool                AutoScroll;  // Keep scrolling if already at the bottom.
 	};

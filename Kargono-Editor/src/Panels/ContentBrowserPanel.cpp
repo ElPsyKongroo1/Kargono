@@ -1,5 +1,6 @@
 #include "Kargono/Project/Project.h"
 #include "Kargono/Core/Application.h"
+#include "Kargono/Core/FileSystem.h"
 #include "Panels/ContentBrowserPanel.h"
 
 #include <imgui.h>
@@ -14,27 +15,47 @@ namespace Kargono
 
 		m_DirectoryIcon = Texture2D::Create(Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/directory_icon.png");
 		m_GenericFileIcon = Texture2D::Create(Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/generic_file_icon.png");
+		m_BackIcon = Texture2D::Create(Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/back_icon.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Content Browser");
 
+		static float padding = 25.0f;
+		static float thumbnailSize = 140;
+		float cellSize = thumbnailSize + padding;
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int columnCount = (int)(panelWidth / cellSize);
+		columnCount = columnCount > 0 ? columnCount : 1;
+
 		if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
 		{
-			if (ImGui::Button("<-"))
+			
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_BackIcon->GetRendererID(), { 22.4f, 22.4f }, { 0, 1 }, { 1, 0 }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
 		}
 
-		static float padding = 25.0f;
-		static float thumbnailSize = 140;
-		float cellSize = thumbnailSize + padding;
+		ImGui::SameLine();
+		if (ImGui::BeginPopup("Options"))
+		{
+			ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
+			ImGui::SliderFloat("Padding", &padding, 0, 32);
+			ImGui::EndPopup();
+		}
+		// Main window
+		if (ImGui::Button("Options", { 70, 28 }))
+			ImGui::OpenPopup("Options");
 
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		columnCount = columnCount > 0 ? columnCount : 1;
+		std::string outputDirectory = "Current Directory: " + FileSystem::GetRelativePath(Project::GetProjectDirectory(), m_CurrentDirectory).string();
+
+		ImGui::SameLine();
+		ImGui::TextWrapped(outputDirectory.c_str());
+
+		ImGui::Separator();
+
 		ImGui::Columns(columnCount, 0, false);
 
 		for (auto& directoryEntry: std::filesystem::directory_iterator(m_CurrentDirectory))
@@ -68,9 +89,7 @@ namespace Kargono
 			
 		}
 		ImGui::Columns(1);
-
-		ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		ImGui::SliderFloat("Padding", &padding, 0, 32);
+		
 
 		// TODO: Status bar
 		ImGui::End();

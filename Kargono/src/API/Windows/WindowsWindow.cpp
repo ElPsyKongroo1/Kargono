@@ -6,6 +6,8 @@
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "API/Windows/WindowsWindow.h"
+
+#include "stb_image.h"
 #include "API/OpenGL/OpenGLContext.h"
 
 
@@ -148,6 +150,13 @@ namespace Kargono
 				MouseMovedEvent event((float)xPos, (float)yPos);
 				data.EventCallback(event);
 			});
+
+		std::filesystem::path logoLocation = "resources/icons/app_logo.png";
+		if (!std::filesystem::exists(logoLocation)) { KG_CORE_ERROR("Path to Application Logo is invalid!"); return; }
+		GLFWimage images[1];
+		images[0].pixels = stbi_load(logoLocation.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
+		glfwSetWindowIcon(m_Window, 1, images);
+		stbi_image_free(images[0].pixels);
 
 	}
 

@@ -244,6 +244,7 @@ namespace Kargono {
 			{
 				if (ImGui::MenuItem("Reload Assembly", "Ctrl+R"))
 				{
+					if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
 					ScriptEngine::ReloadAssembly();
 				}
 				ImGui::EndMenu();
@@ -422,51 +423,55 @@ namespace Kargono {
 
 		}
 
-		// Gizmos
-		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity && m_GizmoType != -1)
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+
 		{
-			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
-			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
-				m_ViewportBounds[1].x - m_ViewportBounds[0].x,
-				m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-			// Camera
-
-			// Runtime camera from entity
-			/*auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>();
-			const glm::mat4& cameraProjection = camera.Camera.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
-
-			// Editor Camera
-			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-
-			// Entity Transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
-			glm::mat4 transform = tc.GetTransform();
-
-			// Snapping
-			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = 0.5f;
-			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
-
-			float snapValues[3] = { snapValue, snapValue, snapValue };
-
-			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-				nullptr, snap ? snapValues : nullptr);
-			if (ImGuizmo::IsUsing())
+			// Gizmos
+			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+			if (selectedEntity && m_GizmoType != -1)
 			{
-				glm::vec3 translation, rotation, scale;
-				Math::DecomposeTransform(transform, translation, rotation, scale);
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+				ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+					m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+					m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
-				glm::vec3 deltaRotation = rotation - tc.Rotation;
-				tc.Translation = translation;
-				tc.Rotation += deltaRotation;
-				tc.Scale = scale;
+				// Camera
+
+				// Runtime camera from entity
+				/*auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+				const auto& camera = cameraEntity.GetComponent<CameraComponent>();
+				const glm::mat4& cameraProjection = camera.Camera.GetProjection();
+				glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
+
+				// Editor Camera
+				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+				// Entity Transform
+				auto& tc = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 transform = tc.GetTransform();
+
+				// Snapping
+				bool snap = Input::IsKeyPressed(Key::LeftControl);
+				float snapValue = 0.5f;
+				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
+
+				float snapValues[3] = { snapValue, snapValue, snapValue };
+
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+					nullptr, snap ? snapValues : nullptr);
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(transform, translation, rotation, scale);
+
+					glm::vec3 deltaRotation = rotation - tc.Rotation;
+					tc.Translation = translation;
+					tc.Rotation += deltaRotation;
+					tc.Scale = scale;
+				}
 			}
 		}
 
@@ -480,11 +485,11 @@ namespace Kargono {
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnEvent(event);
-		}
 
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
-		dispatcher.Dispatch<MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+			EventDispatcher dispatcher(event);
+			dispatcher.Dispatch<KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+			dispatcher.Dispatch<MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+		}
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent event)
@@ -544,6 +549,7 @@ namespace Kargono {
 			{
 				if (control)
 				{
+					if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
 					ScriptEngine::ReloadAssembly();
 				}
 
@@ -633,13 +639,17 @@ namespace Kargono {
 			}
 		}
 
-		// Draw selected entity outline 
-		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
-			TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+		{
+			// Draw selected entity outline 
+			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
+				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
 
-			// Draw Rectangle
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+				// Draw Rectangle
+				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+			}
 		}
+		
 
 		Renderer2D::EndScene();
 	}

@@ -48,13 +48,13 @@ void Kargono::ImGuiLog::Draw(const char* title, bool* p_open)
 		ImGui::Checkbox("Auto-scroll", &AutoScroll);
 		ImGui::EndPopup();
 	}
-
 	// Main window
 	if (ImGui::Button("Options"))
 		ImGui::OpenPopup("Options");
 	ImGui::SameLine();
 	bool clear = ImGui::Button("Clear");
-
+	ImGui::SameLine();
+	Filter.Draw("Filter", -100.0f);
 	ImGui::Separator();
 
 	if (ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
@@ -65,24 +65,34 @@ void Kargono::ImGuiLog::Draw(const char* title, bool* p_open)
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 		const char* buf = Buf.begin();
 		const char* buf_end = Buf.end();
-
-		ImGuiListClipper clipper;
-		clipper.Begin(LineOffsets.Size);
-		while (clipper.Step())
+		if (Filter.IsActive())
 		{
-			for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
+			for (int line_no = 0; line_no < LineOffsets.Size; line_no++)
 			{
 				const char* line_start = buf + LineOffsets[line_no];
 				const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-				ImGui::TextUnformatted(line_start, line_end);
+				if (Filter.PassFilter(line_start, line_end))
+					ImGui::TextUnformatted(line_start, line_end);
 			}
 		}
-		clipper.End();
-		
+		else
+		{
+			ImGuiListClipper clipper;
+			clipper.Begin(LineOffsets.Size);
+			while (clipper.Step())
+			{
+				for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
+				{
+					const char* line_start = buf + LineOffsets[line_no];
+					const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
+					ImGui::TextUnformatted(line_start, line_end);
+				}
+			}
+			clipper.End();
+		}
+
 		ImGui::PopStyleVar();
 
-		// Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
-		// Using a scrollbar or mouse-wheel will take away from the bottom edge.
 		if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
 			ImGui::SetScrollHereY(1.0f);
 	}
@@ -106,7 +116,7 @@ void Kargono::LogPanel::OnImGuiRender()
 	// For the demo: add a debug button _BEFORE_ the normal log window contents
 	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
 	// Most of the contents of the window will be added by the log.Draw() call.
-	ImGui::Begin("Main Log");
+	ImGui::Begin("Log");
 	if (ImGui::Button("Reload"))
 	{
 		LoadBuffer();
@@ -130,7 +140,7 @@ void Kargono::LogPanel::OnImGuiRender()
 	ImGui::End();
 
 	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
-	m_Log.Draw("Main Log");
+	m_Log.Draw("Log");
 }
 
 void Kargono::LogPanel::LoadBuffer()
