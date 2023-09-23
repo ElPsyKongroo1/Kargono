@@ -378,7 +378,7 @@ namespace Kargono {
 		ImGui::Checkbox("Fullscreen While Running or Simulating", &m_RuntimeFullscreen);
 		static float musicVolume = 10.0f;
 		ImGui::Separator();
-		if(ImGui::DragFloat("Music Volume", &musicVolume, 0.5f, 0.0f, 100.0f))
+		if(ImGui::DragFloat("Editor Music", &musicVolume, 0.5f, 0.0f, 100.0f))
 		{
 			m_EditorAudio->m_DefaultStereoSource->SetGain(musicVolume);
 		}

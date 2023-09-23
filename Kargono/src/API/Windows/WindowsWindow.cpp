@@ -151,6 +151,7 @@ namespace Kargono
 				data.EventCallback(event);
 			});
 
+		// Add App Logo
 		std::filesystem::path logoLocation = "resources/icons/app_logo.png";
 		if (!std::filesystem::exists(logoLocation)) { KG_CORE_ERROR("Path to Application Logo is invalid!"); return; }
 		GLFWimage images[1];
@@ -169,6 +170,7 @@ namespace Kargono
 
 		if (s_GLFWWindowCount == 0)
 		{
+			KG_CORE_INFO("GLFW Terminate was Called!");
 			glfwTerminate();
 		}
 	}
