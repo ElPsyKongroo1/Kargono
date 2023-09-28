@@ -84,7 +84,7 @@ namespace Kargono
 
 		glm::vec4 QuadVertexPositions[4];
 
-		Renderer2D::Statistics  Stats;
+		Renderer2D::Statistics Stats;
 
 		struct CameraData
 		{
@@ -100,8 +100,9 @@ namespace Kargono
 
 	void Renderer2D::Init()
 	{
-		
+		// Quads
 
+		// Initialize Vertex Array (Wrapper that holds references to VertexBuffer and VertexIndex objects as well as preferences)
 		s_Data.QuadVertexArray = (VertexArray::Create());
 
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));

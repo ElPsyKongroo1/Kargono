@@ -36,6 +36,7 @@ namespace Kargono
 		std::string Name = "Kargono Application";
 		std::filesystem::path WorkingDirectory;
 		ApplicationCommandLineArgs CommandLineArgs;
+		uint32_t Width, Height;
 	};
 
 	class Application

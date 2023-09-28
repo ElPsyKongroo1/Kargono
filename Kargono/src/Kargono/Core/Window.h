@@ -11,9 +11,12 @@ namespace Kargono
 		uint32_t Width;
 		uint32_t Height;
 
-		WindowProps(const std::string& title = "Kargono Engine",
-			uint32_t width = 1600,
-			uint32_t height = 900)
+		WindowProps()
+			: Title{ "No Title" }, Width{ 0 }, Height{0} {}
+
+		WindowProps(const std::string& title,
+			uint32_t width,
+			uint32_t height)
 			: Title(title), Width(width), Height(height)
 		{}
 	};

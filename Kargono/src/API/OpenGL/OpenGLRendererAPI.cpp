@@ -22,7 +22,6 @@ namespace Kargono
 
 	void OpenGLRendererAPI::Init()
 	{
-		
 
 	#ifdef KG_DEBUG
 			glEnable(GL_DEBUG_OUTPUT);

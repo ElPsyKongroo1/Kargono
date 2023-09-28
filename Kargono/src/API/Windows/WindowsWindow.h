@@ -34,8 +34,9 @@ namespace Kargono {
 		struct WindowData
 		{
 			std::string Title;
-			unsigned int Width, Height;
+			uint32_t Width, Height;
 			bool VSync;
+			uint8_t VersionMajor = 4, VersionMinor = 6;
 
 			EventCallbackFn EventCallback;
 
