@@ -22,6 +22,8 @@ namespace Kargono {
 		spec.Name = "Kargono Editor";
 		spec.CommandLineArgs = args;
 		spec.WorkingDirectory = std::filesystem::current_path();
+		spec.Width = 1600;
+		spec.Height = 900;
 
 		return new KargonoEditor(spec);
 	}
