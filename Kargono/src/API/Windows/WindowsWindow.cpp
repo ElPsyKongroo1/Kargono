@@ -8,7 +8,7 @@
 #include "API/Windows/WindowsWindow.h"
 
 #include "stb_image.h"
-#include "API/OpenGL/OpenGLContext.h"
+#include "glad/glad.h"
 
 
 namespace Kargono 
@@ -54,10 +54,16 @@ namespace Kargono
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWWindowCount;
 
-		m_Context = GraphicsContext::Create(m_Window);
-		m_Context->Init();
+		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		KG_CORE_ASSERT(status, "Failed to initialize Glad!");
 
-		
+		KG_CORE_INFO("OpenGL Info:");
+		KG_CORE_INFO("\tVendor: {0}", (const char*)glGetString(GL_VENDOR));
+		KG_CORE_INFO("\tRenderer: {0}", (const char*)glGetString(GL_RENDERER));
+		KG_CORE_INFO("\tVersion: {0}", (const char*)glGetString(GL_VERSION));
+		KG_CORE_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.5!");
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -174,12 +180,16 @@ namespace Kargono
 		}
 	}
 
+	void WindowsWindow::SwapBuffers()
+	{
+		glfwSwapBuffers(m_Window);
+	}
+
+
 	void WindowsWindow::OnUpdate() 
 	{
-		
 		glfwPollEvents();
-		m_Context->SwapBuffers();
-		
+		SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
