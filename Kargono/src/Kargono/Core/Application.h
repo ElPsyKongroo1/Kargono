@@ -6,7 +6,7 @@
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/ImGui/ImGuiLayer.h"
-#include "Kargono/Renderer/Buffer.h"
+#include "Kargono/Renderer/InputBuffer.h"
 
 #include <functional>
 #include <mutex>

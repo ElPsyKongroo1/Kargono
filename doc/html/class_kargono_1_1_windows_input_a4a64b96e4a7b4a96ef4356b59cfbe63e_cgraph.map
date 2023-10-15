@@ -1,9 +1,0 @@
-<map id="Kargono::WindowsInput::IsMouseButtonPressedImpl" name="Kargono::WindowsInput::IsMouseButtonPressedImpl">
-<area shape="rect" id="Node000001" title="Implementation of the IsMouseButtonPressedImpl function." alt="" coords="5,56,194,99"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#aee95f41fa39520271db70b3d22658c63" title="Function to get the instance of the application." alt="" coords="250,5,421,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,53,264,34,265,39,188,58"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_window.html#a8a121261ab4a48b50ac94931dea2cf7d" title="Pure virtual function for getting the native window." alt="" coords="242,56,429,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="194,75,227,75,227,80,194,80"/>
-<area shape="rect" id="Node000004" href="$class_kargono_1_1_application.html#a1390cb490c2ed807e16bbff27665a77a" title="Function to get the application&#39;s window." alt="" coords="265,123,406,165"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="178,97,251,118,250,123,176,102"/>
-</map>

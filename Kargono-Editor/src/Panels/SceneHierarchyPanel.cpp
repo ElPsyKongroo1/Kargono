@@ -3,6 +3,8 @@
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/UI/UI.h"
+#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Renderer/Shape.h"
 
 #include <imgui.h>
 #include "imgui_internal.h"
@@ -238,8 +240,7 @@ namespace Kargono
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<ScriptComponent>("Script");
-			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
-			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
+			DisplayAddComponentEntry<ShapeComponent>("Shape");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
@@ -384,35 +385,176 @@ namespace Kargono
 
 		});
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
-		{
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
-				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
-		});
-
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<ShapeComponent>("Shape", entity, [](auto& component)
 			{
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-
-				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-				if (ImGui::BeginDragDropTarget())
+				Shape::ShapeTypes selectedShape = component.CurrentShape;
+				if (ImGui::Button("Select a Shape")) { ImGui::OpenPopup("Shape Selection"); }
+				ImGui::SameLine();
+				ImGui::TextUnformatted(Shape::ShapeTypeToString(selectedShape).c_str());
+				if (ImGui::BeginPopup("Shape Selection"))
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					if (ImGui::Selectable(Shape::ShapeTypeToString(Shape::ShapeTypes::None).c_str()))
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath(path);
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-						if (texture->IsLoaded())
-							component.Texture = texture;
-						else
-							KG_WARN("Could not load texture {0}", texturePath.filename().string());
+						component.CurrentShape = Shape::ShapeTypes::None;
+						component.Vertices = nullptr;
+						component.Indices = nullptr;
+						component.TextureCoordinates = nullptr;
+						component.ShaderSpecification.RenderType = Shape::RenderingType::None;
+						auto [newHandle, newShader] = AssetManager::GetShader(component.ShaderSpecification);
+						component.ShaderHandle = newHandle;
+						component.Shader = newShader;
 					}
-					ImGui::EndDragDropTarget();
-
+					if (ImGui::Selectable(Shape::ShapeTypeToString(Shape::ShapeTypes::Quad).c_str()))
+					{
+						component.CurrentShape = Shape::ShapeTypes::Quad;
+						component.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::Quad.GetVertices());
+						component.Indices = CreateRef<std::vector<uint32_t>>(Shape::Quad.GetIndices());
+						component.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::Quad.GetTextureCoordinates());
+						component.ShaderSpecification.RenderType = Shape::Quad.GetType();
+						auto [newHandle, newShader] = AssetManager::GetShader(component.ShaderSpecification);
+						component.ShaderHandle = newHandle;
+						component.Shader = newShader;
+					}
+					if (ImGui::Selectable(Shape::ShapeTypeToString(Shape::ShapeTypes::Cube).c_str()))
+					{
+						component.CurrentShape = Shape::ShapeTypes::Cube;
+						component.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::Cube.GetVertices());
+						component.Indices = CreateRef<std::vector<uint32_t>>(Shape::Cube.GetIndices());
+						component.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::Cube.GetTextureCoordinates());
+						component.ShaderSpecification.RenderType = Shape::Cube.GetType();
+						auto [newHandle, newShader] = AssetManager::GetShader(component.ShaderSpecification);
+						component.ShaderHandle = newHandle;
+						component.Shader = newShader;
+					}
+					ImGui::EndPopup();
 				}
-				// Texture
-				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+				ImGui::Separator();
+				ImGui::Text("Shader Specification");
+
+				auto updateComponent = [&]()
+				{
+					// Get Previous Buffer and Previous Shader
+					Buffer oldBuffer = component.ShaderData;
+					Ref<Shader> oldShader = component.Shader;
+					// Get New Shader
+					auto [newShaderAssetHandle, newShader] = AssetManager::GetShader(component.ShaderSpecification);
+					// Assign New Shader to Component
+					component.ShaderHandle = newShaderAssetHandle;
+					component.Shader = newShader;
+					// Create New Buffer with New ShaderLayout Size and Set Entire Buffer to Zero
+					Buffer newBuffer(newShader->GetInputLayout().GetStride() * sizeof(uint8_t));
+					newBuffer.SetDataToByte(0);
+
+					// Transfer Data from Old Buffer to New Buffer if applicable
+					// This for loop checks if each element in the old shader exists in the new shader.
+					// If an element does exist in both shaders, the data from the old buffer is
+					// transferred to the new buffer!
+					for (const auto& element: oldShader->GetInputLayout().GetElements())
+					{
+						if (newShader->GetInputLayout().FindElementByName(element.Name))
+						{
+							// Get Location of Old Data Pointer
+							std::size_t oldLocation = element.Offset;
+							uint8_t* oldLocationPointer = oldBuffer.As<uint8_t>(oldLocation);
+
+							// Get Location of New Data Pointer
+							std::size_t newLocation = newShader->GetInputLayout().FindElementByName(element.Name).Offset;
+							uint8_t* newLocationPointer = newBuffer.As<uint8_t>(newLocation);
+
+							// Get Size of Data to Transfer
+							std::size_t size = element.Size;
+
+							// Final Memory Copy
+							memcpy_s(newLocationPointer, size, oldLocationPointer, size);
+						}
+					}
+
+					// Assign and Zero Out New Buffer
+					component.ShaderData = newBuffer;
+
+					// Clear old buffer
+					if (oldBuffer) { oldBuffer.Release(); }
+				};
+
+				if (selectedShape == Shape::ShapeTypes::None) { return; }
+				if (ImGui::Checkbox("Add Flat Color", &component.ShaderSpecification.AddFlatColor))
+				{
+					updateComponent();
+					if (component.ShaderSpecification.AddFlatColor)
+					{
+						std::size_t colorLocation = component.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
+						glm::vec4* color = component.ShaderData.As<glm::vec4>(colorLocation);
+						*color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+					}
+					
+				}
+				if (component.ShaderSpecification.AddFlatColor)
+				{
+					std::size_t colorLocation = component.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
+					glm::vec4* color = component.ShaderData.As<glm::vec4>(colorLocation);
+					ImGui::ColorEdit4("Color", glm::value_ptr(*color));
+				}
+				if (ImGui::Checkbox("Add Texture", &component.ShaderSpecification.AddTexture))
+				{
+					updateComponent();
+					if (component.ShaderSpecification.AddTexture)
+					{
+						std::size_t tilingLocation = component.Shader->GetInputLayout().FindElementByName("a_TilingFactor").Offset;
+						float* tilingFactor = component.ShaderData.As<float>(tilingLocation);
+						*tilingFactor = 1.0f;
+					}
+				}
+				if (component.ShaderSpecification.AddTexture)
+				{
+					ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+						{
+							const wchar_t* path = (const wchar_t*)payload->Data;
+							std::filesystem::path texturePath(path);
+							AssetHandle currentHandle = AssetManager::ImportNewTextureFromFile(texturePath);
+							component.TextureHandle = currentHandle;
+							Ref<Texture2D> texture = AssetManager::GetTexture(currentHandle);
+							if (texture->IsLoaded())
+								component.Texture = texture;
+							else
+								KG_WARN("Could not load texture {0}", texturePath.filename().string());
+						}
+						ImGui::EndDragDropTarget();
+					}
+
+					std::size_t tilingLocation = component.Shader->GetInputLayout().FindElementByName("a_TilingFactor").Offset;
+					float* tilingFactor = component.ShaderData.As<float>(tilingLocation);
+					ImGui::DragFloat("Tiling Factor", tilingFactor, 0.1f, 0.0f, 100.0f);
+				}
+				
+				if (ImGui::Checkbox("Add Circle Shape", &component.ShaderSpecification.AddCircleShape))
+				{
+					updateComponent();
+					if (component.ShaderSpecification.AddCircleShape)
+					{
+						std::size_t thicknessLocation = component.Shader->GetInputLayout().FindElementByName("a_Thickness").Offset;
+						float* thickness = component.ShaderData.As<float>(thicknessLocation);
+						*thickness = 1.0f;
+
+						std::size_t fadeLocation = component.Shader->GetInputLayout().FindElementByName("a_Fade").Offset;
+						float* fade = component.ShaderData.As<float>(fadeLocation);
+						*fade = 0.005f;
+					}
+				}
+				if (component.ShaderSpecification.AddCircleShape)
+				{
+					std::size_t thicknessLocation = component.Shader->GetInputLayout().FindElementByName("a_Thickness").Offset;
+					float* thickness = component.ShaderData.As<float>(thicknessLocation);
+					ImGui::DragFloat("Thickness", thickness, 0.025f, 0.0f, 1.0f);
+
+					std::size_t fadeLocation = component.Shader->GetInputLayout().FindElementByName("a_Fade").Offset;
+					float* fade = component.ShaderData.As<float>(fadeLocation);
+					ImGui::DragFloat("Fade", fade, 0.00025f, 0.0f, 1.0f);
+				}
+				if (ImGui::Checkbox("Add Projection Matrix", &component.ShaderSpecification.AddProjectionMatrix)) { updateComponent(); }
+				if (ImGui::Checkbox("Add Entity ID", &component.ShaderSpecification.AddEntityID)) { updateComponent(); }
 			});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)

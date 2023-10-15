@@ -8,10 +8,13 @@
 #include "entt.hpp"
 
 class b2World;
+class Shader;
+struct Buffer;
 
 namespace Kargono 
 {
 	class Entity;
+	struct Shader::ShaderSpecification;
 
 	class Scene 
 	{
@@ -47,6 +50,7 @@ namespace Kargono
 
 		bool IsRunning() const { return m_IsRunning; }
 		bool IsPaused() const { return m_IsPaused; }
+		bool IsEntityValid(entt::entity entity) { return m_Registry.valid(entity); }
 
 
 		void SetPaused(bool paused) { m_IsPaused = paused; }
@@ -64,8 +68,11 @@ namespace Kargono
 
 		void OnPhysics2DStart();
 		void OnPhysics2DStop();
+		void UpdatePhysics(Timestep ts);
 
-		void RenderScene(EditorCamera& camera);
+		void RenderScene(Camera& camera, const glm::mat4& transform);
+	public:
+		static void FillEntityID(Shader::RendererInputSpec& inputSpec);
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;

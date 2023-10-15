@@ -3,6 +3,9 @@
 #include "Kargono/Math/Math.h"
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Renderer/Shader.h"
 
 #include "imgui.h"
 #include "ImGuizmo.h"
@@ -33,11 +36,11 @@ namespace Kargono {
 			0.5f, 0.4f, AL_FALSE, m_PopSound);
 		m_EditorAudio->allAudioSources.push_back(m_LowPopSource);
 
-		m_IconPlay = Texture2D::Create( (Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
-		m_IconPause = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
-		m_IconSimulate = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
-		m_IconStop = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
-		m_IconStep = Texture2D::Create((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
+		m_IconPlay = Texture2D::CreateEditorTexture( (Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
+		m_IconPause = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
+		m_IconSimulate = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
+		m_IconStop = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
+		m_IconStep = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };
@@ -74,11 +77,18 @@ namespace Kargono {
 
 		}
 
+		Renderer::Init();
+		Renderer::SetLineWidth(4.0f);
+
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		Renderer2D::SetLineWidth(4.0f);
 
 		m_EditorAudio->m_DefaultStereoSource->play();
+
+		// TODO: Remove, just shader testing code
+		//Shader::Create( "Test", Shader::BuildShader({}));
+
+		InitializeOverlayData();
 	}
 
 	void EditorLayer::OnDetach()
@@ -108,7 +118,7 @@ namespace Kargono {
 		}
 		
 		//Render
-		Renderer2D::ResetStats();
+		Renderer::ResetStats();
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
@@ -397,12 +407,12 @@ namespace Kargono {
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
-		auto stats = Renderer2D::GetStats();
-		ImGui::Text("Renderer2D Stats:");
+		auto stats = Renderer::GetStats();
+		ImGui::Text("Renderer Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-		ImGui::Text("Quads: %d", stats.QuadCount);
+		/*ImGui::Text("Quads: %d", stats.VertexCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());*/
 
 		ImGui::End();
 	}
@@ -614,39 +624,87 @@ namespace Kargono {
 	{
 	}
 
+	static Shader::RendererInputSpec s_CircleInputSpec{};
+	static Shader::RendererInputSpec s_LineInputSpec{};
+	static glm::vec4 s_RectangleVertexPositions[4]
+	{
+		{ -0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f, 0.5f, 0.0f, 1.0f },
+			{ -0.5f, 0.5f, 0.0f, 1.0f }
+	};
+	static Ref<std::vector<glm::vec3>> s_OutputVector = CreateRef<std::vector<glm::vec3>>();
+
+	void EditorLayer::InitializeOverlayData()
+	{
+
+		// Set up Line Input Specifications for Overlay Calls
+		{
+			Shader::ShaderSpecification lineShaderSpec {true, false, false, true, false, Shape::RenderingType::DrawLine};
+			auto [uuid, localShader] = AssetManager::GetShader(lineShaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+
+			std::size_t colorLocation = localShader->GetInputLayout().FindElementByName("a_Color").Offset;
+			glm::vec4* color = localBuffer.As<glm::vec4>(colorLocation);
+			*color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+			ShapeComponent* lineShapeComponent = new ShapeComponent();
+			lineShapeComponent->CurrentShape = Shape::ShapeTypes::None;
+			lineShapeComponent->Vertices = nullptr;
+
+			s_LineInputSpec.Shader = localShader;
+			s_LineInputSpec.Buffer = localBuffer;
+			s_LineInputSpec.ShapeComponent = lineShapeComponent;
+		}
+
+
+		// Set up Circle Input Specification for Overlay Calls
+
+		{
+			Shader::ShaderSpecification shaderSpec {true, false, true, true, false, Shape::RenderingType::DrawIndex};
+			auto [uuid, localShader] = AssetManager::GetShader(shaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+
+			std::size_t colorLocation = localShader->GetInputLayout().FindElementByName("a_Color").Offset;
+			glm::vec4* color = localBuffer.As<glm::vec4>(colorLocation);
+			*color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+			std::size_t thicknessLocation = localShader->GetInputLayout().FindElementByName("a_Thickness").Offset;
+			float* thickness = localBuffer.As<float>(thicknessLocation);
+			*thickness = 0.05f;
+
+			std::size_t fadeLocation = localShader->GetInputLayout().FindElementByName("a_Fade").Offset;
+			float* fade = localBuffer.As<float>(fadeLocation);
+			*fade = 0.005f;
+
+			ShapeComponent* shapeComp = new ShapeComponent();
+			shapeComp->CurrentShape = Shape::ShapeTypes::Quad;
+			shapeComp->Vertices = CreateRef<std::vector<glm::vec3>>(Shape::Quad.GetVertices());
+			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Shape::Quad.GetIndices());
+
+			s_CircleInputSpec.Shader = localShader;
+			s_CircleInputSpec.Buffer = localBuffer;
+			s_CircleInputSpec.ShapeComponent = shapeComp;
+		}
+
+		// TODO: Shape Components and Buffers are memory leaks!
+	}
+
 	void EditorLayer::OnOverlayRender()
 	{
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
 			if (!camera) { return; }
-			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+			Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
 		{
-			Renderer2D::BeginScene(m_EditorCamera);
+			Renderer::BeginScene(m_EditorCamera);
 		}
 
 		if (m_ShowPhysicsColliders)
 		{
-			// Box Colliders
-			{
-				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-				for (auto entity : view)
-				{
-					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
-
-					glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset.x, bc2d.Offset.y, 0.001f);
-					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
-
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-						* glm::scale(glm::mat4(1.0f), scale);
-
-					Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
-				}
-			}
-
 			// Circle Colliders
 			{
 				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
@@ -661,7 +719,56 @@ namespace Kargono {
 					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
 						* glm::scale(glm::mat4(1.0f), scale);
 
-					Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.05f);
+					s_CircleInputSpec.TransformMatrix = transform;
+					Renderer::SubmitDataToRenderer(s_CircleInputSpec);
+				}
+			}
+			// Box Colliders
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+					glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset.x, bc2d.Offset.y, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					static glm::vec4 boxColliderColor {0.0f, 1.0f, 0.0f, 1.0f};
+
+					std::size_t colorLocation = s_LineInputSpec.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
+					glm::vec4* color = s_LineInputSpec.Buffer.As<glm::vec4>(colorLocation);
+					*color = boxColliderColor;
+
+					glm::vec3 lineVertices[4];
+					for (size_t i = 0; i < 4; i++)
+					{
+						lineVertices[i] = transform * s_RectangleVertexPositions[i];
+					}
+
+					s_OutputVector->clear();
+					s_OutputVector->push_back(lineVertices[0]);
+					s_OutputVector->push_back(lineVertices[1]);
+					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					s_OutputVector->clear();
+					s_OutputVector->push_back(lineVertices[1]);
+					s_OutputVector->push_back(lineVertices[2]);
+					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					s_OutputVector->clear();
+					s_OutputVector->push_back(lineVertices[2]);
+					s_OutputVector->push_back(lineVertices[3]);
+					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					s_OutputVector->clear();
+					s_OutputVector->push_back(lineVertices[3]);
+					s_OutputVector->push_back(lineVertices[0]);
+					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+					Renderer::SubmitDataToRenderer(s_LineInputSpec);
 				}
 			}
 		}
@@ -672,13 +779,41 @@ namespace Kargono {
 			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
 				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
 
-				// Draw Rectangle
-				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+
+				static glm::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
+				std::size_t colorLocation = s_LineInputSpec.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
+				glm::vec4* color = s_LineInputSpec.Buffer.As<glm::vec4>(colorLocation);
+				*color = selectionColor;
+				glm::vec3 lineVertices[4];
+
+				for (size_t i = 0; i < 4; i++)
+				{
+					lineVertices[i] = transform.GetTransform() * s_RectangleVertexPositions[i];
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back(lineVertices[0]);
+				s_OutputVector->push_back(lineVertices[1]);
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Renderer::SubmitDataToRenderer(s_LineInputSpec);
+				s_OutputVector->clear();
+				s_OutputVector->push_back(lineVertices[1]);
+				s_OutputVector->push_back(lineVertices[2]);
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Renderer::SubmitDataToRenderer(s_LineInputSpec);
+				s_OutputVector->clear();
+				s_OutputVector->push_back(lineVertices[2]);
+				s_OutputVector->push_back(lineVertices[3]);
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Renderer::SubmitDataToRenderer(s_LineInputSpec);
+				s_OutputVector->clear();
+				s_OutputVector->push_back(lineVertices[3]);
+				s_OutputVector->push_back(lineVertices[0]);
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Renderer::SubmitDataToRenderer(s_LineInputSpec);
 			}
 		}
-		
 
-		Renderer2D::EndScene();
+		Renderer::EndScene();
 	}
 
 	void EditorLayer::NewProject()
@@ -708,6 +843,9 @@ namespace Kargono {
 			{
 				m_EditorScene->DestroyAllEntities();
 			}
+			AssetManager::ClearAll();
+			AssetManager::DeserializeAll();
+
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 

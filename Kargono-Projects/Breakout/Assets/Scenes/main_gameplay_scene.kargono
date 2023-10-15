@@ -7,9 +7,18 @@ Entities:
       Translation: [-0.112352729, 1.66806841, -0.00848388672]
       Rotation: [0, 0, 0]
       Scale: [3.6908741, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.42104286, 0.301739693, 0.451737463, 1]
-      TilingFactor: 1
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 16840053353259641544
+      ShaderSpecification:
+        AddFlatColor: true
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: false
+        RenderType: DrawIndex
+      Buffer: !!binary "25j6v6LBCkAALAK/19bWPpuamj7n5uY+AACAPwUAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: true
@@ -30,8 +39,8 @@ Entities:
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [-7.4505806e-09, 11.6767263, 43.7930717]
-      Rotation: [0, 0, 0]
+      Translation: [0, 2.55757332, 35.1552544]
+      Rotation: [0.215173215, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       Camera:
@@ -44,20 +53,37 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TexturePath: F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Textures\camera.png
-      TilingFactor: 1
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 8051163355459938058
+      ShaderHandle: 10734445562189320491
+      ShaderSpecification:
+        AddFlatColor: false
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: true
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAAv17yQkBNDA1CBAAAAAAAAAAAAIA/AAAAAAAAgD8="
   - Entity: 10024416772323704999
     TagComponent:
       Tag: Floor
     TransformComponent:
       Translation: [0, -1.97349513, 0]
       Rotation: [0, 0, 0]
-      Scale: [27.2863331, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.830115795, 0.169869229, 0.169869229, 1]
-      TilingFactor: 1
+      Scale: [48.8000717, 1, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 16840053353259641544
+      ShaderSpecification:
+        AddFlatColor: true
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: false
+        RenderType: DrawIndex
+      Buffer: !!binary "RjPDwX2bvL8AAAC/1dRUP62sLD6trCw+AACAPwMAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -72,12 +98,21 @@ Entities:
     TagComponent:
       Tag: Wall
     TransformComponent:
-      Translation: [-13.1079817, 11.254735, 0]
+      Translation: [-24.5235424, 11.254735, 0]
       Rotation: [0, 0, 1.57079637]
-      Scale: [27.2849255, 0.999956012, 1]
-    SpriteRendererComponent:
-      Color: [0.830115795, 0.169869229, 0.169869229, 1]
-      TilingFactor: 1
+      Scale: [27.2846088, 0.999946117, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 16840053353259641544
+      ShaderSpecification:
+        AddFlatColor: true
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: false
+        RenderType: DrawIndex
+      Buffer: !!binary "KTDIwezNGMAAAAC/1dRUP62sLD6trCw+AACAPwIAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -92,12 +127,21 @@ Entities:
     TagComponent:
       Tag: Wall
     TransformComponent:
-      Translation: [13.1850414, 11.254735, 0]
+      Translation: [23.9671535, 11.254735, 0]
       Rotation: [0, 0, 1.57079637]
-      Scale: [27.2840271, 0.999927938, 1]
-    SpriteRendererComponent:
-      Color: [0.830115795, 0.169869229, 0.169869229, 1]
-      TilingFactor: 1
+      Scale: [27.2837543, 0.999919474, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 16840053353259641544
+      ShaderSpecification:
+        AddFlatColor: true
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: false
+        RenderType: DrawIndex
+      Buffer: !!binary "0Ly7QezGGMAAAAC/1dRUP62sLD6trCw+AACAPwEAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -112,12 +156,21 @@ Entities:
     TagComponent:
       Tag: Ceiling
     TransformComponent:
-      Translation: [0, 24.9708939, 0]
+      Translation: [-0.226696968, 24.9708939, 0]
       Rotation: [0, 0, 0]
-      Scale: [27.2863331, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.830115795, 0.169869229, 0.169869229, 1]
-      TilingFactor: 1
+      Scale: [49.8383102, 1, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 16840053353259641544
+      ShaderSpecification:
+        AddFlatColor: true
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        AddTexture: false
+        RenderType: DrawIndex
+      Buffer: !!binary "tCrJwWTEy0EAAAC/1dRUP62sLD6trCw+AACAPwAAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false

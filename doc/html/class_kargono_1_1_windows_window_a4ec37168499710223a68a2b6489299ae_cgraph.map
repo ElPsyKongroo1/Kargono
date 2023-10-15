@@ -1,5 +1,0 @@
-<map id="Kargono::WindowsWindow::OnUpdate" name="Kargono::WindowsWindow::OnUpdate">
-<area shape="rect" id="Node000001" title="Updates the Windows window." alt="" coords="5,5,182,48"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_graphics_context.html#a0e430887b74942cb8680b558d73ac4ae" title="Swaps the front and back buffers to display the rendered frame." alt="" coords="230,5,404,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,24,215,24,215,29,182,29"/>
-</map>

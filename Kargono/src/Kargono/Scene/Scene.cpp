@@ -4,9 +4,10 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Renderer/Renderer2D.h"
+#include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Scene/ScriptableEntity.h"
+#include "Kargono/Renderer/Shader.h"
 
 #include <glm/glm.hpp>
 #include "box2d/Box2d.h"
@@ -125,7 +126,10 @@ namespace Kargono
 		if (m_EntityMap.empty()) { return; }
 		for (auto& [uuid, entity] : m_EntityMap)
 		{
-			m_Registry.destroy(entity);
+			if (m_Registry.valid(entity))
+			{
+				m_Registry.destroy(entity);
+			}
 		}
 		m_EntityMap.clear();
 	}
@@ -196,7 +200,7 @@ namespace Kargono
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		RenderScene(camera);
+		RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts)
@@ -228,27 +232,7 @@ namespace Kargono
 				});
 			}
 
-			// Physics
-			{
-				const int32_t velocityIterations = 6;
-				const int32_t positionIterations = 2;
-				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-				// Retrieve transform from Box2D
-				auto view = m_Registry.view<Rigidbody2DComponent>();
-				for (auto e : view)
-				{
-					Entity entity = { e, this };
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-					b2Body* body = (b2Body*)rb2d.RuntimeBody;
-					const auto& position = body->GetPosition();
-					transform.Translation.x = position.x;
-					transform.Translation.y = position.y;
-					transform.Rotation.z = body->GetAngle();
-				}
-			}
+			UpdatePhysics(ts);
 		}
 
 		// Render 2D
@@ -269,29 +253,8 @@ namespace Kargono
 			}
 			if (mainCamera)
 			{
-				Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-				// Draw sprites
-				{
-					auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-					for (auto entity : group)
-					{
-						const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-						Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-					}
-				}
-
-				// Draw Circles
-				{
-					auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-					for (auto entity : view)
-					{
-						const auto& [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-						Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-					}
-				}
-				Renderer2D::EndScene();
+				// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
+				RenderScene(*mainCamera, glm::inverse(cameraTransform));
 			}
 		}
 	}
@@ -300,33 +263,10 @@ namespace Kargono
 	{
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-
-
-			// Physics
-			{
-				const int32_t velocityIterations = 6;
-				const int32_t positionIterations = 2;
-				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-				// Retrieve transform from Box2D
-				auto view = m_Registry.view<Rigidbody2DComponent>();
-				for (auto e : view)
-				{
-					Entity entity = { e, this };
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-					b2Body* body = (b2Body*)rb2d.RuntimeBody;
-					const auto& position = body->GetPosition();
-					transform.Translation.x = position.x;
-					transform.Translation.y = position.y;
-					transform.Rotation.z = body->GetAngle();
-				}
-			}
+			UpdatePhysics(ts);
 		}
-
 		// Render
-		RenderScene(camera);
+		RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -425,101 +365,79 @@ namespace Kargono
 		m_ContactListener = {};
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
-		
 	}
-	void Scene::RenderScene(EditorCamera& camera)
+
+	void Scene::UpdatePhysics(Timestep ts)
 	{
-		Renderer2D::BeginScene(camera);
-		// Draw Sprites
+		// Physics
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+			// Retrieve transform from Box2D
+			auto view = m_Registry.view<Rigidbody2DComponent>();
+			for (auto e : view)
 			{
-				const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				Entity entity = { e, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& position = body->GetPosition();
+				transform.Translation.x = position.x;
+				transform.Translation.y = position.y;
+				transform.Rotation.z = body->GetAngle();
 			}
 		}
-		// Draw Circles
+	}
+	void Scene::RenderScene(Camera& camera, const glm::mat4& transform)
+	{
+		Renderer::BeginScene(camera, transform);
+		// Draw Shapes
 		{
-			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			auto view = m_Registry.view<TransformComponent, ShapeComponent>();
 			for (auto entity : view)
 			{
-				const auto& [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				const auto& [transform, shape] = view.get<TransformComponent, ShapeComponent>(entity);
 
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+				static Shader::RendererInputSpec inputSpec{};
+				inputSpec.Shader = shape.Shader;
+				inputSpec.Buffer = shape.ShaderData;
+				inputSpec.Entity = static_cast<uint32_t>(entity);
+				inputSpec.EntityRegistry = &m_Registry;
+				inputSpec.ShapeComponent = &shape;
+				inputSpec.TransformMatrix = transform.GetTransform();
+
+				for (const auto& PerObjectSceneFunction : shape.Shader->GetFillDataObjectScene())
+				{
+					PerObjectSceneFunction(inputSpec);
+				}
+
+				Renderer::SubmitDataToRenderer(inputSpec);
 			}
 		}
 
-		Renderer2D::EndScene();
+		Renderer::EndScene();
 
 	}
+	void Scene::FillEntityID(Shader::RendererInputSpec& inputSpec)
+	{
+		std::size_t idLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_EntityID").Offset;
+		auto* pointerToID = inputSpec.Buffer.As<int32_t>(idLocationInBuffer);
+		*pointerToID = inputSpec.Entity;
+	}
+
+
 	template <typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		KG_CRITICAL("Adding a component has an unsupported type");
-		static_assert(sizeof(T) == 0);
 	}
 
-	template<>
-	void Scene::OnComponentAdded<TransformComponent> (Entity entity, TransformComponent& component)
-	{
-		
-	}
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
-	template<>
-	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
-	{
-
-	}
-	template<>
-	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
-	{
-
-	}
-	template<>
-	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-	{
-
-	}
-	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-	{
-
-	}
-	template<>
-	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
-	{
-
-	}
-
-	template<>
-	void Scene::OnComponentAdded <BoxCollider2DComponent> (Entity entity, BoxCollider2DComponent& component)
-	{
-
-	}
-
-	template<>
-	void Scene::OnComponentAdded <CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
-	{
-
-	}
-
-	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
-	{
-
-	}
-
-	template<>
-	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
-	{
-
-	}
-
-	
 }

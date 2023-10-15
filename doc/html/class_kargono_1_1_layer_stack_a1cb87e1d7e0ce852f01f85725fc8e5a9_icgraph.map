@@ -1,7 +1,0 @@
-<map id="Kargono::LayerStack::PushOverlay" name="Kargono::LayerStack::PushOverlay">
-<area shape="rect" id="Node000001" title="Pushes an overlay onto the layer stack." alt="" coords="384,5,527,48"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449" title="Function to add an overlay to the layer stack." alt="" coords="195,5,336,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="369,29,336,29,336,24,369,24"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public access specifier." alt="" coords="5,5,147,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="180,29,147,29,147,24,180,24"/>
-</map>

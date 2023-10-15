@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Timer.h"
+#include "Kargono/Core/FileSystem.h"
 #include "API/OpenGL/OpenGLShader.h"
 
 #include <glad/glad.h>
@@ -53,14 +54,7 @@ namespace Kargono {
 			return "resources/cache/shader/opengl";
 		}
 
-		static void CreateCacheDirectoryIfNeeded()
-		{
-			std::string cacheDirectory = GetCacheDirectory();
-			if (!std::filesystem::exists(cacheDirectory))
-				std::filesystem::create_directories(cacheDirectory);
-		}
-
-		static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)
+		static const char* ShaderBinaryFileExtension(uint32_t stage)
 		{
 			switch (stage)
 			{
@@ -70,101 +64,62 @@ namespace Kargono {
 			KG_CORE_ASSERT(false);
 			return "";
 		}
-
-		static const char* GLShaderStageCachedVulkanFileExtension(uint32_t stage)
-		{
-			switch (stage)
-			{
-			case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
-			case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
-			}
-			KG_CORE_ASSERT(false);
-			return "";
-		}
-
-
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
-		: m_FilePath(filepath)
+	OpenGLShader::OpenGLShader(const std::filesystem::path& filepath)
 	{
-		
+		// Extract name from filepath
+		m_Name = filepath.stem().string();
 
-		Utils::CreateCacheDirectoryIfNeeded();
-
-		std::string source = ReadFile(filepath);
+		FileSystem::CreateNewDirectory(Utils::GetCacheDirectory());
+		std::string source = FileSystem::ReadFileString(filepath);
 		auto shaderSources = PreProcess(source);
 
-		{
-			Timer timer;
-			CompileOrGetVulkanBinaries(shaderSources);
-			CompileOrGetOpenGLBinaries();
-			CreateProgram();
-			KG_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
-		}
-
-		// Extract name from filepath
-		auto lastSlash = filepath.find_last_of("/\\");
-		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-		auto lastDot = filepath.rfind('.');
-		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
-		m_Name = filepath.substr(lastSlash, count);
+		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+		CompileBinaries(shaderSources, openGLSPIRV);
+		CreateProgram(openGLSPIRV);
+		openGLSPIRV.clear();
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const Shader::ShaderSource& fullSource)
 		: m_Name(name)
 	{
-		
+		FileSystem::CreateNewDirectory(Utils::GetCacheDirectory());
+		auto shaderSources = PreProcess(fullSource);
 
-		std::unordered_map<GLenum, std::string> sources;
-		sources[GL_VERTEX_SHADER] = vertexSrc;
-		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
+		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+		CompileBinaries(shaderSources, openGLSPIRV);
+		CreateProgram(openGLSPIRV);
+		openGLSPIRV.clear();
+	}
 
-		CompileOrGetVulkanBinaries(sources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
+	OpenGLShader::OpenGLShader(const std::string& name, const Shader::ShaderSpecification& shaderSpec)
+		: Shader(shaderSpec), m_Name(name)
+	{
+		FileSystem::CreateNewDirectory(Utils::GetCacheDirectory());
+		auto [shaderFullSource, bufferLayout, uniformList] = Shader::BuildShader(shaderSpec);
+		auto shaderSources = PreProcess(shaderFullSource);
+		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+		CompileBinaries(shaderSources, openGLSPIRV);
+		CreateProgram(openGLSPIRV);
+		m_InputBufferLayout = bufferLayout;
+		m_UniformBufferList = uniformList;
+		openGLSPIRV.clear();
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
+		: m_Name(name)
+	{
+		CreateProgram(shaderBinaries);
 	}
 
 	OpenGLShader::~OpenGLShader()
 	{
-		
-
 		glDeleteProgram(m_RendererID);
-	}
-
-	std::string OpenGLShader::ReadFile(const std::string& filepath)
-	{
-		
-
-		std::string result;
-		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
-		if (in)
-		{
-			in.seekg(0, std::ios::end);
-			size_t size = in.tellg();
-			if (size != -1)
-			{
-				result.resize(size);
-				in.seekg(0, std::ios::beg);
-				in.read(&result[0], size);
-			}
-			else
-			{
-				KG_CORE_ERROR("Could not read from file '{0}'", filepath);
-			}
-		}
-		else
-		{
-			KG_CORE_ERROR("Could not open file '{0}'", filepath);
-		}
-
-		return result;
 	}
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
-		
-
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -188,25 +143,24 @@ namespace Kargono {
 		return shaderSources;
 	}
 
-	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
+	void OpenGLShader::CompileBinaries(const std::unordered_map<GLenum, std::string>& shaderSources, std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)
 	{
 		GLuint program = glCreateProgram();
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
-		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
 		const bool optimize = true;
 		if (optimize)
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 
 		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
 
-		auto& shaderData = m_VulkanSPIRV;
+		auto& shaderData = openGLSPIRV;
 		shaderData.clear();
 		for (auto&& [stage, source] : shaderSources)
 		{
-			std::filesystem::path shaderFilePath = m_FilePath;
-			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedVulkanFileExtension(stage));
+			std::filesystem::path cachedPath = cacheDirectory / (m_Name + Utils::ShaderBinaryFileExtension(stage));
 
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
 			if (in.is_open())
@@ -221,76 +175,26 @@ namespace Kargono {
 			}
 			else
 			{
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
+				std::string debugName = "Shader Name: " + m_Name + ", Shader Type: " + Utils::GLShaderStageToString(stage);
+				// Compile SpirV
+				shaderc::SpvCompilationResult module;
+				try 
+				{
+					module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), debugName.c_str(), options);
+				}
+				catch (std::exception e)
+				{
+					KG_CORE_ERROR("Exception thrown inside shaderc!");
+				}
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					KG_CORE_ERROR(module.GetErrorMessage());
 					KG_CORE_ASSERT(false);
 				}
-
+				// Add Newly Compiled Spirv to m_OpenGLSPIRV
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
 
-				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-				if (out.is_open())
-				{
-					auto& data = shaderData[stage];
-					out.write((char*)data.data(), data.size() * sizeof(uint32_t));
-					out.flush();
-					out.close();
-				}
-			}
-		}
-
-		for (auto&& [stage, data] : shaderData)
-			Reflect(stage, data);
-	}
-
-	void OpenGLShader::CompileOrGetOpenGLBinaries()
-	{
-		auto& shaderData = m_OpenGLSPIRV;
-
-		shaderc::Compiler compiler;
-		shaderc::CompileOptions options;
-		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		const bool optimize = false;
-		if (optimize)
-			options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
-
-		shaderData.clear();
-		m_OpenGLSourceCode.clear();
-		for (auto&& [stage, spirv] : m_VulkanSPIRV)
-		{
-			std::filesystem::path shaderFilePath = m_FilePath;
-			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedOpenGLFileExtension(stage));
-
-			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-			if (in.is_open())
-			{
-				in.seekg(0, std::ios::end);
-				auto size = in.tellg();
-				in.seekg(0, std::ios::beg);
-
-				auto& data = shaderData[stage];
-				data.resize(size / sizeof(uint32_t));
-				in.read((char*)data.data(), size);
-			}
-			else
-			{
-				spirv_cross::CompilerGLSL glslCompiler(spirv);
-				m_OpenGLSourceCode[stage] = glslCompiler.compile();
-				auto& source = m_OpenGLSourceCode[stage];
-
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
-				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
-				{
-					KG_CORE_ERROR(module.GetErrorMessage());
-					KG_CORE_ASSERT(false);
-				}
-
-				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
-
+				// Write Spirv to Cache for later use!
 				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
 				if (out.is_open())
 				{
@@ -303,12 +207,12 @@ namespace Kargono {
 		}
 	}
 
-	void OpenGLShader::CreateProgram()
+	void OpenGLShader::CreateProgram(const std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)
 	{
 		GLuint program = glCreateProgram();
 
 		std::vector<GLuint> shaderIDs;
-		for (auto&& [stage, spirv] : m_OpenGLSPIRV)
+		for (auto&& [stage, spirv] : openGLSPIRV)
 		{
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(stage));
 			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), static_cast<GLsizei>(spirv.size() * sizeof(uint32_t)));
@@ -327,7 +231,7 @@ namespace Kargono {
 
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			KG_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data());
+			KG_CORE_ERROR("Shader linking failed :\n{0}", infoLog.data());
 
 			glDeleteProgram(program);
 
@@ -344,48 +248,18 @@ namespace Kargono {
 		m_RendererID = program;
 	}
 
-	void OpenGLShader::Reflect(GLenum stage, const std::vector<uint32_t>& shaderData)
-	{
-		spirv_cross::Compiler compiler(shaderData);
-		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
-
-		KG_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::GLShaderStageToString(stage), m_FilePath);
-		KG_CORE_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
-		KG_CORE_TRACE("    {0} resources", resources.sampled_images.size());
-
-		KG_CORE_TRACE("Uniform buffers:");
-		for (const auto& resource : resources.uniform_buffers)
-		{
-			const auto& bufferType = compiler.get_type(resource.base_type_id);
-			uint32_t bufferSize = static_cast<uint32_t>(compiler.get_declared_struct_size(bufferType));
-			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			int memberCount = static_cast<int>(bufferType.member_types.size());
-
-			KG_CORE_TRACE("  {0}", resource.name);
-			KG_CORE_TRACE("    Size = {0}", bufferSize);
-			KG_CORE_TRACE("    Binding = {0}", binding);
-			KG_CORE_TRACE("    Members = {0}", memberCount);
-		}
-	}
-
 	void OpenGLShader::Bind() const
 	{
-		
-
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
-		
-
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
-		
-
 		UploadUniformInt(name, value);
 	}
 
@@ -403,29 +277,21 @@ namespace Kargono {
 
 	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
-		
-
 		UploadUniformFloat2(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
-		
-
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
-		
-
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
-		
-
 		UploadUniformMat4(name, value);
 	}
 

@@ -20,6 +20,8 @@ project "Kargono"
         "dependencies/stb_image/**.h",
         "dependencies/ImGuizmo/ImGuizmo.h",
         "dependencies/ImGuizmo/ImGuizmo.cpp",
+        "dependencies/hash_library/sha256.cpp",
+        "dependencies/hash_library/sha256.h",
         "src/API/**.h",
         "src/API/**.cpp"
     }
@@ -58,7 +60,8 @@ project "Kargono"
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.OpenALSoft}",
-        "%{IncludeDir.dr_wav}"
+        "%{IncludeDir.dr_wav}",
+        "%{IncludeDir.hash_library}"
 
     }
 
@@ -80,6 +83,9 @@ project "Kargono"
     }
 
     filter "files:dependencies/ImGuizmo/**.cpp"
+        flags{ "NoPCH" }
+
+    filter "files:dependencies/hash_library/**.cpp"
         flags{ "NoPCH" }
 
     filter "system:windows"

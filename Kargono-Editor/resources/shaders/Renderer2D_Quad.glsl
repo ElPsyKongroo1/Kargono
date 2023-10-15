@@ -96,7 +96,7 @@ void main()
 		case 31: texColor *= texture(u_Textures[31], Input.TexCoord * Input.TilingFactor); break;
 	}
 
-	if (texColor.a <= 0.01) 
+	if (texColor.a <= 0.3) 
     {
         discard;
     }

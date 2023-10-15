@@ -7,96 +7,7 @@
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Core/FileSystem.h"
 
-
-#include <yaml-cpp/yaml.h>
-
-namespace YAML
-{
-	template<>
-	struct convert<glm::vec2>
-	{
-		static Node encode(const glm::vec2& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec2& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 2) { return false; }
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec3>
-	{
-		static Node encode (const glm::vec3& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec3& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 3) { return false; }
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec4>
-	{
-		static Node encode(const glm::vec4& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
-			node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec4& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 4) { return false; }
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<Kargono::UUID>
-	{
-		static Node encode(const Kargono::UUID& uuid)
-		{
-			Node node;
-			node.push_back((uint64_t)uuid);
-			return node;
-		}
-		static bool decode(const Node& node, Kargono::UUID& uuid)
-		{
-			uuid = node.as<uint64_t>();
-			return true;
-		}
-	};
-}
+#include "API/Serialization/SerializationAPI.h"
 
 namespace Kargono
 {
@@ -112,27 +23,6 @@ namespace Kargono
 		Type data = scriptField["Data"].as<Type>();       \
 		fieldInstance.SetValue(data);                       \
 		break;                                              \
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-		return out;
 	}
 
 	static std::string RigidBody2DBodyTypeToString(Rigidbody2DComponent::BodyType bodyType)
@@ -169,7 +59,7 @@ namespace Kargono
 		KG_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have a component");
 
 		out << YAML::BeginMap; // Entity Map
-		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
+		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
 		
 
 		if (entity.HasComponent<TagComponent>())
@@ -219,27 +109,35 @@ namespace Kargono
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<SpriteRendererComponent>())
+		if (entity.HasComponent<ShapeComponent>())
 		{
-			out << YAML::Key << "SpriteRendererComponent";
+			out << YAML::Key << "ShapeComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
-			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-			if (spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << FileSystem::GetRelativePath(Project::GetAssetDirectory(), spriteRendererComponent.Texture->GetPath()).string() ;
-
-			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
-			out << YAML::EndMap; // Component Map
-		}
-
-		if (entity.HasComponent<CircleRendererComponent>())
-		{
-			out << YAML::Key << "CircleRendererComponent";
-			out << YAML::BeginMap; // Component Map
-			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
-			out << YAML::Key << "Color" << YAML::Value << circleRendererComponent.Color;
-			out << YAML::Key << "Thickness" << YAML::Value << circleRendererComponent.Thickness;
-			out << YAML::Key << "Fade" << YAML::Value << circleRendererComponent.Fade;
+			auto& shapeComponent = entity.GetComponent<ShapeComponent>();
+			out << YAML::Key << "CurrentShape" << YAML::Value << Shape::ShapeTypeToString(shapeComponent.CurrentShape);
+			if (shapeComponent.Texture)
+			{
+				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
+			}
+			KG_CORE_ASSERT(sizeof(uint8_t) * 12 == sizeof(Shader::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+			if (shapeComponent.Shader)
+			{
+				// Add Shader Handle
+				out << YAML::Key << "ShaderHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.ShaderHandle);
+				// Add Shader Specification
+				const Shader::ShaderSpecification& shaderSpec = shapeComponent.Shader->GetSpecification();
+				out << YAML::Key << "ShaderSpecification" << YAML::Value;
+				out << YAML::BeginMap;
+				out << YAML::Key << "AddFlatColor" << YAML::Value << shaderSpec.AddFlatColor;
+				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << shaderSpec.AddProjectionMatrix;
+				out << YAML::Key << "AddEntityID" << YAML::Value << shaderSpec.AddEntityID;
+				out << YAML::Key << "AddCircleShape" << YAML::Value << shaderSpec.AddCircleShape;
+				out << YAML::Key << "AddTexture" << YAML::Value << shaderSpec.AddTexture;
+				out << YAML::Key << "RenderType" << YAML::Value << Shape::RenderingTypeToString(shaderSpec.RenderType);
+				out << YAML::EndMap;
+				// Add Buffer
+				out << YAML::Key << "Buffer" << YAML::Value << YAML::Binary(shapeComponent.ShaderData.Data, shapeComponent.ShaderData.Size);
+			}
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -327,7 +225,7 @@ namespace Kargono
 						WRITE_SCRIPT_FIELD(ScriptFieldType::Vector2,	glm::vec2);
 						WRITE_SCRIPT_FIELD(ScriptFieldType::Vector3,	glm::vec3);
 						WRITE_SCRIPT_FIELD(ScriptFieldType::Vector4,	glm::vec4);
-						WRITE_SCRIPT_FIELD(ScriptFieldType::Entity,		UUID);
+						WRITE_SCRIPT_FIELD(ScriptFieldType::Entity,		uint64_t);
 
 					}
 
@@ -396,7 +294,7 @@ namespace Kargono
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
 				if (tagComponent) { name = tagComponent["Tag"].as<std::string>(); }
-				KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
+				//KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
@@ -483,29 +381,50 @@ namespace Kargono
 					}
 				}
 
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
+				auto shapeComponent = entity["ShapeComponent"];
+				if (shapeComponent)
 				{
-					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
-					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-					if (spriteRendererComponent["TexturePath"])
+					auto& sc = deserializedEntity.AddComponent<ShapeComponent>();
+					sc.CurrentShape = Shape::StringToShapeType(shapeComponent["CurrentShape"].as<std::string>());
+					if(sc.CurrentShape != Shape::ShapeTypes::None)
 					{
-						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						auto path = Project::AppendToAssetDirPath(texturePath);
-						src.Texture = Texture2D::Create(path.string());
+						sc.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetVertices());
+						sc.Indices = CreateRef<std::vector<uint32_t>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetIndices());
+						sc.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetTextureCoordinates());
+					}
+					if (shapeComponent["TextureHandle"])
+					{
+						AssetHandle textureHandle = shapeComponent["TextureHandle"].as<uint64_t>();
+						sc.Texture = AssetManager::GetTexture(textureHandle);
+						sc.TextureHandle = textureHandle;
 					}
 
-					if (spriteRendererComponent["TilingFactor"])
-						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
-				}
-
-				auto circleRendererComponent = entity["CircleRendererComponent"];
-				if (circleRendererComponent)
-				{
-					auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
-					crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
-					crc.Thickness = circleRendererComponent["Thickness"].as<float>();
-					crc.Fade = circleRendererComponent["Fade"].as<float>();
+					if (shapeComponent["ShaderHandle"])
+					{
+						AssetHandle shaderHandle = shapeComponent["ShaderHandle"].as<uint64_t>();
+						sc.Shader = AssetManager::GetShader(shaderHandle);
+						if (!sc.Shader)
+						{
+							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
+							Shader::ShaderSpecification shaderSpec{};
+							// ShaderSpecification Section
+							shaderSpec.AddFlatColor = shaderSpecificationNode["AddFlatColor"].as<bool>();
+							shaderSpec.AddProjectionMatrix = shaderSpecificationNode["AddProjectionMatrix"].as<bool>();
+							shaderSpec.AddEntityID = shaderSpecificationNode["AddEntityID"].as<bool>();
+							shaderSpec.AddCircleShape = shaderSpecificationNode["AddCircleShape"].as<bool>();
+							shaderSpec.AddTexture = shaderSpecificationNode["AddTexture"].as<bool>();
+							shaderSpec.RenderType = Shape::StringToRenderingType(shaderSpecificationNode["RenderType"].as<std::string>());
+							auto [newHandle , newShader] = AssetManager::GetShader(shaderSpec);
+							shaderHandle = newHandle;
+							sc.Shader = newShader;
+						}
+						sc.ShaderHandle = shaderHandle;
+						sc.ShaderSpecification = sc.Shader->GetSpecification();
+						YAML::Binary binary = shapeComponent["Buffer"].as<YAML::Binary>();
+						Buffer buffer{ binary.size() };
+						memcpy_s(buffer.Data, buffer.Size, binary.data(), buffer.Size);
+						sc.ShaderData = buffer;
+					}
 				}
 
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

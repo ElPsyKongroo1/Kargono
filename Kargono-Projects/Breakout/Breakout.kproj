@@ -1,5 +1,5 @@
 Project:
   Name: Sandbox
-  StartScene: "Scenes/new_scene.kargono"
+  StartScene: "Scenes/main_gameplay_scene.kargono"
   AssetDirectory: "Assets"
   ScriptModulePath: "Scripts/Binaries/Breakout.dll"

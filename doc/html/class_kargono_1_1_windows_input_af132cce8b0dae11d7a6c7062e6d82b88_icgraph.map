@@ -1,7 +1,0 @@
-<map id="Kargono::WindowsInput::GetMousePositionImpl" name="Kargono::WindowsInput::GetMousePositionImpl">
-<area shape="rect" id="Node000001" title="Implementation of the GetMousePositionImpl function." alt="" coords="212,39,372,81"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_windows_input.html#a9ad9d75b5b07d9e50ac01f5189e37ccb" title="Implementation of the GetMouseXImpl function." alt="" coords="5,5,164,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,47,164,42,165,37,197,42"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_windows_input.html#a984bfe7b50216af631308ceb7da820b1" title="Implementation of the GetMouseYImpl function." alt="" coords="5,72,164,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,78,165,83,164,78,197,73"/>
-</map>

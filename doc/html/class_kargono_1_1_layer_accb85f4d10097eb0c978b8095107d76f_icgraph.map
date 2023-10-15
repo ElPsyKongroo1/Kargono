@@ -1,9 +1,0 @@
-<map id="Kargono::Layer::OnAttach" name="Kargono::Layer::OnAttach">
-<area shape="rect" id="Node000001" title="Called when the layer is attached to the application." alt="" coords="384,47,556,73"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#a3de0bf9286cb7ab75fcce597b9f272aa" title="Function to add a layer to the layer stack." alt="" coords="195,5,336,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="369,46,336,41,337,35,370,41"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#a84914a37f547e6758bb7086b1b2b7449" title="Function to add an overlay to the layer stack." alt="" coords="195,72,336,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="370,79,337,85,336,79,369,74"/>
-<area shape="rect" id="Node000004" href="$class_kargono_1_1_application.html#a5013d2d9b4b8a49b26a35a640faee54b" title="Public access specifier." alt="" coords="5,72,147,115"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="180,96,147,96,147,91,180,91"/>
-</map>

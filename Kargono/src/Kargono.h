@@ -28,10 +28,10 @@
 
 // ----Renderer--------------------------------
 #include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/Renderer2D.h"
+#include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/RenderCommand.h"
 
-#include "Kargono/Renderer/Buffer.h"
+#include "Kargono/Renderer/InputBuffer.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Renderer/Framebuffer.h"
 #include "Kargono/Renderer/Texture.h"

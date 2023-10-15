@@ -1,0 +1,11 @@
+Registry: Untitled
+Assets:
+  - AssetHandle: 12820105634099616839
+    MetaData:
+      CheckSum: f39dff176a7dd17d7d697fe04ed6f2fe580313593978de3b02a68e6fd8f0e521
+      FileLocation: ""
+      IntermediateLocation: Intermediates/12820105634099616839.kgasset
+      AssetType: Texture
+      TextureHeight: 512
+      TextureWidth: 512
+      TextureChannels: 4

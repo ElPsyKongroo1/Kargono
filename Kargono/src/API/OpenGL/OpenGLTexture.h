@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Kargono/Renderer/Texture.h"
+#include "Kargono/Assets/Asset.h"
+#include "Kargono/Core/Buffer.h"
 
 #include <glad/glad.h>
 
@@ -11,6 +13,8 @@ namespace Kargono
 	public:
 		OpenGLTexture2D(uint32_t width, uint32_t height);
 		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(Buffer buffer, const TextureMetaData& metadata);
+
 		virtual ~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override { return m_Width; }

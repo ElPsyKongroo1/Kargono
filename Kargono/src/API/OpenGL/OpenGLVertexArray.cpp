@@ -6,21 +6,21 @@
 
 namespace Kargono
 {
-	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+	static GLenum ShaderDataTypeToOpenGLBaseType(InputDataType type)
 	{
 		switch (type)
 		{
-			case ShaderDataType::Float:	return GL_FLOAT;
-			case ShaderDataType::Float2:	return GL_FLOAT;
-			case ShaderDataType::Float3:	return GL_FLOAT;
-			case ShaderDataType::Float4:	return GL_FLOAT;
-			case ShaderDataType::Mat3:		return GL_FLOAT;
-			case ShaderDataType::Mat4:		return GL_FLOAT;
-			case ShaderDataType::Int:		return GL_INT;
-			case ShaderDataType::Int2:		return GL_INT;
-			case ShaderDataType::Int3:		return GL_INT;
-			case ShaderDataType::Int4:		return GL_INT;
-			case ShaderDataType::Bool:		return GL_BOOL;
+			case InputDataType::Float:	return GL_FLOAT;
+			case InputDataType::Float2:	return GL_FLOAT;
+			case InputDataType::Float3:	return GL_FLOAT;
+			case InputDataType::Float4:	return GL_FLOAT;
+			case InputDataType::Mat3:		return GL_FLOAT;
+			case InputDataType::Mat4:		return GL_FLOAT;
+			case InputDataType::Int:		return GL_INT;
+			case InputDataType::Int2:		return GL_INT;
+			case InputDataType::Int3:		return GL_INT;
+			case InputDataType::Int4:		return GL_INT;
+			case InputDataType::Bool:		return GL_BOOL;
 			}
 			KG_CORE_ASSERT(false, "Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
 			return -1;
@@ -28,32 +28,22 @@ namespace Kargono
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
-		
-
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
-		
-
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 	void OpenGLVertexArray::Bind() const
 	{
-		
-
 		glBindVertexArray(m_RendererID);
 	}
 	void OpenGLVertexArray::Unbind() const
 	{
-		
-
 		glBindVertexArray(0);
 	}
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
-		
-
 		KG_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		glBindVertexArray(m_RendererID);
@@ -64,10 +54,10 @@ namespace Kargono
 		{
 			switch (element.Type)
 			{
-			case ShaderDataType::Float:
-			case ShaderDataType::Float2:
-			case ShaderDataType::Float3:
-			case ShaderDataType::Float4:
+			case InputDataType::Float:
+			case InputDataType::Float2:
+			case InputDataType::Float3:
+			case InputDataType::Float4:
 			{
 				glEnableVertexAttribArray(m_VertexBufferIndex);
 				glVertexAttribPointer(m_VertexBufferIndex,
@@ -79,11 +69,11 @@ namespace Kargono
 				m_VertexBufferIndex++;
 				break;
 			}
-			case ShaderDataType::Int:
-			case ShaderDataType::Int2:
-			case ShaderDataType::Int3:
-			case ShaderDataType::Int4:
-			case ShaderDataType::Bool:
+			case InputDataType::Int:
+			case InputDataType::Int2:
+			case InputDataType::Int3:
+			case InputDataType::Int4:
+			case InputDataType::Bool:
 			{
 				glEnableVertexAttribArray(m_VertexBufferIndex);
 				glVertexAttribIPointer(m_VertexBufferIndex,
@@ -94,8 +84,8 @@ namespace Kargono
 				m_VertexBufferIndex++;
 				break;
 			}
-			case ShaderDataType::Mat3:
-			case ShaderDataType::Mat4:
+			case InputDataType::Mat3:
+			case InputDataType::Mat4:
 			{
 				uint8_t count = element.GetComponentCount();
 				for (uint8_t i = 0; i < count; i++)
@@ -122,8 +112,6 @@ namespace Kargono
 	}
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		
-
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 

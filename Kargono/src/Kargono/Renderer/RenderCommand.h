@@ -27,6 +27,12 @@ namespace Kargono
 		{
 			s_RendererAPI->DrawIndexed(vertexArray, indexCount);
 		}
+
+		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount)
+		{
+			s_RendererAPI->DrawIndexed(vertexArray, indexPointer, indexCount);
+		}
+
 		static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 		{
 			s_RendererAPI->DrawLines(vertexArray, vertexCount);

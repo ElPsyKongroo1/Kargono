@@ -2,9 +2,10 @@
 
 #include "Kargono/Core/Application.h"
 #include "Kargono/Utils/PlatformUtils.h"
-#include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
+#include "Kargono/Renderer/RenderCommand.h"
+#include "Kargono/Renderer/Renderer.h"
 
 namespace Kargono
 {
@@ -23,7 +24,7 @@ namespace Kargono
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 
-		Renderer::Init();
+		RenderCommand::Init();
 		ScriptEngine::Init();
 
 	}
@@ -42,7 +43,7 @@ namespace Kargono
 		}
 
 		ScriptEngine::Shutdown();
-		Renderer::Shutdown();
+		// TODO: Add Renderer Shutdown!
 		
 	}
 

@@ -1,5 +1,0 @@
-<map id="Kargono::Layer::OnImGuiRender" name="Kargono::Layer::OnImGuiRender">
-<area shape="rect" id="Node000001" title="Called to render the ImGui for the layer." alt="" coords="226,5,435,32"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,5,178,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,21,178,21,178,16,211,16"/>
-</map>

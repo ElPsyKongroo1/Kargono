@@ -1,7 +1,0 @@
-<map id="ImGui_ImplOpenGL3_RenderDrawData" name="ImGui_ImplOpenGL3_RenderDrawData">
-<area shape="rect" id="Node000001" title=" " alt="" coords="448,5,637,48"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_im_gui_layer.html#aab784e68f15f8bd5c2bba4dff601cd8b" title="Function that ends ImGui rendering." alt="" coords="226,13,400,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="433,29,400,29,400,24,433,24"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_application.html#ae901aff5d0fcd5fa0c50fed446f52415" title="Function to run the application." alt="" coords="5,13,178,40"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="210,29,178,29,178,24,210,24"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="Kargono::KeyReleasedEvent" name="Kargono::KeyReleasedEvent">
-<area shape="rect" id="Node000001" title="Class for handling key released events in the game engine @inherits KeyEvent." alt="" coords="5,155,192,181"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_key_event.html" title="Base class for keyboard events in the game engine." alt="" coords="32,80,165,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,122,101,154,96,154,96,122"/>
-<area shape="rect" id="Node000003" href="$class_kargono_1_1_event.html" title="The base class for all events in the Kargono engine." alt="" coords="44,5,153,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,47,101,80,96,80,96,47"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="RenderCommand.h" name="RenderCommand.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="146,5,279,32"/>
-<area shape="rect" id="Node000002" href="$_application_8cpp.html" title=" " alt="" coords="5,80,116,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,41,88,82,86,77,172,36"/>
-<area shape="rect" id="Node000003" href="$_render_command_8cpp.html" title=" " alt="" coords="139,80,286,107"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="215,47,215,80,210,80,210,47"/>
-<area shape="rect" id="Node000004" href="$_renderer_8cpp.html" title=" " alt="" coords="310,80,408,107"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="252,36,335,77,332,82,250,41"/>
-</map>
