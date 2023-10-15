@@ -3,6 +3,7 @@
 #include "Kargono/Math/Math.h"
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+#include "Kargono/Assets/AssetManager.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -44,8 +45,8 @@ namespace Kargono {
 			}
 
 		}
-
-		Renderer2D::SetLineWidth(4.0f);
+		Renderer::Init();
+		Renderer::SetLineWidth(4.0f);
 
 		OnScenePlay();
 	}
@@ -68,7 +69,7 @@ namespace Kargono {
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		
 		// Render
-		Renderer2D::ResetStats();
+		Renderer::ResetStats();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
@@ -103,6 +104,8 @@ namespace Kargono {
 			{
 				m_ActiveScene->DestroyAllEntities();
 			}
+			AssetManager::ClearAll();
+			AssetManager::DeserializeAll();
 			OpenScene(startScenePath);
 
 		}
