@@ -2,9 +2,6 @@
 
 #include "Kargono/Core/UUID.h"
 
-
-
-
 namespace Kargono
 {
 	static std::random_device s_RandomDevice;

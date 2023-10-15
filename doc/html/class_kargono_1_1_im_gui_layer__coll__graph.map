@@ -1,5 +1,0 @@
-<map id="Kargono::ImGuiLayer" name="Kargono::ImGuiLayer">
-<area shape="rect" id="Node000001" title="Represents an ImGui layer that inherits from the Layer class." alt="" coords="5,80,149,107"/>
-<area shape="rect" id="Node000002" href="$class_kargono_1_1_layer.html" title="Base class for all layers in the game engine." alt="" coords="22,5,132,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,47,80,80,74,80,74,47"/>
-</map>

@@ -3,12 +3,16 @@
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Scene/SceneCamera.h"
 #include "Kargono/Renderer/Texture.h"
+#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Renderer/Shape.h"
 
 #include <glm/glm.hpp>
-#include <string>
 #include <glm/ext/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+
+#include <string>
 
 
 namespace Kargono
@@ -52,27 +56,6 @@ namespace Kargono
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
-	};
-
-	struct SpriteRendererComponent
-	{
-		glm::vec4 Color {1.0f, 1.0f, 1.0f, 1.0f};
-		Ref<Texture2D> Texture;
-		float TilingFactor = 1.0f;
-		SpriteRendererComponent() = default;
-		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
-			: Color(color) {}
-	};
-
-	struct CircleRendererComponent
-	{
-		glm::vec4 Color {1.0f, 1.0f, 1.0f, 1.0f};
-		float Thickness = 1.0f;
-		float Fade = 0.005f;
-
-		CircleRendererComponent() = default;
-		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
 	struct CameraComponent
@@ -162,13 +145,81 @@ namespace Kargono
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
+	struct ShapeComponent
+	{
+		Shape::ShapeTypes CurrentShape = Shape::ShapeTypes::None;
+		Ref<std::vector<glm::vec3>> Vertices {};
+		Ref<std::vector<glm::vec2>> TextureCoordinates {};
+		Ref<std::vector<uint32_t>> Indices {};
+		Ref<Shader> Shader;
+		Shader::ShaderSpecification ShaderSpecification {false, false, false, true, true, Shape::RenderingType::DrawIndex};
+		AssetHandle ShaderHandle;
+		Ref<Texture2D> Texture;
+		AssetHandle TextureHandle;
+		Buffer ShaderData;
+
+		ShapeComponent()
+		{
+			auto [handle , shader] = AssetManager::GetShader(ShaderSpecification);
+			ShaderHandle = handle;
+			Shader = shader;
+			Buffer textureBuffer{ 4 };
+			textureBuffer.SetDataToByte(0xff);
+			TextureHandle = AssetManager::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
+			Texture = AssetManager::GetTexture(TextureHandle);
+			textureBuffer.Release();
+			Buffer buffer(Shader->GetInputLayout().GetStride() * sizeof(uint8_t));
+			ShaderData = buffer;
+			ShaderData.SetDataToByte(0);
+		}
+		ShapeComponent(const ShapeComponent& other)
+		{
+			this->CurrentShape = other.CurrentShape;
+			this->Vertices = other.Vertices;
+			this->TextureCoordinates = other.TextureCoordinates;
+			this->Indices = other.Indices;
+			this->Shader = other.Shader;
+			this->ShaderSpecification = other.ShaderSpecification;
+			this->Texture = other.Texture;
+			this->TextureHandle = other.TextureHandle;
+			this->ShaderHandle = other.ShaderHandle;
+			this->ShaderData = Buffer::Copy(other.ShaderData);
+			//->ShaderData = other.ShaderData;
+		}
+
+		ShapeComponent& operator=(const ShapeComponent& other)
+		{
+
+			this->CurrentShape = other.CurrentShape;
+			this->Vertices = other.Vertices;
+			this->TextureCoordinates = other.TextureCoordinates;
+			this->Indices = other.Indices;
+			this->Shader = other.Shader;
+			this->ShaderSpecification = other.ShaderSpecification;
+			this->Texture = other.Texture;
+			this->TextureHandle = other.TextureHandle;
+			this->ShaderHandle = other.ShaderHandle;
+			this->ShaderData = Buffer::Copy(other.ShaderData);
+			//->ShaderData = other.ShaderData;
+			return *this;
+		}
+		~ShapeComponent()
+		{
+			if (ShaderData)
+			{
+				ShaderData.Release();
+				//KG_CORE_INFO("Shape Destructor Called");
+			}
+			
+		}
+	};
+
 	template<typename... Components>
 	struct ComponentGroup
 	{
 	};
 
-	using AllComponents = ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, ScriptComponent,
+	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, Rigidbody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent>;
+		CircleCollider2DComponent, ShapeComponent>;
 }

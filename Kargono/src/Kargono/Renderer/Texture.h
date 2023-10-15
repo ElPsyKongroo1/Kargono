@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
+#include "Kargono/Core/Buffer.h"
+#include "Kargono/Assets/Asset.h"
 
 #include <string>
 #include <filesystem>
+
 
 namespace Kargono {
 
@@ -30,7 +33,13 @@ namespace Kargono {
 	{
 	public:
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
-		static Ref<Texture2D> Create(const std::filesystem::path& path);
+
+		// Create Texture using intermediate format
+		static Ref<Texture2D> Create(Buffer buffer, const TextureMetaData& metadata);
+
+		// Create unmanaged texture outside of AssetManager. Used for Editor Textures only.
+		// Runtime related textures should use AssetManager.
+		static Ref<Texture2D> CreateEditorTexture(const std::filesystem::path& path);
 
 	};
 }

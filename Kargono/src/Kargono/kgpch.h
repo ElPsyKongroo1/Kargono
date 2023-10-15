@@ -13,13 +13,17 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <exception>
+
 
 #include <string>
 #include <string_view>
 #include <sstream>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <unordered_set>
+#include <tuple>
 
 #include <cmath>
 #include <cassert>

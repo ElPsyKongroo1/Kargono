@@ -2,7 +2,7 @@
 
 #include "Kargono/Project/ProjectSerializer.h"
 
-#include <yaml-cpp/yaml.h>
+#include "API/Serialization/SerializationAPI.h"
 
 namespace Kargono
 {

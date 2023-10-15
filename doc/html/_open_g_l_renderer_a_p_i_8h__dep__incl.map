@@ -1,7 +1,0 @@
-<map id="OpenGLRendererAPI.h" name="OpenGLRendererAPI.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="103,5,256,32"/>
-<area shape="rect" id="Node000002" href="$_open_g_l_renderer_a_p_i_8cpp.html" title=" " alt="" coords="5,80,173,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,43,106,82,103,78,151,39"/>
-<area shape="rect" id="Node000003" href="$_render_command_8cpp.html" title=" " alt="" coords="197,80,344,107"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,39,256,78,253,82,205,43"/>
-</map>

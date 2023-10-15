@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Renderer/Buffer.h"
+#include "Kargono/Renderer/InputBuffer.h"
 
 namespace Kargono
 {

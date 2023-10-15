@@ -1,3 +1,0 @@
-Scene: Untitled
-Entities:
-  []

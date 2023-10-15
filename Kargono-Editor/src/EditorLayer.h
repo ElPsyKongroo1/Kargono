@@ -29,6 +29,7 @@ namespace Kargono {
 
 		void OnUpdateParticles();
 
+		void InitializeOverlayData();
 		void OnOverlayRender();
 
 		void NewProject();
