@@ -1,6 +1,5 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Input.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"

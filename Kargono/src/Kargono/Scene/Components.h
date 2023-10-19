@@ -151,8 +151,9 @@ namespace Kargono
 		Ref<std::vector<glm::vec3>> Vertices {};
 		Ref<std::vector<glm::vec2>> TextureCoordinates {};
 		Ref<std::vector<uint32_t>> Indices {};
+		Ref<std::vector<glm::vec4>> VertexColors {};
 		Ref<Shader> Shader;
-		Shader::ShaderSpecification ShaderSpecification {false, false, false, true, true, Shape::RenderingType::DrawIndex};
+		Shader::ShaderSpecification ShaderSpecification {Shader::ColorInputType::None, false, false, true, true, Shape::RenderingType::DrawIndex};
 		AssetHandle ShaderHandle;
 		Ref<Texture2D> Texture;
 		AssetHandle TextureHandle;
@@ -184,6 +185,7 @@ namespace Kargono
 			this->TextureHandle = other.TextureHandle;
 			this->ShaderHandle = other.ShaderHandle;
 			this->ShaderData = Buffer::Copy(other.ShaderData);
+			this->VertexColors = other.VertexColors;
 			//->ShaderData = other.ShaderData;
 		}
 
@@ -200,6 +202,7 @@ namespace Kargono
 			this->TextureHandle = other.TextureHandle;
 			this->ShaderHandle = other.ShaderHandle;
 			this->ShaderData = Buffer::Copy(other.ShaderData);
+			this->VertexColors = other.VertexColors;
 			//->ShaderData = other.ShaderData;
 			return *this;
 		}

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Kargono/Core/Buffer.h"
-
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 

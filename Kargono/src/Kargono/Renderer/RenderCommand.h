@@ -37,6 +37,10 @@ namespace Kargono
 		{
 			s_RendererAPI->DrawLines(vertexArray, vertexCount);
 		}
+		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+		{
+			s_RendererAPI->DrawTriangles(vertexArray, vertexCount);
+		}
 		static void SetLineWidth(float width)
 		{
 			s_RendererAPI->SetLineWidth(width);

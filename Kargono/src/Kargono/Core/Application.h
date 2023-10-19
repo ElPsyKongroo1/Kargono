@@ -7,12 +7,12 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/ImGui/ImGuiLayer.h"
 #include "Kargono/Renderer/InputBuffer.h"
+#include "Kargono/Physics/Physics2D.h"
 
 #include <functional>
 #include <mutex>
 #include <filesystem>
 
-#include "Kargono/Physics/Physics2D.h"
 
 int main(int argc, char** argv);
 

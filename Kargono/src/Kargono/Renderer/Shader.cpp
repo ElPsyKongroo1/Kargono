@@ -2,12 +2,12 @@
 
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "API/OpenGL/OpenGLShader.h"
+#include "Kargono/Scene/Scene.h"
 #include "Kargono/Core/FileSystem.h"
+#include "API/OpenGL/OpenGLShader.h"
 
 #include <spdlog/fmt/ostr.h>
 
-#include "Kargono/Scene/Scene.h"
 
 namespace Kargono {
 	Ref<Shader> Shader::Create(const std::filesystem::path& filepath)
@@ -237,7 +237,7 @@ namespace Kargono {
 	// Pixel Color Features
 	//=================
 
-	static void AddFlatColorOutput()
+	static void AddColorOutput()
 	{
 		InsertMap(s_VertexInput, 70, [&](uint16_t count)
 			{
@@ -538,7 +538,10 @@ namespace Kargono {
 		AddSimpleVertexOutput();
 		AddSimpleFragmentOutput();
 
-		if (shaderSpec.AddFlatColor) { AddFlatColorOutput(); }
+		if (shaderSpec.ColorInput == Shader::ColorInputType::FlatColor || shaderSpec.ColorInput == Shader::ColorInputType::VertexColor)
+		{
+			AddColorOutput();
+		}
 		if (shaderSpec.AddProjectionMatrix) { AddProjectionMatrix(); }
 		if (shaderSpec.AddEntityID) { AddEntityID(); }
 		if (shaderSpec.AddCircleShape) { AddCircleShape(); }
@@ -550,6 +553,7 @@ namespace Kargono {
 
 		// ==== Vertex Shader ====
 		s_OutputStream << "// Rendering Type: " << Shape::RenderingTypeToString(shaderSpec.RenderType) << "\r\n";
+		s_OutputStream << "// Color Type: " << Shader::ColorInputTypeToString(shaderSpec.ColorInput) << "\r\n";
 		BeginShader("vertex");
 		// Structs/Classes
 		RunFunctions(s_VertexStructs);
@@ -598,14 +602,6 @@ namespace Kargono {
 		RunFunctions(s_FragmentMain);
 		EndMain();
 
-		//std::string ahsdifh = s_OutputStream.str(); // TODO: REMOVE THIS HAHAHAHAHAHAHAHA
-		//static uint16_t count {0};
-		//count++;
-		//std::stringstream filename;
-		//filename << "test" << count << ".txt";
-		//FileSystem::WriteFileString(std::filesystem::current_path() / filename.str(), ahsdifh);
-		//KG_CORE_ERROR(ahsdifh);
-
 		return { s_OutputStream.str(), s_InputBufferLayout, s_UniformBufferLayout };
 	}
 	void Shader::SetSpecification(const Shader::ShaderSpecification& shaderSpec)
@@ -650,6 +646,11 @@ namespace Kargono {
 			m_SubmitUniforms.push_back(Renderer::FillTextureUniform);
 		}
 
+		if (m_ShaderSpecification.ColorInput == Shader::ColorInputType::VertexColor)
+		{
+			m_FillDataPerVertex.push_back(Renderer::FillVertexColor);
+		}
+
 		if (m_ShaderSpecification.AddCircleShape)
 		{
 			m_FillDataPerVertex.push_back(Renderer::FillLocalPosition);
@@ -659,6 +660,11 @@ namespace Kargono {
 		{
 			m_FillDataPerObject.push_back(Renderer::FillIndicesData);
 			m_DrawFunctions.push_back(Renderer::DrawBufferIndices);
+		}
+
+		if (m_ShaderSpecification.RenderType == Shape::RenderingType::DrawTriangle)
+		{
+			m_DrawFunctions.push_back(Renderer::DrawBufferTriangles);
 		}
 
 		KG_CORE_ASSERT(sizeof(Shader::ShaderSpecification) == sizeof(uint8_t) * 12, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");

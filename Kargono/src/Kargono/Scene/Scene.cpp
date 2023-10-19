@@ -6,7 +6,9 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scripting/ScriptEngine.h"
+// Leave this include even if it is gray
 #include "Kargono/Scene/ScriptableEntity.h"
+#include "Kargono/Core/Application.h"
 #include "Kargono/Renderer/Shader.h"
 
 #include <glm/glm.hpp>
@@ -16,7 +18,6 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
-#include "Kargono/Core/Application.h"
 
 
 namespace Kargono
@@ -423,9 +424,7 @@ namespace Kargono
 	}
 	void Scene::FillEntityID(Shader::RendererInputSpec& inputSpec)
 	{
-		std::size_t idLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_EntityID").Offset;
-		auto* pointerToID = inputSpec.Buffer.As<int32_t>(idLocationInBuffer);
-		*pointerToID = inputSpec.Entity;
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 

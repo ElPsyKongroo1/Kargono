@@ -1,6 +1,7 @@
 #include "Kargono/Project/Project.h"
 #include "Kargono/Core/Application.h"
 #include "Kargono/Core/FileSystem.h"
+
 #include "Panels/ContentBrowserPanel.h"
 
 #include <imgui.h>

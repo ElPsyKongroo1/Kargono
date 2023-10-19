@@ -50,6 +50,37 @@ namespace Kargono
 			void* EntityRegistry;
 			glm::mat4 TransformMatrix;
 		};
+
+		// This struct specifies the type of color input used by a shader
+		// For example, flat color only sends one color for each object while vertex color
+		// sends a color for each vertex.
+		enum class ColorInputType
+		{
+			None = 0, FlatColor, VertexColor
+		};
+
+		static std::string ColorInputTypeToString(Shader::ColorInputType colorInput)
+		{
+			switch (colorInput)
+			{
+			case Shader::ColorInputType::None: return "None";
+			case Shader::ColorInputType::FlatColor: return "FlatColor";
+			case Shader::ColorInputType::VertexColor: return "VertexColor";
+			}
+			KG_CORE_ASSERT(false, "Unknown Data Type sent to ColorInputToString Function");
+			return "None";
+		}
+
+		static Shader::ColorInputType StringToColorInputType(std::string_view string)
+		{
+			if (string == "None") { return Shader::ColorInputType::None; }
+			if (string == "FlatColor") { return Shader::ColorInputType::FlatColor; }
+			if (string == "VertexColor") { return Shader::ColorInputType::VertexColor; }
+
+			KG_CORE_ASSERT(false, "Unknown Data Type sent to StringToColorInputType Function");
+			return Shader::ColorInputType::None;
+		}
+
 	public:
 
 		using ShaderSource = std::string;
@@ -59,7 +90,7 @@ namespace Kargono
 			// TODO: Note, ensure you update the serialization method after any changes!
 			
 			// Pixel Color Options
-			bool AddFlatColor = false;
+			Shader::ColorInputType ColorInput = Shader::ColorInputType::None;
 			bool AddTexture = false;
 
 			// Structure Change Options
@@ -76,8 +107,8 @@ namespace Kargono
 			// Default Copy Constructor
 			ShaderSpecification(const ShaderSpecification&) = default;
 			ShaderSpecification() = default;
-			ShaderSpecification(bool flatColor, bool addTexture, bool addCircle, bool addProjection, bool addEntityID, Shape::RenderingType renderType)
-				: AddFlatColor(flatColor), AddTexture(addTexture), AddCircleShape(addCircle), AddProjectionMatrix(addProjection), AddEntityID(addEntityID), RenderType(renderType)
+			ShaderSpecification(Shader::ColorInputType colorInput, bool addTexture, bool addCircle, bool addProjection, bool addEntityID, Shape::RenderingType renderType)
+				: ColorInput(colorInput), AddTexture(addTexture), AddCircleShape(addCircle), AddProjectionMatrix(addProjection), AddEntityID(addEntityID), RenderType(renderType)
 			{}
 		};
 
@@ -103,6 +134,19 @@ namespace Kargono
 		static Ref<Shader> Create(const std::string& name, const Shader::ShaderSpecification shaderSpec);
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries);
 	public:
+		template<typename T>
+		static T* GetInputLocation(const std::string& inputName, Buffer inputBuffer, Ref<Shader> shader)
+		{
+			std::size_t inputLocation = shader->GetInputLayout().FindElementByName(inputName).Offset;
+			return inputBuffer.As<T>(inputLocation);
+		}
+		template<typename T>
+		static void SetDataAtInputLocation(const T& value , const std::string& inputName, Buffer inputBuffer, Ref<Shader> shader)
+		{
+			std::size_t inputLocation = shader->GetInputLayout().FindElementByName(inputName).Offset;
+			T* inputPointer = inputBuffer.As<T>(inputLocation);
+			*inputPointer = value;
+		}
 		static std::tuple<Shader::ShaderSource, InputBufferLayout, UniformBufferList> BuildShader(const ShaderSpecification& shaderSpec);
 
 		const Shader::ShaderSpecification& GetSpecification() const { return m_ShaderSpecification; }

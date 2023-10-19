@@ -1,9 +1,9 @@
 #pragma once
 
-#include "dr_wav.h"
+#include <dr_wav.h>
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class AudioListener 
 {

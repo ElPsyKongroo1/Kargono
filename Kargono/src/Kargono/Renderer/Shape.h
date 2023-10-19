@@ -16,6 +16,11 @@ namespace Kargono
 			None = 0, DrawIndex, DrawTriangle, DrawLine
 		};
 
+		enum class ShapeTypes
+		{
+			None = 0, Quad, Cube, Pyramid
+		};
+
 		static std::string RenderingTypeToString(Shape::RenderingType renderType)
 		{
 			switch (renderType)
@@ -40,11 +45,6 @@ namespace Kargono
 			return Shape::RenderingType::None;
 		}
 
-		enum class ShapeTypes
-		{
-			None = 0, Quad, Cube
-		};
-
 		static std::string ShapeTypeToString(Shape::ShapeTypes shapeType)
 		{
 			switch (shapeType)
@@ -52,6 +52,7 @@ namespace Kargono
 			case Shape::ShapeTypes::None: return "None";
 			case Shape::ShapeTypes::Quad: return "Quad";
 			case Shape::ShapeTypes::Cube: return "Cube";
+			case Shape::ShapeTypes::Pyramid: return "Pyramid";
 			}
 			KG_CORE_ASSERT(false, "Unknown Data Type sent to ShapeTypeToString Function");
 			return "None";
@@ -62,6 +63,7 @@ namespace Kargono
 			if (string == "None") { return Shape::ShapeTypes::None; }
 			if (string == "Quad") { return Shape::ShapeTypes::Quad; }
 			if (string == "Cube") { return Shape::ShapeTypes::Cube; }
+			if (string == "Pyramid") { return Shape::ShapeTypes::Pyramid; }
 
 			KG_CORE_ASSERT(false, "Unknown Data Type sent to StringToShapeType Function");
 			return Shape::ShapeTypes::None;
@@ -71,36 +73,76 @@ namespace Kargono
 		{
 			switch (shapeType)
 			{
-			case Shape::ShapeTypes::Quad: return Shape::Quad;
-			case Shape::ShapeTypes::Cube: return Shape::Cube;
-			case Shape::ShapeTypes::None: return Shape::None;
+			case Shape::ShapeTypes::Pyramid: return Shape::s_Pyramid;
+			case Shape::ShapeTypes::Quad: return Shape::s_Quad;
+			case Shape::ShapeTypes::Cube: return Shape::s_Cube;
+			case Shape::ShapeTypes::None: return Shape::s_None;
 			}
 
 			KG_CORE_ASSERT(false, "Unknown Data Type sent to StringToShapeType Function");
-			return Shape::None;
+			return Shape::s_None;
 		}
-
 
 		using Vertex = glm::vec3;
 	public:
+		//============================================================
+		// Constructors
+		//============================================================
 		Shape() = default;
-		Shape(std::string_view name, const std::vector<Vertex>& vertices, const std::vector<glm::vec2>& texCoordinates, const std::vector<uint32_t>& indices, Shape::RenderingType type)
-			: m_Name{ name }, m_Vertices{ vertices }, m_TextureCoordinates{texCoordinates},  m_Indices{ indices }, m_RenderingType{type} {}
+		Shape(std::string_view name, const std::vector<Vertex>& indexVertices, const std::vector<glm::vec2>& indexTexCoordinates,
+			const std::vector<uint32_t>& indices,
+			const std::vector<Vertex>& triangleVertices, const std::vector<glm::vec2>& triangleTexCoordinates,
+			Shape::RenderingType renderingType, Shape::ShapeTypes shapeType,
+			const std::vector<std::string>& restrictedSpecs)
+			: m_Name{ name }, m_IndexVertices{ indexVertices }, m_IndexTextureCoordinates{ indexTexCoordinates },m_Indices{ indices },
+			m_TriangleVertices{triangleVertices}, m_TriangleTextureCoordinates{triangleTexCoordinates},
+		m_RenderingType{ renderingType }, m_ShapeType{shapeType}, m_RestrictedSpecs(restrictedSpecs) {}
 		std::string_view GetName() const { return m_Name; }
-		const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
-		const std::vector<glm::vec2>& GetTextureCoordinates() const { return m_TextureCoordinates; }
+		//============================================================
+		// Getters/Setters
+		//============================================================
+		// Index Getter/Setters
+		const std::vector<Vertex>& GetIndexVertices() const { return m_IndexVertices; }
 		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
-		Shape::RenderingType GetType() const { return m_RenderingType; }
+		const std::vector<glm::vec2>& GetIndexTextureCoordinates() const { return m_IndexTextureCoordinates; }
+
+		const std::vector<Vertex>& GetTriangleVertices() const { return m_TriangleVertices; }
+		const std::vector<glm::vec2>& GetTriangleTextureCoordinates() const { return m_TriangleTextureCoordinates; }
+
+		// Triangle Getters/Setters
+
+		// Type Information Getters
+		Shape::RenderingType GetRenderingType() const { return m_RenderingType; }
+		Shape::ShapeTypes GetShapeType() const { return m_ShapeType; }
+		const std::vector<std::string>& GetRestrictedSpecs() const { return m_RestrictedSpecs; }
+
 	public:
-		static Shape Quad;
-		static Shape Cube;
-		static Shape None;
+		//============================================================
+		// Static Object Declarations
+		//============================================================
+		static Shape s_Pyramid;
+		static Shape s_Quad;
+		static Shape s_Cube;
+		static Shape s_None;
+
+		inline static std::vector<Shape*> s_AllShapes {&s_Quad, &s_Cube, &s_None, &s_Pyramid};
 	private:
-		std::string m_Name;
-		std::vector<Vertex> m_Vertices;
-		std::vector<glm::vec2> m_TextureCoordinates;
-		std::vector<uint32_t> m_Indices;
-		RenderingType m_RenderingType;
+		std::string m_Name {};
+		// Indices Data
+		std::vector<Vertex> m_IndexVertices {};
+		std::vector<glm::vec2> m_IndexTextureCoordinates {};
+		std::vector<uint32_t> m_Indices {};
+		// Triangle Rendering Data
+		std::vector<Vertex> m_TriangleVertices {};
+		std::vector<glm::vec2> m_TriangleTextureCoordinates {};
+		// Type Information
+		RenderingType m_RenderingType { Shape::RenderingType::None};
+		Shape::ShapeTypes m_ShapeType{ Shape::ShapeTypes::None };
+
+		// Editor Information
+		// This field labels shader specifications that should not be visible in the SceneHierarchy Panel
+		// for this particular object.
+		std::vector<std::string> m_RestrictedSpecs {};
 	};
 
 }
