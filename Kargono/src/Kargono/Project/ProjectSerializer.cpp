@@ -1,7 +1,6 @@
 #include "kgpch.h"
 
 #include "Kargono/Project/ProjectSerializer.h"
-
 #include "API/Serialization/SerializationAPI.h"
 
 namespace Kargono

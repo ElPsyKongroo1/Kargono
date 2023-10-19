@@ -1,6 +1,7 @@
 #include "kgpch.h"
-#include "AudioContext.h"
-#include "AudioMisc.h"
+
+#include "Kargono/Audio/AudioContext.h"
+#include "Kargono/Audio/AudioMisc.h"
 
 void AudioSource::init()
 {

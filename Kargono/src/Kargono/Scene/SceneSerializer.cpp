@@ -6,8 +6,8 @@
 #include "Kargono/Project/Project.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Core/FileSystem.h"
-
 #include "API/Serialization/SerializationAPI.h"
+
 
 namespace Kargono
 {
@@ -115,6 +115,17 @@ namespace Kargono
 			out << YAML::BeginMap; // Component Map
 			auto& shapeComponent = entity.GetComponent<ShapeComponent>();
 			out << YAML::Key << "CurrentShape" << YAML::Value << Shape::ShapeTypeToString(shapeComponent.CurrentShape);
+			if (shapeComponent.VertexColors)
+			{
+				out << YAML::Key << "VertexColors" << YAML::Value << YAML::BeginSeq;
+				for (const auto& color : *shapeComponent.VertexColors)
+				{
+					out << YAML::BeginMap;
+					out << YAML::Key << "Color" << YAML::Value << color;
+					out << YAML::EndMap;
+				}
+				out << YAML::EndSeq;
+			}
 			if (shapeComponent.Texture)
 			{
 				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
@@ -128,12 +139,13 @@ namespace Kargono
 				const Shader::ShaderSpecification& shaderSpec = shapeComponent.Shader->GetSpecification();
 				out << YAML::Key << "ShaderSpecification" << YAML::Value;
 				out << YAML::BeginMap;
-				out << YAML::Key << "AddFlatColor" << YAML::Value << shaderSpec.AddFlatColor;
+				out << YAML::Key << "ColorInputType" << YAML::Value << Shader::ColorInputTypeToString(shaderSpec.ColorInput);
 				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << shaderSpec.AddProjectionMatrix;
 				out << YAML::Key << "AddEntityID" << YAML::Value << shaderSpec.AddEntityID;
 				out << YAML::Key << "AddCircleShape" << YAML::Value << shaderSpec.AddCircleShape;
 				out << YAML::Key << "AddTexture" << YAML::Value << shaderSpec.AddTexture;
 				out << YAML::Key << "RenderType" << YAML::Value << Shape::RenderingTypeToString(shaderSpec.RenderType);
+
 				out << YAML::EndMap;
 				// Add Buffer
 				out << YAML::Key << "Buffer" << YAML::Value << YAML::Binary(shapeComponent.ShaderData.Data, shapeComponent.ShaderData.Size);
@@ -386,12 +398,17 @@ namespace Kargono
 				{
 					auto& sc = deserializedEntity.AddComponent<ShapeComponent>();
 					sc.CurrentShape = Shape::StringToShapeType(shapeComponent["CurrentShape"].as<std::string>());
-					if(sc.CurrentShape != Shape::ShapeTypes::None)
+
+					if (shapeComponent["VertexColors"])
 					{
-						sc.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetVertices());
-						sc.Indices = CreateRef<std::vector<uint32_t>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetIndices());
-						sc.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetTextureCoordinates());
+						auto vertexColors = shapeComponent["VertexColors"];
+						sc.VertexColors = CreateRef<std::vector<glm::vec4>>();
+						for (auto color : vertexColors)
+						{
+							sc.VertexColors->push_back(color["Color"].as<glm::vec4>());
+						}
 					}
+
 					if (shapeComponent["TextureHandle"])
 					{
 						AssetHandle textureHandle = shapeComponent["TextureHandle"].as<uint64_t>();
@@ -408,7 +425,7 @@ namespace Kargono
 							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
 							Shader::ShaderSpecification shaderSpec{};
 							// ShaderSpecification Section
-							shaderSpec.AddFlatColor = shaderSpecificationNode["AddFlatColor"].as<bool>();
+							shaderSpec.ColorInput = Shader::StringToColorInputType(shaderSpecificationNode["ColorInputType"].as<std::string>());
 							shaderSpec.AddProjectionMatrix = shaderSpecificationNode["AddProjectionMatrix"].as<bool>();
 							shaderSpec.AddEntityID = shaderSpecificationNode["AddEntityID"].as<bool>();
 							shaderSpec.AddCircleShape = shaderSpecificationNode["AddCircleShape"].as<bool>();
@@ -424,6 +441,21 @@ namespace Kargono
 						Buffer buffer{ binary.size() };
 						memcpy_s(buffer.Data, buffer.Size, binary.data(), buffer.Size);
 						sc.ShaderData = buffer;
+						if (sc.CurrentShape != Shape::ShapeTypes::None)
+						{
+							if (sc.ShaderSpecification.RenderType == Shape::RenderingType::DrawIndex)
+							{
+								sc.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetIndexVertices());
+								sc.Indices = CreateRef<std::vector<uint32_t>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetIndices());
+								sc.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetIndexTextureCoordinates());
+							}
+
+							if (sc.ShaderSpecification.RenderType == Shape::RenderingType::DrawTriangle)
+							{
+								sc.Vertices = CreateRef<std::vector<glm::vec3>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetTriangleVertices());
+								sc.TextureCoordinates = CreateRef<std::vector<glm::vec2>>(Shape::ShapeTypeToShape(sc.CurrentShape).GetTriangleTextureCoordinates());
+							}
+						}
 					}
 				}
 

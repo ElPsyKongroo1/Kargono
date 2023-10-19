@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/FileSystem.h"
 
-#include "sha256.h"
+#include <sha256.h>
 
 namespace Kargono
 {

@@ -1,11 +1,9 @@
 #pragma once
 
-#include "RendererAPI.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/Texture.h"
+#include "Kargono/Renderer/RendererAPI.h"
 #include "Kargono/Renderer/EditorCamera.h"
 #include "Kargono/Renderer/Camera.h"
-#include "Kargono/Scene/Components.h"
 #include "Kargono/Renderer/Shader.h"
 
 namespace Kargono
@@ -63,6 +61,7 @@ namespace Kargono
 		static void FillLocalPosition(Shader::RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillWorldPosition(Shader::RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillWorldPositionNoTransform(Shader::RendererInputSpec& inputSpec, uint32_t iteration);
+		static void FillVertexColor(Shader::RendererInputSpec& inputSpec, uint32_t iteration);
 		
 		//============================================================
 		// Per DrawCallBuffer Function Pointers to fill Uniform Data
@@ -74,6 +73,7 @@ namespace Kargono
 		//============================================================
 		static void DrawBufferLine(Ref<Shader::DrawCallBuffer> buffer);
 		static void DrawBufferIndices(Ref<Shader::DrawCallBuffer> buffer);
+		static void DrawBufferTriangles(Ref<Shader::DrawCallBuffer> buffer);
 
 		// Specifies maximum size in bytes of DrawCallBuffers
 		static const uint32_t s_MaxVertexBufferSize = 10000;

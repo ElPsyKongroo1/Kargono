@@ -5,9 +5,9 @@
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Core/Timer.h"
 #include "Kargono/Project/Project.h"
+#include "Kargono/Renderer/Shader.h"
 #include "API/Serialization/SerializationAPI.h"
 
-#include "Kargono/Renderer/Shader.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -65,7 +65,7 @@ namespace Kargono
 					Ref<ShaderMetaData> shaderMetaData = CreateRef<ShaderMetaData>();
 
 					// ShaderSpecification Section
-					shaderMetaData->ShaderSpec.AddFlatColor = metadata["AddFlatColor"].as<bool>();
+					shaderMetaData->ShaderSpec.ColorInput = Shader::StringToColorInputType(metadata["ColorInputType"].as<std::string>());
 					shaderMetaData->ShaderSpec.AddProjectionMatrix = metadata["AddProjectionMatrix"].as<bool>();
 					shaderMetaData->ShaderSpec.AddEntityID = metadata["AddEntityID"].as<bool>();
 					shaderMetaData->ShaderSpec.AddCircleShape = metadata["AddCircleShape"].as<bool>();
@@ -130,7 +130,7 @@ namespace Kargono
 			{
 				// ShaderSpecification Section
 				ShaderMetaData* metadata = static_cast<ShaderMetaData*>(asset.Data.SpecificFileData.get());
-				out << YAML::Key << "AddFlatColor" << YAML::Value << metadata->ShaderSpec.AddFlatColor;
+				out << YAML::Key << "ColorInputType" << YAML::Value << Shader::ColorInputTypeToString(metadata->ShaderSpec.ColorInput);
 				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << metadata->ShaderSpec.AddProjectionMatrix;
 				out << YAML::Key << "AddEntityID" << YAML::Value << metadata->ShaderSpec.AddEntityID;
 				out << YAML::Key << "AddCircleShape" << YAML::Value << metadata->ShaderSpec.AddCircleShape;

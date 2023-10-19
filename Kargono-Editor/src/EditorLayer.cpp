@@ -640,13 +640,11 @@ namespace Kargono {
 
 		// Set up Line Input Specifications for Overlay Calls
 		{
-			Shader::ShaderSpecification lineShaderSpec {true, false, false, true, false, Shape::RenderingType::DrawLine};
+			Shader::ShaderSpecification lineShaderSpec {Shader::ColorInputType::FlatColor, false, false, true, false, Shape::RenderingType::DrawLine};
 			auto [uuid, localShader] = AssetManager::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			std::size_t colorLocation = localShader->GetInputLayout().FindElementByName("a_Color").Offset;
-			glm::vec4* color = localBuffer.As<glm::vec4>(colorLocation);
-			*color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+			Shader::SetDataAtInputLocation<glm::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
 			ShapeComponent* lineShapeComponent = new ShapeComponent();
 			lineShapeComponent->CurrentShape = Shape::ShapeTypes::None;
@@ -661,26 +659,18 @@ namespace Kargono {
 		// Set up Circle Input Specification for Overlay Calls
 
 		{
-			Shader::ShaderSpecification shaderSpec {true, false, true, true, false, Shape::RenderingType::DrawIndex};
+			Shader::ShaderSpecification shaderSpec {Shader::ColorInputType::FlatColor, false, true, true, false, Shape::RenderingType::DrawIndex};
 			auto [uuid, localShader] = AssetManager::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			std::size_t colorLocation = localShader->GetInputLayout().FindElementByName("a_Color").Offset;
-			glm::vec4* color = localBuffer.As<glm::vec4>(colorLocation);
-			*color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-
-			std::size_t thicknessLocation = localShader->GetInputLayout().FindElementByName("a_Thickness").Offset;
-			float* thickness = localBuffer.As<float>(thicknessLocation);
-			*thickness = 0.05f;
-
-			std::size_t fadeLocation = localShader->GetInputLayout().FindElementByName("a_Fade").Offset;
-			float* fade = localBuffer.As<float>(fadeLocation);
-			*fade = 0.005f;
+			Shader::SetDataAtInputLocation<glm::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
+			Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
 
 			ShapeComponent* shapeComp = new ShapeComponent();
 			shapeComp->CurrentShape = Shape::ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<glm::vec3>>(Shape::Quad.GetVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Shape::Quad.GetIndices());
+			shapeComp->Vertices = CreateRef<std::vector<glm::vec3>>(Shape::s_Quad.GetIndexVertices());
+			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Shape::s_Quad.GetIndices());
 
 			s_CircleInputSpec.Shader = localShader;
 			s_CircleInputSpec.Buffer = localBuffer;
@@ -738,10 +728,7 @@ namespace Kargono {
 						* glm::scale(glm::mat4(1.0f), scale);
 
 					static glm::vec4 boxColliderColor {0.0f, 1.0f, 0.0f, 1.0f};
-
-					std::size_t colorLocation = s_LineInputSpec.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
-					glm::vec4* color = s_LineInputSpec.Buffer.As<glm::vec4>(colorLocation);
-					*color = boxColliderColor;
+					Shader::SetDataAtInputLocation<glm::vec4>(boxColliderColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
 					glm::vec3 lineVertices[4];
 					for (size_t i = 0; i < 4; i++)
@@ -781,9 +768,8 @@ namespace Kargono {
 
 
 				static glm::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
-				std::size_t colorLocation = s_LineInputSpec.Shader->GetInputLayout().FindElementByName("a_Color").Offset;
-				glm::vec4* color = s_LineInputSpec.Buffer.As<glm::vec4>(colorLocation);
-				*color = selectionColor;
+				Shader::SetDataAtInputLocation<glm::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+
 				glm::vec3 lineVertices[4];
 
 				for (size_t i = 0; i < 4; i++)
@@ -978,7 +964,7 @@ namespace Kargono {
 			return;
 
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		KG_CORE_WARN("Trying to duplicate Entity: {} ({})", selectedEntity.GetName(), selectedEntity.GetUUID());
+		//KG_CORE_WARN("Trying to duplicate Entity: {} ({})", selectedEntity.GetName(), selectedEntity.GetUUID());
 		if (selectedEntity)
 		{
 			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);

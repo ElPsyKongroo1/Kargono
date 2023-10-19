@@ -16,8 +16,6 @@ extern "C"
 	typedef struct _MonoClassField MonoClassField;
 }
 
-
-
 namespace Kargono
 {
 	class ScriptInstance;

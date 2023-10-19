@@ -3,7 +3,6 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Core/Application.h"
 
-
 #include "box2d/b2_contact.h"
 
 namespace Kargono

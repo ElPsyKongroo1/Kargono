@@ -7,7 +7,6 @@
 #include "Kargono/Renderer/UniformBuffer.h"
 #include "Kargono/Project/Project.h"
 #include "Kargono/Scene/Scene.h"
-#include "Kargono/Assets/AssetManager.h"
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -118,47 +117,40 @@ namespace Kargono
 			textureIndex = static_cast<float>(Textures.size() - 1);
 		}
 
-		std::size_t texIndexLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_TexIndex").Offset;
-		auto* pointerToID = inputSpec.Buffer.As<float>(texIndexLocationInBuffer);
-		*pointerToID = textureIndex;
+		Shader::SetDataAtInputLocation<float>(textureIndex, "a_TexIndex", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void Renderer::FillTextureCoordinate(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const glm::vec2& coordinates  = inputSpec.ShapeComponent->TextureCoordinates->at(iteration);
-
-		std::size_t texCoordLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_TexCoord").Offset;
-		auto* pointerToID = inputSpec.Buffer.As <glm::vec2> (texCoordLocationInBuffer);
-		*pointerToID = coordinates;
+		Shader::SetDataAtInputLocation<glm::vec2>(coordinates, "a_TexCoord", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void Renderer::FillLocalPosition(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const glm::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
-
-		std::size_t localPositionLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_LocalPosition").Offset;
-		auto* pointerToID = inputSpec.Buffer.As <glm::vec3>(localPositionLocationInBuffer);
-		*pointerToID = localPosition * 2.0f;
+		const glm::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration) * 2.0f;
+		Shader::SetDataAtInputLocation<glm::vec3>(localPosition, "a_LocalPosition", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void Renderer::FillWorldPosition(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const glm::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
-
 		glm::vec3 worldPosition = inputSpec.TransformMatrix * glm::vec4(localPosition, 1.0f);
-
-		std::size_t localPositionLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_Position").Offset;
-		auto* pointerToID = inputSpec.Buffer.As <glm::vec3>(localPositionLocationInBuffer);
-		*pointerToID = worldPosition;
+		Shader::SetDataAtInputLocation<glm::vec3>(worldPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void Renderer::FillWorldPositionNoTransform(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const glm::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
 
-		std::size_t localPositionLocationInBuffer = inputSpec.Shader->GetInputLayout().FindElementByName("a_Position").Offset;
-		auto* pointerToID = inputSpec.Buffer.As <glm::vec3>(localPositionLocationInBuffer);
-		*pointerToID = localPosition;
+		Shader::SetDataAtInputLocation<glm::vec3>(localPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
+	}
+
+	void Renderer::FillVertexColor(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
+	{
+		auto& colorVector = inputSpec.ShapeComponent->VertexColors;
+		KG_CORE_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
+		Shader::SetDataAtInputLocation<glm::vec4>(colorVector->at(iteration), "a_Color", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void Renderer::FillIndicesData(Shader::RendererInputSpec& inputSpec)
@@ -174,7 +166,7 @@ namespace Kargono
 
 	void Renderer::SubmitDataToRenderer(Shader::RendererInputSpec& inputSpec)
 	{
-		if (!inputSpec.ShapeComponent->Vertices) { return; }
+		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == Shape::RenderingType::None) { return; }
 
 		// Manage current DrawCallBuffer
 		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
@@ -244,6 +236,12 @@ namespace Kargono
 	{
 		RenderCommand::SetLineWidth(s_Data.LineWidth);
 		RenderCommand::DrawLines(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		s_Data.Stats.DrawCalls++;
+	}
+
+	void Renderer::DrawBufferTriangles(Ref<Shader::DrawCallBuffer> buffer)
+	{
+		RenderCommand::DrawTriangles(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
