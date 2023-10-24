@@ -218,7 +218,7 @@ namespace Kargono
 
 					ScriptEngine::OnUpdateEntity(entity, ts);
 				}
-
+				// Native Script On Update
 				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
 					// TODO: Move to Scene::OnScenePlay

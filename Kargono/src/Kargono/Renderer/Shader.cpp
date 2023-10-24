@@ -554,6 +554,7 @@ namespace Kargono {
 		// ==== Vertex Shader ====
 		s_OutputStream << "// Rendering Type: " << Shape::RenderingTypeToString(shaderSpec.RenderType) << "\r\n";
 		s_OutputStream << "// Color Type: " << Shader::ColorInputTypeToString(shaderSpec.ColorInput) << "\r\n";
+		s_OutputStream << "// Draw Outline: " << (shaderSpec.DrawOutline ? "true" : "false") << "\r\n";
 		BeginShader("vertex");
 		// Structs/Classes
 		RunFunctions(s_VertexStructs);
@@ -667,6 +668,6 @@ namespace Kargono {
 			m_DrawFunctions.push_back(Renderer::DrawBufferTriangles);
 		}
 
-		KG_CORE_ASSERT(sizeof(Shader::ShaderSpecification) == sizeof(uint8_t) * 12, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
+		KG_CORE_ASSERT(sizeof(Shader::ShaderSpecification) == sizeof(uint8_t) * 16, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
 	}
 }

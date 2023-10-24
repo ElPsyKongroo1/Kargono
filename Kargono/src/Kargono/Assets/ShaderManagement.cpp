@@ -70,9 +70,10 @@ namespace Kargono
 					shaderMetaData->ShaderSpec.AddEntityID = metadata["AddEntityID"].as<bool>();
 					shaderMetaData->ShaderSpec.AddCircleShape = metadata["AddCircleShape"].as<bool>();
 					shaderMetaData->ShaderSpec.AddTexture = metadata["AddTexture"].as<bool>();
+					shaderMetaData->ShaderSpec.DrawOutline = metadata["DrawOutline"].as<bool>();
 					shaderMetaData->ShaderSpec.RenderType = Shape::StringToRenderingType(metadata["RenderType"].as<std::string>());
 
-					KG_CORE_ASSERT(sizeof(uint8_t) * 12 == sizeof(Shader::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+					KG_CORE_ASSERT(sizeof(uint8_t) * 16 == sizeof(Shader::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
 					{
 						// InputBufferLayout Section
 						auto inputBufferLayout = metadata["InputBufferLayout"];
@@ -135,6 +136,7 @@ namespace Kargono
 				out << YAML::Key << "AddEntityID" << YAML::Value << metadata->ShaderSpec.AddEntityID;
 				out << YAML::Key << "AddCircleShape" << YAML::Value << metadata->ShaderSpec.AddCircleShape;
 				out << YAML::Key << "AddTexture" << YAML::Value << metadata->ShaderSpec.AddTexture;
+				out << YAML::Key << "DrawOutline" << YAML::Value << metadata->ShaderSpec.DrawOutline;
 				out << YAML::Key << "RenderType" << YAML::Value << Shape::RenderingTypeToString(metadata->ShaderSpec.RenderType);
 
 				// InputBufferLayout Section

@@ -1,9 +1,10 @@
 #include "kgpch.h"
 
+#include "Kargono/Renderer/EditorCamera.h"
 #include "Kargono/Core/Input.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
-#include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Core/Application.h"
 
 #include <glfw/glfw3.h>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -60,6 +61,23 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
+		switch (m_MovementType)
+		{
+		case EditorCamera::MovementType::ModelView:
+			OnUpdateModelView(ts);
+			return;
+		case EditorCamera::MovementType::FreeFly:
+			OnUpdateFreeFly(ts);
+			return;
+		case EditorCamera::MovementType::None:
+			return;
+		}
+
+		KG_CORE_ASSERT(false, "Invalid Enum Type for m_MovementType");
+	}
+
+	void EditorCamera::OnUpdateModelView(Timestep ts)
+	{
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
@@ -72,18 +90,84 @@ namespace Kargono {
 				MouseRotate(delta);
 			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
 				MouseZoom(delta.y);
-		}
 
-		UpdateView();
+			UpdateView();
+		}
+		
+	}
+
+	void EditorCamera::OnUpdateFreeFly(Timestep ts)
+	{
+		if (Input::IsKeyPressed(Key::LeftAlt))
+		{
+			MouseMovement();
+			KeyboardMovement(ts);
+
+			UpdateView();
+		}
+	}
+
+	void EditorCamera::MouseMovement()
+	{
+		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+		m_InitialMousePosition = mouse;
+		if (m_MousePaused)
+		{
+			m_MousePaused = false;
+			delta = { 0.0f, 0.0f };
+		}
+		// Adjust Yaw and Pitch Values
+		m_Yaw += delta.x;
+		m_Pitch += delta.y;
+		m_FocalPoint = m_Position + GetForwardDirection() * m_Distance;
 	}
 
 	void EditorCamera::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(KG_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
+		dispatcher.Dispatch<KeyPressedEvent>(KG_BIND_EVENT_FN(EditorCamera::OnKeyPressed));
+		dispatcher.Dispatch<KeyReleasedEvent>(KG_BIND_EVENT_FN(EditorCamera::OnKeyReleased));
+	}
+
+	bool EditorCamera::OnKeyReleased(KeyReleasedEvent& e)
+	{
+		if (e.GetKeyCode() == Key::LeftAlt)
+		{
+			Application::GetCurrentApp().GetWindow().SetMouseCursorVisible(true);
+			m_MousePaused = true;
+		}
+		return false;
+	}
+
+	bool EditorCamera::OnKeyPressed(KeyPressedEvent& e)
+	{
+		if (e.GetKeyCode() == Key::LeftAlt)
+		{
+			Application::GetCurrentApp().GetWindow().SetMouseCursorVisible(false);
+			m_MousePaused = true;
+		}
+		return false;
 	}
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
+	{
+		switch (m_MovementType)
+		{
+		case EditorCamera::MovementType::ModelView:
+			return OnMouseScrollModelView(e);
+		case EditorCamera::MovementType::FreeFly:
+			return OnMouseScrollFreeFly(e);
+		case EditorCamera::MovementType::None:
+			return false;
+		}
+
+		KG_CORE_ASSERT(false, "Invalid Enum Type for m_MovementType");
+		return false;
+	}
+
+	bool EditorCamera::OnMouseScrollModelView(MouseScrolledEvent& e)
 	{
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
@@ -92,6 +176,36 @@ namespace Kargono {
 			UpdateView();
 		}
 		return false;
+	}
+
+	bool EditorCamera::OnMouseScrollFreeFly(MouseScrolledEvent& e)
+	{
+		if (Input::IsKeyPressed(Key::LeftAlt))
+		{
+			float delta = e.GetYOffset() * 5.0f;
+			MouseKeyboardSpeed(delta);
+		}
+		return false;
+	}
+
+	void EditorCamera::KeyboardMovement(Timestep ts)
+	{
+		if (Input::IsKeyPressed(Key::W))
+		{
+			m_FocalPoint += GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
+		if (Input::IsKeyPressed(Key::S))
+		{
+			m_FocalPoint -= GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
+		if (Input::IsKeyPressed(Key::A))
+		{
+			m_FocalPoint -= GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
+		if (Input::IsKeyPressed(Key::D))
+		{
+			m_FocalPoint += GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
 	}
 
 	void EditorCamera::MousePan(const glm::vec2& delta)
@@ -116,6 +230,13 @@ namespace Kargono {
 			m_FocalPoint += GetForwardDirection();
 			m_Distance = 1.0f;
 		}
+	}
+
+	void EditorCamera::MouseKeyboardSpeed(float delta)
+	{
+		if (delta + m_KeyboardSpeed > m_KeyboardMaxSpeed) { m_KeyboardSpeed = m_KeyboardMaxSpeed; return; }
+		if (delta + m_KeyboardSpeed < m_KeyboardMinSpeed) { m_KeyboardSpeed = m_KeyboardMinSpeed; return; }
+		m_KeyboardSpeed += delta;
 	}
 
 	glm::vec3 EditorCamera::GetUpDirection() const

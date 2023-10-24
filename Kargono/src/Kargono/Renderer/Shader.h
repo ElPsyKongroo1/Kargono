@@ -100,7 +100,9 @@ namespace Kargono
 			bool AddProjectionMatrix = false;
 			bool AddEntityID = false;
 
+			// Rendering Options
 			Shape::RenderingType RenderType = Shape::RenderingType::None;
+			bool DrawOutline = false;
 
 			// Generates default relational operations for comparing the same class! https://en.cppreference.com/w/cpp/language/default_comparisons
 			auto operator<=>(const ShaderSpecification&) const = default;
@@ -157,6 +159,10 @@ namespace Kargono
 		const std::vector<std::function<void(RendererInputSpec& spec)>>& GetFillDataObjectScene() const { return m_FillDataInScene; }
 		const std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>>& GetDrawFunctions() const { return m_DrawFunctions; }
 		const std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>>& GetSubmitUniforms() const { return m_SubmitUniforms; }
+
+		const std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>>& GetPreDrawBuffer() const { return m_PreDrawBuffer; }
+		const std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>>& GetPostDrawBuffer() const { return m_PostDrawBuffer; }
+
 		Ref<DrawCallBuffer>& GetCurrentDrawCallBuffer() { return m_CurrentDrawCall; }
 		void SetCurrentDrawCallBufferNull() { m_CurrentDrawCall = nullptr; }
 
@@ -180,6 +186,9 @@ namespace Kargono
 		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataInScene {};
 		std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>> m_SubmitUniforms {};
 		std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>> m_DrawFunctions {};
+
+		std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>> m_PreDrawBuffer {};
+		std::vector<std::function<void(Ref<Shader::DrawCallBuffer> buffer)>> m_PostDrawBuffer {};
 		Ref<DrawCallBuffer> m_CurrentDrawCall = nullptr;
 		Ref<VertexArray> m_VertexArray = nullptr;
 
