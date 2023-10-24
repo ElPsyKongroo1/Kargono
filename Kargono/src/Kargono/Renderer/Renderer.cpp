@@ -252,6 +252,11 @@ namespace Kargono
 		// Submit all Buffers to DrawCalls!
 		for (auto buffer : allBuffers)
 		{
+			for (const auto& preDrawFunction : buffer->Shader->GetPreDrawBuffer())
+			{
+				preDrawFunction(buffer);
+			}
+
 			buffer->Shader->Bind();
 			uint32_t dataSize = static_cast<uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data);
 			buffer->Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->VertexBuffer.Data, dataSize);
@@ -266,6 +271,11 @@ namespace Kargono
 			for (const auto& drawFunction : buffer->Shader->GetDrawFunctions())
 			{
 				drawFunction(buffer);
+			}
+
+			for (const auto& postDrawFunction : buffer->Shader->GetPostDrawBuffer())
+			{
+				postDrawFunction(buffer);
 			}
 			
 		}

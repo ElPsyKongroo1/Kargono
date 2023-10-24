@@ -15,13 +15,17 @@
 #include "box2d/b2_body.h"
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 namespace Kargono {
+
+	EditorLayer* EditorLayer::s_EditorLayer = nullptr;
 
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
 		Application::GetCurrentApp().AddImGuiLayer();
+		s_EditorLayer = this;
 	}
 
 	void EditorLayer::OnAttach()
@@ -392,6 +396,25 @@ namespace Kargono {
 		{
 			m_EditorAudio->m_DefaultStereoSource->SetGain(musicVolume);
 		}
+		static int32_t* choice = (int32_t*)&m_EditorCamera.GetMovementType();
+		ImGui::Text("Editor Camera Movement:");
+		if (ImGui::RadioButton("Model Viewer", choice, (int32_t)EditorCamera::MovementType::ModelView))
+		{
+			m_EditorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("FreeFly", choice, (int32_t)EditorCamera::MovementType::FreeFly))
+		{
+			m_EditorCamera.SetMovementType(EditorCamera::MovementType::FreeFly);
+		}
+		ImGui::SameLine();
+		ImGui::TextDisabled("(Tab)");
+
+		if (*choice == (int32_t)EditorCamera::MovementType::FreeFly)
+		{
+			ImGui::DragFloat("Speed", &m_EditorCamera.GetMovementSpeed(), 0.5f, 
+				m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed());
+		}
 
 		ImGui::End();
 	}
@@ -525,64 +548,76 @@ namespace Kargono {
 
 		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
-			case Key::N:
+		case Key::Escape:
+		{
+			m_SceneHierarchyPanel.SetSelectedEntity({});
+			break;
+		}
+		case Key::Tab:
+		{
+			m_EditorCamera.ToggleMovementType();
+			break;
+		}
+
+		case Key::N:
+		{
+			if (control) { NewScene(); }
+			break;
+		}
+		case Key::O:
+		{
+			if (control) { OpenProject(); }
+			break;
+		}
+		case Key::S:
+		{
+			if (control)
 			{
-				if (control) { NewScene(); }
+				if (shift){SaveSceneAs();}
+				else { SaveScene(); }
+			}
+			break;
+		}
+
+		// Scene Commands
+
+		case Key::D:
+		{
+			if (control) { OnDuplicateEntity(); }
+			break;
+		}
+
+		// Gizmos
+		case Key::Q:
+			{
+			if (!ImGuizmo::IsUsing() && !alt) { m_GizmoType = -1; }
 				break;
 			}
-			case Key::O:
+		case Key::W:
+		{
+			if (!ImGuizmo::IsUsing() && !alt) { m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; }
+			break;
+		}
+		case Key::E:
+		{
+			if (!ImGuizmo::IsUsing() && !alt) { m_GizmoType = ImGuizmo::OPERATION::ROTATE; }
+			break;
+		}
+		case Key::R:
+		{
+			if (control)
 			{
-				if (control) { OpenProject(); }
-				break;
-			}
-			case Key::S:
-			{
-				if (control)
-				{
-					if (shift){SaveSceneAs();}
-					else { SaveScene(); }
-				}
-				break;
+				if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
+				ScriptEngine::ReloadAssembly();
 			}
 
-			// Scene Commands
-
-			case Key::D:
-			{
-				if (control) { OnDuplicateEntity(); }
-				break;
-			}
-
-			// Gizmos
-			case Key::Q:
-				{
-				if (!ImGuizmo::IsUsing()) { m_GizmoType = -1; }
-					break;
-				}
-			case Key::W:
-			{
-				if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; }
-				break;
-			}
-			case Key::E:
-			{
-				if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::ROTATE; }
-				break;
-			}
-			case Key::R:
-			{
-				if (control)
-				{
-					if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
-					ScriptEngine::ReloadAssembly();
-				}
-
-				if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::SCALE; }
-				break;
-			}
+			if (!ImGuizmo::IsUsing()) { m_GizmoType = ImGuizmo::OPERATION::SCALE; }
+			break;
+		}
 		case Key::Delete:
 			{
 			if (Application::GetCurrentApp().GetImGuiLayer()->GetActiveWidgetID() == 0)
@@ -609,7 +644,24 @@ namespace Kargono {
 	{
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
-			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt)) { m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity); }
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+			{
+				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+				// Algorithm to enable double clicking for an entity!
+				static float previousTime{ 0.0f };
+				static Entity previousEntity {};
+				float currentTime = Time::GetTime();
+				if (std::fabs(currentTime - previousTime) < 0.2f && m_HoveredEntity == previousEntity)
+				{
+					auto& transformComponent = m_HoveredEntity.GetComponent<TransformComponent>();
+					m_EditorCamera.SetFocalPoint(transformComponent.Translation);
+					m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+					m_EditorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+				}
+				previousTime = currentTime;
+				previousEntity = m_HoveredEntity;
+
+			}
 		}
 		return false;
 	}

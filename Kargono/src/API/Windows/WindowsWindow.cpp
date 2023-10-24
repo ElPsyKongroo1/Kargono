@@ -204,4 +204,9 @@ namespace Kargono
 	{
 		return m_Data.VSync;
 	}
+	void WindowsWindow::SetMouseCursorVisible(bool choice)
+	{
+		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
+		glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);
+	}
 }

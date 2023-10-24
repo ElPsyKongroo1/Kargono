@@ -12,6 +12,8 @@
 
 namespace Kargono {
 
+
+
 	class EditorLayer : public Layer
 	{
 	public:
@@ -22,6 +24,10 @@ namespace Kargono {
 		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& event) override;
+
+		static EditorLayer* GetCurrentLayer() { return s_EditorLayer; }
+	private:
+		static EditorLayer* s_EditorLayer;
 	private:
 		bool OnKeyPressed(KeyPressedEvent event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent event);
@@ -58,8 +64,9 @@ namespace Kargono {
 		void UI_Settings();
 		void UI_Stats();
 		void UI_Viewport();
+	public:
+		EditorCamera& GetEditorCamera() { return m_EditorCamera; }
 	private:
-
 		// Booleans to display UI Windows
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowContentBrowser = true;

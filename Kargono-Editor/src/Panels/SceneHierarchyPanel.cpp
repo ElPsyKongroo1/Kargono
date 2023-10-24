@@ -5,6 +5,7 @@
 #include "Kargono/UI/UI.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Shape.h"
+#include "EditorLayer.h"
 
 #include <imgui.h>
 #include "imgui_internal.h"
@@ -37,7 +38,6 @@ namespace Kargono
 
 		if (m_Context)
 		{
-
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
@@ -79,6 +79,14 @@ namespace Kargono
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
+		}
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		{
+			auto& editorCamera = EditorLayer::GetCurrentLayer()->GetEditorCamera();
+			auto& transformComponent = entity.GetComponent<TransformComponent>();
+			editorCamera.SetFocalPoint(transformComponent.Translation);
+			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+			editorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
 		}
 		bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
