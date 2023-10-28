@@ -153,7 +153,7 @@ namespace Kargono
 		Ref<std::vector<uint32_t>> Indices {};
 		Ref<std::vector<glm::vec4>> VertexColors {};
 		Ref<Shader> Shader;
-		Shader::ShaderSpecification ShaderSpecification {Shader::ColorInputType::None, false, false, true, true, Shape::RenderingType::DrawIndex};
+		Shader::ShaderSpecification ShaderSpecification {Shader::ColorInputType::None, Shader::TextureInputType::None, false, true, true, Shape::RenderingType::DrawIndex, false};
 		AssetHandle ShaderHandle;
 		Ref<Texture2D> Texture;
 		AssetHandle TextureHandle;

@@ -6,6 +6,7 @@ namespace Kargono
 {
 	class RenderCommand
 	{
+
 	public:
 		static void Init()
 		{
@@ -15,6 +16,26 @@ namespace Kargono
 		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
 			s_RendererAPI->SetViewport(x, y, width, height);
+		}
+
+		static void EnableDepthTesting(bool value)
+		{
+			s_RendererAPI->EnableDepthTesting(value);
+		}
+
+		static void SetStencilMask(uint32_t value)
+		{
+			s_RendererAPI->SetStencilMask(value);
+		}
+
+		static void StencilTestFunc(RendererAPI::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
+		{
+			s_RendererAPI->StencilTestFunc(comparisonType, reference, mask);
+		}
+
+		static void StencilTestOptions(RendererAPI::StencilOptions sfail, RendererAPI::StencilOptions dfail, RendererAPI::StencilOptions sdpass)
+		{
+			s_RendererAPI->StencilTestOptions(sfail, dfail, sdpass);
 		}
 
 		static void SetClearColor(const glm::vec4& color)

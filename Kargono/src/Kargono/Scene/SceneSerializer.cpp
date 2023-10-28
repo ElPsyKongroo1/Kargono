@@ -130,7 +130,7 @@ namespace Kargono
 			{
 				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
 			}
-			KG_CORE_ASSERT(sizeof(uint8_t) * 16 == sizeof(Shader::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+			KG_CORE_ASSERT(sizeof(uint8_t) * 20 == sizeof(Shader::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
 			if (shapeComponent.Shader)
 			{
 				// Add Shader Handle
@@ -143,7 +143,7 @@ namespace Kargono
 				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << shaderSpec.AddProjectionMatrix;
 				out << YAML::Key << "AddEntityID" << YAML::Value << shaderSpec.AddEntityID;
 				out << YAML::Key << "AddCircleShape" << YAML::Value << shaderSpec.AddCircleShape;
-				out << YAML::Key << "AddTexture" << YAML::Value << shaderSpec.AddTexture;
+				out << YAML::Key << "TextureInput" << YAML::Value << Shader::TextureInputTypeToString(shaderSpec.TextureInput);
 				out << YAML::Key << "DrawOutline" << YAML::Value << shaderSpec.DrawOutline;
 				out << YAML::Key << "RenderType" << YAML::Value << Shape::RenderingTypeToString(shaderSpec.RenderType);
 
@@ -430,7 +430,7 @@ namespace Kargono
 							shaderSpec.AddProjectionMatrix = shaderSpecificationNode["AddProjectionMatrix"].as<bool>();
 							shaderSpec.AddEntityID = shaderSpecificationNode["AddEntityID"].as<bool>();
 							shaderSpec.AddCircleShape = shaderSpecificationNode["AddCircleShape"].as<bool>();
-							shaderSpec.AddTexture = shaderSpecificationNode["AddTexture"].as<bool>();
+							shaderSpec.TextureInput = Shader::StringToTextureInputType(shaderSpecificationNode["TextureInput"].as<std::string>());
 							shaderSpec.DrawOutline = shaderSpecificationNode["DrawOutline"].as<bool>();
 							shaderSpec.RenderType = Shape::StringToRenderingType(shaderSpecificationNode["RenderType"].as<std::string>());
 							auto [newHandle , newShader] = AssetManager::GetShader(shaderSpec);

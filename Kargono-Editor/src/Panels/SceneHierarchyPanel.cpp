@@ -510,12 +510,14 @@ namespace Kargono
 
 			auto AddTextureSection = [&]()
 			{
-				if (ImGui::Checkbox("Add Texture", &component.ShaderSpecification.AddTexture))
+				static bool s_CheckBox = component.ShaderSpecification.TextureInput == Shader::TextureInputType::ColorTexture ? true : false;
+				if (ImGui::Checkbox("Add Texture", &s_CheckBox))
 				{
-
+					s_CheckBox ? component.ShaderSpecification.TextureInput = Shader::TextureInputType::ColorTexture :
+						component.ShaderSpecification.TextureInput = Shader::TextureInputType::None;
 					updateComponent();
 					// Checkbox is switched on
-					if (component.ShaderSpecification.AddTexture)
+					if (s_CheckBox)
 					{
 						if (component.CurrentShape == Shape::ShapeTypes::Cube || component.CurrentShape == Shape::ShapeTypes::Pyramid)
 						{
@@ -528,7 +530,7 @@ namespace Kargono
 						Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
 					}
 					// Checkbox is switched off
-					if (!component.ShaderSpecification.AddTexture)
+					if (!s_CheckBox)
 					{
 						if (component.CurrentShape == Shape::ShapeTypes::Cube || component.CurrentShape == Shape::ShapeTypes::Pyramid)
 						{
@@ -541,7 +543,7 @@ namespace Kargono
 						}
 					}
 				}
-				if (component.ShaderSpecification.AddTexture)
+				if (s_CheckBox)
 				{
 					ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
 					if (ImGui::BeginDragDropTarget())
@@ -648,6 +650,7 @@ namespace Kargono
 				AddCircleShapeSection();
 				AddProjectionMatrixSection();
 				AddEntityIDSection();
+				
 			}
 			if (selectedShape == Shape::ShapeTypes::Cube || selectedShape == Shape::ShapeTypes::Pyramid)
 			{
@@ -655,6 +658,7 @@ namespace Kargono
 				AddTextureSection();
 				AddProjectionMatrixSection();
 				AddEntityIDSection();
+				
 			}
 			
 		});

@@ -4,7 +4,14 @@
 #include "Kargono/Renderer/Texture.h"
 #include "API/OpenGL/OpenGLTexture.h"
 
-namespace Kargono {
+namespace Kargono
+{
+
+	Ref<Texture2D> Texture2D::Create(uint32_t rendererID, uint32_t width, uint32_t height)
+	{
+		return CreateRef<OpenGLTexture2D>(rendererID, width, height);
+	}
+
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
 	{
 		return CreateRef<OpenGLTexture2D>(width, height);

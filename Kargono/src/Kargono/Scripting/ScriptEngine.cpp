@@ -96,8 +96,6 @@ namespace Kargono
 				uint32_t cols[MONO_TYPEDEF_SIZE];
 				mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-				
-
 				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
@@ -193,9 +191,10 @@ namespace Kargono
 	{
 		mono_set_assemblies_path("mono/lib");
 
+		// This code allows debugging to occur inside Script Assembly at runtime
+		// Ex: Pong Game can use normal debugging tools!
 		if (s_ScriptData->EnableDebugging)
 		{
-
 			const char* argv[2] =
 			{
 				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
@@ -433,8 +432,6 @@ namespace Kargono
 				}
 			}
 		}
-
-		//mono_field_get_value();
 	}
 
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()

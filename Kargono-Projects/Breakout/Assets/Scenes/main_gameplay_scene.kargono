@@ -14,9 +14,10 @@ Entities:
       ShaderSpecification:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
+        DrawOutline: false
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         RenderType: DrawIndex
       Buffer: !!binary "tCrJwWTEy0EAAAC/1dRUP62sLD6trCw+AACAPwUAAAA="
     Rigidbody2DComponent:
@@ -44,8 +45,9 @@ Entities:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
         AddEntityID: true
+        DrawOutline: false
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         RenderType: DrawIndex
       Buffer: !!binary "0Ly7QezGGMAAAAC/1dRUP62sLD6trCw+AACAPwQAAAA="
     Rigidbody2DComponent:
@@ -73,8 +75,9 @@ Entities:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
         AddEntityID: true
+        DrawOutline: false
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         RenderType: DrawIndex
       Buffer: !!binary "KTDIwezNGMAAAAC/1dRUP62sLD6trCw+AACAPwMAAAA="
     Rigidbody2DComponent:
@@ -102,8 +105,9 @@ Entities:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
         AddEntityID: true
+        DrawOutline: false
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         RenderType: DrawIndex
       Buffer: !!binary "RjPDwX2bvL8AAAC/1dRUP62sLD6trCw+AACAPwIAAAA="
     Rigidbody2DComponent:
@@ -142,8 +146,9 @@ Entities:
         ColorInputType: None
         AddProjectionMatrix: true
         AddEntityID: true
+        DrawOutline: false
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         RenderType: DrawIndex
       Buffer: !!binary "AAAAv17yQkBNDA1CAQAAAAAAAAAAAIA/AAAAAAAAgD8="
   - Entity: 5974950966135629051
@@ -170,8 +175,9 @@ Entities:
         ColorInputType: VertexColor
         AddProjectionMatrix: true
         AddEntityID: true
+        DrawOutline: false
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         RenderType: DrawIndex
       Buffer: !!binary "25j6v6LBCkAALAK/19bWPpuamj7n5uY+AACAPwAAAAA="
     Rigidbody2DComponent:

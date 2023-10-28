@@ -32,6 +32,7 @@ namespace Kargono {
 	class Texture2D : public Texture
 	{
 	public:
+		static Ref<Texture2D> Create(uint32_t rendererID, uint32_t width, uint32_t height);
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
 
 		// Create Texture using intermediate format

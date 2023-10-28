@@ -260,6 +260,11 @@ namespace Kargono
 		}
 	}
 
+	bool Scene::CheckEntityExists(entt::entity entity)
+	{
+		return m_Registry.valid(entity);
+	}
+
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
 		if (!m_IsPaused || m_StepFrames-- > 0)
@@ -426,6 +431,7 @@ namespace Kargono
 	{
 		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
 	}
+
 
 
 	template <typename T>

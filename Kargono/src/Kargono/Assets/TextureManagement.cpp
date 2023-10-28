@@ -274,7 +274,6 @@ namespace Kargono
 		TextureMetaData metadata = *static_cast<TextureMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
 		currentResource = FileSystem::ReadFileBinary(Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
-
 		Ref<Texture2D> newTexture = Texture2D::Create(currentResource, metadata);
 
 		currentResource.Release();

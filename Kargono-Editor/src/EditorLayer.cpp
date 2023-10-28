@@ -86,12 +86,9 @@ namespace Kargono {
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-
 		m_EditorAudio->m_DefaultStereoSource->play();
 
-		// TODO: Remove, just shader testing code
-		//Shader::Create( "Test", Shader::BuildShader({}));
-
+		m_ArialText.Init();
 		InitializeOverlayData();
 	}
 
@@ -167,7 +164,7 @@ namespace Kargono {
 		if (mouseX >= 0 && mouseY >= 0 && mouseX <(int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+			m_HoveredEntity = m_ActiveScene->CheckEntityExists((entt::entity)pixelData) ? Entity((entt::entity)pixelData, m_ActiveScene.get()) : Entity();
 		}
 
 		OnOverlayRender();
@@ -692,7 +689,7 @@ namespace Kargono {
 
 		// Set up Line Input Specifications for Overlay Calls
 		{
-			Shader::ShaderSpecification lineShaderSpec {Shader::ColorInputType::FlatColor, false, false, true, false, Shape::RenderingType::DrawLine};
+			Shader::ShaderSpecification lineShaderSpec {Shader::ColorInputType::FlatColor, Shader::TextureInputType::None, false, true, false, Shape::RenderingType::DrawLine, false};
 			auto [uuid, localShader] = AssetManager::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
@@ -711,7 +708,7 @@ namespace Kargono {
 		// Set up Circle Input Specification for Overlay Calls
 
 		{
-			Shader::ShaderSpecification shaderSpec {Shader::ColorInputType::FlatColor, false, true, true, false, Shape::RenderingType::DrawIndex};
+			Shader::ShaderSpecification shaderSpec {Shader::ColorInputType::FlatColor,  Shader::TextureInputType::None, true, true, false, Shape::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = AssetManager::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
@@ -852,6 +849,9 @@ namespace Kargono {
 		}
 
 		Renderer::EndScene();
+
+		// Render Text!
+		//m_ArialText.RenderText(m_EditorCamera , "abcdefghijklmnopqrstuvwxyz123456789", 640, 360, 0.5f, { 0.2f, 0.5f, 0.6f });
 	}
 
 	void EditorLayer::NewProject()

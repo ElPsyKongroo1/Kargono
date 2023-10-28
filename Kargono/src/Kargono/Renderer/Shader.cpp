@@ -378,6 +378,100 @@ namespace Kargono {
 			});
 	}
 
+	static void AddTextTextureOutput()
+	{
+		InsertMap(s_VertexInput, 70, [&](uint16_t count)
+			{
+				const std::string name = "a_TexCoord";
+				const std::string type = "vec2";
+				s_OutputStream << "layout(location = " << count << ") in " << type << " " << name << ";\r\n";
+				UpdateInputBuffer(name, type);
+			});
+
+		InsertMap(s_VertexInput, 70, [&](uint16_t count)
+			{
+				const std::string name = "a_TexIndex";
+				const std::string type = "float";
+				s_OutputStream << "layout(location = " << count << ") in " << type << " " << name << ";\r\n";
+				UpdateInputBuffer(name, type);
+			});
+
+
+		InsertMap(s_VertexToFragmentSmooth, 70, [&]()
+			{
+				s_OutputStream << "\tvec2 TexCoord;\r\n";
+			});
+
+		InsertMap(s_VertexToFragmentFlat, 70, [&](uint16_t count, std::string_view type)
+			{
+				s_OutputStream << "layout (location = " << count << ") " << type << " flat float v_TexIndex;\r\n";
+			});
+
+		InsertMap(s_VertexMain, 40, [&]()
+			{
+				s_OutputStream << "\tOutput.TexCoord = a_TexCoord;\r\n";
+				s_OutputStream << "\tv_TexIndex = a_TexIndex;\r\n";
+			});
+
+		InsertMap(s_FragmentUniforms, 40, [&](uint16_t count)
+			{
+				const std::string name = "u_Textures";
+				const std::string type = "sampler2D";
+				s_OutputStream << "layout(binding = " << count << ") uniform " << type << " " << name << "[32];\r\n";
+				UpdateUniformBuffer(name, type);
+			});
+		InsertMap(s_FragmentFunctions, 30, [&]()
+			{
+				s_OutputStream << "vec4 GetTextureColor(vec2 texCoordinate)\r\n";
+				s_OutputStream << "{\r\n";
+				s_OutputStream << "\tvec4 texColor;\r\n";
+				s_OutputStream << "\tswitch (int(v_TexIndex))\r\n";
+				s_OutputStream << "\t{\r\n";
+				s_OutputStream << "\t\tcase  0: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[0], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  1: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[1], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  2: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[2], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  3: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[3], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  4: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[4], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  5: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[5], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  6: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[6], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  7: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[7], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  8: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[8], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase  9: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[9], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 10: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[10], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 11: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[11], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 12: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[12], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 13: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[13], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 14: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[14], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 15: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[15], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 16: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[16], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 17: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[17], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 18: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[18], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 19: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[19], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 20: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[20], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 21: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[21], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 22: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[22], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 23: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[23], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 24: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[24], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 25: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[25], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 26: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[26], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 27: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[27], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 28: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[28], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 29: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[29], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 30: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[30], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t\tcase 31: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[31], texCoordinate).r); break;\r\n";
+				s_OutputStream << "\t}\r\n";
+				s_OutputStream << "\treturn texColor;\r\n";
+				s_OutputStream << "}\r\n";
+			});
+
+		InsertMap(s_FragmentMain, 30, [&]()
+			{
+				s_OutputStream << "\tvec2 texCoordinate = Input.TexCoord;\r\n";
+				s_OutputStream << "\tvec4 texColor = GetTextureColor(texCoordinate);\r\n";
+				s_OutputStream << "\to_Color *= texColor;\r\n";
+			});
+	}
+
 	//=================
 	// Modification Feature
 	//=================
@@ -545,7 +639,8 @@ namespace Kargono {
 		if (shaderSpec.AddProjectionMatrix) { AddProjectionMatrix(); }
 		if (shaderSpec.AddEntityID) { AddEntityID(); }
 		if (shaderSpec.AddCircleShape) { AddCircleShape(); }
-		if (shaderSpec.AddTexture) { AddTextureOutput(); }
+		if (shaderSpec.TextureInput == Shader::TextureInputType::ColorTexture) { AddTextureOutput(); }
+		if (shaderSpec.TextureInput == Shader::TextureInputType::TextTexture) { AddTextTextureOutput(); }
 
 		//=================
 		// Start Building Shader
@@ -628,8 +723,14 @@ namespace Kargono {
 
 		if (m_ShaderSpecification.RenderType == Shape::RenderingType::DrawLine)
 		{
-			m_FillDataPerVertex.push_back(Renderer::FillWorldPositionNoTransform);
 			m_DrawFunctions.push_back(Renderer::DrawBufferLine);
+		}
+
+		if (m_ShaderSpecification.RenderType == Shape::RenderingType::DrawLine ||
+			m_ShaderSpecification.TextureInput == Shader::TextureInputType::TextTexture)
+		{
+			m_FillDataPerVertex.push_back(Renderer::FillWorldPositionNoTransform);
+			
 		}
 		else
 		{
@@ -640,7 +741,8 @@ namespace Kargono {
 		{
 			m_FillDataInScene.push_back(Scene::FillEntityID);
 		}
-		if (m_ShaderSpecification.AddTexture)
+		if (m_ShaderSpecification.TextureInput == Shader::TextureInputType::ColorTexture ||
+			m_ShaderSpecification.TextureInput == Shader::TextureInputType::TextTexture)
 		{
 			m_FillDataPerObject.push_back( Renderer::FillTextureIndex);
 			m_FillDataPerVertex.push_back(Renderer::FillTextureCoordinate);
@@ -668,6 +770,6 @@ namespace Kargono {
 			m_DrawFunctions.push_back(Renderer::DrawBufferTriangles);
 		}
 
-		KG_CORE_ASSERT(sizeof(Shader::ShaderSpecification) == sizeof(uint8_t) * 16, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
+		KG_CORE_ASSERT(sizeof(Shader::ShaderSpecification) == sizeof(uint8_t) * 20, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
 	}
 }

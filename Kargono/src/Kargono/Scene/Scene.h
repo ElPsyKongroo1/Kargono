@@ -40,6 +40,7 @@ namespace Kargono
 
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);
+		bool CheckEntityExists(entt::entity entity);
 
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnUpdateRuntime(Timestep ts);

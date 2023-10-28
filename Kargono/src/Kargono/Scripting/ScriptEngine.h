@@ -34,6 +34,7 @@ namespace Kargono
 	class ScriptClass;
 	class Entity;
 
+	// Struct Representation of a Field inside a Script Class
 	struct ScriptField
 	{
 		ScriptFieldType Type;
@@ -41,6 +42,8 @@ namespace Kargono
 		MonoClassField* ClassField;
 	};
 
+	// Struct holds ScriptField and Data Associated with field
+	// Ex: Float (ScriptField) and 4 Bytes of (Data)
 	// Script field + data storage
 	struct ScriptFieldInstance
 	{
@@ -51,7 +54,7 @@ namespace Kargono
 			memset(m_Buffer, 0, sizeof(m_Buffer));
 		}
 
-		char Data[8];
+		// Data[8];
 
 		template<typename T>
 		T GetValue()
@@ -73,9 +76,11 @@ namespace Kargono
 		friend class ScriptInstance;
 	};
 
+	
 	using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
 
-
+	// Main Scripting Library Instance
+	// Uses Mono. Should be a Singleton
 	class ScriptEngine
 	{
 	public:

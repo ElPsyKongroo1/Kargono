@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#include "Kargono/Renderer/RendererAPI.h"
+
 namespace Kargono
 {
 	static void OpenGLMessageCallback(unsigned source, unsigned type, unsigned id,
@@ -67,6 +69,40 @@ namespace Kargono
 		KG_CORE_ASSERT(false, "Unknown severity level!");
 	}
 
+	static GLenum StencilComparisonToGLenum(RendererAPI::StencilComparisonType comparisonType)
+	{
+		switch (comparisonType)
+		{
+		case RendererAPI::StencilComparisonType::NEVER: return GL_NEVER;
+		case RendererAPI::StencilComparisonType::LESS: return GL_LESS;
+		case RendererAPI::StencilComparisonType::LEQUAL: return GL_LEQUAL;
+		case RendererAPI::StencilComparisonType::GREATER: return GL_GREATER;
+		case RendererAPI::StencilComparisonType::GEQUAL: return GL_GEQUAL;
+		case RendererAPI::StencilComparisonType::EQUAL: return GL_EQUAL;
+		case RendererAPI::StencilComparisonType::NOTEQUAL: return GL_NOTEQUAL;
+		case RendererAPI::StencilComparisonType::ALWAYS: return GL_ALWAYS;
+		}
+		KG_CORE_ASSERT(false, "Invalid enum provided in StencilComparisonToGLStencil");
+		return 0;
+	}
+
+	static GLenum StencilOptionsToGLEnum(RendererAPI::StencilOptions option)
+	{
+		switch (option)
+		{
+		case RendererAPI::StencilOptions::KEEP: return GL_KEEP;
+		case RendererAPI::StencilOptions::ZERO: return GL_ZERO;
+		case RendererAPI::StencilOptions::REPLACE: return GL_REPLACE;
+		case RendererAPI::StencilOptions::INCR: return GL_INCR;
+		case RendererAPI::StencilOptions::INCR_WRAP: return GL_INCR_WRAP;
+		case RendererAPI::StencilOptions::DECR: return GL_DECR;
+		case RendererAPI::StencilOptions::DECR_WRAP: return GL_DECR_WRAP;
+		case RendererAPI::StencilOptions::INVERT: return GL_INVERT;
+		}
+		KG_CORE_ASSERT(false, "Invalid enum provided in StencilOptionsToGLEnum");
+		return 0;
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 
@@ -80,10 +116,11 @@ namespace Kargono
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 	#endif
 
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_LINE_SMOOTH);
 	}
 
@@ -96,9 +133,26 @@ namespace Kargono
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
+	void OpenGLRendererAPI::EnableDepthTesting(bool value)
+	{
+		value ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+	}
+	void OpenGLRendererAPI::SetStencilMask(uint32_t value)
+	{
+		glStencilMask(value);
+	}
+	void OpenGLRendererAPI::StencilTestFunc(RendererAPI::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
+	{
+		glStencilFunc(StencilComparisonToGLenum(comparisonType), reference, mask);
+	}
+
+	void OpenGLRendererAPI::StencilTestOptions(RendererAPI::StencilOptions sfail, RendererAPI::StencilOptions dfail, RendererAPI::StencilOptions sdpass)
+	{
+		glStencilOp(StencilOptionsToGLEnum(sfail), StencilOptionsToGLEnum(dfail), StencilOptionsToGLEnum(sdpass));
+	}
 	void OpenGLRendererAPI::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
