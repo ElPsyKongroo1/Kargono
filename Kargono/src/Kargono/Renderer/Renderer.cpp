@@ -66,6 +66,12 @@ namespace Kargono
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
+	void Renderer::BeginScene(const glm::mat4 projection)
+	{
+		s_Data.CameraBuffer.ViewProjection = projection;
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+	}
+
 	void Renderer::EndScene()
 	{
 		FlushBuffers();
@@ -138,6 +144,7 @@ namespace Kargono
 		glm::vec3 worldPosition = inputSpec.TransformMatrix * glm::vec4(localPosition, 1.0f);
 		Shader::SetDataAtInputLocation<glm::vec3>(worldPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
 	}
+
 
 	void Renderer::FillWorldPositionNoTransform(Shader::RendererInputSpec& inputSpec, uint32_t iteration)
 	{

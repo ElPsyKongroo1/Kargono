@@ -3,6 +3,7 @@
 #include "Kargono/Core/FileSystem.h"
 
 #include <sha256.h>
+#include "stb_image_write.h"
 
 namespace Kargono
 {
@@ -58,6 +59,32 @@ namespace Kargono
 		output_file << string;
 		output_file.close();
 		return true;
+	}
+
+	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileSystem::FileTypes fileType)
+	{
+		uint32_t channels{ 0 };
+		std::filesystem::path outputPath = filepath;
+
+		switch (fileType)
+		{
+		case FileSystem::FileTypes::png:
+			{
+			channels = 4;
+			outputPath.replace_extension(".png");
+			stbi_write_png(outputPath.string().c_str(), width, height, channels, buffer, width * channels);
+			return true;
+			}
+		case FileSystem::FileTypes::bmp:
+		{
+			channels = 1;
+			outputPath.replace_extension(".bmp");
+			stbi_write_bmp(outputPath.string().c_str(), width, height, channels, buffer);
+			return true;
+		}
+		}
+		KG_CORE_ASSERT(false, "Invalid FileType enum provided to WriteFileImage function");
+		return false;
 	}
 
 	std::string FileSystem::ReadFileString(const std::filesystem::path& filepath)

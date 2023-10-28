@@ -18,6 +18,13 @@ namespace Kargono
 
 		static bool WriteFileString(const std::filesystem::path& filepath, std::string& string);
 
+		enum class FileTypes
+		{
+			None = 0, png, bmp
+		};
+
+		static bool WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileSystem::FileTypes fileType);
+
 		static std::string ReadFileString(const std::filesystem::path& filepath);
 
 		static std::string ChecksumFromFile(const std::filesystem::path& filepath);

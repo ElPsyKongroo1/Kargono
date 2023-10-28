@@ -2,6 +2,7 @@
 #include "Kargono.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Text/Text.h"
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -88,6 +89,7 @@ namespace Kargono {
 		std::filesystem::path m_EditorScenePath;
 
 		Entity m_HoveredEntity;
+		Text m_ArialText{};
 
 		EditorCamera m_EditorCamera;
 

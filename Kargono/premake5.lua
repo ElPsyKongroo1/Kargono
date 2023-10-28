@@ -57,6 +57,7 @@ project "Kargono"
         "%{IncludeDir.entt}",
         "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.OpenALSoft}",
@@ -79,6 +80,7 @@ project "Kargono"
         "dwmapi.lib",
         "yaml-cpp",
         "%{Library.mono}",
+        "%{Library.free_type}",
         "Kargono-ScriptCore"
     }
 

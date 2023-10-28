@@ -8,6 +8,13 @@
 
 namespace Kargono
 {
+	// Used to Create Texture from previously unmanaged texture
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t rendererID, uint32_t width, uint32_t height)
+		:m_RendererID(rendererID), m_Width(width), m_Height(height)
+	{
+		
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
 		: m_Width(width), m_Height(height)
 	{
@@ -24,7 +31,6 @@ namespace Kargono
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	}
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		:m_Path(path)

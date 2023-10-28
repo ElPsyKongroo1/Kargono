@@ -27,6 +27,7 @@ namespace Kargono
 		//============================================================
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const EditorCamera& camera);
+		static void BeginScene(const glm::mat4 projection);
 		static void SubmitDataToRenderer(Shader::RendererInputSpec& inputSpec);
 		static void EndScene();
 	private:
@@ -69,11 +70,23 @@ namespace Kargono
 		static void FillTextureUniform(Ref<Shader::DrawCallBuffer> buffer);
 
 		//============================================================
-		// Draw Call Function Pointers
+		// Pre Batch Render Functions
+		//============================================================
+		
+
+		//============================================================
+		// Post Batch Render Functions
+		//============================================================
+		
+
+		//============================================================
+		// Draw Call Functions
 		//============================================================
 		static void DrawBufferLine(Ref<Shader::DrawCallBuffer> buffer);
 		static void DrawBufferIndices(Ref<Shader::DrawCallBuffer> buffer);
 		static void DrawBufferTriangles(Ref<Shader::DrawCallBuffer> buffer);
+
+		
 
 		// Specifies maximum size in bytes of DrawCallBuffers
 		static const uint32_t s_MaxVertexBufferSize = 10000;

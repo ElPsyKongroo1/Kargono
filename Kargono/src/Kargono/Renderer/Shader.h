@@ -49,6 +49,7 @@ namespace Kargono
 			uint32_t Entity;
 			void* EntityRegistry;
 			glm::mat4 TransformMatrix;
+			glm::mat4 ObjectOutlineMatrix;
 		};
 
 		// This struct specifies the type of color input used by a shader
@@ -57,6 +58,11 @@ namespace Kargono
 		enum class ColorInputType
 		{
 			None = 0, FlatColor, VertexColor
+		};
+
+		enum class TextureInputType
+		{
+			None = 0, ColorTexture, TextTexture
 		};
 
 		static std::string ColorInputTypeToString(Shader::ColorInputType colorInput)
@@ -81,6 +87,28 @@ namespace Kargono
 			return Shader::ColorInputType::None;
 		}
 
+		static std::string TextureInputTypeToString(Shader::TextureInputType textureInput)
+		{
+			switch (textureInput)
+			{
+			case Shader::TextureInputType::None: return "None";
+			case Shader::TextureInputType::ColorTexture: return "ColorTexture";
+			case Shader::TextureInputType::TextTexture: return "TextTexture";
+			}
+			KG_CORE_ASSERT(false, "Unknown Data Type sent to TextureInputToString Function");
+			return "None";
+		}
+
+		static Shader::TextureInputType StringToTextureInputType(std::string_view string)
+		{
+			if (string == "None") { return Shader::TextureInputType::None; }
+			if (string == "ColorTexture") { return Shader::TextureInputType::ColorTexture; }
+			if (string == "TextTexture") { return Shader::TextureInputType::TextTexture; }
+
+			KG_CORE_ASSERT(false, "Unknown Data Type sent to StringToTextureInputType Function");
+			return Shader::TextureInputType::None;
+		}
+
 	public:
 
 		using ShaderSource = std::string;
@@ -91,7 +119,7 @@ namespace Kargono
 			
 			// Pixel Color Options
 			Shader::ColorInputType ColorInput = Shader::ColorInputType::None;
-			bool AddTexture = false;
+			Shader::TextureInputType TextureInput = Shader::TextureInputType::None;
 
 			// Structure Change Options
 			bool AddCircleShape = false;
@@ -109,8 +137,8 @@ namespace Kargono
 			// Default Copy Constructor
 			ShaderSpecification(const ShaderSpecification&) = default;
 			ShaderSpecification() = default;
-			ShaderSpecification(Shader::ColorInputType colorInput, bool addTexture, bool addCircle, bool addProjection, bool addEntityID, Shape::RenderingType renderType)
-				: ColorInput(colorInput), AddTexture(addTexture), AddCircleShape(addCircle), AddProjectionMatrix(addProjection), AddEntityID(addEntityID), RenderType(renderType)
+			ShaderSpecification(Shader::ColorInputType colorInput, Shader::TextureInputType textureInput, bool addCircle, bool addProjection, bool addEntityID, Shape::RenderingType renderType, bool drawOutline)
+				: ColorInput(colorInput), TextureInput(textureInput), AddCircleShape(addCircle), AddProjectionMatrix(addProjection), AddEntityID(addEntityID), RenderType(renderType), DrawOutline(drawOutline)
 			{}
 		};
 

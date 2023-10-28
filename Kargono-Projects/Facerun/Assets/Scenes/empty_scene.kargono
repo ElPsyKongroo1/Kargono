@@ -16,7 +16,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "u5B+wOOGK0EAAMDAAACAPwAAgD+qqSk/AACAPysAAAA="
@@ -52,7 +52,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "CDc3wKcIokAAALDAAACAP8fGxj4AAIA/AACAPyoAAAA="
@@ -119,7 +119,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawTriangle
       Buffer: !!binary "5gepwARnAkEAAMDAAACAPwAAgD+qqSk/AACAPykAAAAAAAAAAACAPwAAAAAAAIA/"
@@ -149,7 +149,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawTriangle
       Buffer: !!binary "HtYJQOhaBkEAAMDAAACAPwAAgD+qqSk/AACAPygAAAAAAAAAAACAPwAAAAAAAIBA"
@@ -184,7 +184,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: true
-        AddTexture: false
+        TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "ijmVQJJ+CkDtXLDAAACAvwAAgD8AAAAAZmZmPo/CdTwAAIA/oqEhP+vq6j4AAIA/JwAAAA=="
@@ -219,7 +219,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "aTNlwdZRlkC61WO/jYwMP9XU1D7p6Og+AACAPyYAAAAAAAAAAACAPwAAAAAAAIA/"
@@ -239,7 +239,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "RIOAQV88+UDoWR7B1NNTPwAAgD8AAIA/AACAPyUAAAAAAAAAAACAPwAAAAAAAIA/"
@@ -259,7 +259,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "uH2pwT1I10HK7tXBwcBAPwAAgD8AAIA/AACAPyQAAAAAAAAAAACAPwAAgD8AAIA/"
@@ -279,7 +279,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "7pWpwblaVEHXZbXBIwAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -299,7 +299,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "4ayQwlG2W0Lf0fzBIgAAAAAAAAAAAIA/AACAPwAAgD8="
@@ -319,7 +319,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "OD2WQOmIFUDl5CPBIQAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -339,7 +339,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "PiPHwUWlT0ES3o7BIAAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -359,7 +359,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "sX1jwemIFUAwh+rAHwAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -379,7 +379,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "4hLdwemIFUBmPse/HgAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -399,7 +399,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "Lgw2QemIFUDqfdW/HQAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -419,7 +419,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "3lAGwumIFUDYBD7BHAAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -439,7 +439,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "1C0aPyyFkkBkwRzBGwAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -459,7 +459,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "JkqLQSyFkkBgS07BGgAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -479,7 +479,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "ChQNQSyFkkA0uje/GQAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -499,7 +499,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "ChQNQSyFkkC6db/AGAAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -519,7 +519,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "uN5twHP4FUCTW07BFwAAAAAAAAAAAIA/AAAAQAAAgD8="
@@ -539,7 +539,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "+l+OwSyFkkDObBrBFgAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -559,7 +559,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "t0x4QmdMjkFxltnBFQAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -641,7 +641,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "AAAAvwAAAD8ux8RBEQAAAAAAAAAAAIA/AACAQAAAgD8="
@@ -665,7 +665,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "////vlbGmUAAALDAEAAAAAAAAAAAAIA/AACgQAAAgD8="
@@ -701,7 +701,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: false
+        TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "ZzgXwzxVKUMojbrCoaAgPtLRUT+3tjY/AACAPw8AAAA="
@@ -721,7 +721,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "AAAMwoDeHr4AAAAAn56ePoeGhj7x8HA9AACAPw4AAAAAAAAAAACAPwAAAEAAAIBA"
@@ -751,7 +751,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "v34RwnUULr5QAKDAsbAwP6+uLj/T0lI/AACAPw0AAAAAAAAAAACAPwAAAEBmZmZA"
@@ -771,7 +771,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "cTM3wrhMjkHPDNTBDAAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -791,7 +791,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "XNDCQSyFkkA87wXBCwAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -811,7 +811,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "3FbtwRrFgUDu5tjACgAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -831,7 +831,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "9FjJwQtek0B+chbBCQAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -851,7 +851,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "WU+rwQhTj0Cfb3nACAAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -871,7 +871,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "qISXwKzLJUENJ3DBBwAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -891,7 +891,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "I9hVwpGOaUGhFIPBBgAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -911,7 +911,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "bjwYwkWlT0GKG1vBBQAAAAAAAAAAAIA/AAAAAAAAgD8="
@@ -931,7 +931,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "Gr0bwSyFkkAD717ABAAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -951,7 +951,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "1Fr6wCyFkkBAFDbBAwAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -971,7 +971,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "AAAMwikcN74AxLi8AgAAAAAAAAAAAIA/AADAQDMzw0A="
@@ -991,7 +991,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "HIuzQSyFkkBGpQ3AAQAAAAAAAAAAAIA/AABAQAAAgD8="
@@ -1030,7 +1030,7 @@ Entities:
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        AddTexture: true
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawTriangle
       Buffer: !!binary "gYpHQFwBlT8AAMDAAACAPwAAgD+qqSk/AACAPwAAAAAAAAAAAACAPwAAgD/NzEw+"
