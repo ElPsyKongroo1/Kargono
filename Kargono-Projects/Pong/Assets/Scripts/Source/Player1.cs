@@ -87,19 +87,36 @@ namespace Pong
 
 		void OnUpdate(float ts)
 		{
-
-			bool upperLimit = m_Transform.Translation.Y >= 8.25;
-			bool lowerLimit = m_Transform.Translation.Y <= -8.25;
-
 			float speed = Speed;
-			Vector3 velocity = Vector3.Zero;
+			Vector2 velocity = Vector2.Zero;
+			bool changeVelocity = false;
+			if (Input.IsKeyDown(KeyCode.Up)) { 
+				velocity.Y = 1.0f;
+				changeVelocity = true;
+			}
+			else if (Input.IsKeyDown(KeyCode.Down))
+			{
+				velocity.Y = -1.0f;
+				changeVelocity = true;
+			}
 
-			if (Input.IsKeyDown(KeyCode.L) && !lowerLimit) { velocity.Y = -1.0f; }
-			else if (Input.IsKeyDown(KeyCode.O) && !upperLimit) { velocity.Y = 1.0f; }
+			if (Input.IsKeyDown(KeyCode.Right))
+			{
+				velocity.X = 1.0f;
+				changeVelocity = true;
+			}
+			else if (Input.IsKeyDown(KeyCode.Left))
+			{
+				velocity.X = -1.0f;
+				changeVelocity = true;
+			}
 
-			velocity *= speed * ts;
-			Vector3 translation = Translation + velocity;
-			Translation = translation;
+			if (changeVelocity)
+			{
+				m_Rigidbody.LinearVelocity = velocity * speed;
+			}
+
+			
 		}
 
 	}

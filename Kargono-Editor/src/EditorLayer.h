@@ -39,6 +39,8 @@ namespace Kargono {
 		void InitializeOverlayData();
 		void OnOverlayRender();
 
+		void DrawFrustrum(Entity& entity);
+
 		void NewProject();
 		bool OpenProject();
 		void OpenProject(const std::filesystem::path& path);
@@ -56,7 +58,6 @@ namespace Kargono {
 		void OnSceneSimulate();
 		void OnSceneStop();
 		void OnScenePause();
-
 
 		void OnDuplicateEntity();
 
@@ -80,6 +81,7 @@ namespace Kargono {
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
+		bool m_ShowCameraFrustrums = true;
 		bool m_RuntimeFullscreen = false;
 
 		Ref<Framebuffer> m_Framebuffer;
@@ -97,9 +99,7 @@ namespace Kargono {
 		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 		glm::vec2 m_ViewportBounds[2];
 
-
 		int m_GizmoType = -1;
-
 
 		enum class SceneState
 		{

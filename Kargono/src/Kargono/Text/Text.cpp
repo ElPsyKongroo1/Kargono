@@ -124,9 +124,11 @@ namespace Kargono
 	{
 		RenderCommand::EnableDepthTesting(false);
 		// Iterate through all characters
+		float width = static_cast<float>(Application::GetCurrentApp().GetWindow().GetWidth());
+		float height = static_cast<float>(Application::GetCurrentApp().GetWindow().GetHeight());
 		glm::mat4 cameraViewMatrix = glm::inverse(camera.GetViewMatrix());
-		glm::mat4 orthographicProjection = glm::ortho((float)0, (float)1280,
-			(float)0, (float)720, (float)0, (float)100);
+		glm::mat4 orthographicProjection = glm::ortho((float)0, width,
+			(float)0, height, (float)0, (float)100);
 		glm::mat4 outputMatrix = orthographicProjection;
 		Renderer::BeginScene(outputMatrix);
 

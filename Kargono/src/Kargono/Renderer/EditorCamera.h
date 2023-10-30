@@ -149,7 +149,7 @@ namespace Kargono
 
 		// FreeFly Camera Fields
 		float m_KeyboardSpeed = 7.0f;
-		float m_KeyboardMinSpeed = 0.0f;
+		float m_KeyboardMinSpeed = 5.0f;
 		float m_KeyboardMaxSpeed = 300.0f;
 		bool m_MousePaused = true;
 

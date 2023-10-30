@@ -56,6 +56,16 @@ namespace Kargono
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
+
+		glm::mat4 GetTranslation() const
+		{
+			return glm::translate(glm::mat4(1.0f), Translation);
+		}
+
+		glm::mat4 GetRotation() const
+		{
+			return glm::toMat4(glm::quat(Rotation));
+		}
 	};
 
 	struct CameraComponent

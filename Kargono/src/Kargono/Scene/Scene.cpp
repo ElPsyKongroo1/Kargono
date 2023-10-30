@@ -12,26 +12,11 @@
 #include "Kargono/Renderer/Shader.h"
 
 #include <glm/glm.hpp>
-#include "box2d/Box2d.h"
-#include "box2d/b2_world.h"
-#include "box2d/b2_body.h"
-#include "box2d/b2_fixture.h"
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_circle_shape.h"
+
 
 
 namespace Kargono
 {
-
-	Scene::Scene()
-	{
-		//m_Registry.on_construct<CameraComponent>().connect
-	}
-
-	Scene::~Scene()
-	{
-		delete m_PhysicsWorld;
-	}
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
@@ -77,6 +62,7 @@ namespace Kargono
 
 		newScene->m_ViewportWidth = other->m_ViewportWidth;
 		newScene->m_ViewportHeight = other->m_ViewportHeight;
+		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
 
 		auto& srcSceneRegistry = other->m_Registry;
 		auto& dstSceneRegistry = newScene->m_Registry;
@@ -112,14 +98,16 @@ namespace Kargono
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = entity;
-
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_EntityMap.erase(entity.GetUUID());
-		m_Registry.destroy(entity);
+		if (m_Registry.valid(entity))
+		{
+			m_Registry.destroy(entity);
+		}
 	}
 
 	void Scene::DestroyAllEntities()
@@ -138,24 +126,18 @@ namespace Kargono
 	void Scene::OnRuntimeStart()
 	{
 		m_IsRunning = true;
-		OnPhysics2DStart();
+		// Physics
+		m_PhysicsWorld = CreateScope<Physics2DWorld>(this, m_PhysicsSpecification.Gravity);
 
 		// Scripts
 		ScriptEngine::OnRuntimeStart(this);
-		// Instantiate all script entities
-		auto view = m_Registry.view<ScriptComponent>();
-		for (auto e : view)
-		{
-			Entity entity = { e, this };
-
-			ScriptEngine::OnCreateEntity(entity);
-		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		m_IsRunning = false;
-		OnPhysics2DStop();
+		m_PhysicsWorld.reset();
+		m_PhysicsWorld = nullptr;
 
 		// Script
 		ScriptEngine::OnRuntimeStop();
@@ -163,12 +145,15 @@ namespace Kargono
 
 	void Scene::OnSimulationStart()
 	{
-		OnPhysics2DStart();
+		// Physics
+		m_PhysicsWorld = CreateScope<Physics2DWorld>(this, m_PhysicsSpecification.Gravity);
 	}
 
 	void Scene::OnSimulationStop()
 	{
-		OnPhysics2DStop();
+		// Physics
+		m_PhysicsWorld.reset();
+		m_PhysicsWorld = nullptr;
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)
@@ -211,13 +196,7 @@ namespace Kargono
 			// Update Scripts
 			{
 				// C# Entity
-				auto view = m_Registry.view<ScriptComponent>();
-				for (auto e : view)
-				{
-					Entity entity = { e, this };
-
-					ScriptEngine::OnUpdateEntity(entity, ts);
-				}
+				ScriptEngine::OnUpdate(ts);
 				// Native Script On Update
 				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
@@ -228,36 +207,23 @@ namespace Kargono
 						nsc.Instance->m_Entity = Entity{entity, this};
 						nsc.Instance->OnCreate();
 					}
-
 					nsc.Instance->OnUpdate(ts);
 				});
 			}
-
-			UpdatePhysics(ts);
+			m_PhysicsWorld->OnUpdate(ts);
 		}
 
 		// Render 2D
-		Camera* mainCamera = nullptr;
-		glm::mat4 cameraTransform;
-		{
-			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+		Entity cameraEntity = GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		glm::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
-				if (camera.Primary)
-				{
-					mainCamera = &camera.Camera;
-					cameraTransform = transform.GetTransform();
-					break;
-				}
-			}
-			if (mainCamera)
-			{
-				// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-				RenderScene(*mainCamera, glm::inverse(cameraTransform));
-			}
+		if (mainCamera)
+		{
+			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
+			RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
+		
 	}
 
 	bool Scene::CheckEntityExists(entt::entity entity)
@@ -269,7 +235,7 @@ namespace Kargono
 	{
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			UpdatePhysics(ts);
+			m_PhysicsWorld->OnUpdate(ts);
 		}
 		// Render
 		RenderScene(camera, camera.GetViewMatrix());
@@ -307,95 +273,6 @@ namespace Kargono
 	void Scene::Step(int frames)
 	{
 		m_StepFrames = frames;
-	}
-	void Scene::OnPhysics2DStart()
-	{
-		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
-		m_ContactListener = ContactListener();
-		Application::GetCurrentApp().RegisterCollisionEventListener(m_ContactListener);
-		m_PhysicsWorld->SetContactListener(&m_ContactListener);
-		auto view = m_Registry.view<Rigidbody2DComponent>();
-		for (auto e : view)
-		{
-			Entity entity = { e, this };
-			auto& transform = entity.GetComponent<TransformComponent>();
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-			b2BodyDef bodyDef;
-			bodyDef.type = Utils::Rigidbody2DTypeToBox2DBody(rb2d.Type);
-			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
-			bodyDef.angle = transform.Rotation.z;
-
-			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			body->SetFixedRotation(rb2d.FixedRotation);
-			b2BodyUserData& bodyUser = body->GetUserData();
-			bodyUser.UUID = entity.GetUUID();
-			rb2d.RuntimeBody = body;
-
-			if (entity.HasComponent<BoxCollider2DComponent>())
-			{
-				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
-
-				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &boxShape;
-				fixtureDef.density = bc2d.Density;
-				fixtureDef.friction = bc2d.Friction;
-				fixtureDef.restitution = bc2d.Restitution;
-				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
-				body->CreateFixture(&fixtureDef);
-			}
-
-			if (entity.HasComponent<CircleCollider2DComponent>())
-			{
-				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
-
-				b2CircleShape circleShape;
-				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
-				circleShape.m_radius = transform.Scale.x * cc2d.Radius;
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &circleShape;
-				fixtureDef.density = cc2d.Density;
-				fixtureDef.friction = cc2d.Friction;
-				fixtureDef.restitution = cc2d.Restitution;
-				fixtureDef.restitutionThreshold = cc2d.RestitutionThreshold;
-				body->CreateFixture(&fixtureDef);
-			}
-		}
-	}
-	void Scene::OnPhysics2DStop()
-	{
-		m_ContactListener = {};
-		delete m_PhysicsWorld;
-		m_PhysicsWorld = nullptr;
-	}
-
-	void Scene::UpdatePhysics(Timestep ts)
-	{
-		// Physics
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
-			{
-				Entity entity = { e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = body->GetAngle();
-			}
-		}
 	}
 	void Scene::RenderScene(Camera& camera, const glm::mat4& transform)
 	{

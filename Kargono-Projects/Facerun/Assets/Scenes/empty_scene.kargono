@@ -1,16 +1,357 @@
 Scene: Untitled
+Physics:
+  Gravity: [0, 1.75]
 Entities:
-  - Entity: 14828453636723767662
+  - Entity: 12749429271913560387
     TagComponent:
       Tag: Box
     TransformComponent:
-      Translation: [0.171795145, 11.3502121, -5.5]
-      Rotation: [0, 0, 1.57079637]
-      Scale: [1.2595619, 8.29875851, 1]
+      Translation: [3.61782861, 1.66410398, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
     ShapeComponent:
-      CurrentShape: Cube
-      TextureHandle: 8540798848243451946
-      ShaderHandle: 3790121784515050341
+      CurrentShape: Pyramid
+      VertexColors:
+        - Color: [1, 0.572549045, 0.662745118, 1]
+        - Color: [1, 1, 0.20784314, 1]
+        - Color: [0.309803933, 1, 0.662745118, 1]
+        - Color: [1, 0.509803951, 0.458823532, 1]
+        - Color: [0.647058845, 0.611764729, 0.298039228, 1]
+        - Color: [0.752941191, 0.764705896, 0.662745118, 1]
+        - Color: [1, 0.603921592, 0.400000006, 1]
+        - Color: [0.521568656, 0.266666681, 0, 1]
+        - Color: [1, 0.227450982, 0, 1]
+        - Color: [1, 0.458823532, 0.31764707, 0.505882382]
+        - Color: [1, 0.886274517, 0.662745118, 1]
+        - Color: [1, 0.611764729, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+        - Color: [1, 1, 0.662745118, 1]
+      TextureHandle: 11258810199431108506
+      ShaderHandle: 749533696951770874
+      ShaderSpecification:
+        ColorInputType: VertexColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawTriangle
+      Buffer: !!binary "gYpHQFwBlT8AAMDAAACAPwAAgD+qqSk/AACAPysAAAAAAAAAAACAPwAAAADNzEw+"
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.150000006]
+      Size: [0.5, 0.349999994]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 1416575666724957164
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [24.9429245, 2.07875633, -2.21321249]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "HIuzQSyFkkBGpQ3AKgAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 1168201773845479879
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [5.96046448e-08, -0.17881906, -11.8236313]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [70, 23.6021557, 0.999886394]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 3738639750520954500
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAMwikcN74AxLi8KQAAAAAAAAAAAIA/AACAPzMzw0A="
+  - Entity: 18273716516379590876
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-5.32358742, 2.07875633, -11.3799438]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "1Fr6wCyFkkBAFDbBKAAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 5829521914014726300
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-7.23366737, 2.07875633, -3.48333812]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "Gr0bwSyFkkAD717AJwAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 6378408106021816491
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [-9.75401306, 2.97784901, -13.6942234]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "bjwYwkWlT0GKG1vBJgAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 2244518969620201522
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [-25.1560707, 4.59730625, -16.3850727]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "I9hVwpGOaUGhFIPBJQAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 10657477765109477758
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [23.5700569, 0.362224579, -15.0095339]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "qISXwKzLJUENJ3DBJAAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 6412895350353286330
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-18.913744, 1.97888577, -3.89743781]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "WU+rwQhTj0Cfb3nAIwAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 15770393508544689144
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-22.6684341, 2.10522985, -9.40295219]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "9FjJwQtek0B+chbBIgAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 1033205328720227495
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-27.1674118, 1.55531049, -6.77818966]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "3FbtwRrFgUDu5tjAIQAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 1242276924143954553
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [26.851738, 2.07875633, -8.37090683]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "XNDCQSyFkkA87wXBIAAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 4568510293557288313
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [-17.4952354, 7.78745937, -26.5062542]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "cTM3wrhMjkHPDNTBHwAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 629720744589222482
+    TagComponent:
+      Tag: Road
+    TransformComponent:
+      Translation: [0.0923185349, -0.169999942, -5.5]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [72.9321899, 0.999923646, 0.999809921]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 3738639750520954500
+      ShaderHandle: 17268415760754454710
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "v34RwnUULr5QAKDAsbAwP6+uLj/T0lI/AACAPx4AAAAAAAAAAACAPwAAAABmZmZA"
+  - Entity: 2782608401036276757
+    TagComponent:
+      Tag: Ground
+    TransformComponent:
+      Translation: [5.96046448e-08, -11.9580364, 0]
+      Rotation: [0, 0, 0]
+      Scale: [70, 23.6057816, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 3738639750520954500
+      ShaderHandle: 17268415760754454710
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAMwoDeHr4AAAAAn56ePoeGhj7x8HA9AACAPx0AAAAAAAAAAACAPwAAAAAAAIBA"
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 1
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 808996595957977349
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [-1.22032881, 19.3329506, -93.2756958]
+      Rotation: [0, 0, 0]
+      Scale: [300, 300, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 4018309295643676762
+      ShaderHandle: 12383132431015039881
       ShaderSpecification:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
@@ -19,10 +360,88 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "u5B+wOOGK0EAAMDAAACAPwAAgD+qqSk/AACAPysAAAA="
+      Buffer: !!binary "ZzgXwzxVKUMojbrCoaAgPtLRUT+3tjY/AACAPxwAAAA="
+  - Entity: 1186017404151072087
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [3.16649675e-08, 4.30546093, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 8540798848243451946
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "////vlbGmUAAALDAGwAAAAAAAAAAAIA/AABAQAAAgD8="
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.389999986
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.50999999
+      RestitutionThreshold: 0.180000007
+    ScriptComponent:
+      ClassName: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: Float
+          Data: 17
+  - Entity: 8293775937860125679
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [7.4505806e-09, -3.7252903e-09, 24.5972557]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 30
+        OrthographicNear: 0
+        OrthographicFar: 100
+      Primary: true
+      FixedAspectRatio: false
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 12821888071701490030
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAAvwAAAD8ux8RBGgAAAAAAAAAAAIA/AACAQAAAgD8="
+    ScriptComponent:
+      ClassName: Sandbox.Camera
+      ScriptFields:
+        []
+  - Entity: 16055172307293065181
+    TagComponent:
+      Tag: Invisible Wall
+    TransformComponent:
+      Translation: [-25.7045383, 5.46857071, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [13.4200001, 13.4220304, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
@@ -30,32 +449,460 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 12864109159693362022
+  - Entity: 8908532272188604100
     TagComponent:
-      Tag: Box
+      Tag: Invisible Wall
     TransformComponent:
-      Translation: [-2.86273384, 3.66127825, -5.5]
+      Translation: [-2.38418579e-07, 13.5254583, -5.5]
       Rotation: [0, 0, 0]
-      Scale: [1.2595731, 2.80455589, 1]
+      Scale: [70, 3, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11305261500944675927
+    TagComponent:
+      Tag: Invisible Wall
+    TransformComponent:
+      Translation: [30.5755177, 5.40768433, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [13.4200001, 13.4200001, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 13550271212884189528
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [33.7699356, 7.78729391, -27.1984539]
+      Rotation: [-3.14159226, 0, -3.14159226]
+      Scale: [56.6099701, 20, 1]
     ShapeComponent:
-      CurrentShape: Pyramid
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "t0x4QmdMjkFxltnBFgAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 11541659662495606140
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-15.2968636, 2.07875633, -9.65156364]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "+l+OwSyFkkDObBrBFQAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 16204714205944278421
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-1.48718548, 0.843289137, -12.897357]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "uN5twHP4FUCTW07BFAAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 16714838255178927062
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [11.3173923, 2.07875633, -5.98312092]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "ChQNQSyFkkC6db/AEwAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 5980731597213076784
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [11.3173923, 2.07875633, -0.717684984]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "ChQNQSyFkkA0uje/EgAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 10603270118461090189
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [19.9112053, 2.07875633, -12.8934021]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "JkqLQSyFkkBgS07BEQAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 14470545676816017541
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [3.10226178, 2.07875633, -9.79721451]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "1C0aPyyFkkBkwRzBEAAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 18261765960412964801
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-31.3494396, 0.836481392, -11.8761826]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "3lAGwumIFUDYBD7BDwAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 14843209312186063744
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [13.6075068, 0.836481392, -1.66790509]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "Lgw2QemIFUDqfdW/DgAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 12842046634017884822
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-25.4046879, 0.836481392, -1.55659175]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "4hLdwemIFUBmPse/DQAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 8966093407196168747
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [-11.9886532, 0.836481392, -7.32900238]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "sX1jwemIFUAwh+rADAAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 6337398763326236372
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [3.41279292, 2.97784901, -17.8584328]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "PiPHwUWlT0ES3o7BCwAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 10894870893529471880
+    TagComponent:
+      Tag: Rock
+    TransformComponent:
+      Translation: [6.92450619, 0.836481392, -10.2433825]
+      Rotation: [0, 0, 0]
+      Scale: [4.45906639, 3, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2359769334374518467
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "OD2WQOmIFUDl5CPBCgAAAAAAAAAAAIA/AACgQAAAgD8="
+  - Entity: 3448296047212542173
+    TagComponent:
+      Tag: Background Specks
+    TransformComponent:
+      Translation: [-3.14378452, 4.92804241, -31.6024761]
+      Rotation: [0, 0, 0]
+      Scale: [138.387741, 100, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 10761406176345313220
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "4ayQwlG2W0Lf0fzBCQAAAAAAAAAAAIA/AADAQAAAgD8="
+  - Entity: 4940925500749755710
+    TagComponent:
+      Tag: Mountain
+    TransformComponent:
+      Translation: [7.10679245, 3.27214909, -22.6747265]
+      Rotation: [0, 0, 0]
+      Scale: [56.6100006, 20, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 2506722805963562016
+      ShaderHandle: 11782142316776050450
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "7pWpwblaVEHXZbXBCAAAAAAAAAAAAIA/AAAAQAAAgD8="
+  - Entity: 8491172520020854555
+    TagComponent:
+      Tag: Castle
+    TransformComponent:
+      Translation: [3.81361294, 14.4102726, -26.7415962]
+      Rotation: [0, 0, 0]
+      Scale: [50, 25, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 837997036078448433
+      ShaderHandle: 17268415760754454710
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "uH2pwT1I10HK7tXBwcBAPwAAgD8AAIA/AACAPwcAAAAAAAAAAACAPwAAgD8AAIA/"
+  - Entity: 17473884856681341648
+    TagComponent:
+      Tag: Bridge
+    TransformComponent:
+      Translation: [21.0640945, 3.78861952, -9.89694977]
+      Rotation: [0, 0, 0]
+      Scale: [10, 8, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 10982906394546209453
+      ShaderHandle: 17268415760754454710
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "RIOAQV88+UDoWR7B1NNTPwAAgD8AAIA/AACAPwYAAAAAAAAAAACAPwAAAEAAAIA/"
+  - Entity: 10755858033960690501
+    TagComponent:
+      Tag: Tree
+    TransformComponent:
+      Translation: [-11.8250513, 2.19748998, -0.889979959]
+      Rotation: [0, 0, 0]
+      Scale: [5, 5, 1]
+    ShapeComponent:
+      CurrentShape: Quad
       VertexColors:
-        - Color: [1, 0.388235301, 0.568627477, 1]
-        - Color: [1, 0.388235301, 1, 1]
-        - Color: [1, 0.388235301, 1, 1]
-        - Color: [1, 0.388235301, 1, 1]
-        - Color: [1, 0.388235301, 1, 1]
-      TextureHandle: 8540798848243451946
-      ShaderHandle: 366784338246434523
+        - Color: [1, 1, 0.243137255, 1]
+        - Color: [1, 0.0941176489, 1, 1]
+        - Color: [1, 0.0117647061, 1, 1]
+        - Color: [0.549019635, 0.41568628, 0.454901963, 1]
+      TextureHandle: 7287981785978394081
+      ShaderHandle: 11146205225217615749
       ShaderSpecification:
         ColorInputType: VertexColor
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "aTNlwdZRlkC61WO/jYwMP9XU1D7p6Og+AACAPwUAAAAAAAAAAACAPwAAAAAAAIA/"
+  - Entity: 16787081454472316680
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [5.16327381, 1.66410398, -5.5]
+      Rotation: [-0.0226892792, 0, 0]
+      Scale: [1, 1, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      VertexColors:
+        - Color: [1, 0.68235296, 0.941176474, 1]
+        - Color: [1, 0.980392158, 0.20784314, 1]
+        - Color: [0.309803933, 0.474509805, 0.662745118, 1]
+        - Color: [1, 0.631372571, 0.458823532, 1]
+      TextureHandle: 11258810199431108506
+      ShaderHandle: 2110555380627624350
+      ShaderSpecification:
+        ColorInputType: VertexColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: true
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "CDc3wKcIokAAALDAAACAP8fGxj4AAIA/AACAPyoAAAA="
+      Buffer: !!binary "ijmVQJJ+CkDtXLDAAACAvwAAgD8AAAAAZmZmPo/CdTwAAIA/oqEhP+vq6j4AAIA/BAAAAA=="
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.150000006]
+      Size: [0.5, 0.349999994]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 5431570779057162203
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [2.78348017, 6.99491644, -5.5]
+      Rotation: [0, 0, 0]
+      Scale: [1.2595731, 2.80455589, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 8540798848243451946
+      ShaderHandle: 6939183833183348852
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawTriangle
+      Buffer: !!binary "HtYJQOhaBkEAAMDAAACAPwAAgD+qqSk/AACAPwMAAAAAAAAAAACAPwAAAAAAAIBA"
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
@@ -113,7 +960,7 @@ Entities:
         - Color: [1, 1, 0.662745118, 1]
         - Color: [1, 1, 0.662745118, 1]
       TextureHandle: 837997036078448433
-      ShaderHandle: 10664886007694324324
+      ShaderHandle: 749533696951770874
       ShaderSpecification:
         ColorInputType: VertexColor
         AddProjectionMatrix: true
@@ -122,7 +969,7 @@ Entities:
         TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawTriangle
-      Buffer: !!binary "5gepwARnAkEAAMDAAACAPwAAgD+qqSk/AACAPykAAAAAAAAAAACAPwAAAAAAAIA/"
+      Buffer: !!binary "5gepwARnAkEAAMDAAACAPwAAgD+qqSk/AACAPwIAAAAAAAAAAACAPwAAgD8AAIA/"
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
@@ -133,913 +980,68 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 5431570779057162203
+  - Entity: 12864109159693362022
     TagComponent:
       Tag: Box
     TransformComponent:
-      Translation: [2.78348017, 6.99491644, -5.5]
+      Translation: [-2.86273384, 3.66127825, -5.5]
       Rotation: [0, 0, 0]
       Scale: [1.2595731, 2.80455589, 1]
     ShapeComponent:
-      CurrentShape: Cube
-      TextureHandle: 8540798848243451946
-      ShaderHandle: 144360628646727778
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawTriangle
-      Buffer: !!binary "HtYJQOhaBkEAAMDAAACAPwAAgD+qqSk/AACAPygAAAAAAAAAAACAPwAAAAAAAIBA"
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 16787081454472316680
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Translation: [5.16327381, 1.66410398, -5.5]
-      Rotation: [-0.0226892792, 0, 0]
-      Scale: [1, 1, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      VertexColors:
-        - Color: [1, 0.68235296, 0.941176474, 1]
-        - Color: [1, 0.980392158, 0.20784314, 1]
-        - Color: [0.309803933, 0.474509805, 0.662745118, 1]
-        - Color: [1, 0.631372571, 0.458823532, 1]
-      TextureHandle: 11258810199431108506
-      ShaderHandle: 16645188048149203063
-      ShaderSpecification:
-        ColorInputType: VertexColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: true
-        TextureInput: None
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "ijmVQJJ+CkDtXLDAAACAvwAAgD8AAAAAZmZmPo/CdTwAAIA/oqEhP+vq6j4AAIA/JwAAAA=="
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, -0.150000006]
-      Size: [0.5, 0.349999994]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 10755858033960690501
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-11.8250513, 2.19748998, -0.889979959]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      VertexColors:
-        - Color: [1, 1, 0.243137255, 1]
-        - Color: [1, 0.0941176489, 1, 1]
-        - Color: [1, 0.0117647061, 1, 1]
-        - Color: [0.549019635, 0.41568628, 0.454901963, 1]
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 3502328734419177302
-      ShaderSpecification:
-        ColorInputType: VertexColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "aTNlwdZRlkC61WO/jYwMP9XU1D7p6Og+AACAPyYAAAAAAAAAAACAPwAAAAAAAIA/"
-  - Entity: 17473884856681341648
-    TagComponent:
-      Tag: Bridge
-    TransformComponent:
-      Translation: [21.0640945, 3.78861952, -9.89694977]
-      Rotation: [0, 0, 0]
-      Scale: [10, 8, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 10982906394546209453
-      ShaderHandle: 11397976558767704291
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "RIOAQV88+UDoWR7B1NNTPwAAgD8AAIA/AACAPyUAAAAAAAAAAACAPwAAAAAAAIA/"
-  - Entity: 8491172520020854555
-    TagComponent:
-      Tag: Castle
-    TransformComponent:
-      Translation: [3.81361294, 14.4102726, -26.7415962]
-      Rotation: [0, 0, 0]
-      Scale: [50, 25, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 837997036078448433
-      ShaderHandle: 11397976558767704291
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "uH2pwT1I10HK7tXBwcBAPwAAgD8AAIA/AACAPyQAAAAAAAAAAACAPwAAgD8AAIA/"
-  - Entity: 4940925500749755710
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [7.10679245, 3.27214909, -22.6747265]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "7pWpwblaVEHXZbXBIwAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 3448296047212542173
-    TagComponent:
-      Tag: Background Specks
-    TransformComponent:
-      Translation: [-3.14378452, 4.92804241, -31.6024761]
-      Rotation: [0, 0, 0]
-      Scale: [138.387741, 100, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 10761406176345313220
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "4ayQwlG2W0Lf0fzBIgAAAAAAAAAAAIA/AACAPwAAgD8="
-  - Entity: 10894870893529471880
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [6.92450619, 0.836481392, -10.2433825]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "OD2WQOmIFUDl5CPBIQAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 6337398763326236372
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [3.41279292, 2.97784901, -17.8584328]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "PiPHwUWlT0ES3o7BIAAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 8966093407196168747
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-11.9886532, 0.836481392, -7.32900238]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "sX1jwemIFUAwh+rAHwAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 12842046634017884822
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-25.4046879, 0.836481392, -1.55659175]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "4hLdwemIFUBmPse/HgAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 14843209312186063744
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [13.6075068, 0.836481392, -1.66790509]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "Lgw2QemIFUDqfdW/HQAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 18261765960412964801
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-31.3494396, 0.836481392, -11.8761826]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "3lAGwumIFUDYBD7BHAAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 14470545676816017541
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [3.10226178, 2.07875633, -9.79721451]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "1C0aPyyFkkBkwRzBGwAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 10603270118461090189
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [19.9112053, 2.07875633, -12.8934021]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "JkqLQSyFkkBgS07BGgAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 5980731597213076784
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [11.3173923, 2.07875633, -0.717684984]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "ChQNQSyFkkA0uje/GQAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 16714838255178927062
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [11.3173923, 2.07875633, -5.98312092]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "ChQNQSyFkkC6db/AGAAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 16204714205944278421
-    TagComponent:
-      Tag: Rock
-    TransformComponent:
-      Translation: [-1.48718548, 0.843289137, -12.897357]
-      Rotation: [0, 0, 0]
-      Scale: [4.45906639, 3, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2359769334374518467
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "uN5twHP4FUCTW07BFwAAAAAAAAAAAIA/AAAAQAAAgD8="
-  - Entity: 11541659662495606140
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-15.2968636, 2.07875633, -9.65156364]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "+l+OwSyFkkDObBrBFgAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 13550271212884189528
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [33.7699356, 7.78729391, -27.1984539]
-      Rotation: [-3.14159226, 0, -3.14159226]
-      Scale: [56.6099701, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "t0x4QmdMjkFxltnBFQAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 11305261500944675927
-    TagComponent:
-      Tag: Invisible Wall
-    TransformComponent:
-      Translation: [30.5755177, 5.40768433, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [13.4200001, 13.4200001, 1]
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 8908532272188604100
-    TagComponent:
-      Tag: Invisible Wall
-    TransformComponent:
-      Translation: [-2.38418579e-07, 13.5254583, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [70, 3, 1]
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 16055172307293065181
-    TagComponent:
-      Tag: Invisible Wall
-    TransformComponent:
-      Translation: [-25.7045383, 5.46857071, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [13.4200001, 13.4220304, 1]
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 8293775937860125679
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [7.4505806e-09, -3.7252903e-09, 24.5972557]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 30
-        OrthographicNear: 0
-        OrthographicFar: 100
-      Primary: true
-      FixedAspectRatio: false
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 12821888071701490030
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "AAAAvwAAAD8ux8RBEQAAAAAAAAAAAIA/AACAQAAAgD8="
-    ScriptComponent:
-      ClassName: Sandbox.Camera
-      ScriptFields:
-        []
-  - Entity: 1186017404151072087
-    TagComponent:
-      Tag: Player
-    TransformComponent:
-      Translation: [3.16649675e-08, 4.30546093, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 8540798848243451946
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "////vlbGmUAAALDAEAAAAAAAAAAAAIA/AACgQAAAgD8="
-    Rigidbody2DComponent:
-      BodyType: Dynamic
-      FixedRotation: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.389999986
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.50999999
-      RestitutionThreshold: 0.180000007
-    ScriptComponent:
-      ClassName: Sandbox.Player
-      ScriptFields:
-        - Name: Speed
-          Type: Float
-          Data: 17
-  - Entity: 808996595957977349
-    TagComponent:
-      Tag: Background
-    TransformComponent:
-      Translation: [-1.22032881, 19.3329506, -93.2756958]
-      Rotation: [0, 0, 0]
-      Scale: [300, 300, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 4018309295643676762
-      ShaderHandle: 3790121784515050341
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: None
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "ZzgXwzxVKUMojbrCoaAgPtLRUT+3tjY/AACAPw8AAAA="
-  - Entity: 2782608401036276757
-    TagComponent:
-      Tag: Ground
-    TransformComponent:
-      Translation: [5.96046448e-08, -11.9580364, 0]
-      Rotation: [0, 0, 0]
-      Scale: [70, 23.6057816, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 3738639750520954500
-      ShaderHandle: 11397976558767704291
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "AAAMwoDeHr4AAAAAn56ePoeGhj7x8HA9AACAPw4AAAAAAAAAAACAPwAAAEAAAIBA"
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 1
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 629720744589222482
-    TagComponent:
-      Tag: Road
-    TransformComponent:
-      Translation: [0.0923185349, -0.169999942, -5.5]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [72.9321899, 0.999923646, 0.999809921]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 3738639750520954500
-      ShaderHandle: 11397976558767704291
-      ShaderSpecification:
-        ColorInputType: FlatColor
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "v34RwnUULr5QAKDAsbAwP6+uLj/T0lI/AACAPw0AAAAAAAAAAACAPwAAAEBmZmZA"
-  - Entity: 4568510293557288313
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [-17.4952354, 7.78745937, -26.5062542]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "cTM3wrhMjkHPDNTBDAAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 1242276924143954553
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [26.851738, 2.07875633, -8.37090683]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "XNDCQSyFkkA87wXBCwAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 1033205328720227495
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-27.1674118, 1.55531049, -6.77818966]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "3FbtwRrFgUDu5tjACgAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 15770393508544689144
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-22.6684341, 2.10522985, -9.40295219]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "9FjJwQtek0B+chbBCQAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 6412895350353286330
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-18.913744, 1.97888577, -3.89743781]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "WU+rwQhTj0Cfb3nACAAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 10657477765109477758
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [23.5700569, 0.362224579, -15.0095339]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "qISXwKzLJUENJ3DBBwAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 2244518969620201522
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [-25.1560707, 4.59730625, -16.3850727]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "I9hVwpGOaUGhFIPBBgAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 6378408106021816491
-    TagComponent:
-      Tag: Mountain
-    TransformComponent:
-      Translation: [-9.75401306, 2.97784901, -13.6942234]
-      Rotation: [0, 0, 0]
-      Scale: [56.6100006, 20, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 2506722805963562016
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "bjwYwkWlT0GKG1vBBQAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 5829521914014726300
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-7.23366737, 2.07875633, -3.48333812]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "Gr0bwSyFkkAD717ABAAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 18273716516379590876
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [-5.32358742, 2.07875633, -11.3799438]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "1Fr6wCyFkkBAFDbBAwAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 1168201773845479879
-    TagComponent:
-      Tag: Floor
-    TransformComponent:
-      Translation: [5.96046448e-08, -0.17881906, -11.8236313]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [70, 23.6021557, 0.999886394]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 3738639750520954500
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "AAAMwikcN74AxLi8AgAAAAAAAAAAAIA/AADAQDMzw0A="
-  - Entity: 1416575666724957164
-    TagComponent:
-      Tag: Tree
-    TransformComponent:
-      Translation: [24.9429245, 2.07875633, -2.21321249]
-      Rotation: [0, 0, 0]
-      Scale: [5, 5, 1]
-    ShapeComponent:
-      CurrentShape: Quad
-      TextureHandle: 7287981785978394081
-      ShaderHandle: 11576876471744276199
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: ColorTexture
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "HIuzQSyFkkBGpQ3AAQAAAAAAAAAAAIA/AABAQAAAgD8="
-  - Entity: 12749429271913560387
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Translation: [3.61782861, 1.66410398, -5.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    ShapeComponent:
       CurrentShape: Pyramid
       VertexColors:
-        - Color: [1, 0.572549045, 0.662745118, 1]
-        - Color: [1, 1, 0.20784314, 1]
-        - Color: [0.309803933, 1, 0.662745118, 1]
-        - Color: [1, 0.509803951, 0.458823532, 1]
-        - Color: [0.647058845, 0.611764729, 0.298039228, 1]
-        - Color: [0.752941191, 0.764705896, 0.662745118, 1]
-        - Color: [1, 0.603921592, 0.400000006, 1]
-        - Color: [0.521568656, 0.266666681, 0, 1]
-        - Color: [1, 0.227450982, 0, 1]
-        - Color: [1, 0.458823532, 0.31764707, 0.505882382]
-        - Color: [1, 0.886274517, 0.662745118, 1]
-        - Color: [1, 0.611764729, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-        - Color: [1, 1, 0.662745118, 1]
-      TextureHandle: 11258810199431108506
-      ShaderHandle: 10664886007694324324
+        - Color: [1, 0.388235301, 0.568627477, 1]
+        - Color: [1, 0.388235301, 1, 1]
+        - Color: [1, 0.388235301, 1, 1]
+        - Color: [1, 0.388235301, 1, 1]
+        - Color: [1, 0.388235301, 1, 1]
+      TextureHandle: 8540798848243451946
+      ShaderHandle: 4254124067849936909
       ShaderSpecification:
         ColorInputType: VertexColor
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        TextureInput: ColorTexture
+        TextureInput: None
         DrawOutline: false
-        RenderType: DrawTriangle
-      Buffer: !!binary "gYpHQFwBlT8AAMDAAACAPwAAgD+qqSk/AACAPwAAAAAAAAAAAACAPwAAgD/NzEw+"
+        RenderType: DrawIndex
+      Buffer: !!binary "CDc3wKcIokAAALDAAACAP8fGxj4AAIA/AACAPwEAAAA="
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
     BoxCollider2DComponent:
-      Offset: [0, -0.150000006]
-      Size: [0.5, 0.349999994]
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 14828453636723767662
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [0.171795145, 11.3502121, -5.5]
+      Rotation: [0, 0, 1.57079637]
+      Scale: [1.2595619, 8.29875851, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 8540798848243451946
+      ShaderHandle: 12383132431015039881
+      ShaderSpecification:
+        ColorInputType: FlatColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: None
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "u5B+wOOGK0EAAMDAAACAPwAAgD+qqSk/AACAPwAAAAA="
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
       Restitution: 0

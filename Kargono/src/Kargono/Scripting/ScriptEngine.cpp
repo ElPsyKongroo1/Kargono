@@ -136,7 +136,7 @@ namespace Kargono
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
-		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+		std::unordered_map<UUID, Ref<ScriptClassInstance>> EntityInstances;
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
@@ -205,12 +205,9 @@ namespace Kargono
 			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
 		}
 
-		MonoDomain* rootDomain = mono_jit_init("KargonoJITRuntime");
+		bool status = InitializeRootDomain();
 
-		KG_CORE_ASSERT(rootDomain, "Mono Domain not loaded correctly!")
-
-		// Store the root domain pointer
-		s_ScriptData->RootDomain = rootDomain;
+		KG_CORE_ASSERT(status, "Failed to load Mono Root Domain!");
 
 		if (s_ScriptData->EnableDebugging)
 		{
@@ -240,13 +237,26 @@ namespace Kargono
 		s_ScriptData->RootDomain = nullptr;
 	}
 
-	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::InitializeRootDomain()
 	{
+		MonoDomain* rootDomain = mono_jit_init("KargonoJITRuntime");
+		// Store the root domain pointer
+		s_ScriptData->RootDomain = rootDomain;
+		if (!s_ScriptData->RootDomain) { return false; }
+		return true;
+	}
 
+	bool ScriptEngine::InitializeAppDomain()
+	{
 		// Create an App Domain
 		s_ScriptData->AppDomain = mono_domain_create_appdomain((char*)"KargonoScriptRuntime", nullptr);
+		if (!s_ScriptData->AppDomain) { return false; }
 		mono_domain_set(s_ScriptData->AppDomain, true);
-		// Move this maybe
+		return true;
+	}
+
+	bool ScriptEngine::LoadCoreAssembly(const std::filesystem::path& filepath)
+	{
 		s_ScriptData->CoreAssemblyFilepath = filepath;
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		if (s_ScriptData->CoreAssembly == nullptr) { return false; }
@@ -255,11 +265,8 @@ namespace Kargono
 		return true;
 	}
 
-	
-
 	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
-		// Move this maybe
 		s_ScriptData->AppAssemblyFilepath = filepath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		if (s_ScriptData->AppAssembly == nullptr){return false;}
@@ -277,13 +284,29 @@ namespace Kargono
 		mono_domain_set(mono_get_root_domain(), false);
 		mono_domain_unload(s_ScriptData->AppDomain);
 
-		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
+		bool status = InitializeAppDomain();
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not initialize App Domain.");
+			return;
+		}
 
+		status = LoadCoreAssembly(s_ScriptData->CoreAssemblyFilepath);
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
+			return;
+		}
 		const auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
-		LoadAppAssembly(scriptModulePath);
-		LoadAssemblyClasses();
+		status = LoadAppAssembly(scriptModulePath);
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			return;
+		}
 
 		// Retrieve and instantiate class
+		LoadAssemblyClasses();
 		ScriptGlue::RegisterComponents();
 
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
@@ -292,7 +315,14 @@ namespace Kargono
 
 	void ScriptEngine::InitialAssemblyLoad()
 	{
-		bool status = LoadAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
+		bool status = InitializeAppDomain();
+		if (!status)
+		{
+			KG_CORE_ERROR("[ScriptEngine] Could not initialize App Domain.");
+			return;
+		}
+
+		status = LoadCoreAssembly("Resources/Scripts/Kargono-ScriptCore.dll");
 		if (!status)
 		{
 			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
@@ -315,6 +345,15 @@ namespace Kargono
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
 	{
 		s_ScriptData->SceneContext = scene;
+
+		// Instantiate all script entities
+		auto view = scene->GetAllEntitiesWith<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, scene };
+
+			OnCreateEntity(entity);
+		}
 	}
 
 	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
@@ -332,13 +371,14 @@ namespace Kargono
 		const auto& sc = entity.GetComponent<ScriptComponent>();
 		if (ScriptEngine::EntityClassExists(sc.ClassName))
 		{
+			// Create a ScriptInstance specific to the entity and its ScriptClass
+			// Store ScriptInstance inside EntityInstances map with UUID
 			UUID entityID = entity.GetUUID();
-
-			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_ScriptData->EntityClasses[sc.ClassName], entity);
+			Ref<ScriptClassInstance> instance = CreateRef<ScriptClassInstance>(s_ScriptData->EntityClasses[sc.ClassName], entity);
 			s_ScriptData->EntityInstances[entity.GetUUID()] = instance;
 
-			// Copy field values
-			if (s_ScriptData->EntityScriptFields.find(entityID) != s_ScriptData->EntityScriptFields.end())
+			// Copy field values into C# Script
+			if (s_ScriptData->EntityScriptFields.contains(entityID))
 			{
 				const ScriptFieldMap& fieldMap = s_ScriptData->EntityScriptFields.at(entityID);
 				for (const auto& [name, fieldInstance] : fieldMap)
@@ -353,23 +393,17 @@ namespace Kargono
 
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
-
 		UUID entityUUID = entity.GetUUID();
-		if (s_ScriptData->EntityInstances.contains(entityUUID))
-		{
-			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
-
-			instance->InvokeOnUpdate(ts);
-		}
-		else
+		if (!s_ScriptData->EntityInstances.contains(entityUUID))
 		{
 			KG_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
+			return;
 		}
-
-		
+		Ref<ScriptClassInstance> instance = s_ScriptData->EntityInstances[entityUUID];
+		instance->InvokeOnUpdate(ts);
 	}
 
-	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
+	Ref<ScriptClassInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
 	{
 		auto it = s_ScriptData->EntityInstances.find(entityID);
 		if (it == s_ScriptData->EntityInstances.end()) { return nullptr; }
@@ -383,6 +417,18 @@ namespace Kargono
 		s_ScriptData->SceneContext = nullptr;
 
 		s_ScriptData->EntityInstances.clear();
+	}
+
+	void ScriptEngine::OnUpdate(Timestep ts)
+	{
+		auto view = s_ScriptData->SceneContext->GetAllEntitiesWith<ScriptComponent>();
+		// Run On-Update function for each ScriptObject
+		for (auto e : view)
+		{
+			Entity entity = { e, s_ScriptData->SceneContext };
+
+			ScriptEngine::OnUpdateEntity(entity, ts);
+		}
 	}
 
 	void ScriptEngine::LoadAssemblyClasses()
@@ -428,7 +474,7 @@ namespace Kargono
 					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(type);
 					KG_CORE_WARN("  {} ({})", fieldName, Utils::ScriptFieldTypeToString(fieldType));
 
-					scriptClass->m_Fields[fieldName] = { fieldType, fieldName, field };
+					scriptClass->AddField(fieldName, fieldType, field);
 				}
 			}
 		}
@@ -442,16 +488,7 @@ namespace Kargono
 	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
 	{
 		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(uuid))
-		return s_ScriptData->EntityInstances.at(uuid)->GetManagedObject();
-
-
-	}
-
-	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
-	{
-		MonoObject* instance = mono_object_new(s_ScriptData->AppDomain, monoClass);
-		mono_runtime_object_init(instance);
-		return instance;
+		return s_ScriptData->EntityInstances.at(uuid)->GetInstance();
 	}
 
 	Scene* ScriptEngine::GetSceneContext()
@@ -490,7 +527,9 @@ namespace Kargono
 
 	MonoObject* ScriptClass::Instantiate()
 	{
-		return ScriptEngine::InstantiateClass(m_MonoClass);
+		MonoObject* instance = mono_object_new(s_ScriptData->AppDomain, m_MonoClass);
+		mono_runtime_object_init(instance);
+		return instance;
 	}
 
 	MonoMethod* ScriptClass::GetMethod(const std::string& name, int parameterCount)
@@ -504,9 +543,13 @@ namespace Kargono
 		return mono_runtime_invoke(method, instance, params, &exception);
 	}
 
-	
-	
-	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
+	bool ScriptClass::AddField(const char* fieldName, const ScriptFieldType& fieldType, MonoClassField* field)
+	{
+		auto [newElement, insertionSuccessful] = m_Fields.insert({fieldName, {fieldType, fieldName, field}});
+		return insertionSuccessful;
+	}
+
+	ScriptClassInstance::ScriptClassInstance(Ref<ScriptClass> scriptClass, Entity entity)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = scriptClass->Instantiate();
@@ -524,12 +567,12 @@ namespace Kargono
 		}
 	}
 
-	void ScriptInstance::InvokeOnCreate()
+	void ScriptClassInstance::InvokeOnCreate()
 	{
 		if (m_OnCreateMethod) { m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);}
 	}
 
-	void ScriptInstance::InvokeOnUpdate(float ts)
+	void ScriptClassInstance::InvokeOnUpdate(float ts)
 	{
 		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!")
 		if (m_OnUpdateMethod)
@@ -539,7 +582,7 @@ namespace Kargono
 		}
 	}
 
-	bool ScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	bool ScriptClassInstance::GetFieldValueInternal(const std::string& name, void* buffer)
 	{
 		const auto& fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);
@@ -551,7 +594,7 @@ namespace Kargono
 
 	}
 
-	bool ScriptInstance::SetFieldValueInternal(const std::string& name, const void* value)
+	bool ScriptClassInstance::SetFieldValueInternal(const std::string& name, const void* value)
 	{
 		const auto& fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);

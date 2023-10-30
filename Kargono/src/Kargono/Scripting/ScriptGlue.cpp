@@ -114,6 +114,18 @@ namespace Kargono
 		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
 	}
 
+	static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, glm::vec2* linearVelocity)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		KG_CORE_ASSERT(scene)
+		Entity entity = scene->GetEntityByUUID(entityID);
+		KG_CORE_ASSERT(entity)
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetLinearVelocity(b2Vec2(linearVelocity->x, linearVelocity->y));
+	}
+
 	static void Rigidbody2DComponent_SetType(UUID entityID, Rigidbody2DComponent::BodyType bodyType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -192,6 +204,7 @@ namespace Kargono
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulse);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
+		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetLinearVelocity);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
 
