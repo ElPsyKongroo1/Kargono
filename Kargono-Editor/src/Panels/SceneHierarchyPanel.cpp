@@ -336,7 +336,7 @@ namespace Kargono
 			bool sceneRunning = m_Context->IsRunning();
 			if (sceneRunning)
 			{
-				Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+				Ref<ScriptClassInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
 			   if (scriptInstance)
 			   {
 				   const auto& fields = scriptInstance->GetScriptClass()->GetFields();

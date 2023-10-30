@@ -42,6 +42,10 @@ namespace Kargono
 				InternalCalls.Rigidbody2DComponent_GetLinearVelocity(Entity.ID, out Vector2 velocity);
 				return velocity;
 			}
+			set
+			{
+				InternalCalls.Rigidbody2DComponent_SetLinearVelocity(Entity.ID, ref value);
+			}
 		}
 
 		public void ApplyLinearImpulse(Vector2 impulse, Vector2 point, bool wake)

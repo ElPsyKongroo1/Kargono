@@ -258,8 +258,14 @@ namespace Kargono
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
 		YAML::Emitter out;
-		out << YAML::BeginMap;
+		out << YAML::BeginMap; // Start of File Map
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		{ // Physics
+			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
+			out << YAML::Key << "Gravity" << YAML::Value << m_Scene->m_PhysicsSpecification.Gravity;
+			out << YAML::EndMap; // Physics Maps
+		}
+		
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
@@ -269,7 +275,7 @@ namespace Kargono
 				SerializeEntity(out, entity);
 		});
 		out << YAML::EndSeq;
-		out << YAML::EndMap;
+		out << YAML::EndMap; // Start of File Map
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
@@ -296,6 +302,9 @@ namespace Kargono
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		KG_CORE_TRACE("Deserializing scene");
+
+		auto physics = data["Physics"];
+		m_Scene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<glm::vec2>();
 
 		auto entities = data["Entities"];
 		if (entities)

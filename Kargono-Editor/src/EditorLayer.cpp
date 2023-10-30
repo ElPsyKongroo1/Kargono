@@ -385,7 +385,8 @@ namespace Kargono {
 	void EditorLayer::UI_Settings()
 	{
 		ImGui::Begin("Settings");
-		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+		ImGui::Checkbox("Show Camera Frustrums", &m_ShowCameraFrustrums);
 		ImGui::Checkbox("Fullscreen While Running or Simulating", &m_RuntimeFullscreen);
 		static float musicVolume = 10.0f;
 		ImGui::Separator();
@@ -411,6 +412,16 @@ namespace Kargono {
 		{
 			ImGui::DragFloat("Speed", &m_EditorCamera.GetMovementSpeed(), 0.5f, 
 				m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed());
+		}
+
+		ImGui::Text("Physics Settings:");
+		if (ImGui::DragFloat2("Gravity", glm::value_ptr(m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
+		{
+			if (m_ActiveScene->GetPhysicsWorld())
+			{
+				m_ActiveScene->GetPhysicsSpecification().Gravity = m_EditorScene->GetPhysicsSpecification().Gravity;
+				m_ActiveScene->GetPhysicsWorld()->SetGravity(m_EditorScene->GetPhysicsSpecification().Gravity);
+			}
 		}
 
 		ImGui::End();
@@ -641,7 +652,7 @@ namespace Kargono {
 	{
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
-			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt) && m_HoveredEntity)
 			{
 				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
 				// Algorithm to enable double clicking for an entity!
@@ -682,6 +693,66 @@ namespace Kargono {
 			{ 0.5f, 0.5f, 0.0f, 1.0f },
 			{ -0.5f, 0.5f, 0.0f, 1.0f }
 	};
+	static glm::vec4 s_CubeVertexPositions[8]
+	{
+		{ -0.5f, -0.5f, 0.5f, 1.0f },		// 0
+			{ 0.5f, -0.5f, 0.5f, 1.0f },		// 1
+			{ 0.5f, 0.5f, 0.5f, 1.0f },		// 2
+			{ -0.5f, 0.5f, 0.5f, 1.0f },		// 3
+		{ -0.5f, -0.5f, -0.5f, 1.0f },		// 4
+			{ 0.5f, -0.5f, -0.5f, 1.0f },	// 5
+			{ 0.5f, 0.5f, -0.5f, 1.0f },		// 6
+		{ -0.5f, 0.5f, -0.5f, 1.0f },		// 7
+	};
+
+	static glm::uvec2 s_CubeIndices[12]
+	{
+		{0,1},
+		{1,2},
+		{2,3},
+		{3,0},
+		{4,5},
+		{5,6},
+		{6,7},
+		{7,4},
+		{0,4},
+		{1,5},
+		{2,6},
+		{3,7}
+	};
+
+	static glm::vec4 s_FrustrumVertexPositions[8]
+	{
+		{ -1.0f, -1.0f, 1.0f, 1.0f },		// 0
+			{ 1.0f, -1.0f, 1.0f, 1.0f },		// 1
+			{ 1.0f, 1.0f, 1.0f, 1.0f },		// 2
+			{ -1.0f, 1.0f, 1.0f, 1.0f },		// 3
+		{ -1.0f, -1.0f, -1.0f, 1.0f },		// 4
+			{ 1.0f, -1.0f, -1.0f, 1.0f },	// 5
+			{ 1.0f, 1.0f, -1.0f, 1.0f },		// 6
+		{ -1.0f, 1.0f, -1.0f, 1.0f },		// 7
+	};
+
+	static glm::uvec2 s_FrustrumIndices[16]
+	{
+		{0,1},
+		{1,2},
+		{2,3},
+		{3,0},
+		{4,5},
+		{5,6},
+		{6,7},
+		{7,4},
+		{0,4},
+		{1,5},
+		{2,6},
+		{3,7},
+		{4, 8},
+		{5, 8},
+		{6, 8},
+		{7,8}
+	};
+
 	static Ref<std::vector<glm::vec3>> s_OutputVector = CreateRef<std::vector<glm::vec3>>();
 
 	void EditorLayer::InitializeOverlayData()
@@ -784,7 +855,6 @@ namespace Kargono {
 					{
 						lineVertices[i] = transform * s_RectangleVertexPositions[i];
 					}
-
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[0]);
 					s_OutputVector->push_back(lineVertices[1]);
@@ -814,44 +884,79 @@ namespace Kargono {
 			// Draw selected entity outline 
 			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
 				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
-
-
 				static glm::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Shader::SetDataAtInputLocation<glm::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
-				glm::vec3 lineVertices[4];
+				glm::vec3 lineVertices[8];
 
-				for (size_t i = 0; i < 4; i++)
+				for (size_t i = 0; i < 8; i++)
 				{
-					lineVertices[i] = transform.GetTransform() * s_RectangleVertexPositions[i];
+					lineVertices[i] = transform.GetTransform() * s_CubeVertexPositions[i];
 				}
-				s_OutputVector->clear();
-				s_OutputVector->push_back(lineVertices[0]);
-				s_OutputVector->push_back(lineVertices[1]);
-				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-				Renderer::SubmitDataToRenderer(s_LineInputSpec);
-				s_OutputVector->clear();
-				s_OutputVector->push_back(lineVertices[1]);
-				s_OutputVector->push_back(lineVertices[2]);
-				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-				Renderer::SubmitDataToRenderer(s_LineInputSpec);
-				s_OutputVector->clear();
-				s_OutputVector->push_back(lineVertices[2]);
-				s_OutputVector->push_back(lineVertices[3]);
-				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-				Renderer::SubmitDataToRenderer(s_LineInputSpec);
-				s_OutputVector->clear();
-				s_OutputVector->push_back(lineVertices[3]);
-				s_OutputVector->push_back(lineVertices[0]);
-				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-				Renderer::SubmitDataToRenderer(s_LineInputSpec);
+
+				for (auto& indices : s_CubeIndices)
+				{
+					s_OutputVector->clear();
+					s_OutputVector->push_back(lineVertices[indices.x]);
+					s_OutputVector->push_back(lineVertices[indices.y]);
+					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+				}
+
+				if (selectedEntity.HasComponent<CameraComponent>() && m_ShowCameraFrustrums)
+				{
+					DrawFrustrum(selectedEntity);
+				}
 			}
 		}
 
 		Renderer::EndScene();
 
 		// Render Text!
-		//m_ArialText.RenderText(m_EditorCamera , "abcdefghijklmnopqrstuvwxyz123456789", 640, 360, 0.5f, { 0.2f, 0.5f, 0.6f });
+		//m_ArialText.RenderText(m_EditorCamera , "abcdefghijklmnopqrstuvwxyz123456789", 800, 850, 0.5f, { 0.2f, 0.5f, 0.6f });
+	}
+
+	void EditorLayer::DrawFrustrum(Entity& entity)
+	{
+		auto& transform = entity.GetComponent<TransformComponent>();
+		auto& camera = entity.GetComponent<CameraComponent>();
+		float windowWidth = (float)Application::GetCurrentApp().GetWindow().GetWidth();
+		float windowHeight = (float)Application::GetCurrentApp().GetWindow().GetHeight();
+		glm::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
+		auto cameraProjectionType = camera.Camera.GetProjectionType();
+		glm::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
+		Shader::SetDataAtInputLocation<glm::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+
+		glm::vec3 lineVertices[9];
+
+		for (size_t i = 0; i < 8; i++)
+		{
+			glm::vec4 vertexPosition = s_FrustrumVertexPositions[i];
+			glm::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_FrustrumVertexPositions[i];
+			localSpaceCoordinates = localSpaceCoordinates / localSpaceCoordinates.w; // Perspective Division
+			lineVertices[i] = transform.GetTranslation() * transform.GetRotation() * localSpaceCoordinates;
+			
+		}
+
+		lineVertices[8] = (transform.GetTransform() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bool colorChanged = false;
+		uint32_t iteration = 0;
+		for (auto& indices : s_FrustrumIndices)
+		{
+			if (iteration >= 12 && !colorChanged)
+			{
+				selectionColor = { 0.3f, 0.1f, 0.8f, 1.0f };
+				Shader::SetDataAtInputLocation<glm::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+				colorChanged = true;
+			}
+			s_OutputVector->clear();
+			s_OutputVector->push_back(lineVertices[indices.x]);
+			s_OutputVector->push_back(lineVertices[indices.y]);
+			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Renderer::SubmitDataToRenderer(s_LineInputSpec);
+			iteration++;
+		}
+
 	}
 
 	void EditorLayer::NewProject()
