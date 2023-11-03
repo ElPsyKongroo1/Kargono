@@ -15,6 +15,7 @@
 extern "C"
 {
 	typedef struct _MonoClass MonoClass;
+	typedef struct _MonoDomain MonoDomain;
 	typedef struct _MonoObject MonoObject;
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
@@ -29,6 +30,7 @@ namespace Kargono
 	class Scene;
 	class ScriptClass;
 	class Entity;
+	class PhysicsCollisionEvent;
 
 	//============================================================
 	// Enums and Other Type Declarations
@@ -187,6 +189,8 @@ namespace Kargono
 		static void OnRuntimeStop();
 		// This function calls the OnUpdate function for all registered entities with a ScriptComponent
 		static void OnUpdate(Timestep ts);
+		// This function handles collision events that are registered with individual entities
+		static void OnPhysicsCollision(PhysicsCollisionEvent event);
 
 		// Private Functions that serve as supporting functionality for above LifeCycle Functions
 	private:
@@ -251,6 +255,7 @@ namespace Kargono
 		//============================
 		static MonoImage* GetCoreAssemblyImage();
 		static bool AppDomainExists();
+		static MonoDomain* GetAppDomain();
 		static MonoObject* GetManagedInstance(UUID uuid);
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
@@ -334,7 +339,7 @@ namespace Kargono
 		//		1. Uses the ScriptClass method Instantiate() to create
 		//		a MonoObject* and store it in m_Instance
 		//		2. Get references to class methods (currently this includes
-		//		the constructor, OnCreate, and OnUpdate) from scriptClass
+		//		the constructor, OnCreate, OnUpdate, and OnPhysicsCollision) from scriptClass
 		//		3. Calls constructor for MonoObject*
 		ScriptClassInstance(Ref<ScriptClass> scriptClass, Entity entity);
 		//============================
@@ -344,6 +349,8 @@ namespace Kargono
 		void InvokeOnCreate();
 		// Calls C# OnUpdate Function
 		void InvokeOnUpdate(float ts);
+		// Calls C# OnUpdate Function
+		bool InvokeOnPhysicsCollision(UUID otherEntity);
 
 		//============================
 		// Getter/Setter
@@ -388,6 +395,7 @@ namespace Kargono
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+		MonoMethod* m_OnCollisionMethod = nullptr;
 		// Buffer used to transfer data when performing field update operations
 		//		(Get/SetFieldValueInternal)
 		inline static char s_FieldValueBuffer[8];

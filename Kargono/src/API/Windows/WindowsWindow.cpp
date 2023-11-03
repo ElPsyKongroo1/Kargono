@@ -204,6 +204,15 @@ namespace Kargono
 	{
 		return m_Data.VSync;
 	}
+	void WindowsWindow::SetFullscreen()
+	{
+		// Final Parameter adjusts refresh rate. May want to change this later!
+		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
+	}
+	void WindowsWindow::DisableFullscreen()
+	{
+		glfwSetWindowMonitor(m_Window, nullptr, 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
+	}
 	void WindowsWindow::SetMouseCursorVisible(bool choice)
 	{
 		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;

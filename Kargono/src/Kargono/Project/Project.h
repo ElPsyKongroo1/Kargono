@@ -11,11 +11,10 @@ namespace Kargono
 	struct ProjectConfig
 	{
 		std::string Name = "Untitled";
-
 		std::filesystem::path StartScene;
-
 		std::filesystem::path AssetDirectory;
 		std::filesystem::path ScriptModulePath;
+		bool DefaultFullscreen = false;
 	};
 
 	class Project
@@ -31,6 +30,36 @@ namespace Kargono
 		{
 			KG_CORE_ASSERT(s_ActiveProject);
 			return GetProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
+		}
+
+		static std::filesystem::path GetStartingScene()
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			return GetProjectDirectory() / s_ActiveProject->m_Config.StartScene;
+		}
+
+		static bool GetIsFullscreen()
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.DefaultFullscreen;
+		}
+
+		static void SetIsFullscreen(bool fullscreen)
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.DefaultFullscreen = fullscreen;
+		}
+
+		static std::string GetProjectName()
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.Name;
+		}
+
+		static void SetProjectName(std::string name)
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.Name = name;
 		}
 
 		

@@ -39,5 +39,8 @@ namespace Kargono
 		internal extern static Rigidbody2DComponent.BodyType Rigidbody2DComponent_GetType(ulong entityID);
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Rigidbody2DComponent_SetType(ulong entityID, Rigidbody2DComponent.BodyType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static String TagComponent_GetTag(ulong entityID);
 	}
 }

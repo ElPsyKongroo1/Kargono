@@ -9,12 +9,14 @@ using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace Pong
 {
+
 	public class Player1 : Entity
 	{
 		private TransformComponent m_Transform;
 		private Rigidbody2DComponent m_Rigidbody;
 
 		public float Speed = 2.0f;
+		private float SpeedUpFactor = 2.0f;
 
 		void OnCreate()
 		{
@@ -24,14 +26,14 @@ namespace Pong
 
 		void OnUpdate(float ts)
 		{
-			bool upperLimit = m_Transform.Translation.Y >= 8.25;
-			bool lowerLimit = m_Transform.Translation.Y <= -8.25;
+			bool upperLimit = m_Transform.Translation.Y >= 11.15;
+			bool lowerLimit = m_Transform.Translation.Y <= -11.15;
 
-			float speed = Speed;
+			float speed = Input.IsKeyDown(KeyCode.LeftShift) ? Speed * SpeedUpFactor : Speed;
 			Vector3 velocity = Vector3.Zero;
 
 			if (Input.IsKeyDown(KeyCode.A) && !lowerLimit) { velocity.Y = -1.0f; }
-			else if (Input.IsKeyDown(KeyCode.Q) && !upperLimit) { velocity.Y = 1.0f; }
+			else if (Input.IsKeyDown(KeyCode.W) && !upperLimit) { velocity.Y = 1.0f; }
 
 			velocity *= speed * ts;
 			Vector3 translation = Translation + velocity;
@@ -46,6 +48,7 @@ namespace Pong
 		private Rigidbody2DComponent m_Rigidbody;
 
 		public float Speed = 2.0f;
+		private float SpeedUpFactor = 2.0f;
 
 		void OnCreate()
 		{
@@ -56,13 +59,13 @@ namespace Pong
 		void OnUpdate(float ts)
 		{
 
-			bool upperLimit = m_Transform.Translation.Y >= 8.25;
-			bool lowerLimit = m_Transform.Translation.Y <= -8.25;
+			bool upperLimit = m_Transform.Translation.Y >= 11.15;
+			bool lowerLimit = m_Transform.Translation.Y <= -11.15;
 
-			float speed = Speed;
+			float speed = Input.IsKeyDown(KeyCode.RightShift) ? Speed * SpeedUpFactor : Speed;
 			Vector3 velocity = Vector3.Zero;
 
-			if (Input.IsKeyDown(KeyCode.L) && !lowerLimit) { velocity.Y = -1.0f; }
+			if (Input.IsKeyDown(KeyCode.Semicolon) && !lowerLimit) { velocity.Y = -1.0f; }
 			else if (Input.IsKeyDown(KeyCode.O) && !upperLimit) { velocity.Y = 1.0f; }
 
 			velocity *= speed * ts;
@@ -115,8 +118,97 @@ namespace Pong
 			{
 				m_Rigidbody.LinearVelocity = velocity * speed;
 			}
+		}
 
-			
+		bool OnPhysicsCollision(ulong otherEntity)
+		{
+
+			Entity otherEntityInstance = CreateEntityWithID(otherEntity);
+			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Left Wall" ||
+			    otherEntityInstance.GetComponent<TagComponent>().Tag == "Right Wall")
+			{
+				m_Rigidbody.LinearVelocity *= 0;
+				return true;
+			}
+
+			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Top Wall" ||
+			    otherEntityInstance.GetComponent<TagComponent>().Tag == "Bottom Wall")
+			{
+
+				Vector2 horizontalDirection;
+				Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+				if (currentVelocity.X >= 0)
+				{
+					horizontalDirection = new Vector2(1.0f, 0.0f);
+				}
+				else
+				{
+					horizontalDirection = new Vector2(-1.0f, 0.0f);
+				}
+				currentVelocity = (currentVelocity.Normalize() + (horizontalDirection * 0.1f)).Normalize() * Speed;
+				m_Rigidbody.LinearVelocity = currentVelocity;
+				return true;
+			}
+
+			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Top Wall")
+			{
+
+				Vector2 up = new Vector2(0.0f, -1.0f);
+				Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+				currentVelocity = (currentVelocity.Normalize() + (up * 0.1f)).Normalize() * Speed;
+				m_Rigidbody.LinearVelocity = currentVelocity;
+				return true;
+			}
+
+			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Player1")
+			{
+				if (Input.IsKeyDown(KeyCode.W))
+				{
+					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+					Vector2 up = new Vector2(0.0f, 1.0f);
+					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+					m_Rigidbody.LinearVelocity = currentVelocity;
+				}
+				if (Input.IsKeyDown(KeyCode.A))
+				{
+					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+					Vector2 up = new Vector2(0.0f, -1.0f);
+					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+					m_Rigidbody.LinearVelocity = currentVelocity;
+				}
+
+				return true;
+			}
+
+			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Player2")
+			{
+				if (Input.IsKeyDown(KeyCode.O))
+				{
+					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+					Vector2 up = new Vector2(0.0f, 1.0f);
+					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+					m_Rigidbody.LinearVelocity = currentVelocity;
+				}
+				if (Input.IsKeyDown(KeyCode.Semicolon))
+				{
+					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+					Vector2 up = new Vector2(0.0f, -1.0f);
+					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+					m_Rigidbody.LinearVelocity = currentVelocity;
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 	}

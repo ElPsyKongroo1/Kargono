@@ -54,25 +54,16 @@ namespace Kargono
 		void OnSimulationStart();
 		void OnSimulationStop();
 
-		// This function simply renders the current objects
-		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
-		// This function renders the current entities, calls the OnUpdate functions for
-		//		the scripting engine, and calls the OnUpdate functions for the physics
-		//		engine.
-		void OnUpdateRuntime(Timestep ts);
-		// This function renders the all the current entities and calls the OnUpdate function
-		//		for the physics engine
-		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
+		// Submits render data to the renderer.
+		void RenderScene(Camera& camera, const glm::mat4& transform);
+		// Updates Physics
+		void OnUpdatePhysics(Timestep ts);
 
 		// Other LifeCycle Functions
 		// These Getter/Setter Functions query the current state of the scene.
 		//		IsRunning and IsPaused allow certain functionality to be stopped based on their
 		//		values. Step allows one iteration to occur
 		bool IsRunning() const { return m_IsRunning; }
-		bool IsPaused() const { return m_IsPaused; }
-		void SetPaused(bool paused) { m_IsPaused = paused; }
-		// TODO: Move Step Function into Editor
-		void Step(int frames = 1);
 
 	private:
 		// Supporting private functions for LifeCycle Functions
@@ -81,8 +72,6 @@ namespace Kargono
 		//		the current scene and the newly instantiated component.
 		template <typename T>
 		void OnComponentAdded(Entity entity, T& component);
-		// Submits render data to the renderer.
-		void RenderScene(Camera& camera, const glm::mat4& transform);
 	public:
 		//====================
 		// Rendering Pipeline Functions
@@ -160,8 +149,6 @@ namespace Kargono
 
 		// Scene State Fields
 		bool m_IsRunning = false;
-		bool m_IsPaused = false;
-		int m_StepFrames = 0;
 
 		// Friend Declarations
 		friend class Entity;

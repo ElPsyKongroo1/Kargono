@@ -86,26 +86,7 @@ namespace Kargono
 		ScriptComponent(const ScriptComponent&) = default;
 	};
 
-	// Forward Declaration
-	class ScriptableEntity;
-
-	struct NativeScriptComponent
-	{
-		ScriptableEntity* Instance = nullptr;
-
-		ScriptableEntity* (*InstantiateScript)();
-		void (*DestroyScript)(NativeScriptComponent*);
-
-		template<typename T>
-		void Bind()
-		{
-			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
-			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
-		}
-	};
-
 	// Physics
-
 	struct Rigidbody2DComponent
 	{
 		enum class BodyType {Static = 0, Dynamic, Kinematic};
@@ -233,6 +214,6 @@ namespace Kargono
 	};
 
 	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, ScriptComponent,
-		NativeScriptComponent, Rigidbody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, ShapeComponent>;
+	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
+	TagComponent>;
 }

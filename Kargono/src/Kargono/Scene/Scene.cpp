@@ -6,8 +6,6 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scripting/ScriptEngine.h"
-// Leave this include even if it is gray
-#include "Kargono/Scene/ScriptableEntity.h"
 #include "Kargono/Core/Application.h"
 #include "Kargono/Renderer/Shader.h"
 
@@ -183,62 +181,9 @@ namespace Kargono
 		return {};
 	}
 
-
-	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
-	{
-		RenderScene(camera, camera.GetViewMatrix());
-	}
-
-	void Scene::OnUpdateRuntime(Timestep ts)
-	{
-		if (!m_IsPaused || m_StepFrames-- > 0)
-		{
-			// Update Scripts
-			{
-				// C# Entity
-				ScriptEngine::OnUpdate(ts);
-				// Native Script On Update
-				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-				{
-					// TODO: Move to Scene::OnScenePlay
-					if (!nsc.Instance)
-					{
-						nsc.Instance = nsc.InstantiateScript();
-						nsc.Instance->m_Entity = Entity{entity, this};
-						nsc.Instance->OnCreate();
-					}
-					nsc.Instance->OnUpdate(ts);
-				});
-			}
-			m_PhysicsWorld->OnUpdate(ts);
-		}
-
-		// Render 2D
-		Entity cameraEntity = GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		glm::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
-
-		if (mainCamera)
-		{
-			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			RenderScene(*mainCamera, glm::inverse(cameraTransform));
-		}
-		
-	}
-
 	bool Scene::CheckEntityExists(entt::entity entity)
 	{
 		return m_Registry.valid(entity);
-	}
-
-	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
-	{
-		if (!m_IsPaused || m_StepFrames-- > 0)
-		{
-			m_PhysicsWorld->OnUpdate(ts);
-		}
-		// Render
-		RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -270,10 +215,6 @@ namespace Kargono
 		}
 		return {};
 	}
-	void Scene::Step(int frames)
-	{
-		m_StepFrames = frames;
-	}
 	void Scene::RenderScene(Camera& camera, const glm::mat4& transform)
 	{
 		Renderer::BeginScene(camera, transform);
@@ -304,12 +245,14 @@ namespace Kargono
 		Renderer::EndScene();
 
 	}
+	void Scene::OnUpdatePhysics(Timestep ts)
+	{
+		m_PhysicsWorld->OnUpdate(ts);
+	}
 	void Scene::FillEntityID(Shader::RendererInputSpec& inputSpec)
 	{
 		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
 	}
-
-
 
 	template <typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)

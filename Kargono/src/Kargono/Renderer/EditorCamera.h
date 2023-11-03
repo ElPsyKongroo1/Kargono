@@ -79,6 +79,16 @@ namespace Kargono
 		// Camera Pitch and Yaw for Camera Rotations
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
+		void SetPitch(float pitch)
+		{
+			m_Pitch = pitch;
+			UpdateView();
+		}
+		void SetYaw(float yaw)
+		{
+			m_Yaw = yaw;
+			UpdateView();
+		}
 		// Change Camera Type
 		EditorCamera::MovementType& GetMovementType() { return m_MovementType; }
 		void SetMovementType(EditorCamera::MovementType movementType)

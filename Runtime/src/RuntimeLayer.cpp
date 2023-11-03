@@ -6,6 +6,7 @@
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Assets/AssetManager.h"
 
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,6 +24,14 @@ namespace Kargono {
 	void RuntimeLayer::OnAttach()
 	{
 		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
+		m_PopSound = new AudioBuffer("resources/audio/pop-sound.wav");
+		m_EditorAudio->allAudioBuffers.push_back(m_PopSound);
+		m_PopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			1.0f, 1.0f, AL_FALSE, m_PopSound);
+		m_EditorAudio->allAudioSources.push_back(m_PopSource);
+		m_LowPopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+			0.5f, 0.4f, AL_FALSE, m_PopSound);
+		m_EditorAudio->allAudioSources.push_back(m_LowPopSource);
 		m_EditorAudio->m_DefaultStereoSource->play();
 
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
@@ -46,6 +55,9 @@ namespace Kargono {
 			}
 
 		}
+
+		Project::GetIsFullscreen() ? currentWindow.SetFullscreen() : currentWindow.DisableFullscreen();
+
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
 
@@ -74,18 +86,45 @@ namespace Kargono {
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
-		m_ActiveScene->OnUpdateRuntime(ts);
+		OnUpdateRuntime(ts);
 
 	}
 
 	void RuntimeLayer::OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
+	}
+
+	bool RuntimeLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
+	{
+		ScriptEngine::OnPhysicsCollision(event);
+		m_PopSource->play();
+		return false;
+	}
+
+	void RuntimeLayer::OnUpdateRuntime(Timestep ts)
+	{
+		// Update Scripts
+		ScriptEngine::OnUpdate(ts);
+
+		m_ActiveScene->OnUpdatePhysics(ts);
+
+		// Render 2D
+		Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		glm::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+
+		if (mainCamera)
+		{
+			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
+			m_ActiveScene->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+		}
 	}
 
 
 	bool RuntimeLayer::OpenProject()
 	{
-		m_HoveredEntity = {};
 		std::string filepath = FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
 		if (filepath.empty()) { return false; }
 
@@ -143,14 +182,12 @@ namespace Kargono {
 
 	void RuntimeLayer::OnScenePlay()
 	{
-		m_HoveredEntity = {};
 
 		m_ActiveScene->OnRuntimeStart();
 	}
 
 	void RuntimeLayer::OnSceneStop()
 	{
-		m_HoveredEntity = {};
 
 		m_ActiveScene->OnRuntimeStop();
 

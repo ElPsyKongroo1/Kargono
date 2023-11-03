@@ -1,5 +1,6 @@
 Project:
   Name: Facerun
-  StartScene: "Scenes/empty_scene.kargono"
-  AssetDirectory: "Assets"
-  ScriptModulePath: "Scripts/Binaries/Facerun.dll"
+  StartScene: Scenes/empty_scene.kargono
+  AssetDirectory: Assets
+  ScriptModulePath: Scripts/Binaries/Facerun.dll
+  DefaultFullscreen: false

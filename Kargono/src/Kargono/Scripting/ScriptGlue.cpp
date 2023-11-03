@@ -27,7 +27,8 @@ namespace Kargono
 		KG_CORE_ASSERT(entity)
 
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
-		KG_CORE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end())
+		
+		KG_CORE_ASSERT(s_EntityHasComponentFuncs.contains(managedType))
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
 
@@ -149,6 +150,17 @@ namespace Kargono
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		return Utils::Rigidbody2DTypeFromBox2DBody(body->GetType());
 	}
+
+	static MonoString* TagComponent_GetTag(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		KG_CORE_ASSERT(scene)
+		Entity entity = scene->GetEntityByUUID(entityID);
+		KG_CORE_ASSERT(entity)
+
+		auto& tagComponent = entity.GetComponent<TagComponent>();
+		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
+	}
 	
 
 	static bool Input_IsKeyDown(KeyCode keycode)
@@ -207,6 +219,8 @@ namespace Kargono
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetLinearVelocity);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
+
+		KG_ADD_INTERNAL_CALL(TagComponent_GetTag);
 
 		KG_ADD_INTERNAL_CALL(Input_IsKeyDown);
     }

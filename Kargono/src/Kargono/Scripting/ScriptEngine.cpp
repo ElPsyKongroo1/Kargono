@@ -9,6 +9,7 @@
 #include "Kargono/Core/Application.h"
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Project/Project.h"
+#include "Kargono/Events/ApplicationEvent.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
@@ -45,6 +46,15 @@ namespace Kargono
 
 	namespace Utils
 	{
+
+		static void PrintMonoException(MonoObject* exception)
+		{
+			MonoClass* exceptionClass = mono_object_get_class(exception);
+			std::string className = mono_class_get_name(exceptionClass);
+			std::string assemblyName = mono_class_get_namespace(exceptionClass);
+			KG_CORE_ERROR("An exception was thrown in the InvokeMethod Function! \nException Type: {} \nException Message: {}", className, assemblyName);
+			KG_CORE_ASSERT(false);
+		}
 
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
@@ -261,7 +271,7 @@ namespace Kargono
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		if (s_ScriptData->CoreAssembly == nullptr) { return false; }
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
-		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
+		Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 		return true;
 	}
 
@@ -271,7 +281,7 @@ namespace Kargono
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filepath, s_ScriptData->EnableDebugging);
 		if (s_ScriptData->AppAssembly == nullptr){return false;}
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
-		//Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
+		Utils::PrintAssemblyTypes(s_ScriptData->AppAssembly);
 
 		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filepath.string(), OnAppAssemblyFileSystemEvent);
@@ -366,6 +376,11 @@ namespace Kargono
 		return static_cast<bool>(s_ScriptData->AppDomain);
 	}
 
+	MonoDomain* ScriptEngine::GetAppDomain()
+	{
+		return s_ScriptData->AppDomain;
+	}
+
 	void ScriptEngine::OnCreateEntity(Entity entity)
 	{
 		const auto& sc = entity.GetComponent<ScriptComponent>();
@@ -394,11 +409,8 @@ namespace Kargono
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
 		UUID entityUUID = entity.GetUUID();
-		if (!s_ScriptData->EntityInstances.contains(entityUUID))
-		{
-			KG_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
-			return;
-		}
+
+		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(entityUUID), "Could not find ScriptInstance for entity");
 		Ref<ScriptClassInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 		instance->InvokeOnUpdate(ts);
 	}
@@ -426,8 +438,27 @@ namespace Kargono
 		for (auto e : view)
 		{
 			Entity entity = { e, s_ScriptData->SceneContext };
-
+			if (entity.GetComponent<ScriptComponent>().ClassName == "None") { continue; }
 			ScriptEngine::OnUpdateEntity(entity, ts);
+		}
+	}
+
+	void ScriptEngine::OnPhysicsCollision(PhysicsCollisionEvent event)
+	{
+		UUID entityOne = event.GetEntityOne();
+		UUID entityTwo = event.GetEntityTwo();
+		bool collisionHandled = false;
+
+		if (s_ScriptData->EntityInstances.contains(entityOne))
+		{
+			Ref<ScriptClassInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityOne];
+			collisionHandled = monoEntityInstance->InvokeOnPhysicsCollision(entityTwo);
+		}
+
+		if (!collisionHandled && s_ScriptData->EntityInstances.contains(entityTwo))
+		{
+			Ref<ScriptClassInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityTwo];
+			monoEntityInstance->InvokeOnPhysicsCollision(entityOne);
 		}
 	}
 
@@ -457,6 +488,13 @@ namespace Kargono
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 
 			if (!isEntity) { continue; }
+			void* iter = nullptr;
+			MonoMethod* method;
+			KG_CORE_WARN("{} class methods:", className);
+			while (method = mono_class_get_methods(monoClass, &iter))
+			{
+				KG_CORE_WARN("	{}", mono_method_get_name(method));
+			}
 
 			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, className);
 			s_ScriptData->EntityClasses[fullName] = scriptClass;
@@ -473,7 +511,6 @@ namespace Kargono
 					MonoType* type = mono_field_get_type(field);
 					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(type);
 					KG_CORE_WARN("  {} ({})", fieldName, Utils::ScriptFieldTypeToString(fieldType));
-
 					scriptClass->AddField(fieldName, fieldType, field);
 				}
 			}
@@ -534,13 +571,19 @@ namespace Kargono
 
 	MonoMethod* ScriptClass::GetMethod(const std::string& name, int parameterCount)
 	{
-		return mono_class_get_method_from_name(m_MonoClass, name.c_str(), parameterCount);
+		MonoMethod* returnMethod = mono_class_get_method_from_name(m_MonoClass, name.c_str(), parameterCount);
+		return returnMethod;
 	}
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
 		MonoObject* exception = nullptr;
-		return mono_runtime_invoke(method, instance, params, &exception);
+		MonoObject* returnValue = mono_runtime_invoke(method, instance, params, &exception);
+
+		if (exception) { Utils::PrintMonoException(exception); return nullptr; }
+
+		return returnValue;
+
 	}
 
 	bool ScriptClass::AddField(const char* fieldName, const ScriptFieldType& fieldType, MonoClassField* field)
@@ -558,6 +601,8 @@ namespace Kargono
 
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+		m_OnCollisionMethod = scriptClass->GetMethod("OnPhysicsCollision", 1);
+
 
 		// Call Entity Constructor
 		{
@@ -580,6 +625,17 @@ namespace Kargono
 			void* param = &ts;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
 		}
+	}
+
+	bool ScriptClassInstance::InvokeOnPhysicsCollision(UUID otherEntity)
+	{
+		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!")
+			if (m_OnCollisionMethod)
+			{
+				void* param = &otherEntity;
+				return *(bool*)m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionMethod, &param);
+			}
+		return false;
 	}
 
 	bool ScriptClassInstance::GetFieldValueInternal(const std::string& name, void* buffer)

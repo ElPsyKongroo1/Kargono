@@ -1,5 +1,6 @@
 Project:
   Name: Pong
-  StartScene: "Scenes/main_gameplay.kargono"
-  AssetDirectory: "Assets"
-  ScriptModulePath: "Scripts/Binaries/Pong.dll"
+  StartScene: Scenes/main_gameplay.kargono
+  AssetDirectory: Assets
+  ScriptModulePath: Scripts/Binaries/Pong.dll
+  DefaultFullscreen: false

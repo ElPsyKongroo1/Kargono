@@ -24,6 +24,7 @@ namespace Kargono
 				out << YAML::Key << "StartScene" << YAML::Value << config.StartScene.string();
 				out << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
 				out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
+				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
 				out << YAML::EndMap; // Project
 			}
 
@@ -56,6 +57,7 @@ namespace Kargono
 		config.StartScene = projectNode["StartScene"].as<std::string>();
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
+		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
 
 		return true;
 	}
