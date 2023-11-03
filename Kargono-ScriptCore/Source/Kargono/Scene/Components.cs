@@ -24,6 +24,14 @@ namespace Kargono
 		}
 	}
 
+	public class TagComponent : Component
+	{
+		public String Tag
+		{
+			get => InternalCalls.TagComponent_GetTag(Entity.ID);
+		}
+	}
+
 	public class Rigidbody2DComponent : Component
 	{
 

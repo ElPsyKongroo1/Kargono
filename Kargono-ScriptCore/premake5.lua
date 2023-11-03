@@ -6,6 +6,9 @@ project "Kargono-ScriptCore"
     targetdir ("../Kargono-Editor/Resources/Scripts")
     objdir ("../Kargono-Editor/Resources/Scripts/Intermediates")
     
+    filter { "system:windows" }
+        postbuildcommands { "{COPYDIR} \"%{wks.location}Kargono-Editor/Resources/Scripts\" \"%{wks.location}Runtime/Resources/Scripts\"" }
+
     files 
     {
 		"Source/**.cs",

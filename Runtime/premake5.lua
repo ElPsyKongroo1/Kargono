@@ -39,9 +39,9 @@ project "Runtime"
     }
 
     defines 
-        {
-            "KG_RUNTIME"
-        }
+    {
+        "KG_RUNTIME"
+    }
 
     filter "system:windows"
         

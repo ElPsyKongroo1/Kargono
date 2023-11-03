@@ -40,5 +40,11 @@ namespace Kargono
 		{
 			return (float)Math.Sqrt(LengthSquared());
 		}
+
+		public Vector2 Normalize()
+		{
+			float distance = Length();
+			return new Vector2(X / distance, Y / distance);
+		}
 	}
 }
