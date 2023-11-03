@@ -53,6 +53,16 @@ namespace Kargono
 			return new Entity(entityID);
 		}
 
+		public Entity CreateEntityWithID(ulong id)
+		{
+			if (id == 0)
+			{
+				return null;
+			}
+
+			return new Entity(id);
+		}
+
 		public T As<T>() where T : Entity, new()
 		{
 			object instance = InternalCalls.GetScriptInstance(ID);

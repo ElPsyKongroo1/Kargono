@@ -66,6 +66,7 @@ namespace Kargono
 		{
 			s_RendererAPI->SetLineWidth(width);
 		}
+
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

@@ -317,22 +317,45 @@ namespace Kargono
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
 		{
-			const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
+			// Load in all entity class names
+			auto entityClasses = ScriptEngine::GetEntityClasses();
+			std::string currentScript{"None"};
+			bool scriptClassExists;
+			if (scriptClassExists = entityClasses.contains(component.ClassName)){ currentScript = component.ClassName; }
+			if (ImGui::BeginCombo("Entity Scripts", currentScript.c_str()))
+			{
+				if (ImGui::Selectable("None"))
+				{
+					component.ClassName = "";
+					ImGui::SetItemDefaultFocus();
+					scriptClassExists = false;
+				}
+				for (auto& [className, classReference] : entityClasses)
+				{
+					if (ImGui::Selectable(className.c_str()))
+					{
+						component.ClassName = className;
+						scriptClassExists = true;
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+			//const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
-			static char buffer[64];
-			strcpy_s(buffer, component.ClassName.c_str());
+			//static char buffer[64];
+			//strcpy_s(buffer, component.ClassName.c_str());
 
-			UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
+			//UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
 
-			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			/*if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 			{
 				component.ClassName = buffer;
 				return;
-			}
+			}*/
+
 
 			// Fields
-			
-
 			bool sceneRunning = m_Context->IsRunning();
 			if (sceneRunning)
 			{

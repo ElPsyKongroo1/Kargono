@@ -6,17 +6,17 @@ Entities:
     TagComponent:
       Tag: Ball
     TransformComponent:
-      Translation: [25.9217854, -0.00246607768, 3.7252903e-09]
+      Translation: [25.9217854, -0.00246607885, 3.7252903e-09]
       Rotation: [0, 0, 1.57079637]
-      Scale: [0.999998391, 0.999998391, 1]
+      Scale: [1.29999638, 1.29999638, 1]
     ShapeComponent:
       CurrentShape: Quad
       VertexColors:
-        - Color: [1, 1, 0.411764711, 1]
-        - Color: [1, 0.454901963, 1, 1]
-        - Color: [0.20784314, 0.909803927, 1, 1]
+        - Color: [1, 0, 1, 1]
         - Color: [1, 1, 1, 1]
-      TextureHandle: 1008307395632263226
+        - Color: [1, 0.909803927, 1, 1]
+        - Color: [1, 1, 0, 1]
+      TextureHandle: 7411058966582404143
       ShaderHandle: 2670557135485920854
       ShaderSpecification:
         ColorInputType: VertexColor
@@ -26,7 +26,7 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "0V/LQY+hAL8AAIAxAACAvwAAgD8AAAAAAACAPsHKIT4AAIA/AACAPwAAgD8AAIA/BwAAAA=="
+      Buffer: !!binary "nyzKQeQHJ78AAIAxAACAvwAAgD8AAAAAAACAP/ypcT0AAIA/AACAPwAAAAAAAIA/BwAAAA=="
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: true
@@ -36,20 +36,20 @@ Entities:
       Density: 1
       Friction: 0
       Restitution: 1
-      RestitutionThreshold: 0.100000001
+      RestitutionThreshold: 0.00999999978
     ScriptComponent:
       ClassName: Pong.Ball
       ScriptFields:
         - Name: Speed
           Type: Float
-          Data: 13
+          Data: 55
   - Entity: 1623836227372765255
     TagComponent:
       Tag: Player2
     TransformComponent:
-      Translation: [46, -0.00213944539, 9.31322575e-09]
+      Translation: [45.920536, -0.00214099884, 9.3131991e-09]
       Rotation: [0, 0, 1.57079637]
-      Scale: [6.50079346, 1.49993455, 1]
+      Scale: [8.5, 1.09998739, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 1008307395632263226
@@ -62,13 +62,13 @@ Entities:
         TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "CQA1QowpUMAAACAyAACAPwAAgD8AAIA/AACAPwYAAAAAAAAAAACAPwAAAAAAAIA/"
+      Buffer: !!binary "b3s1QokRiMDi/x8yAACAPwAAgD8AAIA/AACAPwYAAAAAAAAAAACAPwAAAAAAAIA/"
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: true
     BoxCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Size: [0.479999989, 0.479999989]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -83,9 +83,9 @@ Entities:
     TagComponent:
       Tag: Player1
     TransformComponent:
-      Translation: [4, -0.00246477127, 3.7252903e-09]
+      Translation: [4, -0.00246500969, 3.7252903e-09]
       Rotation: [0, 0, 1.57079637]
-      Scale: [6.50100756, 1.49998808, 1]
+      Scale: [8.5, 1.09998977, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 1008307395632263226
@@ -98,13 +98,13 @@ Entities:
         TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "GABQQKIwUMAAAIAxAACAPwAAgD8AAIA/AACAPwUAAAAAAAAAAACAPwAAAAAAAIA/"
+      Buffer: !!binary "4sxcQDAUiMAAAIAxAACAPwAAgD8AAIA/AACAPwUAAAAAAAAAAACAPwAAAAAAAIA/"
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: true
     BoxCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Size: [0.479999989, 0.479999989]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -119,9 +119,9 @@ Entities:
     TagComponent:
       Tag: Bottom Wall
     TransformComponent:
-      Translation: [25, -12, 0.00999999978]
+      Translation: [25, -16, 0.00999999978]
       Rotation: [0, 0, 1.57079637]
-      Scale: [0.999990702, 50.9994164, 1]
+      Scale: [0.999981582, 50.9988327, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 17057334801167380747
@@ -134,7 +134,7 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "gNn/vvr/R8EK1yM8AAAAAAAAgD8AAIA/AACAPwQAAAA="
+      Buffer: !!binary "QLP/vvr/g8EK1yM8AAAAAAAAgD8AAIA/AACAPwQAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -149,9 +149,9 @@ Entities:
     TagComponent:
       Tag: Top Wall
     TransformComponent:
-      Translation: [25, 12, 0.00999999978]
+      Translation: [25, 16, 0.00999999978]
       Rotation: [0, 0, 1.57079637]
-      Scale: [0.999999821, 51, 1]
+      Scale: [0.999990821, 50.999424, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 17057334801167380747
@@ -164,7 +164,7 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "wP//vgIAOEEK1yM8AAAAAAAAgD8AAIA/AACAPwMAAAA="
+      Buffer: !!binary "ANr/vgYAeEEK1yM8AAAAAAAAgD8AAIA/AACAPwMAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -181,7 +181,7 @@ Entities:
     TransformComponent:
       Translation: [50, -0.00216794014, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 25, 1]
+      Scale: [1, 33, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 17057334801167380747
@@ -194,7 +194,7 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "AABGQh/3R0EAAAAAAAAAAAAAgD8AAIA/AACAPwIAAAA="
+      Buffer: !!binary "AABGQo/7g0EAAAAAAAAAAAAAgD8AAIA/AACAPwIAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -211,7 +211,7 @@ Entities:
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 25, 1]
+      Scale: [1, 33, 1]
     ShapeComponent:
       CurrentShape: Quad
       TextureHandle: 17057334801167380747
@@ -224,7 +224,7 @@ Entities:
         TextureInput: None
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "AAAAvwAASEEAAAAAAAAAAAAAgD8AAIA/AACAPwEAAAA="
+      Buffer: !!binary "AAAAvwAAhEEAAAAAAAAAAAAAgD8AAIA/AACAPwEAAAA="
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -239,30 +239,30 @@ Entities:
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [25, 0, 31.7220249]
+      Translation: [25, 0, 39.9734993]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       Camera:
         ProjectionType: 1
-        PerspectiveFOV: 1.2915436
-        PerspectiveNear: 24.0100002
-        PerspectiveFar: 53
-        OrthographicSize: 27
-        OrthographicNear: 30
-        OrthographicFar: 34
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 39
+        OrthographicNear: 37
+        OrthographicFar: 44
       Primary: true
       FixedAspectRatio: false
     ShapeComponent:
       CurrentShape: Quad
-      TextureHandle: 17057334801167380747
-      ShaderHandle: 12997310174580324402
+      TextureHandle: 8051163355459938058
+      ShaderHandle: 16075931647133155393
       ShaderSpecification:
         ColorInputType: FlatColor
         AddProjectionMatrix: true
         AddEntityID: true
         AddCircleShape: false
-        TextureInput: None
+        TextureInput: ColorTexture
         DrawOutline: false
         RenderType: DrawIndex
-      Buffer: !!binary "AADEQQAAAD+1xv1BAACAP4aFBT+EgwM/AACAPwAAAAA="
+      Buffer: !!binary "AADEQQAAAD/d5B9CAACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAIA/"

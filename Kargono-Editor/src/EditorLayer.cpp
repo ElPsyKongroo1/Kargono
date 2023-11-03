@@ -48,9 +48,9 @@ namespace Kargono {
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER,  FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
-		m_Framebuffer = Framebuffer::Create(fbSpec);
+		fbSpec.Width = 1600;
+		fbSpec.Height = 900;
+		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
 
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
@@ -110,22 +110,22 @@ namespace Kargono {
 
 		// Resize
 
-		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
-			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_ViewportFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 		
 		//Render
 		Renderer::ResetStats();
-		m_Framebuffer->Bind();
+		m_ViewportFramebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
 		// Clear our entity ID attachment to -1
-		m_Framebuffer->ClearAttachment(1, -1);
+		m_ViewportFramebuffer->ClearAttachment(1, -1);
 
 		// Update Scene
 		switch (m_SceneState)
@@ -134,23 +134,22 @@ namespace Kargono {
 			{
 				m_EditorCamera.OnUpdate(ts);
 
-				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				OnUpdateEditor(ts, m_EditorCamera);
 				break;
 			}
 			case SceneState::Simulate:
 			{
 				m_EditorCamera.OnUpdate(ts);
 
-				m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+				OnUpdateSimulation(ts, m_EditorCamera);
 				break;
 			}
 			case SceneState::Play:
 			{
-				m_ActiveScene->OnUpdateRuntime(ts);
+				OnUpdateRuntime(ts);
 				break;
 			}
 		}
-		
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -163,15 +162,61 @@ namespace Kargono {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX <(int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = m_ActiveScene->CheckEntityExists((entt::entity)pixelData) ? Entity((entt::entity)pixelData, m_ActiveScene.get()) : Entity();
 		}
 
 		OnOverlayRender();
 
-		m_Framebuffer->Unbind();
+		m_ViewportFramebuffer->Unbind();
 
 	}
+
+	void EditorLayer::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+	{
+		m_ActiveScene->RenderScene(camera, camera.GetViewMatrix());
+	}
+
+	void EditorLayer::OnUpdateRuntime(Timestep ts)
+	{
+		if (!m_IsPaused || m_StepFrames-- > 0)
+		{
+			// Update Scripts
+
+			ScriptEngine::OnUpdate(ts);
+
+			m_ActiveScene->OnUpdatePhysics(ts);
+		}
+
+		// Render 2D
+		Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		glm::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+
+		if (mainCamera)
+		{
+			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
+			m_ActiveScene->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+		}
+
+	}
+
+	void EditorLayer::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
+	{
+		if (!m_IsPaused || m_StepFrames-- > 0)
+		{
+			m_ActiveScene->OnUpdatePhysics(ts);
+		}
+
+		// Render
+		m_ActiveScene->RenderScene(camera, camera.GetViewMatrix());
+	}
+
+	void EditorLayer::Step(int frames)
+	{
+		m_StepFrames = frames;
+	}
+
 
 	void EditorLayer::OnImGuiRender()
 	{
@@ -231,7 +276,7 @@ namespace Kargono {
 
 		style.WindowMinSize.x = minWinSizeX;
 
-		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Simulate || m_SceneState == SceneState::Play))
+		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
 		{
 			if (m_ShowViewport) { UI_Viewport(); }
 			if (m_ShowToolbar) { UI_Toolbar(); }
@@ -279,6 +324,8 @@ namespace Kargono {
 				if (ImGui::MenuItem("Viewport", NULL, &m_ShowViewport)){}
 				if (ImGui::MenuItem("Toolbar", NULL, &m_ShowToolbar)){}
 				if (ImGui::MenuItem("Demo Window", NULL, &m_ShowDemoWindow)){}
+				if (ImGui::MenuItem("Project", NULL, &m_ShowProject)){}
+
 				ImGui::EndMenu();
 			}
 
@@ -292,6 +339,7 @@ namespace Kargono {
 		if (m_ShowSettings) { UI_Settings(); }
 		if (m_ShowViewport) { UI_Viewport(); }
 		if (m_ShowToolbar) { UI_Toolbar(); }
+		if (m_ShowProject) { UI_Project(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
 		ImGui::End();
@@ -350,28 +398,24 @@ namespace Kargono {
 
 		if (hasPauseButton)
 		{
-			bool isPaused = m_ActiveScene->IsPaused();
 			ImGui::SameLine();
 			{
 				Ref<Texture2D> icon = m_IconPause;
-				//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 				if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 					&& toolbarEnabled)
 				{
-					m_ActiveScene->SetPaused(!isPaused);
+					m_IsPaused = !m_IsPaused;
 				}
 			}
-			if (isPaused)
+			if (m_IsPaused)
 			{
 				ImGui::SameLine();
 				{
 					Ref<Texture2D> icon = m_IconStep;
-					bool isPaused = m_ActiveScene->IsPaused();
-					//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 					if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 						&& toolbarEnabled)
 					{
-						m_ActiveScene->Step(1);
+						Step(1);
 					}
 				}
 			}
@@ -423,6 +467,40 @@ namespace Kargono {
 				m_ActiveScene->GetPhysicsWorld()->SetGravity(m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
+		
+
+		ImGui::End();
+	}
+
+	void EditorLayer::UI_Project()
+	{
+		ImGui::Begin("Project");
+		ImGui::TextUnformatted("Project Name:");
+		ImGui::Separator();
+		ImGui::BeginChild("Project Name", ImVec2(0.0f, ImGui::GetFontSize() * 3), true, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::Text(Project::GetProjectName().c_str());
+		ImGui::EndChild();
+
+		ImGui::TextUnformatted("Project Directory:");
+		ImGui::Separator();
+		ImGui::BeginChild("Project Directory", ImVec2(0.0f, ImGui::GetFontSize() * 3), true, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::Text(Project::GetProjectDirectory().string().c_str());
+		ImGui::EndChild();
+
+		ImGui::TextUnformatted("Starting Scene:");
+		ImGui::Separator();
+		ImGui::BeginChild("Starting Scene", ImVec2(0.0f, ImGui::GetFontSize() * 3), true, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::Text(FileSystem::GetRelativePath(Project::GetProjectDirectory(), Project::GetStartingScene()).string().c_str());
+		ImGui::EndChild();
+
+		ImGui::TextUnformatted("Default Game Fullscreen:");
+		ImGui::Separator();
+		bool projectFullscreen = Project::GetIsFullscreen();
+		if (ImGui::Checkbox("Default Game Fullscreen", &projectFullscreen))
+		{
+			Project::SetIsFullscreen(projectFullscreen);
+		}
+
 
 		ImGui::End();
 	}
@@ -465,7 +543,7 @@ namespace Kargono {
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
 		if (ImGui::BeginDragDropTarget())
@@ -542,11 +620,10 @@ namespace Kargono {
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnEvent(event);
-
 			dispatcher.Dispatch<KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 			dispatcher.Dispatch<MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
-
 		}
+		if (m_SceneState == SceneState::Play && m_IsPaused) { dispatcher.Dispatch<MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed)); }
 		dispatcher.Dispatch<PhysicsCollisionEvent>(KG_BIND_EVENT_FN(EditorLayer::OnPhysicsCollision));
 	}
 
@@ -585,8 +662,16 @@ namespace Kargono {
 		{
 			if (control)
 			{
-				if (shift){SaveSceneAs();}
-				else { SaveScene(); }
+				if (shift)
+				{
+					SaveSceneAs();
+					SaveProject();
+				}
+				else
+				{
+					SaveScene();
+					SaveProject();
+				}
 			}
 			break;
 		}
@@ -676,12 +761,9 @@ namespace Kargono {
 
 	bool EditorLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
 	{
+		ScriptEngine::OnPhysicsCollision(event);
 		m_PopSource->play();
 		return false;
-	}
-
-	void EditorLayer::OnUpdateParticles()
-	{
 	}
 
 	static Shader::RendererInputSpec s_CircleInputSpec{};
@@ -806,7 +888,7 @@ namespace Kargono {
 		{
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
 			if (!camera) { return; }
-			Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+			Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, glm::inverse(camera.GetComponent<TransformComponent>().GetTransform()));
 		}
 		else
 		{
@@ -879,7 +961,7 @@ namespace Kargono {
 			}
 		}
 
-		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate || (m_SceneState == SceneState::Play && m_IsPaused))
 		{
 			// Draw selected entity outline 
 			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
@@ -997,7 +1079,7 @@ namespace Kargono {
 
 	void EditorLayer::SaveProject()
 	{
-		//Project::SaveActive();
+		Project::SaveActive((Project::GetProjectDirectory() / Project::GetProjectName()).replace_extension(".kproj"));
 	}
 
 	void EditorLayer::NewScene()
@@ -1112,7 +1194,7 @@ namespace Kargono {
 	{
 		if (m_SceneState == SceneState::Edit) { return; }
 
-		m_ActiveScene->SetPaused(true);
+		m_IsPaused = true;
 	}
 
 	void EditorLayer::OnDuplicateEntity()
