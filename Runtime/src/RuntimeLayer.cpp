@@ -23,17 +23,6 @@ namespace Kargono {
 
 	void RuntimeLayer::OnAttach()
 	{
-		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
-		m_PopSound = new AudioBuffer("resources/audio/pop-sound.wav");
-		m_EditorAudio->allAudioBuffers.push_back(m_PopSound);
-		m_PopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-			1.0f, 1.0f, AL_FALSE, m_PopSound);
-		m_EditorAudio->allAudioSources.push_back(m_PopSource);
-		m_LowPopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-			0.5f, 0.4f, AL_FALSE, m_PopSound);
-		m_EditorAudio->allAudioSources.push_back(m_LowPopSource);
-		m_EditorAudio->m_DefaultStereoSource->play();
-
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
 		m_ViewportSize = { currentWindow.GetWidth(), currentWindow.GetHeight()};
@@ -66,14 +55,15 @@ namespace Kargono {
 
 	void RuntimeLayer::OnDetach()
 	{
-		OnSceneStop();
-		if (m_EditorAudio)
+		auto view = m_ActiveScene->GetAllEntitiesWith<AudioComponent>();
+		for (auto& entity : view)
 		{
-			m_EditorAudio->terminate();
-			delete m_EditorAudio;
-			m_EditorAudio = nullptr;
+			Entity e = { entity, m_ActiveScene.get() };
+			auto& audioComponent = e.GetComponent<AudioComponent>();
+			audioComponent.Audio.reset();
 		}
-		
+		OnSceneStop();
+
 	}
 
 	void RuntimeLayer::OnUpdate(Timestep ts)
@@ -99,7 +89,6 @@ namespace Kargono {
 	bool RuntimeLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
 	{
 		ScriptEngine::OnPhysicsCollision(event);
-		m_PopSource->play();
 		return false;
 	}
 
@@ -153,7 +142,7 @@ namespace Kargono {
 
 	void RuntimeLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Kargono Scene (*.kargono)\0*.kargono\0");
+		std::string filepath = FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
 		if (!filepath.empty())
 		{
 			OpenScene(filepath);
@@ -164,7 +153,7 @@ namespace Kargono {
 	{
 		OnSceneStop();
 
-		if (path.extension().string() != ".kargono")
+		if (path.extension().string() != ".kgscene")
 		{
 			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;

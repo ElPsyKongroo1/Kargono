@@ -16,7 +16,7 @@
 #include "Kargono/Core/Layer.h"
 #include "Kargono/ImGui/ImGuiLayer.h"
 
-#include "Kargono/Audio/AudioContext.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scene/Components.h"

@@ -7,6 +7,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Scene/Scene.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #include "box2d/b2_body.h"
 #include "mono/jit/jit.h"
@@ -161,6 +162,45 @@ namespace Kargono
 		auto& tagComponent = entity.GetComponent<TagComponent>();
 		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
 	}
+
+	static void AudioComponent_PlayAudio(UUID entityID)
+	{
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		KG_CORE_ASSERT(scene);
+			Entity entity = scene->GetEntityByUUID(entityID);
+		KG_CORE_ASSERT(entity);
+
+		if (!entity.HasComponent<AudioComponent>()) { return; }
+		auto& audioComponent = entity.GetComponent<AudioComponent>();
+		AudioEngine::PlaySound(audioComponent.Audio);
+	}
+
+	static void AudioComponent_PlayAudioByName(UUID entityID, MonoString* audioTag)
+	{
+		std::string aTag = std::string(mono_string_to_utf8(audioTag));
+		Scene* scene = ScriptEngine::GetSceneContext();
+		KG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		KG_CORE_ASSERT(entity);
+
+		if (entity.HasComponent<MultiAudioComponent>())
+		{
+			if (entity.GetComponent<MultiAudioComponent>().AudioComponents.contains(aTag))
+			{
+				AudioEngine::PlaySound(entity.GetComponent<MultiAudioComponent>().AudioComponents.at(aTag).Audio);
+				return;
+			}
+		}
+
+		auto& audioComponent = entity.GetComponent<AudioComponent>();
+		if (audioComponent.Name == aTag)
+		{
+			AudioEngine::PlaySound(audioComponent.Audio);
+		}
+		
+	}
+
 	
 
 	static bool Input_IsKeyDown(KeyCode keycode)
@@ -181,7 +221,7 @@ namespace Kargono
 		MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(), ScriptEngine::GetCoreAssemblyImage());
 			if (!managedType)
 			{
-				KG_CORE_ERROR("Could not find component type {}", managedTypename);
+				//KG_CORE_ERROR("Could not find component type {}", managedTypename);
 				return;
 			}
 		s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };
@@ -221,6 +261,10 @@ namespace Kargono
 		KG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
 
 		KG_ADD_INTERNAL_CALL(TagComponent_GetTag);
+
+		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudio);
+		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudioByName);
+		
 
 		KG_ADD_INTERNAL_CALL(Input_IsKeyDown);
     }

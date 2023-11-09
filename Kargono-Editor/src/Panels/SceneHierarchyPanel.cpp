@@ -5,6 +5,7 @@
 #include "Kargono/UI/UI.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Shape.h"
+#include "Kargono/Audio/AudioEngine.h"
 #include "EditorLayer.h"
 
 #include <imgui.h>
@@ -218,7 +219,14 @@ namespace Kargono
 				uiFunction(component);
 				ImGui::TreePop();
 			}
-			if (removeComponent) { entity.RemoveComponent<T>(); }
+			if (removeComponent)
+			{
+				entity.RemoveComponent<T>();
+				if (typeid(T) == typeid(AudioComponent) && entity.HasComponent<MultiAudioComponent>())
+				{
+					entity.RemoveComponent<MultiAudioComponent>();
+				}
+			}
 		}
 	}
 
@@ -230,14 +238,26 @@ namespace Kargono
 
 			char buffer[256] = {};
 			strncpy_s(buffer, tag.c_str(), sizeof(buffer));
-
-			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+			ImGui::SetCursorPosX(30.0f);
+			ImGui::Text(tag.c_str());
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
-				tag = std::string(buffer);
+				ImGui::OpenPopup("UpdateTag");
+			}
+
+			if (ImGui::BeginPopup("UpdateTag"))
+			{
+				ImGui::InputText("##Tag", buffer, sizeof(buffer));
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
+				{
+					tag = std::string(buffer);
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
 			}
 		}
 
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 130);
 		ImGui::PushItemWidth(-1);
 
 		if (ImGui::Button("Add Component"))
@@ -250,6 +270,7 @@ namespace Kargono
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<ScriptComponent>("Script");
 			DisplayAddComponentEntry<ShapeComponent>("Shape");
+			DisplayAddComponentEntry<AudioComponent>("Audio");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
@@ -417,6 +438,170 @@ namespace Kargono
 
 		});
 
+		DrawComponent<AudioComponent>("Audio", entity, [&](auto& component)
+		{
+			bool replaceComponent = false;
+			bool deleteComponent = false;
+			static std::string oldComponentName {};
+			AudioComponent replacementComponent{};
+
+			auto AudioTableRow = [&](uint32_t slot, AudioComponent& audioComp) mutable
+			{
+				ImGui::TableNextRow();
+				// Column One Displays Slot Number
+				ImGui::TableSetColumnIndex(0);
+				std::string slotTitle = (std::string("Slot ") + std::to_string(slot));
+				if (slot == 1) { slotTitle = slotTitle + " (Default)"; }
+				ImGui::Text(slotTitle.c_str());
+				// Column Two Displays Component Tag
+				ImGui::TableSetColumnIndex(1);
+				static std::string nameOutput {};
+				static char textBuffer[256] = {};
+				nameOutput = audioComp.Audio ? audioComp.Name : "[Empty]";
+				strncpy_s(textBuffer, nameOutput.c_str(), sizeof(textBuffer));
+				ImGui::Text(textBuffer);
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+				{
+					if (audioComp.Audio)
+					{
+						ImGui::OpenPopup(("UpdateAudio" + std::to_string(slot)).c_str());
+					}
+					else
+					{
+						ImGui::OpenPopup(("InvalidSlot" + std::to_string(slot)).c_str());
+					}
+					
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				{
+					if (slot > 1) { ImGui::OpenPopup(("DeleteSlot" + std::to_string(slot)).c_str()); }
+				}
+
+				if (ImGui::BeginPopup(("UpdateAudio" + std::to_string(slot)).c_str()))
+				{
+					ImGui::InputText("##", textBuffer, sizeof(textBuffer));
+					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
+					{
+						oldComponentName = audioComp.Name;
+						audioComp.Name = std::string(textBuffer);
+						if (slot > 1)
+						{
+							replacementComponent = audioComp;
+							replaceComponent = true;
+						}
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginPopup(("InvalidSlot" + std::to_string(slot)).c_str()))
+				{
+					ImGui::Text("Please Drag an Audio File to this slot!");
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginPopup(("DeleteSlot" + std::to_string(slot)).c_str()))
+				{
+					if (ImGui::Selectable("Delete Slot"))
+					{
+						oldComponentName = audioComp.Name;
+						deleteComponent = true;
+					}
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_AUDIO"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path audioPath(path);
+						AssetHandle currentHandle = AssetManager::ImportNewAudioFromFile(audioPath);
+						audioComp.AudioHandle = currentHandle;
+						Ref<AudioBuffer> audio = AssetManager::GetAudio(currentHandle);
+						if (audio)
+						{
+							oldComponentName = audioComp.Name;
+							audioComp.Audio = audio;
+							audioComp.Name = audioPath.stem().string();
+							if (slot > 1)
+							{
+								replacementComponent = audioComp;
+								replaceComponent = true;
+							}
+						}
+
+						else { KG_WARN("Could not load audio {0}", audioPath.filename().string()); }
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+			};
+
+			// Main Table that lists audio slots and their corresponding AudioComponents
+			static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+
+			if (ImGui::BeginTable("table", 2, flags))
+			{
+				ImGui::TableSetupColumn("Slot", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				ImGui::TableSetupColumn("Audio Tag", ImGuiTableColumnFlags_WidthFixed, 200.0f);
+				ImGui::TableHeadersRow();
+
+				uint32_t iterator{ 1 };
+				// Add Basic Audio Component Slot
+				AudioTableRow(iterator, component);
+
+				// Add Multi Audio Component Slots
+				if (entity.HasComponent<MultiAudioComponent>())
+				{
+					iterator++;
+					for (auto& [title, audioComp] : entity.GetComponent<MultiAudioComponent>().AudioComponents)
+					{
+						AudioTableRow(iterator, audioComp);
+						iterator++;
+					}
+				}
+				ImGui::EndTable();
+			}
+
+			// Add New Slot Section
+			if (ImGui::Button("Add Audio Slot"))
+			{
+				if (!entity.HasComponent<MultiAudioComponent>())
+				{
+					entity.AddComponent<MultiAudioComponent>();
+				}
+				AudioComponent newComponent = AudioComponent();
+				newComponent.Audio = nullptr;
+				uint32_t iterator{ 0 };
+				std::string temporaryName {"Empty"};
+				// TODO: Potential Infinite Loop
+				while (entity.GetComponent<MultiAudioComponent>().AudioComponents.
+					contains(temporaryName + std::to_string(iterator))) { iterator++; }
+				newComponent.Name = temporaryName + std::to_string(iterator);
+				entity.GetComponent<MultiAudioComponent>().AudioComponents.insert({ temporaryName + std::to_string(iterator), newComponent });
+			}
+
+			// Replace Component outside of for loop to prevent errors
+			if (replaceComponent)
+			{
+				entity.GetComponent<MultiAudioComponent>().AudioComponents.erase(oldComponentName);
+				entity.GetComponent<MultiAudioComponent>().AudioComponents.insert({ replacementComponent.Name, replacementComponent });
+			}
+			if (deleteComponent)
+			{
+				entity.GetComponent<MultiAudioComponent>().AudioComponents.erase(oldComponentName);
+				if (entity.HasComponent<MultiAudioComponent>())
+				{
+					if (entity.GetComponent<MultiAudioComponent>().AudioComponents.size() <= 0)
+					{
+						entity.RemoveComponent<MultiAudioComponent>();
+					}
+				}
+			}
+		});
+
 		DrawComponent<ShapeComponent>("Shape", entity, [](auto& component)
 		{
 			//=========================
@@ -571,7 +756,7 @@ namespace Kargono
 					ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
 					if (ImGui::BeginDragDropTarget())
 					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_IMAGE"))
 						{
 							const wchar_t* path = (const wchar_t*)payload->Data;
 							std::filesystem::path texturePath(path);

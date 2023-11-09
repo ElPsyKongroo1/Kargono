@@ -8,6 +8,7 @@
 #include "Kargono/ImGui/ImGuiLayer.h"
 #include "Kargono/Renderer/InputBuffer.h"
 #include "Kargono/Physics/Physics2D.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #include <functional>
 #include <mutex>
@@ -88,6 +89,7 @@ namespace Kargono
 	private:
 		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
+		AudioEngine* m_AudioContext = nullptr;
 		ImGuiLayer* m_ImGuiLayer = nullptr;
 		bool m_Running = true;
 		bool m_Minimized = false;

@@ -6,6 +6,7 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Renderer/Shape.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -13,6 +14,7 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include <string>
+#include <unordered_map>
 
 
 namespace Kargono
@@ -76,6 +78,24 @@ namespace Kargono
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct AudioComponent
+	{
+		std::string Name;
+		Ref<AudioBuffer> Audio;
+		AssetHandle AudioHandle;
+
+		AudioComponent() = default;
+		AudioComponent(const AudioComponent&) = default;
+	};
+
+	struct MultiAudioComponent
+	{
+		std::unordered_map<std::string, AudioComponent> AudioComponents{};
+
+		MultiAudioComponent() = default;
+		MultiAudioComponent(const MultiAudioComponent&) = default;
 	};
 
 	struct ScriptComponent
@@ -213,7 +233,7 @@ namespace Kargono
 	{
 	};
 
-	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, ScriptComponent,
+	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent, ScriptComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
 	TagComponent>;
 }

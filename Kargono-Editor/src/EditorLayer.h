@@ -207,10 +207,8 @@ namespace Kargono {
 		int m_StepFrames = 0;
 
 		// Audio Resources TODO: Move into own class
-		AudioContext* m_EditorAudio = nullptr;
-		AudioBuffer* m_PopSound = nullptr;
-		AudioSource* m_PopSource = nullptr;
-		AudioSource* m_LowPopSource = nullptr;
+		Ref<AudioBuffer> m_PopSound = nullptr;
+		Ref<AudioSource> m_PopSource = nullptr;
 
 		// Text Resources
 		Text m_ArialText{};

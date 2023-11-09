@@ -1,8 +1,11 @@
 #include "kgpch.h"
 
 #include "Kargono/Utils/PlatformUtils.h"
+#include "Kargono/Utils/Utilities.h"
 #include "Kargono/Core/Application.h"
 
+#include <windows.h>
+#include <shellapi.h>
 #include <commdlg.h>
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -16,6 +19,27 @@ namespace Kargono
 	{
 		return (float)glfwGetTime();
 	}
+
+	void FileExplorer::OpenFileExplorer(const std::filesystem::path& path)
+	{
+		KG_CORE_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
+		// TODO: Add More Input Validation for system call.
+		std::string outputString = "explorer " + path.string();
+		system(outputString.c_str());
+	}
+
+	void FileExplorer::OpenScriptProject(const std::filesystem::path& path)
+	{
+		// TODO: Add More Input Validation for system call.
+		if (!std::filesystem::exists(path))
+		{
+			KG_CORE_ERROR("Invalid path provided to OpenScriptProject");
+			return;
+		}
+		std::string outputString = "start " + path.string();
+		system(outputString.c_str());
+	}
+
 
 	std::string FileDialogs::OpenFile(const char* filter)
 	{

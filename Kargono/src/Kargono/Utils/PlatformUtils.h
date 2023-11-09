@@ -1,8 +1,18 @@
 #pragma once
 #include <string>
+#include <filesystem>
+
 
 namespace Kargono
 {
+
+	class FileExplorer
+	{
+	public:
+		static void OpenFileExplorer( const std::filesystem::path& path);
+		static void OpenScriptProject( const std::filesystem::path& path);
+	};
+
 	class FileDialogs
 	{
 	public:

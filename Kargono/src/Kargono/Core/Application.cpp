@@ -26,6 +26,7 @@ namespace Kargono
 
 		RenderCommand::Init();
 		ScriptEngine::Init();
+		AudioEngine::Init();
 
 	}
 
@@ -43,6 +44,7 @@ namespace Kargono
 		}
 
 		ScriptEngine::Shutdown();
+		AudioEngine::Terminate();
 		// TODO: Add Renderer Shutdown!
 		
 	}

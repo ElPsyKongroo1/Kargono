@@ -16,12 +16,33 @@ namespace Kargono
 		{
 			None = 0,
 			Texture = 1,
-			Shader = 2
+			Shader = 2,
+			Audio = 3
 		};
 
-		std::string AssetTypeToString(AssetType type);
+		inline std::string AssetTypeToString(AssetType type)
+		{
+			switch (type)
+			{
+			case AssetType::Texture: return "Texture";
+			case AssetType::Shader: return "Shader";
+			case AssetType::Audio: return "Audio";
+			case AssetType::None: return "None";
+			}
+			KG_CORE_ASSERT(false, "Unknown Type of AssetType.");
+			return "";
+		}
 
-		AssetType StringToAssetType(std::string type);
+		inline AssetType StringToAssetType(std::string type)
+		{
+			if (type == "Texture") { return AssetType::Texture; }
+			if (type == "Shader") { return AssetType::Shader; }
+			if (type == "Audio") { return AssetType::Audio; }
+			if (type == "None") { return AssetType::None; }
+
+			KG_CORE_ASSERT(false, "Unknown Type of AssetType String.");
+			return AssetType::None;
+		}
 
 	}
 
@@ -29,6 +50,13 @@ namespace Kargono
 	struct TextureMetaData
 	{
 		int32_t Width, Height, Channels;
+		std::filesystem::path InitialFileLocation;
+	};
+
+	struct AudioMetaData
+	{
+		uint32_t Channels, SampleRate;
+		uint64_t TotalPcmFrameCount, TotalSize;
 		std::filesystem::path InitialFileLocation;
 	};
 
