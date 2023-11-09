@@ -77,6 +77,7 @@ namespace Pong
 
 	public class Ball : Entity
 	{
+		private AudioComponent m_Audio;
 		private TransformComponent m_Transform;
 		private Rigidbody2DComponent m_Rigidbody;
 
@@ -84,6 +85,7 @@ namespace Pong
 
 		void OnCreate()
 		{
+			m_Audio = GetComponent<AudioComponent>();
 			m_Transform = GetComponent<TransformComponent>();
 			m_Rigidbody = GetComponent<Rigidbody2DComponent>();
 		}
@@ -122,91 +124,92 @@ namespace Pong
 
 		bool OnPhysicsCollision(ulong otherEntity)
 		{
-
 			Entity otherEntityInstance = CreateEntityWithID(otherEntity);
-			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Left Wall" ||
-			    otherEntityInstance.GetComponent<TagComponent>().Tag == "Right Wall")
-			{
-				m_Rigidbody.LinearVelocity *= 0;
-				return true;
-			}
 
-			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Top Wall" ||
-			    otherEntityInstance.GetComponent<TagComponent>().Tag == "Bottom Wall")
+			bool collisionHandled = false;
+			switch (otherEntityInstance.GetComponent<TagComponent>().Tag)
 			{
-
-				Vector2 horizontalDirection;
-				Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
-				if (currentVelocity.X >= 0)
+				case "Left Wall":
+				case "Right Wall":
 				{
-					horizontalDirection = new Vector2(1.0f, 0.0f);
+					m_Rigidbody.LinearVelocity *= 0;
+					m_Audio.PlayAudio("lose_sound");
+					collisionHandled =  true;
+					break;
 				}
-				else
+				case "Top Wall":
+				case "Bottom Wall":
 				{
-					horizontalDirection = new Vector2(-1.0f, 0.0f);
-				}
-				currentVelocity = (currentVelocity.Normalize() + (horizontalDirection * 0.1f)).Normalize() * Speed;
-				m_Rigidbody.LinearVelocity = currentVelocity;
-				return true;
-			}
-
-			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Top Wall")
-			{
-
-				Vector2 up = new Vector2(0.0f, -1.0f);
-				Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
-				currentVelocity = (currentVelocity.Normalize() + (up * 0.1f)).Normalize() * Speed;
-				m_Rigidbody.LinearVelocity = currentVelocity;
-				return true;
-			}
-
-			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Player1")
-			{
-				if (Input.IsKeyDown(KeyCode.W))
-				{
-					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
-					Vector2 up = new Vector2(0.0f, 1.0f);
+					Vector2 horizontalDirection;
 					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
-
-					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+					if (currentVelocity.X >= 0)
+					{
+						horizontalDirection = new Vector2(1.0f, 0.0f);
+					}
+					else
+					{
+						horizontalDirection = new Vector2(-1.0f, 0.0f);
+					}
+					currentVelocity = (currentVelocity.Normalize() + (horizontalDirection * 0.1f)).Normalize() * Speed;
 					m_Rigidbody.LinearVelocity = currentVelocity;
+					collisionHandled = true;
+					break;
 				}
-				if (Input.IsKeyDown(KeyCode.A))
+				case "Player1":
 				{
-					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
-					Vector2 up = new Vector2(0.0f, -1.0f);
-					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+					if (Input.IsKeyDown(KeyCode.W))
+					{
+						float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+						Vector2 up = new Vector2(0.0f, 1.0f);
+						Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
 
-					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
-					m_Rigidbody.LinearVelocity = currentVelocity;
+						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+						m_Rigidbody.LinearVelocity = currentVelocity;
+					}
+					if (Input.IsKeyDown(KeyCode.A))
+					{
+						float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+						Vector2 up = new Vector2(0.0f, -1.0f);
+						Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+						m_Rigidbody.LinearVelocity = currentVelocity;
+					}
+					m_Audio.PlayAudio("pop-sound");
+					collisionHandled = true;
+					break;
 				}
+				case "Player2":
+				{
+					if (Input.IsKeyDown(KeyCode.O))
+					{
+						float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+						Vector2 up = new Vector2(0.0f, 1.0f);
+						Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
 
-				return true;
+						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+						m_Rigidbody.LinearVelocity = currentVelocity;
+					}
+					if (Input.IsKeyDown(KeyCode.Semicolon))
+					{
+						float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
+						Vector2 up = new Vector2(0.0f, -1.0f);
+						Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
+
+						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
+						m_Rigidbody.LinearVelocity = currentVelocity;
+					}
+					m_Audio.PlayAudio("pop-sound");
+					collisionHandled = true;
+					break;
+				}
 			}
 
-			if (otherEntityInstance.GetComponent<TagComponent>().Tag == "Player2")
-			{
-				if (Input.IsKeyDown(KeyCode.O))
-				{
-					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
-					Vector2 up = new Vector2(0.0f, 1.0f);
-					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
-
-					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
-					m_Rigidbody.LinearVelocity = currentVelocity;
-				}
-				if (Input.IsKeyDown(KeyCode.Semicolon))
-				{
-					float deflectionFactor = Input.IsKeyDown(KeyCode.LeftShift) ? 0.55f : 0.33f;
-					Vector2 up = new Vector2(0.0f, -1.0f);
-					Vector2 currentVelocity = m_Rigidbody.LinearVelocity;
-
-					currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
-					m_Rigidbody.LinearVelocity = currentVelocity;
-				}
-
-				return true;
-			}
+			//if (collisionHandled)
+			//{
+			//	m_Audio.PlayAudio();
+			//	return true;
+			//}
 
 			return false;
 		}

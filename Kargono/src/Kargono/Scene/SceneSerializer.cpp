@@ -109,6 +109,32 @@ namespace Kargono
 			out << YAML::EndMap; // Component Map
 		}
 
+		if (entity.HasComponent<AudioComponent>())
+		{
+			out << YAML::Key << "AudioComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& audioComponent = entity.GetComponent<AudioComponent>();
+			out << YAML::Key << "Name" << YAML::Value << audioComponent.Name;
+			out << YAML::Key << "AudioHandle" << YAML::Value << static_cast<uint64_t>(audioComponent.AudioHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<MultiAudioComponent>())
+		{
+			out << YAML::Key << "MultiAudioComponent";
+			out << YAML::BeginSeq; // Component Sequence
+
+			for (auto& [key, audioComp] : entity.GetComponent<MultiAudioComponent>().AudioComponents)
+			{
+				out << YAML::BeginMap; // Audio Component Map
+				out << YAML::Key << "Name" << YAML::Value << audioComp.Name;
+				out << YAML::Key << "AudioHandle" << YAML::Value << static_cast<uint64_t>(audioComp.AudioHandle);
+				out << YAML::EndMap; // Audio Component Map
+			}
+
+			out << YAML::EndSeq; // Component Sequence
+		}
+
 		if (entity.HasComponent<ShapeComponent>())
 		{
 			out << YAML::Key << "ShapeComponent";
@@ -294,7 +320,7 @@ namespace Kargono
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kargono file '{0}'\n     {1}", filepath, e.what());
+			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 
@@ -347,6 +373,30 @@ namespace Kargono
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+				}
+
+				auto audioComponent = entity["AudioComponent"];
+				if (audioComponent)
+				{
+					auto& audioComp = deserializedEntity.AddComponent<AudioComponent>();
+					audioComp.Name = audioComponent["Name"].as<std::string>();
+					audioComp.AudioHandle = audioComponent["AudioHandle"].as<uint64_t>();
+					audioComp.Audio = AssetManager::GetAudio(audioComp.AudioHandle);
+				}
+
+				auto multiAudioComponent = entity["MultiAudioComponent"];
+				if (multiAudioComponent)
+				{
+					auto& multiAudioComp = deserializedEntity.AddComponent<MultiAudioComponent>();
+
+					for (auto audioComp : multiAudioComponent)
+					{
+						AudioComponent newComponent{};
+						newComponent.Name = audioComp["Name"].as<std::string>();
+						newComponent.AudioHandle = audioComp["AudioHandle"].as<uint64_t>();
+						newComponent.Audio = AssetManager::GetAudio(newComponent.AudioHandle);
+						multiAudioComp.AudioComponents.insert({ newComponent.Name, newComponent });
+					}
 				}
 
 				auto scriptComponent = entity["ScriptComponent"];

@@ -1,6 +1,6 @@
 Project:
   Name: Breakout
-  StartScene: Scenes/main_gameplay_scene.kargono
+  StartScene: Scenes/main_gameplay_scene.kgscene
   AssetDirectory: Assets
   ScriptModulePath: Scripts/Binaries/Breakout.dll
   DefaultFullscreen: false

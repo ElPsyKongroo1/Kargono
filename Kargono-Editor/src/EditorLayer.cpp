@@ -30,16 +30,6 @@ namespace Kargono {
 
 	void EditorLayer::OnAttach()
 	{
-		m_EditorAudio = new AudioContext("resources/audio/mechanist-theme.wav");
-		m_PopSound = new AudioBuffer("resources/audio/pop-sound.wav");
-		m_EditorAudio->allAudioBuffers.push_back(m_PopSound);
-		m_PopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-			1.0f, 1.0f, AL_FALSE, m_PopSound);
-		m_EditorAudio->allAudioSources.push_back(m_PopSource);
-		m_LowPopSource = new AudioSource(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-			0.5f, 0.4f, AL_FALSE, m_PopSound);
-		m_EditorAudio->allAudioSources.push_back(m_LowPopSource);
-
 		m_IconPlay = Texture2D::CreateEditorTexture( (Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
 		m_IconPause = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
 		m_IconSimulate = Texture2D::CreateEditorTexture((Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
@@ -69,7 +59,7 @@ namespace Kargono {
 		else
 		{
 			// TODO: prompt the user to select a directory
-			//NewProject();
+			// NewProject();
 
 			// If no project is opened, close Editor
 			// TODO: this is while we don't have a new project path
@@ -86,21 +76,29 @@ namespace Kargono {
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		m_EditorAudio->m_DefaultStereoSource->play();
-
 		m_ArialText.Init();
 		InitializeOverlayData();
 	}
 
 	void EditorLayer::OnDetach()
 	{
-		if (m_EditorAudio)
+		auto allAudioComponents = m_EditorScene->GetAllEntitiesWith<AudioComponent>();
+		for (auto& entity : allAudioComponents)
 		{
-			m_EditorAudio->terminate();
-			delete m_EditorAudio;
-			m_EditorAudio = nullptr;
+			Entity e = { entity, m_EditorScene.get()};
+			auto& audioComponent = e.GetComponent<AudioComponent>();
+			audioComponent.Audio.reset();
 		}
-		
+		auto allMultiAudioComponents = m_EditorScene->GetAllEntitiesWith<MultiAudioComponent>();
+		for (auto& entity : allMultiAudioComponents)
+		{
+			Entity e = { entity, m_EditorScene.get() };
+			auto& multiAudioComponent = e.GetComponent<MultiAudioComponent>();
+			for (auto& [key, component] : multiAudioComponent.AudioComponents)
+			{
+				component.Audio.reset();
+			}
+		}
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -434,10 +432,6 @@ namespace Kargono {
 		ImGui::Checkbox("Fullscreen While Running or Simulating", &m_RuntimeFullscreen);
 		static float musicVolume = 10.0f;
 		ImGui::Separator();
-		if(ImGui::DragFloat("Editor Music", &musicVolume, 0.5f, 0.0f, 100.0f))
-		{
-			m_EditorAudio->m_DefaultStereoSource->SetGain(musicVolume);
-		}
 		static int32_t* choice = (int32_t*)&m_EditorCamera.GetMovementType();
 		ImGui::Text("Editor Camera Movement:");
 		if (ImGui::RadioButton("Model Viewer", choice, (int32_t)EditorCamera::MovementType::ModelView))
@@ -467,8 +461,6 @@ namespace Kargono {
 				m_ActiveScene->GetPhysicsWorld()->SetGravity(m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
-		
-
 		ImGui::End();
 	}
 
@@ -548,7 +540,7 @@ namespace Kargono {
 			ImVec2{ 1, 0 });
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_SCENE"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				OpenScene(path);
@@ -759,10 +751,10 @@ namespace Kargono {
 		return false;
 	}
 
+
 	bool EditorLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
 	{
 		ScriptEngine::OnPhysicsCollision(event);
-		m_PopSource->play();
 		return false;
 	}
 
@@ -1066,6 +1058,13 @@ namespace Kargono {
 			else { ScriptEngine::InitialAssemblyLoad(); }
 			if (m_EditorScene)
 			{
+				auto view = m_EditorScene->GetAllEntitiesWith<AudioComponent>();
+				for (auto& entity : view)
+				{
+					Entity e = { entity, m_EditorScene.get() };
+					auto& audioComponent = e.GetComponent<AudioComponent>();
+					audioComponent.Audio.reset();
+				}
 				m_EditorScene->DestroyAllEntities();
 			}
 			AssetManager::ClearAll();
@@ -1093,7 +1092,7 @@ namespace Kargono {
 
 	void EditorLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Kargono Scene (*.kargono)\0*.kargono\0");
+		std::string filepath = FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
 		if (!filepath.empty())
 		{
 			OpenScene(filepath);
@@ -1107,7 +1106,7 @@ namespace Kargono {
 			OnSceneStop();
 		}
 
-		if (path.extension().string() != ".kargono")
+		if (path.extension().string() != ".kgscene")
 		{
 			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;
@@ -1134,7 +1133,7 @@ namespace Kargono {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::string filepath = FileDialogs::SaveFile("Kargono Scene (*.kargono)\0*.kargono\0");
+		std::string filepath = FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
 		if (!filepath.empty())
 		{
 			SerializeScene(m_EditorScene, filepath);
@@ -1188,6 +1187,7 @@ namespace Kargono {
 		m_ActiveScene = m_EditorScene;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		AudioEngine::StopAllAudio();
 	}
 
 	void EditorLayer::OnScenePause()

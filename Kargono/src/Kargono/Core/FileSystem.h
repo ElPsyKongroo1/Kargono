@@ -10,11 +10,15 @@ namespace Kargono
 	class FileSystem
 	{
 	public:
+
+		static void RenameFile(const std::filesystem::path& oldPath, std::string newName);
+
 		static Buffer ReadFileBinary(const std::filesystem::path& filepath);
 
 		static std::filesystem::path GetRelativePath(const std::filesystem::path& base, const std::filesystem::path& full);
 
 		static bool WriteFileBinary(const std::filesystem::path& filepath, Buffer buffer);
+		static bool WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer);
 
 		static bool WriteFileString(const std::filesystem::path& filepath, std::string& string);
 

@@ -3,6 +3,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Renderer/Shader.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #include <filesystem>
 #include <tuple>
@@ -72,6 +73,32 @@ namespace Kargono {
 
 
 	//============================================================
+	// Audio
+	//============================================================
+	public:
+		// Retrieve the current project's Audio Registry from disk and Add to in-memory register
+		static void DeserializeAudioRegistry();
+		// Save Current in-memory registry to disk
+		static void SerializeAudioRegistry();
+		// Function to Load a new Audio from a file
+		static AssetHandle ImportNewAudioFromFile(const std::filesystem::path& filePath);
+		// Function to Load a new Audio from a buffer
+		static Ref<AudioBuffer> InstantiateAudioIntoMemory(Asset& asset);
+		// Function to get a texture with a given name
+		static Ref<AudioBuffer> GetAudio(const AssetHandle& handle);
+		// Clear Audio s_AudioRegistry and s_Audio
+		static void ClearAudioRegistry();
+	private:
+		// Imports Audio Data into intermediate format from a file!
+		static void CreateAudioIntermediateFromFile(const std::filesystem::path& filePath, Asset& newAsset);
+	private:
+		// Registry (Location of all items, even if they are not loaded into memory yet)
+		static std::unordered_map<AssetHandle, Asset> s_AudioRegistry;
+		// Maps to assets already loaded into memory
+		static std::unordered_map<AssetHandle, Ref<AudioBuffer>> s_Audio;
+
+
+	//============================================================
 	// General API
 	//============================================================
 	public:
@@ -81,6 +108,7 @@ namespace Kargono {
 		{
 			DeserializeShaderRegistry();
 			DeserializeTextureRegistry();
+			DeserializeAudioRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -88,6 +116,7 @@ namespace Kargono {
 		{
 			SerializeShaderRegistry();
 			SerializeTextureRegistry();
+			SerializeAudioRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -95,6 +124,7 @@ namespace Kargono {
 		{
 			ClearTextureRegistry();
 			ClearShaderRegistry();
+			ClearAudioRegistry();
 		}
 	};
 	

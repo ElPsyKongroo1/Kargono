@@ -7,6 +7,12 @@
 
 namespace Kargono
 {
+	void FileSystem::RenameFile(const std::filesystem::path& oldPath, std::string newName)
+	{
+		std::filesystem::path newPath = oldPath.parent_path() / newName;
+		
+		std::filesystem::rename(oldPath, newPath);
+	}
 	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
 	{
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
@@ -44,6 +50,19 @@ namespace Kargono
 		}
 
 		output_file.write(buffer.As<const char>(), buffer.Size);
+		return true;
+	}
+	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer)
+	{
+		CreateNewDirectory(filepath.parent_path());
+		std::ofstream output_file(filepath, std::ios::binary);
+		if (!output_file)
+		{
+			KG_CORE_ERROR("Failed to write binary data to file");
+			return false;
+		}
+
+		output_file.write(buffer.As<const char>(), buffer.Size());
 		return true;
 	}
 

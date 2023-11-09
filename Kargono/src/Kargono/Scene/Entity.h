@@ -50,7 +50,6 @@ namespace Kargono
 		void RemoveComponent()
 		{
 			KG_CORE_ASSERT(HasComponent<T>(), "Entity does not have the component!");
-
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
