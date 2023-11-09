@@ -32,6 +32,19 @@ namespace Kargono
 		}
 	}
 
+	public class AudioComponent : Component
+	{
+		public void PlayAudio()
+		{
+			InternalCalls.AudioComponent_PlayAudio(Entity.ID);
+		}
+
+		public void PlayAudio(String audioTag)
+		{
+			InternalCalls.AudioComponent_PlayAudioByName(Entity.ID, audioTag);
+		}
+	}
+
 	public class Rigidbody2DComponent : Component
 	{
 

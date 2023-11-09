@@ -42,5 +42,11 @@ namespace Kargono
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static String TagComponent_GetTag(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void AudioComponent_PlayAudio(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void AudioComponent_PlayAudioByName(ulong entityID, string audioTag);
 	}
 }
