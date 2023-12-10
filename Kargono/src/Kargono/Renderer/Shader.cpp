@@ -730,7 +730,6 @@ namespace Kargono {
 			m_ShaderSpecification.TextureInput == Shader::TextureInputType::TextTexture)
 		{
 			m_FillDataPerVertex.push_back(Renderer::FillWorldPositionNoTransform);
-			
 		}
 		else
 		{

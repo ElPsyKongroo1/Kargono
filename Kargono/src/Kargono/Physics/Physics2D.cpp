@@ -61,9 +61,10 @@ namespace Kargono
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
-
+				b2Vec2 offsets{ bc2d.Offset.y, -bc2d.Offset.x };
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
+				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y,
+									offsets, 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -106,6 +107,9 @@ namespace Kargono
 		
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
+		// TODO: HUGE HACK TO FIX SIMULATIONS BUGS. PLEASE UPDATE LATER!!!
+		//		TODO: Need to separate rendering logic from update logic.
+		if (ts > 0.016666) { ts = 0.016666f; }
 		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Renderer/EditorCamera.h"
-#include "Kargono/Core/Input.h"
+#include "Kargono/Input/InputPolling.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Core/Application.h"
@@ -78,17 +78,17 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdateModelView(Timestep ts)
 	{
-		if (Input::IsKeyPressed(Key::LeftAlt))
+		if (InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+			const glm::vec2& mouse{ InputPolling::GetMouseX(), InputPolling::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
-			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
+			if (InputPolling::IsMouseButtonPressed(Mouse::ButtonMiddle))
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+			else if (InputPolling::IsMouseButtonPressed(Mouse::ButtonLeft))
 				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+			else if (InputPolling::IsMouseButtonPressed(Mouse::ButtonRight))
 				MouseZoom(delta.y);
 
 			UpdateView();
@@ -98,7 +98,7 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdateFreeFly(Timestep ts)
 	{
-		if (Input::IsKeyPressed(Key::LeftAlt))
+		if (InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			MouseMovement();
 			KeyboardMovement(ts);
@@ -109,7 +109,7 @@ namespace Kargono {
 
 	void EditorCamera::MouseMovement()
 	{
-		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+		const glm::vec2& mouse{ InputPolling::GetMouseX(), InputPolling::GetMouseY() };
 		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 		m_InitialMousePosition = mouse;
 		if (m_MousePaused)
@@ -169,7 +169,7 @@ namespace Kargono {
 
 	bool EditorCamera::OnMouseScrollModelView(MouseScrolledEvent& e)
 	{
-		if (Input::IsKeyPressed(Key::LeftAlt))
+		if (InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			float delta = e.GetYOffset() * 0.1f;
 			MouseZoom(delta);
@@ -180,7 +180,7 @@ namespace Kargono {
 
 	bool EditorCamera::OnMouseScrollFreeFly(MouseScrolledEvent& e)
 	{
-		if (Input::IsKeyPressed(Key::LeftAlt))
+		if (InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			float delta = e.GetYOffset() * 5.0f;
 			MouseKeyboardSpeed(delta);
@@ -190,19 +190,19 @@ namespace Kargono {
 
 	void EditorCamera::KeyboardMovement(Timestep ts)
 	{
-		if (Input::IsKeyPressed(Key::W))
+		if (InputPolling::IsKeyPressed(Key::W))
 		{
 			m_FocalPoint += GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (Input::IsKeyPressed(Key::S))
+		if (InputPolling::IsKeyPressed(Key::S))
 		{
 			m_FocalPoint -= GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (Input::IsKeyPressed(Key::A))
+		if (InputPolling::IsKeyPressed(Key::A))
 		{
 			m_FocalPoint -= GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (Input::IsKeyPressed(Key::D))
+		if (InputPolling::IsKeyPressed(Key::D))
 		{
 			m_FocalPoint += GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}

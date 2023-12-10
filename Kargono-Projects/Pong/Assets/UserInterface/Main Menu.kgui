@@ -1,0 +1,56 @@
+Font: 826018726820464441
+Windows:
+  - ScreenPosition: [0, 0, 0]
+    Size: [1, 1]
+    BackgroundColor: [1, 0.176470593, 1, 0.141176477]
+    ParentIndex: -1
+    ChildBufferIndex: -1
+    ChildBufferSize: 0
+    WidgetCounts:
+      TextWidgetCount: 4
+      TextWidgetLocation: 0
+      ButtonWidgetCount: 0
+      ButtonWidgetLocation: 0
+      CheckboxWidgetCount: 0
+      CheckboxWidgetLocation: 0
+      ComboWidgetCount: 0
+      ComboWidgetLocation: 0
+      PopupWidgetCount: 0
+      PopupWidgetLocation: 0
+    Widgets:
+      - WindowPosition: [0.119999997, 0.50999999]
+        Size: [0.129999995, 0.119999997]
+        BackgroundColor: [1, 1, 1, 0.117647059]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: Play
+          TextSize: 0.400000006
+          TextAbsoluteDimensions: [83, 38]
+          TextCentered: true
+      - WindowPosition: [0.129999995, 0.25999999]
+        Size: [0.109999999, 0.119999997]
+        BackgroundColor: [1, 1, 1, 0.117647059]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: Exit
+          TextSize: 0.400000006
+          TextAbsoluteDimensions: [69, 38]
+          TextCentered: true
+      - WindowPosition: [0.0399999991, 0.790000021]
+        Size: [0.300000012, 0.100000001]
+        BackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: PONG
+          TextSize: 0.620000005
+          TextAbsoluteDimensions: [102, 40]
+          TextCentered: true
+      - WindowPosition: [0.699999988, 0]
+        Size: [0.300000012, 0.100000001]
+        BackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: "@Wienersons Incorporated"
+          TextSize: 0.119999997
+          TextAbsoluteDimensions: [546, 42]
+          TextCentered: true

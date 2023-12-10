@@ -21,8 +21,12 @@ namespace Kargono {
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
-		virtual void SetFullscreen() override;
+		virtual void EnableFullscreen() override;
 		virtual void DisableFullscreen() override;
+		virtual void SetResizable(bool resizable) override;
+		virtual void CenterWindow() override;
+		virtual glm::vec2 GetMonitorDimensions() override;
+		virtual void ResizeWindow(glm::vec2 newWindowSize) override;
 
 		virtual void SetMouseCursorVisible(bool choice) override;
 

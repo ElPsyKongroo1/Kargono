@@ -1,0 +1,52 @@
+Registry: Audio
+Assets:
+  - AssetHandle: 8971184297765158014
+    MetaData:
+      CheckSum: 91a01fea6cda6d3adbd52ce135789f23af66e3d50fd0b685b6fd68eb389b96e3
+      IntermediateLocation: Audio/Intermediates/8971184297765158014.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 48000
+      TotalPcmFrameCount: 5678312
+      TotalSize: 22713248
+      InitialFileLocation: Audio\Manoria-Cathedral.wav
+  - AssetHandle: 12873632591324649681
+    MetaData:
+      CheckSum: 7afd0510ddd03da8545f86776a81c8288d508ca9b38679b3058036440e5ff77b
+      IntermediateLocation: Audio/Intermediates/12873632591324649681.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 48000
+      TotalPcmFrameCount: 8688750
+      TotalSize: 34755000
+      InitialFileLocation: Audio\mechanist-theme.wav
+  - AssetHandle: 6515589321809716456
+    MetaData:
+      CheckSum: 54d0fe26bcdf59665cf53869d85788e2b8b92bed17fa605ea3dbaa5a49ad4076
+      IntermediateLocation: Audio/Intermediates/6515589321809716456.kgaudio
+      AssetType: Audio
+      Channels: 1
+      SampleRate: 44100
+      TotalPcmFrameCount: 4891
+      TotalSize: 9782
+      InitialFileLocation: Audio\pop-sound.wav
+  - AssetHandle: 3608787027047319333
+    MetaData:
+      CheckSum: d45e3b73c8d76c3e3f722b2798762b79150b968c16d1c44dc6d68338075b4198
+      IntermediateLocation: Audio/Intermediates/3608787027047319333.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 4411632
+      TotalSize: 17646528
+      InitialFileLocation: Audio\test-song.wav
+  - AssetHandle: 2121478283880279507
+    MetaData:
+      CheckSum: ddf01cf657fbac7c16227de0cb038243df7b8343d634c46b42cdb2d3c70b9ffc
+      IntermediateLocation: Audio/Intermediates/2121478283880279507.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 41666
+      TotalSize: 166664
+      InitialFileLocation: Audio\lose_sound.wav

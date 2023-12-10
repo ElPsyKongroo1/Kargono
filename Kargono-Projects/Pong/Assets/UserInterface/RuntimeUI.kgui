@@ -1,0 +1,38 @@
+Font: 826018726820464441
+Windows:
+  - ScreenPosition: [0, 0, 0]
+    Size: [1, 1]
+    BackgroundColor: [1, 1, 1, 0]
+    ParentIndex: -1
+    ChildBufferIndex: -1
+    ChildBufferSize: 0
+    WidgetCounts:
+      TextWidgetCount: 2
+      TextWidgetLocation: 0
+      ButtonWidgetCount: 0
+      ButtonWidgetLocation: 0
+      CheckboxWidgetCount: 0
+      CheckboxWidgetLocation: 0
+      ComboWidgetCount: 0
+      ComboWidgetLocation: 0
+      PopupWidgetCount: 0
+      PopupWidgetLocation: 0
+    Widgets:
+      - WindowPosition: [0, 0.870000005]
+        Size: [0.300000012, 0.100000001]
+        BackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: Score 1
+          TextSize: 0.360000014
+          TextAbsoluteDimensions: [166, 35]
+          TextCentered: true
+      - WindowPosition: [0.709999979, 0.870000005]
+        Size: [0.300000012, 0.100000001]
+        BackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        TextWidget:
+          Text: Score 2
+          TextSize: 0.360000014
+          TextAbsoluteDimensions: [166, 35]
+          TextCentered: true

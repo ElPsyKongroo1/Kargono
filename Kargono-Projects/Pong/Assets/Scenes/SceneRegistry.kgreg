@@ -1,0 +1,12 @@
+Registry: Scene
+Assets:
+  - AssetHandle: 13036162138140767594
+    MetaData:
+      CheckSum: f399fb9d041f303d1d1e0123e1e3f54e9bc0b7ba3ca59b3e1a88df7a03f54ea7
+      IntermediateLocation: Scenes/main_gameplay.kgscene
+      AssetType: Scene
+  - AssetHandle: 4583548209336787209
+    MetaData:
+      CheckSum: 13e3c35596ad5533c9e83389640142a0165fe1c5cbc25a9e06739e534282130d
+      IntermediateLocation: Scenes/new_scene.kgscene
+      AssetType: Scene

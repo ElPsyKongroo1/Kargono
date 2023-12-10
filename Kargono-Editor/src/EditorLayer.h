@@ -2,7 +2,8 @@
 #include "Kargono.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Renderer/EditorCamera.h"
-#include "Kargono/Text/Text.h"
+#include "Kargono/Text/TextEngine.h"
+#include "Kargono/Assets/Asset.h"
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -105,10 +106,20 @@ namespace Kargono {
 		void UI_Stats();
 		// This is the actual viewport that shows the current Scene world.
 		void UI_Viewport();
-
+		// This panel allows the editor to create and manage runtime user interfaces
+		void UI_UserInterface();
+		// This panel allows the editor to create different input modes that can be swapped out
+		void UI_InputEditor();
 		// This function exposes project details and allows certain settings to be changed for the currently
 		//		loaded project.
 		void UI_Project();
+
+	private:
+		// Supporting functions for InputEditor. These functions display different sections of the InputEditor
+		//		user interface.
+		void InputEditor_Keyboard_Events();
+		void InputEditor_Keyboard_Polling();
+
 	public:
 		// This function catches thrown application events and dispatches them to other functions
 		//		(OnKeyPressed(), OnMouseButtonPressed(), and OnPhysicsCollision()).
@@ -119,7 +130,7 @@ namespace Kargono {
 		// These next two functions provide different code to respond to user input.
 		bool OnKeyPressed(KeyPressedEvent event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent event);
-		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
+		// This function responds to application collision events.
 		bool OnPhysicsCollision(PhysicsCollisionEvent event);
 	public:
 		//=========================
@@ -142,11 +153,13 @@ namespace Kargono {
 		//		the current scene.
 		void NewScene();
 		void OpenScene();
+	public:
 		void OpenScene(const std::filesystem::path& path);
+	private:
+		void OpenScene(AssetHandle newScene);
 		void SaveScene();
-		void SaveSceneAs();
 		// This function is called by SaveSceneAs() to actually serialize the scene.
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+		void SerializeScene(Ref<Scene> scene);
 
 		//=========================
 		// Scene State Transitions
@@ -173,15 +186,18 @@ namespace Kargono {
 		bool m_ShowToolbar = true;
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
+		bool m_ShowUserInterfaceEditor = false;
+		bool m_ShowInputEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
 		bool m_ShowCameraFrustrums = true;
 		bool m_RuntimeFullscreen = false;
+		bool m_ShowUserInterface = true;
 		// Editor Scenes
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
-		std::filesystem::path m_EditorScenePath;
+		AssetHandle m_EditorSceneHandle;
 
 		// Misc
 		Entity m_HoveredEntity;
@@ -190,7 +206,7 @@ namespace Kargono {
 		// Viewport Resources
 		Ref<Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
-		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
+		glm::uvec2 m_ViewportSize = {0, 0};
 		glm::vec2 m_ViewportBounds[2];
 
 		// ImGuizmo Resources
@@ -206,19 +222,10 @@ namespace Kargono {
 		bool m_IsPaused = false;
 		int m_StepFrames = 0;
 
-		// Audio Resources TODO: Move into own class
-		Ref<AudioBuffer> m_PopSound = nullptr;
-		Ref<AudioSource> m_PopSource = nullptr;
-
-		// Text Resources
-		Text m_ArialText{};
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<LogPanel>  m_LogPanel;
-
-		// Editor Resources
-		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStop, m_IconStep, m_IconSimulate;
 	};
 
 }

@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Input.h"
+#include "Kargono/Input/InputPolling.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Scripting/ScriptGlue.h"
 #include "Kargono/Scripting/ScriptEngine.h"
@@ -10,6 +10,7 @@
 #include "Kargono/Audio/AudioEngine.h"
 
 #include "box2d/b2_body.h"
+#include "Kargono/Input/InputMode.h"
 #include "mono/jit/jit.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/reflection.h"
@@ -163,6 +164,16 @@ namespace Kargono
 		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
 	}
 
+	static void Audio_PlayAudio(MonoString* audioFileLocation)
+	{
+		const std::string audio = std::string(mono_string_to_utf8(audioFileLocation));
+		auto [handle, audioBuffer] = AssetManager::GetAudio(audio);
+		if (audioBuffer)
+		{
+			AudioEngine::PlaySound(audioBuffer);
+		}
+	}
+
 	static void AudioComponent_PlayAudio(UUID entityID)
 	{
 
@@ -205,8 +216,15 @@ namespace Kargono
 
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
-		return Input::IsKeyPressed(keycode);
+		return InputPolling::IsKeyPressed(keycode);
 	}
+
+	static bool InputMode_IsKeySlotDown(uint16_t keySlot)
+	{
+		return InputMode::IsKeyboardSlotPressed(keySlot);
+	}
+
+	
 
 	template<typename ... Component>
 	static void RegisterComponent()
@@ -262,10 +280,11 @@ namespace Kargono
 
 		KG_ADD_INTERNAL_CALL(TagComponent_GetTag);
 
+		KG_ADD_INTERNAL_CALL(Audio_PlayAudio);
 		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudio);
 		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudioByName);
-		
 
 		KG_ADD_INTERNAL_CALL(Input_IsKeyDown);
+		KG_ADD_INTERNAL_CALL(InputMode_IsKeySlotDown);
     }
 }

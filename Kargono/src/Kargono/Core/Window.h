@@ -3,6 +3,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Events/Event.h"
 
+#include <glm/glm.hpp>
+
 namespace Kargono 
 {
 	struct WindowProps 
@@ -35,8 +37,12 @@ namespace Kargono
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
-		virtual void SetFullscreen() = 0;
+		virtual void EnableFullscreen() = 0;
 		virtual void DisableFullscreen() = 0;
+		virtual void SetResizable(bool resizable) = 0;
+		virtual void CenterWindow() = 0;
+		virtual glm::vec2 GetMonitorDimensions() = 0;
+		virtual void ResizeWindow(glm::vec2 newWindowSize) = 0;
 
 		virtual void SetMouseCursorVisible(bool choice) = 0;
 

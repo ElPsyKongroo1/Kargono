@@ -1,0 +1,1302 @@
+Registry: Font
+Assets:
+  - AssetHandle: 9175099288870376645
+    MetaData:
+      CheckSum: a9c67d890aa5e65fef01b68165ac955053ea4aa5516c3915ee69ad45ed84e832
+      IntermediateLocation: Fonts/Intermediates/9175099288870376645.kgfont
+      AssetType: Font
+      InitialFileLocation: Fonts\arial.ttf
+      AverageWidth: 28.09375
+      AverageHeight: 30.7890625
+      BufferLocations:
+        - 0
+        - 720
+        - 1440
+        - 2160
+        - 2880
+        - 3600
+        - 4320
+        - 5040
+        - 5760
+        - 6480
+        - 7200
+        - 7920
+        - 8640
+        - 9360
+        - 10080
+        - 10800
+        - 11520
+        - 12240
+        - 12960
+        - 13680
+        - 14400
+        - 15120
+        - 15840
+        - 16560
+        - 17280
+        - 18000
+        - 18720
+        - 19440
+        - 20160
+        - 20880
+        - 21600
+        - 22320
+        - 23040
+        - 23040
+        - 23250
+        - 23406
+        - 24351
+        - 25335
+        - 26665
+        - 27680
+        - 27740
+        - 28325
+        - 28910
+        - 29150
+        - 29678
+        - 29762
+        - 29818
+        - 29848
+        - 30338
+        - 31143
+        - 31598
+        - 32438
+        - 33243
+        - 34118
+        - 34923
+        - 35763
+        - 36568
+        - 37408
+        - 38213
+        - 38363
+        - 38587
+        - 39139
+        - 39475
+        - 40027
+        - 40832
+        - 42857
+        - 44047
+        - 44992
+        - 46077
+        - 47127
+        - 48072
+        - 48947
+        - 50102
+        - 51082
+        - 51292
+        - 51992
+        - 53007
+        - 53777
+        - 54967
+        - 55947
+        - 57137
+        - 58082
+        - 59340
+        - 60460
+        - 61440
+        - 62420
+        - 63400
+        - 64520
+        - 66095
+        - 67215
+        - 68335
+        - 69350
+        - 69800
+        - 70290
+        - 70785
+        - 71184
+        - 71300
+        - 71363
+        - 71987
+        - 72757
+        - 73355
+        - 74160
+        - 74784
+        - 75309
+        - 76137
+        - 76872
+        - 77047
+        - 77542
+        - 78277
+        - 78452
+        - 79336
+        - 79882
+        - 80506
+        - 81298
+        - 82126
+        - 82490
+        - 83062
+        - 83504
+        - 84050
+        - 84674
+        - 85584
+        - 86208
+        - 87072
+        - 87670
+        - 88300
+        - 88525
+        - 89155
+        - 89355
+      Characters:
+        - Character: 0
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 1
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 2
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 3
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 4
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 5
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 6
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 7
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 8
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 9
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 10
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 11
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 12
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 13
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 14
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 15
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 16
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 17
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 18
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 19
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 20
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 21
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 22
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 23
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 24
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 25
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 26
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 27
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 28
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 29
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 30
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 31
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 32
+          Size: [0, 0]
+          Bearing: [0, 0]
+          Advance: 832
+        - Character: 33
+          Size: [6, 35]
+          Bearing: [4, 35]
+          Advance: 832
+        - Character: 34
+          Size: [13, 12]
+          Bearing: [2, 35]
+          Advance: 1088
+        - Character: 35
+          Size: [27, 35]
+          Bearing: [0, 35]
+          Advance: 1728
+        - Character: 36
+          Size: [24, 41]
+          Bearing: [1, 37]
+          Advance: 1728
+        - Character: 37
+          Size: [38, 35]
+          Bearing: [2, 35]
+          Advance: 2752
+        - Character: 38
+          Size: [29, 35]
+          Bearing: [2, 35]
+          Advance: 2048
+        - Character: 39
+          Size: [5, 12]
+          Bearing: [2, 35]
+          Advance: 576
+        - Character: 40
+          Size: [13, 45]
+          Bearing: [2, 35]
+          Advance: 1024
+        - Character: 41
+          Size: [13, 45]
+          Bearing: [2, 35]
+          Advance: 1024
+        - Character: 42
+          Size: [16, 15]
+          Bearing: [1, 35]
+          Advance: 1216
+        - Character: 43
+          Size: [24, 22]
+          Bearing: [2, 28]
+          Advance: 1792
+        - Character: 44
+          Size: [7, 12]
+          Bearing: [3, 5]
+          Advance: 832
+        - Character: 45
+          Size: [14, 4]
+          Bearing: [1, 15]
+          Advance: 1024
+        - Character: 46
+          Size: [6, 5]
+          Bearing: [4, 5]
+          Advance: 832
+        - Character: 47
+          Size: [14, 35]
+          Bearing: [0, 35]
+          Advance: 832
+        - Character: 48
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 49
+          Size: [13, 35]
+          Bearing: [5, 35]
+          Advance: 1728
+        - Character: 50
+          Size: [24, 35]
+          Bearing: [1, 35]
+          Advance: 1728
+        - Character: 51
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 52
+          Size: [25, 35]
+          Bearing: [0, 35]
+          Advance: 1728
+        - Character: 53
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 54
+          Size: [24, 35]
+          Bearing: [1, 35]
+          Advance: 1728
+        - Character: 55
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 56
+          Size: [24, 35]
+          Bearing: [1, 35]
+          Advance: 1728
+        - Character: 57
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 58
+          Size: [6, 25]
+          Bearing: [4, 25]
+          Advance: 832
+        - Character: 59
+          Size: [7, 32]
+          Bearing: [3, 25]
+          Advance: 832
+        - Character: 60
+          Size: [24, 23]
+          Bearing: [2, 29]
+          Advance: 1792
+        - Character: 61
+          Size: [24, 14]
+          Bearing: [2, 24]
+          Advance: 1792
+        - Character: 62
+          Size: [24, 23]
+          Bearing: [2, 29]
+          Advance: 1792
+        - Character: 63
+          Size: [23, 35]
+          Bearing: [2, 35]
+          Advance: 1728
+        - Character: 64
+          Size: [45, 45]
+          Bearing: [2, 35]
+          Advance: 3136
+        - Character: 65
+          Size: [34, 35]
+          Bearing: [-1, 35]
+          Advance: 2048
+        - Character: 66
+          Size: [27, 35]
+          Bearing: [3, 35]
+          Advance: 2048
+        - Character: 67
+          Size: [31, 35]
+          Bearing: [2, 35]
+          Advance: 2240
+        - Character: 68
+          Size: [30, 35]
+          Bearing: [3, 35]
+          Advance: 2240
+        - Character: 69
+          Size: [27, 35]
+          Bearing: [3, 35]
+          Advance: 2048
+        - Character: 70
+          Size: [25, 35]
+          Bearing: [3, 35]
+          Advance: 1856
+        - Character: 71
+          Size: [33, 35]
+          Bearing: [2, 35]
+          Advance: 2368
+        - Character: 72
+          Size: [28, 35]
+          Bearing: [3, 35]
+          Advance: 2240
+        - Character: 73
+          Size: [6, 35]
+          Bearing: [4, 35]
+          Advance: 832
+        - Character: 74
+          Size: [20, 35]
+          Bearing: [1, 35]
+          Advance: 1536
+        - Character: 75
+          Size: [29, 35]
+          Bearing: [3, 35]
+          Advance: 2048
+        - Character: 76
+          Size: [22, 35]
+          Bearing: [3, 35]
+          Advance: 1728
+        - Character: 77
+          Size: [34, 35]
+          Bearing: [3, 35]
+          Advance: 2560
+        - Character: 78
+          Size: [28, 35]
+          Bearing: [3, 35]
+          Advance: 2240
+        - Character: 79
+          Size: [34, 35]
+          Bearing: [2, 35]
+          Advance: 2368
+        - Character: 80
+          Size: [27, 35]
+          Bearing: [3, 35]
+          Advance: 2048
+        - Character: 81
+          Size: [34, 37]
+          Bearing: [2, 35]
+          Advance: 2368
+        - Character: 82
+          Size: [32, 35]
+          Bearing: [3, 35]
+          Advance: 2240
+        - Character: 83
+          Size: [28, 35]
+          Bearing: [2, 35]
+          Advance: 2048
+        - Character: 84
+          Size: [28, 35]
+          Bearing: [1, 35]
+          Advance: 1856
+        - Character: 85
+          Size: [28, 35]
+          Bearing: [3, 35]
+          Advance: 2240
+        - Character: 86
+          Size: [32, 35]
+          Bearing: [0, 35]
+          Advance: 2048
+        - Character: 87
+          Size: [45, 35]
+          Bearing: [0, 35]
+          Advance: 2880
+        - Character: 88
+          Size: [32, 35]
+          Bearing: [0, 35]
+          Advance: 2048
+        - Character: 89
+          Size: [32, 35]
+          Bearing: [0, 35]
+          Advance: 2048
+        - Character: 90
+          Size: [29, 35]
+          Bearing: [0, 35]
+          Advance: 1856
+        - Character: 91
+          Size: [10, 45]
+          Bearing: [3, 35]
+          Advance: 832
+        - Character: 92
+          Size: [14, 35]
+          Bearing: [0, 35]
+          Advance: 832
+        - Character: 93
+          Size: [11, 45]
+          Bearing: [0, 35]
+          Advance: 832
+        - Character: 94
+          Size: [21, 19]
+          Bearing: [1, 35]
+          Advance: 1472
+        - Character: 95
+          Size: [29, 4]
+          Bearing: [-1, -7]
+          Advance: 1728
+        - Character: 96
+          Size: [9, 7]
+          Bearing: [2, 35]
+          Advance: 1024
+        - Character: 97
+          Size: [24, 26]
+          Bearing: [1, 26]
+          Advance: 1728
+        - Character: 98
+          Size: [22, 35]
+          Bearing: [3, 35]
+          Advance: 1728
+        - Character: 99
+          Size: [23, 26]
+          Bearing: [1, 26]
+          Advance: 1536
+        - Character: 100
+          Size: [23, 35]
+          Bearing: [1, 35]
+          Advance: 1728
+        - Character: 101
+          Size: [24, 26]
+          Bearing: [1, 26]
+          Advance: 1728
+        - Character: 102
+          Size: [15, 35]
+          Bearing: [0, 35]
+          Advance: 832
+        - Character: 103
+          Size: [23, 36]
+          Bearing: [1, 26]
+          Advance: 1728
+        - Character: 104
+          Size: [21, 35]
+          Bearing: [3, 35]
+          Advance: 1728
+        - Character: 105
+          Size: [5, 35]
+          Bearing: [3, 35]
+          Advance: 704
+        - Character: 106
+          Size: [11, 45]
+          Bearing: [-3, 35]
+          Advance: 704
+        - Character: 107
+          Size: [21, 35]
+          Bearing: [3, 35]
+          Advance: 1536
+        - Character: 108
+          Size: [5, 35]
+          Bearing: [3, 35]
+          Advance: 704
+        - Character: 109
+          Size: [34, 26]
+          Bearing: [3, 26]
+          Advance: 2560
+        - Character: 110
+          Size: [21, 26]
+          Bearing: [3, 26]
+          Advance: 1728
+        - Character: 111
+          Size: [24, 26]
+          Bearing: [1, 26]
+          Advance: 1728
+        - Character: 112
+          Size: [22, 36]
+          Bearing: [3, 26]
+          Advance: 1728
+        - Character: 113
+          Size: [23, 36]
+          Bearing: [1, 26]
+          Advance: 1728
+        - Character: 114
+          Size: [14, 26]
+          Bearing: [3, 26]
+          Advance: 1024
+        - Character: 115
+          Size: [22, 26]
+          Bearing: [1, 26]
+          Advance: 1536
+        - Character: 116
+          Size: [13, 34]
+          Bearing: [0, 34]
+          Advance: 832
+        - Character: 117
+          Size: [21, 26]
+          Bearing: [3, 26]
+          Advance: 1728
+        - Character: 118
+          Size: [24, 26]
+          Bearing: [0, 26]
+          Advance: 1536
+        - Character: 119
+          Size: [35, 26]
+          Bearing: [0, 26]
+          Advance: 2240
+        - Character: 120
+          Size: [24, 26]
+          Bearing: [0, 26]
+          Advance: 1536
+        - Character: 121
+          Size: [24, 36]
+          Bearing: [0, 26]
+          Advance: 1536
+        - Character: 122
+          Size: [23, 26]
+          Bearing: [0, 26]
+          Advance: 1536
+        - Character: 123
+          Size: [14, 45]
+          Bearing: [1, 35]
+          Advance: 1024
+        - Character: 124
+          Size: [5, 45]
+          Bearing: [4, 35]
+          Advance: 768
+        - Character: 125
+          Size: [14, 45]
+          Bearing: [1, 35]
+          Advance: 1024
+        - Character: 126
+          Size: [25, 8]
+          Bearing: [2, 21]
+          Advance: 1792
+        - Character: 127
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+  - AssetHandle: 826018726820464441
+    MetaData:
+      CheckSum: 34ac0488d3305e3a381d1f1bbe5504fd69861d26a54bd68c2a1e1d2b21a188c1
+      IntermediateLocation: Fonts/Intermediates/826018726820464441.kgfont
+      AssetType: Font
+      InitialFileLocation: Fonts\impact.ttf
+      AverageWidth: 25.5703125
+      AverageHeight: 32.3671875
+      BufferLocations:
+        - 0
+        - 720
+        - 1440
+        - 2160
+        - 2880
+        - 3600
+        - 4320
+        - 5040
+        - 5760
+        - 6480
+        - 7200
+        - 7920
+        - 8640
+        - 9360
+        - 10080
+        - 10800
+        - 11520
+        - 12240
+        - 12960
+        - 13680
+        - 14400
+        - 15120
+        - 15840
+        - 16560
+        - 17280
+        - 18000
+        - 18720
+        - 19440
+        - 20160
+        - 20880
+        - 21600
+        - 22320
+        - 23040
+        - 23040
+        - 23496
+        - 23700
+        - 24720
+        - 25800
+        - 27087
+        - 27955
+        - 28063
+        - 28595
+        - 29127
+        - 29270
+        - 29798
+        - 29894
+        - 29992
+        - 30056
+        - 30816
+        - 31776
+        - 32422
+        - 33280
+        - 34200
+        - 35112
+        - 36048
+        - 37008
+        - 37730
+        - 38690
+        - 39650
+        - 39850
+        - 40090
+        - 40642
+        - 41002
+        - 41554
+        - 42490
+        - 44044
+        - 45032
+        - 45944
+        - 46944
+        - 47856
+        - 48578
+        - 49262
+        - 50222
+        - 51134
+        - 51552
+        - 52122
+        - 53110
+        - 53756
+        - 54972
+        - 55846
+        - 56806
+        - 57680
+        - 58712
+        - 59586
+        - 60506
+        - 61342
+        - 62278
+        - 63304
+        - 64824
+        - 65736
+        - 66648
+        - 67370
+        - 67826
+        - 68586
+        - 69042
+        - 69479
+        - 69535
+        - 69613
+        - 70295
+        - 71169
+        - 71851
+        - 72725
+        - 73438
+        - 73970
+        - 74798
+        - 75672
+        - 76090
+        - 76636
+        - 77510
+        - 77928
+        - 79013
+        - 79726
+        - 80439
+        - 81244
+        - 82049
+        - 82545
+        - 83227
+        - 83752
+        - 84465
+        - 85178
+        - 86232
+        - 86914
+        - 87719
+        - 88246
+        - 89011
+        - 89319
+        - 90084
+        - 90337
+      Characters:
+        - Character: 0
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 1
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 2
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 3
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 4
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 5
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 6
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 7
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 8
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 9
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 10
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 11
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 12
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 13
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 14
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 15
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 16
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 17
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 18
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 19
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 20
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 21
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 22
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 23
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 24
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 25
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 26
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 27
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 28
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 29
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 30
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 31
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304
+        - Character: 32
+          Size: [0, 0]
+          Bearing: [0, 0]
+          Advance: 512
+        - Character: 33
+          Size: [12, 38]
+          Bearing: [1, 38]
+          Advance: 832
+        - Character: 34
+          Size: [17, 12]
+          Bearing: [0, 38]
+          Advance: 1152
+        - Character: 35
+          Size: [30, 34]
+          Bearing: [0, 34]
+          Advance: 1920
+        - Character: 36
+          Size: [24, 45]
+          Bearing: [1, 41]
+          Advance: 1664
+        - Character: 37
+          Size: [33, 39]
+          Bearing: [0, 39]
+          Advance: 2112
+        - Character: 38
+          Size: [28, 31]
+          Bearing: [0, 31]
+          Advance: 1792
+        - Character: 39
+          Size: [9, 12]
+          Bearing: [0, 38]
+          Advance: 576
+        - Character: 40
+          Size: [14, 38]
+          Bearing: [1, 38]
+          Advance: 960
+        - Character: 41
+          Size: [14, 38]
+          Bearing: [0, 38]
+          Advance: 960
+        - Character: 42
+          Size: [13, 11]
+          Bearing: [0, 38]
+          Advance: 832
+        - Character: 43
+          Size: [24, 22]
+          Bearing: [1, 30]
+          Advance: 1664
+        - Character: 44
+          Size: [8, 12]
+          Bearing: [0, 7]
+          Advance: 512
+        - Character: 45
+          Size: [14, 7]
+          Bearing: [0, 19]
+          Advance: 896
+        - Character: 46
+          Size: [8, 8]
+          Bearing: [0, 8]
+          Advance: 576
+        - Character: 47
+          Size: [19, 40]
+          Bearing: [0, 39]
+          Advance: 1216
+        - Character: 48
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 49
+          Size: [17, 38]
+          Bearing: [0, 38]
+          Advance: 1152
+        - Character: 50
+          Size: [22, 39]
+          Bearing: [1, 39]
+          Advance: 1536
+        - Character: 51
+          Size: [23, 40]
+          Bearing: [1, 39]
+          Advance: 1600
+        - Character: 52
+          Size: [24, 38]
+          Bearing: [0, 38]
+          Advance: 1536
+        - Character: 53
+          Size: [24, 39]
+          Bearing: [1, 38]
+          Advance: 1664
+        - Character: 54
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 55
+          Size: [19, 38]
+          Bearing: [0, 38]
+          Advance: 1216
+        - Character: 56
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 57
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 58
+          Size: [8, 25]
+          Bearing: [1, 25]
+          Advance: 640
+        - Character: 59
+          Size: [8, 30]
+          Bearing: [1, 25]
+          Advance: 640
+        - Character: 60
+          Size: [24, 23]
+          Bearing: [1, 31]
+          Advance: 1664
+        - Character: 61
+          Size: [24, 15]
+          Bearing: [1, 26]
+          Advance: 1664
+        - Character: 62
+          Size: [24, 23]
+          Bearing: [1, 31]
+          Advance: 1664
+        - Character: 63
+          Size: [24, 39]
+          Bearing: [1, 39]
+          Advance: 1600
+        - Character: 64
+          Size: [37, 42]
+          Bearing: [0, 39]
+          Advance: 2368
+        - Character: 65
+          Size: [26, 38]
+          Bearing: [-1, 38]
+          Advance: 1536
+        - Character: 66
+          Size: [24, 38]
+          Bearing: [1, 38]
+          Advance: 1728
+        - Character: 67
+          Size: [25, 40]
+          Bearing: [1, 39]
+          Advance: 1728
+        - Character: 68
+          Size: [24, 38]
+          Bearing: [1, 38]
+          Advance: 1728
+        - Character: 69
+          Size: [19, 38]
+          Bearing: [1, 38]
+          Advance: 1280
+        - Character: 70
+          Size: [18, 38]
+          Bearing: [1, 38]
+          Advance: 1216
+        - Character: 71
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 72
+          Size: [24, 38]
+          Bearing: [1, 38]
+          Advance: 1728
+        - Character: 73
+          Size: [11, 38]
+          Bearing: [1, 38]
+          Advance: 896
+        - Character: 74
+          Size: [15, 38]
+          Bearing: [0, 38]
+          Advance: 1024
+        - Character: 75
+          Size: [26, 38]
+          Bearing: [1, 38]
+          Advance: 1664
+        - Character: 76
+          Size: [17, 38]
+          Bearing: [1, 38]
+          Advance: 1152
+        - Character: 77
+          Size: [32, 38]
+          Bearing: [1, 38]
+          Advance: 2176
+        - Character: 78
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1664
+        - Character: 79
+          Size: [24, 40]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 80
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1536
+        - Character: 81
+          Size: [24, 43]
+          Bearing: [1, 39]
+          Advance: 1664
+        - Character: 82
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1664
+        - Character: 83
+          Size: [23, 40]
+          Bearing: [1, 39]
+          Advance: 1600
+        - Character: 84
+          Size: [22, 38]
+          Bearing: [0, 38]
+          Advance: 1408
+        - Character: 85
+          Size: [24, 39]
+          Bearing: [1, 38]
+          Advance: 1664
+        - Character: 86
+          Size: [27, 38]
+          Bearing: [-1, 38]
+          Advance: 1600
+        - Character: 87
+          Size: [40, 38]
+          Bearing: [0, 38]
+          Advance: 2496
+        - Character: 88
+          Size: [24, 38]
+          Bearing: [0, 38]
+          Advance: 1472
+        - Character: 89
+          Size: [24, 38]
+          Bearing: [-1, 38]
+          Advance: 1472
+        - Character: 90
+          Size: [19, 38]
+          Bearing: [0, 38]
+          Advance: 1216
+        - Character: 91
+          Size: [12, 38]
+          Bearing: [1, 38]
+          Advance: 896
+        - Character: 92
+          Size: [19, 40]
+          Bearing: [0, 39]
+          Advance: 1216
+        - Character: 93
+          Size: [12, 38]
+          Bearing: [0, 38]
+          Advance: 896
+        - Character: 94
+          Size: [23, 19]
+          Bearing: [0, 38]
+          Advance: 1472
+        - Character: 95
+          Size: [28, 2]
+          Bearing: [-1, -4]
+          Advance: 1728
+        - Character: 96
+          Size: [13, 6]
+          Bearing: [0, 41]
+          Advance: 1024
+        - Character: 97
+          Size: [22, 31]
+          Bearing: [1, 31]
+          Advance: 1536
+        - Character: 98
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1600
+        - Character: 99
+          Size: [22, 31]
+          Bearing: [1, 31]
+          Advance: 1536
+        - Character: 100
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1600
+        - Character: 101
+          Size: [23, 31]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 102
+          Size: [14, 38]
+          Bearing: [0, 38]
+          Advance: 896
+        - Character: 103
+          Size: [23, 36]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 104
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1600
+        - Character: 105
+          Size: [11, 38]
+          Bearing: [1, 38]
+          Advance: 832
+        - Character: 106
+          Size: [13, 42]
+          Bearing: [-1, 38]
+          Advance: 832
+        - Character: 107
+          Size: [23, 38]
+          Bearing: [1, 38]
+          Advance: 1472
+        - Character: 108
+          Size: [11, 38]
+          Bearing: [1, 38]
+          Advance: 832
+        - Character: 109
+          Size: [35, 31]
+          Bearing: [1, 31]
+          Advance: 2368
+        - Character: 110
+          Size: [23, 31]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 111
+          Size: [23, 31]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 112
+          Size: [23, 35]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 113
+          Size: [23, 35]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 114
+          Size: [16, 31]
+          Bearing: [1, 31]
+          Advance: 1088
+        - Character: 115
+          Size: [22, 31]
+          Bearing: [0, 31]
+          Advance: 1472
+        - Character: 116
+          Size: [15, 35]
+          Bearing: [0, 35]
+          Advance: 960
+        - Character: 117
+          Size: [23, 31]
+          Bearing: [1, 31]
+          Advance: 1600
+        - Character: 118
+          Size: [23, 31]
+          Bearing: [-1, 31]
+          Advance: 1344
+        - Character: 119
+          Size: [34, 31]
+          Bearing: [-1, 31]
+          Advance: 2048
+        - Character: 120
+          Size: [22, 31]
+          Bearing: [0, 31]
+          Advance: 1344
+        - Character: 121
+          Size: [23, 35]
+          Bearing: [-1, 31]
+          Advance: 1408
+        - Character: 122
+          Size: [17, 31]
+          Bearing: [0, 31]
+          Advance: 1088
+        - Character: 123
+          Size: [17, 45]
+          Bearing: [0, 38]
+          Advance: 1152
+        - Character: 124
+          Size: [7, 44]
+          Bearing: [3, 38]
+          Advance: 832
+        - Character: 125
+          Size: [17, 45]
+          Bearing: [0, 38]
+          Advance: 1152
+        - Character: 126
+          Size: [23, 11]
+          Bearing: [1, 26]
+          Advance: 1600
+        - Character: 127
+          Size: [24, 30]
+          Bearing: [6, 30]
+          Advance: 2304

@@ -4,12 +4,18 @@
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Text/TextEngine.h"
+#include "Kargono/UI/RuntimeUI.h"
 
 #include <filesystem>
 #include <tuple>
 
 
-namespace Kargono {
+namespace Kargono
+{
+	class Scene;
+	class Project;
+
 
 	// Main API for getting resources at runtime!
 	class AssetManager
@@ -86,6 +92,8 @@ namespace Kargono {
 		static Ref<AudioBuffer> InstantiateAudioIntoMemory(Asset& asset);
 		// Function to get a texture with a given name
 		static Ref<AudioBuffer> GetAudio(const AssetHandle& handle);
+		// Function to get an audio buffer from its initial file location
+		static std::tuple<AssetHandle, Ref<AudioBuffer>> GetAudio(const std::filesystem::path& filepath);
 		// Clear Audio s_AudioRegistry and s_Audio
 		static void ClearAudioRegistry();
 	private:
@@ -99,6 +107,109 @@ namespace Kargono {
 
 
 	//============================================================
+	// Font
+	//============================================================
+	public:
+		// Retrieve the current project's Font Registry from disk and Add to in-memory register
+		static void DeserializeFontRegistry();
+		// Save Current in-memory registry to disk
+		static void SerializeFontRegistry();
+		// Function to Load a new Font from a file
+		static AssetHandle ImportNewFontFromFile(const std::filesystem::path& filePath);
+		// Function to Load a new Font from a buffer
+		static Ref<Font> InstantiateFontIntoMemory(Asset& asset);
+		// Function to get a texture with a given name
+		static Ref<Font> GetFont(const AssetHandle& handle);
+		// Clear Font s_FontRegistry and s_Font
+		static void ClearFontRegistry();
+	private:
+		// Imports Font Data into intermediate format from a file!
+		static void CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Asset& newAsset);
+	private:
+		// Registry (Location of all items, even if they are not loaded into memory yet)
+		static std::unordered_map<AssetHandle, Asset> s_FontRegistry;
+		// Maps to assets already loaded into memory
+		static std::unordered_map<AssetHandle, Ref<Font>> s_Fonts;
+
+	//============================================================
+	// Scene
+	//============================================================
+	public:
+		// Retrieve the current project's Scene Registry from disk and Add to in-memory register
+		static void DeserializeSceneRegistry();
+		// Save Current in-memory registry to disk
+		static void SerializeSceneRegistry();
+		// Save a single scene
+		static void SerializeScene(Ref<Scene> scene,const std::filesystem::path& filepath);
+		// Load a single scene
+		static bool DeserializeScene(Ref<Scene> scene, const std::filesystem::path& filepath);
+		// Check if name already exists in registry
+		static bool CheckSceneExists(const std::string& sceneName);
+		// Function to Load a new Scene from a file
+		static AssetHandle CreateNewScene(const std::string& sceneName);
+		// Save Current Scene
+		static void SaveScene(AssetHandle sceneHandle , Ref<Scene> scene);
+		// Function to get a texture with a given name
+		static Ref<Scene> GetScene(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Scene>> GetScene(const std::filesystem::path& filepath);
+		// Instantiate a new scene
+		static Ref<Scene> InstantiateScene(const Asset& sceneAsset);
+		// Clear Scene s_SceneRegistry and s_Scene
+		static void ClearSceneRegistry();
+		static std::unordered_map<AssetHandle, Asset>& GetSceneRegistry() { return s_SceneRegistry; }
+	private:
+		// Imports Scene Data into intermediate format from a file!
+		static void CreateSceneFile(const std::string& sceneName, Asset& newAsset);
+	private:
+		// Registry (Location of all items, even if they are not loaded into memory yet)
+		static std::unordered_map<AssetHandle, Asset> s_SceneRegistry;
+
+	//============================================================
+	// UIObject
+	//============================================================
+	public:
+		// Retrieve the current project's UIObject Registry from disk and Add to in-memory register
+		static void DeserializeUIObjectRegistry();
+		// Save Current in-memory registry to disk
+		static void SerializeUIObjectRegistry();
+		// Save a single uiObject
+		static void SerializeUIObject(Ref<UIEngine::UIObject> uiObject, const std::filesystem::path& filepath);
+		// Load a single uiObject
+		static bool DeserializeUIObject(Ref<UIEngine::UIObject> uiObject, const std::filesystem::path& filepath);
+		// Check if name already exists in registry
+		static bool CheckUIObjectExists(const std::string& uiObjectName);
+		// Function to Load a new UIObject from a file
+		static AssetHandle CreateNewUIObject(const std::string& uiObjectName);
+		// Save Current UIObject
+		static void SaveUIObject(AssetHandle uiObjectHandle, Ref<UIEngine::UIObject> uiObject);
+		// Returns the relative path from project directory of intermediate file
+		static std::filesystem::path GetUIObjectLocation(const AssetHandle& handle);
+		// Function to get a texture with a given name
+		static Ref<UIEngine::UIObject> GetUIObject(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<UIEngine::UIObject>> GetUIObject(const std::filesystem::path& filepath);
+		// Instantiate a new uiObject
+		static Ref<UIEngine::UIObject> InstantiateUIObject(const Asset& uiObjectAsset);
+		// Clear UIObject s_UIObjectRegistry and s_UIObject
+		static void ClearUIObjectRegistry();
+		static std::unordered_map<AssetHandle, Asset>& GetUIObjectRegistry() { return s_UIObjectRegistry; }
+	private:
+		// Imports UIObject Data into intermediate format from a file!
+		static void CreateUIObjectFile(const std::string& uiObjectName, Asset& newAsset);
+	private:
+		// Registry (Location of all items, even if they are not loaded into memory yet)
+		static std::unordered_map<AssetHandle, Asset> s_UIObjectRegistry;
+
+
+	//============================================================
+	// Project
+	//============================================================
+	public:
+	// Save a single project
+	static bool SerializeProject(Ref<Project> project, const std::filesystem::path& filepath);
+	// Load a single project
+	static bool DeserializeProject(Ref<Project> project, const std::filesystem::path& filepath);
+
+	//============================================================
 	// General API
 	//============================================================
 	public:
@@ -109,6 +220,9 @@ namespace Kargono {
 			DeserializeShaderRegistry();
 			DeserializeTextureRegistry();
 			DeserializeAudioRegistry();
+			DeserializeFontRegistry();
+			DeserializeSceneRegistry();
+			DeserializeUIObjectRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -117,6 +231,9 @@ namespace Kargono {
 			SerializeShaderRegistry();
 			SerializeTextureRegistry();
 			SerializeAudioRegistry();
+			SerializeFontRegistry();
+			SerializeSceneRegistry();
+			SerializeUIObjectRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -125,6 +242,9 @@ namespace Kargono {
 			ClearTextureRegistry();
 			ClearShaderRegistry();
 			ClearAudioRegistry();
+			ClearFontRegistry();
+			ClearSceneRegistry();
+			ClearUIObjectRegistry();
 		}
 	};
 	

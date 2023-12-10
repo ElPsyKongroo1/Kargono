@@ -10,6 +10,8 @@
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Project/Project.h"
 #include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Input/InputMode.h"
+
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
@@ -18,6 +20,7 @@
 #include "mono/metadata/mono-debug.h"
 #include "mono/metadata/threads.h"
 #include "FileWatch.hpp"
+#include "Kargono/Input/InputPolling.h"
 
 namespace Kargono
 {
@@ -131,23 +134,29 @@ namespace Kargono
 
 	struct ScriptEngineData
 	{
+		// Mono Environment
 		MonoDomain* RootDomain = nullptr;
 		MonoDomain* AppDomain = nullptr;
-
+		// Mono Assemblies and their Images
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage= nullptr;
 
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
-
+		// Stored File paths for assemblies
 		std::filesystem::path CoreAssemblyFilepath;
 		std::filesystem::path AppAssemblyFilepath;
-
+		// Base Entity Class
 		ScriptClass EntityClass;
-
+		// Maps for all entity classes, their specific instances, and the instances' fields
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
-		std::unordered_map<UUID, Ref<ScriptClassInstance>> EntityInstances;
+		std::unordered_map<UUID, Ref<ScriptClassEntityInstance>> EntityInstances;
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
+
+		// Class and Instance used to make runtime calls that make static changes to the engine.
+		//		These functions are created by the end-user for specific needs.
+		Ref<ScriptClass> CustomEngineCalls;
+		ScriptClassCustomCallInstance CustomEngineCallInstance;
 
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
 		bool AssemblyReloadPending = false;
@@ -389,7 +398,7 @@ namespace Kargono
 			// Create a ScriptInstance specific to the entity and its ScriptClass
 			// Store ScriptInstance inside EntityInstances map with UUID
 			UUID entityID = entity.GetUUID();
-			Ref<ScriptClassInstance> instance = CreateRef<ScriptClassInstance>(s_ScriptData->EntityClasses[sc.ClassName], entity);
+			Ref<ScriptClassEntityInstance> instance = CreateRef<ScriptClassEntityInstance>(s_ScriptData->EntityClasses[sc.ClassName], entity);
 			s_ScriptData->EntityInstances[entity.GetUUID()] = instance;
 
 			// Copy field values into C# Script
@@ -411,11 +420,11 @@ namespace Kargono
 		UUID entityUUID = entity.GetUUID();
 
 		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(entityUUID), "Could not find ScriptInstance for entity");
-		Ref<ScriptClassInstance> instance = s_ScriptData->EntityInstances[entityUUID];
+		Ref<ScriptClassEntityInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 		instance->InvokeOnUpdate(ts);
 	}
 
-	Ref<ScriptClassInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
+	Ref<ScriptClassEntityInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
 	{
 		auto it = s_ScriptData->EntityInstances.find(entityID);
 		if (it == s_ScriptData->EntityInstances.end()) { return nullptr; }
@@ -433,6 +442,15 @@ namespace Kargono
 
 	void ScriptEngine::OnUpdate(Timestep ts)
 	{
+
+		auto& globalBindings = InputMode::GetKeyboardCustomCallsOnUpdate();
+		for (auto& binding : globalBindings)
+		{
+			if (!InputPolling::IsKeyPressed(binding->GetKeyBinding())) { continue; }
+
+			s_ScriptData->CustomEngineCallInstance.InvokeMethod(binding->GetFunctionBinding());
+		}
+
 		auto view = s_ScriptData->SceneContext->GetAllEntitiesWith<ScriptComponent>();
 		// Run On-Update function for each ScriptObject
 		for (auto e : view)
@@ -451,13 +469,13 @@ namespace Kargono
 
 		if (s_ScriptData->EntityInstances.contains(entityOne))
 		{
-			Ref<ScriptClassInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityOne];
+			Ref<ScriptClassEntityInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityOne];
 			collisionHandled = monoEntityInstance->InvokeOnPhysicsCollision(entityTwo);
 		}
 
 		if (!collisionHandled && s_ScriptData->EntityInstances.contains(entityTwo))
 		{
-			Ref<ScriptClassInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityTwo];
+			Ref<ScriptClassEntityInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityTwo];
 			monoEntityInstance->InvokeOnPhysicsCollision(entityOne);
 		}
 	}
@@ -484,6 +502,22 @@ namespace Kargono
 			MonoClass* monoClass = mono_class_from_name(s_ScriptData->AppAssemblyImage, nameSpace, className);
 
 			if (monoClass == entityClass) { continue; }
+
+			if (std::string(className) == "CustomCalls")
+			{
+				s_ScriptData->CustomEngineCalls = CreateRef<ScriptClass>(nameSpace, className, false);
+				s_ScriptData->CustomEngineCallInstance = ScriptClassCustomCallInstance(s_ScriptData->CustomEngineCalls);
+				void* iter = nullptr;
+				MonoMethod* method;
+				KG_CORE_WARN("{} class methods:", className);
+				while (method = mono_class_get_methods(monoClass, &iter))
+				{
+					KG_CORE_WARN("	{}", mono_method_get_name(method));
+					if (std::string(mono_method_get_name(method)) == ".ctor") { continue; }
+					ScriptMethod newMethod = ScriptMethod(mono_method_get_name(method), 0, method);
+					s_ScriptData->CustomEngineCallInstance.AddMethod(newMethod);
+				}
+			}
 
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 
@@ -545,6 +579,11 @@ namespace Kargono
 		return s_ScriptData->EntityClasses;
 	}
 
+	std::unordered_map<std::string, ScriptMethod>& ScriptEngine::GetCustomCallMap()
+	{
+		return s_ScriptData->CustomEngineCallInstance.m_Methods;
+	}
+
 	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
 	{
 		KG_CORE_ASSERT(entity)
@@ -592,7 +631,7 @@ namespace Kargono
 		return insertionSuccessful;
 	}
 
-	ScriptClassInstance::ScriptClassInstance(Ref<ScriptClass> scriptClass, Entity entity)
+	ScriptClassEntityInstance::ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Entity entity)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = scriptClass->Instantiate();
@@ -604,7 +643,7 @@ namespace Kargono
 		m_OnCollisionMethod = scriptClass->GetMethod("OnPhysicsCollision", 1);
 
 
-		// Call Entity Constructor
+		// Call C# Entity Constructor
 		{
 			UUID entityID = entity.GetUUID();
 			void* param = &entityID;
@@ -612,12 +651,12 @@ namespace Kargono
 		}
 	}
 
-	void ScriptClassInstance::InvokeOnCreate()
+	void ScriptClassEntityInstance::InvokeOnCreate()
 	{
 		if (m_OnCreateMethod) { m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);}
 	}
 
-	void ScriptClassInstance::InvokeOnUpdate(float ts)
+	void ScriptClassEntityInstance::InvokeOnUpdate(float ts)
 	{
 		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!")
 		if (m_OnUpdateMethod)
@@ -627,7 +666,7 @@ namespace Kargono
 		}
 	}
 
-	bool ScriptClassInstance::InvokeOnPhysicsCollision(UUID otherEntity)
+	bool ScriptClassEntityInstance::InvokeOnPhysicsCollision(UUID otherEntity)
 	{
 		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!")
 			if (m_OnCollisionMethod)
@@ -638,7 +677,7 @@ namespace Kargono
 		return false;
 	}
 
-	bool ScriptClassInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	bool ScriptClassEntityInstance::GetFieldValueInternal(const std::string& name, void* buffer)
 	{
 		const auto& fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);
@@ -650,7 +689,7 @@ namespace Kargono
 
 	}
 
-	bool ScriptClassInstance::SetFieldValueInternal(const std::string& name, const void* value)
+	bool ScriptClassEntityInstance::SetFieldValueInternal(const std::string& name, const void* value)
 	{
 		const auto& fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);
@@ -660,6 +699,24 @@ namespace Kargono
 		mono_field_set_value(m_Instance, field.ClassField, (void*)value);
 		return true;
 
+	}
+
+	ScriptClassCustomCallInstance::ScriptClassCustomCallInstance(Ref<ScriptClass> scriptClass)
+	{
+		m_Instance = scriptClass->Instantiate();
+	}
+
+	void ScriptClassCustomCallInstance::InvokeMethod(const std::string& methodName)
+	{
+		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!");
+		if (m_Methods.contains(methodName))
+		{
+			ScriptMethod& method = m_Methods.at(methodName);
+			if (method.m_MonoMethod)
+			{
+				m_ScriptClass->InvokeMethod(m_Instance, method.m_MonoMethod, nullptr);
+			}
+		}
 	}
 
 }

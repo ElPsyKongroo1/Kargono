@@ -26,11 +26,12 @@ extern "C"
 namespace Kargono
 {
 	// More Forward Declarations!
-	class ScriptClassInstance;
+	class ScriptClassEntityInstance;
 	class Scene;
 	class ScriptClass;
 	class Entity;
 	class PhysicsCollisionEvent;
+	struct ScriptMethod;
 
 	//============================================================
 	// Enums and Other Type Declarations
@@ -150,7 +151,7 @@ namespace Kargono
 		uint8_t m_Buffer[8];
 
 		friend class ScriptEngine;
-		friend class ScriptClassInstance;
+		friend class ScriptClassEntityInstance;
 	};
 
 	// This map serves as the C++ representation of the fields associated with
@@ -259,10 +260,11 @@ namespace Kargono
 		static MonoObject* GetManagedInstance(UUID uuid);
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+		static std::unordered_map<std::string, ScriptMethod>& GetCustomCallMap();
 		static bool EntityClassExists(const std::string& fullClassName);
 		static Scene* GetSceneContext();
 		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
-		static Ref<ScriptClassInstance> GetEntityScriptInstance(UUID entityID);
+		static Ref<ScriptClassEntityInstance> GetEntityScriptInstance(UUID entityID);
 
 	private:
 		// Friend declarations
@@ -277,7 +279,7 @@ namespace Kargono
 	//		in the Mono Core or App Assembly Currently, instances of the
 	//		ScriptClass are instantiated when a new assembly is loaded.
 	//		In the context of C#, this object simply represents a class, not
-	//		a C# instance of a class. The ScriptClassInstance object represents
+	//		a C# instance of a class. The ScriptClassEntityInstance object represents
 	//		an actual C# object.
 	class ScriptClass
 	{
@@ -305,11 +307,12 @@ namespace Kargono
 
 		// Instantiate produces a MonoObject* to a new instance object of the C# class.
 		//		This function is used to create the underlying mono object associated with
-		//		a ScriptClassInstance
+		//		a ScriptClassEntityInstance
 		MonoObject* Instantiate();
-		// This function is used by a ScriptClassInstance to invoke a class method from
+		// This function is used by a ScriptClassEntityInstance to invoke a class method from
 		//		the C# class
 		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+		MonoClass* GetMonoClass() { return m_MonoClass; }
 	private:
 		// Namespace and ClassName Describing the class. Mostly for debug purposes
 		std::string m_ClassNamespace;
@@ -321,15 +324,43 @@ namespace Kargono
 
 		friend class ScriptEngine;
 	};
+
+	struct ScriptMethod
+	{
+	public:
+		std::string m_Name{};
+		uint32_t m_NumParameters{};
+		MonoMethod* m_MonoMethod{ nullptr };
+	};
+
+	class ScriptClassCustomCallInstance
+	{
+	public:
+		ScriptClassCustomCallInstance() = default;
+		ScriptClassCustomCallInstance(Ref<ScriptClass> scriptClass);
+	public:
+		void InvokeMethod(const std::string& methodName);
+		void AddMethod(ScriptMethod method) { m_Methods.insert_or_assign(method.m_Name, method); }
+		std::unordered_map<std::string, ScriptMethod> m_Methods{};
+	private:
+		// Underlying MonoObject*
+		MonoObject* m_Instance = nullptr;
+		// Class
+		Ref<ScriptClass> m_ScriptClass;
+		// All Available Methods
+
+		friend class ScriptEngine;
+	};
+
 	//============================================================
-	// ScriptClassInstance Class
+	// ScriptClassEntityInstance Class
 	//============================================================
 	// This class represents an object instance of a C# class in an
 	//		assembly file.
 	// Ex: A C# Player Class inside the App Assembly is represented by
 	//		the C++ ScriptClass. A new instance of this C# Player Class is
-	//		represented by the C++ ScriptClassInstance Class.
-	class ScriptClassInstance
+	//		represented by the C++ ScriptClassEntityInstance Class.
+	class ScriptClassEntityInstance
 	{
 	public:
 		//============================
@@ -341,7 +372,7 @@ namespace Kargono
 		//		2. Get references to class methods (currently this includes
 		//		the constructor, OnCreate, OnUpdate, and OnPhysicsCollision) from scriptClass
 		//		3. Calls constructor for MonoObject*
-		ScriptClassInstance(Ref<ScriptClass> scriptClass, Entity entity);
+		ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Entity entity);
 		//============================
 		// Interface for Method Calls
 		//============================

@@ -8,6 +8,7 @@
 
 #include "stb_image.h"
 #include "glad/glad.h"
+#include "Kargono/Project/Project.h"
 
 
 namespace Kargono 
@@ -204,7 +205,7 @@ namespace Kargono
 	{
 		return m_Data.VSync;
 	}
-	void WindowsWindow::SetFullscreen()
+	void WindowsWindow::EnableFullscreen()
 	{
 		// Final Parameter adjusts refresh rate. May want to change this later!
 		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
@@ -212,6 +213,36 @@ namespace Kargono
 	void WindowsWindow::DisableFullscreen()
 	{
 		glfwSetWindowMonitor(m_Window, nullptr, 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
+	}
+	void WindowsWindow::SetResizable(bool resizable)
+	{
+		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+	}
+	void WindowsWindow::CenterWindow()
+	{
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		glfwSetWindowPos(m_Window, (mode->width - m_Data.Width) / 2, (mode->height - m_Data.Height) / 2);
+	}
+	glm::vec2 WindowsWindow::GetMonitorDimensions()
+	{
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		return glm::vec2(static_cast<float>(mode->width), static_cast<float>(mode->height));
+	}
+	void WindowsWindow::ResizeWindow(glm::vec2 newWindowSize)
+	{
+		glfwSetWindowSize(m_Window, static_cast<int>(newWindowSize.x), static_cast<int>(newWindowSize.y));
+
+		m_Data.Width = static_cast<uint32_t>(newWindowSize.x);
+		m_Data.Height = static_cast<uint32_t>(newWindowSize.y);
+
+		if (!Project::GetIsFullscreen()) { CenterWindow(); }
+
+		// Event thrown to ensure resize updates viewport
+		WindowResizeEvent event(newWindowSize.x, newWindowSize.y);
+		m_Data.EventCallback(event);
+
 	}
 	void WindowsWindow::SetMouseCursorVisible(bool choice)
 	{

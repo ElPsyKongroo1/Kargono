@@ -29,5 +29,7 @@ namespace Kargono
 		Ref<Texture2D> m_SceneIcon;
 		Ref<Texture2D> m_RegistryIcon;
 		Ref<Texture2D> m_ScriptProjectIcon;
+		Ref<Texture2D> m_UserInterfaceIcon;
+		Ref<Texture2D> m_FontIcon;
 	};
 }
