@@ -25,6 +25,9 @@ namespace Kargono
 		internal extern static bool Input_IsKeyDown(KeyCode keycode);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool InputMode_IsKeySlotDown(ushort keySlot);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Rigidbody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 point, bool wake);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -42,6 +45,9 @@ namespace Kargono
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static String TagComponent_GetTag(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Audio_PlayAudio(string audioFileLocation);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void AudioComponent_PlayAudio(ulong entityID);

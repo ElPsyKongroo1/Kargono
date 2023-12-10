@@ -4,6 +4,7 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Assets/Asset.h"
 
 #include <filesystem>
 
@@ -39,6 +40,8 @@ namespace Kargono {
 	private:
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
+		// This function updates the scene cameras when the window is resized
+		bool OnWindowResize(WindowResizeEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
 		bool OnPhysicsCollision(PhysicsCollisionEvent event);
 		// Logic to open the project and its main scene
@@ -49,6 +52,7 @@ namespace Kargono {
 		void OpenProject(const std::filesystem::path& path);
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void OpenScene(AssetHandle sceneHandle);
 
 		// Starts and stops the runtime. This includes Scripting,
 		//		Physics, and supporting functionality.
@@ -58,12 +62,7 @@ namespace Kargono {
 	private:
 		// Current Scene
 		Ref<Scene> m_ActiveScene;
-		std::filesystem::path m_ScenePath;
-
-		// Viewport Data
-		bool m_ViewportFocused = false, m_ViewportHovered = false;
-		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
-		glm::vec2 m_ViewportBounds[2];
+		AssetHandle m_SceneHandle;
 
 	};
 
