@@ -2,7 +2,7 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Renderer/Texture.h"
-#include "Kargono/UI/UI.h"
+#include "Kargono/UI/EditorUI.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Shape.h"
 #include "Kargono/Audio/AudioEngine.h"
@@ -316,23 +316,21 @@ namespace Kargono
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
 					float verticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-					if (ImGui::DragFloat("Vertical FOV", &verticalFOV)) { camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV)); }
+					if (ImGui::DragFloat("Vertical FOV", &verticalFOV, 1, 0, 10000)) { camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV)); }
 					float perspectiveNear = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near Plane", &perspectiveNear)) { camera.SetPerspectiveNearClip(perspectiveNear); }
+					if (ImGui::DragFloat("Near Plane", &perspectiveNear, 1, 0, 10000)) { camera.SetPerspectiveNearClip(perspectiveNear); }
 					float perspectiveFar = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far Plane", &perspectiveFar)) { camera.SetPerspectiveFarClip(perspectiveFar); }
+					if (ImGui::DragFloat("Far Plane", &perspectiveFar, 1, 0, 10000)) { camera.SetPerspectiveFarClip(perspectiveFar); }
 				}
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 				{
 					float orthoSize = camera.GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &orthoSize)) { camera.SetOrthographicSize(orthoSize); }
+					if (ImGui::DragFloat("Size", &orthoSize, 1, 0, 10000)) { camera.SetOrthographicSize(orthoSize); }
 					float orthoNear = camera.GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Plane", &orthoNear)) { camera.SetOrthographicNearClip(orthoNear); }
+					if (ImGui::DragFloat("Near Plane", &orthoNear, 1, 0, 10000)) { camera.SetOrthographicNearClip(orthoNear); }
 					float orthoFar = camera.GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far Plane", &orthoFar)) { camera.SetOrthographicFarClip(orthoFar); }
-
-					ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+					if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
 				}
 			});
 
@@ -380,7 +378,7 @@ namespace Kargono
 			bool sceneRunning = m_Context->IsRunning();
 			if (sceneRunning)
 			{
-				Ref<ScriptClassInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+				Ref<ScriptClassEntityInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
 			   if (scriptInstance)
 			   {
 				   const auto& fields = scriptInstance->GetScriptClass()->GetFields();

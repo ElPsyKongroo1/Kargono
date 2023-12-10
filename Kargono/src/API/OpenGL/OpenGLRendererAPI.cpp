@@ -129,11 +129,16 @@ namespace Kargono
 		glViewport(x, y, width, height);
 	}
 
+	void OpenGLRendererAPI::ClearDepthBuffer()
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
+
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
-	void OpenGLRendererAPI::EnableDepthTesting(bool value)
+	void OpenGLRendererAPI::SetDepthTesting(bool value)
 	{
 		value ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	}

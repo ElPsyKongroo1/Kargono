@@ -32,8 +32,9 @@ namespace Kargono
 		virtual ~RendererAPI() = default;
 		virtual void Init() = 0;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+		virtual void ClearDepthBuffer() = 0;
 		virtual void SetClearColor(const glm::vec4& color) = 0;
-		virtual void EnableDepthTesting(bool value) = 0;
+		virtual void SetDepthTesting(bool value) = 0;
 		virtual void SetStencilMask(uint32_t value) = 0;
 		virtual void StencilTestFunc(RendererAPI::StencilComparisonType comparisonType, int32_t reference, uint32_t mask) = 0;
 		virtual void StencilTestOptions(RendererAPI::StencilOptions sfail, RendererAPI::StencilOptions dfail, RendererAPI::StencilOptions sdpass) = 0;

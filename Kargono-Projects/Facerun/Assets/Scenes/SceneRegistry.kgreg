@@ -1,0 +1,7 @@
+Registry: Scene
+Assets:
+  - AssetHandle: 10325815472985218675
+    MetaData:
+      CheckSum: f8a2d934e4cb627bae0ef6627d855c0c6211fdc89d7027f6b3249264cf9e5ac1
+      IntermediateLocation: Scenes/empty_scene.kgscene
+      AssetType: Scene

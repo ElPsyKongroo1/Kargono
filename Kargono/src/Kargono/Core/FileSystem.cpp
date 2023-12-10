@@ -39,6 +39,17 @@ namespace Kargono
 		stream.close();
 		return buffer;
 	}
+
+	void FileSystem::DeleteSelectedFile(const std::filesystem::path& filepath)
+	{
+		std::filesystem::remove(filepath);
+	}
+
+	void FileSystem::DeleteSelectedDirectory(const std::filesystem::path& filepath)
+	{
+		std::filesystem::remove_all(filepath);
+	}
+
 	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, Buffer buffer)
 	{
 		CreateNewDirectory(filepath.parent_path());
@@ -52,6 +63,23 @@ namespace Kargono
 		output_file.write(buffer.As<const char>(), buffer.Size);
 		return true;
 	}
+
+	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, std::vector<Buffer>& buffers)
+	{
+		CreateNewDirectory(filepath.parent_path());
+		std::ofstream output_file(filepath, std::ios::binary);
+		if (!output_file)
+		{
+			KG_CORE_ERROR("Failed to write binary data to file");
+			return false;
+		}
+		for (auto& buffer : buffers)
+		{
+			output_file.write(buffer.As<const char>(), buffer.Size);
+		}
+		return true;
+	}
+
 	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer)
 	{
 		CreateNewDirectory(filepath.parent_path());
@@ -78,6 +106,21 @@ namespace Kargono
 		output_file << string;
 		output_file.close();
 		return true;
+	}
+
+	void FileSystem::MoveFileToDirectory(const std::filesystem::path& filepath, const std::filesystem::path& newDirectory)
+	{
+		// Ensure duplicate path is not provided
+		if (!static_cast<bool>(filepath.compare(newDirectory))) { return; }
+		// Copy File over
+		std::error_code ec {};
+		std::filesystem::copy(filepath, newDirectory, ec);
+
+		// Delete file in original directory if copy was successful!
+		if (!ec)
+		{
+			FileSystem::DeleteSelectedFile(filepath);
+		}
 	}
 
 	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileSystem::FileTypes fileType)

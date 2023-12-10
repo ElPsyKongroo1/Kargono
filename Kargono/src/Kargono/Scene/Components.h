@@ -74,7 +74,7 @@ namespace Kargono
 	{
 		SceneCamera Camera;
 		bool Primary = true; // TODO: Think about moving to scene
-		bool FixedAspectRatio = false;
+		bool FixedAspectRatio = true;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;

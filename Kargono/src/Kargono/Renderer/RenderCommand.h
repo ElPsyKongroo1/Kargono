@@ -18,9 +18,14 @@ namespace Kargono
 			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
-		static void EnableDepthTesting(bool value)
+		static void ClearDepthBuffer()
 		{
-			s_RendererAPI->EnableDepthTesting(value);
+			s_RendererAPI->ClearDepthBuffer();
+		}
+
+		static void SetDepthTesting(bool value)
+		{
+			s_RendererAPI->SetDepthTesting(value);
 		}
 
 		static void SetStencilMask(uint32_t value)

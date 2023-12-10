@@ -13,4 +13,12 @@ namespace Kargono
 			return InternalCalls.Input_IsKeyDown(keycode);
 		}
 	}
+
+	public class InputMode
+	{
+		public static bool IsKeySlotDown(UInt16 keySlot)
+		{
+			return InternalCalls.InputMode_IsKeySlotDown(keySlot);
+		}
+	}
 }

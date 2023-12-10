@@ -1,10 +1,10 @@
 #include "RuntimeLayer.h"
 
-#include "Kargono/Scene/SceneSerializer.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Scripting/ScriptEngine.h"
 #include "Kargono/Assets/AssetManager.h"
+#include "Kargono/UI/RuntimeUI.h"
 
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -25,8 +25,6 @@ namespace Kargono {
 	{
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
-		m_ViewportSize = { currentWindow.GetWidth(), currentWindow.GetHeight()};
-
 		m_ActiveScene = CreateRef<Scene>();
 
 		auto commandLineArgs = Application::GetCurrentApp().GetSpecification().CommandLineArgs;
@@ -45,10 +43,13 @@ namespace Kargono {
 
 		}
 
-		Project::GetIsFullscreen() ? currentWindow.SetFullscreen() : currentWindow.DisableFullscreen();
+		Project::GetIsFullscreen() ? currentWindow.EnableFullscreen() : currentWindow.DisableFullscreen();
+		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Project::GetTargetResolution()));
+		currentWindow.SetResizable(false);
 
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
+		TextEngine::Init();
 
 		OnScenePlay();
 	}
@@ -68,8 +69,6 @@ namespace Kargono {
 
 	void RuntimeLayer::OnUpdate(Timestep ts)
 	{
-
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		
 		// Render
 		Renderer::ResetStats();
@@ -83,7 +82,14 @@ namespace Kargono {
 	void RuntimeLayer::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
 		dispatcher.Dispatch<PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
+	}
+
+	bool RuntimeLayer::OnWindowResize(WindowResizeEvent event)
+	{
+		m_ActiveScene->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		return false;
 	}
 
 	bool RuntimeLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
@@ -125,7 +131,8 @@ namespace Kargono {
 	{
 		if (Project::Load(path))
 		{
-			auto startScenePath = Project::AppendToAssetDirPath(Project::GetActive()->GetConfig().StartScene);
+			auto startScenePath = Project::AppendToAssetDirPath(Project::GetActive()->GetConfig().StartScenePath);
+			AssetHandle startSceneHandle = Project::GetActive()->GetConfig().StartSceneHandle;
 
 			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
 			else { ScriptEngine::InitialAssemblyLoad(); }
@@ -135,7 +142,7 @@ namespace Kargono {
 			}
 			AssetManager::ClearAll();
 			AssetManager::DeserializeAll();
-			OpenScene(startScenePath);
+			OpenScene(startSceneHandle);
 
 		}
 	}
@@ -159,13 +166,22 @@ namespace Kargono {
 			return;
 		}
 
-		Ref<Scene> newScene = CreateRef<Scene>();
-		SceneSerializer serializer(newScene);
-		if (serializer.Deserialize(path.string()))
+		auto [sceneHandle, newScene] = AssetManager::GetScene(path);
+		if (AssetManager::DeserializeScene(newScene, path.string()))
 		{
 			m_ActiveScene = newScene;
-			m_ScenePath = path;
+			m_SceneHandle = sceneHandle;
+
 		}
+	}
+
+	void RuntimeLayer::OpenScene(AssetHandle sceneHandle)
+	{
+		Ref<Scene> newScene = AssetManager::GetScene(sceneHandle);
+		if (!newScene) { newScene = CreateRef<Scene>(); }
+
+		m_ActiveScene = newScene;
+		m_SceneHandle = sceneHandle;
 	}
 
 

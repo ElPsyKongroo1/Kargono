@@ -152,6 +152,7 @@ namespace Pong
 					}
 					currentVelocity = (currentVelocity.Normalize() + (horizontalDirection * 0.1f)).Normalize() * Speed;
 					m_Rigidbody.LinearVelocity = currentVelocity;
+					m_Audio.PlayAudio();
 					collisionHandled = true;
 					break;
 				}
@@ -175,7 +176,7 @@ namespace Pong
 						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
 						m_Rigidbody.LinearVelocity = currentVelocity;
 					}
-					m_Audio.PlayAudio("pop-sound");
+					m_Audio.PlayAudio();
 					collisionHandled = true;
 					break;
 				}
@@ -199,7 +200,7 @@ namespace Pong
 						currentVelocity = (currentVelocity.Normalize() + (up * deflectionFactor)).Normalize() * Speed;
 						m_Rigidbody.LinearVelocity = currentVelocity;
 					}
-					m_Audio.PlayAudio("pop-sound");
+					m_Audio.PlayAudio();
 					collisionHandled = true;
 					break;
 				}

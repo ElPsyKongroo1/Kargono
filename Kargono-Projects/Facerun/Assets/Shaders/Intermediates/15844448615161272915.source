@@ -1,0 +1,43 @@
+// Rendering Type: DrawIndex
+// Color Type: None
+// Draw Outline: false
+//============================================================
+// vertex shader
+//============================================================
+#type vertex
+#version 450 core
+
+
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in int a_EntityID;
+layout(std140, binding = 0) uniform Camera
+{
+mat4 u_ViewProjection;
+};
+layout (location = 0) out flat int v_EntityID;
+
+void main()
+{
+	gl_Position = vec4(a_Position, 1.0);
+	gl_Position = u_ViewProjection * gl_Position;
+	v_EntityID = a_EntityID;
+}
+
+
+//============================================================
+// fragment shader
+//============================================================
+#type fragment
+#version 450 core
+
+
+layout (location = 0) in flat int v_EntityID;
+layout(location = 0) out vec4 o_Color;
+layout(location = 1) out int o_EntityID;
+
+
+void main()
+{
+	o_Color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	o_EntityID = v_EntityID;
+}

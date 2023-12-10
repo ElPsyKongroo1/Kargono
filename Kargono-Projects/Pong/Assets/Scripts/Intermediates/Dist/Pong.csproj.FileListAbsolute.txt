@@ -1,0 +1,7 @@
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Binaries\Pong.dll
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Binaries\Kargono-ScriptCore.dll
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Binaries\Kargono-ScriptCore.pdb
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Intermediates\Dist\Pong.csproj.AssemblyReference.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Intermediates\Dist\Pong.csproj.CoreCompileInputs.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Intermediates\Dist\Pong.csproj.CopyComplete
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Pong\Assets\Scripts\Intermediates\Dist\Pong.dll
