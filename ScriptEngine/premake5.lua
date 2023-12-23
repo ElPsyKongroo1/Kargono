@@ -1,13 +1,13 @@
-project "Kargono-ScriptCore"
+project "ScriptEngine"
     kind "SharedLib"
     language "C#"
     dotnetframework "4.7.2"
     
-    targetdir ("../Kargono-Editor/Resources/Scripts")
-    objdir ("../Kargono-Editor/Resources/Scripts/Intermediates")
+    targetdir ("../Editor/Resources/Scripts")
+    objdir ("../Editor/Resources/Scripts/Intermediates")
     
     filter { "system:windows" }
-        postbuildcommands { "{COPYDIR} \"%{wks.location}Kargono-Editor/Resources/Scripts\" \"%{wks.location}Runtime/Resources/Scripts\"" }
+        postbuildcommands { "{COPYDIR} \"%{wks.location}Editor/Resources/Scripts\" \"%{wks.location}Runtime/Resources/Scripts\"" }
 
     files 
     {

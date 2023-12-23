@@ -23,7 +23,7 @@ project "Runtime"
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
-        "%{wks.location}/Kargono/src",
+        "%{wks.location}/Engine/src",
         "%{wks.location}/Runtime/src"
 
     }
@@ -35,7 +35,7 @@ project "Runtime"
 
     links 
     { 
-        "Kargono"  
+        "Engine"  
     }
 
     defines 

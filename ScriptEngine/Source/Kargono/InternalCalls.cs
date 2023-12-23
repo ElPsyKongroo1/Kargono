@@ -50,6 +50,9 @@ namespace Kargono
 		internal extern static void Audio_PlayAudio(string audioFileLocation);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Scene_TransitionScene(string sceneFileLocation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void AudioComponent_PlayAudio(ulong entityID);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
