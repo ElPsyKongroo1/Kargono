@@ -17,7 +17,7 @@ def produce_comments(src_string):
 
     while True:
         initial_output = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "The format of your response should be a python list"
                                               " with key-value pair dictionary elements. Do not add any additional text!"
@@ -32,7 +32,7 @@ def produce_comments(src_string):
                 {"role": "user", "content": 'I am going to provide you a file from my game engine directory. Please provide'
                                             "comments that are compatible with the Doxygen API. Return me a list where"
                                             "the few first words of the line being referenced is the key, and the comment is the value."
-                                            "Please add documentation like @param, @return, @source, and your interpretation of the objects in the source code."
+                                            "Please add documentation like @param, @return, @details, and your interpretation of the objects in the source code."
                                             "This should include comments for functions, enumerations, classes, methods, parameters, and return values. "
                                             "To ensure the c++ files still compile, ensure you add /// before each comment."
                                             "Also note that each line from the input is separated by a newline character"

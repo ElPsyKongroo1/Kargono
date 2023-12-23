@@ -8,8 +8,8 @@ import util_functions
 
 def create_output():
 
-    folder_name = "Kargono"
-    source_dir = "./../../Kargono"
+    folder_name = "Engine"
+    source_dir = "./../../Engine"
     ignore_directories = ['dependencies*']
     working_dir = "./directories/" + folder_name + "-working-dir"
     cache_dir = "./directories/" + folder_name + "-cache-dir"

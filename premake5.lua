@@ -1,7 +1,7 @@
 include "./dependencies/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 workspace "Kargono"
-    startproject "Kargono-Editor"
+    startproject "Editor"
     architecture "x86_64"
     configurations
     {
@@ -24,19 +24,19 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 
 group "Dependencies"
-    include "Kargono/dependencies/GLFW"
-    include "Kargono/dependencies/Box2D"
-    include "Kargono/dependencies/GLAD"
-    include "Kargono/dependencies/imGui"
-    include "Kargono/dependencies/yaml-cpp"
+    include "Engine/dependencies/GLFW"
+    include "Engine/dependencies/Box2D"
+    include "Engine/dependencies/GLAD"
+    include "Engine/dependencies/imGui"
+    include "Engine/dependencies/yaml-cpp"
 group ""
 
 group "Core"
-    include "Kargono-ScriptCore" 
-    include "Kargono"
+    include "ScriptEngine" 
+    include "Engine"
 group ""
 
 group "Tools"
-    include "Kargono-Editor"
+    include "Editor"
     include "Runtime"
 group ""
