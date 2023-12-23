@@ -1,20 +1,8 @@
+#include "Kargono/kgpch.h"
 #include "RuntimeLayer.h"
 
-#include "Kargono/Math/Math.h"
-#include "Kargono/Utils/PlatformUtils.h"
-#include "Kargono/Scripting/ScriptEngine.h"
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/UI/RuntimeUI.h"
-
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "box2d/b2_body.h"
-#include <iostream>
-#include <chrono>
-
-namespace Kargono {
+namespace Kargono
+{
 
 	RuntimeLayer::RuntimeLayer()
 		: Layer("RuntimeLayer")
@@ -25,7 +13,7 @@ namespace Kargono {
 	{
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
-		m_ActiveScene = CreateRef<Scene>();
+		Scene::SetActiveScene(CreateRef<Scene>());
 
 		auto commandLineArgs = Application::GetCurrentApp().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
@@ -43,23 +31,24 @@ namespace Kargono {
 
 		}
 
-		Project::GetIsFullscreen() ? currentWindow.EnableFullscreen() : currentWindow.DisableFullscreen();
-		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Project::GetTargetResolution()));
+		Projects::Project::GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
 
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
-		TextEngine::Init();
+		UI::TextEngine::Init();
 
 		OnScenePlay();
 	}
 
 	void RuntimeLayer::OnDetach()
 	{
-		auto view = m_ActiveScene->GetAllEntitiesWith<AudioComponent>();
+		
+		auto view = Scene::GetActiveScene()->GetAllEntitiesWith<AudioComponent>();
 		for (auto& entity : view)
 		{
-			Entity e = { entity, m_ActiveScene.get() };
+			Entity e = { entity, Scene::GetActiveScene().get() };
 			auto& audioComponent = e.GetComponent<AudioComponent>();
 			audioComponent.Audio.reset();
 		}
@@ -79,48 +68,48 @@ namespace Kargono {
 
 	}
 
-	void RuntimeLayer::OnEvent(Event& event)
+	void RuntimeLayer::OnEvent(Events::Event& event)
 	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
-		dispatcher.Dispatch<PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
+		Events::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
+		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
 	}
 
-	bool RuntimeLayer::OnWindowResize(WindowResizeEvent event)
+	bool RuntimeLayer::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		m_ActiveScene->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
 
-	bool RuntimeLayer::OnPhysicsCollision(PhysicsCollisionEvent event)
+	bool RuntimeLayer::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
-		ScriptEngine::OnPhysicsCollision(event);
+		Script::ScriptEngine::OnPhysicsCollision(event);
 		return false;
 	}
 
 	void RuntimeLayer::OnUpdateRuntime(Timestep ts)
 	{
 		// Update Scripts
-		ScriptEngine::OnUpdate(ts);
+		Script::ScriptEngine::OnUpdate(ts);
 
-		m_ActiveScene->OnUpdatePhysics(ts);
+		Scene::GetActiveScene()->OnUpdatePhysics(ts);
 
 		// Render 2D
-		Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		glm::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			m_ActiveScene->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 
 
 	bool RuntimeLayer::OpenProject()
 	{
-		std::string filepath = FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
 		if (filepath.empty()) { return false; }
 
 		OpenProject(filepath);
@@ -129,74 +118,41 @@ namespace Kargono {
 
 	void RuntimeLayer::OpenProject(const std::filesystem::path& path)
 	{
-		if (Project::Load(path))
+		if (Assets::AssetManager::OpenProject(path))
 		{
-			auto startScenePath = Project::AppendToAssetDirPath(Project::GetActive()->GetConfig().StartScenePath);
-			AssetHandle startSceneHandle = Project::GetActive()->GetConfig().StartSceneHandle;
+			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 
-			if (ScriptEngine::AppDomainExists()){ ScriptEngine::ReloadAssembly(); }
-			else { ScriptEngine::InitialAssemblyLoad(); }
-			if (m_ActiveScene)
+			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
+			else { Script::ScriptEngine::InitialAssemblyLoad(); }
+			if (Scene::GetActiveScene())
 			{
-				m_ActiveScene->DestroyAllEntities();
+				Scene::GetActiveScene()->DestroyAllEntities();
 			}
-			AssetManager::ClearAll();
-			AssetManager::DeserializeAll();
+			Assets::AssetManager::ClearAll();
+			Assets::AssetManager::DeserializeAll();
 			OpenScene(startSceneHandle);
 
 		}
 	}
 
-	void RuntimeLayer::OpenScene()
+
+	void RuntimeLayer::OpenScene(Assets::AssetHandle sceneHandle)
 	{
-		std::string filepath = FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
-		if (!filepath.empty())
-		{
-			OpenScene(filepath);
-		}
-	}
-
-	void RuntimeLayer::OpenScene(const std::filesystem::path& path)
-	{
-		OnSceneStop();
-
-		if (path.extension().string() != ".kgscene")
-		{
-			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
-			return;
-		}
-
-		auto [sceneHandle, newScene] = AssetManager::GetScene(path);
-		if (AssetManager::DeserializeScene(newScene, path.string()))
-		{
-			m_ActiveScene = newScene;
-			m_SceneHandle = sceneHandle;
-
-		}
-	}
-
-	void RuntimeLayer::OpenScene(AssetHandle sceneHandle)
-	{
-		Ref<Scene> newScene = AssetManager::GetScene(sceneHandle);
+		Ref<Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scene>(); }
-
-		m_ActiveScene = newScene;
-		m_SceneHandle = sceneHandle;
+		Scene::SetActiveScene(newScene);
 	}
 
 
 	void RuntimeLayer::OnScenePlay()
 	{
-
-		m_ActiveScene->OnRuntimeStart();
+		Scene::GetActiveScene()->OnRuntimeStart();
 	}
 
 	void RuntimeLayer::OnSceneStop()
 	{
-
-		m_ActiveScene->OnRuntimeStop();
-
-		m_ActiveScene->DestroyAllEntities();
+		Scene::GetActiveScene()->OnRuntimeStop();
+		Scene::GetActiveScene()->DestroyAllEntities();
 	}
 
 }

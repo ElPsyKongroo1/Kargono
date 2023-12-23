@@ -1,0 +1,56 @@
+Registry: Untitled
+Assets:
+  - AssetHandle: 17057334801167380747
+    MetaData:
+      CheckSum: ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e
+      IntermediateLocation: Textures/Intermediates/17057334801167380747.kgtexture
+      AssetType: Texture
+      TextureHeight: 1
+      TextureWidth: 1
+      TextureChannels: 4
+      InitialFileLocation: None
+  - AssetHandle: 1008307395632263226
+    MetaData:
+      CheckSum: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      IntermediateLocation: Textures/Intermediates/1008307395632263226.kgtexture
+      AssetType: Texture
+      TextureHeight: 150
+      TextureWidth: 800
+      TextureChannels: 4
+      InitialFileLocation: Textures\BasePaddle.png
+  - AssetHandle: 8051163355459938058
+    MetaData:
+      CheckSum: f39dff176a7dd17d7d697fe04ed6f2fe580313593978de3b02a68e6fd8f0e521
+      IntermediateLocation: Textures/Intermediates/8051163355459938058.kgtexture
+      AssetType: Texture
+      TextureHeight: 512
+      TextureWidth: 512
+      TextureChannels: 4
+      InitialFileLocation: Textures\camera.png
+  - AssetHandle: 7411058966582404143
+    MetaData:
+      CheckSum: f2989b42549f3eb01eeb1f8ccddaaaf02a73b98df04b95c35ee420b9a3d26fce
+      IntermediateLocation: Textures/Intermediates/7411058966582404143.kgtexture
+      AssetType: Texture
+      TextureHeight: 600
+      TextureWidth: 600
+      TextureChannels: 4
+      InitialFileLocation: Textures\BlueBlock.png
+  - AssetHandle: 17523732859264026445
+    MetaData:
+      CheckSum: 4c95d5974ecccc1aa13df26f04f9c5afd91eef73be08b63e9baf97c4372e27fe
+      IntermediateLocation: Textures/Intermediates/17523732859264026445.kgtexture
+      AssetType: Texture
+      TextureHeight: 600
+      TextureWidth: 600
+      TextureChannels: 4
+      InitialFileLocation: Textures\BaseBall.png
+  - AssetHandle: 1143395742954915528
+    MetaData:
+      CheckSum: fc8f6da59c4f7f5a2fca0b1331e583f403ff9588e65b88c1a2ecf282521c04a5
+      IntermediateLocation: Textures/Intermediates/1143395742954915528.kgtexture
+      AssetType: Texture
+      TextureHeight: 600
+      TextureWidth: 600
+      TextureChannels: 4
+      InitialFileLocation: Textures\PurpleBlock.png

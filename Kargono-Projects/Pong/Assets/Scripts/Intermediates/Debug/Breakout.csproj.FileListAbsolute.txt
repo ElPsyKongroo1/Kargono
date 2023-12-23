@@ -1,9 +1,0 @@
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Binaries\Breakout.dll
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Binaries\Breakout.pdb
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Binaries\Kargono-ScriptCore.dll
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Binaries\Kargono-ScriptCore.pdb
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Intermediates\Debug\Breakout.csproj.AssemblyReference.cache
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Intermediates\Debug\Breakout.csproj.CoreCompileInputs.cache
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Intermediates\Debug\Breakout.csproj.CopyComplete
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Intermediates\Debug\Breakout.dll
-F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Projects\Breakout\Assets\Scripts\Intermediates\Debug\Breakout.pdb

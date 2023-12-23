@@ -1,0 +1,53 @@
+Physics:
+  Gravity: [0, 0]
+Entities:
+  - Entity: 5942960898844651145
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [-3.63360119, 0.834297895, 15.2106962]
+      Rotation: [0, -0.505465865, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: 8
+        OrthographicFar: 14
+      Primary: true
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 8051163355459938058
+      ShaderHandle: 13851209146974046272
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "QEaCwEbKqj9Xf29BAQAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 5259435093118310564
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [0, 0, 8.06505489]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 5871177019587903897
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: None
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAAvwAAAD/uFPJAAAAAAA=="
