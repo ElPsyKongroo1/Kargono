@@ -114,8 +114,6 @@ namespace Kargono {
 		// Supporting functions for InputEditor. These functions display different sections of the InputEditor
 		//		user interface.
 
-		
-
 	public:
 		// This function catches thrown application events and dispatches them to other functions
 		//		(OnKeyPressed(), OnMouseButtonPressed(), and OnPhysicsCollision()).
@@ -125,6 +123,8 @@ namespace Kargono {
 		// These private functions are called by the above OnEvent(e) function to handle application events.
 		// These next functions provide different code to respond to user input.
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+		// This sets the application to stop running (Calls On Stop) at runtime.
+		bool OnApplicationClose(Events::ApplicationCloseEvent event);
 		bool OnKeyPressedRuntime(Events::KeyPressedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		// This function responds to application collision events.
@@ -161,10 +161,10 @@ namespace Kargono {
 		//=========================
 		// Scene State Transitions
 		//=========================
-		void OnScenePlay();
-		void OnSceneSimulate();
-		void OnSceneStop();
-		void OnScenePause();
+		void OnPlay();
+		void OnSimulate();
+		void OnStop();
+		void OnPause();
 
 		// Extra function. Allows the duplicate of an entity in the current m_EditorScene
 		void OnDuplicateEntity();
@@ -195,13 +195,18 @@ namespace Kargono {
 		Ref<Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;
 
+		Ref<UI::UIObject> m_EditorUIObject = nullptr;
+		Assets::AssetHandle m_EditorUIObjectHandle{0};
+
+		Ref<InputMode> m_EditorInputMode = nullptr;
+		Assets::AssetHandle m_EditorInputModeHandle{0};
+
 		// Misc
 		EditorCamera m_EditorCamera;
 
 		// Viewport Resources
 		Ref<Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
-		Math::uvec2 m_ViewportSize = {0, 0};
 		Math::vec2 m_ViewportBounds[2];
 
 		// ImGuizmo Resources

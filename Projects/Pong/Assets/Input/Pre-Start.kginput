@@ -1,0 +1,10 @@
+KeyboardPolling:
+  []
+CustomCallsOnUpdate:
+  []
+ScriptClassOnUpdate:
+  []
+CustomCallsOnKeyPressed:
+  []
+ScriptClassOnKeyPressed:
+  []

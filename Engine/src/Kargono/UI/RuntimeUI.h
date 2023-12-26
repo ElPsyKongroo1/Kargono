@@ -17,9 +17,14 @@ namespace Kargono::UI
 	//============================
 	// Function Callbacks Struct
 	//============================
-	struct EventCallbacks
+	struct WidgetCallbacks
 	{
-		std::function<void()> OnMouseClick;
+		std::string OnPress {};
+	};
+
+	struct UICallbacks
+	{
+		std::string OnMove {};
 	};
 
 	//============================
@@ -51,12 +56,15 @@ namespace Kargono::UI
 	public:
 		virtual void PushRenderData(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
 	public:
+		std::string Tag{ "None" };
 		Math::vec2 WindowPosition{ 0.4f };
 		Math::vec2 Size  {0.3f};
-		Math::vec4 BackgroundColor{1.0f};
-		EventCallbacks FunctionPointers;
+		Math::vec4 DefaultBackgroundColor{1.0f};
+		Math::vec4 ActiveBackgroundColor{1.0f};
+		WidgetCallbacks FunctionPointers {};
 		WidgetTypes WidgetType{ WidgetTypes::None };
 		DirectionPointers DirectionPointer{};
+		bool Selectable{ true };
 	};
 
 
@@ -82,6 +90,7 @@ namespace Kargono::UI
 		std::string Text{ "New Text" };
 		float TextSize{ 0.12f };
 		Math::vec2 TextAbsoluteDimensions {};
+		Math::vec4 TextColor{0.5f};
 		bool TextCentered = true;
 	};
 
@@ -153,6 +162,7 @@ namespace Kargono::UI
 			uint16_t PopupWidgetLocation{};
 		};
 	public:
+		std::string Tag{ "None" };
 		Math::vec3 ScreenPosition{};
 		Math::vec2 Size {};
 		Math::vec4 BackgroundColor {1.0f};
@@ -160,6 +170,8 @@ namespace Kargono::UI
 		int32_t ParentIndex{ -1 };
 		int32_t ChildBufferIndex{ -1 };
 		uint32_t ChildBufferSize{ 0 };
+		int32_t DefaultActiveWidget{ -1 };
+		Ref<Widget> DefaultActiveWidgetRef { nullptr };
 		std::vector<Ref<Widget>> Widgets {};
 
 		void DisplayWindow();
@@ -185,7 +197,9 @@ namespace Kargono::UI
 	{
 		std::vector<Window> Windows {};
 		Ref<Font> m_Font = nullptr;
+		Math::vec4 m_SelectColor {1.0f};
 		Assets::AssetHandle m_FontHandle {0};
+		UICallbacks m_FunctionPointers{};
 	};
 
 
@@ -197,7 +211,7 @@ namespace Kargono::UI
 		static void Terminate();
 		static bool SaveCurrentUIIntoUIObject();
 		static void DeleteWindow(uint32_t windowLocation);
-		static void PushRenderData(const EditorCamera& camera, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
+		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
 		static void AddWindow(Window& window); // TODO: Remove this api, it is for testing!
 		static void SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
 		static std::vector<Window>& GetAllWindows();
@@ -207,6 +221,21 @@ namespace Kargono::UI
 		static Assets::AssetHandle GetCurrentUIHandle();
 		static void SetCurrentUIObject(Ref<UIObject> newUI);
 		static void SetCurrentUIHandle(Assets::AssetHandle newHandle);
+		static void SetSelectedWidgetColor(const Math::vec4& color);
+		static void SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
+
+		static void SetFunctionOnMove(const std::string& function);
+		static std::string GetFunctionOnMove();
+
+		static void SetDisplayWindow(const std::string& windowTag, bool display);
+
+		static void MoveRight();
+		static void MoveLeft();
+		static void MoveUp();
+		static void MoveDown();
+		static void OnPress();
+	private:
+		static void CalculateDirections();
 	private:
 		std::vector<Window*> m_DisplayedWindows{};
 		Ref<UIObject> m_CurrentUI{ nullptr };
@@ -215,13 +244,26 @@ namespace Kargono::UI
 		Widget* m_SelectedWidget { nullptr };
 		Widget* m_HoveredWidget { nullptr };
 		Window* m_ActiveWindow { nullptr };
+		UICallbacks m_FunctionPointers{};
 
 		Ref<Font> m_CurrentFont;
 		Assets::AssetHandle m_FontHandle {0};
+		Math::vec4 m_SelectColor {1.0f};
 
 		static RuntimeEngine s_Engine;
 
 		friend class TextWidget;
+
+	public:
+		// Editor API
+		static int32_t& GetWindowToDelete();
+		static int32_t& GetWidgetToDelete();
+		static int32_t& GetWindowsToAddWidget();
+		static UI::WidgetTypes& GetWidgetTypeToAdd();
+		static uint32_t& GetWindowToAdd();
+		static int32_t& GetSelectedWindow();
+		static int32_t& GetSelectedWidget();
+		static Math::vec4& GetSelectColor();
 	};
 }
 

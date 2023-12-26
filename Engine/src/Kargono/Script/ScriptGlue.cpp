@@ -8,8 +8,10 @@
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Core/Application.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Events/ApplicationEvent.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/object.h"
@@ -174,15 +176,105 @@ namespace Kargono::Script
 		}
 	}
 
+	static void Audio_PlayStereoAudio(MonoString* audioFileLocation)
+	{
+		const std::string audio = std::string(mono_string_to_utf8(audioFileLocation));
+		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audio);
+		if (audioBuffer)
+		{
+			Audio::AudioEngine::PlayStereoSound(audioBuffer);
+		}
+	}
+
 	static void Scene_TransitionScene(MonoString* sceneFileLocation)
 	{
 		const std::string sceneLocation = std::string(mono_string_to_utf8(sceneFileLocation));
 		auto [handle, sceneReference] = Assets::AssetManager::GetScene(sceneLocation);
 		if (sceneReference)
 		{
-			Scene::TransitionScene(handle);
+			Scene::TransitionScene(sceneReference);
 		}
 	}
+
+	static void UserInterface_LoadUserInterface(MonoString* uiFileLocation)
+	{
+		const std::string uiLocation = std::string(mono_string_to_utf8(uiFileLocation));
+		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiLocation);
+		if (uiReference)
+		{
+			UI::RuntimeEngine::LoadUIObject(uiReference, handle);
+		}
+	}
+
+	static void UserInterface_MoveRight()
+	{
+		UI::RuntimeEngine::MoveRight();
+	}
+
+	static void UserInterface_MoveLeft()
+	{
+		UI::RuntimeEngine::MoveLeft();
+	}
+
+	static void UserInterface_MoveUp()
+	{
+		UI::RuntimeEngine::MoveUp();
+	}
+
+	static void UserInterface_MoveDown()
+	{
+		UI::RuntimeEngine::MoveDown();
+	}
+
+	static void UserInterface_OnPress()
+	{
+		UI::RuntimeEngine::OnPress();
+	}
+
+	static void UserInterface_SetWidgetText(MonoString* windowTag, MonoString* widgetTag, MonoString* newText )
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
+		const std::string text = std::string(mono_string_to_utf8(newText));
+		UI::RuntimeEngine::SetWidgetText(window, widget, text);
+	}
+
+	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		
+		UI::RuntimeEngine::SetDisplayWindow(window, display);
+	}
+
+	static void InputMode_LoadInputMode(MonoString* inputModeLocation)
+	{
+		static Ref<InputMode> s_InputRef {nullptr};
+		static Assets::AssetHandle s_InputHandle {0};
+
+		const std::string inputLocation = std::string(mono_string_to_utf8(inputModeLocation));
+		auto [handle, inputReference] = Assets::AssetManager::GetInputMode(inputLocation);
+		s_InputRef = inputReference;
+		s_InputHandle = handle;
+		if (inputReference)
+		{
+			Application::GetCurrentApp().SubmitToMainThread([&]()
+			{
+				InputMode::LoadInputMode(s_InputRef, s_InputHandle);
+			});
+			
+		}
+	}
+
+	static void Core_CloseApplication()
+	{
+		Application::GetCurrentApp().SubmitToMainThread([&]()
+			{
+				Events::ApplicationCloseEvent event {};
+				Window::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
+				eventCallback(event);
+			});
+	}
+	
 
 	static void AudioComponent_PlayAudio(UUID entityID)
 	{
@@ -291,11 +383,24 @@ namespace Kargono::Script
 		KG_ADD_INTERNAL_CALL(TagComponent_GetTag);
 
 		KG_ADD_INTERNAL_CALL(Audio_PlayAudio);
+		KG_ADD_INTERNAL_CALL(Audio_PlayStereoAudio);
 		KG_ADD_INTERNAL_CALL(Scene_TransitionScene);
 		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudio);
 		KG_ADD_INTERNAL_CALL(AudioComponent_PlayAudioByName);
 
 		KG_ADD_INTERNAL_CALL(Input_IsKeyDown);
 		KG_ADD_INTERNAL_CALL(InputMode_IsKeySlotDown);
+		KG_ADD_INTERNAL_CALL(UserInterface_LoadUserInterface);
+		KG_ADD_INTERNAL_CALL(UserInterface_MoveRight);
+		KG_ADD_INTERNAL_CALL(UserInterface_MoveLeft);
+		KG_ADD_INTERNAL_CALL(UserInterface_MoveUp);
+		KG_ADD_INTERNAL_CALL(UserInterface_MoveDown);
+		KG_ADD_INTERNAL_CALL(UserInterface_OnPress);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetWidgetText);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetDisplayWindow);
+
+		KG_ADD_INTERNAL_CALL(InputMode_LoadInputMode);
+		KG_ADD_INTERNAL_CALL(Core_CloseApplication);
+		
     }
 }

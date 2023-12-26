@@ -34,11 +34,16 @@ namespace Kargono
 		virtual void OnUpdate(Timestep ts) override;
 		// Currently does nothing!
 		virtual void OnEvent(Events::Event& event) override;
+		
 	private:
+		// This function processes key pressed events
+		bool OnKeyPressed(Events::KeyPressedEvent event);
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
 		// This function updates the scene cameras when the window is resized
 		bool OnWindowResize(Events::WindowResizeEvent event);
+		// This function closes the runtime application
+		bool OnApplicationClose(Events::ApplicationCloseEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
 		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
 		// Logic to open the project and its main scene
@@ -60,8 +65,8 @@ namespace Kargono
 
 		// Starts and stops the runtime. This includes Scripting,
 		//		Physics, and supporting functionality.
-		void OnScenePlay();
-		void OnSceneStop();
+		void OnPlay();
+		void OnStop();
 
 	};
 

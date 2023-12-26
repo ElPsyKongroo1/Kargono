@@ -2,6 +2,8 @@
 
 #include "Kargono/Scene/SceneCamera.h"
 
+#include "Kargono/Core/Application.h"
+
 namespace Kargono
 {
 	SceneCamera::SceneCamera()
@@ -27,22 +29,23 @@ namespace Kargono
 
 		RecalculateProjection();
 	}
-	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
+	void SceneCamera::OnViewportResize()
 	{
-		m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
 		RecalculateProjection();
-		
 	}
 	void SceneCamera::RecalculateProjection()
 	{
+		auto& application = Application::GetCurrentApp().GetWindow();
+		float aspectRatio = static_cast<float>(application.GetViewportWidth()) / static_cast<float>(application.GetViewportHeight());
+
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_Projection = glm::perspective(m_PerspectiveFOV, aspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 		else
 		{
-			float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
-			float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
+			float orthoLeft = -m_OrthographicSize * aspectRatio * 0.5f;
+			float orthoRight = m_OrthographicSize * aspectRatio * 0.5f;
 
 			float orthoBottom = -m_OrthographicSize * 0.5f;
 			float orthoTop = m_OrthographicSize * 0.5f;

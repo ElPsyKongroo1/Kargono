@@ -215,6 +215,14 @@ namespace Kargono::Script
 		// with references to class types
 		static void LoadAssemblyClasses();
 
+
+	public:
+		//============================
+		// External API CustomCalls Functions
+		//============================
+		// This function allows a Custom Calls function in C# to be called outside of
+		//		the ScriptEngine.
+		static void RunCustomCallsFunction(const std::string& functionName, void** parameters = nullptr);
 	public:
 		//============================
 		// Getter/Setter/Query Functions

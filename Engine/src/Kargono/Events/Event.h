@@ -34,7 +34,7 @@ namespace Kargono::Events
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		AppTick, AppUpdate, AppRender,
+		AppTick, AppUpdate, AppRender, AppClose,
 		PhysicsCollision,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled

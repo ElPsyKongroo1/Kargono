@@ -1,0 +1,58 @@
+Physics:
+  Gravity: [0, 0]
+Entities:
+  - Entity: 4109745557686817395
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 3.7252903e-09, 3.7252903e-09]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: 2
+        OrthographicFar: 6
+      Primary: true
+    ShapeComponent:
+      CurrentShape: Quad
+      TextureHandle: 8051163355459938058
+      ShaderHandle: 13851209146974046272
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: ColorTexture
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAAvwAAAD8AAIAxAQAAAAAAAAAAAIA/AAAAAAAAgD8="
+  - Entity: 8434211902844567157
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, -4.57011127]
+      Rotation: [0, 0, 0]
+      Scale: [21.5984764, 15.093996, 1]
+    ShapeComponent:
+      CurrentShape: Quad
+      VertexColors:
+        - Color: [1, 1, 0.611764729, 1]
+        - Color: [1, 0.698039234, 1, 1]
+        - Color: [0.572549045, 0.905882359, 1, 1]
+        - Color: [1, 0.635294139, 0.741176486, 1]
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 13003070490235285011
+      ShaderSpecification:
+        ColorInputType: VertexColor
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: None
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "rskswQKB8UBaPpLAAACAP6OiIj++vT0/AACAPwAAAAA="

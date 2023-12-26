@@ -35,6 +35,7 @@ namespace API::Windows
 		{
 			std::string Title;
 			uint32_t Width, Height;
+			uint32_t ViewportWidth, ViewportHeight;
 			bool VSync;
 			uint8_t VersionMajor = 4, VersionMinor = 5;
 			EventCallbackFn EventCallback;
@@ -105,9 +106,17 @@ namespace API::Windows
 	public:
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
+
+		virtual uint32_t GetViewportWidth() const override { return m_Data.ViewportWidth; }
+		virtual uint32_t GetViewportHeight() const override { return m_Data.ViewportHeight; }
+
+		virtual void SetViewportWidth(uint32_t width) override { m_Data.ViewportWidth = width; }
+		virtual void SetViewportHeight(uint32_t height) override { m_Data.ViewportHeight = height; }
+
 		virtual void* GetNativeWindow() const override { return m_Window; }
 		bool IsVSync() const override { return m_Data.VSync; }
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		virtual EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
 
 	private:
 		// m_Window holds the reference to the underlying GLFW window that is represented by this class.
