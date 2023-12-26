@@ -24,14 +24,32 @@ namespace API::Windows
 
 	WindowsWindow::WindowsWindow(const Kargono::WindowProps& props)
 	{
-		Init(props);
+		// Update Class Data
+		m_Data.Title = props.Title;
+		m_Data.Width = props.Width;
+		m_Data.Height = props.Height;
+		m_Data.ViewportWidth = props.Width;
+		m_Data.ViewportHeight = props.Height;
+		m_Window = nullptr;
+
 	}
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
 	}
 
-	void WindowsWindow::Init(const Kargono::WindowProps& props)
+	void WindowsWindow::Init(const Kargono::WindowProps& props, const std::filesystem::path& logoPath)
+	{
+		// Update Class Data
+		m_Data.Title = props.Title;
+		m_Data.Width = props.Width;
+		m_Data.Height = props.Height;
+		m_Data.ViewportWidth = props.Width;
+		m_Data.ViewportHeight = props.Height;
+		Init(logoPath);
+	}
+
+	void WindowsWindow::Init(const std::filesystem::path& logoPath)
 	{
 		// Ensure Only One Window Instance is active
 		if (s_GLFWWindowCount > 0)
@@ -39,16 +57,8 @@ namespace API::Windows
 			KG_CORE_ASSERT(false, "Attempt to initialize another glfwWindow.");
 			return;
 		}
-
-		// Update Class Data
-		m_Data.Title = props.Title;
-		m_Data.Width = props.Width;
-		m_Data.Height = props.Height;
-		m_Data.ViewportWidth = props.Width;
-		m_Data.ViewportHeight = props.Height;
-
 		// Start Initializing GLFW
-		KG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		KG_CORE_INFO("Creating window {0} ({1}, {2})", m_Data.Title, m_Data.Width, m_Data.Height);
 		
 		KG_CORE_INFO("Initializing GLFW");
 		int success = glfwInit();
@@ -59,7 +69,7 @@ namespace API::Windows
 		#if defined(KG_DEBUG)
 		if (Kargono::Renderer::GetAPI() == Kargono::RenderAPI::OpenGL) { glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); }
 		#endif
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWWindowCount;
 
 		// Make Context Current and Load GLAD (GLAD obtains function pointers for OpenGL functions from GPU Drivers)
@@ -166,10 +176,9 @@ namespace API::Windows
 			});
 
 		// Add App Logo
-		std::filesystem::path logoLocation = "resources/icons/app_logo.png";
-		if (!std::filesystem::exists(logoLocation)) { KG_CORE_ERROR("Path to Application Logo is invalid!"); return; }
+		if (!std::filesystem::exists(logoPath)) { KG_CORE_ERROR("Path to Application Logo is invalid!"); return; }
 		GLFWimage images[1];
-		images[0].pixels = stbi_load(logoLocation.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
+		images[0].pixels = stbi_load(logoPath.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
 		glfwSetWindowIcon(m_Window, 1, images);
 		stbi_image_free(images[0].pixels);
 
