@@ -650,10 +650,10 @@ Assets:
           Size: [24, 30]
           Bearing: [6, 30]
           Advance: 2304
-  - AssetHandle: 826018726820464441
+  - AssetHandle: 10569950259390381689
     MetaData:
       CheckSum: 34ac0488d3305e3a381d1f1bbe5504fd69861d26a54bd68c2a1e1d2b21a188c1
-      IntermediateLocation: Fonts/Intermediates/826018726820464441.kgfont
+      IntermediateLocation: Fonts/Intermediates/10569950259390381689.kgfont
       AssetType: Font
       InitialFileLocation: Fonts\impact.ttf
       AverageWidth: 25.5703125

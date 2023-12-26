@@ -1369,7 +1369,7 @@ namespace Kargono::Assets
 			return;
 		}
 
-		FT_Set_Pixel_Sizes(face, 0, 48);
+		FT_Set_Pixel_Sizes(face, 0, 48); // 48
 
 		// disable byte-alignment restriction
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -2275,6 +2275,11 @@ namespace Kargono::Assets
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
+		// Select Color
+		out << YAML::Key << "SelectColor" << YAML::Value << uiObject->m_SelectColor;
+
+		// Function Pointers
+		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << uiObject->m_FunctionPointers.OnMove;
 		// Font
 		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(uiObject->m_FontHandle);
 		// Windows
@@ -2285,12 +2290,14 @@ namespace Kargono::Assets
 		{
 			out << YAML::BeginMap; // Start Window Map
 
+			out << YAML::Key << "Tag" << YAML::Value << window.Tag;
 			out << YAML::Key << "ScreenPosition" << YAML::Value << window.ScreenPosition;
 			out << YAML::Key << "Size" << YAML::Value << window.Size;
 			out << YAML::Key << "BackgroundColor" << YAML::Value << window.BackgroundColor;
 			out << YAML::Key << "ParentIndex" << YAML::Value << window.ParentIndex;
 			out << YAML::Key << "ChildBufferIndex" << YAML::Value << window.ChildBufferIndex;
 			out << YAML::Key << "ChildBufferSize" << YAML::Value << window.ChildBufferSize;
+			out << YAML::Key << "DefaultActiveWidget" << YAML::Value << window.DefaultActiveWidget;
 
 			out << YAML::Key << "WidgetCounts" << YAML::Value;
 			out << YAML::BeginMap; // Begin WidgetCounts Map
@@ -2313,10 +2320,18 @@ namespace Kargono::Assets
 			{
 				out << YAML::BeginMap; // Begin Widget Map
 
+				out << YAML::Key << "Tag" << YAML::Value << widget->Tag;
 				out << YAML::Key << "WindowPosition" << YAML::Value << widget->WindowPosition;
 				out << YAML::Key << "Size" << YAML::Value << widget->Size;
-				out << YAML::Key << "BackgroundColor" << YAML::Value << widget->BackgroundColor;
+				out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << widget->DefaultBackgroundColor;
 				out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->WidgetType);
+				out << YAML::Key << "Selectable" << YAML::Value << widget->Selectable;
+				out << YAML::Key << "DirectionPointerUp" << YAML::Value << widget->DirectionPointer.Up;
+				out << YAML::Key << "DirectionPointerDown" << YAML::Value << widget->DirectionPointer.Down;
+				out << YAML::Key << "DirectionPointerLeft" << YAML::Value << widget->DirectionPointer.Left;
+				out << YAML::Key << "DirectionPointerRight" << YAML::Value << widget->DirectionPointer.Right;
+
+				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << widget->FunctionPointers.OnPress;
 				switch (widget->WidgetType)
 				{
 				case UI::WidgetTypes::TextWidget:
@@ -2326,6 +2341,7 @@ namespace Kargono::Assets
 						out << YAML::BeginMap; // Begin TextWidget Map
 						out << YAML::Key << "Text" << YAML::Value << textWidget->Text;
 						out << YAML::Key << "TextSize" << YAML::Value << textWidget->TextSize;
+						out << YAML::Key << "TextColor" << YAML::Value << textWidget->TextColor;
 						out << YAML::Key << "TextAbsoluteDimensions" << YAML::Value << textWidget->TextAbsoluteDimensions;
 						out << YAML::Key << "TextCentered" << YAML::Value << textWidget->TextCentered;
 						out << YAML::EndMap; // End TextWidget Map
@@ -2387,10 +2403,15 @@ namespace Kargono::Assets
 		}
 
 		KG_CORE_TRACE("Deserializing user interface object");
-		// Get Font!
+
+		// Get SelectColor
+		uiObject->m_SelectColor = data["SelectColor"].as<Math::vec4>();
+		// Function Pointers
+		uiObject->m_FunctionPointers.OnMove = data["FunctionPointerOnMove"].as<std::string>();
+		// Get Font
 		uiObject->m_FontHandle = data["Font"].as<uint64_t>();
 		uiObject->m_Font = AssetManager::GetFont(uiObject->m_FontHandle);
-		// Get Windows!
+		// Get Windows
 		auto windows = data["Windows"];
 		if (windows)
 		{
@@ -2398,12 +2419,14 @@ namespace Kargono::Assets
 			for (auto window : windows)
 			{
 				UI::Window newWindow{};
+				newWindow.Tag = window["Tag"].as<std::string>();
 				newWindow.ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
 				newWindow.Size = window["Size"].as<Math::vec2>();
 				newWindow.BackgroundColor = window["BackgroundColor"].as<Math::vec4>();
 				newWindow.ParentIndex = window["ParentIndex"].as<int32_t>();
 				newWindow.ChildBufferIndex = window["ChildBufferIndex"].as<int32_t>();
 				newWindow.ChildBufferSize = window["ChildBufferSize"].as<uint32_t>();
+				newWindow.DefaultActiveWidget = window["DefaultActiveWidget"].as<int32_t>();
 
 				auto widgetCounts = window["WidgetCounts"];
 				newWindow.WidgetCounts.TextWidgetCount = widgetCounts["TextWidgetCount"].as<uint16_t>();
@@ -2437,6 +2460,7 @@ namespace Kargono::Assets
 							UI::TextWidget* textWidget = static_cast<UI::TextWidget*>(newWidget.get());
 							textWidget->Text = specificWidget["Text"].as<std::string>();
 							textWidget->TextSize = specificWidget["TextSize"].as<float>();
+							textWidget->TextColor = specificWidget["TextColor"].as<glm::vec4>();
 							textWidget->TextAbsoluteDimensions = specificWidget["TextAbsoluteDimensions"].as<Math::vec2>();
 							textWidget->TextCentered = specificWidget["TextCentered"].as<bool>();
 							break;
@@ -2448,14 +2472,24 @@ namespace Kargono::Assets
 							}
 						}
 
+						newWidget->Tag = widget["Tag"].as<std::string>();
 						newWidget->WindowPosition = widget["WindowPosition"].as<Math::vec2>();
 						newWidget->Size = widget["Size"].as<Math::vec2>();
-						newWidget->BackgroundColor = widget["BackgroundColor"].as<Math::vec4>();
+						newWidget->DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
+						newWidget->ActiveBackgroundColor = newWidget->DefaultBackgroundColor;
+						newWidget->Selectable = widget["Selectable"].as<bool>();
+						newWidget->DirectionPointer.Up = widget["DirectionPointerUp"].as<int32_t>();
+						newWidget->DirectionPointer.Down = widget["DirectionPointerDown"].as<int32_t>();
+						newWidget->DirectionPointer.Left = widget["DirectionPointerLeft"].as<int32_t>();
+						newWidget->DirectionPointer.Right = widget["DirectionPointerRight"].as<int32_t>();
+
+						newWidget->FunctionPointers.OnPress = widget["FunctionPointerOnPress"].as<std::string>();
 
 						newWidgetsList.push_back(newWidget);
 
 
 					}
+					if (newWindow.DefaultActiveWidget != -1) { newWindow.DefaultActiveWidgetRef = newWidgetsList.at(newWindow.DefaultActiveWidget); }
 				}
 
 				newWindowsList.push_back(newWindow);
@@ -2540,8 +2574,12 @@ namespace Kargono::Assets
 	std::tuple<AssetHandle, Ref<UI::UIObject>> AssetManager::GetUIObject(const std::filesystem::path& filepath)
 	{
 		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		std::filesystem::path uiObjectPath = filepath;
 
-		std::filesystem::path uiObjectPath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		if (filepath.is_absolute())
+		{
+			uiObjectPath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		}
 
 		for (auto& [assetHandle, asset] : s_UIObjectRegistry)
 		{
@@ -3152,7 +3190,12 @@ namespace Kargono::Assets
 	{
 		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
-		std::filesystem::path inputModePath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		std::filesystem::path inputModePath = filepath;
+
+		if (filepath.is_absolute())
+		{
+			inputModePath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		}
 
 		for (auto& [assetHandle, asset] : s_InputModeRegistry)
 		{
@@ -3243,6 +3286,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
 				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
 				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
+				out << YAML::Key << "OnRuntimeStartFunction" << YAML::Value << config.OnRuntimeStartFunction;
 				out << YAML::EndMap; // Project
 			}
 
@@ -3279,6 +3323,7 @@ namespace Kargono::Assets
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
 		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
 		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
+		config.OnRuntimeStartFunction = projectNode["OnRuntimeStartFunction"].as<std::string>();
 		return true;
 	}
 

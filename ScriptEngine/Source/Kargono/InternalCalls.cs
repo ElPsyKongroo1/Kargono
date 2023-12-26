@@ -50,6 +50,9 @@ namespace Kargono
 		internal extern static void Audio_PlayAudio(string audioFileLocation);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Audio_PlayStereoAudio(string audioFileLocation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Scene_TransitionScene(string sceneFileLocation);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -57,5 +60,35 @@ namespace Kargono
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void AudioComponent_PlayAudioByName(ulong entityID, string audioTag);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_LoadUserInterface(string userInterfaceLocation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_MoveRight();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_MoveLeft();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_MoveUp();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_MoveDown();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_OnPress();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetWidgetText(string windowTag, string widgetTag, string newText);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetDisplayWindow(string windowTag, bool display);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void InputMode_LoadInputMode(string inputModeLocation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Core_CloseApplication();
 	}
 }

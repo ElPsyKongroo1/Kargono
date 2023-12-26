@@ -5,6 +5,23 @@ CustomCallsOnUpdate:
 ScriptClassOnUpdate:
   []
 CustomCallsOnKeyPressed:
-  []
+  - BindingType: KeyboardAction
+    FunctionBinding: MoveRight
+    KeyBinding: 262
+  - BindingType: KeyboardAction
+    FunctionBinding: MoveLeft
+    KeyBinding: 263
+  - BindingType: KeyboardAction
+    FunctionBinding: MoveRight
+    KeyBinding: 262
+  - BindingType: KeyboardAction
+    FunctionBinding: MoveUp
+    KeyBinding: 265
+  - BindingType: KeyboardAction
+    FunctionBinding: MoveDown
+    KeyBinding: 264
+  - BindingType: KeyboardAction
+    FunctionBinding: OnPress
+    KeyBinding: 257
 ScriptClassOnKeyPressed:
   []

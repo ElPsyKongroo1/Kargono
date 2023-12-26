@@ -50,9 +50,9 @@ namespace Kargono::Events
 	//============================================================
 	// Window Close Event Class
 	//============================================================
-	// This event represents the situation where the current window is minimized.
-	//		This event can be used to prevent excess resource usage while the window
-	//		is minimized.
+	// This event represents the situation where the current window is closed.
+	//		This event is used to completely close both the application and
+	//		the window.
 	class WindowCloseEvent : public Event
 	{
 	public:
@@ -69,6 +69,31 @@ namespace Kargono::Events
 		static EventType GetStaticType() { return EventType::WindowClose; }
 		virtual EventType GetEventType() const override { return GetStaticType(); }
 		virtual const char* GetName() const override { return "WindowCloseEvent"; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	};
+
+	//============================================================
+	// Application Close Event Class
+	//============================================================
+	// This event represents closing the runtime application. In the editor
+	//		this simply calls OnStop(), however, in the runtime application
+	//		it calls a WindowCloseEvent().
+	class ApplicationCloseEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		// This event does not include any data. The constructor
+		//		is simple.
+		ApplicationCloseEvent() = default;
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		static EventType GetStaticType() { return EventType::AppClose; }
+		virtual EventType GetEventType() const override { return GetStaticType(); }
+		virtual const char* GetName() const override { return "ApplicationCloseEvent"; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	};
 	//============================================================

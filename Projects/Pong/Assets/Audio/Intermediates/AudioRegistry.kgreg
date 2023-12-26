@@ -10,6 +10,26 @@ Assets:
       TotalPcmFrameCount: 5678312
       TotalSize: 22713248
       InitialFileLocation: Audio\Manoria-Cathedral.wav
+  - AssetHandle: 4772404760776306022
+    MetaData:
+      CheckSum: f533eade437d80d58145bacddddd588cec46d78abf8bec6879d1f81d1fb3fb61
+      IntermediateLocation: Audio/Intermediates/4772404760776306022.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 10475
+      TotalSize: 41900
+      InitialFileLocation: Audio\menu_select.wav
+  - AssetHandle: 8671885103280513201
+    MetaData:
+      CheckSum: 05b3a183410b7cde9ec5f2406248caee88c51180267400e8b42d1b0eb381957a
+      IntermediateLocation: Audio/Intermediates/8671885103280513201.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 34816
+      TotalSize: 139264
+      InitialFileLocation: Audio\menu_confirm.wav
   - AssetHandle: 12873632591324649681
     MetaData:
       CheckSum: 7afd0510ddd03da8545f86776a81c8288d508ca9b38679b3058036440e5ff77b

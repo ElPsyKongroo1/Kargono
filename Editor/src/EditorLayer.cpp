@@ -19,8 +19,6 @@ namespace Kargono
 
 	void EditorLayer::OnAttach()
 	{
-		auto& currentWindow = Application::GetCurrentApp().GetWindow();
-
 		UI::EditorEngine::Init();
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>();
 
@@ -65,9 +63,6 @@ namespace Kargono
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
 		InitializeOverlayData();
-
-		m_ViewportSize = { currentWindow.GetWidth(), currentWindow.GetHeight() };
-		Scene::GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 	}
 
 	void EditorLayer::OnDetach()
@@ -93,12 +88,13 @@ namespace Kargono
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
-			static_cast<float>(m_ViewportSize.x) > 0.0f && static_cast<float>(m_ViewportSize.y) > 0.0f &&
-			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
+			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
 		{
-			m_ViewportFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_EditorCamera.SetViewportSize(static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y));
+			m_ViewportFramebuffer->Resize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
+			m_EditorCamera.SetViewportSize(static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()));
 		}
 		
 		// Render
@@ -153,7 +149,24 @@ namespace Kargono
 
 		if (m_ShowUserInterface)
 		{
-			UI::RuntimeEngine::PushRenderData(m_EditorCamera, m_ViewportSize.x, m_ViewportSize.y);
+			auto& currentApplication = Application::GetCurrentApp().GetWindow();
+			if (m_SceneState == SceneState::Play)
+			{
+				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
+				Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+				Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+
+				if (mainCamera)
+				{
+					UI::RuntimeEngine::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+				}
+			}
+			else
+			{
+				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
+				UI::RuntimeEngine::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+			}
+
 		}
 
 
@@ -299,7 +312,7 @@ namespace Kargono
 			{
 				if (ImGui::MenuItem("Reload Assembly", "Ctrl+R"))
 				{
-					if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
+					if (m_SceneState != SceneState::Edit) { OnStop(); }
 					Script::ScriptEngine::ReloadAssembly();
 				}
 				ImGui::EndMenu();
@@ -374,8 +387,8 @@ namespace Kargono
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor )
 				&& toolbarEnabled)
 			{
-				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) { OnScenePlay(); }
-				else if (m_SceneState == SceneState::Play) { OnSceneStop(); }
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) { OnPlay(); }
+				else if (m_SceneState == SceneState::Play) { OnStop(); }
 			}
 		}
 		if (hasSimulateButton)
@@ -387,8 +400,8 @@ namespace Kargono
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
-				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) { OnSceneSimulate(); }
-				else if (m_SceneState == SceneState::Simulate) { OnSceneStop(); }
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) { OnSimulate(); }
+				else if (m_SceneState == SceneState::Simulate) { OnStop(); }
 			}
 			
 		}
@@ -583,6 +596,26 @@ namespace Kargono
 		}
 		ImGui::NewLine();
 
+		ImGui::TextUnformatted("OnRuntimeStart Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnRuntimeStart", Projects::Project::GetProjectOnRuntimeStart().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnRuntimeStart("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnRuntimeStart(name);
+				}
+			}
+			
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
 
 		ImGui::End();
 	}
@@ -610,13 +643,15 @@ namespace Kargono
 
 	void EditorLayer::UI_Viewport()
 	{
+		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
+
 		ImGui::Begin("Viewport", 0, window_flags);
 		auto viewportOffset = ImGui::GetWindowPos();
-		static Math::uvec2 oldViewportSize = m_ViewportSize;
+		static Math::uvec2 oldViewportSize = {currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight()};
 		Math::vec2 localViewportBounds[2];
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
@@ -627,25 +662,28 @@ namespace Kargono
 		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::Project::GetTargetResolution());
 		if (aspectRatio.x > aspectRatio.y && ((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y) < viewportPanelSize.y)
 		{
-			m_ViewportSize = { viewportPanelSize.x, (viewportPanelSize.x / aspectRatio.x) * aspectRatio.y };
+			currentWindow.SetViewportWidth(viewportPanelSize.x);
+			currentWindow.SetViewportHeight((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y);
 		}
 		else
 		{
-			m_ViewportSize = { (viewportPanelSize.y / aspectRatio.y) * aspectRatio.x, viewportPanelSize.y };
+			currentWindow.SetViewportWidth((viewportPanelSize.y / aspectRatio.y) * aspectRatio.x);
+			currentWindow.SetViewportHeight(viewportPanelSize.y);
 		}
 
-		localViewportBounds[0] = {  (viewportPanelSize.x - static_cast<float>(m_ViewportSize.x)) * 0.5f, (viewportPanelSize.y - static_cast<float>(m_ViewportSize.y)) * 0.5f};
-		localViewportBounds[1] = { m_ViewportBounds[0].x + static_cast<float>(m_ViewportSize.x),  m_ViewportBounds[0].y + static_cast<float>(m_ViewportSize.y) };
-		m_ViewportBounds[0] = {  localViewportBounds[0].x + viewportOffset.x, localViewportBounds[0].y + viewportOffset.y};
-		m_ViewportBounds[1] = { m_ViewportBounds[0].x + static_cast<float>(m_ViewportSize.x), m_ViewportBounds[0].y + static_cast<float>(m_ViewportSize.y)};
+		localViewportBounds[0] = {  (viewportPanelSize.x - static_cast<float>(currentWindow.GetViewportWidth())) * 0.5f, (viewportPanelSize.y - static_cast<float>(currentWindow.GetViewportHeight())) * 0.5f };
+		localViewportBounds[1] = { m_ViewportBounds[0].x + static_cast<float>(currentWindow.GetViewportWidth()),  m_ViewportBounds[0].y + static_cast<float>(currentWindow.GetViewportHeight()) };
+		m_ViewportBounds[0] = { localViewportBounds[0].x + viewportOffset.x, localViewportBounds[0].y + viewportOffset.y };
+		m_ViewportBounds[1] = { m_ViewportBounds[0].x + static_cast<float>(currentWindow.GetViewportWidth()), m_ViewportBounds[0].y + static_cast<float>(currentWindow.GetViewportHeight()) };
 		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y) }, ImVec2{ 0, 1 },
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()) }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
 
-		if (oldViewportSize != m_ViewportSize)
+		Math::uvec2 viewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
+		if (oldViewportSize != viewportSize)
 		{
-			Scene::GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			Scene::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -735,6 +773,9 @@ namespace Kargono
 			}
 			ImGui::DragFloat((std::string("Text Size##") + std::to_string(selectedWidget)).c_str(), &textWidget->TextSize,
 				0.01f, 0.0f, 5.0f);
+			ImGui::ColorEdit4("Text Color", glm::value_ptr(textWidget->TextColor));
+
+
 			break;
 			}
 		default:
@@ -745,14 +786,14 @@ namespace Kargono
 
 	void EditorLayer::UI_UserInterface()
 	{
-		static int32_t windowToDelete { -1 };
-		static int32_t widgetToDelete { -1 };
-		static int32_t windowsToAddWidget { -1 };
-		static UI::WidgetTypes widgetTypeToAdd {UI::WidgetTypes::None };
-		static uint32_t windowToAdd {0};
 		int32_t windowIteration{ 1 };
-		static int32_t selectedWindow { -1 };
-		static int32_t selectedWidget { -1 };
+		int32_t& windowToDelete = UI::RuntimeEngine::GetWindowToDelete();
+		int32_t& widgetToDelete = UI::RuntimeEngine::GetWidgetToDelete();
+		int32_t& windowsToAddWidget = UI::RuntimeEngine::GetWindowsToAddWidget();
+		UI::WidgetTypes& widgetTypeToAdd = UI::RuntimeEngine::GetWidgetTypeToAdd();
+		uint32_t& windowToAdd = UI::RuntimeEngine::GetWindowToAdd();
+		int32_t& selectedWindow = UI::RuntimeEngine::GetSelectedWindow();
+		int32_t& selectedWidget = UI::RuntimeEngine::GetSelectedWidget();
 
 		ImGui::Begin("User Interface Editor");
 
@@ -762,28 +803,12 @@ namespace Kargono
 			if (ImGui::Selectable("None"))
 			{
 				UI::RuntimeEngine::ClearUIEngine();
-				windowToDelete = -1;
-				widgetToDelete = -1;
-				windowsToAddWidget = -1;
-				widgetTypeToAdd = UI::WidgetTypes::None;
-				windowToAdd = 0;
-				windowIteration = 1;
-				selectedWindow = -1;
-				selectedWidget = -1;
 			}
 			for (auto& [uuid, asset] : Assets::AssetManager::GetUIObjectRegistry())
 			{
 				if (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))
 				{
 					UI::RuntimeEngine::ClearUIEngine();
-					windowToDelete = -1;
-					widgetToDelete = -1;
-					windowsToAddWidget = -1;
-					widgetTypeToAdd = UI::WidgetTypes::None;
-					windowToAdd = 0;
-					windowIteration = 1;
-					selectedWindow = -1;
-					selectedWidget = -1;
 
 					UI::RuntimeEngine::LoadUIObject(Assets::AssetManager::GetUIObject(uuid), uuid);
 				}
@@ -815,14 +840,6 @@ namespace Kargono
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
 				UI::RuntimeEngine::ClearUIEngine();
-				windowToDelete = -1;
-				widgetToDelete = -1;
-				windowsToAddWidget = -1;
-				widgetTypeToAdd = UI::WidgetTypes::None;
-				windowToAdd = 0;
-				windowIteration = 1;
-				selectedWindow = -1;
-				selectedWidget = -1;
 
 				Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewUIObject(std::string(buffer));
 				UI::RuntimeEngine::LoadUIObject(Assets::AssetManager::GetUIObject(newHandle), newHandle);
@@ -830,6 +847,37 @@ namespace Kargono
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
+		}
+
+		if (!UI::RuntimeEngine::GetCurrentUIObject())
+		{
+			ImGui::End();
+			return;
+		}
+
+		if (ImGui::ColorEdit4("Select Color", glm::value_ptr(UI::RuntimeEngine::GetSelectColor())))
+		{
+			UI::RuntimeEngine::SetSelectedWidgetColor(UI::RuntimeEngine::GetSelectColor());
+		}
+
+		if (ImGui::BeginCombo(("OnMove##" + std::to_string(selectedWidget)).c_str(), UI::RuntimeEngine::GetFunctionOnMove().empty() ? "None" : UI::RuntimeEngine::GetFunctionOnMove().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				UI::RuntimeEngine::SetFunctionOnMove({});
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (script.NumParameters > 0) { continue; }
+
+				if (ImGui::Selectable(name.c_str()))
+				{
+					UI::RuntimeEngine::SetFunctionOnMove(name);
+				}
+			}
+
+			ImGui::EndCombo();
 		}
 
 		// Main window
@@ -920,20 +968,103 @@ namespace Kargono
 				if (selectedWidget != -1)
 				{
 					auto& widget = UI::RuntimeEngine::GetAllWindows().at(selectedWindow - 1).Widgets.at(selectedWidget - 1);
-					ImGui::Text(("Widget " + std::to_string(selectedWidget)).c_str());
+					char buffer[256] = {};
+					strncpy_s(buffer, widget->Tag.c_str(), sizeof(buffer));
+					ImGui::Text(widget->Tag.c_str());
+					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						ImGui::OpenPopup("UpdateWidgetTag");
+					}
+
+					if (ImGui::BeginPopup("UpdateWidgetTag"))
+					{
+						ImGui::InputText("##WidgetTag", buffer, sizeof(buffer));
+						if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
+						{
+							widget->Tag = std::string(buffer);
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
 					ImGui::Separator();
+					ImGui::Checkbox((std::string("Selectable##") + std::to_string(selectedWidget)).c_str(), &widget->Selectable);
 					ImGui::DragFloat2((std::string("Widget Location##") + std::to_string(selectedWidget)).c_str(),
 					                  glm::value_ptr(widget->WindowPosition), 0.01f, 0.0f, 1.0f);
 					ImGui::DragFloat2((std::string("Widget Size##") + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget->Size), 0.01f, 0.0f, 1.0f);
-					ImGui::ColorEdit4("Background Color", glm::value_ptr(widget->BackgroundColor));
+					if (ImGui::ColorEdit4(("Background Color##" + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget->DefaultBackgroundColor)))
+					{
+						widget->ActiveBackgroundColor = widget->DefaultBackgroundColor;
+					}
+					if (ImGui::BeginCombo(("OnPress##" + std::to_string(selectedWidget)).c_str(), widget->FunctionPointers.OnPress.empty() ? "None" : widget->FunctionPointers.OnPress.c_str()))
+					{
+						if (ImGui::Selectable("None"))
+						{
+							widget->FunctionPointers.OnPress = {};
+						}
+
+						for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+						{
+							if (script.NumParameters > 0) { continue; }
+
+							if (ImGui::Selectable(name.c_str()))
+							{
+								widget->FunctionPointers.OnPress = name;
+							}
+						}
+
+						ImGui::EndCombo();
+					}
 					DisplayWidgetSpecificInfo(widget, selectedWidget);
 				}
 				else
 				{
 					auto& window = UI::RuntimeEngine::GetAllWindows().at(selectedWindow - 1);
-					ImGui::Text(("Window " + std::to_string(selectedWindow)).c_str());
+					char buffer[256] = {};
+					strncpy_s(buffer, window.Tag.c_str(), sizeof(buffer));
+					ImGui::Text(window.Tag.c_str());
+					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						ImGui::OpenPopup("UpdateWindowTag");
+					}
+
+					if (ImGui::BeginPopup("UpdateWindowTag"))
+					{
+						ImGui::InputText("##WindowTag", buffer, sizeof(buffer));
+						if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
+						{
+							window.Tag = std::string(buffer);
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
+
 					ImGui::Separator();
+					int32_t widgetLocation = -1;
+					if (window.DefaultActiveWidgetRef)
+					{
+						auto iterator = std::find(window.Widgets.begin(), window.Widgets.end(), window.DefaultActiveWidgetRef);
+						widgetLocation = static_cast<int32_t>(iterator - window.Widgets.begin()) + 1;
+					}
+					if (ImGui::BeginCombo(("Default Widget##" + std::to_string(selectedWindow)).c_str(), 
+						widgetLocation == -1 ? "None" : (std::string("Widget ") + std::to_string(widgetLocation)).c_str()))
+					{
+						if (ImGui::Selectable("None"))
+						{
+							window.DefaultActiveWidgetRef = nullptr;
+						}
+						uint32_t iteration{ 0 };
+						for (auto& widget : window.Widgets)
+						{
+							if (ImGui::Selectable(("Widget " + std::to_string(iteration + 1) + " (" + widget->Tag + ")").c_str()))
+							{
+								window.DefaultActiveWidgetRef = window.Widgets.at(iteration);
+							}
+							iteration++;
+						}
+						ImGui::EndCombo();
+					}
 					bool windowDisplayed = window.GetWindowDisplayed();
+					
 					if (ImGui::Checkbox((std::string("Display Window##") + std::to_string(selectedWindow)).c_str(), &windowDisplayed))
 					{
 						if (windowDisplayed)
@@ -1017,9 +1148,21 @@ namespace Kargono
 			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressedEditor));
 			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		}
-		if (m_SceneState == SceneState::Play && m_IsPaused) { dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed)); }
 		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(EditorLayer::OnPhysicsCollision));
-		if (m_SceneState == SceneState::Play) { dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressedRuntime)); }
+
+		if (m_SceneState == SceneState::Play && m_IsPaused) { dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed)); }
+
+		if (m_SceneState == SceneState::Play)
+		{
+			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressedRuntime));
+			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(EditorLayer::OnApplicationClose));
+		}
+	}
+
+	bool EditorLayer::OnApplicationClose(Events::ApplicationCloseEvent event)
+	{
+		OnStop();
+		return false;
 	}
 
 	bool EditorLayer::OnKeyPressedRuntime(Events::KeyPressedEvent event)
@@ -1097,7 +1240,7 @@ namespace Kargono
 		{
 			if (control)
 			{
-				if (m_SceneState != SceneState::Edit) { OnSceneStop(); }
+				if (m_SceneState != SceneState::Edit) { OnStop(); }
 				Script::ScriptEngine::ReloadAssembly();
 			}
 
@@ -1511,7 +1654,7 @@ namespace Kargono
 	{
 		if (m_SceneState != SceneState::Edit)
 		{
-			OnSceneStop();
+			OnStop();
 		}
 
 		if (path.extension().string() != ".kgscene")
@@ -1531,7 +1674,7 @@ namespace Kargono
 	{
 		if (m_SceneState != SceneState::Edit)
 		{
-			OnSceneStop();
+			OnStop();
 		}
 
 		Ref<Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
@@ -1553,26 +1696,43 @@ namespace Kargono
 		
 	}
 
-	void EditorLayer::OnScenePlay()
+	void EditorLayer::OnPlay()
 	{
+		// Cache Current UIObject/InputMode in editor
+		if (!UI::RuntimeEngine::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
+		else
+		{
+			UI::RuntimeEngine::SaveCurrentUIIntoUIObject();
+			m_EditorUIObject = UI::RuntimeEngine::GetCurrentUIObject();
+			m_EditorUIObjectHandle = UI::RuntimeEngine::GetCurrentUIHandle();
+		}
+
+		if (!InputMode::s_InputMode) { m_EditorInputMode = nullptr; }
+		else
+		{
+			m_EditorInputMode = InputMode::s_InputMode;
+			m_EditorInputModeHandle = InputMode::s_InputModeHandle;
+		}
+
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
-		if (m_SceneState == SceneState::Simulate) { OnSceneStop(); }
+		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
 		m_SceneState = SceneState::Play;
 		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
 		Scene::GetActiveScene()->OnRuntimeStart();
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
 	}
 
-	void EditorLayer::OnSceneSimulate()
+	void EditorLayer::OnSimulate()
 	{
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
-		if (m_SceneState == SceneState::Play) { OnSceneStop(); }
+		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
 		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
 		Scene::GetActiveScene()->OnSimulationStart();
 	}
-	void EditorLayer::OnSceneStop()
+	void EditorLayer::OnStop()
 	{
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
 		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
@@ -1585,9 +1745,31 @@ namespace Kargono
 		Scene::GetActiveScene()->DestroyAllEntities();
 		Scene::SetActiveScene(m_EditorScene);
 		Audio::AudioEngine::StopAllAudio();
+
+		// Clear UIObjects during runtime.
+		if (m_EditorUIObject)
+		{
+			UI::RuntimeEngine::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
+		}
+		else
+		{
+			UI::RuntimeEngine::ClearUIEngine();
+		}
+
+		// Clear InputModes during runtime.
+		if (m_EditorInputMode)
+		{
+			InputMode::LoadInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+		}
+		else
+		{
+			InputMode::s_InputMode = nullptr;
+			InputMode::s_InputModeHandle = 0;
+
+		}
 	}
 
-	void EditorLayer::OnScenePause()
+	void EditorLayer::OnPause()
 	{
 		if (m_SceneState == SceneState::Edit) { return; }
 
@@ -1600,7 +1782,6 @@ namespace Kargono
 			return;
 
 		Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-		//KG_CORE_WARN("Trying to duplicate Entity: {} ({})", selectedEntity.GetName(), selectedEntity.GetUUID());
 		if (selectedEntity)
 		{
 			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);

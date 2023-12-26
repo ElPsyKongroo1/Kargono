@@ -667,8 +667,6 @@ namespace Kargono
 			ImGui::InputText("New Input Mode Name", buffer, sizeof(buffer));
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
-				InputMode::ClearInputEngine();
-
 				Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewInputMode(std::string(buffer));
 				InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(newHandle), newHandle);
 

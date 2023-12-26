@@ -501,8 +501,8 @@ namespace Kargono::Script
 
 				s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(binding->GetFunctionBinding());
 			}
-
-			for (auto& [className, bindingVector] : InputMode::GetScriptClassOnKeyPressed())
+			auto& scriptClassBindings = InputMode::GetScriptClassOnKeyPressed();
+			for (auto& [className, bindingVector] : scriptClassBindings)
 			{
 				if (!Scene::GetScriptClassToEntityList().contains(className)) { continue; }
 
@@ -619,6 +619,11 @@ namespace Kargono::Script
 				}
 			}
 		}
+	}
+
+	void ScriptEngine::RunCustomCallsFunction(const std::string& functionName, void** parameters)
+	{
+		s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(functionName, parameters);
 	}
 
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()

@@ -1,11 +1,15 @@
-Font: 826018726820464441
+SelectColor: [0.403921574, 0.0666666701, 0.686274529, 0.745098054]
+FunctionPointerOnMove: PlayMenuSelect
+Font: 10569950259390381689
 Windows:
-  - ScreenPosition: [0, 0, 0]
+  - Tag: None
+    ScreenPosition: [0, 0, 0]
     Size: [1, 1]
     BackgroundColor: [1, 0.176470593, 1, 0.141176477]
     ParentIndex: -1
     ChildBufferIndex: -1
     ChildBufferSize: 0
+    DefaultActiveWidget: 0
     WidgetCounts:
       TextWidgetCount: 4
       TextWidgetLocation: 0
@@ -18,39 +22,71 @@ Windows:
       PopupWidgetCount: 0
       PopupWidgetLocation: 0
     Widgets:
-      - WindowPosition: [0.119999997, 0.50999999]
+      - Tag: None
+        WindowPosition: [0.119999997, 0.469999999]
         Size: [0.129999995, 0.119999997]
-        BackgroundColor: [1, 1, 1, 0.117647059]
+        DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
+        Selectable: true
+        DirectionPointerUp: -1
+        DirectionPointerDown: 1
+        DirectionPointerLeft: -1
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: OpenPongGameplay
         TextWidget:
           Text: Play
           TextSize: 0.400000006
+          TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [83, 38]
           TextCentered: true
-      - WindowPosition: [0.129999995, 0.25999999]
+      - Tag: None
+        WindowPosition: [0.129999995, 0.209999993]
         Size: [0.109999999, 0.119999997]
-        BackgroundColor: [1, 1, 1, 0.117647059]
+        DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
+        Selectable: true
+        DirectionPointerUp: 0
+        DirectionPointerDown: -1
+        DirectionPointerLeft: -1
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: CloseApplication
         TextWidget:
           Text: Exit
           TextSize: 0.400000006
+          TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [69, 38]
           TextCentered: true
-      - WindowPosition: [0.0399999991, 0.790000021]
-        Size: [0.300000012, 0.100000001]
-        BackgroundColor: [1, 1, 1, 0]
+      - Tag: None
+        WindowPosition: [0.0700000003, 0.709999979]
+        Size: [0.239999995, 0.170000002]
+        DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
+        Selectable: false
+        DirectionPointerUp: -1
+        DirectionPointerDown: 0
+        DirectionPointerLeft: -1
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: ""
         TextWidget:
-          Text: PONG
-          TextSize: 0.620000005
-          TextAbsoluteDimensions: [102, 40]
+          Text: Pong
+          TextSize: 0.469999999
+          TextColor: [1, 1, 1, 1]
+          TextAbsoluteDimensions: [99, 38]
           TextCentered: true
-      - WindowPosition: [0.699999988, 0]
+      - Tag: None
+        WindowPosition: [0.699999988, 0]
         Size: [0.300000012, 0.100000001]
-        BackgroundColor: [1, 1, 1, 0]
+        DefaultBackgroundColor: [1, 1, 1, 0]
         WidgetType: TextWidget
+        Selectable: false
+        DirectionPointerUp: 1
+        DirectionPointerDown: -1
+        DirectionPointerLeft: 1
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: ""
         TextWidget:
           Text: "@Wienersons Incorporated"
           TextSize: 0.119999997
+          TextColor: [1, 1, 0.827450991, 0.501960814]
           TextAbsoluteDimensions: [546, 42]
           TextCentered: true

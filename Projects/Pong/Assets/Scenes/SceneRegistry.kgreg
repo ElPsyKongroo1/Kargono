@@ -1,5 +1,10 @@
 Registry: Scene
 Assets:
+  - AssetHandle: 4149337072942010858
+    MetaData:
+      CheckSum: 171ed5c8163272eec943a747ce8e55cfe39463613e608cbc3b20d90f1ceddb62
+      IntermediateLocation: Scenes/main_menu.kgscene
+      AssetType: Scene
   - AssetHandle: 13036162138140767594
     MetaData:
       CheckSum: f399fb9d041f303d1d1e0123e1e3f54e9bc0b7ba3ca59b3e1a88df7a03f54ea7

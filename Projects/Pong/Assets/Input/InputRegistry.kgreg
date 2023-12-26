@@ -5,8 +5,18 @@ Assets:
       CheckSum: 1093115897879aa3ad9511a1dc2850929cfb60ba45ec741605f69f5d20203472
       IntermediateLocation: Input/Runtime.kginput
       AssetType: InputMode
+  - AssetHandle: 3854906340709899314
+    MetaData:
+      CheckSum: 636d4cbcdd1be3086ae229604a4281ee80ac80127ff3b5401bd171c5f33cda41
+      IntermediateLocation: Input/Pre_Start.kginput
+      AssetType: InputMode
   - AssetHandle: 18127653067119779522
     MetaData:
       CheckSum: d87d72dd54743bbf9454776bdc7f8c33981d0646dfa567a727a17a577aa13909
       IntermediateLocation: Input/MainMenu.kginput
+      AssetType: InputMode
+  - AssetHandle: 14956320095946783806
+    MetaData:
+      CheckSum: ec3454b67d6f1e24dc4cafe050a642b0f1be2966f17cbb53bfdd41b9b13c0bc2
+      IntermediateLocation: Input/Pre-Start.kginput
       AssetType: InputMode

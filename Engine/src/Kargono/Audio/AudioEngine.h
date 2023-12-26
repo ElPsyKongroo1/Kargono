@@ -176,7 +176,7 @@ namespace Kargono::Audio
 		//==============================
 		// This function is currently unimplemented! This function should play requested
 		//		stereo audio and take in a buffer.
-		static void PlayStereoAudio();
+		static void PlayStereoSound(Ref<AudioBuffer> audioBuffer);
 		// This function is the main API for playing sound effects. The sourceSpec and
 		//		listenerSpec allow for customization of concepts such as source/listener
 		//		distance, source volume, source pitch, relative velocities (doppler effect),

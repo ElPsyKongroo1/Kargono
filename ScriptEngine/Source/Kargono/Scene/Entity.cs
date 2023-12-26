@@ -44,7 +44,7 @@ namespace Kargono
 
 		}
 
-		public Entity FindEntityByName(string name)
+		public static Entity FindEntityByName(string name)
 		{
 			ulong entityID = InternalCalls.Entity_FindEntityByName(name);
 

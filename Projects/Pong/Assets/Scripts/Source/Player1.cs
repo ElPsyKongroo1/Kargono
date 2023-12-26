@@ -11,15 +11,17 @@ namespace Pong
 {
 	public class Player1 : Entity
 	{
-		private TransformComponent m_Transform;
-		private Rigidbody2DComponent m_Rigidbody;
+		public TransformComponent m_Transform;
+		public Rigidbody2DComponent m_Rigidbody;
 
 		public float Speed = 2.0f;
 		private float SpeedUpFactor = 2.0f;
+		public Vector3 InitialPosition = Vector3.Zero;
 
 		void OnCreate()
 		{
 			m_Transform = GetComponent<TransformComponent>();
+			InitialPosition = m_Transform.Translation;
 			m_Rigidbody = GetComponent<Rigidbody2DComponent>();
 		}
 
@@ -59,15 +61,17 @@ namespace Pong
 
 	public class Player2 : Entity
 	{
-		private TransformComponent m_Transform;
-		private Rigidbody2DComponent m_Rigidbody;
+		public TransformComponent m_Transform;
+		public Rigidbody2DComponent m_Rigidbody;
 
 		public float Speed = 2.0f;
 		private float SpeedUpFactor = 2.0f;
+		public Vector3 InitialPosition = Vector3.Zero;
 
 		void OnCreate()
 		{
 			m_Transform = GetComponent<TransformComponent>();
+			InitialPosition = m_Transform.Translation;
 			m_Rigidbody = GetComponent<Rigidbody2DComponent>();
 		}
 
@@ -107,48 +111,22 @@ namespace Pong
 
 	public class Ball : Entity
 	{
-		private AudioComponent m_Audio;
-		private TransformComponent m_Transform;
-		private Rigidbody2DComponent m_Rigidbody;
+		public AudioComponent m_Audio;
+		public TransformComponent m_Transform;
+		public Rigidbody2DComponent m_Rigidbody;
 
 		public float Speed = 2.0f;
 		public bool ChangeVelocity = false;
+		public UInt32 PlayerOneScore = 0;
+		public UInt32 PlayerTwoScore = 0;
+		public Vector3 InitialPosition = Vector3.Zero;
 
 		void OnCreate()
 		{
 			m_Audio = GetComponent<AudioComponent>();
 			m_Transform = GetComponent<TransformComponent>();
+			InitialPosition = m_Transform.Translation;
 			m_Rigidbody = GetComponent<Rigidbody2DComponent>();
-		}
-
-		void MoveUp()
-		{
-			Vector2 velocity = Vector2.Zero;
-			velocity.Y = 1.0f;
-			m_Rigidbody.LinearVelocity = velocity * Speed;
-			
-		}
-
-		void MoveDown()
-		{
-			Vector2 velocity = Vector2.Zero;
-			velocity.Y = -1.0f;
-			m_Rigidbody.LinearVelocity = velocity * Speed;
-			
-		}
-
-		void MoveLeft()
-		{
-			Vector2 velocity = Vector2.Zero;
-			velocity.X = -1.0f;
-			m_Rigidbody.LinearVelocity = velocity * Speed;
-		}
-
-		void MoveRight()
-		{
-			Vector2 velocity = Vector2.Zero;
-			velocity.X = 1.0f;
-			m_Rigidbody.LinearVelocity = velocity * Speed;
 		}
 
 		void OnUpdate(float ts)
@@ -163,10 +141,24 @@ namespace Pong
 			switch (otherEntityInstance.GetComponent<TagComponent>().Tag)
 			{
 				case "Left Wall":
-				case "Right Wall":
 				{
+					PlayerTwoScore++;
+					UserInterface.SetWidgetText("base_window", "score_player_2", PlayerTwoScore.ToString());
 					m_Rigidbody.LinearVelocity *= 0;
 					m_Audio.PlayAudio("lose_sound");
+					UserInterface.SetDisplayWindow("pre_game_warning", true);
+					InputMode.LoadInputMode("Input/Pre_Start.kginput");
+					collisionHandled = true;
+					break;
+				}
+				case "Right Wall":
+				{
+					PlayerOneScore++;
+					UserInterface.SetWidgetText("base_window", "score_player_1", PlayerOneScore.ToString());
+					m_Rigidbody.LinearVelocity *= 0;
+					m_Audio.PlayAudio("lose_sound");
+					UserInterface.SetDisplayWindow("pre_game_warning", true);
+					InputMode.LoadInputMode("Input/Pre_Start.kginput");
 					collisionHandled =  true;
 					break;
 				}

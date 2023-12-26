@@ -12,6 +12,11 @@ namespace Kargono
 		{
 			InternalCalls.Audio_PlayAudio(audioFileLocation);
 		}
+
+		public static void PlayStereoAudio(string audioFileLocation)
+		{
+			InternalCalls.Audio_PlayStereoAudio(audioFileLocation);
+		}
 	}
 
 }
