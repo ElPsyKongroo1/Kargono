@@ -13,7 +13,6 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Input/InputMode.h"
 
-
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"

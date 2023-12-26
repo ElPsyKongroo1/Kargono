@@ -18,7 +18,7 @@ namespace Kargono::Utility
 	{
 		return (float)glfwGetTime();
 	}
-
+#if KG_EXPORT == 0
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
 		KG_CORE_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
@@ -38,7 +38,7 @@ namespace Kargono::Utility
 		std::string outputString = "start " + path.string();
 		system(outputString.c_str());
 	}
-
+#endif
 
 	std::filesystem::path FileDialogs::OpenFile(const char* filter)
 	{

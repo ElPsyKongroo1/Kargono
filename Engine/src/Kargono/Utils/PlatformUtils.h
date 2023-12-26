@@ -20,6 +20,7 @@ namespace Kargono::Utility
 	class OSCommands
 	{
 	public:
+#if KG_EXPORT == 0
 		// This function opens a file explorer window at the provided absolute
 		//		path. This is operating system dependent and only works on windows.
 		static void OpenFileExplorer( const std::filesystem::path& path);
@@ -27,6 +28,7 @@ namespace Kargono::Utility
 		//		This scripting engine is a .csproj file that opens the Visual Studio
 		//		project.
 		static void OpenScriptProject( const std::filesystem::path& path);
+#endif
 	};
 
 	//============================================================

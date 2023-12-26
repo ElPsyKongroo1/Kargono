@@ -40,7 +40,8 @@ project "Runtime"
 
     defines 
     {
-        "KG_RUNTIME"
+        "KG_RUNTIME",
+        "KG_EXPORT=0"
     }
 
     filter "system:windows"

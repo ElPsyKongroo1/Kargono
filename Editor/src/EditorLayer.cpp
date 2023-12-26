@@ -13,47 +13,33 @@ namespace Kargono
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
-		Application::GetCurrentApp().AddImGuiLayer();
 		s_EditorLayer = this;
 	}
 
 	void EditorLayer::OnAttach()
 	{
-		UI::EditorEngine::Init();
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>();
-
-		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferDataFormat::RGBA8, FramebufferDataFormat::RED_INTEGER,  FramebufferDataFormat::Depth };
-		fbSpec.Width = 1600;
-		fbSpec.Height = 900;
-		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
 
 		m_EditorScene = CreateRef<Scene>();
 		Scene::SetActiveScene(m_EditorScene);
 
 		m_SceneState = SceneState::Edit;
+
+		if (!OpenProject())
+		{
+			Application::GetCurrentApp().Close();
+			return;
+		}
+		UI::EditorEngine::Init();
+
+		Application::GetCurrentApp().AddImGuiLayer();
 		m_LogPanel = CreateScope<LogPanel>();
 
-		auto commandLineArgs = Application::GetCurrentApp().GetSpecification().CommandLineArgs;
-		if (commandLineArgs.Count > 1)
-		{
-			auto projectFilePath = commandLineArgs[1];
-			OpenProject(projectFilePath);
-		}
-		else
-		{
-			// TODO: prompt the user to select a directory
-			// NewProject();
-
-			// If no project is opened, close Editor
-			// TODO: this is while we don't have a new project path
-			if (!OpenProject())
-			{
-				Application::GetCurrentApp().Close();
-				return;
-			}
-
-		}
+		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferDataFormat::RGBA8, FramebufferDataFormat::RED_INTEGER,  FramebufferDataFormat::Depth };
+		fbSpec.Width = Application::GetCurrentApp().GetWindow().GetWidth();
+		fbSpec.Height = Application::GetCurrentApp().GetWindow().GetHeight();
+		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
 
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
@@ -1595,6 +1581,12 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
+			if (!Application::GetCurrentApp().GetWindow().GetNativeWindow())
+			{
+				
+				Application::GetCurrentApp().GetWindow().Init();
+				RenderCommand::Init();
+			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
