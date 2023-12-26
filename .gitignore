@@ -415,3 +415,9 @@ scripts/__pycache__
 /Runtime/resources/Scripts/ScriptEngine.dll
 /Runtime/resources/Scripts/ScriptEngine.pdb
 /Editor/resources/Scripts/Intermediates/Debug/ScriptEngine.csproj.AssemblyReference.cache
+/Runtime/Runtime.aps
+/Runtime/Runtime.rc
+/Runtime/resource.h
+/Editor/resources/Scripts/Intermediates/Debug/ScriptEngine.csproj.CoreCompileInputs.cache
+/Editor/resources/Scripts/Intermediates/Dist/ScriptEngine.csproj.CoreCompileInputs.cache
+/Editor/resources/Scripts/Intermediates/Dist/ScriptEngine.dll

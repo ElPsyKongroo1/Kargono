@@ -54,7 +54,7 @@ namespace API::Windows
 		//==============================
 		// Object Lifecycle Functions
 		//==============================
-	private:
+	public:
 		// The main focus of this function is to initialize the underlying GLFW window.
 		//		The ancillary uses of this function include:
 		//		1. It initializes the m_Window* with a reference to the actual GLFW window
@@ -64,7 +64,10 @@ namespace API::Windows
 		//		4. It registers function callbacks with GLFW so events such as keyboard presses
 		//		or window resize events can be handles by the engine.
 		//		5. It initializes the logo used by the application.
-		virtual void Init(const Kargono::WindowProps& props);
+		virtual void Init(const std::filesystem::path& logoPath = "resources/icons/app_logo.png") override;
+		// This function allows the window properties to be changed a second time before being finally
+		//		initialized!
+		virtual void Init(const Kargono::WindowProps& props, const std::filesystem::path& logoPath = "resources/icons/app_logo.png") override;
 		// This function simply closes the GLFW window associated with its instance. This window
 		//		should be a singleton. If all GLFW windows are closed successfully, GLFW will terminate.
 		virtual void Shutdown();

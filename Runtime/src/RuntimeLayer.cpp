@@ -1,8 +1,16 @@
 #include "Kargono/kgpch.h"
 #include "RuntimeLayer.h"
 
+#include <filesystem>
+
 namespace Kargono
 {
+	// Final Export Values
+	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
+	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
+
+	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
+	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
 
 	RuntimeLayer::RuntimeLayer()
 		: Layer("RuntimeLayer")
@@ -14,22 +22,21 @@ namespace Kargono
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
 		Scene::SetActiveScene(CreateRef<Scene>());
-
-		auto commandLineArgs = Application::GetCurrentApp().GetSpecification().CommandLineArgs;
-		if (commandLineArgs.Count > 1)
+		#if KG_EXPORT == 0
+		if (!OpenProject())
 		{
-			auto projectFilePath = commandLineArgs[1];
-			OpenProject(projectFilePath);
+			Application::GetCurrentApp().Close();
+			return;
 		}
-		else
+		#else
+		OpenProject(runtimePath);
+		if (!Projects::Project::GetActive())
 		{
-			if (!OpenProject())
-			{
-				Application::GetCurrentApp().Close();
-				return;
-			}
-
+			Application::GetCurrentApp().Close();
+			return;
 		}
+		#endif
+		
 
 		Projects::Project::GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
@@ -148,6 +155,22 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
+			if (!Application::GetCurrentApp().GetWindow().GetNativeWindow())
+			{
+				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
+				WindowProps projectProps =
+				{
+					Projects::Project::GetProjectName(),
+					static_cast<uint32_t>(screenSize.x),
+					static_cast<uint32_t>(screenSize.y)
+				};
+				#if KG_EXPORT == 0
+				Application::GetCurrentApp().GetWindow().Init(projectProps);
+				#else
+				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
+				#endif
+				RenderCommand::Init();
+			}
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }

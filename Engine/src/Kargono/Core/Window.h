@@ -4,6 +4,8 @@
 #include "Kargono/Events/Event.h"
 #include "Kargono/Math/Math.h"
 
+#include <filesystem>
+
 
 namespace Kargono 
 {
@@ -30,6 +32,10 @@ namespace Kargono
 		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
+
+		virtual void Init(const std::filesystem::path& logoPath = "resources/icons/app_logo.png") = 0;
+		
+		virtual void Init(const Kargono::WindowProps& props, const std::filesystem::path& logoPath = "resources/icons/app_logo.png") = 0;
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
