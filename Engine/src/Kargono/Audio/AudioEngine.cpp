@@ -68,9 +68,24 @@ namespace Kargono::Audio
 		alec(alDeleteBuffers(1, &(m_BufferID)));
 	}
 
-	void AudioEngine::PlayStereoAudio()
+	void AudioEngine::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
 	{
-		// TODO: CRICKETS...
+		static ALfloat forwardAndUpVectors[] =
+		{
+			0, 0, 1,  // Forward Vectors
+			0, 1, 0   // Up Vectors
+		};
+
+		auto audioSource = s_AudioContext->m_StereoMusicSource.get();
+		uint32_t sourceID = audioSource->GetSourceID();
+
+		alec(alSourceStop(sourceID));
+		if (!audioBuffer) { return; }
+		alec(alSourcei(sourceID, AL_BUFFER, audioBuffer->m_BufferID));
+		alec(alListener3f(AL_POSITION, 0, 0, 0));
+		alec(alListener3f(AL_VELOCITY, 0, 0, 0));
+		alec(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
+		alec(alSourcePlay(sourceID));
 	}
 	void AudioEngine::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
 	{
@@ -116,6 +131,8 @@ namespace Kargono::Audio
 			s_AudioContext->m_AudioSourceQueue.pop();
 			s_AudioContext->m_AudioSourceQueue.push(audioSource);
 		}
+
+		alec(alSourceStop(s_AudioContext->m_StereoMusicSource->GetSourceID()));
 	}
 	void AudioEngine::Init()
 	{
@@ -138,6 +155,11 @@ namespace Kargono::Audio
 
 		// Initialize all Sound Sources
 		s_AudioContext->m_StereoMusicSource = CreateScope<AudioSource>();
+		alec(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_POSITION, 0, 0, 0));
+		alec(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_VELOCITY, 0, 0, 0));
+		alec(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_PITCH, 1.0f));
+		alec(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
+		alec(alSourcei(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_LOOPING, true));
 
 		for (uint32_t iterator{0}; iterator < 15; iterator++)
 		{

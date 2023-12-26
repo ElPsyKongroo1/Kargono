@@ -20,5 +20,10 @@ namespace Kargono
 		{
 			return InternalCalls.InputMode_IsKeySlotDown(keySlot);
 		}
+
+		public static void LoadInputMode(string inputModeLocation)
+		{
+			InternalCalls.InputMode_LoadInputMode(inputModeLocation);
+		}
 	}
 }

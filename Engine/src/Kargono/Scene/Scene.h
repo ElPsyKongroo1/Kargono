@@ -101,6 +101,7 @@ namespace Kargono
 		// This functino replaces the current scene with the scene in the provided handle.
 		//		The current scene is held in s_ActiveScene btw.
 		static void TransitionScene(Assets::AssetHandle newSceneHandle);
+		static void TransitionScene(Ref<Scene> newScene);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
@@ -157,7 +158,6 @@ namespace Kargono
 	private:
 		// Underlying ECS registry that holds actual entities and their components
 		entt::registry m_Registry;
-		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		// Entity Map that holds easy to access reference to all entities in the scene.
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		// This map holds lists of entitys (UUID) using the key of a script class.

@@ -57,8 +57,6 @@ namespace Kargono
 	{
 		Ref<Scene> newScene = CreateRef<Scene>();
 
-		newScene->m_ViewportWidth = other->m_ViewportWidth;
-		newScene->m_ViewportHeight = other->m_ViewportHeight;
 		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
 
 		auto& srcSceneRegistry = other->m_Registry;
@@ -86,6 +84,11 @@ namespace Kargono
 	{
 		m_HoveredEntity = new Entity();
 		m_SelectedEntity = new Entity();
+
+		//m_ViewportWidth = Application::GetCurrentApp().GetWindow().GetWidth();
+		//m_ViewportHeight = Application::GetCurrentApp().GetWindow().GetHeight();
+
+		
 	}
 	Scene::~Scene()
 	{
@@ -219,19 +222,14 @@ namespace Kargono
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
-		if (m_ViewportWidth == width && m_ViewportHeight == height) { return; }
-
-		m_ViewportWidth = width;
-		m_ViewportHeight = height;
-
 		// Resize non-fixed
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			
-			cameraComponent.Camera.SetViewportSize(width, height);
-			
+			cameraComponent.Camera.OnViewportResize();
+					
 		}
 
 	}
@@ -242,6 +240,11 @@ namespace Kargono
 	void Scene::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
 		Ref<Scene> newScene = Assets::AssetManager::GetScene(newSceneHandle);
+		TransitionScene(newScene);
+	}
+
+	void Scene::TransitionScene(Ref<Scene> newScene)
+	{
 		if (!newScene) { return; }
 
 		s_ActiveScene->OnRuntimeStop();
@@ -250,13 +253,14 @@ namespace Kargono
 
 		s_ActiveScene = newScene;
 
-		Audio::AudioEngine::StopAllAudio();
+		//Audio::AudioEngine::StopAllAudio();
 
 		*s_ActiveScene->m_HoveredEntity = {};
 		*s_ActiveScene->m_SelectedEntity = {};
 
 		s_ActiveScene->OnRuntimeStart();
 	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -314,7 +318,6 @@ namespace Kargono
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
-		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
-			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		
 	}
 }

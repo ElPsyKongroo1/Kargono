@@ -89,6 +89,8 @@ namespace Kargono
 
 	void InputMode::LoadInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle)
 	{
+		InputMode::ClearInputEngine();
+
 		s_InputMode = newInput;
 		s_InputModeHandle = newHandle;
 	}

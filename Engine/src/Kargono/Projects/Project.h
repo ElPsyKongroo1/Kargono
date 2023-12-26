@@ -61,6 +61,9 @@ namespace Kargono::Projects
 		// TargetResolution describes the screen resolution the application will attempt
 		//		to display when starting the runtime application.
 		ScreenResolutionOptions TargetResolution{ ScreenResolutionOptions::MatchDevice };
+		// OnRuntimeStartFunction holds the name of the custom call that is run when
+		//		the application is started.
+		std::string OnRuntimeStartFunction {"None"};
 	};
 
 	//============================================================
@@ -187,6 +190,21 @@ namespace Kargono::Projects
 		{
 			KG_CORE_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.Name = name;
+		}
+
+		// This function gets the name of the function from the ScriptEngine CustomCalls that is
+		//		run when the application starts.
+		static std::string& GetProjectOnRuntimeStart()
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnRuntimeStartFunction;
+		}
+
+		// This function allows the function pointer to be updated when the application begins.
+		static void SetProjectOnRuntimeStart(const std::string& name)
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnRuntimeStartFunction = name;
 		}
 
 		// This function returns the currently active project held in s_ActiveProject.

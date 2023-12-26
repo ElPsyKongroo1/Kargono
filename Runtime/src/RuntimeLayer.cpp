@@ -38,8 +38,9 @@ namespace Kargono
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
 		UI::TextEngine::Init();
+		UI::RuntimeEngine::Init();
 
-		OnScenePlay();
+		OnPlay();
 	}
 
 	void RuntimeLayer::OnDetach()
@@ -52,7 +53,7 @@ namespace Kargono
 			auto& audioComponent = e.GetComponent<AudioComponent>();
 			audioComponent.Audio.reset();
 		}
-		OnSceneStop();
+		OnStop();
 
 	}
 
@@ -65,18 +66,39 @@ namespace Kargono
 		RenderCommand::Clear();
 
 		OnUpdateRuntime(ts);
+		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
+		if (mainCamera)
+		{
+			UI::RuntimeEngine::PushRenderData(glm::inverse(cameraTransform), 
+				Application::GetCurrentApp().GetWindow().GetWidth(), Application::GetCurrentApp().GetWindow().GetHeight());
+		}
 	}
 
 	void RuntimeLayer::OnEvent(Events::Event& event)
 	{
 		Events::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
+		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnKeyPressed));
 		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
+		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnApplicationClose));
+
+	}
+
+	bool RuntimeLayer::OnApplicationClose(Events::ApplicationCloseEvent event)
+	{
+		Events::WindowCloseEvent windowEvent {};
+		Window::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
+		eventCallback(windowEvent);
+		return false;
 	}
 
 	bool RuntimeLayer::OnWindowResize(Events::WindowResizeEvent event)
 	{
+		Application::GetCurrentApp().GetWindow().SetViewportWidth(event.GetWidth());
+		Application::GetCurrentApp().GetWindow().SetViewportHeight(event.GetHeight());
 		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
@@ -84,6 +106,12 @@ namespace Kargono
 	bool RuntimeLayer::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
 		Script::ScriptEngine::OnPhysicsCollision(event);
+		return false;
+	}
+
+	bool RuntimeLayer::OnKeyPressed(Events::KeyPressedEvent event)
+	{
+		Script::ScriptEngine::OnKeyPressed(event);
 		return false;
 	}
 
@@ -144,12 +172,13 @@ namespace Kargono
 	}
 
 
-	void RuntimeLayer::OnScenePlay()
+	void RuntimeLayer::OnPlay()
 	{
 		Scene::GetActiveScene()->OnRuntimeStart();
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
 	}
 
-	void RuntimeLayer::OnSceneStop()
+	void RuntimeLayer::OnStop()
 	{
 		Scene::GetActiveScene()->OnRuntimeStop();
 		Scene::GetActiveScene()->DestroyAllEntities();
