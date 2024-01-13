@@ -9,11 +9,39 @@
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Renderer/RenderCommand.h"
 #include "Kargono/Renderer/Texture.h"
+#include "Kargono/Projects/Project.h"
 
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#include "glad/glad.h"
+#include "msdf-atlas-gen/msdf-atlas-gen.h"
+#include "msdf-atlas-gen/FontGeometry.h"
 
+
+namespace Kargono::Utility
+{
+	template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
+	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
+	{
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+		msdf_atlas::GeneratorAttributes attributes;
+		attributes.config.overlapSupport = true;
+		attributes.scanlinePass = true;
+		msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
+		generator.setAttributes(attributes);
+		generator.setThreadCount(numAvailableThread);
+		generator.generate(glyphs.data(), (int32_t)glyphs.size());
+
+		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
+
+		TextureSpecification spec;
+		spec.Width = bitmap.width;
+		spec.Height = bitmap.height;
+		spec.Format = ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Texture2D> texture = Texture2D::Create(spec);
+		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
+		return texture;
+	}
+}
 
 namespace Kargono::UI
 {
@@ -52,119 +80,217 @@ namespace Kargono::UI
 		}
 	}
 
-	Ref<Font> TextEngine::InstantiateFontEditor(const std::filesystem::path& editorPath)
+	Ref<Font> TextEngine::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
+		std::vector<msdf_atlas::GlyphGeometry> glyphs;
+		msdf_atlas::FontGeometry fontGeometry;
+		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
+		KG_CORE_ASSERT(ft, "MSDFGEN failed to initialize!");
+
 		Ref<Font> newFont = CreateRef<Font>();
 
-		FT_Library ft;
-		if (FT_Init_FreeType(&ft))
+		std::string fileString = filepath.string();
+		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fileString.c_str());
+		if (!font)
 		{
-			KG_CORE_ASSERT(false, "FreeType Library Not Initialized Properly");
+			KG_CORE_ERROR("Font not loaded correctly from filepath: " + filepath.string());
 			return nullptr;
 		}
 
-		FT_Face face;
-		if (FT_New_Face(ft, editorPath.string().c_str(), 0, &face))
+		struct CharsetRange
 		{
-			KG_CORE_ERROR("Font not Loaded Correctly!");
-			return nullptr;
-		}
+			uint32_t Begin, End;
+		};
 
-		FT_Set_Pixel_Sizes(face, 0, 48);
-
-		// disable byte-alignment restriction
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		double widthSum{ 0 };
-		double heightSum{ 0 };
-		uint32_t count{ 0 };
-
-		for (unsigned char character{ 0 }; character < 128; character++)
+		// From imgui_draw.cpp
+		static const CharsetRange charsetRanges[] =
 		{
-			// Load Character Glyph
-			if (FT_Load_Char(face, character, FT_LOAD_RENDER))
+			{0x0020, 0x00FF}
+		};
+
+		msdf_atlas::Charset charset;
+		for (CharsetRange range : charsetRanges)
+		{
+			for (uint32_t character = range.Begin; character <= range.End; character++)
 			{
-				KG_CORE_ERROR("Font Character not Loaded Correctly!");
-				return nullptr;
+				charset.add(character);
 			}
-			// TODO: Create API for Textures!
-			// Generate Texture
-			unsigned int texture;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_RED,
-				face->glyph->bitmap.width,
-				face->glyph->bitmap.rows,
-				0,
-				GL_RED,
-				GL_UNSIGNED_BYTE,
-				face->glyph->bitmap.buffer
-			);
-			// set texture options
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			Character mapCharacter = {
-				Texture2D::Create(texture, face->glyph->bitmap.width, face->glyph->bitmap.rows),
-			Math::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-		  Math::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				static_cast<uint32_t>(face->glyph->advance.x)
-			};
-
-			widthSum += mapCharacter.Advance >> 6;
-			heightSum += face->glyph->bitmap.rows;
-			count++;
-			newFont->GetCharacters().insert(std::pair<unsigned char, Character>(character, mapCharacter));
 		}
 
-		newFont->m_AverageWidth = static_cast<float>(widthSum / count);
-		newFont->m_AverageHeight = static_cast<float>(heightSum / count);
-		FT_Done_Face(face);
-		FT_Done_FreeType(ft);
+		double fontScale = 1.0;
+		fontGeometry = msdf_atlas::FontGeometry(&glyphs);
+		int glyphsLoaded = fontGeometry.loadCharset(font, fontScale, charset);
+		KG_CORE_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
+
+		double emSize = 40.0;
+
+		msdf_atlas::TightAtlasPacker atlasPacker;
+		// atlasPacker.setDimensionsConstraint();
+		atlasPacker.setPixelRange(2.0);
+		atlasPacker.setMiterLimit(1.0);
+		atlasPacker.setPadding(0);
+		atlasPacker.setScale(emSize);
+		int32_t remaining = atlasPacker.pack(glyphs.data(), (int32_t)glyphs.size());
+		KG_CORE_ASSERT(remaining == 0);
+
+		int32_t width, height;
+		atlasPacker.getDimensions(width, height);
+		emSize = atlasPacker.getScale();
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+#define DEFAULT_ANGLE_THRESHOLD 3.0
+#define LCG_MULTIPLIER 6364136223846793005ull
+#define LCG_INCREMENT 1442695040888963407ull
+
+		// if MSDF || MTSDF
+		uint64_t coloringSeed = 0;
+		bool expensiveColoring = false;
+		if (expensiveColoring)
+		{
+			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool {
+				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
+				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+				return true;
+				}, glyphs.size()).finish(numAvailableThread);
+		}
+		else {
+			unsigned long long glyphSeed = coloringSeed;
+			for (msdf_atlas::GlyphGeometry& glyph : glyphs)
+			{
+				glyphSeed *= LCG_MULTIPLIER;
+				glyph.edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+			}
+		}
+
+
+		newFont->m_AtlasTexture = Utility::CreateAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("Test", (float)emSize, glyphs, fontGeometry, width, height);
+
+		msdfgen::destroyFont(font);
+		msdfgen::deinitializeFreetype(ft);
+
+		const auto& metrics = fontGeometry.getMetrics();
+		newFont->m_LineHeight = metrics.lineHeight;
+
+		const auto& glyphMetrics = fontGeometry.getGlyphs();
+		newFont->m_Characters.clear();
+		for (auto& glyphGeometry : glyphMetrics)
+		{
+			unsigned char character = static_cast<uint8_t>(glyphGeometry.getCodepoint());
+			Character characterStruct{};
+
+			// Fill the texture location inside Atlas
+			double al, ab, ar, at;
+			glyphGeometry.getQuadAtlasBounds(al, ab, ar, at);
+			characterStruct.TexCoordinateMin = { (float)al, (float)ab };
+			characterStruct.TexCoordinateMax = { (float)ar, (float)at };
+			// Fill the Bounding Box Size when Rendering
+			double pl, pb, pr, pt;
+			glyphGeometry.getQuadPlaneBounds(pl, pb, pr, pt);
+			characterStruct.QuadMin = { (float)pl, (float)pb };
+			characterStruct.QuadMax = { (float)pr, (float)pt };
+			// Fill the Advance
+			characterStruct.Advance = (float)glyphGeometry.getAdvance();
+			// Fill Glyph Size
+			int32_t glyphWidth, glyphHeight;
+			glyphGeometry.getBoxSize(glyphWidth, glyphHeight);
+			characterStruct.Size = { glyphWidth, glyphHeight };
+			newFont->m_Characters.insert_or_assign(character, characterStruct);
+		}
 
 		return newFont;
 	}
 
-	
-
-	void Font::PushTextData(std::string text, Math::vec3 translation, float scale, Math::vec3 color)
+	void Font::PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
-		float testNumber{ 0.0f }; // TODO: REMOVE!!!!!
-		Shader::SetDataAtInputLocation<Math::vec4>({ color, 1.0f }, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
+		Ref<Texture2D> fontAtlas = m_AtlasTexture;
 
-		std::string::const_iterator currentCharacter;
-		for (currentCharacter = text.begin(); currentCharacter != text.end(); currentCharacter++)
+		s_TextInputSpec.ShapeComponent->Texture = fontAtlas;
+		Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
+
+		double x = translation.x;
+		double y = translation.y;
+		//double fsScale = scale / (metrics.ascenderY - metrics.descenderY);
+
+		for (size_t i = 0; i < string.size(); i++)
 		{
-			Character ch = m_Characters[*currentCharacter];
+			char character = string[i];
+			Character glyph;
 
-			float xpos = translation.x + ch.Bearing.x * scale;
-			float ypos = translation.y - (ch.Size.y - ch.Bearing.y) * scale;
+			switch (character)
+			{
+			case '\n':
+				{
+					x = translation.x;
+					y -= scale * m_LineHeight;
+					continue;
+				}
+			case '\r':
+				{
+					continue;
+				}
+			case '\t':
+				{
+					character = ' ';
+					break;
+				}
+			}
 
-			float charWidth = ch.Size.x * scale;
-			float charHeight = ch.Size.y * scale;
+			if (m_Characters.contains(character))
+			{
+				glyph = m_Characters.at(character);
+			}
+			else
+			{
+				glyph = m_Characters.at('?');
+			}
+
+			// Glyph inside Atlas size
+			glm::vec2 texCoordMin(glyph.TexCoordinateMin);
+			glm::vec2 texCoordMax(glyph.TexCoordinateMax);
+
+			// Glyph size when rendered
+			
+			glm::vec2 quadMin(glyph.QuadMin);
+			glm::vec2 quadMax(glyph.QuadMax);
+
+			quadMin *= scale, quadMax *= scale;
+			quadMin += glm::vec2(x, y);
+			quadMax += glm::vec2(x, y);
+
+			float texelWidth = 1.0f / fontAtlas->GetWidth();
+			float texelHeight = 1.0f / fontAtlas->GetHeight();
+			texCoordMin *= glm::vec2(texelWidth, texelHeight);
+			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			s_Vertices->clear();
-			s_Vertices->push_back({ xpos, ypos + charHeight, translation.z });
-			s_Vertices->push_back({ xpos, ypos, translation.z });
-			s_Vertices->push_back({ xpos + charWidth, ypos, translation.z });
-			s_Vertices->push_back({ xpos, ypos + charHeight, translation.z });
-			s_Vertices->push_back({ xpos + charWidth, ypos, translation.z });
-			s_Vertices->push_back({ xpos + charWidth, ypos + charHeight, translation.z });
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+
+			s_TexCoordinates->clear();
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back(texCoordMin);										// 0, 0
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back(texCoordMax);										// 1, 1
 
 			s_TextInputSpec.ShapeComponent->Vertices = s_Vertices;
-			s_TextInputSpec.ShapeComponent->Texture = ch.Texture;
 
 			Renderer::SubmitDataToRenderer(s_TextInputSpec);
-			testNumber += (ch.Advance >> 6) * scale;
-			// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-			translation.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+
+			// TODO: Add Kerning back! Info on Kerning is here: https://freetype.org/freetype2/docs/glyphs/glyphs-4.html
+			//double advance = 0;
+			//char nextCharacter = string[i + 1];
+			//fontGeometry.getAdvance(advance, character, nextCharacter);
+			//float kerningOffset = 0.0f;
+			//x += fsScale * advance + kerningOffset;
+
+			x += scale * glyph.Advance;
+
 		}
-		//KG_CORE_ERROR("The test number is {}", testNumber);
 	}
 
 	Math::vec2 Font::CalculateTextSize(const std::string& text)
@@ -173,12 +299,16 @@ namespace Kargono::UI
 		std::string::const_iterator currentCharacter;
 		for (currentCharacter = text.begin(); currentCharacter != text.end(); currentCharacter++)
 		{
-			Character ch = m_Characters[*currentCharacter];
-
-			if (ch.Size.y > outputSize.y) { outputSize.y = static_cast<float>(ch.Size.y); }
-			outputSize.x += (ch.Advance >> 6);
+			if (!m_Characters.contains(*currentCharacter))
+			{
+				continue;
+			}
+			Character glyph = m_Characters[*currentCharacter];
+			if (glyph.Size.y > outputSize.y) { outputSize.y = glyph.Size.y; }
+			outputSize.x += glyph.Advance;
 		}
-
+		//TODO: FIX THIS MAGIC NUMBER PLEASE
+		outputSize.y /= 42.0f;
 		return outputSize;
 	}
 }

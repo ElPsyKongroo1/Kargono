@@ -63,7 +63,9 @@ project "Engine"
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.OpenALSoft}",
         "%{IncludeDir.dr_wav}",
-        "%{IncludeDir.hash_library}"
+        "%{IncludeDir.hash_library}",
+        "%{IncludeDir.msdf_atlas_gen}",
+        "%{IncludeDir.msdfgen}"
 
     }
 
@@ -80,6 +82,7 @@ project "Engine"
         "imGui",
         "dwmapi.lib",
         "yaml-cpp",
+        "msdf-atlas-gen",
         "%{Library.mono}",
         "%{Library.free_type}",
         "ScriptEngine"
@@ -118,7 +121,10 @@ project "Engine"
 			"%{Library.ShaderC_Debug}",
 			"%{Library.SPIRV_Cross_Debug}",
 			"%{Library.SPIRV_Cross_GLSL_Debug}",
-			"%{Library.OpenALSoft_Debug}"
+			"%{Library.OpenALSoft_Debug}",
+			-- "%{Library.msdf_gen_Debug}",
+			-- "%{Library.msdf_atlas_gen_Debug}",
+			-- "%{Library.msdf_gen_ext_Debug}"
 		}
 
 
@@ -135,7 +141,10 @@ project "Engine"
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Release}"
+			"%{Library.OpenALSoft_Release}",
+            -- "%{Library.msdf_gen_Release}",
+            -- "%{Library.msdf_atlas_gen_Release}",
+			-- "%{Library.msdf_gen_ext_Release}"
 		}
 
     filter "configurations:Dist"
@@ -151,5 +160,8 @@ project "Engine"
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Dist}"
+			"%{Library.OpenALSoft_Dist}",
+            -- "%{Library.msdf_gen_Dist}",
+            -- "%{Library.msdf_atlas_gen_Dist}",
+			-- "%{Library.msdf_gen_ext_Dist}"
 		}

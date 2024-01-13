@@ -3,8 +3,6 @@
 #include "Kargono/Renderer/VertexArray.h"
 #include "Kargono/Math/Math.h"
 
-
-
 namespace Kargono
 {
 	enum class RenderAPI

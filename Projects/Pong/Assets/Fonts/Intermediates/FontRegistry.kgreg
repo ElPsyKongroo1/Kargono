@@ -1,1302 +1,2696 @@
 Registry: Font
 Assets:
-  - AssetHandle: 9175099288870376645
-    MetaData:
-      CheckSum: a9c67d890aa5e65fef01b68165ac955053ea4aa5516c3915ee69ad45ed84e832
-      IntermediateLocation: Fonts/Intermediates/9175099288870376645.kgfont
-      AssetType: Font
-      InitialFileLocation: Fonts\arial.ttf
-      AverageWidth: 28.09375
-      AverageHeight: 30.7890625
-      BufferLocations:
-        - 0
-        - 720
-        - 1440
-        - 2160
-        - 2880
-        - 3600
-        - 4320
-        - 5040
-        - 5760
-        - 6480
-        - 7200
-        - 7920
-        - 8640
-        - 9360
-        - 10080
-        - 10800
-        - 11520
-        - 12240
-        - 12960
-        - 13680
-        - 14400
-        - 15120
-        - 15840
-        - 16560
-        - 17280
-        - 18000
-        - 18720
-        - 19440
-        - 20160
-        - 20880
-        - 21600
-        - 22320
-        - 23040
-        - 23040
-        - 23250
-        - 23406
-        - 24351
-        - 25335
-        - 26665
-        - 27680
-        - 27740
-        - 28325
-        - 28910
-        - 29150
-        - 29678
-        - 29762
-        - 29818
-        - 29848
-        - 30338
-        - 31143
-        - 31598
-        - 32438
-        - 33243
-        - 34118
-        - 34923
-        - 35763
-        - 36568
-        - 37408
-        - 38213
-        - 38363
-        - 38587
-        - 39139
-        - 39475
-        - 40027
-        - 40832
-        - 42857
-        - 44047
-        - 44992
-        - 46077
-        - 47127
-        - 48072
-        - 48947
-        - 50102
-        - 51082
-        - 51292
-        - 51992
-        - 53007
-        - 53777
-        - 54967
-        - 55947
-        - 57137
-        - 58082
-        - 59340
-        - 60460
-        - 61440
-        - 62420
-        - 63400
-        - 64520
-        - 66095
-        - 67215
-        - 68335
-        - 69350
-        - 69800
-        - 70290
-        - 70785
-        - 71184
-        - 71300
-        - 71363
-        - 71987
-        - 72757
-        - 73355
-        - 74160
-        - 74784
-        - 75309
-        - 76137
-        - 76872
-        - 77047
-        - 77542
-        - 78277
-        - 78452
-        - 79336
-        - 79882
-        - 80506
-        - 81298
-        - 82126
-        - 82490
-        - 83062
-        - 83504
-        - 84050
-        - 84674
-        - 85584
-        - 86208
-        - 87072
-        - 87670
-        - 88300
-        - 88525
-        - 89155
-        - 89355
-      Characters:
-        - Character: 0
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 1
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 2
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 3
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 4
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 5
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 6
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 7
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 8
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 9
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 10
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 11
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 12
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 13
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 14
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 15
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 16
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 17
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 18
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 19
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 20
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 21
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 22
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 23
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 24
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 25
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 26
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 27
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 28
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 29
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 30
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 31
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 32
-          Size: [0, 0]
-          Bearing: [0, 0]
-          Advance: 832
-        - Character: 33
-          Size: [6, 35]
-          Bearing: [4, 35]
-          Advance: 832
-        - Character: 34
-          Size: [13, 12]
-          Bearing: [2, 35]
-          Advance: 1088
-        - Character: 35
-          Size: [27, 35]
-          Bearing: [0, 35]
-          Advance: 1728
-        - Character: 36
-          Size: [24, 41]
-          Bearing: [1, 37]
-          Advance: 1728
-        - Character: 37
-          Size: [38, 35]
-          Bearing: [2, 35]
-          Advance: 2752
-        - Character: 38
-          Size: [29, 35]
-          Bearing: [2, 35]
-          Advance: 2048
-        - Character: 39
-          Size: [5, 12]
-          Bearing: [2, 35]
-          Advance: 576
-        - Character: 40
-          Size: [13, 45]
-          Bearing: [2, 35]
-          Advance: 1024
-        - Character: 41
-          Size: [13, 45]
-          Bearing: [2, 35]
-          Advance: 1024
-        - Character: 42
-          Size: [16, 15]
-          Bearing: [1, 35]
-          Advance: 1216
-        - Character: 43
-          Size: [24, 22]
-          Bearing: [2, 28]
-          Advance: 1792
-        - Character: 44
-          Size: [7, 12]
-          Bearing: [3, 5]
-          Advance: 832
-        - Character: 45
-          Size: [14, 4]
-          Bearing: [1, 15]
-          Advance: 1024
-        - Character: 46
-          Size: [6, 5]
-          Bearing: [4, 5]
-          Advance: 832
-        - Character: 47
-          Size: [14, 35]
-          Bearing: [0, 35]
-          Advance: 832
-        - Character: 48
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 49
-          Size: [13, 35]
-          Bearing: [5, 35]
-          Advance: 1728
-        - Character: 50
-          Size: [24, 35]
-          Bearing: [1, 35]
-          Advance: 1728
-        - Character: 51
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 52
-          Size: [25, 35]
-          Bearing: [0, 35]
-          Advance: 1728
-        - Character: 53
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 54
-          Size: [24, 35]
-          Bearing: [1, 35]
-          Advance: 1728
-        - Character: 55
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 56
-          Size: [24, 35]
-          Bearing: [1, 35]
-          Advance: 1728
-        - Character: 57
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 58
-          Size: [6, 25]
-          Bearing: [4, 25]
-          Advance: 832
-        - Character: 59
-          Size: [7, 32]
-          Bearing: [3, 25]
-          Advance: 832
-        - Character: 60
-          Size: [24, 23]
-          Bearing: [2, 29]
-          Advance: 1792
-        - Character: 61
-          Size: [24, 14]
-          Bearing: [2, 24]
-          Advance: 1792
-        - Character: 62
-          Size: [24, 23]
-          Bearing: [2, 29]
-          Advance: 1792
-        - Character: 63
-          Size: [23, 35]
-          Bearing: [2, 35]
-          Advance: 1728
-        - Character: 64
-          Size: [45, 45]
-          Bearing: [2, 35]
-          Advance: 3136
-        - Character: 65
-          Size: [34, 35]
-          Bearing: [-1, 35]
-          Advance: 2048
-        - Character: 66
-          Size: [27, 35]
-          Bearing: [3, 35]
-          Advance: 2048
-        - Character: 67
-          Size: [31, 35]
-          Bearing: [2, 35]
-          Advance: 2240
-        - Character: 68
-          Size: [30, 35]
-          Bearing: [3, 35]
-          Advance: 2240
-        - Character: 69
-          Size: [27, 35]
-          Bearing: [3, 35]
-          Advance: 2048
-        - Character: 70
-          Size: [25, 35]
-          Bearing: [3, 35]
-          Advance: 1856
-        - Character: 71
-          Size: [33, 35]
-          Bearing: [2, 35]
-          Advance: 2368
-        - Character: 72
-          Size: [28, 35]
-          Bearing: [3, 35]
-          Advance: 2240
-        - Character: 73
-          Size: [6, 35]
-          Bearing: [4, 35]
-          Advance: 832
-        - Character: 74
-          Size: [20, 35]
-          Bearing: [1, 35]
-          Advance: 1536
-        - Character: 75
-          Size: [29, 35]
-          Bearing: [3, 35]
-          Advance: 2048
-        - Character: 76
-          Size: [22, 35]
-          Bearing: [3, 35]
-          Advance: 1728
-        - Character: 77
-          Size: [34, 35]
-          Bearing: [3, 35]
-          Advance: 2560
-        - Character: 78
-          Size: [28, 35]
-          Bearing: [3, 35]
-          Advance: 2240
-        - Character: 79
-          Size: [34, 35]
-          Bearing: [2, 35]
-          Advance: 2368
-        - Character: 80
-          Size: [27, 35]
-          Bearing: [3, 35]
-          Advance: 2048
-        - Character: 81
-          Size: [34, 37]
-          Bearing: [2, 35]
-          Advance: 2368
-        - Character: 82
-          Size: [32, 35]
-          Bearing: [3, 35]
-          Advance: 2240
-        - Character: 83
-          Size: [28, 35]
-          Bearing: [2, 35]
-          Advance: 2048
-        - Character: 84
-          Size: [28, 35]
-          Bearing: [1, 35]
-          Advance: 1856
-        - Character: 85
-          Size: [28, 35]
-          Bearing: [3, 35]
-          Advance: 2240
-        - Character: 86
-          Size: [32, 35]
-          Bearing: [0, 35]
-          Advance: 2048
-        - Character: 87
-          Size: [45, 35]
-          Bearing: [0, 35]
-          Advance: 2880
-        - Character: 88
-          Size: [32, 35]
-          Bearing: [0, 35]
-          Advance: 2048
-        - Character: 89
-          Size: [32, 35]
-          Bearing: [0, 35]
-          Advance: 2048
-        - Character: 90
-          Size: [29, 35]
-          Bearing: [0, 35]
-          Advance: 1856
-        - Character: 91
-          Size: [10, 45]
-          Bearing: [3, 35]
-          Advance: 832
-        - Character: 92
-          Size: [14, 35]
-          Bearing: [0, 35]
-          Advance: 832
-        - Character: 93
-          Size: [11, 45]
-          Bearing: [0, 35]
-          Advance: 832
-        - Character: 94
-          Size: [21, 19]
-          Bearing: [1, 35]
-          Advance: 1472
-        - Character: 95
-          Size: [29, 4]
-          Bearing: [-1, -7]
-          Advance: 1728
-        - Character: 96
-          Size: [9, 7]
-          Bearing: [2, 35]
-          Advance: 1024
-        - Character: 97
-          Size: [24, 26]
-          Bearing: [1, 26]
-          Advance: 1728
-        - Character: 98
-          Size: [22, 35]
-          Bearing: [3, 35]
-          Advance: 1728
-        - Character: 99
-          Size: [23, 26]
-          Bearing: [1, 26]
-          Advance: 1536
-        - Character: 100
-          Size: [23, 35]
-          Bearing: [1, 35]
-          Advance: 1728
-        - Character: 101
-          Size: [24, 26]
-          Bearing: [1, 26]
-          Advance: 1728
-        - Character: 102
-          Size: [15, 35]
-          Bearing: [0, 35]
-          Advance: 832
-        - Character: 103
-          Size: [23, 36]
-          Bearing: [1, 26]
-          Advance: 1728
-        - Character: 104
-          Size: [21, 35]
-          Bearing: [3, 35]
-          Advance: 1728
-        - Character: 105
-          Size: [5, 35]
-          Bearing: [3, 35]
-          Advance: 704
-        - Character: 106
-          Size: [11, 45]
-          Bearing: [-3, 35]
-          Advance: 704
-        - Character: 107
-          Size: [21, 35]
-          Bearing: [3, 35]
-          Advance: 1536
-        - Character: 108
-          Size: [5, 35]
-          Bearing: [3, 35]
-          Advance: 704
-        - Character: 109
-          Size: [34, 26]
-          Bearing: [3, 26]
-          Advance: 2560
-        - Character: 110
-          Size: [21, 26]
-          Bearing: [3, 26]
-          Advance: 1728
-        - Character: 111
-          Size: [24, 26]
-          Bearing: [1, 26]
-          Advance: 1728
-        - Character: 112
-          Size: [22, 36]
-          Bearing: [3, 26]
-          Advance: 1728
-        - Character: 113
-          Size: [23, 36]
-          Bearing: [1, 26]
-          Advance: 1728
-        - Character: 114
-          Size: [14, 26]
-          Bearing: [3, 26]
-          Advance: 1024
-        - Character: 115
-          Size: [22, 26]
-          Bearing: [1, 26]
-          Advance: 1536
-        - Character: 116
-          Size: [13, 34]
-          Bearing: [0, 34]
-          Advance: 832
-        - Character: 117
-          Size: [21, 26]
-          Bearing: [3, 26]
-          Advance: 1728
-        - Character: 118
-          Size: [24, 26]
-          Bearing: [0, 26]
-          Advance: 1536
-        - Character: 119
-          Size: [35, 26]
-          Bearing: [0, 26]
-          Advance: 2240
-        - Character: 120
-          Size: [24, 26]
-          Bearing: [0, 26]
-          Advance: 1536
-        - Character: 121
-          Size: [24, 36]
-          Bearing: [0, 26]
-          Advance: 1536
-        - Character: 122
-          Size: [23, 26]
-          Bearing: [0, 26]
-          Advance: 1536
-        - Character: 123
-          Size: [14, 45]
-          Bearing: [1, 35]
-          Advance: 1024
-        - Character: 124
-          Size: [5, 45]
-          Bearing: [4, 35]
-          Advance: 768
-        - Character: 125
-          Size: [14, 45]
-          Bearing: [1, 35]
-          Advance: 1024
-        - Character: 126
-          Size: [25, 8]
-          Bearing: [2, 21]
-          Advance: 1792
-        - Character: 127
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-  - AssetHandle: 10569950259390381689
+  - AssetHandle: 7507720298335089313
     MetaData:
       CheckSum: 34ac0488d3305e3a381d1f1bbe5504fd69861d26a54bd68c2a1e1d2b21a188c1
-      IntermediateLocation: Fonts/Intermediates/10569950259390381689.kgfont
+      IntermediateLocation: Fonts/Intermediates/7507720298335089313.kgfont
       AssetType: Font
       InitialFileLocation: Fonts\impact.ttf
-      AverageWidth: 25.5703125
-      AverageHeight: 32.3671875
-      BufferLocations:
-        - 0
-        - 720
-        - 1440
-        - 2160
-        - 2880
-        - 3600
-        - 4320
-        - 5040
-        - 5760
-        - 6480
-        - 7200
-        - 7920
-        - 8640
-        - 9360
-        - 10080
-        - 10800
-        - 11520
-        - 12240
-        - 12960
-        - 13680
-        - 14400
-        - 15120
-        - 15840
-        - 16560
-        - 17280
-        - 18000
-        - 18720
-        - 19440
-        - 20160
-        - 20880
-        - 21600
-        - 22320
-        - 23040
-        - 23040
-        - 23496
-        - 23700
-        - 24720
-        - 25800
-        - 27087
-        - 27955
-        - 28063
-        - 28595
-        - 29127
-        - 29270
-        - 29798
-        - 29894
-        - 29992
-        - 30056
-        - 30816
-        - 31776
-        - 32422
-        - 33280
-        - 34200
-        - 35112
-        - 36048
-        - 37008
-        - 37730
-        - 38690
-        - 39650
-        - 39850
-        - 40090
-        - 40642
-        - 41002
-        - 41554
-        - 42490
-        - 44044
-        - 45032
-        - 45944
-        - 46944
-        - 47856
-        - 48578
-        - 49262
-        - 50222
-        - 51134
-        - 51552
-        - 52122
-        - 53110
-        - 53756
-        - 54972
-        - 55846
-        - 56806
-        - 57680
-        - 58712
-        - 59586
-        - 60506
-        - 61342
-        - 62278
-        - 63304
-        - 64824
-        - 65736
-        - 66648
-        - 67370
-        - 67826
-        - 68586
-        - 69042
-        - 69479
-        - 69535
-        - 69613
-        - 70295
-        - 71169
-        - 71851
-        - 72725
-        - 73438
-        - 73970
-        - 74798
-        - 75672
-        - 76090
-        - 76636
-        - 77510
-        - 77928
-        - 79013
-        - 79726
-        - 80439
-        - 81244
-        - 82049
-        - 82545
-        - 83227
-        - 83752
-        - 84465
-        - 85178
-        - 86232
-        - 86914
-        - 87719
-        - 88246
-        - 89011
-        - 89319
-        - 90084
-        - 90337
+      AtlasWidth: 512
+      AtlasHeight: 512
+      LineHeight: 1.21972656
       Characters:
-        - Character: 0
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 1
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 2
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 3
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 4
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 5
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 6
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 7
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 8
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 9
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 10
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 11
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 12
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 13
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 14
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 15
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 16
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 17
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 18
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 19
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 20
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 21
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 22
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 23
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 24
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 25
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 26
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 27
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 28
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 29
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 30
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
-        - Character: 31
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
         - Character: 32
           Size: [0, 0]
-          Bearing: [0, 0]
-          Advance: 512
+          TexCoordinateMin: [0, 0]
+          TexCoordinateMax: [0, 0]
+          QuadMin: [0, 0]
+          QuadMax: [0, 0]
+          Advance: 0.176269531
         - Character: 33
-          Size: [12, 38]
-          Bearing: [1, 38]
-          Advance: 832
+          Size: [12, 35]
+          TexCoordinateMin: [461.5, 355.5]
+          TexCoordinateMax: [472.5, 389.5]
+          QuadMin: [0.00605468731, -0.0297363289]
+          QuadMax: [0.281054676, 0.820263684]
+          Advance: 0.270019531
         - Character: 34
-          Size: [17, 12]
-          Bearing: [0, 38]
-          Advance: 1152
+          Size: [17, 14]
+          TexCoordinateMin: [82.5, 240.5]
+          TexCoordinateMax: [98.5, 253.5]
+          QuadMin: [-0.0151855471, 0.500830054]
+          QuadMax: [0.384814441, 0.825830102]
+          Advance: 0.369628906
         - Character: 35
-          Size: [30, 34]
-          Bearing: [0, 34]
-          Advance: 1920
+          Size: [27, 32]
+          TexCoordinateMin: [340.5, 287.5]
+          TexCoordinateMax: [366.5, 318.5]
+          QuadMin: [-0.0117675783, -0.0349609368]
+          QuadMax: [0.63823241, 0.740039051]
+          Advance: 0.626464844
         - Character: 36
-          Size: [24, 45]
-          Bearing: [1, 41]
-          Advance: 1664
+          Size: [23, 41]
+          TexCoordinateMin: [358.5, 471.5]
+          TexCoordinateMax: [380.5, 511.5]
+          QuadMin: [-0.00156250002, -0.109619141]
+          QuadMax: [0.548437476, 0.890380859]
+          Advance: 0.547363281
         - Character: 37
-          Size: [33, 39]
-          Bearing: [0, 39]
-          Advance: 2112
+          Size: [30, 36]
+          TexCoordinateMin: [449.5, 391.5]
+          TexCoordinateMax: [478.5, 426.5]
+          QuadMin: [-0.0160644539, -0.0422363281]
+          QuadMax: [0.708935559, 0.832763672]
+          Advance: 0.692871094
         - Character: 38
-          Size: [28, 31]
-          Bearing: [0, 31]
-          Advance: 1792
+          Size: [26, 31]
+          TexCoordinateMin: [367.5, 288.5]
+          TexCoordinateMax: [392.5, 318.5]
+          QuadMin: [-0.015625, -0.0463867188]
+          QuadMax: [0.609375, 0.703613281]
+          Advance: 0.576171875
         - Character: 39
-          Size: [9, 12]
-          Bearing: [0, 38]
-          Advance: 576
+          Size: [9, 14]
+          TexCoordinateMin: [99.5, 240.5]
+          TexCoordinateMax: [107.5, 253.5]
+          QuadMin: [-0.00771484384, 0.500830054]
+          QuadMax: [0.19228515, 0.825830102]
+          Advance: 0.185058594
         - Character: 40
-          Size: [14, 38]
-          Bearing: [1, 38]
-          Advance: 960
+          Size: [14, 35]
+          TexCoordinateMin: [473.5, 355.5]
+          TexCoordinateMax: [486.5, 389.5]
+          QuadMin: [0.00571289053, -0.0297363289]
+          QuadMax: [0.330712885, 0.820263684]
+          Advance: 0.313476562
         - Character: 41
-          Size: [14, 38]
-          Bearing: [0, 38]
-          Advance: 960
+          Size: [14, 35]
+          TexCoordinateMin: [0.5, 319.5]
+          TexCoordinateMax: [13.5, 353.5]
+          QuadMin: [-0.017724609, -0.0297363289]
+          QuadMax: [0.307275385, 0.820263684]
+          Advance: 0.313476562
         - Character: 42
-          Size: [13, 11]
-          Bearing: [0, 38]
-          Advance: 832
+          Size: [14, 13]
+          TexCoordinateMin: [117.5, 241.5]
+          TexCoordinateMax: [130.5, 253.5]
+          QuadMin: [-0.0221191403, 0.519433618]
+          QuadMax: [0.302880853, 0.81943357]
+          Advance: 0.280761719
         - Character: 43
-          Size: [24, 22]
-          Bearing: [1, 30]
-          Advance: 1664
+          Size: [22, 22]
+          TexCoordinateMin: [389.5, 262.5]
+          TexCoordinateMax: [410.5, 283.5]
+          QuadMin: [0.00410156231, 0.132519528]
+          QuadMax: [0.529101551, 0.657519519]
+          Advance: 0.533203125
         - Character: 44
-          Size: [8, 12]
-          Bearing: [0, 7]
-          Advance: 512
+          Size: [9, 14]
+          TexCoordinateMin: [108.5, 240.5]
+          TexCoordinateMax: [116.5, 253.5]
+          QuadMin: [-0.0162597653, -0.135644525]
+          QuadMax: [0.183740228, 0.189355463]
+          Advance: 0.16796875
+        - Character: 45
+          Size: [14, 9]
+          TexCoordinateMin: [187.5, 245.5]
+          TexCoordinateMax: [200.5, 253.5]
+          QuadMin: [-0.0152832028, 0.223974615]
+          QuadMax: [0.309716791, 0.423974603]
+          Advance: 0.294433594
+        - Character: 46
+          Size: [9, 10]
+          TexCoordinateMin: [164.5, 244.5]
+          TexCoordinateMax: [172.5, 253.5]
+          QuadMin: [-0.007958984, -0.0319335945]
+          QuadMax: [0.19204101, 0.193066403]
+          Advance: 0.184570312
+        - Character: 47
+          Size: [19, 36]
+          TexCoordinateMin: [479.5, 391.5]
+          TexCoordinateMax: [497.5, 426.5]
+          QuadMin: [-0.0272460934, -0.0422363281]
+          QuadMax: [0.4227539, 0.832763672]
+          Advance: 0.395507812
+        - Character: 48
+          Size: [22, 36]
+          TexCoordinateMin: [0.5, 354.5]
+          TexCoordinateMax: [21.5, 389.5]
+          QuadMin: [0.00532226544, -0.0422363281]
+          QuadMax: [0.530322254, 0.832763672]
+          Advance: 0.536132812
+        - Character: 49
+          Size: [17, 35]
+          TexCoordinateMin: [14.5, 319.5]
+          TexCoordinateMax: [30.5, 353.5]
+          QuadMin: [-0.0273925774, -0.0297363289]
+          QuadMax: [0.37260741, 0.820263684]
+          Advance: 0.380859375
+        - Character: 50
+          Size: [22, 36]
+          TexCoordinateMin: [22.5, 354.5]
+          TexCoordinateMax: [43.5, 389.5]
+          QuadMin: [-0.0103027346, -0.0346679688]
+          QuadMax: [0.514697254, 0.840332031]
+          Advance: 0.501953125
+        - Character: 51
+          Size: [22, 36]
+          TexCoordinateMin: [58.5, 354.5]
+          TexCoordinateMax: [79.5, 389.5]
+          QuadMin: [-0.000537109387, -0.0422363281]
+          QuadMax: [0.524462879, 0.832763672]
+          Advance: 0.530273438
+        - Character: 52
+          Size: [23, 35]
+          TexCoordinateMin: [63.5, 319.5]
+          TexCoordinateMax: [85.5, 353.5]
+          QuadMin: [-0.025244141, -0.0297363289]
+          QuadMax: [0.524755836, 0.820263684]
+          Advance: 0.499511719
+        - Character: 53
+          Size: [22, 36]
+          TexCoordinateMin: [80.5, 354.5]
+          TexCoordinateMax: [101.5, 389.5]
+          QuadMin: [0.00581054669, -0.0498046875]
+          QuadMax: [0.530810535, 0.825195312]
+          Advance: 0.536621094
+        - Character: 54
+          Size: [22, 36]
+          TexCoordinateMin: [102.5, 354.5]
+          TexCoordinateMax: [123.5, 389.5]
+          QuadMin: [0.00947265606, -0.0419921875]
+          QuadMax: [0.534472644, 0.833007812]
+          Advance: 0.541503906
+        - Character: 55
+          Size: [19, 35]
+          TexCoordinateMin: [86.5, 319.5]
+          TexCoordinateMax: [104.5, 353.5]
+          QuadMin: [-0.0306640621, -0.0297363289]
+          QuadMax: [0.419335932, 0.820263684]
+          Advance: 0.391601562
+        - Character: 56
+          Size: [22, 36]
+          TexCoordinateMin: [124.5, 354.5]
+          TexCoordinateMax: [145.5, 389.5]
+          QuadMin: [0.00458984356, -0.0422363281]
+          QuadMax: [0.529589832, 0.832763672]
+          Advance: 0.534667969
+        - Character: 57
+          Size: [22, 36]
+          TexCoordinateMin: [146.5, 354.5]
+          TexCoordinateMax: [167.5, 389.5]
+          QuadMin: [0.00947265606, -0.0424804688]
+          QuadMax: [0.534472644, 0.832519531]
+          Advance: 0.541503906
+        - Character: 58
+          Size: [9, 24]
+          TexCoordinateMin: [314.5, 260.5]
+          TexCoordinateMax: [322.5, 283.5]
+          QuadMin: [0.009619141, -0.0301757809]
+          QuadMax: [0.209619135, 0.544824243]
+          Advance: 0.202148438
+        - Character: 59
+          Size: [9, 28]
+          TexCoordinateMin: [247.5, 256.5]
+          TexCoordinateMax: [255.5, 283.5]
+          QuadMin: [0.009619141, -0.130712897]
+          QuadMax: [0.209619135, 0.544287086]
+          Advance: 0.202148438
+        - Character: 60
+          Size: [22, 23]
+          TexCoordinateMin: [345.5, 261.5]
+          TexCoordinateMax: [366.5, 283.5]
+          QuadMin: [0.00410156231, 0.128808588]
+          QuadMax: [0.529101551, 0.67880857]
+          Advance: 0.533203125
+        - Character: 61
+          Size: [22, 16]
+          TexCoordinateMin: [44.5, 238.5]
+          TexCoordinateMax: [65.5, 253.5]
+          QuadMin: [0.00410156231, 0.207519531]
+          QuadMax: [0.529101551, 0.582519531]
+          Advance: 0.533203125
+        - Character: 62
+          Size: [22, 23]
+          TexCoordinateMin: [323.5, 261.5]
+          TexCoordinateMax: [344.5, 283.5]
+          QuadMin: [0.00410156231, 0.128808588]
+          QuadMax: [0.529101551, 0.67880857]
+          Advance: 0.533203125
+        - Character: 63
+          Size: [22, 36]
+          TexCoordinateMin: [168.5, 354.5]
+          TexCoordinateMax: [189.5, 389.5]
+          QuadMin: [0.0114257811, -0.0339355469]
+          QuadMax: [0.536425769, 0.841064453]
+          Advance: 0.524902344
+        - Character: 64
+          Size: [33, 37]
+          TexCoordinateMin: [351.5, 431.5]
+          TexCoordinateMax: [383.5, 467.5]
+          QuadMin: [-0.0120605472, -0.0647460967]
+          QuadMax: [0.787939429, 0.835253894]
+          Advance: 0.774902344
+        - Character: 65
+          Size: [24, 35]
+          TexCoordinateMin: [105.5, 319.5]
+          TexCoordinateMax: [128.5, 353.5]
+          QuadMin: [-0.0335937515, -0.0297363289]
+          QuadMax: [0.541406274, 0.820263684]
+          Advance: 0.5078125
+        - Character: 66
+          Size: [23, 35]
+          TexCoordinateMin: [129.5, 319.5]
+          TexCoordinateMax: [151.5, 353.5]
+          QuadMin: [0.00527343759, -0.0297363289]
+          QuadMax: [0.555273414, 0.820263684]
+          Advance: 0.552246094
+        - Character: 67
+          Size: [23, 36]
+          TexCoordinateMin: [190.5, 354.5]
+          TexCoordinateMax: [212.5, 389.5]
+          QuadMin: [0.00307617197, -0.0422363281]
+          QuadMax: [0.553076148, 0.832763672]
+          Advance: 0.553710938
+        - Character: 68
+          Size: [23, 35]
+          TexCoordinateMin: [152.5, 319.5]
+          TexCoordinateMax: [174.5, 353.5]
+          QuadMin: [0.00405273447, -0.0297363289]
+          QuadMax: [0.554052711, 0.820263684]
+          Advance: 0.552734375
+        - Character: 69
+          Size: [18, 35]
+          TexCoordinateMin: [175.5, 319.5]
+          TexCoordinateMax: [192.5, 353.5]
+          QuadMin: [0.00673828134, -0.0297363289]
+          QuadMax: [0.431738287, 0.820263684]
+          Advance: 0.415527344
+        - Character: 70
+          Size: [17, 35]
+          TexCoordinateMin: [193.5, 319.5]
+          TexCoordinateMax: [209.5, 353.5]
+          QuadMin: [0.0150878904, -0.0297363289]
+          QuadMax: [0.415087879, 0.820263684]
+          Advance: 0.397949219
+        - Character: 71
+          Size: [23, 36]
+          TexCoordinateMin: [213.5, 354.5]
+          TexCoordinateMax: [235.5, 389.5]
+          QuadMin: [-0.00107421877, -0.0422363281]
+          QuadMax: [0.548925757, 0.832763672]
+          Advance: 0.551269531
+        - Character: 72
+          Size: [22, 35]
+          TexCoordinateMin: [210.5, 319.5]
+          TexCoordinateMax: [231.5, 353.5]
+          QuadMin: [0.0148437498, -0.0297363289]
+          QuadMax: [0.539843738, 0.820263684]
+          Advance: 0.555175781
+        - Character: 73
+          Size: [12, 35]
+          TexCoordinateMin: [499.5, 355.5]
+          TexCoordinateMax: [510.5, 389.5]
+          QuadMin: [0.00629882794, -0.0297363289]
+          QuadMax: [0.281298816, 0.820263684]
+          Advance: 0.288085938
+        - Character: 74
+          Size: [15, 35]
+          TexCoordinateMin: [232.5, 319.5]
+          TexCoordinateMax: [246.5, 353.5]
+          QuadMin: [-0.0243652351, -0.0297363289]
+          QuadMax: [0.325634778, 0.820263684]
+          Advance: 0.331054688
+        - Character: 75
+          Size: [24, 35]
+          TexCoordinateMin: [247.5, 319.5]
+          TexCoordinateMax: [270.5, 353.5]
+          QuadMin: [0.00400390616, -0.0297363289]
+          QuadMax: [0.57900393, 0.820263684]
+          Advance: 0.536621094
+        - Character: 76
+          Size: [17, 35]
+          TexCoordinateMin: [271.5, 319.5]
+          TexCoordinateMax: [287.5, 353.5]
+          QuadMin: [0.00629882794, -0.0297363289]
+          QuadMax: [0.406298816, 0.820263684]
+          Advance: 0.380371094
+        - Character: 77
+          Size: [29, 35]
+          TexCoordinateMin: [288.5, 319.5]
+          TexCoordinateMax: [316.5, 353.5]
+          QuadMin: [0.00815429725, -0.0297363289]
+          QuadMax: [0.708154321, 0.820263684]
+          Advance: 0.716796875
+        - Character: 78
+          Size: [22, 35]
+          TexCoordinateMin: [317.5, 319.5]
+          TexCoordinateMax: [338.5, 353.5]
+          QuadMin: [0.00800781231, -0.0297363289]
+          QuadMax: [0.533007801, 0.820263684]
+          Advance: 0.541503906
+        - Character: 79
+          Size: [23, 36]
+          TexCoordinateMin: [236.5, 354.5]
+          TexCoordinateMax: [258.5, 389.5]
+          QuadMin: [-0.00205078116, -0.0422363281]
+          QuadMax: [0.547949195, 0.832763672]
+          Advance: 0.546386719
+        - Character: 80
+          Size: [21, 35]
+          TexCoordinateMin: [339.5, 319.5]
+          TexCoordinateMax: [359.5, 353.5]
+          QuadMin: [0.0124511719, -0.0297363289]
+          QuadMax: [0.512451172, 0.820263684]
+          Advance: 0.501953125
+        - Character: 81
+          Size: [23, 40]
+          TexCoordinateMin: [122.5, 428.5]
+          TexCoordinateMax: [144.5, 467.5]
+          QuadMin: [-0.00180664065, -0.131787106]
+          QuadMax: [0.548193336, 0.843212903]
+          Advance: 0.546386719
+        - Character: 82
+          Size: [22, 35]
+          TexCoordinateMin: [450.5, 319.5]
+          TexCoordinateMax: [471.5, 353.5]
+          QuadMin: [0.00800781231, -0.0297363289]
+          QuadMax: [0.533007801, 0.820263684]
+          Advance: 0.538574219
+        - Character: 83
+          Size: [22, 36]
+          TexCoordinateMin: [259.5, 354.5]
+          TexCoordinateMax: [280.5, 389.5]
+          QuadMin: [-0.00371093745, -0.0422363281]
+          QuadMax: [0.521289051, 0.832763672]
+          Advance: 0.517089844
+        - Character: 84
+          Size: [21, 35]
+          TexCoordinateMin: [487.5, 319.5]
+          TexCoordinateMax: [507.5, 353.5]
+          QuadMin: [-0.01953125, -0.0297363289]
+          QuadMax: [0.48046875, 0.820263684]
+          Advance: 0.4609375
+        - Character: 85
+          Size: [22, 36]
+          TexCoordinateMin: [281.5, 354.5]
+          TexCoordinateMax: [302.5, 389.5]
+          QuadMin: [0.0106933592, -0.0505371094]
+          QuadMax: [0.535693347, 0.824462891]
+          Advance: 0.546875
+        - Character: 86
+          Size: [25, 35]
+          TexCoordinateMin: [487.5, 477.5]
+          TexCoordinateMax: [511.5, 511.5]
+          QuadMin: [-0.0382812507, -0.0297363289]
+          QuadMax: [0.561718762, 0.820263684]
+          Advance: 0.5234375
+        - Character: 87
+          Size: [36, 35]
+          TexCoordinateMin: [45.5, 284.5]
+          TexCoordinateMax: [80.5, 318.5]
+          QuadMin: [-0.0302734375, -0.0297363289]
+          QuadMax: [0.844726562, 0.820263684]
+          Advance: 0.814453125
+        - Character: 88
+          Size: [23, 35]
+          TexCoordinateMin: [81.5, 284.5]
+          TexCoordinateMax: [103.5, 318.5]
+          QuadMin: [-0.0279296879, -0.0297363289]
+          QuadMax: [0.522070289, 0.820263684]
+          Advance: 0.482421875
+        - Character: 89
+          Size: [23, 35]
+          TexCoordinateMin: [104.5, 284.5]
+          TexCoordinateMax: [126.5, 318.5]
+          QuadMin: [-0.0384277329, -0.0297363289]
+          QuadMax: [0.511572242, 0.820263684]
+          Advance: 0.473144531
+        - Character: 90
+          Size: [19, 35]
+          TexCoordinateMin: [127.5, 284.5]
+          TexCoordinateMax: [145.5, 318.5]
+          QuadMin: [-0.0296874996, -0.0297363289]
+          QuadMax: [0.420312494, 0.820263684]
+          Advance: 0.396972656
+        - Character: 91
+          Size: [12, 35]
+          TexCoordinateMin: [146.5, 284.5]
+          TexCoordinateMax: [157.5, 318.5]
+          QuadMin: [0.0150878904, -0.0297363289]
+          QuadMax: [0.290087879, 0.820263684]
+          Advance: 0.282226562
+        - Character: 92
+          Size: [19, 36]
+          TexCoordinateMin: [303.5, 354.5]
+          TexCoordinateMax: [321.5, 389.5]
+          QuadMin: [-0.0272460934, -0.0422363281]
+          QuadMax: [0.4227539, 0.832763672]
+          Advance: 0.395507812
+        - Character: 93
+          Size: [12, 35]
+          TexCoordinateMin: [158.5, 284.5]
+          TexCoordinateMax: [169.5, 318.5]
+          QuadMin: [-0.00834960956, -0.0297363289]
+          QuadMax: [0.266650379, 0.820263684]
+          Advance: 0.282226562
+        - Character: 94
+          Size: [22, 19]
+          TexCoordinateMin: [0.5, 235.5]
+          TexCoordinateMax: [21.5, 253.5]
+          QuadMin: [-0.0210449211, 0.37045899]
+          QuadMax: [0.503955066, 0.820459008]
+          Advance: 0.483398438
+        - Character: 95
+          Size: [26, 5]
+          TexCoordinateMin: [281.5, 249.5]
+          TexCoordinateMax: [306.5, 253.5]
+          QuadMin: [-0.0363769531, -0.150097653]
+          QuadMax: [0.588623047, -0.0500976555]
+          Advance: 0.552246094
+        - Character: 96
+          Size: [14, 9]
+          TexCoordinateMin: [173.5, 245.5]
+          TexCoordinateMax: [186.5, 253.5]
+          QuadMin: [-0.032617189, 0.699072242]
+          QuadMax: [0.292382807, 0.899072289]
+          Advance: 0.333496094
+        - Character: 97
+          Size: [21, 30]
+          TexCoordinateMin: [489.5, 289.5]
+          TexCoordinateMax: [509.5, 318.5]
+          QuadMin: [-0.00122070312, -0.0385253914]
+          QuadMax: [0.498779297, 0.686474621]
+          Advance: 0.50390625
+        - Character: 98
+          Size: [22, 36]
+          TexCoordinateMin: [322.5, 354.5]
+          TexCoordinateMax: [343.5, 389.5]
+          QuadMin: [-4.88281257e-05, -0.0480957031]
+          QuadMax: [0.52495116, 0.826904297]
+          Advance: 0.51953125
+        - Character: 99
+          Size: [21, 30]
+          TexCoordinateMin: [393.5, 289.5]
+          TexCoordinateMax: [413.5, 318.5]
+          QuadMin: [0.000244140625, -0.0385253914]
+          QuadMax: [0.500244141, 0.686474621]
+          Advance: 0.494628906
+        - Character: 100
+          Size: [22, 36]
+          TexCoordinateMin: [344.5, 354.5]
+          TexCoordinateMax: [365.5, 389.5]
+          QuadMin: [-0.00590820331, -0.0480957031]
+          QuadMax: [0.519091785, 0.826904297]
+          Advance: 0.51953125
+        - Character: 101
+          Size: [22, 30]
+          TexCoordinateMin: [414.5, 289.5]
+          TexCoordinateMax: [435.5, 318.5]
+          QuadMin: [-0.00688476581, -0.0385253914]
+          QuadMax: [0.518115222, 0.686474621]
+          Advance: 0.511230469
+        - Character: 102
+          Size: [15, 35]
+          TexCoordinateMin: [472.5, 319.5]
+          TexCoordinateMax: [486.5, 353.5]
+          QuadMin: [-0.0307128914, -0.0297363289]
+          QuadMax: [0.319287121, 0.820263684]
+          Advance: 0.2890625
+        - Character: 103
+          Size: [22, 34]
+          TexCoordinateMin: [214.5, 285.5]
+          TexCoordinateMax: [235.5, 318.5]
+          QuadMin: [-0.00615234394, -0.138574213]
+          QuadMax: [0.518847644, 0.686425805]
+          Advance: 0.518554688
+        - Character: 104
+          Size: [22, 35]
+          TexCoordinateMin: [428.5, 319.5]
+          TexCoordinateMax: [449.5, 353.5]
+          QuadMin: [0.000683593738, -0.0297363289]
+          QuadMax: [0.525683582, 0.820263684]
+          Advance: 0.523925781
+        - Character: 105
+          Size: [12, 35]
+          TexCoordinateMin: [416.5, 319.5]
+          TexCoordinateMax: [427.5, 353.5]
+          QuadMin: [-0.000781250012, -0.0297363289]
+          QuadMax: [0.274218738, 0.820263684]
+          Advance: 0.273925781
+        - Character: 106
+          Size: [13, 39]
+          TexCoordinateMin: [247.5, 429.5]
+          TexCoordinateMax: [259.5, 467.5]
+          QuadMin: [-0.0293945316, -0.125146478]
+          QuadMax: [0.270605475, 0.824853539]
+          Advance: 0.279785156
+        - Character: 107
+          Size: [21, 35]
+          TexCoordinateMin: [372.5, 319.5]
+          TexCoordinateMax: [392.5, 353.5]
+          QuadMin: [0.00952148438, -0.0297363289]
+          QuadMax: [0.509521484, 0.820263684]
+          Advance: 0.478027344
+        - Character: 108
+          Size: [12, 35]
+          TexCoordinateMin: [360.5, 319.5]
+          TexCoordinateMax: [371.5, 353.5]
+          QuadMin: [-0.000781250012, -0.0297363289]
+          QuadMax: [0.274218738, 0.820263684]
+          Advance: 0.273925781
+        - Character: 109
+          Size: [32, 30]
+          TexCoordinateMin: [0.5, 254.5]
+          TexCoordinateMax: [31.5, 283.5]
+          QuadMin: [-0.000781250012, -0.0326660164]
+          QuadMax: [0.774218738, 0.692333996]
+          Advance: 0.770996094
+        - Character: 110
+          Size: [22, 30]
+          TexCoordinateMin: [32.5, 254.5]
+          TexCoordinateMax: [53.5, 283.5]
+          QuadMin: [0.000195312503, -0.0326660164]
+          QuadMax: [0.525195301, 0.692333996]
+          Advance: 0.522949219
+        - Character: 111
+          Size: [22, 30]
+          TexCoordinateMin: [54.5, 254.5]
+          TexCoordinateMax: [75.5, 283.5]
+          QuadMin: [-0.00712890644, -0.0385253914]
+          QuadMax: [0.517871082, 0.686474621]
+          Advance: 0.511230469
+        - Character: 112
+          Size: [22, 34]
+          TexCoordinateMin: [192.5, 285.5]
+          TexCoordinateMax: [213.5, 318.5]
+          QuadMin: [-0.000292968762, -0.128808588]
+          QuadMax: [0.524707019, 0.69619143]
+          Advance: 0.519042969
+        - Character: 113
+          Size: [22, 34]
+          TexCoordinateMin: [170.5, 285.5]
+          TexCoordinateMax: [191.5, 318.5]
+          QuadMin: [-0.00664062519, -0.128808588]
+          QuadMax: [0.518359363, 0.69619143]
+          Advance: 0.518066406
+        - Character: 114
+          Size: [16, 30]
+          TexCoordinateMin: [119.5, 254.5]
+          TexCoordinateMax: [134.5, 283.5]
+          QuadMin: [0.00463867188, -0.0326660164]
+          QuadMax: [0.379638672, 0.692333996]
+          Advance: 0.357910156
+        - Character: 115
+          Size: [21, 30]
+          TexCoordinateMin: [98.5, 254.5]
+          TexCoordinateMax: [118.5, 283.5]
+          QuadMin: [-0.0131835938, -0.0385253914]
+          QuadMax: [0.486816406, 0.686474621]
+          Advance: 0.470703125
+        - Character: 116
+          Size: [16, 33]
+          TexCoordinateMin: [291.5, 286.5]
+          TexCoordinateMax: [306.5, 318.5]
+          QuadMin: [-0.0336914062, -0.0328124985]
+          QuadMax: [0.341308594, 0.767187476]
+          Advance: 0.3046875
+        - Character: 117
+          Size: [22, 30]
+          TexCoordinateMin: [76.5, 254.5]
+          TexCoordinateMax: [97.5, 283.5]
+          QuadMin: [-0.00297851558, -0.0443847664]
+          QuadMax: [0.522021472, 0.680615246]
+          Advance: 0.522460938
+        - Character: 118
+          Size: [21, 29]
+          TexCoordinateMin: [226.5, 255.5]
+          TexCoordinateMax: [246.5, 283.5]
+          QuadMin: [-0.0314941406, -0.0260253903]
+          QuadMax: [0.468505859, 0.673974633]
+          Advance: 0.437011719
+        - Character: 119
+          Size: [31, 29]
+          TexCoordinateMin: [195.5, 255.5]
+          TexCoordinateMax: [225.5, 283.5]
+          QuadMin: [-0.0402832031, -0.0260253903]
+          QuadMax: [0.709716797, 0.673974633]
+          Advance: 0.669433594
+        - Character: 120
+          Size: [21, 29]
+          TexCoordinateMin: [152.5, 255.5]
+          TexCoordinateMax: [172.5, 283.5]
+          QuadMin: [-0.0288085938, -0.0260253903]
+          QuadMax: [0.471191406, 0.673974633]
+          Advance: 0.43359375
+        - Character: 121
+          Size: [22, 33]
+          TexCoordinateMin: [236.5, 286.5]
+          TexCoordinateMax: [257.5, 318.5]
+          QuadMin: [-0.041308593, -0.121435545]
+          QuadMax: [0.483691394, 0.678564429]
+          Advance: 0.448242188
+        - Character: 122
+          Size: [17, 29]
+          TexCoordinateMin: [135.5, 255.5]
+          TexCoordinateMax: [151.5, 283.5]
+          QuadMin: [-0.0259277336, -0.0260253903]
+          QuadMax: [0.374072254, 0.673974633]
+          Advance: 0.351074219
+        - Character: 123
+          Size: [17, 41]
+          TexCoordinateMin: [381.5, 471.5]
+          TexCoordinateMax: [397.5, 511.5]
+          QuadMin: [-0.0154296877, -0.178710938]
+          QuadMax: [0.384570301, 0.821289062]
+          Advance: 0.369628906
+        - Character: 124
+          Size: [8, 40]
+          TexCoordinateMin: [145.5, 428.5]
+          TexCoordinateMax: [152.5, 467.5]
+          QuadMin: [0.0479980484, -0.156933591]
+          QuadMax: [0.222998053, 0.818066418]
+          Advance: 0.270996094
+        - Character: 125
+          Size: [17, 41]
+          TexCoordinateMin: [398.5, 471.5]
+          TexCoordinateMax: [414.5, 511.5]
+          QuadMin: [-0.0154296877, -0.178710938]
+          QuadMax: [0.384570301, 0.821289062]
+          Advance: 0.369628906
+        - Character: 126
+          Size: [22, 12]
+          TexCoordinateMin: [142.5, 242.5]
+          TexCoordinateMax: [163.5, 253.5]
+          QuadMin: [-4.88281257e-05, 0.273876965]
+          QuadMax: [0.52495116, 0.548876941]
+          Advance: 0.524902344
+        - Character: 160
+          Size: [0, 0]
+          TexCoordinateMin: [0, 0]
+          TexCoordinateMax: [0, 0]
+          QuadMin: [0, 0]
+          QuadMax: [0, 0]
+          Advance: 0.176269531
+        - Character: 161
+          Size: [12, 35]
+          TexCoordinateMin: [487.5, 355.5]
+          TexCoordinateMax: [498.5, 389.5]
+          QuadMin: [-0.0115234377, -0.124951169]
+          QuadMax: [0.263476551, 0.72504884]
+          Advance: 0.270019531
+        - Character: 162
+          Size: [22, 37]
+          TexCoordinateMin: [86.5, 390.5]
+          TexCoordinateMax: [107.5, 426.5]
+          QuadMin: [-0.00249023433, -0.0874511749]
+          QuadMax: [0.522509754, 0.812548816]
+          Advance: 0.517089844
+        - Character: 163
+          Size: [23, 36]
+          TexCoordinateMin: [438.5, 354.5]
+          TexCoordinateMax: [460.5, 389.5]
+          QuadMin: [-0.00156250002, -0.0422363281]
+          QuadMax: [0.548437476, 0.832763672]
+          Advance: 0.53515625
+        - Character: 164
+          Size: [24, 24]
+          TexCoordinateMin: [290.5, 260.5]
+          TexCoordinateMax: [313.5, 283.5]
+          QuadMin: [-0.0135742184, 0.0394042954]
+          QuadMax: [0.561425805, 0.614404321]
+          Advance: 0.548339844
+        - Character: 165
+          Size: [23, 35]
+          TexCoordinateMin: [393.5, 319.5]
+          TexCoordinateMax: [415.5, 353.5]
+          QuadMin: [-0.0384277329, -0.0297363289]
+          QuadMax: [0.511572242, 0.820263684]
+          Advance: 0.473144531
+        - Character: 166
+          Size: [8, 40]
+          TexCoordinateMin: [153.5, 428.5]
+          TexCoordinateMax: [160.5, 467.5]
+          QuadMin: [0.0479980484, -0.156933591]
+          QuadMax: [0.222998053, 0.818066418]
+          Advance: 0.270996094
+        - Character: 167
+          Size: [21, 40]
+          TexCoordinateMin: [161.5, 428.5]
+          TexCoordinateMax: [181.5, 467.5]
+          QuadMin: [-0.00805664062, -0.139843747]
+          QuadMax: [0.491943359, 0.835156262]
+          Advance: 0.483886719
+        - Character: 168
+          Size: [17, 9]
+          TexCoordinateMin: [229.5, 245.5]
+          TexCoordinateMax: [245.5, 253.5]
+          QuadMin: [-0.0330078118, 0.696386695]
+          QuadMax: [0.366992176, 0.896386743]
+          Advance: 0.333496094
+        - Character: 169
+          Size: [33, 33]
+          TexCoordinateMin: [307.5, 286.5]
+          TexCoordinateMax: [339.5, 318.5]
+          QuadMin: [-0.00839843787, -0.0259765629]
+          QuadMax: [0.791601539, 0.774023414]
+          Advance: 0.783691406
+        - Character: 170
+          Size: [15, 20]
+          TexCoordinateMin: [448.5, 264.5]
+          TexCoordinateMax: [462.5, 283.5]
+          QuadMin: [-0.0128906248, 0.363330066]
+          QuadMax: [0.337109387, 0.83833009]
+          Advance: 0.324707031
+        - Character: 171
+          Size: [17, 25]
+          TexCoordinateMin: [273.5, 259.5]
+          TexCoordinateMax: [289.5, 283.5]
+          QuadMin: [-0.0144531252, 0.0325195305]
+          QuadMax: [0.385546863, 0.632519543]
+          Advance: 0.37109375
+        - Character: 172
+          Size: [22, 16]
+          TexCoordinateMin: [22.5, 238.5]
+          TexCoordinateMax: [43.5, 253.5]
+          QuadMin: [0.00410156231, 0.207519531]
+          QuadMax: [0.529101551, 0.582519531]
+          Advance: 0.533203125
+        - Character: 173
+          Size: [14, 9]
+          TexCoordinateMin: [201.5, 245.5]
+          TexCoordinateMax: [214.5, 253.5]
+          QuadMin: [-0.0152832028, 0.223974615]
+          QuadMax: [0.309716791, 0.423974603]
+          Advance: 0.294433594
+        - Character: 174
+          Size: [33, 33]
+          TexCoordinateMin: [258.5, 286.5]
+          TexCoordinateMax: [290.5, 318.5]
+          QuadMin: [-0.00839843787, -0.0259765629]
+          QuadMax: [0.791601539, 0.774023414]
+          Advance: 0.783691406
+        - Character: 175
+          Size: [26, 5]
+          TexCoordinateMin: [255.5, 249.5]
+          TexCoordinateMax: [280.5, 253.5]
+          QuadMin: [-0.0363769531, 0.800097644]
+          QuadMax: [0.588623047, 0.900097668]
+          Advance: 0.552246094
+        - Character: 176
+          Size: [16, 16]
+          TexCoordinateMin: [66.5, 238.5]
+          TexCoordinateMax: [81.5, 253.5]
+          QuadMin: [-0.0141601562, 0.458007812]
+          QuadMax: [0.360839844, 0.833007812]
+          Advance: 0.347167969
+        - Character: 177
+          Size: [22, 29]
+          TexCoordinateMin: [173.5, 255.5]
+          TexCoordinateMax: [194.5, 283.5]
+          QuadMin: [0.00410156231, 0.0604003891]
+          QuadMax: [0.529101551, 0.760400414]
+          Advance: 0.533203125
+        - Character: 178
+          Size: [15, 20]
+          TexCoordinateMin: [478.5, 264.5]
+          TexCoordinateMax: [492.5, 283.5]
+          QuadMin: [-0.0163085945, 0.356494129]
+          QuadMax: [0.333691418, 0.831494153]
+          Advance: 0.317871094
+        - Character: 179
+          Size: [15, 21]
+          TexCoordinateMin: [433.5, 263.5]
+          TexCoordinateMax: [447.5, 283.5]
+          QuadMin: [-0.0119140623, 0.33984375]
+          QuadMax: [0.338085949, 0.83984375]
+          Advance: 0.326171875
+        - Character: 180
+          Size: [14, 9]
+          TexCoordinateMin: [215.5, 245.5]
+          TexCoordinateMax: [228.5, 253.5]
+          QuadMin: [0.0411132798, 0.699072242]
+          QuadMax: [0.366113275, 0.899072289]
+          Advance: 0.333496094
+        - Character: 181
+          Size: [20, 37]
+          TexCoordinateMin: [173.5, 390.5]
+          TexCoordinateMax: [192.5, 426.5]
+          QuadMin: [-0.00214843755, -0.225390628]
+          QuadMax: [0.472851574, 0.674609363]
+          Advance: 0.471191406
+        - Character: 182
+          Size: [26, 39]
+          TexCoordinateMin: [260.5, 429.5]
+          TexCoordinateMax: [285.5, 467.5]
+          QuadMin: [-0.0187988281, -0.1336914]
+          QuadMax: [0.606201172, 0.816308618]
+          Advance: 0.576171875
+        - Character: 183
+          Size: [9, 9]
+          TexCoordinateMin: [246.5, 245.5]
+          TexCoordinateMax: [254.5, 253.5]
+          QuadMin: [0.0667480454, 0.240576178]
+          QuadMax: [0.266748041, 0.440576166]
+          Advance: 0.333496094
+        - Character: 184
+          Size: [11, 12]
+          TexCoordinateMin: [131.5, 242.5]
+          TexCoordinateMax: [141.5, 253.5]
+          QuadMin: [0.0300292969, -0.240039065]
+          QuadMax: [0.280029297, 0.0349609368]
+          Advance: 0.333496094
+        - Character: 185
+          Size: [12, 20]
+          TexCoordinateMin: [493.5, 264.5]
+          TexCoordinateMax: [504.5, 283.5]
+          QuadMin: [-0.0271484368, 0.35307616]
+          QuadMax: [0.247851565, 0.828076184]
+          Advance: 0.244628906
+        - Character: 186
+          Size: [15, 20]
+          TexCoordinateMin: [463.5, 264.5]
+          TexCoordinateMax: [477.5, 283.5]
+          QuadMin: [-0.0104492186, 0.363330066]
+          QuadMax: [0.339550793, 0.83833009]
+          Advance: 0.329589844
+        - Character: 187
+          Size: [17, 25]
+          TexCoordinateMin: [256.5, 259.5]
+          TexCoordinateMax: [272.5, 283.5]
+          QuadMin: [-0.0144531252, 0.0325195305]
+          QuadMax: [0.385546863, 0.632519543]
+          Advance: 0.37109375
+        - Character: 188
+          Size: [28, 36]
+          TexCoordinateMin: [421.5, 391.5]
+          TexCoordinateMax: [448.5, 426.5]
+          QuadMin: [-0.0286621097, -0.0422363281]
+          QuadMax: [0.646337867, 0.832763672]
+          Advance: 0.623535156
+        - Character: 189
+          Size: [28, 36]
+          TexCoordinateMin: [393.5, 391.5]
+          TexCoordinateMax: [420.5, 426.5]
+          QuadMin: [-0.0210937504, -0.0422363281]
+          QuadMax: [0.653906226, 0.832763672]
+          Advance: 0.645019531
+        - Character: 190
+          Size: [30, 36]
+          TexCoordinateMin: [363.5, 391.5]
+          TexCoordinateMax: [392.5, 426.5]
+          QuadMin: [-0.0141113279, -0.0422363281]
+          QuadMax: [0.710888684, 0.832763672]
+          Advance: 0.69140625
+        - Character: 191
+          Size: [22, 36]
+          TexCoordinateMin: [341.5, 391.5]
+          TexCoordinateMax: [362.5, 426.5]
+          QuadMin: [-0.0120117189, -0.145751953]
+          QuadMax: [0.512988269, 0.729248047]
+          Advance: 0.524902344
+        - Character: 192
+          Size: [24, 41]
+          TexCoordinateMin: [415.5, 471.5]
+          TexCoordinateMax: [438.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0261230469]
+          QuadMax: [0.541406274, 0.973876953]
+          Advance: 0.5078125
+        - Character: 193
+          Size: [24, 41]
+          TexCoordinateMin: [439.5, 471.5]
+          TexCoordinateMax: [462.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0261230469]
+          QuadMax: [0.541406274, 0.973876953]
+          Advance: 0.5078125
+        - Character: 194
+          Size: [24, 42]
+          TexCoordinateMin: [70.5, 470.5]
+          TexCoordinateMax: [93.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0359374993]
+          QuadMax: [0.541406274, 0.989062488]
+          Advance: 0.5078125
+        - Character: 195
+          Size: [24, 42]
+          TexCoordinateMin: [94.5, 470.5]
+          TexCoordinateMax: [117.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0303222649]
+          QuadMax: [0.541406274, 0.994677722]
+          Advance: 0.5078125
+        - Character: 196
+          Size: [24, 41]
+          TexCoordinateMin: [463.5, 471.5]
+          TexCoordinateMax: [486.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0288085938]
+          QuadMax: [0.541406274, 0.971191406]
+          Advance: 0.5078125
+        - Character: 197
+          Size: [24, 44]
+          TexCoordinateMin: [0.5, 468.5]
+          TexCoordinateMax: [23.5, 511.5]
+          QuadMin: [-0.0335937515, -0.0331054702]
+          QuadMax: [0.541406274, 1.04189456]
+          Advance: 0.5078125
+        - Character: 198
+          Size: [32, 35]
+          TexCoordinateMin: [31.5, 319.5]
+          TexCoordinateMax: [62.5, 353.5]
+          QuadMin: [-0.0427734368, -0.0297363289]
+          QuadMax: [0.732226551, 0.820263684]
+          Advance: 0.713378906
+        - Character: 199
+          Size: [23, 43]
+          TexCoordinateMin: [24.5, 469.5]
+          TexCoordinateMax: [46.5, 511.5]
+          QuadMin: [0.00307617197, -0.212011725]
+          QuadMax: [0.553076148, 0.837988257]
+          Advance: 0.553710938
+        - Character: 200
+          Size: [18, 41]
+          TexCoordinateMin: [0.5, 427.5]
+          TexCoordinateMax: [17.5, 467.5]
+          QuadMin: [0.00673828134, -0.0261230469]
+          QuadMax: [0.431738287, 0.973876953]
+          Advance: 0.415527344
+        - Character: 201
+          Size: [18, 41]
+          TexCoordinateMin: [18.5, 427.5]
+          TexCoordinateMax: [35.5, 467.5]
+          QuadMin: [0.00673828134, -0.0261230469]
+          QuadMax: [0.431738287, 0.973876953]
+          Advance: 0.415527344
+        - Character: 202
+          Size: [19, 42]
+          TexCoordinateMin: [118.5, 470.5]
+          TexCoordinateMax: [136.5, 511.5]
+          QuadMin: [-0.0174804684, -0.0359374993]
+          QuadMax: [0.432519525, 0.989062488]
+          Advance: 0.415527344
+        - Character: 203
+          Size: [18, 41]
+          TexCoordinateMin: [36.5, 427.5]
+          TexCoordinateMax: [53.5, 467.5]
+          QuadMin: [0.00478515634, -0.0288085938]
+          QuadMax: [0.429785162, 0.971191406]
+          Advance: 0.415527344
+        - Character: 204
+          Size: [14, 41]
+          TexCoordinateMin: [54.5, 427.5]
+          TexCoordinateMax: [67.5, 467.5]
+          QuadMin: [-0.0506835952, -0.0261230469]
+          QuadMax: [0.2743164, 0.973876953]
+          Advance: 0.288085938
+        - Character: 205
+          Size: [14, 41]
+          TexCoordinateMin: [68.5, 427.5]
+          TexCoordinateMax: [81.5, 467.5]
+          QuadMin: [0.0132812504, -0.0261230469]
+          QuadMax: [0.338281244, 0.973876953]
+          Advance: 0.288085938
+        - Character: 206
+          Size: [19, 42]
+          TexCoordinateMin: [137.5, 470.5]
+          TexCoordinateMax: [155.5, 511.5]
+          QuadMin: [-0.0809570327, -0.0359374993]
+          QuadMax: [0.369042963, 0.989062488]
+          Advance: 0.288085938
+        - Character: 207
+          Size: [17, 41]
+          TexCoordinateMin: [82.5, 427.5]
+          TexCoordinateMax: [98.5, 467.5]
+          QuadMin: [-0.0559570305, -0.0288085938]
+          QuadMax: [0.344042957, 0.971191406]
+          Advance: 0.288085938
+        - Character: 208
+          Size: [24, 35]
+          TexCoordinateMin: [21.5, 284.5]
+          TexCoordinateMax: [44.5, 318.5]
+          QuadMin: [-0.0226074215, -0.0297363289]
+          QuadMax: [0.552392602, 0.820263684]
+          Advance: 0.55859375
+        - Character: 209
+          Size: [22, 42]
+          TexCoordinateMin: [156.5, 470.5]
+          TexCoordinateMax: [177.5, 511.5]
+          QuadMin: [0.00800781231, -0.0303222649]
+          QuadMax: [0.533007801, 0.994677722]
+          Advance: 0.541503906
+        - Character: 210
+          Size: [23, 42]
+          TexCoordinateMin: [178.5, 470.5]
+          TexCoordinateMax: [200.5, 511.5]
+          QuadMin: [-0.00205078116, -0.0469238274]
+          QuadMax: [0.547949195, 0.97807616]
+          Advance: 0.546386719
+        - Character: 211
+          Size: [23, 42]
+          TexCoordinateMin: [201.5, 470.5]
+          TexCoordinateMax: [223.5, 511.5]
+          QuadMin: [-0.00205078116, -0.0469238274]
+          QuadMax: [0.547949195, 0.97807616]
+          Advance: 0.546386719
+        - Character: 212
+          Size: [23, 42]
+          TexCoordinateMin: [224.5, 470.5]
+          TexCoordinateMax: [246.5, 511.5]
+          QuadMin: [-0.00205078116, -0.0442382805]
+          QuadMax: [0.547949195, 0.980761707]
+          Advance: 0.546386719
+        - Character: 213
+          Size: [23, 43]
+          TexCoordinateMin: [47.5, 469.5]
+          TexCoordinateMax: [69.5, 511.5]
+          QuadMin: [-0.00205078116, -0.0511230454]
+          QuadMax: [0.547949195, 0.998876929]
+          Advance: 0.546386719
+        - Character: 214
+          Size: [23, 42]
+          TexCoordinateMin: [247.5, 470.5]
+          TexCoordinateMax: [269.5, 511.5]
+          QuadMin: [-0.00205078116, -0.0496093743]
+          QuadMax: [0.547949195, 0.975390613]
+          Advance: 0.546386719
+        - Character: 215
+          Size: [22, 22]
+          TexCoordinateMin: [411.5, 262.5]
+          TexCoordinateMax: [432.5, 283.5]
+          QuadMin: [0.00410156231, 0.139599606]
+          QuadMax: [0.529101551, 0.664599597]
+          Advance: 0.533203125
+        - Character: 216
+          Size: [27, 36]
+          TexCoordinateMin: [411.5, 354.5]
+          TexCoordinateMax: [437.5, 389.5]
+          QuadMin: [-0.0520507805, -0.0422363281]
+          QuadMax: [0.597949207, 0.832763672]
+          Advance: 0.546386719
+        - Character: 217
+          Size: [22, 42]
+          TexCoordinateMin: [270.5, 470.5]
+          TexCoordinateMax: [291.5, 511.5]
+          QuadMin: [0.0106933592, -0.0469238274]
+          QuadMax: [0.535693347, 0.97807616]
+          Advance: 0.546875
+        - Character: 218
+          Size: [22, 42]
+          TexCoordinateMin: [292.5, 470.5]
+          TexCoordinateMax: [313.5, 511.5]
+          QuadMin: [0.0106933592, -0.0469238274]
+          QuadMax: [0.535693347, 0.97807616]
+          Advance: 0.546875
+        - Character: 219
+          Size: [22, 42]
+          TexCoordinateMin: [314.5, 470.5]
+          TexCoordinateMax: [335.5, 511.5]
+          QuadMin: [0.0106933592, -0.0442382805]
+          QuadMax: [0.535693347, 0.980761707]
+          Advance: 0.546875
+        - Character: 220
+          Size: [22, 42]
+          TexCoordinateMin: [336.5, 470.5]
+          TexCoordinateMax: [357.5, 511.5]
+          QuadMin: [0.0106933592, -0.0496093743]
+          QuadMax: [0.535693347, 0.975390613]
+          Advance: 0.546875
+        - Character: 221
+          Size: [23, 41]
+          TexCoordinateMin: [99.5, 427.5]
+          TexCoordinateMax: [121.5, 467.5]
+          QuadMin: [-0.0384277329, -0.0261230469]
+          QuadMax: [0.511572242, 0.973876953]
+          Advance: 0.473144531
+        - Character: 222
+          Size: [21, 35]
+          TexCoordinateMin: [0.5, 284.5]
+          TexCoordinateMax: [20.5, 318.5]
+          QuadMin: [0.0124511719, -0.0297363289]
+          QuadMax: [0.512451172, 0.820263684]
+          Advance: 0.501953125
+        - Character: 223
+          Size: [23, 36]
+          TexCoordinateMin: [388.5, 354.5]
+          TexCoordinateMax: [410.5, 389.5]
+          QuadMin: [0.00136718748, -0.0339355469]
+          QuadMax: [0.551367164, 0.841064453]
+          Advance: 0.550292969
+        - Character: 224
+          Size: [21, 37]
+          TexCoordinateMin: [65.5, 390.5]
+          TexCoordinateMax: [85.5, 426.5]
+          QuadMin: [-0.00122070312, -0.0439941399]
+          QuadMax: [0.498779297, 0.856005847]
+          Advance: 0.50390625
+        - Character: 225
+          Size: [21, 37]
+          TexCoordinateMin: [450.5, 431.5]
+          TexCoordinateMax: [470.5, 467.5]
+          QuadMin: [-0.00122070312, -0.0439941399]
+          QuadMax: [0.498779297, 0.856005847]
+          Advance: 0.50390625
+        - Character: 226
+          Size: [21, 37]
+          TexCoordinateMin: [215.5, 390.5]
+          TexCoordinateMax: [235.5, 426.5]
+          QuadMin: [-0.00122070312, -0.041308593]
+          QuadMax: [0.498779297, 0.858691394]
+          Advance: 0.50390625
+        - Character: 227
+          Size: [21, 38]
+          TexCoordinateMin: [308.5, 430.5]
+          TexCoordinateMax: [328.5, 467.5]
+          QuadMin: [-0.00122070312, -0.0481933579]
+          QuadMax: [0.498779297, 0.876806617]
+          Advance: 0.50390625
+        - Character: 228
+          Size: [21, 37]
+          TexCoordinateMin: [44.5, 390.5]
+          TexCoordinateMax: [64.5, 426.5]
+          QuadMin: [-0.00122070312, -0.0466796868]
+          QuadMax: [0.498779297, 0.853320301]
+          Advance: 0.50390625
+        - Character: 229
+          Size: [21, 40]
+          TexCoordinateMin: [204.5, 428.5]
+          TexCoordinateMax: [224.5, 467.5]
+          QuadMin: [-0.00122070312, -0.0448730476]
+          QuadMax: [0.498779297, 0.930126965]
+          Advance: 0.50390625
+        - Character: 230
+          Size: [31, 30]
+          TexCoordinateMin: [458.5, 289.5]
+          TexCoordinateMax: [488.5, 318.5]
+          QuadMin: [0, -0.0385253914]
+          QuadMax: [0.75, 0.686474621]
+          Advance: 0.753417969
+        - Character: 231
+          Size: [21, 37]
+          TexCoordinateMin: [130.5, 390.5]
+          TexCoordinateMax: [150.5, 426.5]
+          QuadMin: [0.000244140625, -0.21074219]
+          QuadMax: [0.500244141, 0.689257801]
+          Advance: 0.494628906
+        - Character: 232
+          Size: [22, 37]
+          TexCoordinateMin: [151.5, 390.5]
+          TexCoordinateMax: [172.5, 426.5]
+          QuadMin: [-0.00688476581, -0.0439941399]
+          QuadMax: [0.518115222, 0.856005847]
+          Advance: 0.511230469
+        - Character: 233
+          Size: [22, 37]
+          TexCoordinateMin: [471.5, 431.5]
+          TexCoordinateMax: [492.5, 467.5]
+          QuadMin: [-0.00688476581, -0.0439941399]
+          QuadMax: [0.518115222, 0.856005847]
+          Advance: 0.511230469
+        - Character: 234
+          Size: [22, 37]
+          TexCoordinateMin: [236.5, 390.5]
+          TexCoordinateMax: [257.5, 426.5]
+          QuadMin: [-0.00688476581, -0.041308593]
+          QuadMax: [0.518115222, 0.858691394]
+          Advance: 0.511230469
+        - Character: 235
+          Size: [22, 37]
+          TexCoordinateMin: [302.5, 390.5]
+          TexCoordinateMax: [323.5, 426.5]
+          QuadMin: [-0.00688476581, -0.0466796868]
+          QuadMax: [0.518115222, 0.853320301]
+          Advance: 0.511230469
+        - Character: 236
+          Size: [14, 36]
+          TexCoordinateMin: [44.5, 354.5]
+          TexCoordinateMax: [57.5, 389.5]
+          QuadMin: [-0.0575195327, -0.0256347656]
+          QuadMax: [0.267480463, 0.849365234]
+          Advance: 0.273925781
+        - Character: 237
+          Size: [14, 36]
+          TexCoordinateMin: [498.5, 391.5]
+          TexCoordinateMax: [511.5, 426.5]
+          QuadMin: [0.00766601553, -0.0256347656]
+          QuadMax: [0.33266601, 0.849365234]
+          Advance: 0.273925781
+        - Character: 238
+          Size: [19, 37]
+          TexCoordinateMin: [493.5, 431.5]
+          TexCoordinateMax: [511.5, 467.5]
+          QuadMin: [-0.0863281265, -0.035449218]
+          QuadMax: [0.363671869, 0.864550769]
+          Advance: 0.273925781
+        - Character: 239
+          Size: [17, 36]
+          TexCoordinateMin: [324.5, 391.5]
+          TexCoordinateMax: [340.5, 426.5]
+          QuadMin: [-0.0613281243, -0.0283203125]
+          QuadMax: [0.338671863, 0.846679688]
+          Advance: 0.273925781
+        - Character: 240
+          Size: [22, 36]
+          TexCoordinateMin: [366.5, 354.5]
+          TexCoordinateMax: [387.5, 389.5]
+          QuadMin: [-0.00688476581, -0.0480957031]
+          QuadMax: [0.518115222, 0.826904297]
+          Advance: 0.511230469
+        - Character: 241
+          Size: [22, 37]
+          TexCoordinateMin: [384.5, 431.5]
+          TexCoordinateMax: [405.5, 467.5]
+          QuadMin: [0.000195312503, -0.0298339836]
+          QuadMax: [0.525195301, 0.870166004]
+          Advance: 0.522949219
+        - Character: 242
+          Size: [22, 37]
+          TexCoordinateMin: [0.5, 390.5]
+          TexCoordinateMax: [21.5, 426.5]
+          QuadMin: [-0.00712890644, -0.0439941399]
+          QuadMax: [0.517871082, 0.856005847]
+          Advance: 0.511230469
+        - Character: 243
+          Size: [22, 37]
+          TexCoordinateMin: [193.5, 390.5]
+          TexCoordinateMax: [214.5, 426.5]
+          QuadMin: [-0.00712890644, -0.0439941399]
+          QuadMax: [0.517871082, 0.856005847]
+          Advance: 0.511230469
+        - Character: 244
+          Size: [22, 37]
+          TexCoordinateMin: [406.5, 431.5]
+          TexCoordinateMax: [427.5, 467.5]
+          QuadMin: [-0.00712890644, -0.041308593]
+          QuadMax: [0.517871082, 0.858691394]
+          Advance: 0.511230469
+        - Character: 245
+          Size: [22, 38]
+          TexCoordinateMin: [329.5, 430.5]
+          TexCoordinateMax: [350.5, 467.5]
+          QuadMin: [-0.00712890644, -0.0481933579]
+          QuadMax: [0.517871082, 0.876806617]
+          Advance: 0.511230469
+        - Character: 246
+          Size: [22, 37]
+          TexCoordinateMin: [428.5, 431.5]
+          TexCoordinateMax: [449.5, 467.5]
+          QuadMin: [-0.00712890644, -0.0466796868]
+          QuadMax: [0.517871082, 0.853320301]
+          Advance: 0.511230469
+        - Character: 247
+          Size: [22, 22]
+          TexCoordinateMin: [367.5, 262.5]
+          TexCoordinateMax: [388.5, 283.5]
+          QuadMin: [0.00410156231, 0.133740231]
+          QuadMax: [0.529101551, 0.658740222]
+          Advance: 0.533203125
+        - Character: 248
+          Size: [22, 30]
+          TexCoordinateMin: [436.5, 289.5]
+          TexCoordinateMax: [457.5, 318.5]
+          QuadMin: [-0.00712890644, -0.0385253914]
+          QuadMax: [0.517871082, 0.686474621]
+          Advance: 0.511230469
+        - Character: 249
+          Size: [22, 37]
+          TexCoordinateMin: [22.5, 390.5]
+          TexCoordinateMax: [43.5, 426.5]
+          QuadMin: [-0.00297851558, -0.0439941399]
+          QuadMax: [0.522021472, 0.856005847]
+          Advance: 0.522460938
+        - Character: 250
+          Size: [22, 37]
+          TexCoordinateMin: [108.5, 390.5]
+          TexCoordinateMax: [129.5, 426.5]
+          QuadMin: [-0.00297851558, -0.0439941399]
+          QuadMax: [0.522021472, 0.856005847]
+          Advance: 0.522460938
+        - Character: 251
+          Size: [22, 37]
+          TexCoordinateMin: [258.5, 390.5]
+          TexCoordinateMax: [279.5, 426.5]
+          QuadMin: [-0.00297851558, -0.041308593]
+          QuadMax: [0.522021472, 0.858691394]
+          Advance: 0.522460938
+        - Character: 252
+          Size: [22, 37]
+          TexCoordinateMin: [280.5, 390.5]
+          TexCoordinateMax: [301.5, 426.5]
+          QuadMin: [-0.00297851558, -0.0466796868]
+          QuadMax: [0.522021472, 0.853320301]
+          Advance: 0.522460938
+        - Character: 253
+          Size: [22, 40]
+          TexCoordinateMin: [225.5, 428.5]
+          TexCoordinateMax: [246.5, 467.5]
+          QuadMin: [-0.041308593, -0.121044919]
+          QuadMax: [0.483691394, 0.85395509]
+          Advance: 0.448242188
+        - Character: 254
+          Size: [22, 39]
+          TexCoordinateMin: [286.5, 429.5]
+          TexCoordinateMax: [307.5, 467.5]
+          QuadMin: [-0.000292968762, -0.1258789]
+          QuadMax: [0.524707019, 0.824121118]
+          Advance: 0.519042969
+        - Character: 255
+          Size: [22, 40]
+          TexCoordinateMin: [182.5, 428.5]
+          TexCoordinateMax: [203.5, 467.5]
+          QuadMin: [-0.041308593, -0.123730466]
+          QuadMax: [0.483691394, 0.851269543]
+          Advance: 0.448242188
+  - AssetHandle: 14825664752610736975
+    MetaData:
+      CheckSum: a9c67d890aa5e65fef01b68165ac955053ea4aa5516c3915ee69ad45ed84e832
+      IntermediateLocation: Fonts/Intermediates/14825664752610736975.kgfont
+      AssetType: Font
+      InitialFileLocation: Fonts\arial.ttf
+      AtlasWidth: 512
+      AtlasHeight: 512
+      LineHeight: 1.14990234
+      Characters:
+        - Character: 32
+          Size: [0, 0]
+          TexCoordinateMin: [0, 0]
+          TexCoordinateMax: [0, 0]
+          QuadMin: [0, 0]
+          QuadMax: [0, 0]
+          Advance: 0.277832031
+        - Character: 33
+          Size: [8, 32]
+          TexCoordinateMin: [288.5, 329.5]
+          TexCoordinateMax: [295.5, 360.5]
+          QuadMin: [0.0528808609, -0.029589843]
+          QuadMax: [0.227880865, 0.745410144]
+          Advance: 0.277832031
+        - Character: 34
+          Size: [14, 14]
+          TexCoordinateMin: [335.5, 250.5]
+          TexCoordinateMax: [348.5, 263.5]
+          QuadMin: [0.0145019535, 0.426611334]
+          QuadMax: [0.339501947, 0.751611352]
+          Advance: 0.354980469
+        - Character: 35
+          Size: [25, 33]
+          TexCoordinateMin: [250.5, 399.5]
+          TexCoordinateMax: [274.5, 431.5]
+          QuadMin: [-0.023144532, -0.0420898423]
+          QuadMax: [0.576855481, 0.757910132]
+          Advance: 0.556152344
+        - Character: 36
+          Size: [22, 39]
+          TexCoordinateMin: [0.5, 432.5]
+          TexCoordinateMax: [21.5, 470.5]
+          QuadMin: [0.00996093731, -0.135644525]
+          QuadMax: [0.534960926, 0.814355493]
+          Advance: 0.556152344
+        - Character: 37
+          Size: [34, 34]
+          TexCoordinateMin: [80.5, 398.5]
+          TexCoordinateMax: [113.5, 431.5]
+          QuadMin: [0.0303710941, -0.0616699234]
+          QuadMax: [0.855371118, 0.763330102]
+          Advance: 0.889160156
+        - Character: 38
+          Size: [28, 33]
+          TexCoordinateMin: [344.5, 399.5]
+          TexCoordinateMax: [371.5, 431.5]
+          QuadMin: [0.00600585947, -0.0442871079]
+          QuadMax: [0.681005836, 0.755712867]
+          Advance: 0.666992188
+        - Character: 39
+          Size: [8, 14]
+          TexCoordinateMin: [502.5, 473.5]
+          TexCoordinateMax: [509.5, 486.5]
+          QuadMin: [0.00649414072, 0.426611334]
+          QuadMax: [0.181494147, 0.751611352]
+          Advance: 0.190917969
+        - Character: 40
+          Size: [13, 41]
+          TexCoordinateMin: [0.5, 471.5]
+          TexCoordinateMax: [12.5, 511.5]
+          QuadMin: [0.0287109371, -0.241210938]
+          QuadMax: [0.328710943, 0.758789062]
+          Advance: 0.333007812
+        - Character: 41
+          Size: [13, 41]
+          TexCoordinateMin: [36.5, 471.5]
+          TexCoordinateMax: [48.5, 511.5]
+          QuadMin: [0.0287109371, -0.241210938]
+          QuadMax: [0.328710943, 0.758789062]
+          Advance: 0.333007812
+        - Character: 42
+          Size: [16, 16]
+          TexCoordinateMin: [297.5, 248.5]
+          TexCoordinateMax: [312.5, 263.5]
+          QuadMin: [0.00512695312, 0.388183594]
+          QuadMax: [0.380126953, 0.763183594]
+          Advance: 0.389160156
+        - Character: 43
+          Size: [22, 22]
+          TexCoordinateMin: [97.5, 242.5]
+          TexCoordinateMax: [118.5, 263.5]
+          QuadMin: [0.0294921882, 0.0897949189]
+          QuadMax: [0.554492176, 0.61479491]
+          Advance: 0.583984375
+        - Character: 44
+          Size: [8, 13]
+          TexCoordinateMin: [363.5, 251.5]
+          TexCoordinateMax: [370.5, 263.5]
+          QuadMin: [0.0484863296, -0.170751959]
+          QuadMax: [0.223486334, 0.129248053]
+          Advance: 0.277832031
         - Character: 45
           Size: [14, 7]
-          Bearing: [0, 19]
-          Advance: 896
+          TexCoordinateMin: [472.5, 257.5]
+          TexCoordinateMax: [485.5, 263.5]
+          QuadMin: [0.00424804678, 0.1840332]
+          QuadMax: [0.329248041, 0.334033191]
+          Advance: 0.333007812
         - Character: 46
           Size: [8, 8]
-          Bearing: [0, 8]
-          Advance: 576
+          TexCoordinateMin: [428.5, 256.5]
+          TexCoordinateMax: [435.5, 263.5]
+          QuadMin: [0.0533691421, -0.0374511704]
+          QuadMax: [0.228369147, 0.137548834]
+          Advance: 0.277832031
         - Character: 47
-          Size: [19, 40]
-          Bearing: [0, 39]
-          Advance: 1216
+          Size: [15, 33]
+          TexCoordinateMin: [67.5, 361.5]
+          TexCoordinateMax: [81.5, 393.5]
+          QuadMin: [-0.0360839851, -0.0420898423]
+          QuadMax: [0.313916028, 0.757910132]
+          Advance: 0.277832031
         - Character: 48
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [22, 33]
+          TexCoordinateMin: [82.5, 361.5]
+          TexCoordinateMax: [103.5, 393.5]
+          QuadMin: [0.0124023436, -0.0467285141]
+          QuadMax: [0.537402332, 0.753271461]
+          Advance: 0.556152344
         - Character: 49
-          Size: [17, 38]
-          Bearing: [0, 38]
-          Advance: 1152
+          Size: [14, 32]
+          TexCoordinateMin: [410.5, 329.5]
+          TexCoordinateMax: [423.5, 360.5]
+          QuadMin: [0.0782226548, -0.0281249993]
+          QuadMax: [0.40322265, 0.746874988]
+          Advance: 0.556152344
         - Character: 50
-          Size: [22, 39]
-          Bearing: [1, 39]
-          Advance: 1536
+          Size: [22, 32]
+          TexCoordinateMin: [424.5, 329.5]
+          TexCoordinateMax: [445.5, 360.5]
+          QuadMin: [0.00430664048, -0.0281249993]
+          QuadMax: [0.52930665, 0.746874988]
+          Advance: 0.556152344
         - Character: 51
-          Size: [23, 40]
-          Bearing: [1, 39]
-          Advance: 1600
+          Size: [22, 33]
+          TexCoordinateMin: [104.5, 361.5]
+          TexCoordinateMax: [125.5, 393.5]
+          QuadMin: [0.0138671873, -0.0469726548]
+          QuadMax: [0.538867176, 0.75302732]
+          Advance: 0.556152344
         - Character: 52
-          Size: [24, 38]
-          Bearing: [0, 38]
-          Advance: 1536
+          Size: [23, 32]
+          TexCoordinateMin: [446.5, 329.5]
+          TexCoordinateMax: [468.5, 360.5]
+          QuadMin: [-0.0147460941, -0.029589843]
+          QuadMax: [0.535253882, 0.745410144]
+          Advance: 0.556152344
         - Character: 53
-          Size: [24, 39]
-          Bearing: [1, 38]
-          Advance: 1664
+          Size: [22, 32]
+          TexCoordinateMin: [469.5, 329.5]
+          TexCoordinateMax: [490.5, 360.5]
+          QuadMin: [0.0163085945, -0.0405761711]
+          QuadMax: [0.541308582, 0.734423816]
+          Advance: 0.556152344
         - Character: 54
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [22, 33]
+          TexCoordinateMin: [126.5, 361.5]
+          TexCoordinateMax: [147.5, 393.5]
+          QuadMin: [0.0114257811, -0.0467285141]
+          QuadMax: [0.536425769, 0.753271461]
+          Advance: 0.556152344
         - Character: 55
-          Size: [19, 38]
-          Bearing: [0, 38]
-          Advance: 1216
+          Size: [22, 32]
+          TexCoordinateMin: [0.5, 296.5]
+          TexCoordinateMax: [21.5, 327.5]
+          QuadMin: [0.0165527351, -0.0342285149]
+          QuadMax: [0.541552722, 0.740771472]
+          Advance: 0.556152344
         - Character: 56
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [22, 33]
+          TexCoordinateMin: [148.5, 361.5]
+          TexCoordinateMax: [169.5, 393.5]
+          QuadMin: [0.0138671873, -0.0467285141]
+          QuadMax: [0.538867176, 0.753271461]
+          Advance: 0.556152344
         - Character: 57
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [22, 33]
+          TexCoordinateMin: [170.5, 361.5]
+          TexCoordinateMax: [191.5, 393.5]
+          QuadMin: [0.0143554686, -0.0467285141]
+          QuadMax: [0.539355457, 0.753271461]
+          Advance: 0.556152344
         - Character: 58
-          Size: [8, 25]
-          Bearing: [1, 25]
-          Advance: 640
+          Size: [8, 24]
+          TexCoordinateMin: [22.5, 240.5]
+          TexCoordinateMax: [29.5, 263.5]
+          QuadMin: [0.0528808609, -0.0282226559]
+          QuadMax: [0.227880865, 0.546777368]
+          Advance: 0.277832031
         - Character: 59
           Size: [8, 30]
-          Bearing: [1, 25]
-          Advance: 640
+          TexCoordinateMin: [178.5, 266.5]
+          TexCoordinateMax: [185.5, 295.5]
+          QuadMin: [0.0484863296, -0.174023435]
+          QuadMax: [0.223486334, 0.550976574]
+          Advance: 0.277832031
         - Character: 60
-          Size: [24, 23]
-          Bearing: [1, 31]
-          Advance: 1664
+          Size: [22, 23]
+          TexCoordinateMin: [75.5, 241.5]
+          TexCoordinateMax: [96.5, 263.5]
+          QuadMin: [0.0292480476, 0.0777832046]
+          QuadMax: [0.554248035, 0.627783179]
+          Advance: 0.583984375
         - Character: 61
-          Size: [24, 15]
-          Bearing: [1, 26]
-          Advance: 1664
+          Size: [22, 15]
+          TexCoordinateMin: [480.5, 472.5]
+          TexCoordinateMax: [501.5, 486.5]
+          QuadMin: [0.0294921882, 0.178271487]
+          QuadMax: [0.554492176, 0.528271496]
+          Advance: 0.583984375
         - Character: 62
-          Size: [24, 23]
-          Bearing: [1, 31]
-          Advance: 1664
+          Size: [22, 23]
+          TexCoordinateMin: [53.5, 241.5]
+          TexCoordinateMax: [74.5, 263.5]
+          QuadMin: [0.0292480476, 0.0777832046]
+          QuadMax: [0.554248035, 0.627783179]
+          Advance: 0.583984375
         - Character: 63
-          Size: [24, 39]
-          Bearing: [1, 39]
-          Advance: 1600
+          Size: [22, 33]
+          TexCoordinateMin: [214.5, 361.5]
+          TexCoordinateMax: [235.5, 393.5]
+          QuadMin: [0.0124023436, -0.0359863266]
+          QuadMax: [0.537402332, 0.764013648]
+          Advance: 0.556152344
         - Character: 64
-          Size: [37, 42]
-          Bearing: [0, 39]
-          Advance: 2368
+          Size: [40, 41]
+          TexCoordinateMin: [72.5, 471.5]
+          TexCoordinateMax: [111.5, 511.5]
+          QuadMin: [0.0291015618, -0.240722656]
+          QuadMax: [1.00410151, 0.759277344]
+          Advance: 1.01513672
         - Character: 65
-          Size: [26, 38]
-          Bearing: [-1, 38]
-          Advance: 1536
+          Size: [30, 32]
+          TexCoordinateMin: [119.5, 296.5]
+          TexCoordinateMax: [148.5, 327.5]
+          QuadMin: [-0.029003907, -0.029589843]
+          QuadMax: [0.695996106, 0.745410144]
+          Advance: 0.666992188
         - Character: 66
-          Size: [24, 38]
-          Bearing: [1, 38]
-          Advance: 1728
+          Size: [25, 32]
+          TexCoordinateMin: [149.5, 296.5]
+          TexCoordinateMax: [173.5, 327.5]
+          QuadMin: [0.0435058586, -0.029589843]
+          QuadMax: [0.643505871, 0.745410144]
+          Advance: 0.666992188
         - Character: 67
-          Size: [25, 40]
-          Bearing: [1, 39]
-          Advance: 1728
+          Size: [29, 33]
+          TexCoordinateMin: [256.5, 361.5]
+          TexCoordinateMax: [284.5, 393.5]
+          QuadMin: [0.0162109379, -0.0420898423]
+          QuadMax: [0.716210961, 0.757910132]
+          Advance: 0.722167969
         - Character: 68
-          Size: [24, 38]
-          Bearing: [1, 38]
-          Advance: 1728
+          Size: [27, 32]
+          TexCoordinateMin: [174.5, 296.5]
+          TexCoordinateMax: [200.5, 327.5]
+          QuadMin: [0.0480468757, -0.029589843]
+          QuadMax: [0.698046863, 0.745410144]
+          Advance: 0.722167969
         - Character: 69
-          Size: [19, 38]
-          Bearing: [1, 38]
-          Advance: 1280
+          Size: [25, 32]
+          TexCoordinateMin: [201.5, 296.5]
+          TexCoordinateMax: [225.5, 327.5]
+          QuadMin: [0.0461914055, -0.029589843]
+          QuadMax: [0.646191418, 0.745410144]
+          Advance: 0.666992188
         - Character: 70
-          Size: [18, 38]
-          Bearing: [1, 38]
-          Advance: 1216
+          Size: [23, 32]
+          TexCoordinateMin: [252.5, 296.5]
+          TexCoordinateMax: [274.5, 327.5]
+          QuadMin: [0.0484863296, -0.029589843]
+          QuadMax: [0.598486304, 0.745410144]
+          Advance: 0.610839844
         - Character: 71
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [30, 33]
+          TexCoordinateMin: [285.5, 361.5]
+          TexCoordinateMax: [314.5, 393.5]
+          QuadMin: [0.021777343, -0.0420898423]
+          QuadMax: [0.746777356, 0.757910132]
+          Advance: 0.777832031
         - Character: 72
-          Size: [24, 38]
-          Bearing: [1, 38]
-          Advance: 1728
+          Size: [26, 32]
+          TexCoordinateMin: [275.5, 296.5]
+          TexCoordinateMax: [300.5, 327.5]
+          QuadMin: [0.0483398438, -0.029589843]
+          QuadMax: [0.673339844, 0.745410144]
+          Advance: 0.722167969
         - Character: 73
-          Size: [11, 38]
-          Bearing: [1, 38]
-          Advance: 896
+          Size: [7, 32]
+          TexCoordinateMin: [331.5, 296.5]
+          TexCoordinateMax: [337.5, 327.5]
+          QuadMin: [0.065624997, -0.029589843]
+          QuadMax: [0.215625003, 0.745410144]
+          Advance: 0.277832031
         - Character: 74
-          Size: [15, 38]
-          Bearing: [0, 38]
-          Advance: 1024
+          Size: [19, 33]
+          TexCoordinateMin: [315.5, 361.5]
+          TexCoordinateMax: [333.5, 393.5]
+          QuadMin: [0.000549086079, -0.0481933579]
+          QuadMax: [0.450549096, 0.751806617]
+          Advance: 0.5
         - Character: 75
-          Size: [26, 38]
-          Bearing: [1, 38]
-          Advance: 1664
+          Size: [27, 32]
+          TexCoordinateMin: [381.5, 296.5]
+          TexCoordinateMax: [407.5, 327.5]
+          QuadMin: [0.0441406257, -0.029589843]
+          QuadMax: [0.694140613, 0.745410144]
+          Advance: 0.666992188
         - Character: 76
-          Size: [17, 38]
-          Bearing: [1, 38]
-          Advance: 1152
+          Size: [21, 32]
+          TexCoordinateMin: [491.5, 329.5]
+          TexCoordinateMax: [511.5, 360.5]
+          QuadMin: [0.046875, -0.029589843]
+          QuadMax: [0.546875, 0.745410144]
+          Advance: 0.556152344
         - Character: 77
-          Size: [32, 38]
-          Bearing: [1, 38]
-          Advance: 2176
+          Size: [31, 32]
+          TexCoordinateMin: [30.5, 264.5]
+          TexCoordinateMax: [60.5, 295.5]
+          QuadMin: [0.0407714844, -0.029589843]
+          QuadMax: [0.790771484, 0.745410144]
+          Advance: 0.833007812
         - Character: 78
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1664
+          Size: [26, 32]
+          TexCoordinateMin: [87.5, 264.5]
+          TexCoordinateMax: [112.5, 295.5]
+          QuadMin: [0.0456542969, -0.029589843]
+          QuadMax: [0.670654297, 0.745410144]
+          Advance: 0.722167969
         - Character: 79
-          Size: [24, 40]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [31, 33]
+          TexCoordinateMin: [334.5, 361.5]
+          TexCoordinateMax: [364.5, 393.5]
+          QuadMin: [0.015625, -0.0418457016]
+          QuadMax: [0.765625, 0.758154273]
+          Advance: 0.777832031
         - Character: 80
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1536
+          Size: [25, 32]
+          TexCoordinateMin: [153.5, 264.5]
+          TexCoordinateMax: [177.5, 295.5]
+          QuadMin: [0.0503417961, -0.029589843]
+          QuadMax: [0.650341809, 0.745410144]
+          Advance: 0.666992188
         - Character: 81
-          Size: [24, 43]
-          Bearing: [1, 39]
-          Advance: 1664
+          Size: [31, 35]
+          TexCoordinateMin: [26.5, 397.5]
+          TexCoordinateMax: [56.5, 431.5]
+          QuadMin: [0.0170898438, -0.0885742158]
+          QuadMax: [0.767089844, 0.761425793]
+          Advance: 0.777832031
         - Character: 82
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1664
+          Size: [29, 32]
+          TexCoordinateMin: [113.5, 264.5]
+          TexCoordinateMax: [141.5, 295.5]
+          QuadMin: [0.0440429673, -0.029589843]
+          QuadMax: [0.744042993, 0.745410144]
+          Advance: 0.722167969
         - Character: 83
-          Size: [23, 40]
-          Bearing: [1, 39]
-          Advance: 1600
+          Size: [26, 33]
+          TexCoordinateMin: [398.5, 361.5]
+          TexCoordinateMax: [423.5, 393.5]
+          QuadMin: [0.0173339844, -0.0420898423]
+          QuadMax: [0.642333984, 0.757910132]
+          Advance: 0.666992188
         - Character: 84
-          Size: [22, 38]
-          Bearing: [0, 38]
-          Advance: 1408
+          Size: [26, 32]
+          TexCoordinateMin: [61.5, 264.5]
+          TexCoordinateMax: [86.5, 295.5]
+          QuadMin: [-0.00537109375, -0.029589843]
+          QuadMax: [0.619628906, 0.745410144]
+          Advance: 0.610839844
         - Character: 85
-          Size: [24, 39]
-          Bearing: [1, 38]
-          Advance: 1664
+          Size: [26, 33]
+          TexCoordinateMin: [424.5, 361.5]
+          TexCoordinateMax: [449.5, 393.5]
+          QuadMin: [0.0476074219, -0.0481933579]
+          QuadMax: [0.672607422, 0.751806617]
+          Advance: 0.722167969
         - Character: 86
-          Size: [27, 38]
-          Bearing: [-1, 38]
-          Advance: 1600
+          Size: [30, 32]
+          TexCoordinateMin: [0.5, 264.5]
+          TexCoordinateMax: [29.5, 295.5]
+          QuadMin: [-0.0307128914, -0.029589843]
+          QuadMax: [0.694287121, 0.745410144]
+          Advance: 0.666992188
         - Character: 87
-          Size: [40, 38]
-          Bearing: [0, 38]
-          Advance: 2496
+          Size: [40, 32]
+          TexCoordinateMin: [472.5, 439.5]
+          TexCoordinateMax: [511.5, 470.5]
+          QuadMin: [-0.0150878904, -0.029589843]
+          QuadMax: [0.959912121, 0.745410144]
+          Advance: 0.943847656
         - Character: 88
-          Size: [24, 38]
-          Bearing: [0, 38]
-          Advance: 1472
+          Size: [30, 32]
+          TexCoordinateMin: [464.5, 296.5]
+          TexCoordinateMax: [493.5, 327.5]
+          QuadMin: [-0.0299804695, -0.029589843]
+          QuadMax: [0.695019543, 0.745410144]
+          Advance: 0.666992188
         - Character: 89
-          Size: [24, 38]
-          Bearing: [-1, 38]
-          Advance: 1472
+          Size: [30, 32]
+          TexCoordinateMin: [434.5, 296.5]
+          TexCoordinateMax: [463.5, 327.5]
+          QuadMin: [-0.0314453132, -0.029589843]
+          QuadMax: [0.693554699, 0.745410144]
+          Advance: 0.666992188
         - Character: 90
-          Size: [19, 38]
-          Bearing: [0, 38]
-          Advance: 1216
+          Size: [26, 32]
+          TexCoordinateMin: [408.5, 296.5]
+          TexCoordinateMax: [433.5, 327.5]
+          QuadMin: [-0.00952148438, -0.029589843]
+          QuadMax: [0.615478516, 0.745410144]
+          Advance: 0.610839844
         - Character: 91
-          Size: [12, 38]
-          Bearing: [1, 38]
-          Advance: 896
+          Size: [11, 40]
+          TexCoordinateMin: [240.5, 472.5]
+          TexCoordinateMax: [250.5, 511.5]
+          QuadMin: [0.0397949219, -0.228955075]
+          QuadMax: [0.289794922, 0.746044934]
+          Advance: 0.277832031
         - Character: 92
-          Size: [19, 40]
-          Bearing: [0, 39]
-          Advance: 1216
+          Size: [15, 33]
+          TexCoordinateMin: [473.5, 361.5]
+          TexCoordinateMax: [487.5, 393.5]
+          QuadMin: [-0.0360839851, -0.0420898423]
+          QuadMax: [0.313916028, 0.757910132]
+          Advance: 0.277832031
         - Character: 93
-          Size: [12, 38]
-          Bearing: [0, 38]
-          Advance: 896
+          Size: [11, 40]
+          TexCoordinateMin: [251.5, 472.5]
+          TexCoordinateMax: [261.5, 511.5]
+          QuadMin: [-0.00903320312, -0.228955075]
+          QuadMax: [0.240966797, 0.746044934]
+          Advance: 0.277832031
         - Character: 94
-          Size: [23, 19]
-          Bearing: [0, 38]
-          Advance: 1472
+          Size: [20, 19]
+          TexCoordinateMin: [202.5, 245.5]
+          TexCoordinateMax: [221.5, 263.5]
+          QuadMin: [-0.00288085942, 0.307470709]
+          QuadMax: [0.472119153, 0.757470727]
+          Advance: 0.469238281
         - Character: 95
-          Size: [28, 2]
-          Bearing: [-1, -4]
-          Advance: 1728
+          Size: [27, 6]
+          TexCoordinateMin: [472.5, 433.5]
+          TexCoordinateMax: [498.5, 438.5]
+          QuadMin: [-0.0488769524, -0.229492188]
+          QuadMax: [0.601123035, -0.104492188]
+          Advance: 0.556152344
         - Character: 96
-          Size: [13, 6]
-          Bearing: [0, 41]
-          Advance: 1024
+          Size: [11, 9]
+          TexCoordinateMin: [417.5, 255.5]
+          TexCoordinateMax: [427.5, 263.5]
+          QuadMin: [0.0102539062, 0.551367164]
+          QuadMax: [0.260253906, 0.751367211]
+          Advance: 0.333007812
         - Character: 97
-          Size: [22, 31]
-          Bearing: [1, 31]
-          Advance: 1536
+          Size: [23, 25]
+          TexCoordinateMin: [389.5, 271.5]
+          TexCoordinateMax: [411.5, 295.5]
+          QuadMin: [-9.76562515e-05, -0.040722657]
+          QuadMax: [0.54990232, 0.559277356]
+          Advance: 0.556152344
         - Character: 98
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1600
+          Size: [21, 33]
+          TexCoordinateMin: [33.5, 328.5]
+          TexCoordinateMax: [53.5, 360.5]
+          QuadMin: [0.0402832031, -0.0479492173]
+          QuadMax: [0.540283203, 0.752050757]
+          Advance: 0.556152344
         - Character: 99
-          Size: [22, 31]
-          Bearing: [1, 31]
-          Advance: 1536
+          Size: [22, 25]
+          TexCoordinateMin: [412.5, 271.5]
+          TexCoordinateMax: [433.5, 295.5]
+          QuadMin: [0.00239257817, -0.040722657]
+          QuadMax: [0.527392566, 0.559277356]
+          Advance: 0.5
         - Character: 100
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1600
+          Size: [21, 33]
+          TexCoordinateMin: [77.5, 328.5]
+          TexCoordinateMax: [97.5, 360.5]
+          QuadMin: [0.00903320312, -0.0479492173]
+          QuadMax: [0.509033203, 0.752050757]
+          Advance: 0.556152344
         - Character: 101
-          Size: [23, 31]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [23, 25]
+          TexCoordinateMin: [366.5, 271.5]
+          TexCoordinateMax: [388.5, 295.5]
+          QuadMin: [0.000634765602, -0.040722657]
+          QuadMax: [0.550634742, 0.559277356]
+          Advance: 0.556152344
         - Character: 102
-          Size: [14, 38]
-          Bearing: [0, 38]
-          Advance: 896
+          Size: [16, 33]
+          TexCoordinateMin: [98.5, 328.5]
+          TexCoordinateMax: [113.5, 360.5]
+          QuadMin: [-0.0266113281, -0.0359863266]
+          QuadMax: [0.348388672, 0.764013648]
+          Advance: 0.277832031
         - Character: 103
-          Size: [23, 36]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [22, 33]
+          TexCoordinateMin: [114.5, 328.5]
+          TexCoordinateMax: [135.5, 360.5]
+          QuadMin: [-0.00175781245, -0.240087897]
+          QuadMax: [0.523242176, 0.559912086]
+          Advance: 0.556152344
         - Character: 104
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1600
+          Size: [20, 32]
+          TexCoordinateMin: [91.5, 296.5]
+          TexCoordinateMax: [110.5, 327.5]
+          QuadMin: [0.0395996086, -0.029589843]
+          QuadMax: [0.514599621, 0.745410144]
+          Advance: 0.556152344
         - Character: 105
-          Size: [11, 38]
-          Bearing: [1, 38]
-          Advance: 832
+          Size: [7, 32]
+          TexCoordinateMin: [84.5, 296.5]
+          TexCoordinateMax: [90.5, 327.5]
+          QuadMin: [0.0353515632, -0.029589843]
+          QuadMax: [0.185351565, 0.745410144]
+          Advance: 0.222167969
         - Character: 106
-          Size: [13, 42]
-          Bearing: [-1, 38]
-          Advance: 832
+          Size: [11, 41]
+          TexCoordinateMin: [112.5, 471.5]
+          TexCoordinateMax: [122.5, 511.5]
+          QuadMin: [-0.0712890625, -0.247314453]
+          QuadMax: [0.178710938, 0.752685547]
+          Advance: 0.222167969
         - Character: 107
-          Size: [23, 38]
-          Bearing: [1, 38]
-          Advance: 1472
+          Size: [21, 32]
+          TexCoordinateMin: [43.5, 296.5]
+          TexCoordinateMax: [63.5, 327.5]
+          QuadMin: [0.03125, -0.029589843]
+          QuadMax: [0.53125, 0.745410144]
+          Advance: 0.5
         - Character: 108
-          Size: [11, 38]
-          Bearing: [1, 38]
-          Advance: 832
+          Size: [7, 32]
+          TexCoordinateMin: [36.5, 296.5]
+          TexCoordinateMax: [42.5, 327.5]
+          QuadMin: [0.032910157, -0.029589843]
+          QuadMax: [0.182910159, 0.745410144]
+          Advance: 0.222167969
         - Character: 109
-          Size: [35, 31]
-          Bearing: [1, 31]
-          Advance: 2368
+          Size: [32, 25]
+          TexCoordinateMin: [480.5, 487.5]
+          TexCoordinateMax: [511.5, 511.5]
+          QuadMin: [0.0297363289, -0.034863282]
+          QuadMax: [0.804736316, 0.565136731]
+          Advance: 0.833007812
         - Character: 110
-          Size: [23, 31]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [20, 25]
+          TexCoordinateMin: [323.5, 271.5]
+          TexCoordinateMax: [342.5, 295.5]
+          QuadMin: [0.0391113274, -0.034863282]
+          QuadMax: [0.51411134, 0.565136731]
+          Advance: 0.556152344
         - Character: 111
-          Size: [23, 31]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [23, 25]
+          TexCoordinateMin: [343.5, 271.5]
+          TexCoordinateMax: [365.5, 295.5]
+          QuadMin: [0.00112304685, -0.040722657]
+          QuadMax: [0.551123023, 0.559277356]
+          Advance: 0.556152344
         - Character: 112
-          Size: [23, 35]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [22, 33]
+          TexCoordinateMin: [202.5, 328.5]
+          TexCoordinateMax: [223.5, 360.5]
+          QuadMin: [0.0285156257, -0.234228522]
+          QuadMax: [0.553515613, 0.565771461]
+          Advance: 0.556152344
         - Character: 113
-          Size: [23, 35]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [21, 33]
+          TexCoordinateMin: [224.5, 328.5]
+          TexCoordinateMax: [244.5, 360.5]
+          QuadMin: [0.009765625, -0.234228522]
+          QuadMax: [0.509765625, 0.565771461]
+          Advance: 0.556152344
         - Character: 114
-          Size: [16, 31]
-          Bearing: [1, 31]
-          Advance: 1088
+          Size: [15, 25]
+          TexCoordinateMin: [308.5, 271.5]
+          TexCoordinateMax: [322.5, 295.5]
+          QuadMin: [0.0308105461, -0.034863282]
+          QuadMax: [0.380810559, 0.565136731]
+          Advance: 0.333007812
         - Character: 115
-          Size: [22, 31]
-          Bearing: [0, 31]
-          Advance: 1472
+          Size: [21, 25]
+          TexCoordinateMin: [287.5, 271.5]
+          TexCoordinateMax: [307.5, 295.5]
+          QuadMin: [-0.00390625, -0.040722657]
+          QuadMax: [0.49609375, 0.559277356]
+          Advance: 0.5
         - Character: 116
-          Size: [15, 35]
-          Bearing: [0, 35]
-          Advance: 960
+          Size: [14, 32]
+          TexCoordinateMin: [396.5, 329.5]
+          TexCoordinateMax: [409.5, 360.5]
+          QuadMin: [-0.0184570309, -0.0410644524]
+          QuadMax: [0.306542963, 0.733935535]
+          Advance: 0.277832031
         - Character: 117
-          Size: [23, 31]
-          Bearing: [1, 31]
-          Advance: 1600
+          Size: [20, 25]
+          TexCoordinateMin: [231.5, 271.5]
+          TexCoordinateMax: [250.5, 295.5]
+          QuadMin: [0.0366699211, -0.046582032]
+          QuadMax: [0.511669934, 0.553417981]
+          Advance: 0.556152344
         - Character: 118
-          Size: [23, 31]
-          Bearing: [-1, 31]
-          Advance: 1344
+          Size: [23, 24]
+          TexCoordinateMin: [489.5, 272.5]
+          TexCoordinateMax: [511.5, 295.5]
+          QuadMin: [-0.0245117191, -0.0282226559]
+          QuadMax: [0.525488257, 0.546777368]
+          Advance: 0.5
         - Character: 119
-          Size: [34, 31]
-          Bearing: [-1, 31]
-          Advance: 2048
+          Size: [32, 24]
+          TexCoordinateMin: [457.5, 272.5]
+          TexCoordinateMax: [488.5, 295.5]
+          QuadMin: [-0.0288574211, -0.0282226559]
+          QuadMax: [0.746142566, 0.546777368]
+          Advance: 0.722167969
         - Character: 120
-          Size: [22, 31]
-          Bearing: [0, 31]
-          Advance: 1344
+          Size: [23, 24]
+          TexCoordinateMin: [434.5, 272.5]
+          TexCoordinateMax: [456.5, 295.5]
+          QuadMin: [-0.0250000004, -0.0282226559]
+          QuadMax: [0.524999976, 0.546777368]
+          Advance: 0.5
         - Character: 121
-          Size: [23, 35]
-          Bearing: [-1, 31]
-          Advance: 1408
+          Size: [23, 33]
+          TexCoordinateMin: [265.5, 328.5]
+          TexCoordinateMax: [287.5, 360.5]
+          QuadMin: [-0.021337891, -0.245947272]
+          QuadMax: [0.528662086, 0.554052711]
+          Advance: 0.5
         - Character: 122
-          Size: [17, 31]
-          Bearing: [0, 31]
-          Advance: 1088
+          Size: [22, 24]
+          TexCoordinateMin: [0.5, 240.5]
+          TexCoordinateMax: [21.5, 263.5]
+          QuadMin: [-0.0134765627, -0.0282226559]
+          QuadMax: [0.511523426, 0.546777368]
+          Advance: 0.5
         - Character: 123
-          Size: [17, 45]
-          Bearing: [0, 38]
-          Advance: 1152
+          Size: [15, 41]
+          TexCoordinateMin: [123.5, 471.5]
+          TexCoordinateMax: [137.5, 511.5]
+          QuadMin: [-0.00581054669, -0.241210938]
+          QuadMax: [0.344189465, 0.758789062]
+          Advance: 0.333984375
         - Character: 124
-          Size: [7, 44]
-          Bearing: [3, 38]
-          Advance: 832
+          Size: [7, 41]
+          TexCoordinateMin: [138.5, 471.5]
+          TexCoordinateMax: [144.5, 511.5]
+          QuadMin: [0.0551269539, -0.241210938]
+          QuadMax: [0.205126956, 0.758789062]
+          Advance: 0.259765625
         - Character: 125
-          Size: [17, 45]
-          Bearing: [0, 38]
-          Advance: 1152
+          Size: [15, 41]
+          TexCoordinateMin: [145.5, 471.5]
+          TexCoordinateMax: [159.5, 511.5]
+          QuadMin: [-0.0106933592, -0.241210938]
+          QuadMax: [0.339306653, 0.758789062]
+          Advance: 0.333984375
         - Character: 126
-          Size: [23, 11]
-          Bearing: [1, 26]
-          Advance: 1600
-        - Character: 127
-          Size: [24, 30]
-          Bearing: [6, 30]
-          Advance: 2304
+          Size: [23, 10]
+          TexCoordinateMin: [383.5, 254.5]
+          TexCoordinateMax: [405.5, 263.5]
+          QuadMin: [0.0172363278, 0.239550784]
+          QuadMax: [0.567236304, 0.464550793]
+          Advance: 0.583984375
+        - Character: 160
+          Size: [0, 0]
+          TexCoordinateMin: [0, 0]
+          TexCoordinateMax: [0, 0]
+          QuadMin: [0, 0]
+          QuadMax: [0, 0]
+          Advance: 0.277832031
+        - Character: 161
+          Size: [8, 32]
+          TexCoordinateMin: [111.5, 296.5]
+          TexCoordinateMax: [118.5, 327.5]
+          QuadMin: [0.0802246109, -0.226855472]
+          QuadMax: [0.255224615, 0.548144519]
+          Advance: 0.333007812
+        - Character: 162
+          Size: [22, 40]
+          TexCoordinateMin: [262.5, 472.5]
+          TexCoordinateMax: [283.5, 511.5]
+          QuadMin: [0.0160644539, -0.229443356]
+          QuadMax: [0.541064441, 0.745556653]
+          Advance: 0.556152344
+        - Character: 163
+          Size: [24, 33]
+          TexCoordinateMin: [488.5, 361.5]
+          TexCoordinateMax: [511.5, 393.5]
+          QuadMin: [-0.0167480465, -0.0428222641]
+          QuadMax: [0.558251977, 0.757177711]
+          Advance: 0.556152344
+        - Character: 164
+          Size: [23, 23]
+          TexCoordinateMin: [30.5, 241.5]
+          TexCoordinateMax: [52.5, 263.5]
+          QuadMin: [0.00112304685, 0.0792480484]
+          QuadMax: [0.551123023, 0.629248023]
+          Advance: 0.556152344
+        - Character: 165
+          Size: [26, 32]
+          TexCoordinateMin: [226.5, 296.5]
+          TexCoordinateMax: [251.5, 327.5]
+          QuadMin: [-0.0366210938, -0.029589843]
+          QuadMax: [0.588378906, 0.745410144]
+          Advance: 0.556152344
+        - Character: 166
+          Size: [7, 41]
+          TexCoordinateMin: [160.5, 471.5]
+          TexCoordinateMax: [166.5, 511.5]
+          QuadMin: [0.0551269539, -0.241210938]
+          QuadMax: [0.205126956, 0.758789062]
+          Advance: 0.259765625
+        - Character: 167
+          Size: [22, 41]
+          TexCoordinateMin: [167.5, 471.5]
+          TexCoordinateMax: [188.5, 511.5]
+          QuadMin: [0.0124023436, -0.241210938]
+          QuadMax: [0.537402332, 0.758789062]
+          Advance: 0.556152344
+        - Character: 168
+          Size: [14, 8]
+          TexCoordinateMin: [444.5, 256.5]
+          TexCoordinateMax: [457.5, 263.5]
+          QuadMin: [0.00424804678, 0.582666039]
+          QuadMax: [0.329248041, 0.757665992]
+          Advance: 0.333007812
+        - Character: 169
+          Size: [33, 33]
+          TexCoordinateMin: [0.5, 328.5]
+          TexCoordinateMax: [32.5, 360.5]
+          QuadMin: [-0.0301269535, -0.0403808579]
+          QuadMax: [0.769873023, 0.759619117]
+          Advance: 0.736816406
+        - Character: 170
+          Size: [17, 18]
+          TexCoordinateMin: [253.5, 246.5]
+          TexCoordinateMax: [269.5, 263.5]
+          QuadMin: [-0.0132324221, 0.333642572]
+          QuadMax: [0.386767566, 0.758642554]
+          Advance: 0.370117188
+        - Character: 171
+          Size: [20, 21]
+          TexCoordinateMin: [140.5, 243.5]
+          TexCoordinateMax: [159.5, 263.5]
+          QuadMin: [0.0371582024, 0.0078125]
+          QuadMax: [0.512158215, 0.5078125]
+          Advance: 0.556152344
+        - Character: 172
+          Size: [22, 15]
+          TexCoordinateMin: [313.5, 249.5]
+          TexCoordinateMax: [334.5, 263.5]
+          QuadMin: [0.0294921882, 0.179980472]
+          QuadMax: [0.554492176, 0.529980481]
+          Advance: 0.583984375
+        - Character: 173
+          Size: [14, 7]
+          TexCoordinateMin: [458.5, 257.5]
+          TexCoordinateMax: [471.5, 263.5]
+          QuadMin: [0.00424804678, 0.1840332]
+          QuadMax: [0.329248041, 0.334033191]
+          Advance: 0.333007812
+        - Character: 174
+          Size: [33, 33]
+          TexCoordinateMin: [365.5, 361.5]
+          TexCoordinateMax: [397.5, 393.5]
+          QuadMin: [-0.0301269535, -0.0403808579]
+          QuadMax: [0.769873023, 0.759619117]
+          Advance: 0.736816406
+        - Character: 175
+          Size: [27, 6]
+          TexCoordinateMin: [0.5, 234.5]
+          TexCoordinateMax: [26.5, 239.5]
+          QuadMin: [-0.0488769524, 0.733642578]
+          QuadMax: [0.601123035, 0.858642578]
+          Advance: 0.552246094
+        - Character: 176
+          Size: [14, 14]
+          TexCoordinateMin: [349.5, 250.5]
+          TexCoordinateMax: [362.5, 263.5]
+          QuadMin: [0.0354980454, 0.430029303]
+          QuadMax: [0.360498041, 0.755029321]
+          Advance: 0.399902344
+        - Character: 177
+          Size: [22, 28]
+          TexCoordinateMin: [186.5, 268.5]
+          TexCoordinateMax: [207.5, 295.5]
+          QuadMin: [0.0119140623, -0.0374511704]
+          QuadMax: [0.536914051, 0.637548804]
+          Advance: 0.548828125
+        - Character: 178
+          Size: [16, 18]
+          TexCoordinateMin: [237.5, 246.5]
+          TexCoordinateMax: [252.5, 263.5]
+          QuadMin: [-0.0231933594, 0.32875976]
+          QuadMax: [0.351806641, 0.753759742]
+          Advance: 0.333007812
+        - Character: 179
+          Size: [15, 19]
+          TexCoordinateMin: [222.5, 245.5]
+          TexCoordinateMax: [236.5, 263.5]
+          QuadMin: [-0.00922851544, 0.31186524]
+          QuadMax: [0.340771496, 0.761865258]
+          Advance: 0.333007812
+        - Character: 180
+          Size: [11, 9]
+          TexCoordinateMin: [406.5, 255.5]
+          TexCoordinateMax: [416.5, 263.5]
+          QuadMin: [0.0734863281, 0.551367164]
+          QuadMax: [0.323486328, 0.751367211]
+          Advance: 0.333007812
+        - Character: 181
+          Size: [20, 32]
+          TexCoordinateMin: [64.5, 296.5]
+          TexCoordinateMax: [83.5, 327.5]
+          QuadMin: [0.0500976555, -0.227587894]
+          QuadMax: [0.525097668, 0.547412097]
+          Advance: 0.576171875
+        - Character: 182
+          Size: [25, 40]
+          TexCoordinateMin: [284.5, 472.5]
+          TexCoordinateMax: [308.5, 511.5]
+          QuadMin: [-0.0294921882, -0.228955075]
+          QuadMax: [0.570507824, 0.746044934]
+          Advance: 0.537109375
+        - Character: 183
+          Size: [8, 8]
+          TexCoordinateMin: [436.5, 256.5]
+          TexCoordinateMax: [443.5, 263.5]
+          QuadMin: [0.0787597671, 0.273583978]
+          QuadMax: [0.253759772, 0.44858399]
+          Advance: 0.333007812
+        - Character: 184
+          Size: [12, 12]
+          TexCoordinateMin: [371.5, 252.5]
+          TexCoordinateMax: [382.5, 263.5]
+          QuadMin: [0.0204589851, -0.234667972]
+          QuadMax: [0.295458972, 0.0403320305]
+          Advance: 0.333007812
+        - Character: 185
+          Size: [11, 18]
+          TexCoordinateMin: [286.5, 246.5]
+          TexCoordinateMax: [296.5, 263.5]
+          QuadMin: [0.0173339844, 0.32875976]
+          QuadMax: [0.267333984, 0.753759742]
+          Advance: 0.333007812
+        - Character: 186
+          Size: [16, 18]
+          TexCoordinateMin: [270.5, 246.5]
+          TexCoordinateMax: [285.5, 263.5]
+          QuadMin: [-0.00537109375, 0.332177728]
+          QuadMax: [0.369628906, 0.757177711]
+          Advance: 0.365234375
+        - Character: 187
+          Size: [20, 21]
+          TexCoordinateMin: [160.5, 243.5]
+          TexCoordinateMax: [179.5, 263.5]
+          QuadMin: [0.0400878899, 0.0078125]
+          QuadMax: [0.515087903, 0.5078125]
+          Advance: 0.556152344
+        - Character: 188
+          Size: [34, 34]
+          TexCoordinateMin: [114.5, 398.5]
+          TexCoordinateMax: [147.5, 431.5]
+          QuadMin: [0.023291016, -0.0624023452]
+          QuadMax: [0.848291039, 0.76259768]
+          Advance: 0.833984375
+        - Character: 189
+          Size: [34, 34]
+          TexCoordinateMin: [148.5, 398.5]
+          TexCoordinateMax: [181.5, 431.5]
+          QuadMin: [0.0218261722, -0.0624023452]
+          QuadMax: [0.846826196, 0.76259768]
+          Advance: 0.833984375
+        - Character: 190
+          Size: [36, 34]
+          TexCoordinateMin: [182.5, 398.5]
+          TexCoordinateMax: [217.5, 431.5]
+          QuadMin: [-0.0197753906, -0.0624023452]
+          QuadMax: [0.855224609, 0.76259768]
+          Advance: 0.833984375
+        - Character: 191
+          Size: [22, 33]
+          TexCoordinateMin: [487.5, 399.5]
+          TexCoordinateMax: [508.5, 431.5]
+          QuadMin: [0.0453613289, -0.24545899]
+          QuadMax: [0.570361316, 0.554540992]
+          Advance: 0.610839844
+        - Character: 192
+          Size: [30, 39]
+          TexCoordinateMin: [22.5, 432.5]
+          TexCoordinateMax: [51.5, 470.5]
+          QuadMin: [-0.029003907, -0.0267578121]
+          QuadMax: [0.695996106, 0.923242211]
+          Advance: 0.666992188
+        - Character: 193
+          Size: [30, 39]
+          TexCoordinateMin: [52.5, 432.5]
+          TexCoordinateMax: [81.5, 470.5]
+          QuadMin: [-0.029003907, -0.0267578121]
+          QuadMax: [0.695996106, 0.923242211]
+          Advance: 0.666992188
+        - Character: 194
+          Size: [30, 39]
+          TexCoordinateMin: [82.5, 432.5]
+          TexCoordinateMax: [111.5, 470.5]
+          QuadMin: [-0.029003907, -0.0267578121]
+          QuadMax: [0.695996106, 0.923242211]
+          Advance: 0.666992188
+        - Character: 195
+          Size: [30, 38]
+          TexCoordinateMin: [286.5, 433.5]
+          TexCoordinateMax: [315.5, 470.5]
+          QuadMin: [-0.029003907, -0.0262207035]
+          QuadMax: [0.695996106, 0.898779273]
+          Advance: 0.666992188
+        - Character: 196
+          Size: [30, 38]
+          TexCoordinateMin: [316.5, 433.5]
+          TexCoordinateMax: [345.5, 470.5]
+          QuadMin: [-0.029003907, -0.0325683579]
+          QuadMax: [0.695996106, 0.892431617]
+          Advance: 0.666992188
+        - Character: 197
+          Size: [30, 38]
+          TexCoordinateMin: [346.5, 433.5]
+          TexCoordinateMax: [375.5, 470.5]
+          QuadMin: [-0.029003907, -0.0279296879]
+          QuadMax: [0.695996106, 0.897070289]
+          Advance: 0.666992188
+        - Character: 198
+          Size: [41, 32]
+          TexCoordinateMin: [296.5, 329.5]
+          TexCoordinateMax: [336.5, 360.5]
+          QuadMin: [-0.0270996094, -0.029589843]
+          QuadMax: [0.972900391, 0.745410144]
+          Advance: 1
+        - Character: 199
+          Size: [29, 41]
+          TexCoordinateMin: [189.5, 471.5]
+          TexCoordinateMax: [217.5, 511.5]
+          QuadMin: [0.0162109379, -0.238769531]
+          QuadMax: [0.716210961, 0.761230469]
+          Advance: 0.722167969
+        - Character: 200
+          Size: [25, 39]
+          TexCoordinateMin: [112.5, 432.5]
+          TexCoordinateMax: [136.5, 470.5]
+          QuadMin: [0.0461914055, -0.0267578121]
+          QuadMax: [0.646191418, 0.923242211]
+          Advance: 0.666992188
+        - Character: 201
+          Size: [25, 39]
+          TexCoordinateMin: [137.5, 432.5]
+          TexCoordinateMax: [161.5, 470.5]
+          QuadMin: [0.0461914055, -0.0267578121]
+          QuadMax: [0.646191418, 0.923242211]
+          Advance: 0.666992188
+        - Character: 202
+          Size: [25, 39]
+          TexCoordinateMin: [162.5, 432.5]
+          TexCoordinateMax: [186.5, 470.5]
+          QuadMin: [0.0461914055, -0.0267578121]
+          QuadMax: [0.646191418, 0.923242211]
+          Advance: 0.666992188
+        - Character: 203
+          Size: [25, 38]
+          TexCoordinateMin: [376.5, 433.5]
+          TexCoordinateMax: [400.5, 470.5]
+          QuadMin: [0.0461914055, -0.0325683579]
+          QuadMax: [0.646191418, 0.892431617]
+          Advance: 0.666992188
+        - Character: 204
+          Size: [11, 39]
+          TexCoordinateMin: [187.5, 432.5]
+          TexCoordinateMax: [197.5, 470.5]
+          QuadMin: [-0.0068359375, -0.0267578121]
+          QuadMax: [0.243164062, 0.923242211]
+          Advance: 0.277832031
+        - Character: 205
+          Size: [11, 39]
+          TexCoordinateMin: [198.5, 432.5]
+          TexCoordinateMax: [208.5, 470.5]
+          QuadMin: [0.0339355469, -0.0267578121]
+          QuadMax: [0.283935547, 0.923242211]
+          Advance: 0.277832031
+        - Character: 206
+          Size: [16, 39]
+          TexCoordinateMin: [239.5, 432.5]
+          TexCoordinateMax: [254.5, 470.5]
+          QuadMin: [-0.0485839844, -0.0267578121]
+          QuadMax: [0.326416016, 0.923242211]
+          Advance: 0.277832031
+        - Character: 207
+          Size: [14, 38]
+          TexCoordinateMin: [458.5, 433.5]
+          TexCoordinateMax: [471.5, 470.5]
+          QuadMin: [-0.023583984, -0.0325683579]
+          QuadMax: [0.30141601, 0.892431617]
+          Advance: 0.277832031
+        - Character: 208
+          Size: [30, 32]
+          TexCoordinateMin: [301.5, 296.5]
+          TexCoordinateMax: [330.5, 327.5]
+          QuadMin: [-0.0287597664, -0.029589843]
+          QuadMax: [0.696240246, 0.745410144]
+          Advance: 0.722167969
+        - Character: 209
+          Size: [26, 38]
+          TexCoordinateMin: [0.5, 394.5]
+          TexCoordinateMax: [25.5, 431.5]
+          QuadMin: [0.0456542969, -0.0262207035]
+          QuadMax: [0.670654297, 0.898779273]
+          Advance: 0.722167969
+        - Character: 210
+          Size: [31, 40]
+          TexCoordinateMin: [309.5, 472.5]
+          TexCoordinateMax: [339.5, 511.5]
+          QuadMin: [0.015625, -0.0453613289]
+          QuadMax: [0.765625, 0.929638684]
+          Advance: 0.777832031
+        - Character: 211
+          Size: [31, 40]
+          TexCoordinateMin: [340.5, 472.5]
+          TexCoordinateMax: [370.5, 511.5]
+          QuadMin: [0.015625, -0.0453613289]
+          QuadMax: [0.765625, 0.929638684]
+          Advance: 0.777832031
+        - Character: 212
+          Size: [31, 40]
+          TexCoordinateMin: [371.5, 472.5]
+          TexCoordinateMax: [401.5, 511.5]
+          QuadMin: [0.015625, -0.0453613289]
+          QuadMax: [0.765625, 0.929638684]
+          Advance: 0.777832031
+        - Character: 213
+          Size: [31, 39]
+          TexCoordinateMin: [255.5, 432.5]
+          TexCoordinateMax: [285.5, 470.5]
+          QuadMin: [0.015625, -0.0448242202]
+          QuadMax: [0.765625, 0.905175805]
+          Advance: 0.777832031
+        - Character: 214
+          Size: [31, 38]
+          TexCoordinateMin: [401.5, 433.5]
+          TexCoordinateMax: [431.5, 470.5]
+          QuadMin: [0.015625, -0.0386718735]
+          QuadMax: [0.765625, 0.886328101]
+          Advance: 0.777832031
+        - Character: 215
+          Size: [21, 21]
+          TexCoordinateMin: [119.5, 243.5]
+          TexCoordinateMax: [139.5, 263.5]
+          QuadMin: [0.0415039062, 0.103515625]
+          QuadMax: [0.541503906, 0.603515625]
+          Advance: 0.583984375
+        - Character: 216
+          Size: [32, 34]
+          TexCoordinateMin: [218.5, 398.5]
+          TexCoordinateMax: [249.5, 431.5]
+          QuadMin: [0.00312500005, -0.0558105484]
+          QuadMax: [0.778124988, 0.769189477]
+          Advance: 0.777832031
+        - Character: 217
+          Size: [26, 40]
+          TexCoordinateMin: [402.5, 472.5]
+          TexCoordinateMax: [427.5, 511.5]
+          QuadMin: [0.0476074219, -0.0453613289]
+          QuadMax: [0.672607422, 0.929638684]
+          Advance: 0.722167969
+        - Character: 218
+          Size: [26, 40]
+          TexCoordinateMin: [428.5, 472.5]
+          TexCoordinateMax: [453.5, 511.5]
+          QuadMin: [0.0476074219, -0.0453613289]
+          QuadMax: [0.672607422, 0.929638684]
+          Advance: 0.722167969
+        - Character: 219
+          Size: [26, 40]
+          TexCoordinateMin: [454.5, 472.5]
+          TexCoordinateMax: [479.5, 511.5]
+          QuadMin: [0.0476074219, -0.0453613289]
+          QuadMax: [0.672607422, 0.929638684]
+          Advance: 0.722167969
+        - Character: 220
+          Size: [26, 38]
+          TexCoordinateMin: [432.5, 433.5]
+          TexCoordinateMax: [457.5, 470.5]
+          QuadMin: [0.0476074219, -0.0386718735]
+          QuadMax: [0.672607422, 0.886328101]
+          Advance: 0.722167969
+        - Character: 221
+          Size: [30, 39]
+          TexCoordinateMin: [209.5, 432.5]
+          TexCoordinateMax: [238.5, 470.5]
+          QuadMin: [-0.0314453132, -0.0267578121]
+          QuadMax: [0.693554699, 0.923242211]
+          Advance: 0.666992188
+        - Character: 222
+          Size: [25, 32]
+          TexCoordinateMin: [371.5, 329.5]
+          TexCoordinateMax: [395.5, 360.5]
+          QuadMin: [0.0503417961, -0.029589843]
+          QuadMax: [0.650341809, 0.745410144]
+          Advance: 0.666992188
+        - Character: 223
+          Size: [24, 33]
+          TexCoordinateMin: [0.5, 361.5]
+          TexCoordinateMax: [23.5, 393.5]
+          QuadMin: [0.039648436, -0.0420898423]
+          QuadMax: [0.614648461, 0.757910132]
+          Advance: 0.610839844
+        - Character: 224
+          Size: [23, 33]
+          TexCoordinateMin: [372.5, 399.5]
+          TexCoordinateMax: [394.5, 431.5]
+          QuadMin: [-9.76562515e-05, -0.0459960923]
+          QuadMax: [0.54990232, 0.754003882]
+          Advance: 0.556152344
+        - Character: 225
+          Size: [23, 33]
+          TexCoordinateMin: [275.5, 399.5]
+          TexCoordinateMax: [297.5, 431.5]
+          QuadMin: [-9.76562515e-05, -0.0459960923]
+          QuadMax: [0.54990232, 0.754003882]
+          Advance: 0.556152344
+        - Character: 226
+          Size: [23, 33]
+          TexCoordinateMin: [418.5, 399.5]
+          TexCoordinateMax: [440.5, 431.5]
+          QuadMin: [-9.76562515e-05, -0.0459960923]
+          QuadMax: [0.54990232, 0.754003882]
+          Advance: 0.556152344
+        - Character: 227
+          Size: [23, 32]
+          TexCoordinateMin: [348.5, 329.5]
+          TexCoordinateMax: [370.5, 360.5]
+          QuadMin: [-9.76562515e-05, -0.039355468]
+          QuadMax: [0.54990232, 0.735644519]
+          Advance: 0.556152344
+        - Character: 228
+          Size: [23, 33]
+          TexCoordinateMin: [464.5, 399.5]
+          TexCoordinateMax: [486.5, 431.5]
+          QuadMin: [-9.76562515e-05, -0.0457519516]
+          QuadMax: [0.54990232, 0.754248023]
+          Advance: 0.556152344
+        - Character: 229
+          Size: [23, 34]
+          TexCoordinateMin: [57.5, 398.5]
+          TexCoordinateMax: [79.5, 431.5]
+          QuadMin: [-9.76562515e-05, -0.0479980484]
+          QuadMax: [0.54990232, 0.777001977]
+          Advance: 0.556152344
+        - Character: 230
+          Size: [36, 25]
+          TexCoordinateMin: [251.5, 271.5]
+          TexCoordinateMax: [286.5, 295.5]
+          QuadMin: [0.00341796875, -0.040722657]
+          QuadMax: [0.878417969, 0.559277356]
+          Advance: 0.889160156
+        - Character: 231
+          Size: [22, 33]
+          TexCoordinateMin: [192.5, 361.5]
+          TexCoordinateMax: [213.5, 393.5]
+          QuadMin: [0.00239257817, -0.232763678]
+          QuadMax: [0.527392566, 0.567236304]
+          Advance: 0.5
+        - Character: 232
+          Size: [23, 33]
+          TexCoordinateMin: [179.5, 328.5]
+          TexCoordinateMax: [201.5, 360.5]
+          QuadMin: [0.000634765602, -0.0459960923]
+          QuadMax: [0.550634742, 0.754003882]
+          Advance: 0.556152344
+        - Character: 233
+          Size: [23, 33]
+          TexCoordinateMin: [321.5, 399.5]
+          TexCoordinateMax: [343.5, 431.5]
+          QuadMin: [0.000634765602, -0.0459960923]
+          QuadMax: [0.550634742, 0.754003882]
+          Advance: 0.556152344
+        - Character: 234
+          Size: [23, 33]
+          TexCoordinateMin: [24.5, 361.5]
+          TexCoordinateMax: [46.5, 393.5]
+          QuadMin: [0.000634765602, -0.0459960923]
+          QuadMax: [0.550634742, 0.754003882]
+          Advance: 0.556152344
+        - Character: 235
+          Size: [23, 33]
+          TexCoordinateMin: [395.5, 399.5]
+          TexCoordinateMax: [417.5, 431.5]
+          QuadMin: [0.000634765602, -0.0457519516]
+          QuadMax: [0.550634742, 0.754248023]
+          Advance: 0.556152344
+        - Character: 236
+          Size: [11, 32]
+          TexCoordinateMin: [337.5, 329.5]
+          TexCoordinateMax: [347.5, 360.5]
+          QuadMin: [-0.0161132812, -0.027636718]
+          QuadMax: [0.233886719, 0.747363269]
+          Advance: 0.277832031
+        - Character: 237
+          Size: [11, 32]
+          TexCoordinateMin: [142.5, 264.5]
+          TexCoordinateMax: [152.5, 295.5]
+          QuadMin: [0.0573730469, -0.027636718]
+          QuadMax: [0.307373047, 0.747363269]
+          Advance: 0.277832031
+        - Character: 238
+          Size: [16, 32]
+          TexCoordinateMin: [494.5, 296.5]
+          TexCoordinateMax: [509.5, 327.5]
+          QuadMin: [-0.0412597656, -0.027636718]
+          QuadMax: [0.333740234, 0.747363269]
+          Advance: 0.277832031
+        - Character: 239
+          Size: [14, 32]
+          TexCoordinateMin: [22.5, 296.5]
+          TexCoordinateMax: [35.5, 327.5]
+          QuadMin: [-0.0211425778, -0.0273925774]
+          QuadMax: [0.303857416, 0.74760741]
+          Advance: 0.277832031
+        - Character: 240
+          Size: [23, 33]
+          TexCoordinateMin: [136.5, 328.5]
+          TexCoordinateMax: [158.5, 360.5]
+          QuadMin: [0.000878906227, -0.0481933579]
+          QuadMax: [0.550878882, 0.751806617]
+          Advance: 0.556152344
+        - Character: 241
+          Size: [20, 32]
+          TexCoordinateMin: [338.5, 296.5]
+          TexCoordinateMax: [357.5, 327.5]
+          QuadMin: [0.0391113274, -0.033496093]
+          QuadMax: [0.51411134, 0.741503894]
+          Advance: 0.556152344
+        - Character: 242
+          Size: [23, 33]
+          TexCoordinateMin: [450.5, 361.5]
+          TexCoordinateMax: [472.5, 393.5]
+          QuadMin: [0.00112304685, -0.0459960923]
+          QuadMax: [0.551123023, 0.754003882]
+          Advance: 0.556152344
+        - Character: 243
+          Size: [23, 33]
+          TexCoordinateMin: [441.5, 399.5]
+          TexCoordinateMax: [463.5, 431.5]
+          QuadMin: [0.00112304685, -0.0459960923]
+          QuadMax: [0.551123023, 0.754003882]
+          Advance: 0.556152344
+        - Character: 244
+          Size: [23, 33]
+          TexCoordinateMin: [298.5, 399.5]
+          TexCoordinateMax: [320.5, 431.5]
+          QuadMin: [0.00112304685, -0.0459960923]
+          QuadMax: [0.551123023, 0.754003882]
+          Advance: 0.556152344
+        - Character: 245
+          Size: [23, 32]
+          TexCoordinateMin: [358.5, 296.5]
+          TexCoordinateMax: [380.5, 327.5]
+          QuadMin: [0.00112304685, -0.039355468]
+          QuadMax: [0.551123023, 0.735644519]
+          Advance: 0.556152344
+        - Character: 246
+          Size: [23, 33]
+          TexCoordinateMin: [54.5, 328.5]
+          TexCoordinateMax: [76.5, 360.5]
+          QuadMin: [0.00112304685, -0.0457519516]
+          QuadMax: [0.551123023, 0.754248023]
+          Advance: 0.556152344
+        - Character: 247
+          Size: [22, 19]
+          TexCoordinateMin: [180.5, 245.5]
+          TexCoordinateMax: [201.5, 263.5]
+          QuadMin: [0.0119140623, 0.12802735]
+          QuadMax: [0.536914051, 0.578027368]
+          Advance: 0.548828125
+        - Character: 248
+          Size: [23, 27]
+          TexCoordinateMin: [208.5, 269.5]
+          TexCoordinateMax: [230.5, 295.5]
+          QuadMin: [0.0309082028, -0.069140628]
+          QuadMax: [0.580908179, 0.580859363]
+          Advance: 0.610839844
+        - Character: 249
+          Size: [20, 33]
+          TexCoordinateMin: [245.5, 328.5]
+          TexCoordinateMax: [264.5, 360.5]
+          QuadMin: [0.0366699211, -0.0459960923]
+          QuadMax: [0.511669934, 0.754003882]
+          Advance: 0.556152344
+        - Character: 250
+          Size: [20, 33]
+          TexCoordinateMin: [159.5, 328.5]
+          TexCoordinateMax: [178.5, 360.5]
+          QuadMin: [0.0366699211, -0.0459960923]
+          QuadMax: [0.511669934, 0.754003882]
+          Advance: 0.556152344
+        - Character: 251
+          Size: [20, 33]
+          TexCoordinateMin: [236.5, 361.5]
+          TexCoordinateMax: [255.5, 393.5]
+          QuadMin: [0.0366699211, -0.0459960923]
+          QuadMax: [0.511669934, 0.754003882]
+          Advance: 0.556152344
+        - Character: 252
+          Size: [20, 33]
+          TexCoordinateMin: [47.5, 361.5]
+          TexCoordinateMax: [66.5, 393.5]
+          QuadMin: [0.0366699211, -0.0457519516]
+          QuadMax: [0.511669934, 0.754248023]
+          Advance: 0.556152344
+        - Character: 253
+          Size: [23, 41]
+          TexCoordinateMin: [49.5, 471.5]
+          TexCoordinateMax: [71.5, 511.5]
+          QuadMin: [-0.021337891, -0.245361328]
+          QuadMax: [0.528662086, 0.754638672]
+          Advance: 0.5
+        - Character: 254
+          Size: [22, 40]
+          TexCoordinateMin: [218.5, 472.5]
+          TexCoordinateMax: [239.5, 511.5]
+          QuadMin: [0.0285156257, -0.228955075]
+          QuadMax: [0.553515613, 0.746044934]
+          Advance: 0.556152344
+        - Character: 255
+          Size: [23, 41]
+          TexCoordinateMin: [13.5, 471.5]
+          TexCoordinateMax: [35.5, 511.5]
+          QuadMin: [-0.021337891, -0.245117188]
+          QuadMax: [0.528662086, 0.754882812]
+          Advance: 0.5

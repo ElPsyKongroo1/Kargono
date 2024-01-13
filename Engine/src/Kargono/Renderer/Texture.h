@@ -8,7 +8,26 @@
 #include <filesystem>
 
 
-namespace Kargono {
+namespace Kargono
+{
+
+	enum class ImageFormat
+	{
+		None = 0,
+		R8,
+		RGB8,
+		RGBA8,
+		RGBA32F
+	};
+
+	struct TextureSpecification
+	{
+		uint32_t Width = 1;
+		uint32_t Height = 1;
+		ImageFormat Format = ImageFormat::RGBA8;
+		bool GenerateMipMaps = true;
+
+	};
 
 	class Texture
 	{
@@ -28,6 +47,7 @@ namespace Kargono {
 	class Texture2D : public Texture
 	{
 	public:
+		static Ref<Texture2D> Create(const TextureSpecification& spec);
 		static Ref<Texture2D> Create(uint32_t rendererID, uint32_t width, uint32_t height);
 
 		// Create Texture using intermediate format
@@ -38,5 +58,25 @@ namespace Kargono {
 		static Ref<Texture2D> CreateEditorTexture(const std::filesystem::path& path);
 
 	};
+}
+
+namespace Kargono::Utility
+{
+	inline uint32_t ImageFormatToBytes(ImageFormat format)
+	{
+		switch (format)
+		{
+		case ImageFormat::R8:		{ return 1;}
+		case ImageFormat::RGB8:		{ return 3;}
+		case ImageFormat::RGBA8:	{ return 4;}
+		case ImageFormat::RGBA32F:	{ return 16;}
+		case ImageFormat::None:		{ return 1; }
+		default:
+			{
+				KG_CORE_ASSERT(false, "Invalid ImageFormat submitted to ImageFormatToSize");
+				return 0;
+			}
+		}
+	}
 }
 

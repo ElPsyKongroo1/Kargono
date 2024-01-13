@@ -6,7 +6,10 @@
 
 namespace Kargono
 {
-
+	Ref<Texture2D> Texture2D::Create(const TextureSpecification& spec)
+	{
+		return CreateRef<API::OpenGL::OpenGLTexture2D>(spec);
+	}
 	Ref<Texture2D> Texture2D::Create(uint32_t rendererID, uint32_t width, uint32_t height)
 	{
 		return CreateRef<API::OpenGL::OpenGLTexture2D>(rendererID, width, height);

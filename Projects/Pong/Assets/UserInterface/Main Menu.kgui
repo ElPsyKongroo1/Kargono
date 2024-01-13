@@ -1,6 +1,6 @@
 SelectColor: [0.403921574, 0.0666666701, 0.686274529, 0.745098054]
 FunctionPointerOnMove: PlayMenuSelect
-Font: 10569950259390381689
+Font: 7507720298335089313
 Windows:
   - Tag: None
     ScreenPosition: [0, 0, 0]
@@ -35,9 +35,9 @@ Windows:
         FunctionPointerOnPress: OpenPongGameplay
         TextWidget:
           Text: Play
-          TextSize: 0.400000006
+          TextSize: 0.720000029
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [83, 38]
+          TextAbsoluteDimensions: [1.72802734, 0.833333313]
           TextCentered: true
       - Tag: None
         WindowPosition: [0.129999995, 0.209999993]
@@ -52,13 +52,13 @@ Windows:
         FunctionPointerOnPress: CloseApplication
         TextWidget:
           Text: Exit
-          TextSize: 0.400000006
+          TextSize: 0.670000017
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [69, 38]
+          TextAbsoluteDimensions: [1.42773438, 0.833333313]
           TextCentered: true
       - Tag: None
-        WindowPosition: [0.0700000003, 0.709999979]
-        Size: [0.239999995, 0.170000002]
+        WindowPosition: [0.100000001, 0.74000001]
+        Size: [0.170000002, 0.140000001]
         DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
         Selectable: false
@@ -69,9 +69,9 @@ Windows:
         FunctionPointerOnPress: ""
         TextWidget:
           Text: Pong
-          TextSize: 0.469999999
+          TextSize: 0.850000024
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [99, 38]
+          TextAbsoluteDimensions: [2.0546875, 0.833333313]
           TextCentered: true
       - Tag: None
         WindowPosition: [0.699999988, 0]
@@ -86,7 +86,7 @@ Windows:
         FunctionPointerOnPress: ""
         TextWidget:
           Text: "@Wienersons Incorporated"
-          TextSize: 0.119999997
-          TextColor: [1, 1, 0.827450991, 0.501960814]
-          TextAbsoluteDimensions: [546, 42]
+          TextSize: 0.300000012
+          TextColor: [1, 1, 0.827450991, 1]
+          TextAbsoluteDimensions: [11.3208008, 0.880952358]
           TextCentered: true
