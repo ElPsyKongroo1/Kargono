@@ -6,11 +6,58 @@
 #include "stb_image.h"
 #include <glad/glad.h>
 
+namespace API::Utility
+{
+	static GLenum KargonoFormatToGLDataFormat(Kargono::ImageFormat format)
+	{
+		switch (format)
+		{
+		case Kargono::ImageFormat::RGB8: return GL_RGB;
+		case Kargono::ImageFormat::RGBA8: return GL_RGBA;
+		default:
+		{
+			KG_CORE_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLDataFormat");
+			return 0;
+		}
+		}
+	}
+
+	static GLenum KargonoFormatToGLInternalFormat(Kargono::ImageFormat format)
+	{
+		switch (format)
+		{
+		case Kargono::ImageFormat::RGB8: return GL_RGB8;
+		case Kargono::ImageFormat::RGBA8: return GL_RGBA8;
+		default:
+		{
+			KG_CORE_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLInternalFormat");
+			return 0;
+		}
+				
+		}
+	}
+}
+
 namespace API::OpenGL
 {
+	OpenGLTexture2D::OpenGLTexture2D(const Kargono::TextureSpecification& spec)
+		: m_Width(spec.Width), m_Height(spec.Height)
+	{
+		m_InternalFormat = Utility::KargonoFormatToGLInternalFormat(spec.Format);
+		m_DataFormat = Utility::KargonoFormatToGLDataFormat(spec.Format);
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
 	// Used to Create Texture from previously unmanaged texture
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t rendererID, uint32_t width, uint32_t height)
-		:m_RendererID(rendererID), m_Width(width), m_Height(height)
+		: m_RendererID(rendererID), m_Width(width), m_Height(height)
 	{
 		
 	}

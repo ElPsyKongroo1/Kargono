@@ -25,7 +25,7 @@ namespace Kargono::Assets
 		Font = 4,
 		Scene = 5,
 		UIObject = 6,
-		InputMode = 7
+		InputMode = 7,
 	};
 
 	//==============================
@@ -116,10 +116,10 @@ namespace Kargono::Assets
 	//		debugging.
 	struct FontMetaData
 	{
-		std::vector<uint64_t> BufferLocations{};
+		float AtlasWidth;
+		float AtlasHeight;
+		float LineHeight{};
 		std::vector<std::pair<unsigned char, UI::Character>> Characters{};
-		float AverageWidth{ 0 };
-		float AverageHeight{ 0 };
 		std::filesystem::path InitialFileLocation;
 	};
 

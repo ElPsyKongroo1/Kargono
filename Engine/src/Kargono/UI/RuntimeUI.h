@@ -92,6 +92,7 @@ namespace Kargono::UI
 		Math::vec2 TextAbsoluteDimensions {};
 		Math::vec4 TextColor{0.5f};
 		bool TextCentered = true;
+		friend class RuntimeEngine;
 	};
 
 	class ButtonWidget : public Widget
@@ -240,7 +241,7 @@ namespace Kargono::UI
 		std::vector<Window*> m_DisplayedWindows{};
 		Ref<UIObject> m_CurrentUI{ nullptr };
 		Assets::AssetHandle m_CurrentUIHandle{0};
-		std::vector<Window> m_UICache {};
+		std::vector<Window> m_Windows {};
 		Widget* m_SelectedWidget { nullptr };
 		Widget* m_HoveredWidget { nullptr };
 		Window* m_ActiveWindow { nullptr };

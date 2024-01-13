@@ -360,87 +360,51 @@ namespace Kargono
 				UpdateInputBuffer(name, type);
 			});
 
-		InsertMap(s_VertexInput, 70, [&](uint16_t count)
-			{
-				const std::string name = "a_TexIndex";
-				const std::string type = "float";
-				s_OutputStream << "layout(location = " << count << ") in " << type << " " << name << ";\r\n";
-				UpdateInputBuffer(name, type);
-			});
-
-
 		InsertMap(s_VertexToFragmentSmooth, 70, [&]()
 			{
 				s_OutputStream << "\tvec2 TexCoord;\r\n";
 			});
 
-		InsertMap(s_VertexToFragmentFlat, 70, [&](uint16_t count, std::string_view type)
-			{
-				s_OutputStream << "layout (location = " << count << ") " << type << " flat float v_TexIndex;\r\n";
-			});
-
 		InsertMap(s_VertexMain, 40, [&]()
 			{
 				s_OutputStream << "\tOutput.TexCoord = a_TexCoord;\r\n";
-				s_OutputStream << "\tv_TexIndex = a_TexIndex;\r\n";
 			});
 
 		InsertMap(s_FragmentUniforms, 40, [&](uint16_t count)
 			{
 				const std::string name = "u_Textures";
 				const std::string type = "sampler2D";
-				s_OutputStream << "layout(binding = " << count << ") uniform " << type << " " << name << "[32];\r\n";
+				s_OutputStream << "layout(binding = " << count << ") uniform " << type << " " << name << ";\r\n";
 				UpdateUniformBuffer(name, type);
 			});
-		InsertMap(s_FragmentFunctions, 30, [&]()
+
+		InsertMap(s_FragmentFunctions, 50, [&]()
 			{
-				s_OutputStream << "vec4 GetTextureColor(vec2 texCoordinate)\r\n";
+				s_OutputStream << "float screenPxRange()\r\n";
 				s_OutputStream << "{\r\n";
-				s_OutputStream << "\tvec4 texColor;\r\n";
-				s_OutputStream << "\tswitch (int(v_TexIndex))\r\n";
-				s_OutputStream << "\t{\r\n";
-				s_OutputStream << "\t\tcase  0: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[0], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  1: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[1], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  2: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[2], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  3: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[3], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  4: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[4], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  5: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[5], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  6: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[6], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  7: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[7], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  8: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[8], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase  9: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[9], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 10: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[10], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 11: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[11], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 12: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[12], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 13: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[13], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 14: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[14], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 15: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[15], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 16: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[16], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 17: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[17], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 18: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[18], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 19: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[19], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 20: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[20], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 21: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[21], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 22: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[22], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 23: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[23], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 24: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[24], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 25: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[25], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 26: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[26], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 27: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[27], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 28: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[28], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 29: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[29], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 30: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[30], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t\tcase 31: texColor = vec4(1.0, 1.0, 1.0, texture(u_Textures[31], texCoordinate).r); break;\r\n";
-				s_OutputStream << "\t}\r\n";
-				s_OutputStream << "\treturn texColor;\r\n";
+				s_OutputStream << "\tconst float pxRange = 2.0; \r\n";
+				s_OutputStream << "\tvec2 unitRange = vec2(pxRange) / vec2(textureSize(u_Textures, 0));\r\n";
+				s_OutputStream << "\tvec2 screenTexSize = vec2(1.0) / fwidth(Input.TexCoord);\r\n";
+				s_OutputStream << "\treturn max(0.5 * dot(unitRange, screenTexSize), 1.0);\r\n";
+				s_OutputStream << "}\r\n";
+
+				s_OutputStream << "float median(float r, float g, float b)\r\n";
+				s_OutputStream << "{\r\n";
+				s_OutputStream << "\treturn max(min(r, g), min(max(r, g), b));\r\n";
 				s_OutputStream << "}\r\n";
 			});
 
 		InsertMap(s_FragmentMain, 30, [&]()
 			{
-				s_OutputStream << "\tvec2 texCoordinate = Input.TexCoord;\r\n";
-				s_OutputStream << "\tvec4 texColor = GetTextureColor(texCoordinate);\r\n";
-				s_OutputStream << "\to_Color *= texColor;\r\n";
+				s_OutputStream << "\tvec4 texColor = texture(u_Textures, Input.TexCoord);\r\n";
+				s_OutputStream << "\tvec3 msd = texture(u_Textures, Input.TexCoord).rgb;\r\n";
+				s_OutputStream << "\tfloat sd = median(msd.r, msd.g, msd.b);\r\n";
+				s_OutputStream << "\tfloat screenPxDistance = screenPxRange() * (sd - 0.5);\r\n";
+				s_OutputStream << "\tfloat opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);\r\n";
+				s_OutputStream << "\t\tvec4 bgColor = vec4(0.0);\r\n";
+				s_OutputStream << "\t\to_Color = mix(bgColor, Input.Color, opacity);\r\n";
+				s_OutputStream << "\tif (opacity == 0.0)\r\n";
+				s_OutputStream << "\t\tdiscard;\r\n";
 			});
 	}
 

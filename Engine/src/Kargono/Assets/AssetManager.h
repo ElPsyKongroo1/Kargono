@@ -241,7 +241,6 @@ namespace Kargono::Assets
 		//		to use.
 		static std::unordered_map<AssetHandle, Ref<Audio::AudioBuffer>> s_Audio;
 
-
 	//============================================================
 	// Font
 	//============================================================
