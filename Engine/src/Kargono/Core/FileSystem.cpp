@@ -4,6 +4,7 @@
 
 #include <sha256.h>
 #include "stb_image_write.h"
+#include "Kargono/Renderer/Texture.h"
 
 namespace Kargono
 {
@@ -148,6 +149,7 @@ namespace Kargono
 		KG_CORE_ASSERT(false, "Invalid FileType enum provided to WriteFileImage function");
 		return false;
 	}
+
 
 	std::string FileSystem::ReadFileString(const std::filesystem::path& filepath)
 	{

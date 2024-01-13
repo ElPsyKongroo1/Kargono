@@ -1,0 +1,75 @@
+// Rendering Type: DrawTriangle
+// Color Type: FlatColor
+// Draw Outline: false
+//============================================================
+// vertex shader
+//============================================================
+#type vertex
+#version 450 core
+
+struct VertexOutput
+{
+	vec4 Color;
+	vec2 TexCoord;
+};
+
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec4 a_Color;
+layout(location = 2) in vec2 a_TexCoord;
+layout(std140, binding = 0) uniform Camera
+{
+mat4 u_ViewProjection;
+};
+layout(location = 0) out VertexOutput Output;
+
+void main()
+{
+	gl_Position = vec4(a_Position, 1.0);
+	Output.Color = a_Color;
+	Output.TexCoord = a_TexCoord;
+	gl_Position = u_ViewProjection * gl_Position;
+}
+
+
+//============================================================
+// fragment shader
+//============================================================
+#type fragment
+#version 450 core
+
+struct VertexOutput
+{
+	vec4 Color;
+	vec2 TexCoord;
+};
+
+layout(location = 0) in VertexOutput Input;
+layout(binding = 0) uniform sampler2D u_Textures;
+layout(location = 0) out vec4 o_Color;
+
+float screenPxRange()
+{
+	const float pxRange = 2.0; 
+	vec2 unitRange = vec2(pxRange) / vec2(textureSize(u_Textures, 0));
+	vec2 screenTexSize = vec2(1.0) / fwidth(Input.TexCoord);
+	return max(0.5 * dot(unitRange, screenTexSize), 1.0);
+}
+float median(float r, float g, float b)
+{
+	return max(min(r, g), min(max(r, g), b));
+}
+
+void main()
+{
+	o_Color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	vec4 texColor = texture(u_Textures, Input.TexCoord);
+	vec3 msd = texture(u_Textures, Input.TexCoord).rgb;
+	float sd = median(msd.r, msd.g, msd.b);
+	float screenPxDistance = screenPxRange() * (sd - 0.5);
+	float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
+		vec4 bgColor = vec4(0.0);
+		o_Color = mix(bgColor, Input.Color, opacity);
+	if (opacity == 0.0)
+		discard;
+	o_Color *= Input.Color;
+}

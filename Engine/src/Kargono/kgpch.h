@@ -38,8 +38,4 @@
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/UUID.h"
 
-#ifdef KG_PLATFORM_WINDOWS
-	#include <Windows.h>
-#endif
-
 

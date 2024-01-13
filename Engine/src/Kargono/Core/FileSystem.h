@@ -8,6 +8,8 @@
 
 namespace Kargono
 {
+	class Texture2D;
+
 	class FileSystem
 	{
 	public:

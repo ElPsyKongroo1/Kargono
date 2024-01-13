@@ -13,8 +13,6 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Math/Math.h"
 
-
-
 #include "stb_image.h"
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_cross.hpp>
@@ -23,9 +21,8 @@
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #include <dr_wav.h>
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#include "glad/glad.h"
+#include "msdf-atlas-gen/msdf-atlas-gen.h"
+#include "msdf-atlas-gen/FontGeometry.h"
 #include "Kargono/Renderer/ShaderBuilder.h"
 
 
@@ -451,7 +448,13 @@ namespace Kargono::Utility
 			}
 			if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 			{
+
 				KG_CORE_ERROR(module.GetErrorMessage());
+				KG_CORE_ERROR("Here are the shaders: ");
+				for (auto& [enumName, text] : shaderSources)
+				{
+					KG_CORE_ERROR(text);
+				}
 				KG_CORE_ASSERT(false);
 			}
 			// Add Newly Compiled Spirv to m_OpenGLSPIRV
@@ -1085,7 +1088,64 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 		pcmData.Release();
 	}
+}
 
+namespace Kargono::Utility
+{
+	template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
+	static void CreateAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height, TextureSpecification& textureSpec, Buffer& buffer)
+	{
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+		msdf_atlas::GeneratorAttributes attributes;
+		attributes.config.overlapSupport = true;
+		attributes.scanlinePass = true;
+		msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
+		generator.setAttributes(attributes);
+		generator.setThreadCount(numAvailableThread);
+		generator.generate(glyphs.data(), (int32_t)glyphs.size());
+
+		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
+
+		textureSpec.Width = bitmap.width;
+		textureSpec.Height = bitmap.height;
+		textureSpec.Format = ImageFormat::RGB8;
+		textureSpec.GenerateMipMaps = false;
+
+		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
+		memcpy_s(buffer.Data, buffer.Size, bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
+	}
+
+
+	/*template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
+	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
+	{
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+		msdf_atlas::GeneratorAttributes attributes;
+		attributes.config.overlapSupport = true;
+		attributes.scanlinePass = true;
+		msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
+		generator.setAttributes(attributes);
+		generator.setThreadCount(numAvailableThread);
+		generator.generate(glyphs.data(), (int32_t)glyphs.size());
+
+		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
+
+		TextureSpecification spec;
+		spec.Width = bitmap.width;
+		spec.Height = bitmap.height;
+		spec.Format = ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Texture2D> texture = Texture2D::Create(spec);
+		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(spec.Format));
+		return texture;
+	}*/
+
+}
+
+namespace Kargono::Assets
+{
 	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_FontRegistry {};
 	std::unordered_map<AssetHandle, Ref<UI::Font>> AssetManager::s_Fonts {};
 
@@ -1138,26 +1198,21 @@ namespace Kargono::Assets
 				{
 					Ref<Assets::FontMetaData> fontMetaData = CreateRef<Assets::FontMetaData>();
 
-					fontMetaData->AverageWidth = metadata["AverageWidth"].as<float>();
-					fontMetaData->AverageHeight = metadata["AverageHeight"].as<float>();
-
-					auto bufferLocations = metadata["BufferLocations"];
-					fontMetaData->BufferLocations = std::vector<uint64_t>();
-					auto& bufferLocationVector = fontMetaData->BufferLocations;
-					for (YAML::const_iterator it = bufferLocations.begin(); it != bufferLocations.end(); ++it)
-					{
-						bufferLocationVector.push_back(it->as<uint64_t>());
-					}
+					fontMetaData->AtlasWidth = metadata["AtlasWidth"].as<float>();
+					fontMetaData->AtlasHeight = metadata["AtlasHeight"].as<float>();
+					fontMetaData->LineHeight = metadata["LineHeight"].as<float>();
 
 					auto characters = metadata["Characters"];
 					auto& characterVector = fontMetaData->Characters;
 					for (auto character : characters)
 					{
 						UI::Character newCharacter{};
-						newCharacter.Texture = nullptr;
-						newCharacter.Size = character["Size"].as<Math::ivec2>();
-						newCharacter.Bearing = character["Bearing"].as<Math::ivec2>();
-						newCharacter.Advance = character["Advance"].as<uint32_t>();
+						newCharacter.Size = character["Size"].as<Math::vec2>();
+						newCharacter.Advance = character["Advance"].as<float>();
+						newCharacter.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
+						newCharacter.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
+						newCharacter.QuadMin = character["QuadMin"].as<Math::vec2>();
+						newCharacter.QuadMax = character["QuadMax"].as<Math::vec2>();
 						characterVector.push_back(std::pair<unsigned char, UI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
 					}
 
@@ -1200,12 +1255,10 @@ namespace Kargono::Assets
 				Assets::FontMetaData* metadata = static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
 
 				out << YAML::Key << "InitialFileLocation" << YAML::Value << metadata->InitialFileLocation.string();
-				out << YAML::Key << "AverageWidth" << YAML::Value << metadata->AverageWidth;
-				out << YAML::Key << "AverageHeight" << YAML::Value << metadata->AverageHeight;
 
-				out << YAML::Key << "BufferLocations" << YAML::BeginSeq;
-				for (auto& location : metadata->BufferLocations) { out << location; }
-				out << YAML::EndSeq;
+				out << YAML::Key << "AtlasWidth" << YAML::Value << metadata->AtlasWidth;
+				out << YAML::Key << "AtlasHeight" << YAML::Value << metadata->AtlasHeight;
+				out << YAML::Key << "LineHeight" << YAML::Value << metadata->LineHeight;
 
 				out << YAML::Key << "Characters" << YAML::Value << YAML::BeginSeq;
 				for (auto& [character, characterStruct] : metadata->Characters)
@@ -1213,7 +1266,10 @@ namespace Kargono::Assets
 					out << YAML::BeginMap;
 					out << YAML::Key << "Character" << YAML::Value << static_cast<uint32_t>(character);
 					out << YAML::Key << "Size" << YAML::Value << characterStruct.Size;
-					out << YAML::Key << "Bearing" << YAML::Value << characterStruct.Bearing;
+					out << YAML::Key << "TexCoordinateMin" << YAML::Value << characterStruct.TexCoordinateMin;
+					out << YAML::Key << "TexCoordinateMax" << YAML::Value << characterStruct.TexCoordinateMax;
+					out << YAML::Key << "QuadMin" << YAML::Value << characterStruct.QuadMin;
+					out << YAML::Key << "QuadMax" << YAML::Value << characterStruct.QuadMax;
 					out << YAML::Key << "Advance" << YAML::Value << characterStruct.Advance;
 					out << YAML::EndMap;
 				}
@@ -1277,49 +1333,23 @@ namespace Kargono::Assets
 		Buffer currentResource{};
 		currentResource = FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<UI::Font> newFont = CreateRef<UI::Font>();
-		newFont->m_AverageWidth = metadata.AverageWidth;
-		newFont->m_AverageHeight = metadata.AverageHeight;
 		auto& fontCharacters = newFont->GetCharacters();
 
-		auto& bufferLocations = metadata.BufferLocations;
+		// Create Texture
+		TextureSpecification spec;
+		spec.Width = metadata.AtlasWidth;
+		spec.Height = metadata.AtlasHeight;
+		spec.Format = ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Texture2D> texture = Texture2D::Create(spec);
+		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
+		newFont->m_AtlasTexture = texture;
 
-		// disable byte-alignment restriction
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		newFont->SetLineHeight(metadata.LineHeight);
 
-		uint64_t iterator{ 0 };
 		for (auto& [character, characterStruct] : metadata.Characters)
 		{
-			// Generate Texture
-			unsigned int texture;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_RED,
-				characterStruct.Size.x,
-				characterStruct.Size.y,
-				0,
-				GL_RED,
-				GL_UNSIGNED_BYTE,
-				(currentResource.Data + bufferLocations.at(iterator))
-			);
-			// set texture options
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			iterator++;
-
-			UI::Character mapCharacter =
-			{
-				Texture2D::Create(texture, characterStruct.Size.x, characterStruct.Size.y),
-				characterStruct.Size,
-				characterStruct.Bearing,
-				characterStruct.Advance
-			};
-
-			fontCharacters.insert(std::pair<unsigned char, UI::Character>(character, mapCharacter));
+			fontCharacters.insert(std::pair<unsigned char, UI::Character>(character, characterStruct));
 		}
 
 		currentResource.Release();
@@ -1355,96 +1385,140 @@ namespace Kargono::Assets
 	void AssetManager::CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
 	{
 		// Create Buffers
-		FT_Library ft;
-		if (FT_Init_FreeType(&ft))
-		{
-			KG_CORE_ASSERT(false, "FreeType Library Not Initialized Properly");
-			return;
-		}
-
-		FT_Face face;
-		if (FT_New_Face(ft, filePath.string().c_str(), 0, &face))
-		{
-			KG_CORE_ERROR("Font not Loaded Correctly!");
-			return;
-		}
-
-		FT_Set_Pixel_Sizes(face, 0, 48); // 48
-
-		// disable byte-alignment restriction
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		double widthSum{ 0 };
-		double heightSum{ 0 };
-		uint32_t count{ 0 };
-		float AverageWidth{ 0 };
-		float AverageHeight{ 0 };
-
+		std::vector<msdf_atlas::GlyphGeometry> glyphs;
+		msdf_atlas::FontGeometry fontGeometry;
+		float lineHeight{ 0 };
 		std::vector<std::pair<unsigned char, UI::Character>> characters {};
-		std::vector<uint64_t> bufferLocations {};
-		std::vector<Buffer> characterBuffers{};
-		uint64_t totalBuffer{ 0 };
 
-		for (unsigned char character{ 0 }; character < 128; character++)
+		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
+		KG_CORE_ASSERT(ft, "MSDFGEN failed to initialize!");
+
+		std::string fileString = filePath.string();
+		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fileString.c_str());
+		if (!font)
 		{
-			Buffer fontBuffer{};
-			// Load Character Glyph
-			if (FT_Load_Char(face, character, FT_LOAD_RENDER))
-			{
-				KG_CORE_ERROR("Font Character not Loaded Correctly!");
-				return;
-			}
-
-			UI::Character mapCharacter = {
-				nullptr,
-			Math::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-		  Math::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				static_cast<uint32_t>(face->glyph->advance.x)
-			};
-			// Create Character Buffer!
-			characters.push_back({ character, mapCharacter });
-			widthSum += mapCharacter.Advance >> 6;
-			heightSum += face->glyph->bitmap.rows;
-			count++;
-
-			// Store character image files in series of buffers and holding a vector of locations
-			//		inside the buffer where each image is located.
-			//		Ex: Image 2's start location is located at bufferLocations.at(1);
-			uint64_t bufferSize = mapCharacter.Size.x * mapCharacter.Size.y * sizeof(uint8_t);
-			fontBuffer.Allocate(bufferSize);
-			bufferLocations.push_back(totalBuffer);
-			totalBuffer += bufferSize;
-			std::memcpy(fontBuffer.Data, face->glyph->bitmap.buffer, bufferSize);
-			characterBuffers.push_back(fontBuffer);
+			KG_CORE_ERROR("Font not loaded correctly from filepath: " + filePath.string());
+			return;
 		}
 
-		AverageWidth = static_cast<float>(widthSum / count);
-		AverageHeight = static_cast<float>(heightSum / count);
+		struct CharsetRange
+		{
+			uint32_t Begin, End;
+		};
 
-		FT_Done_Face(face);
-		FT_Done_FreeType(ft);
+		// From imgui_draw.cpp
+		static const CharsetRange charsetRanges[] =
+		{
+			{0x0020, 0x00FF}
+		};
+
+		msdf_atlas::Charset charset;
+		for (CharsetRange range : charsetRanges)
+		{
+			for (uint32_t character = range.Begin; character <= range.End; character++)
+			{
+				charset.add(character);
+			}
+		}
+
+		double fontScale = 1.0;
+		fontGeometry = msdf_atlas::FontGeometry(&glyphs);
+		int glyphsLoaded = fontGeometry.loadCharset(font, fontScale, charset);
+		KG_CORE_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
+
+		double emSize = 40.0;
+
+		msdf_atlas::TightAtlasPacker atlasPacker;
+		// atlasPacker.setDimensionsConstraint();
+		atlasPacker.setPixelRange(2.0);
+		atlasPacker.setMiterLimit(1.0);
+		atlasPacker.setPadding(0);
+		atlasPacker.setScale(emSize);
+		int32_t remaining = atlasPacker.pack(glyphs.data(), (int32_t)glyphs.size());
+		KG_CORE_ASSERT(remaining == 0);
+
+		int32_t width, height;
+		atlasPacker.getDimensions(width, height);
+		emSize = atlasPacker.getScale();
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+#define DEFAULT_ANGLE_THRESHOLD 3.0
+#define LCG_MULTIPLIER 6364136223846793005ull
+#define LCG_INCREMENT 1442695040888963407ull
+
+		// if MSDF || MTSDF
+		uint64_t coloringSeed = 0;
+		bool expensiveColoring = false;
+		if (expensiveColoring)
+		{
+			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool {
+				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
+				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+				return true;
+				}, glyphs.size()).finish(numAvailableThread);
+		}
+		else {
+			unsigned long long glyphSeed = coloringSeed;
+			for (msdf_atlas::GlyphGeometry& glyph : glyphs)
+			{
+				glyphSeed *= LCG_MULTIPLIER;
+				glyph.edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+			}
+		}
+		Buffer buffer{};
+		TextureSpecification textureSpec{};
+		Utility::CreateAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("Test", (float)emSize, glyphs, fontGeometry, width, height, textureSpec, buffer);
+
+		msdfgen::destroyFont(font);
+		msdfgen::deinitializeFreetype(ft);
+
+		const auto& metrics = fontGeometry.getMetrics();
+		lineHeight = metrics.lineHeight;
+
+		const auto& glyphMetrics = fontGeometry.getGlyphs();
+		for (auto& glyphGeometry : glyphMetrics)
+		{
+			unsigned char character = static_cast<uint8_t>(glyphGeometry.getCodepoint());
+			UI::Character characterStruct{};
+
+			// Fill the texture location inside Atlas
+			double al, ab, ar, at;
+			glyphGeometry.getQuadAtlasBounds(al, ab, ar, at);
+			characterStruct.TexCoordinateMin = { (float)al, (float)ab };
+			characterStruct.TexCoordinateMax = { (float)ar, (float)at };
+			// Fill the Bounding Box Size when Rendering
+			double pl, pb, pr, pt;
+			glyphGeometry.getQuadPlaneBounds(pl, pb, pr, pt);
+			characterStruct.QuadMin = { (float)pl, (float)pb };
+			characterStruct.QuadMax = { (float)pr, (float)pt };
+			// Fill the Advance
+			characterStruct.Advance = (float)glyphGeometry.getAdvance();
+			// Fill Glyph Size
+			int32_t glyphWidth, glyphHeight;
+			glyphGeometry.getBoxSize(glyphWidth, glyphHeight);
+			characterStruct.Size = { glyphWidth, glyphHeight };
+			characters.push_back({ character, characterStruct });
+		}
 
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Fonts/Intermediates/" + (std::string)newAsset.Handle + ".kgfont";
 		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
-		FileSystem::WriteFileBinary(intermediateFullPath, characterBuffers);
+		FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Font;
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::FontMetaData> metadata = CreateRef<Assets::FontMetaData>();
-		metadata->BufferLocations = bufferLocations;
+		metadata->AtlasWidth = textureSpec.Width;
+		metadata->AtlasHeight = textureSpec.Height;
+		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
-		metadata->AverageWidth = AverageWidth;
-		metadata->AverageHeight = AverageHeight;
 		metadata->InitialFileLocation = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
-		// Release all buffer data
-		for (auto& buffer : characterBuffers)
-		{
-			buffer.Release();
-		}
+
+		buffer.Release();
 	}
+
+
 }
 namespace Kargono::Utility
 {

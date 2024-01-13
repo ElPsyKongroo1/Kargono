@@ -40,61 +40,53 @@ namespace Kargono::UI
 		// This function allows font to be initialized outside the management of the
 		//		AssetManager. This font will persist inside the application until the
 		//		application is closed. This is primarily useful for editor only assets.
-		static Ref<Font> InstantiateFontEditor(const std::filesystem::path& editorPath);
+		static Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
 	};
 
 	//==============================
-	// Character Struct
+	// MSDFCharacter Struct
 	//==============================
 	// This struct holds all of the data necessary to render a specific character including
 	//		its image and its dimensions.
 	struct Character
 	{
-		// Reference to the Glyph (Image of Character). This is just an image...
-		Ref<Texture2D>	Texture;
 		// This is the size of the Glyph in pixels (Width/Height).
-		Math::ivec2	Size;
-		// Offset from baseline to left/top of glyph
-		Math::ivec2	Bearing;
-		// Offset to advance to next glyph (Space required to advance to next character position).
-		uint32_t Advance;    
+		Math::vec2	Size;
+		Math::vec2 TexCoordinateMin;
+		Math::vec2 TexCoordinateMax;
+		Math::vec2 QuadMin;
+		Math::vec2 QuadMax;
+		float Advance;
+
 	};
 
-	//============================================================
-	// Font Class
-	//============================================================
-	// This class represents an entire font. Think of Times New Roman in Microsoft Word. The font
-	//		holds a series of characters which intern holds the image of the character (Glyph) and
-	//		its dimensions. The average width and height are used to center text in the RuntimeUI.
 	class Font
 	{
 	public:
 		//==============================
 		// External Functionality
 		//==============================
-		// This function submits the rendering data for a line of text to the renderer. The parameters
-		//		specify the text, its location on the screen, its scale, and its color.
-		void PushTextData(std::string text, Math::vec3 translation, float scale, Math::vec3 color);
-		// This function calculates the text size of a full string of text. The resultant value can be
-		//		used to center the text on the screen.
+		
+		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
+		
 		Math::vec2 CalculateTextSize(const std::string& text);
 
 		//==============================
 		// Getters/Setters
 		//==============================
 		std::unordered_map<unsigned char, Character>& GetCharacters() { return m_Characters; }
-		float GetAverageWidth() const { return m_AverageWidth; }
-		float GetAverageHeight() const { return m_AverageHeight; }
-	private:
-		// m_Characters holds a map to all of the characters that exist in the current
-		//		font. These characters hold all the data necessary to render itself.
-		std::unordered_map<unsigned char, Character> m_Characters {};
-		// m_AverageWidth and m_AverageHeight hold the average width and height of all the characters
-		//		in the font.
-		float m_AverageWidth{};
-		float m_AverageHeight{};
+		float GetLineHeight() const { return m_LineHeight; }
+		void SetLineHeight(float height) { m_LineHeight = height; }
 
+	public:
+		Ref<Texture2D> m_AtlasTexture = nullptr;
+	private:
+		float m_LineHeight {0};
+		std::unordered_map<unsigned char, Character> m_Characters{};
 		friend class Assets::AssetManager;
 		friend class TextEngine;
 	};
+
+
+
 }

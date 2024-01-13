@@ -28,6 +28,7 @@ group "Dependencies"
     include "Engine/dependencies/Box2D"
     include "Engine/dependencies/GLAD"
     include "Engine/dependencies/imGui"
+    include "Engine/dependencies/msdf_atlas_gen"
     include "Engine/dependencies/yaml-cpp"
 group ""
 

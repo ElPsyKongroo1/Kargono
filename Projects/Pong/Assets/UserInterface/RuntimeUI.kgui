@@ -1,6 +1,6 @@
 SelectColor: [1, 0.647058845, 1, 1]
 FunctionPointerOnMove: ""
-Font: 10569950259390381689
+Font: 7507720298335089313
 Windows:
   - Tag: base_window
     ScreenPosition: [0, 0, 0]
@@ -23,8 +23,8 @@ Windows:
       PopupWidgetLocation: 0
     Widgets:
       - Tag: score_player_1
-        WindowPosition: [0, 0.870000005]
-        Size: [0.300000012, 0.100000001]
+        WindowPosition: [0, 0.860000014]
+        Size: [0.119999997, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
         WidgetType: TextWidget
         Selectable: false
@@ -35,12 +35,12 @@ Windows:
         FunctionPointerOnPress: ""
         TextWidget:
           Text: 0
-          TextSize: 0.360000014
+          TextSize: 1
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [26, 40]
+          TextAbsoluteDimensions: [0.536132812, 0.857142866]
           TextCentered: true
       - Tag: score_player_2
-        WindowPosition: [0.720000029, 0.870000005]
+        WindowPosition: [0.790000021, 0.860000014]
         Size: [0.300000012, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
         WidgetType: TextWidget
@@ -52,9 +52,9 @@ Windows:
         FunctionPointerOnPress: ""
         TextWidget:
           Text: 0
-          TextSize: 0.360000014
+          TextSize: 1
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [26, 40]
+          TextAbsoluteDimensions: [0.536132812, 0.857142866]
           TextCentered: true
   - Tag: pre_game_warning
     ScreenPosition: [0, 0, 0]
@@ -89,12 +89,12 @@ Windows:
         FunctionPointerOnPress: ""
         TextWidget:
           Text: Press Space To Play!
-          TextSize: 0.239999995
+          TextSize: 0.600000024
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [402, 40]
+          TextAbsoluteDimensions: [8.35742188, 0.857142866]
           TextCentered: true
       - Tag: Controls_1
-        WindowPosition: [0.0599999987, 0]
+        WindowPosition: [0.0599999987, 0.100000001]
         Size: [0.239999995, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
         WidgetType: TextWidget
@@ -102,16 +102,16 @@ Windows:
         DirectionPointerUp: 0
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
-        DirectionPointerRight: 2
+        DirectionPointerRight: 0
         FunctionPointerOnPress: ""
         TextWidget:
-          Text: "Player 1: W = Up, A = Down, Left Shift = Speed Up"
-          TextSize: 0.100000001
+          Text: "Player 1\nW = Up\nA = Down\nLeft Shift = Speed Up"
+          TextSize: 0.200000003
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [906, 40]
+          TextAbsoluteDimensions: [17.8466797, 0.857142866]
           TextCentered: true
       - Tag: Controls_2
-        WindowPosition: [0.649999976, 0]
+        WindowPosition: [0.889999986, 0.100000001]
         Size: [0.239999995, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
         WidgetType: TextWidget
@@ -122,8 +122,8 @@ Windows:
         DirectionPointerRight: -1
         FunctionPointerOnPress: ""
         TextWidget:
-          Text: "Player 2: O = Up, Semicolon = Down, Right Shift = Speed Up"
-          TextSize: 0.100000001
+          Text: "Player 2\nO = Up\nSemicolon = Down \nRight Shift = Speed Up"
+          TextSize: 0.200000003
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [1119, 40]
+          TextAbsoluteDimensions: [22.4296875, 0.857142866]
           TextCentered: true

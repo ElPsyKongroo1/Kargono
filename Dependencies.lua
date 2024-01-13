@@ -20,6 +20,8 @@ IncludeDir["hash_library"] = "%{wks.location}/Engine/dependencies/hash_library"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["mono"] = "%{wks.location}/Engine/dependencies/mono/include"
 IncludeDir["OpenALSoft"] = "%{wks.location}/Engine/dependencies/OpenAL/include"
+IncludeDir["msdfgen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/msdfgen"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen"
 IncludeDir["dr_wav"] = "%{wks.location}/Engine/dependencies/dr_wav/include"
 
 -- Include Directories: Points to a directory with a variable number if library files.
@@ -35,6 +37,18 @@ Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
 Library["OpenALSoft_Debug"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/debug/OpenAL32.lib"
 Library["OpenALSoft_Release"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/release/OpenAL32.lib"
 Library["OpenALSoft_Dist"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/dist/OpenAL32.lib"
+
+-- Library["msdf_gen_Debug"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/debug/msdfgen-core.lib"
+-- Library["msdf_gen_Release"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/release/msdfgen-core.lib"
+-- Library["msdf_gen_Dist"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/dist/msdfgen-core.lib"
+
+-- Library["msdf_gen_ext_Debug"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/debug/msdfgen-ext.lib"
+-- Library["msdf_gen_ext_Release"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/release/msdfgen-ext.lib"
+-- Library["msdf_gen_ext_Dist"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/dist/msdfgen-ext.lib"
+
+-- Library["msdf_atlas_gen_Debug"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/debug/msdf-atlas-gen.lib"
+-- Library["msdf_atlas_gen_Release"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/release/msdf-atlas-gen.lib"
+-- Library["msdf_atlas_gen_Dist"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/dist/msdf-atlas-gen.lib"
 
 Library["free_type"] = "%{wks.location}/Engine/dependencies/free_type/lib/Release/freetype.lib"
 

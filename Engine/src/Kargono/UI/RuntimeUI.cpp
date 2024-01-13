@@ -32,7 +32,7 @@ namespace Kargono::UI
 	{
 		s_Engine.m_CurrentUI = nullptr;
 		s_Engine.m_CurrentUIHandle = 0;
-		s_DefaultFont = TextEngine::InstantiateFontEditor("resources/fonts/arial.ttf");
+		s_DefaultFont = TextEngine::InstantiateEditorFont("resources/fonts/arial.ttf");
 		s_Engine.m_CurrentFont = s_DefaultFont;
 		s_Engine.m_FontHandle = 0;
 		// Initialize Window Spec Data
@@ -64,7 +64,7 @@ namespace Kargono::UI
 
 		s_Engine.m_CurrentUI = uiObject;
 		s_Engine.m_CurrentUIHandle = uiHandle;
-		s_Engine.m_UICache = uiObject->Windows;
+		s_Engine.m_Windows = uiObject->Windows;
 		s_Engine.m_SelectColor = uiObject->m_SelectColor;
 		s_Engine.m_FunctionPointers.OnMove = uiObject->m_FunctionPointers.OnMove;
 		RefreshDisplayedWindows();
@@ -76,10 +76,10 @@ namespace Kargono::UI
 			s_Engine.m_FontHandle = 0;
 		}
 
-		if (s_Engine.m_UICache.size() > 0)
+		if (s_Engine.m_Windows.size() > 0)
 		{
-			s_Engine.m_UICache.at(0).DisplayWindow();
-			s_Engine.m_ActiveWindow = &s_Engine.m_UICache.at(0);
+			s_Engine.m_Windows.at(0).DisplayWindow();
+			s_Engine.m_ActiveWindow = &s_Engine.m_Windows.at(0);
 			if (s_Engine.m_ActiveWindow->DefaultActiveWidgetRef)
 			{
 				s_Engine.m_SelectedWidget = s_Engine.m_ActiveWindow->DefaultActiveWidgetRef.get();
@@ -89,8 +89,20 @@ namespace Kargono::UI
 			{
 				s_Engine.m_SelectedWidget = nullptr;
 			}
-			
+
+			for (auto& window : s_Engine.m_Windows)
+			{
+				if (window.WidgetCounts.TextWidgetCount < 1){ continue; }
+				for (uint32_t iterator{0}; iterator < window.WidgetCounts.TextWidgetCount; iterator++)
+				{
+					auto textWidget = (TextWidget*)window.Widgets.at(window.WidgetCounts.TextWidgetLocation + iterator).get();
+					textWidget->CalculateTextSize();
+				}
+			}
+
 		}
+
+
 	}
 
 
@@ -102,7 +114,7 @@ namespace Kargono::UI
 			return false;
 		}
 
-		for (auto& window : s_Engine.m_UICache)
+		for (auto& window : s_Engine.m_Windows)
 		{
 			if (window.DefaultActiveWidgetRef)
 			{
@@ -121,7 +133,7 @@ namespace Kargono::UI
 		currentUI->m_SelectColor = s_Engine.m_SelectColor;
 		currentUI->m_Font = s_Engine.m_CurrentFont;
 		currentUI->m_FontHandle = s_Engine.m_FontHandle;
-		currentUI->Windows = s_Engine.m_UICache;
+		currentUI->Windows = s_Engine.m_Windows;
 		return true;
 	}
 
@@ -174,7 +186,7 @@ namespace Kargono::UI
 	void RuntimeEngine::AddWindow(Window& window)
 	{
 		window.DisplayWindow();
-		s_Engine.m_UICache.push_back(window);
+		s_Engine.m_Windows.push_back(window);
 		RuntimeEngine::RefreshDisplayedWindows();
 	}
 
@@ -182,11 +194,21 @@ namespace Kargono::UI
 	{
 		s_Engine.m_CurrentFont = newFont;
 		s_Engine.m_FontHandle = fontHandle;
+
+		for (auto& window : s_Engine.m_Windows)
+		{
+			if (window.WidgetCounts.TextWidgetCount < 1) { continue; }
+			for (uint32_t iterator{ 0 }; iterator < window.WidgetCounts.TextWidgetCount; iterator++)
+			{
+				auto textWidget = (TextWidget*)window.Widgets.at(window.WidgetCounts.TextWidgetLocation + iterator).get();
+				textWidget->CalculateTextSize();
+			}
+		}
 	}
 
 	std::vector<Window>& RuntimeEngine::GetAllWindows()
 	{
-		return s_Engine.m_UICache;
+		return s_Engine.m_Windows;
 	}
 
 	void Window::IncrementIterators(uint16_t iterator)
@@ -224,7 +246,7 @@ namespace Kargono::UI
 	{
 		s_Engine.m_CurrentUI = nullptr;
 		s_Engine.m_CurrentUIHandle = 0;
-		s_Engine.m_UICache.clear();
+		s_Engine.m_Windows.clear();
 		s_Engine.m_DisplayedWindows.clear();
 		s_Engine.m_SelectedWidget = nullptr;
 		s_Engine.m_HoveredWidget = nullptr;
@@ -269,7 +291,7 @@ namespace Kargono::UI
 
 	void RuntimeEngine::SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
-		for (auto& window : s_Engine.m_UICache)
+		for (auto& window : s_Engine.m_Windows)
 		{
 			if (window.Tag == windowTag)
 			{
@@ -301,7 +323,7 @@ namespace Kargono::UI
 
 	void RuntimeEngine::SetDisplayWindow(const std::string& windowTag, bool display)
 	{
-		for (auto& window : s_Engine.m_UICache)
+		for (auto& window : s_Engine.m_Windows)
 		{
 			if (window.Tag == windowTag)
 			{
@@ -373,7 +395,7 @@ namespace Kargono::UI
 
 	void RuntimeEngine::CalculateDirections()
 	{
-		for (auto& window : s_Engine.m_UICache)
+		for (auto& window : s_Engine.m_Windows)
 		{
 			for (auto& currentWidget : window.Widgets)
 			{
@@ -786,12 +808,23 @@ namespace Kargono::UI
 		// Render Text
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::Project::GetTargetResolution());
 		float textSize = (viewportWidth * 0.15f * TextSize) * (resolution.y / resolution.x);
-		textSize = textSize / RuntimeEngine::s_Engine.m_CurrentFont->GetAverageWidth();
+		//textSize /= RuntimeEngine::s_Engine.m_CurrentFont->GetAverageWidth();
+
+
 		if (TextCentered)
 		{
+			//widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f), widgetTranslation.z);
 			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
 		}
-		RuntimeEngine::s_Engine.m_CurrentFont->PushTextData(Text, widgetTranslation, textSize, TextColor);
+
+		//KG_CORE_INFO("Hey, the widget size for this text is {} wide and the text is {} wide", widgetSize.x, TextAbsoluteDimensions.x * textSize);
+		//KG_CORE_INFO("Hey, the widget height is {} and the text height is {}", widgetSize.y, TextAbsoluteDimensions.y * textSize);
+
+		//KG_CORE_INFO(textSize);
+		//KG_CORE_INFO("Text Absolute Size is {} {}", TextAbsoluteDimensions.x, TextAbsoluteDimensions.y);
+		//textSize += 50.0f;
+
+		RuntimeEngine::s_Engine.m_CurrentFont->PushTextData(Text, widgetTranslation, TextColor, textSize);
 	}
 
 	void TextWidget::CalculateTextSize()

@@ -24,6 +24,8 @@ namespace API::OpenGL
 
 		// All of these constructors instantiate the OpenGL version of a texture.
 
+		// TODO: This should be a temporary api for creating a texture!
+		OpenGLTexture2D(const Kargono::TextureSpecification& spec);
 		// This constructor takes an already instantiated texture and wraps it inside
 		//		this class. I plan to remove this constructor once I make the
 		//		texture creation API more complete.

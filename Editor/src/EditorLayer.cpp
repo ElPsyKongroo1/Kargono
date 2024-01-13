@@ -46,6 +46,8 @@ namespace Kargono
 		UI::TextEngine::Init();
 		UI::RuntimeEngine::Init();
 
+		
+
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
 		InitializeOverlayData();
@@ -617,6 +619,8 @@ namespace Kargono
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
+		//ImGui::Image((ImTextureID*)UI::GetTextureAtlas()->GetRendererID(), { 512, 512 }, {0, 1}, {1, 0});
+
 		auto stats = Renderer::GetStats();
 		ImGui::Text("Renderer Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
@@ -738,31 +742,32 @@ namespace Kargono
 			{
 				UI::TextWidget* textWidget = (UI::TextWidget*)widget.get();
 
-			char buffer[256] = {};
-			strncpy_s(buffer, textWidget->Text.c_str(), sizeof(buffer));
-			if (ImGui::Button(textWidget->Text.c_str()))
-			{
-				ImGui::OpenPopup((std::string("##Input Text") + std::to_string(selectedWidget)).c_str());
-			}
-			ImGui::SameLine();
-			ImGui::Text("Widget Text");
-
-			if (ImGui::BeginPopup((std::string("##Input Text") + std::to_string(selectedWidget)).c_str()))
-			{
-				ImGui::InputText((std::string("##Input Text") + std::to_string(selectedWidget)).c_str(), buffer, sizeof(buffer));
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
+				char buffer[256] = {};
+				strncpy_s(buffer, textWidget->Text.c_str(), sizeof(buffer));
+				if (ImGui::Button(textWidget->Text.c_str()))
 				{
-					textWidget->SetText(std::string(buffer));
-					ImGui::CloseCurrentPopup();
+					ImGui::OpenPopup((std::string("##Input Text") + std::to_string(selectedWidget)).c_str());
 				}
-				ImGui::EndPopup();
-			}
-			ImGui::DragFloat((std::string("Text Size##") + std::to_string(selectedWidget)).c_str(), &textWidget->TextSize,
-				0.01f, 0.0f, 5.0f);
-			ImGui::ColorEdit4("Text Color", glm::value_ptr(textWidget->TextColor));
+				ImGui::SameLine();
+				ImGui::Text("Widget Text");
 
-
-			break;
+				if (ImGui::BeginPopup((std::string("##Input Text") + std::to_string(selectedWidget)).c_str()))
+				{
+					ImGui::InputTextMultiline((std::string("##Input Text") + std::to_string(selectedWidget)).c_str(), 
+						buffer, sizeof(buffer), 
+						ImVec2(0, 0), ImGuiInputTextFlags_CtrlEnterForNewLine);
+					if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(ImGuiKey_Enter) && !(ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)))
+					{
+						textWidget->SetText(std::string(buffer));
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::DragFloat((std::string("Text Size##") + std::to_string(selectedWidget)).c_str(), &textWidget->TextSize,
+					0.01f, 0.0f, 5.0f);
+				ImGui::ColorEdit4("Text Color", glm::value_ptr(textWidget->TextColor));
+				ImGui::Checkbox("Toggle Centered",&textWidget->TextCentered);
+				break;
 			}
 		default:
 			KG_CORE_ASSERT(false, "Invalid Widget Type Presented!");
