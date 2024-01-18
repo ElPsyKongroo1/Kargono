@@ -38,7 +38,7 @@ namespace API::Windows
 			uint32_t ViewportWidth, ViewportHeight;
 			bool VSync;
 			uint8_t VersionMajor = 4, VersionMinor = 5;
-			EventCallbackFn EventCallback;
+			Kargono::Events::EventCallbackFn EventCallback;
 		};
 
 	public:
@@ -118,8 +118,8 @@ namespace API::Windows
 
 		virtual void* GetNativeWindow() const override { return m_Window; }
 		bool IsVSync() const override { return m_Data.VSync; }
-		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		virtual EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
+		void SetEventCallback(const Kargono::Events::EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		virtual Kargono::Events::EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
 
 	private:
 		// m_Window holds the reference to the underlying GLFW window that is represented by this class.

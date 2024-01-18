@@ -23,6 +23,7 @@ IncludeDir["OpenALSoft"] = "%{wks.location}/Engine/dependencies/OpenAL/include"
 IncludeDir["msdfgen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen"
 IncludeDir["dr_wav"] = "%{wks.location}/Engine/dependencies/dr_wav/include"
+IncludeDir["optick"] = "%{wks.location}/Engine/dependencies/optick/include"
 
 -- Include Directories: Points to a directory with a variable number if library files.
 -- Linker will check these paths when finding external libraries.

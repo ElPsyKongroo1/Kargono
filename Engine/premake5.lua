@@ -22,6 +22,8 @@ project "Engine"
         "dependencies/ImGuizmo/ImGuizmo.cpp",
         "dependencies/hash_library/sha256.cpp",
         "dependencies/hash_library/sha256.h",
+        "dependencies/optick/src/**.cpp",
+        "dependencies/optick/src/**.h",
         "src/API/**.h",
         "src/API/**.cpp"
     }
@@ -65,8 +67,8 @@ project "Engine"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.hash_library}",
         "%{IncludeDir.msdf_atlas_gen}",
-        "%{IncludeDir.msdfgen}"
-
+        "%{IncludeDir.msdfgen}",
+        "%{IncludeDir.optick}"
     }
 
     libdirs
@@ -92,6 +94,9 @@ project "Engine"
         flags{ "NoPCH" }
 
     filter "files:dependencies/hash_library/**.cpp"
+        flags{ "NoPCH" }
+
+    filter "files:dependencies/optick/src/**.cpp"
         flags{ "NoPCH" }
 
     filter "system:windows"

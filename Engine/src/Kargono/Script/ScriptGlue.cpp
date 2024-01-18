@@ -270,7 +270,7 @@ namespace Kargono::Script
 		Application::GetCurrentApp().SubmitToMainThread([&]()
 			{
 				Events::ApplicationCloseEvent event {};
-				Window::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
+				Events::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
 				eventCallback(event);
 			});
 	}

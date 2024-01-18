@@ -18,6 +18,113 @@ namespace Kargono::Utility
 	{
 		return (float)glfwGetTime();
 	}
+
+	void Time::GetTimeFromMilliseconds(uint64_t initialMilliseconds, uint64_t& hours, uint64_t& minutes, uint64_t& seconds, uint64_t& milliseconds)
+	{
+		// Conversion Values
+		constexpr uint64_t hoursToMilliseconds{ 3'600'000 };
+		constexpr uint64_t minutesToMilliseconds{ 60'000 };
+		constexpr uint64_t secondsToMilliseconds{ 1000 };
+
+		// Convert Values
+		milliseconds = initialMilliseconds;
+		hours = milliseconds / hoursToMilliseconds;
+		milliseconds %= hoursToMilliseconds;
+		minutes = milliseconds / minutesToMilliseconds;
+		milliseconds %= minutesToMilliseconds;
+		seconds = milliseconds / secondsToMilliseconds;
+		milliseconds %= secondsToMilliseconds;
+	}
+
+	std::string Time::GetStringFromMilliseconds(uint64_t initialMilliseconds)
+	{
+		// Conversion Values
+		constexpr uint64_t hoursToMilliseconds{ 3'600'000 };
+		constexpr uint64_t minutesToMilliseconds{ 60'000 };
+		constexpr uint64_t secondsToMilliseconds{ 1000 };
+
+		// Convert Values
+		uint64_t milliseconds = initialMilliseconds;
+		uint64_t hours = milliseconds / hoursToMilliseconds;
+		milliseconds %= hoursToMilliseconds;
+		uint64_t minutes = milliseconds / minutesToMilliseconds;
+		milliseconds %= minutesToMilliseconds;
+		uint64_t seconds = milliseconds / secondsToMilliseconds;
+		milliseconds %= secondsToMilliseconds;
+		std::stringstream timeOutput{};
+		if (hours > 0)
+		{
+			if (hours == 1) { timeOutput << "1 Hour"; }
+			else { timeOutput << std::to_string(hours) << " Hours"; }
+			if (milliseconds != 0 || seconds != 0 || minutes != 0) { timeOutput << ", "; }
+		}
+
+		if (minutes > 0)
+		{
+			if (minutes == 1) { timeOutput << "1 Minute"; }
+			else { timeOutput << std::to_string(minutes) << " Minutes"; }
+			if (milliseconds != 0 || seconds != 0) { timeOutput << ", "; }
+		}
+
+		if (seconds > 0)
+		{
+			if (seconds == 1) { timeOutput << "1 Second"; }
+			else { timeOutput << std::to_string(seconds) << " Seconds"; }
+			if (milliseconds != 0) { timeOutput << ", "; }
+
+		}
+
+		if (milliseconds > 0 || hours + minutes + seconds == 0)
+		{
+			if (milliseconds == 1) { timeOutput << "1 Millisecond"; }
+			else { timeOutput << std::to_string(milliseconds) << " Milliseconds"; }
+		}
+
+		return timeOutput.str();
+	}
+
+	std::string Time::GetStringFromSeconds(uint64_t initialSeconds)
+	{
+		// Conversion Values
+		constexpr uint64_t hoursToSeconds{ 3600 };
+		constexpr uint64_t minutesToSeconds{ 60 };
+
+		// Convert Values
+		uint64_t seconds = initialSeconds;
+		uint64_t hours = seconds / hoursToSeconds;
+		seconds %= hoursToSeconds;
+		uint64_t minutes = seconds / minutesToSeconds;
+		seconds %= minutesToSeconds;
+
+		std::stringstream timeOutput{};
+		if (hours > 0)
+		{
+			if (hours == 1) { timeOutput << "1 Hour"; }
+			else { timeOutput << std::to_string(hours) << " Hours"; }
+			if (seconds != 0 || minutes != 0) { timeOutput << ", "; }
+		}
+
+		if (minutes > 0)
+		{
+			if (minutes == 1) { timeOutput << "1 Minute"; }
+			else { timeOutput << std::to_string(minutes) << " Minutes"; }
+			if (seconds != 0) { timeOutput << ", "; }
+		}
+
+		if (seconds > 0 || hours + minutes == 0)
+		{
+			if (seconds == 1) { timeOutput << "1 Second"; }
+			else { timeOutput << std::to_string(seconds) << " Seconds"; }
+
+		}
+
+		return timeOutput.str();
+	}
+
+
+
+
+
 #if KG_EXPORT == 0
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
@@ -36,6 +143,12 @@ namespace Kargono::Utility
 			return;
 		}
 		std::string outputString = "start " + path.string();
+		system(outputString.c_str());
+	}
+
+	void OSCommands::OpenProfiler()
+	{
+		std::string outputString = "start " + std::string("../Engine/dependencies/optick/Optick.exe");
 		system(outputString.c_str());
 	}
 #endif

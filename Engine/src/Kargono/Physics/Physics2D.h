@@ -33,7 +33,6 @@ namespace Kargono::Physics
 	class ContactListener : public b2ContactListener
 	{
 	public:
-		using EventCallbackFn = std::function<void(Events::Event&)>;
 		//=========================
 		// Constructor(s)
 		//=========================
@@ -44,7 +43,7 @@ namespace Kargono::Physics
 		//=========================
 		// This function sets the callback function that will be called with the PhysicsCollisionEvent
 		//		as the parameter when a collision occurs.
-		void SetEventCallback(const EventCallbackFn& callback) { m_CallbackFunc = callback; }
+		void SetEventCallback(const Events::EventCallbackFn& callback) { m_CallbackFunc = callback; }
 		//=========================
 		// Collision Detection
 		//=========================
@@ -52,7 +51,7 @@ namespace Kargono::Physics
 		virtual void BeginContact(b2Contact* contact) override;
 	private:
 		// Event callback function pointer
-		EventCallbackFn m_CallbackFunc;
+		Events::EventCallbackFn m_CallbackFunc;
 	};
 
 	//=========================
