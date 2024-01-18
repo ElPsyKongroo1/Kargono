@@ -22,6 +22,8 @@
 #include "Kargono/Core/Layer.h"
 #include "Kargono/Core/ImGuiLayer.h"
 #include "Kargono/Core/FileSystem.h"
+#include "Kargono/Core/Profiler.h"
+#include "Kargono/Core/AppTick.h"
 
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"

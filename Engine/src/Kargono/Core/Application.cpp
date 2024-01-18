@@ -1,11 +1,14 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Application.h"
+
+#include "AppTick.h"
 #include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Renderer/RenderCommand.h"
 #include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Core/Profiler.h"
 
 namespace Kargono
 {
@@ -23,6 +26,7 @@ namespace Kargono
 
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
+		AppTickEngine::SetAppTickCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 
 		Script::ScriptEngine::Init();
 		Audio::AudioEngine::Init();
@@ -81,6 +85,11 @@ namespace Kargono
 		m_Running = false;
 	}
 
+	void Application::SetAppStartTime()
+	{
+		m_AppStartTime = Utility::Time::GetTime();
+	}
+
 	void Application::SubmitToMainThread(const std::function<void()>& function)
 	{
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
@@ -90,37 +99,50 @@ namespace Kargono
 
 	void Application::Run()
 	{
+		constexpr float constantFrameTime = 1.0f / 60.0f;
+		static float lastFrameTime = 0.0f;
+		static float accumulator = 0.0f;
+
 		while (m_Running)
 		{
-			float time = Utility::Time::GetTime();
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
+			float currentTime = Utility::Time::GetTime();
+			Timestep timestep = currentTime - lastFrameTime;
+			lastFrameTime = currentTime;
+			accumulator += timestep;
+			if (accumulator < constantFrameTime) { continue; }
+			accumulator -= constantFrameTime;
+			if (accumulator > constantFrameTime) { accumulator = 0; }
 
-			ExecuteMainThreadQueue();
-
-			if (!m_Minimized)
 			{
+				KG_PROFILE_FRAME("Main Thread");
+
+				AppTickEngine::UpdateGenerators(constantFrameTime);
+
+				ExecuteMainThreadQueue();
+				if (!m_Minimized)
 				{
-					for (Layer* layer : m_LayerStack)
-					{
-						layer->OnUpdate(timestep);
-					}
-				}
-				if (m_ImGuiLayer)
-				{
-					m_ImGuiLayer->Begin();
 					{
 						for (Layer* layer : m_LayerStack)
 						{
-							layer->OnImGuiRender();
+							layer->OnUpdate(constantFrameTime);
 						}
 					}
-					m_ImGuiLayer->End();
-				}
+					if (m_ImGuiLayer)
+					{
+						m_ImGuiLayer->Begin();
+						{
+							for (Layer* layer : m_LayerStack)
+							{
+								layer->OnImGuiRender();
+							}
+						}
+						m_ImGuiLayer->End();
+					}
 				
-			}
+				}
 
-			m_Window->OnUpdate();
+				m_Window->OnUpdate();
+			}
 		}
 	}
 
@@ -146,6 +168,8 @@ namespace Kargono
 
 	void Application::ExecuteMainThreadQueue()
 	{
+		KG_PROFILE_FUNCTION();
+
 		for (auto& func : m_MainThreadQueue) { func(); }
 		m_MainThreadQueue.clear();
 	}

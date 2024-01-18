@@ -165,5 +165,7 @@ namespace Kargono::Events
 	{
 		return os << e.ToString();
 	}
+
+	using EventCallbackFn = std::function<void(Events::Event&)>;
 	
 }

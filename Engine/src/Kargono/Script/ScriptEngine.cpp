@@ -489,6 +489,8 @@ namespace Kargono::Script
 
 	void ScriptEngine::OnKeyPressed(Events::KeyPressedEvent event)
 	{
+		KG_PROFILE_FUNCTION()
+
 		if (event.IsRepeat()) { return; }
 		if (InputMode::s_InputMode)
 		{
@@ -698,6 +700,8 @@ namespace Kargono::Script
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
+		KG_PROFILE_FUNCTION()
+
 		MonoObject* exception = nullptr;
 		MonoObject* returnValue = mono_runtime_invoke(method, instance, params, &exception);
 
@@ -820,6 +824,8 @@ namespace Kargono::Script
 
 	void ScriptClassCustomCallInstance::InvokeCustomMethod(const std::string& methodName, void** params)
 	{
+		KG_PROFILE_FUNCTION()
+
 		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!");
 		m_ScriptClass->InvokeCustomMethod(m_Instance, methodName, params);
 	}

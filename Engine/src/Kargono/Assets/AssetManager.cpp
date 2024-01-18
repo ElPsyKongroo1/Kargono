@@ -3361,6 +3361,18 @@ namespace Kargono::Assets
 				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
 				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
 				out << YAML::Key << "OnRuntimeStartFunction" << YAML::Value << config.OnRuntimeStartFunction;
+
+				if (config.AppTickGenerators.size() > 0)
+				{
+					out << YAML::Key << "AppTickGenerators" << YAML::BeginSeq;
+					// Serialize App Tick Generators
+					for (auto generatorValue : config.AppTickGenerators)
+					{
+						out << YAML::Value << generatorValue;
+					}
+					out << YAML::EndSeq;
+				}
+
 				out << YAML::EndMap; // Project
 			}
 
@@ -3398,6 +3410,18 @@ namespace Kargono::Assets
 		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
 		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
 		config.OnRuntimeStartFunction = projectNode["OnRuntimeStartFunction"].as<std::string>();
+
+		auto tickGenerators = projectNode["AppTickGenerators"];
+
+		if (tickGenerators)
+		{
+			for (auto generator : tickGenerators)
+			{
+				uint64_t value = generator.as<uint64_t>();
+				config.AppTickGenerators.insert(value);
+			}
+		}
+
 		return true;
 	}
 

@@ -6,6 +6,7 @@
 
 #include <string>
 #include <filesystem>
+#include <unordered_set>
 
 namespace Kargono::Assets { class AssetManager; }
 
@@ -64,6 +65,8 @@ namespace Kargono::Projects
 		// OnRuntimeStartFunction holds the name of the custom call that is run when
 		//		the application is started.
 		std::string OnRuntimeStartFunction {"None"};
+
+		std::unordered_set<uint64_t> AppTickGenerators{};
 	};
 
 	//============================================================
@@ -191,6 +194,13 @@ namespace Kargono::Projects
 			KG_CORE_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.Name = name;
 		}
+
+		static std::unordered_set<uint64_t>& GetAppTickGenerators()
+		{
+			KG_CORE_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.AppTickGenerators;
+		}
+
 
 		// This function gets the name of the function from the ScriptEngine CustomCalls that is
 		//		run when the application starts.

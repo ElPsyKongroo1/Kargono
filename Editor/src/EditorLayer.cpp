@@ -46,8 +46,6 @@ namespace Kargono
 		UI::TextEngine::Init();
 		UI::RuntimeEngine::Init();
 
-		
-
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
 		InitializeOverlayData();
@@ -76,6 +74,8 @@ namespace Kargono
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		KG_PROFILE_FUNCTION();
+
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
@@ -210,6 +210,8 @@ namespace Kargono
 
 	void EditorLayer::OnImGuiRender()
 	{
+		KG_PROFILE_FUNCTION();
+
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
@@ -605,6 +607,128 @@ namespace Kargono
 		}
 		ImGui::NewLine();
 
+
+		ImGui::TextUnformatted("App Tick Generators:");
+		ImGui::Separator();
+
+		// Enable Delete Option
+		static bool deleteMenuToggle = false;
+		bool deleteGenerator = false;
+		bool openGeneratorPopup = false;
+		uint64_t generatorToDelete{};
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 126.0f);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::EditorEngine::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+		{
+			ImGui::OpenPopup("AppTickGeneratorSettings");
+		}
+		ImGui::PopStyleColor();
+
+		if (ImGui::BeginPopup("AppTickGeneratorSettings"))
+		{
+			if (ImGui::Selectable("Add New Generator"))
+			{
+				openGeneratorPopup = true;
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Selectable("Toggle Delete Option", deleteMenuToggle))
+			{
+				deleteMenuToggle = deleteMenuToggle ? false : true; // Conditional Toggles Boolean
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		static int32_t newHours {0};
+		static int32_t newMinutes {0};
+		static int32_t newSeconds {0};
+		static int32_t newMilliseconds {0};
+		if (openGeneratorPopup)
+		{
+			ImGui::OpenPopup("New App Tick Generator");
+			newHours = 0;
+			newMinutes = 0;
+			newSeconds = 0;
+			newMilliseconds = 0;
+		}
+
+		if (ImGui::BeginPopup("New App Tick Generator"))
+		{
+			ImGui::DragInt("Hours", &newHours, 1, 0, 2'000'000'000);
+			ImGui::DragInt("Minutes", &newMinutes, 1, 0, 59);
+			ImGui::DragInt("Seconds", &newSeconds, 1, 0, 59);
+			ImGui::DragInt("Milliseconds", &newMilliseconds, 1, 0, 999);
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Submit"))
+			{
+				auto& generators = Projects::Project::GetAppTickGenerators();
+
+				if (newSeconds < 0) { newSeconds = 0; }
+				if (newMinutes < 0) { newMinutes = 0; }
+				if (newHours < 0) { newHours = 0; }
+				if (newMilliseconds < 0) { newMilliseconds = 0; }
+
+				uint64_t finalMilliseconds = newMilliseconds + 
+					static_cast<uint64_t>(newSeconds * 1000) + 
+					static_cast<uint64_t>(newMinutes * 60'000) + 
+					static_cast<uint64_t>(newHours * 3'600'000);
+
+				generators.insert(finalMilliseconds);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+		if (ImGui::BeginTable("AppTickGeneratorTable", deleteMenuToggle ? 2 : 1, flags))
+		{
+			ImGui::TableSetupColumn("All Active Generators", ImGuiTableColumnFlags_WidthStretch);
+			if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
+			ImGui::TableHeadersRow();
+
+			for (auto& generatorValue : Projects::Project::GetAppTickGenerators())
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x + 6.0f);
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
+
+				std::string textOutput = "Every " + Utility::Time::GetStringFromMilliseconds(generatorValue);
+
+				ImGui::Text(textOutput.c_str());
+				if (deleteMenuToggle)
+				{
+					ImGui::SameLine();
+					ImGui::TableSetColumnIndex(1);
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+					if (ImGui::ImageButton(("Delete Generator##AppTickGeneratorDelete" + std::to_string(generatorValue)).c_str(), (ImTextureID)(uint64_t)UI::EditorEngine::s_IconDelete->GetRendererID(),
+						ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+					{
+						deleteGenerator = true;
+						generatorToDelete = generatorValue;
+					}
+					ImGui::PopStyleColor();
+				}
+
+			}
+			ImGui::EndTable();
+		}
+		if (deleteGenerator)
+		{
+			auto& generators = Projects::Project::GetAppTickGenerators();
+			generators.erase(generatorToDelete);
+		}
+
+		ImGui::NewLine();
+
+
 		ImGui::End();
 	}
 
@@ -612,21 +736,44 @@ namespace Kargono
 	{
 		ImGui::Begin("Stats");
 
+		ImGui::Text("Scene");
+		ImGui::Separator();
 		std::string name = "None";
 		if (*Scene::GetActiveScene()->GetHoveredEntity())
 		{
 			name = Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<TagComponent>().Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
+		ImGui::NewLine();
 
-		//ImGui::Image((ImTextureID*)UI::GetTextureAtlas()->GetRendererID(), { 512, 512 }, {0, 1}, {1, 0});
-
+		ImGui::Text("Renderer");
+		ImGui::Separator();
 		auto stats = Renderer::GetStats();
-		ImGui::Text("Renderer Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-		/*ImGui::Text("Quads: %d", stats.VertexCount);
-		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());*/
+		ImGui::NewLine();
+
+		ImGui::Text("Time");
+		ImGui::Separator();
+		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
+		if (Scene::GetActiveScene()->IsRunning())
+		{
+			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime()) - Application::GetCurrentApp().GetAppStartTime()).c_str());
+		}
+		else
+		{
+			ImGui::Text("Application Runtime: %s", "Application is not running");
+		}
+		
+		ImGui::NewLine();
+
+		ImGui::Text("Debugging");
+		ImGui::Separator();
+		if (ImGui::Button("Open Profiler"))
+		{
+			Utility::OSCommands::OpenProfiler();
+		}
+		ImGui::NewLine();
+
 
 		ImGui::End();
 	}
@@ -1158,6 +1305,8 @@ namespace Kargono
 
 	bool EditorLayer::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
+		KG_PROFILE_FUNCTION()
+
 		Script::ScriptEngine::OnKeyPressed(event);
 		return false;
 	}
@@ -1718,6 +1867,8 @@ namespace Kargono
 		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
 		Scene::GetActiveScene()->OnRuntimeStart();
 		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
+		AppTickEngine::LoadProjectGenerators();
+		Application::GetCurrentApp().SetAppStartTime();
 	}
 
 	void EditorLayer::OnSimulate()
@@ -1762,8 +1913,8 @@ namespace Kargono
 		{
 			InputMode::s_InputMode = nullptr;
 			InputMode::s_InputModeHandle = 0;
-
 		}
+		AppTickEngine::ClearGenerators();
 	}
 
 	void EditorLayer::OnPause()

@@ -77,4 +77,5 @@ namespace Kargono
 
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
+#include "Kargono/Core/Profiler.h"
 
