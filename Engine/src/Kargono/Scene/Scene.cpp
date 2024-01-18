@@ -273,6 +273,7 @@ namespace Kargono
 	}
 	void Scene::RenderScene(Camera& camera, const Math::mat4& transform)
 	{
+
 		Renderer::BeginScene(camera, transform);
 		// Draw Shapes
 		{

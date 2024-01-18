@@ -69,6 +69,8 @@ namespace Kargono
 
     void ImGuiLayer::OnEvent(Events::Event& e)
     {
+		KG_PROFILE_FUNCTION();
+
         if (m_BlockEvents)
         {
             ImGuiIO& io = ImGui::GetIO();

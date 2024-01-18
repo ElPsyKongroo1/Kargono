@@ -131,6 +131,32 @@ namespace Kargono::Events
 		UUID m_EntityTwo;
 	};
 
+	//============================================================
+	// App Tick Event Class
+	//============================================================
+	class AppTickEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		AppTickEvent(uint64_t delayMilliseconds)
+			: m_DelayMilliseconds(delayMilliseconds) {}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+
+		uint64_t GetDelayMilliseconds() const { return m_DelayMilliseconds; }
+
+		static EventType GetStaticType() { return EventType::AppTick; }
+		virtual EventType GetEventType() const override { return GetStaticType(); }
+		virtual const char* GetName() const override { return "AppTickEvent"; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	private:
+		uint64_t m_DelayMilliseconds;
+	};
+
 
 
 

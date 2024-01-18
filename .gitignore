@@ -17,6 +17,7 @@ bin-int/**
 *openai_keys.py
 *.tlog
 **.tlog
+*.env
 # Kargono files
 *.log
 Kargono-Editor/resources/Scripts/Intermediates/*
@@ -421,3 +422,7 @@ scripts/__pycache__
 /Editor/resources/Scripts/Intermediates/Debug/ScriptEngine.csproj.CoreCompileInputs.cache
 /Editor/resources/Scripts/Intermediates/Dist/ScriptEngine.csproj.CoreCompileInputs.cache
 /Editor/resources/Scripts/Intermediates/Dist/ScriptEngine.dll
+/Projects/Pong/Assets/Scripts/Binaries/Pong.dll
+/Projects/Pong/Assets/Scripts/Binaries/Pong.pdb
+/Projects/Pong/Assets/Scripts/Binaries/ScriptEngine.dll
+/Projects/Pong/Assets/Scripts/Binaries/ScriptEngine.pdb

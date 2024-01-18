@@ -84,11 +84,13 @@ namespace API::Windows
 		KG_CORE_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.5!");
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		SetVSync(false);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
+				KG_PROFILE_FUNCTION("GLFW Resize Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 				data.Width = width;
@@ -100,6 +102,7 @@ namespace API::Windows
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
 			{
+				KG_PROFILE_FUNCTION("GLFW Close Event");
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::WindowCloseEvent event;
 				data.EventCallback(event);
@@ -107,6 +110,8 @@ namespace API::Windows
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
+				KG_PROFILE_FUNCTION("GLFW Keyboard Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				switch (action)
 				{
@@ -133,6 +138,8 @@ namespace API::Windows
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 			{
+				KG_PROFILE_FUNCTION("GLFW Typing Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::KeyTypedEvent event(keycode);
 				data.EventCallback(event);
@@ -141,6 +148,8 @@ namespace API::Windows
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
+				KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 				switch (action)
@@ -162,6 +171,8 @@ namespace API::Windows
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
+				KG_PROFILE_FUNCTION("GLFW Scroll Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseScrolledEvent event((float)xOffset, (float)yOffset);
@@ -169,6 +180,8 @@ namespace API::Windows
 			});
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) 
 			{
+				KG_PROFILE_FUNCTION("GLFW Move Cursor Event");
+
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseMovedEvent event((float)xPos, (float)yPos);
@@ -198,13 +211,19 @@ namespace API::Windows
 
 	void WindowsWindow::SwapBuffers()
 	{
+		KG_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_Window);
 	}
 
 
 	void WindowsWindow::OnUpdate() 
 	{
-		glfwPollEvents();
+		KG_PROFILE_FUNCTION();
+		{
+			KG_PROFILE_FUNCTION("GLFW Polling");
+			glfwPollEvents();
+		}
+		
 		SwapBuffers();
 	}
 

@@ -24,7 +24,8 @@ project "Runtime"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/src",
-        "%{wks.location}/Runtime/src"
+        "%{wks.location}/Runtime/src",
+        "%{IncludeDir.optick}"
 
     }
 

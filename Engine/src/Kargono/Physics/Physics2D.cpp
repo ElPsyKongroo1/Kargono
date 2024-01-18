@@ -108,9 +108,6 @@ namespace Kargono::Physics
 		
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
-		// TODO: HUGE HACK TO FIX SIMULATIONS BUGS. PLEASE UPDATE LATER!!!
-		//		TODO: Need to separate rendering logic from update logic.
-		if (ts > 0.016666) { ts = 0.016666f; }
 		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D

@@ -79,6 +79,9 @@ namespace Kargono
 			return m_ImGuiLayer;
 		}
 
+		double GetAppStartTime() { return m_AppStartTime; }
+		void SetAppStartTime();
+
 		void SubmitToMainThread(const std::function<void()>& function);
 		void Run();
 	private:
@@ -93,8 +96,8 @@ namespace Kargono
 		ImGuiLayer* m_ImGuiLayer = nullptr;
 		bool m_Running = true;
 		bool m_Minimized = false;
+		double m_AppStartTime = 0.0f;
 		LayerStack m_LayerStack;
-		float m_LastFrameTime = 0.0f;
 
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;

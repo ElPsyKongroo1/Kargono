@@ -28,7 +28,6 @@ namespace Kargono
 	class Window
 	{
 	public:
-		using EventCallbackFn = std::function<void(Events::Event&)>;
 		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
@@ -46,8 +45,8 @@ namespace Kargono
 		virtual void SetViewportWidth(uint32_t width) = 0;
 		virtual void SetViewportHeight(uint32_t height) = 0;
 
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
-		virtual EventCallbackFn& GetEventCallback() = 0;
+		virtual void SetEventCallback(const Events::EventCallbackFn& callback) = 0;
+		virtual Events::EventCallbackFn& GetEventCallback() = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 

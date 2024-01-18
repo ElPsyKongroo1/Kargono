@@ -24,7 +24,8 @@ project "Editor"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/src",
-        "%{wks.location}/Editor/src"
+        "%{wks.location}/Editor/src",
+        "%{IncludeDir.optick}"
 
     }
 

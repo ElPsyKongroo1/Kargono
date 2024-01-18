@@ -390,6 +390,7 @@ namespace Kargono::UI
 
 	void RuntimeEngine::OnPress()
 	{
+		if (!s_Engine.m_SelectedWidget) { return; }
 		Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_SelectedWidget->FunctionPointers.OnPress);
 	}
 
