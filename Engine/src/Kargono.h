@@ -27,6 +27,7 @@
 
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Events/NetworkingEvent.h"
 
 //-----------------Input-----------------//
 #include "Kargono/Input/InputPolling.h"
@@ -34,6 +35,9 @@
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
+
+//-----------------Network-----------------//
+#include "Kargono/Network/Network.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"

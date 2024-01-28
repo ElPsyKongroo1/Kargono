@@ -15,6 +15,7 @@ namespace Kargono::Math
 	//==============================
 	// Math Type Aliases
 	//==============================
+
 	// These type aliases provide a central location to manage the
 	//		underlying math library implementation. This makes
 	//		the Kargono API much simpler to use.

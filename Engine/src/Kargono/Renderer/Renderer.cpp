@@ -46,7 +46,7 @@ namespace Kargono
 
 	void Renderer::Init()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "No valid project is active while trying to initialize shaders!");
+		KG_ASSERT(Projects::Project::GetActive(), "No valid project is active while trying to initialize shaders!");
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 	}
 	void Renderer::Shutdown()
@@ -95,7 +95,7 @@ namespace Kargono
 	void Renderer::FillTextureIndex(RendererInputSpec& inputSpec)
 	{
 		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_CORE_ASSERT(inputSpec.ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		KG_ASSERT(inputSpec.ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
 		auto& Textures = inputSpec.CurrentDrawBuffer->Textures;
 		float textureIndex = -1.0f;
 
@@ -153,7 +153,7 @@ namespace Kargono
 	void Renderer::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		auto& colorVector = inputSpec.ShapeComponent->VertexColors;
-		KG_CORE_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
+		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
 		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), "a_Color", inputSpec.Buffer, inputSpec.Shader);
 	}
 

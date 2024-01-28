@@ -25,7 +25,8 @@ project "Editor"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/src",
         "%{wks.location}/Editor/src",
-        "%{IncludeDir.optick}"
+        "%{IncludeDir.optick}",
+        "%{IncludeDir.asio}"
 
     }
 
@@ -82,6 +83,7 @@ project "Editor"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
+        symbols "on"
 
     filter "configurations:Dist"
         kind "WindowedApp"
@@ -95,3 +97,4 @@ project "Editor"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
+        symbols "off"

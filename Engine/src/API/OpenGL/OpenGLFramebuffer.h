@@ -60,7 +60,7 @@ namespace API::OpenGL
 		//		main viewport buffer and present it as an image to ImGui to display in the editor
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const override
 		{
-			KG_CORE_ASSERT(index < m_ColorAttachmentIDs.size(), "Invalid attempted access");
+			KG_ASSERT(index < m_ColorAttachmentIDs.size(), "Invalid attempted access");
 			return m_ColorAttachmentIDs[index];
 		}
 		virtual const Kargono::FramebufferSpecification& GetSpecification() const override { return m_Specification; }

@@ -12,6 +12,9 @@
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Events/NetworkingEvent.h"
+#include "Kargono/Network/Client.h"
+
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/object.h"
@@ -26,13 +29,13 @@ namespace Kargono::Script
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 		Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
 		
-		KG_CORE_ASSERT(s_EntityHasComponentFuncs.contains(managedType))
+		KG_ASSERT(s_EntityHasComponentFuncs.contains(managedType))
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
 
@@ -41,7 +44,7 @@ namespace Kargono::Script
 		char* cStr = mono_string_to_utf8(name);
 
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 		Entity entity = scene->FindEntityByName(cStr);
 		mono_free(cStr);
 
@@ -85,9 +88,9 @@ namespace Kargono::Script
 	static void Rigidbody2DComponent_ApplyLinearImpulse(UUID entityID, Math::vec2* impulse, Math::vec2* point, bool wake)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 		Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -97,9 +100,9 @@ namespace Kargono::Script
 	static void Rigidbody2DComponent_ApplyLinearImpulseToCenter(UUID entityID, Math::vec2* impulse, bool wake)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 			Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -109,9 +112,9 @@ namespace Kargono::Script
 	static void Rigidbody2DComponent_GetLinearVelocity(UUID entityID, Math::vec2* outLinearVelocity)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 			Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -122,9 +125,9 @@ namespace Kargono::Script
 	static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2* linearVelocity)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 		Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -134,9 +137,9 @@ namespace Kargono::Script
 	static void Rigidbody2DComponent_SetType(UUID entityID, Rigidbody2DComponent::BodyType bodyType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 			Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -146,9 +149,9 @@ namespace Kargono::Script
 	static Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetType(UUID entityID)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 			Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
@@ -158,9 +161,9 @@ namespace Kargono::Script
 	static MonoString* TagComponent_GetTag(UUID entityID)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene)
+		KG_ASSERT(scene)
 		Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 
 		auto& tagComponent = entity.GetComponent<TagComponent>();
 		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
@@ -239,6 +242,35 @@ namespace Kargono::Script
 		UI::RuntimeEngine::SetWidgetText(window, widget, text);
 	}
 
+	static void UserInterface_SetSelectedWidget(MonoString* windowTag, MonoString* widgetTag)
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
+		UI::RuntimeEngine::SetSelectedWidget(window, widget);
+	}
+	
+
+	static void UserInterface_SetWidgetTextColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
+		UI::RuntimeEngine::SetWidgetTextColor(window, widget, *color);
+	}
+
+	static void UserInterface_SetWidgetBackgroundColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
+		UI::RuntimeEngine::SetWidgetBackgroundColor(window, widget, *color);
+	}
+
+	static void UserInterface_SetWidgetSelectable(MonoString* windowTag, MonoString* widgetTag, bool selectable)
+	{
+		const std::string window = std::string(mono_string_to_utf8(windowTag));
+		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
+		UI::RuntimeEngine::SetWidgetSelectable(window, widget, selectable);
+	}
+
 	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
@@ -274,15 +306,86 @@ namespace Kargono::Script
 				eventCallback(event);
 			});
 	}
-	
+
+	static void Network_RequestJoinSession()
+	{
+		Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestJoinSession>());
+	}
+
+	static void Network_RequestUserCount()
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestUserCount>());
+		}
+	}
+
+	static uint16_t Network_GetSessionSlot()
+	{
+
+		if (Network::Client::GetActiveClient())
+		{
+			return Network::Client::GetActiveClient()->GetSessionSlot();
+		}
+		// Client is unavailable so send error response
+		return std::numeric_limits<uint16_t>::max();
+	}
+
+	static void Network_LeaveCurrentSession()
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::LeaveCurrentSession>());
+		}
+	}
+
+	static void Network_EnableReadyCheck()
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::EnableReadyCheck>());
+		}
+	}
+
+	static void Network_SessionReadyCheck()
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SessionReadyCheck>());
+		}
+	}
+
+	static void Network_SendAllEntityLocation(uint64_t id, Math::vec3* translation)
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(id, *translation));
+		}
+	}
+
+	static void Network_SendAllEntityPhysics(uint64_t id, Math::vec3* translation, Math::vec2* linearVelocity)
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityPhysics>(id, *translation, *linearVelocity));
+		}
+	}
+
+	static void Network_SignalAll(uint16_t signal)
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SignalAll>(signal));
+		}
+	}
 
 	static void AudioComponent_PlayAudio(UUID entityID)
 	{
 
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene);
+		KG_ASSERT(scene);
 			Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity);
+		KG_ASSERT(entity);
 
 		if (!entity.HasComponent<AudioComponent>()) { return; }
 		auto& audioComponent = entity.GetComponent<AudioComponent>();
@@ -293,9 +396,9 @@ namespace Kargono::Script
 	{
 		std::string aTag = std::string(mono_string_to_utf8(audioTag));
 		Scene* scene = ScriptEngine::GetSceneContext();
-		KG_CORE_ASSERT(scene);
+		KG_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
-		KG_CORE_ASSERT(entity);
+		KG_ASSERT(entity);
 
 		if (entity.HasComponent<MultiAudioComponent>())
 		{
@@ -313,8 +416,6 @@ namespace Kargono::Script
 		}
 		
 	}
-
-	
 
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
@@ -341,7 +442,7 @@ namespace Kargono::Script
 		MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(), ScriptEngine::GetCoreAssemblyImage());
 			if (!managedType)
 			{
-				//KG_CORE_ERROR("Could not find component type {}", managedTypename);
+				//KG_ERROR("Could not find component type {}", managedTypename);
 				return;
 			}
 		s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };
@@ -397,10 +498,28 @@ namespace Kargono::Script
 		KG_ADD_INTERNAL_CALL(UserInterface_MoveDown);
 		KG_ADD_INTERNAL_CALL(UserInterface_OnPress);
 		KG_ADD_INTERNAL_CALL(UserInterface_SetWidgetText);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetWidgetTextColor);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetWidgetBackgroundColor);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetWidgetSelectable);
+		KG_ADD_INTERNAL_CALL(UserInterface_SetSelectedWidget);
+
 		KG_ADD_INTERNAL_CALL(UserInterface_SetDisplayWindow);
 
 		KG_ADD_INTERNAL_CALL(InputMode_LoadInputMode);
 		KG_ADD_INTERNAL_CALL(Core_CloseApplication);
+		KG_ADD_INTERNAL_CALL(Network_RequestJoinSession);
+		KG_ADD_INTERNAL_CALL(Network_RequestUserCount);
+		KG_ADD_INTERNAL_CALL(Network_LeaveCurrentSession);
+		KG_ADD_INTERNAL_CALL(Network_GetSessionSlot);
+		KG_ADD_INTERNAL_CALL(Network_EnableReadyCheck);
+		KG_ADD_INTERNAL_CALL(Network_SessionReadyCheck);
+		KG_ADD_INTERNAL_CALL(Network_SendAllEntityLocation);
+		KG_ADD_INTERNAL_CALL(Network_SendAllEntityPhysics);
+		KG_ADD_INTERNAL_CALL(Network_SignalAll);
+		
+		
+
+		
 		
     }
 }

@@ -110,7 +110,7 @@ namespace Kargono::UI
 	{
 		if (!static_cast<bool>(s_Engine.m_CurrentUI) || s_Engine.m_CurrentUIHandle == 0)
 		{
-			KG_CORE_ERROR("Attempt to save user interface with invalid UIObject or Assets::AssetHandle in s_Engine");
+			KG_ERROR("Attempt to save user interface with invalid UIObject or Assets::AssetHandle in s_Engine");
 			return false;
 		}
 
@@ -305,6 +305,85 @@ namespace Kargono::UI
 							textWidget->Text = newText;
 							return;
 						}
+					}
+				}
+			}
+		}
+	}
+
+	void RuntimeEngine::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
+	{
+		for (auto& window : s_Engine.m_Windows)
+		{
+			if (window.Tag == windowTag)
+			{
+				for (auto& widget : window.Widgets)
+				{
+					if (widget->Tag == widgetTag)
+					{
+						s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
+						s_Engine.m_SelectedWidget = widget.get();
+						s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
+						Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	void RuntimeEngine::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	{
+		for (auto& window : s_Engine.m_Windows)
+		{
+			if (window.Tag == windowTag)
+			{
+				for (auto& widget : window.Widgets)
+				{
+					if (widget->Tag == widgetTag)
+					{
+						if (widget->WidgetType == WidgetTypes::TextWidget)
+						{
+							TextWidget* textWidget = (TextWidget*)widget.get();
+							textWidget->TextColor = color;
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void RuntimeEngine::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	{
+		for (auto& window : s_Engine.m_Windows)
+		{
+			if (window.Tag == windowTag)
+			{
+				for (auto& widget : window.Widgets)
+				{
+					if (widget->Tag == widgetTag)
+					{
+						widget->DefaultBackgroundColor = color;
+						widget->ActiveBackgroundColor = color;
+					}
+				}
+			}
+		}
+	}
+
+	void RuntimeEngine::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
+	{
+		for (auto& window : s_Engine.m_Windows)
+		{
+			if (window.Tag == windowTag)
+			{
+				for (auto& widget : window.Widgets)
+				{
+					if (widget->Tag == widgetTag)
+					{
+						widget->Selectable = selectable;
+						CalculateDirections();
 					}
 				}
 			}
@@ -776,7 +855,7 @@ namespace Kargono::UI
 
 	void Window::DeleteWidget(int32_t widgetLocation)
 	{
-		KG_CORE_ASSERT(widgetLocation >= 0, "Invalid Location provided to DeleteWidget!");
+		KG_ASSERT(widgetLocation >= 0, "Invalid Location provided to DeleteWidget!");
 		switch (Widgets.at(widgetLocation)->WidgetType)
 		{
 		case WidgetTypes::TextWidget: {WidgetCounts.TextWidgetCount--;  break; }

@@ -34,8 +34,14 @@ namespace Kargono::Events
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		AppTick, AppUpdate, AppRender, AppClose,
-		PhysicsCollision,
+		CleanUpTimers,
+		SkipUpdate, AddExtraUpdate,
+		UpdateOnlineUsers, RequestJoinSession, ApproveJoinSession, DenyJoinSession, RequestUserCount,
+		LeaveCurrentSession, UserLeftSession, CurrentSessionInit, ConnectionTerminated, StartSession,
+		UpdateSessionUserSlot, EnableReadyCheck, SendReadyCheck, SendReadyCheckConfirm, SendAllEntityLocation,
+		UpdateEntityLocation, SendAllEntityPhysics, UpdateEntityPhysics, SignalAll, ReceiveSignal,
+		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
+		PhysicsCollision, PhysicsCollisionEnd,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
@@ -55,7 +61,8 @@ namespace Kargono::Events
 		Input				= BIT(1),
 		Keyboard			= BIT(2),
 		Mouse				= BIT(3),
-		MouseButton			= BIT(4)
+		MouseButton			= BIT(4),
+		Networking			= BIT(5)
 
 	};
 

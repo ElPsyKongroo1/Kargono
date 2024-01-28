@@ -85,7 +85,7 @@ namespace Kargono::UI
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;
 		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
-		KG_CORE_ASSERT(ft, "MSDFGEN failed to initialize!");
+		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
 
 		Ref<Font> newFont = CreateRef<Font>();
 
@@ -93,7 +93,7 @@ namespace Kargono::UI
 		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fileString.c_str());
 		if (!font)
 		{
-			KG_CORE_ERROR("Font not loaded correctly from filepath: " + filepath.string());
+			KG_ERROR("Font not loaded correctly from filepath: " + filepath.string());
 			return nullptr;
 		}
 
@@ -120,7 +120,7 @@ namespace Kargono::UI
 		double fontScale = 1.0;
 		fontGeometry = msdf_atlas::FontGeometry(&glyphs);
 		int glyphsLoaded = fontGeometry.loadCharset(font, fontScale, charset);
-		KG_CORE_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
+		KG_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
 
 		double emSize = 40.0;
 
@@ -131,7 +131,7 @@ namespace Kargono::UI
 		atlasPacker.setPadding(0);
 		atlasPacker.setScale(emSize);
 		int32_t remaining = atlasPacker.pack(glyphs.data(), (int32_t)glyphs.size());
-		KG_CORE_ASSERT(remaining == 0);
+		KG_ASSERT(remaining == 0);
 
 		int32_t width, height;
 		atlasPacker.getDimensions(width, height);
@@ -150,7 +150,7 @@ namespace Kargono::UI
 				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
 				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
 				return true;
-				}, glyphs.size()).finish(numAvailableThread);
+				}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
 		}
 		else {
 			unsigned long long glyphSeed = coloringSeed;
@@ -168,7 +168,7 @@ namespace Kargono::UI
 		msdfgen::deinitializeFreetype(ft);
 
 		const auto& metrics = fontGeometry.getMetrics();
-		newFont->m_LineHeight = metrics.lineHeight;
+		newFont->m_LineHeight = static_cast<float>(metrics.lineHeight);
 
 		const auto& glyphMetrics = fontGeometry.getGlyphs();
 		newFont->m_Characters.clear();

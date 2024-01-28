@@ -43,30 +43,30 @@ namespace API::Utility
 		case GL_DEBUG_SEVERITY_HIGH:
 		{
 			severityString = "High";
-			KG_CORE_CRITICAL("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_CRITICAL("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		case GL_DEBUG_SEVERITY_MEDIUM:
 		{
 			severityString = "Medium";
-			KG_CORE_ERROR("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_ERROR("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		case GL_DEBUG_SEVERITY_LOW:
 		{
 			severityString = "Low";
-			KG_CORE_WARN("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_WARN("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
 		{
 			severityString = "Notification";
-			KG_CORE_TRACE("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_INFO("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		}
 
-		KG_CORE_ASSERT(false, "Unknown severity level!");
+		KG_ASSERT(false, "Unknown severity level!");
 	}
 
 	static GLenum StencilComparisonToGLenum(Kargono::StencilComparisonType comparisonType)
@@ -82,7 +82,7 @@ namespace API::Utility
 		case Kargono::StencilComparisonType::NOTEQUAL: return GL_NOTEQUAL;
 		case Kargono::StencilComparisonType::ALWAYS: return GL_ALWAYS;
 		}
-		KG_CORE_ASSERT(false, "Invalid enum provided in StencilComparisonToGLStencil");
+		KG_ASSERT(false, "Invalid enum provided in StencilComparisonToGLStencil");
 		return 0;
 	}
 
@@ -99,7 +99,7 @@ namespace API::Utility
 		case Kargono::StencilOptions::DECR_WRAP: return GL_DECR_WRAP;
 		case Kargono::StencilOptions::INVERT: return GL_INVERT;
 		}
-		KG_CORE_ASSERT(false, "Invalid enum provided in StencilOptionsToGLEnum");
+		KG_ASSERT(false, "Invalid enum provided in StencilOptionsToGLEnum");
 		return 0;
 	}
 }

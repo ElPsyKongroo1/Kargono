@@ -18,7 +18,7 @@ namespace Kargono
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			KG_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
+			KG_ASSERT(!HasComponent<T>(), "Entity already has component!");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
@@ -35,7 +35,7 @@ namespace Kargono
 		template<typename T>
 		T& GetComponent()
 		{
-			KG_CORE_ASSERT(HasComponent<T>(), "Entity does not have the component!")
+			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!")
 
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
@@ -49,7 +49,7 @@ namespace Kargono
 		template<typename T>
 		void RemoveComponent()
 		{
-			KG_CORE_ASSERT(HasComponent<T>(), "Entity does not have the component!");
+			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 

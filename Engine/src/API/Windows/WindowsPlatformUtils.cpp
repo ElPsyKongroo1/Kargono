@@ -128,7 +128,7 @@ namespace Kargono::Utility
 #if KG_EXPORT == 0
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
-		KG_CORE_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
+		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
 		// TODO: Add More Input Validation for system call.
 		std::string outputString = "explorer " + path.string();
 		system(outputString.c_str());
@@ -139,7 +139,7 @@ namespace Kargono::Utility
 		// TODO: Add More Input Validation for system call.
 		if (!std::filesystem::exists(path))
 		{
-			KG_CORE_ERROR("Invalid path provided to OpenScriptProject");
+			KG_ERROR("Invalid path provided to OpenScriptProject");
 			return;
 		}
 		std::string outputString = "start " + path.string();

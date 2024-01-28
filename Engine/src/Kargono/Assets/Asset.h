@@ -186,7 +186,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::InputMode: return "InputMode";
 		case Assets::AssetType::None: return "None";
 		}
-		KG_CORE_ASSERT(false, "Unknown Type of AssetType.");
+		KG_ASSERT(false, "Unknown Type of AssetType.");
 		return "";
 	}
 
@@ -201,7 +201,7 @@ namespace Kargono::Utility
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
 		if (type == "None") { return Assets::AssetType::None; }
 
-		KG_CORE_ASSERT(false, "Unknown Type of AssetType String.");
+		KG_ASSERT(false, "Unknown Type of AssetType String.");
 		return Assets::AssetType::None;
 	}
 }

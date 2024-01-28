@@ -66,7 +66,38 @@ namespace Kargono::Projects
 		//		the application is started.
 		std::string OnRuntimeStartFunction {"None"};
 
+		std::string OnUpdateUserCountFunction {"None"};
+
+		std::string OnApproveJoinSessionFunction {"None"};
+
+		std::string OnUserLeftSessionFunction {"None"};
+
+		std::string OnCurrentSessionInitFunction {"None"};
+
+		std::string OnConnectionTerminatedFunction {"None"};
+
+		std::string OnUpdateSessionUserSlotFunction {"None"};
+
+		std::string OnStartSessionFunction {"None"};
+
+		std::string OnSessionReadyCheckConfirmFunction {"None"};
+
+		std::string OnReceiveSignalFunction {"None"};
+
 		std::unordered_set<uint64_t> AppTickGenerators{};
+
+		bool AppIsNetworked = false;
+
+		// Networking Variables
+
+		std::string ServerIP{};
+		uint16_t ServerPort{};
+		// LocalMachine or Remote are only options currently
+		std::string ServerLocation{"LocalMachine"};
+		uint64_t SecretOne{};
+		uint64_t SecretTwo{};
+		uint64_t SecretThree{};
+		uint64_t SecretFour{};
 	};
 
 	//============================================================
@@ -92,7 +123,7 @@ namespace Kargono::Projects
 		//		in s_ActiveProject.
 		static const std::filesystem::path& GetProjectDirectory()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_ProjectDirectory;
 		}
 		// This function simply returns the absolute path to the
@@ -100,7 +131,7 @@ namespace Kargono::Projects
 		//		associated with the active project in s_ActiveProject.
 		static std::filesystem::path GetAssetDirectory()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return GetProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
 		}
 
@@ -108,7 +139,7 @@ namespace Kargono::Projects
 		//		project in s_ActiveProject.
 		static std::filesystem::path GetStartScenePath(bool isAbsolute = true)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			if (isAbsolute)
 			{
 				// Return Absolute Path
@@ -122,7 +153,7 @@ namespace Kargono::Projects
 		//		project in s_ActiveProject.
 		static std::filesystem::path GetScriptModulePath(bool isAbsolute = true)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			if (isAbsolute)
 			{
 				// Return Absolute Path
@@ -138,7 +169,7 @@ namespace Kargono::Projects
 		//		the AssetManager.
 		static Assets::AssetHandle GetStartSceneHandle()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.StartSceneHandle;
 		}
 
@@ -146,7 +177,7 @@ namespace Kargono::Projects
 		//		boolean value.
 		static bool GetIsFullscreen()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.DefaultFullscreen;
 		}
 
@@ -154,27 +185,27 @@ namespace Kargono::Projects
 		//		active project, s_ActiveProject
 		static void SetIsFullscreen(bool fullscreen)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.DefaultFullscreen = fullscreen;
 		}
 		// This function returns the current target resolution associated with
 		//		the current project in s_ActiveProject.
 		static ScreenResolutionOptions GetTargetResolution()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.TargetResolution;
 		}
 		// This function provides an API to set the target resolution on the currently
 		//		active project, s_ActiveProject
 		static void SetTargetResolution(ScreenResolutionOptions option)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.TargetResolution = option;
 		}
 		// This function sets the starting scene of the current project in s_ActiveProject.
 		static void SetStartingScene(Assets::AssetHandle handle, const std::filesystem::path& path)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.StartSceneHandle = handle;
 			s_ActiveProject->m_Config.StartScenePath = path;
 		}
@@ -183,7 +214,7 @@ namespace Kargono::Projects
 		//		This value is mostly for debugging purposes.
 		static std::string GetProjectName()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.Name;
 		}
 
@@ -191,30 +222,238 @@ namespace Kargono::Projects
 		//		s_ActiveProject.
 		static void SetProjectName(const std::string& name)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.Name = name;
 		}
 
 		static std::unordered_set<uint64_t>& GetAppTickGenerators()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.AppTickGenerators;
 		}
 
+		static bool GetAppIsNetworked()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.AppIsNetworked;
+		}
+
+		
+		static void SetAppIsNetworked(bool isNetworked)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.AppIsNetworked = isNetworked;
+		}
 
 		// This function gets the name of the function from the ScriptEngine CustomCalls that is
 		//		run when the application starts.
 		static std::string& GetProjectOnRuntimeStart()
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.OnRuntimeStartFunction;
 		}
 
 		// This function allows the function pointer to be updated when the application begins.
 		static void SetProjectOnRuntimeStart(const std::string& name)
 		{
-			KG_CORE_ASSERT(s_ActiveProject);
+			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.OnRuntimeStartFunction = name;
+		}
+
+		static std::string& GetProjectOnUpdateUserCount()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnUpdateUserCountFunction;
+		}
+
+		static void SetProjectOnUpdateUserCount(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnUpdateUserCountFunction = name;
+		}
+
+		static std::string& GetProjectOnApproveJoinSession()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnApproveJoinSessionFunction;
+		}
+
+		static void SetProjectOnApproveJoinSession(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnApproveJoinSessionFunction = name;
+		}
+
+		static std::string& GetProjectOnUserLeftSession()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnUserLeftSessionFunction;
+		}
+
+		static void SetProjectOnUserLeftSession(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnUserLeftSessionFunction = name;
+		}
+
+		static std::string& GetProjectOnCurrentSessionInit()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnCurrentSessionInitFunction;
+		}
+
+		static void SetProjectOnCurrentSessionInit(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnCurrentSessionInitFunction = name;
+		}
+
+		static std::string& GetProjectOnConnectionTerminated()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnConnectionTerminatedFunction;
+		}
+
+		static void SetProjectOnConnectionTerminated(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnConnectionTerminatedFunction = name;
+		}
+
+		static std::string& GetProjectOnUpdateSessionUserSlot()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnUpdateSessionUserSlotFunction;
+		}
+
+		static void SetProjectOnUpdateSessionUserSlot(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnUpdateSessionUserSlotFunction = name;
+		}
+
+		static std::string& GetProjectOnStartSession()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnStartSessionFunction;
+		}
+
+		static void SetProjectOnStartSession(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnStartSessionFunction = name;
+		}
+
+		static std::string& GetProjectOnSessionReadyCheckConfirm()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnSessionReadyCheckConfirmFunction;
+		}
+
+		static void SetProjectOnSessionReadyCheckConfirm(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnSessionReadyCheckConfirmFunction = name;
+		}
+
+		static std::string& GetProjectOnReceiveSignal()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnReceiveSignalFunction;
+		}
+
+		static void SetProjectOnReceiveSignal(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.OnReceiveSignalFunction = name;
+		}
+
+		static std::string GetServerIP()
+		{
+			KG_ASSERT(s_ActiveProject);
+			if (s_ActiveProject->m_Config.ServerLocation == "LocalMachine")
+			{
+				return "127.0.0.1";
+			}
+			return s_ActiveProject->m_Config.ServerIP;
+		}
+
+		static void SetServerIP(const std::string& name)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.ServerIP = name;
+		}
+
+		static uint16_t GetServerPort()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.ServerPort;
+		}
+
+		static void SetServerPort(uint16_t newPort)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.ServerPort = newPort;
+		}
+
+		static const std::string& GetServerLocation()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.ServerLocation;
+		}
+
+		static void SetServerLocation(const std::string& location)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.ServerLocation = location;
+		}
+
+		static uint64_t GetSecretOne()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.SecretOne;
+		}
+
+		static void SetSecretOne(uint64_t newSecret)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.SecretOne = newSecret;
+		}
+
+		static uint64_t GetSecretTwo()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.SecretTwo;
+		}
+
+		static void SetSecretTwo(uint64_t newSecret)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.SecretTwo = newSecret;
+		}
+
+		static uint64_t GetSecretThree()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.SecretThree;
+		}
+
+		static void SetSecretThree(uint64_t newSecret)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.SecretThree = newSecret;
+		}
+
+		static uint64_t GetSecretFour()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.SecretFour;
+		}
+
+		static void SetSecretFour(uint64_t newSecret)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.SecretFour = newSecret;
 		}
 
 		// This function returns the currently active project held in s_ActiveProject.
@@ -265,7 +504,7 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::MatchDevice: return "Match Device";
 		case Projects::ScreenResolutionOptions::None: return "None";
 		}
-		KG_CORE_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
+		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
 		return "None";
 	}
 
@@ -287,7 +526,7 @@ namespace Kargono::Utility
 		if (optionStr == "Match Device") { return Projects::ScreenResolutionOptions::MatchDevice; }
 		if (optionStr == "None") { return Projects::ScreenResolutionOptions::None; }
 
-		KG_CORE_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
+		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
 		return Projects::ScreenResolutionOptions::None;
 	}
 

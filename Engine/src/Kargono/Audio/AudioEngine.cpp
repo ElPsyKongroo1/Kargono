@@ -16,7 +16,7 @@ namespace Kargono::Utility
 	ALenum error = alGetError();\
 	if( error != AL_NO_ERROR)\
 	{\
-		KG_CORE_ERROR("OpenAL Error: {} with call for {}", error, #message);\
+		KG_ERROR("OpenAL Error: {} with call for {}", error, #message);\
 	}\
 }
 
@@ -139,8 +139,8 @@ namespace Kargono::Audio
 		// Find default audio device
 		s_AudioContext->m_CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
 		s_AudioContext->m_CurrentDeviceID = alcOpenDevice(s_AudioContext->m_CurrentDeviceName.c_str());
-		KG_CORE_ASSERT(s_AudioContext->m_CurrentDeviceID, "Failed to get the default device for OpenAL");
-		KG_CORE_INFO("OpenAL Device: {}", alcGetString(s_AudioContext->m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
+		KG_ASSERT(s_AudioContext->m_CurrentDeviceID, "Failed to get the default device for OpenAL");
+		KG_INFO("OpenAL Device: {}", alcGetString(s_AudioContext->m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
 
 		// Create an OpenAL audio context from the device
 		s_AudioContext->m_ContextID = alcCreateContext(s_AudioContext->m_CurrentDeviceID, nullptr);
@@ -148,7 +148,7 @@ namespace Kargono::Audio
 
 		// Activate this context so that OpenAL state modifications are applied to the context
 		bool makeCurrentValid = alcMakeContextCurrent(s_AudioContext->m_ContextID);
-		KG_CORE_ASSERT(makeCurrentValid, "Failed to make the OpenAL context the current context");
+		KG_ASSERT(makeCurrentValid, "Failed to make the OpenAL context the current context");
 
 		// Create a listener in 3D space
 		s_AudioContext->m_DefaultListener = CreateScope<AudioListener>();
@@ -165,7 +165,7 @@ namespace Kargono::Audio
 		{
 			s_AudioContext->m_AudioSourceQueue.push(CreateRef<AudioSource>());
 		}
-		KG_CORE_INFO("Audio Engine Initiated Successfully!");
+		KG_INFO("Audio Engine Initiated Successfully!");
 	}
 
 	void AudioEngine::Terminate()
@@ -174,7 +174,7 @@ namespace Kargono::Audio
 		s_AudioContext->m_StereoMusicSource.reset();
 		while (!s_AudioContext->m_AudioSourceQueue.empty())
 		{
-			KG_CORE_ASSERT(s_AudioContext->m_AudioSourceQueue.front().use_count() == 1, "Not all Audio Resources have been cleared!");
+			KG_ASSERT(s_AudioContext->m_AudioSourceQueue.front().use_count() == 1, "Not all Audio Resources have been cleared!");
 			s_AudioContext->m_AudioSourceQueue.front().reset();
 			s_AudioContext->m_AudioSourceQueue.pop();
 		}
@@ -187,7 +187,7 @@ namespace Kargono::Audio
 		s_AudioContext->m_CurrentDeviceName = "";
 		s_AudioContext->m_CurrentDeviceID = nullptr;
 		s_AudioContext->m_ContextID = nullptr;
-		KG_CORE_INFO("Audio Engine Shutdown Successfully!");
+		KG_INFO("Audio Engine Shutdown Successfully!");
 	}
 }
 

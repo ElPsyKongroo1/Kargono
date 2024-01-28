@@ -23,10 +23,19 @@ namespace Kargono::Physics
 	}
 	void ContactListener::BeginContact(b2Contact* contact)
 	{
-		KG_CORE_ASSERT(m_CallbackFunc, "Missing Callback Function to link to Event Dispatch!");
+		KG_ASSERT(m_CallbackFunc, "Missing Callback Function to link to Event Dispatch!");
 		UUID entityOne = contact->GetFixtureA()->GetBody()->GetUserData().UUID;
 		UUID entityTwo = contact->GetFixtureB()->GetBody()->GetUserData().UUID;
 		Events::PhysicsCollisionEvent event = Events::PhysicsCollisionEvent(entityOne, entityTwo);
+		m_CallbackFunc(event);
+	}
+
+	void ContactListener::EndContact(b2Contact* contact)
+	{
+		KG_ASSERT(m_CallbackFunc, "Missing Callback Function to link to Event Dispatch!");
+		UUID entityOne = contact->GetFixtureA()->GetBody()->GetUserData().UUID;
+		UUID entityTwo = contact->GetFixtureB()->GetBody()->GetUserData().UUID;
+		Events::PhysicsCollisionEnd event = Events::PhysicsCollisionEnd(entityOne, entityTwo);
 		m_CallbackFunc(event);
 	}
 
