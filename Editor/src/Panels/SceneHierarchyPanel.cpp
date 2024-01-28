@@ -1,4 +1,4 @@
-#include "Kargono/kgpch.h"
+#include "kgpch.h"
 
 #include "Panels/SceneHierarchyPanel.h"
 

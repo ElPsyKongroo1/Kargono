@@ -22,7 +22,7 @@ namespace API::Utility
 		case Kargono::InputDataType::Int4:		return GL_INT;
 		case Kargono::InputDataType::Bool:		return GL_BOOL;
 		}
-		KG_CORE_ASSERT(false, "Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
+		KG_ASSERT(false, "Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
 		return -1;
 	}
 }
@@ -47,7 +47,7 @@ namespace API::OpenGL
 	}
 	void OpenGLVertexArray::AddVertexBuffer(const Kargono::Ref<Kargono::VertexBuffer>& vertexBuffer)
 	{
-		KG_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
+		KG_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		// Get the Vertex Buffer Layout
 		glBindVertexArray(m_RendererID);
@@ -109,7 +109,7 @@ namespace API::OpenGL
 				break;
 			}
 			default:
-				KG_CORE_ASSERT(false, "Unknown ShaderDataType!");
+				KG_ASSERT(false, "Unknown ShaderDataType!");
 			}
 		}
 

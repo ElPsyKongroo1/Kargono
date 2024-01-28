@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Timer.h"
+#include "Kargono/Core/Timers.h"
 #include "Kargono/Core/FileSystem.h"
 #include "API/OpenGL/OpenGLShader.h"
 
@@ -49,7 +49,7 @@ namespace API::OpenGL
 
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			KG_CORE_ERROR("Shader linking failed :\n{0}", infoLog.data());
+			KG_ERROR("Shader linking failed :\n{0}", infoLog.data());
 
 			glDeleteProgram(program);
 

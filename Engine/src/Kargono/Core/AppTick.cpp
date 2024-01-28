@@ -17,7 +17,7 @@ namespace Kargono
 		AppTickEngine::ClearGenerators();
 		for (auto generatorValue : Projects::Project::GetAppTickGenerators())
 		{
-			AppTickEngine::AddGenerator(generatorValue);
+			AppTickEngine::AddGeneratorUsage(generatorValue);
 		}
 	}
 
@@ -37,7 +37,7 @@ namespace Kargono
 				generator.Accumulator -= generator.DelaySeconds;
 				Events::AppTickEvent event = Events::AppTickEvent(generator.DelayMilliSeconds);
 				s_AppTickCallback(event);
-				KG_CORE_INFO("An App Tick has been generated with a delay of {}", Utility::Time::GetStringFromMilliseconds(generator.DelayMilliSeconds));
+				KG_INFO("An App Tick has been generated with a delay of {}", Utility::Time::GetStringFromMilliseconds(generator.DelayMilliSeconds));
 			}
 		}
 	}
@@ -55,14 +55,15 @@ namespace Kargono
 		}
 	}
 
-	void AppTickEngine::AddGenerator(uint64_t delayMilliseconds)
+	void AppTickEngine::AddGeneratorUsage(uint64_t delayMilliseconds)
 	{
 		// Check if a similar generator already exists
 		for (auto& generator : s_AppTickGenerators)
 		{
 			if (delayMilliseconds == generator.DelayMilliSeconds)
 			{
-				KG_CORE_INFO("Attempt to add an AppTickGenerator that already exists!");
+				KG_INFO("Attempt to add an AppTickGenerator that already exists!");
+				generator.UsageCount++;
 				return;
 			}
 		}
@@ -72,7 +73,37 @@ namespace Kargono
 		newGenerator.Accumulator = 0.0f;
 		newGenerator.DelayMilliSeconds = delayMilliseconds;
 		newGenerator.DelaySeconds = static_cast<double>(delayMilliseconds) / 1000.0;
+		newGenerator.UsageCount = 1;
 		s_AppTickGenerators.push_back(newGenerator);
+	}
+
+	void AppTickEngine::RemoveGeneratorUsage(uint64_t delayMilliseconds)
+	{
+		// Decrease usage count if there is a match
+		for (auto& generator : s_AppTickGenerators)
+		{
+			if (delayMilliseconds == generator.DelayMilliSeconds)
+			{
+				KG_INFO("Attempt to add an AppTickGenerator that already exists!");
+				generator.UsageCount--;
+			}
+		}
+
+		// Remove generators that have usagecount reduced to 0
+		auto iter = std::remove_if(s_AppTickGenerators.begin(), s_AppTickGenerators.end(), [&](AppTickGenerator& generator)
+		{
+			if (generator.UsageCount <= 0)
+			{
+				return true;
+			}
+
+			return false;
+		});
+
+		if (iter != s_AppTickGenerators.end())
+		{
+			s_AppTickGenerators.erase(iter, s_AppTickGenerators.end());
+		}
 	}
 
 }

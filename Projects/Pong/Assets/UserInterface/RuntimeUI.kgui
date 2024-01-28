@@ -93,7 +93,7 @@ Windows:
           TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [8.35742188, 0.857142866]
           TextCentered: true
-      - Tag: Controls_1
+      - Tag: controls_1
         WindowPosition: [0.0599999987, 0.100000001]
         Size: [0.239999995, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
@@ -110,7 +110,7 @@ Windows:
           TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [17.8466797, 0.857142866]
           TextCentered: true
-      - Tag: Controls_2
+      - Tag: controls_2
         WindowPosition: [0.889999986, 0.100000001]
         Size: [0.239999995, 0.100000001]
         DefaultBackgroundColor: [1, 1, 1, 0]
@@ -126,4 +126,75 @@ Windows:
           TextSize: 0.200000003
           TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [22.4296875, 0.857142866]
+          TextCentered: true
+  - Tag: online_lobby
+    ScreenPosition: [0, 0, 0]
+    Size: [1, 1]
+    BackgroundColor: [1, 1, 0.635294139, 0.149019614]
+    ParentIndex: -1
+    ChildBufferIndex: -1
+    ChildBufferSize: 0
+    DefaultActiveWidget: 0
+    WidgetCounts:
+      TextWidgetCount: 3
+      TextWidgetLocation: 0
+      ButtonWidgetCount: 0
+      ButtonWidgetLocation: 0
+      CheckboxWidgetCount: 0
+      CheckboxWidgetLocation: 0
+      ComboWidgetCount: 0
+      ComboWidgetLocation: 0
+      PopupWidgetCount: 0
+      PopupWidgetLocation: 0
+    Widgets:
+      - Tag: main_text
+        WindowPosition: [0.360000014, 0.829999983]
+        Size: [0.300000012, 0.100000001]
+        DefaultBackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        Selectable: true
+        DirectionPointerUp: -1
+        DirectionPointerDown: -1
+        DirectionPointerLeft: 1
+        DirectionPointerRight: 2
+        FunctionPointerOnPress: ""
+        TextWidget:
+          Text: Waiting for Players...
+          TextSize: 0.5
+          TextColor: [1, 1, 1, 1]
+          TextAbsoluteDimensions: [8.34472656, 0.833333313]
+          TextCentered: true
+      - Tag: player_slot_0
+        WindowPosition: [0.0299999993, 0.810000002]
+        Size: [0.170000002, 0.189999998]
+        DefaultBackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        Selectable: true
+        DirectionPointerUp: -1
+        DirectionPointerDown: -1
+        DirectionPointerLeft: -1
+        DirectionPointerRight: 0
+        FunctionPointerOnPress: ""
+        TextWidget:
+          Text: No Player 1
+          TextSize: 0.400000006
+          TextColor: [1, 1, 1, 1]
+          TextAbsoluteDimensions: [4.38330078, 0.833333313]
+          TextCentered: true
+      - Tag: player_slot_1
+        WindowPosition: [0.720000029, 0.850000024]
+        Size: [0.300000012, 0.100000001]
+        DefaultBackgroundColor: [1, 1, 1, 0]
+        WidgetType: TextWidget
+        Selectable: true
+        DirectionPointerUp: -1
+        DirectionPointerDown: -1
+        DirectionPointerLeft: 0
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: ""
+        TextWidget:
+          Text: No Player 2
+          TextSize: 0.400000006
+          TextColor: [1, 1, 1, 1]
+          TextAbsoluteDimensions: [4.50439453, 0.857142866]
           TextCentered: true

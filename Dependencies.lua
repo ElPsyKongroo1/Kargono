@@ -15,7 +15,7 @@ IncludeDir["stb_image"] = "%{wks.location}/Engine/dependencies/stb_image"
 IncludeDir["entt"] = "%{wks.location}/Engine/dependencies/entt/include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/Engine/dependencies/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/Engine/dependencies/ImGuizmo"
-IncludeDir["free_type"] = "%{wks.location}/Engine/dependencies/free_type/include"
+--IncludeDir["free_type"] = "%{wks.location}/Engine/dependencies/free_type/include"
 IncludeDir["hash_library"] = "%{wks.location}/Engine/dependencies/hash_library"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["mono"] = "%{wks.location}/Engine/dependencies/mono/include"
@@ -24,6 +24,7 @@ IncludeDir["msdfgen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/msdf
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen"
 IncludeDir["dr_wav"] = "%{wks.location}/Engine/dependencies/dr_wav/include"
 IncludeDir["optick"] = "%{wks.location}/Engine/dependencies/optick/include"
+IncludeDir["asio"] = "%{wks.location}/Engine/dependencies/asio/include"
 
 -- Include Directories: Points to a directory with a variable number if library files.
 -- Linker will check these paths when finding external libraries.
@@ -51,7 +52,7 @@ Library["OpenALSoft_Dist"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/dis
 -- Library["msdf_atlas_gen_Release"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/release/msdf-atlas-gen.lib"
 -- Library["msdf_atlas_gen_Dist"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/dist/msdf-atlas-gen.lib"
 
-Library["free_type"] = "%{wks.location}/Engine/dependencies/free_type/lib/Release/freetype.lib"
+--Library["free_type"] = "%{wks.location}/Engine/dependencies/free_type/lib/Release/freetype.lib"
 
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK}/VkLayer_utils.lib"

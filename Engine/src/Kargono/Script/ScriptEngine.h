@@ -25,6 +25,7 @@ extern "C"
 namespace Kargono::Events
 {
 	class PhysicsCollisionEvent;
+	class PhysicsCollisionEnd;
 	class KeyPressedEvent;
 }
 
@@ -98,7 +99,7 @@ namespace Kargono::Script
 		template<typename T>
 		T GetValue()
 		{
-			KG_CORE_ASSERT(sizeof(T) <= 16, "Type too large!");
+			KG_ASSERT(sizeof(T) <= 16, "Type too large!");
 			return *(T*)m_Buffer;
 		}
 		// Provides ability to set data inside m_Buffer based
@@ -106,7 +107,7 @@ namespace Kargono::Script
 		template<typename T>
 		void SetValue(T value)
 		{
-			KG_CORE_ASSERT(sizeof(T) <= 16, "Type too large!");
+			KG_ASSERT(sizeof(T) <= 16, "Type too large!");
 			memcpy(m_Buffer, &value, sizeof(T));
 		}
 	private:
@@ -157,6 +158,8 @@ namespace Kargono::Script
 		static void OnKeyPressed(Events::KeyPressedEvent event);
 		// This function handles collision events that are registered with individual entities
 		static void OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+
+		static void OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 
 		// Private Functions that serve as supporting functionality for above LifeCycle Functions
 	private:
@@ -306,6 +309,8 @@ namespace Kargono::Script
 		// Calls C# OnUpdate Function
 		bool InvokeOnPhysicsCollision(MonoObject* instance, UUID otherEntity);
 
+		bool InvokeOnPhysicsCollisionEnd(MonoObject* instance, UUID otherEntity);
+
 		//============================
 		// Getter/Setter
 		//============================
@@ -341,6 +346,7 @@ namespace Kargono::Script
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 		MonoMethod* m_OnCollisionMethod = nullptr;
+		MonoMethod* m_OnCollisionEndMethod = nullptr;
 
 		// This map holds references to ScriptMethods which are dynamically created inside the
 		//		C# scripts.
@@ -413,6 +419,8 @@ namespace Kargono::Script
 		// Calls C# OnUpdate Function
 		bool InvokeOnPhysicsCollision(UUID otherEntity);
 
+		bool InvokeOnPhysicsCollisionEnd(UUID otherEntity);
+
 		// Public API for getting and setting field values inside C# object.
 		//		These methods are templated to allow for different types
 		//		of fields to be Get/Set. These functions call the internal
@@ -421,7 +429,7 @@ namespace Kargono::Script
 		template<typename T>
 		T GetFieldValue(const std::string& name)
 		{
-			KG_CORE_ASSERT(sizeof(T) <= 16, "Type too large!");
+			KG_ASSERT(sizeof(T) <= 16, "Type too large!");
 
 			bool success = GetFieldValueInternal(name, s_FieldValueBuffer);
 			if (!success) { return T(); }
@@ -430,7 +438,7 @@ namespace Kargono::Script
 		template<typename T>
 		void SetFieldValue(const std::string& name, T value)
 		{
-			KG_CORE_ASSERT(sizeof(T) <= 16, "Type too large!");
+			KG_ASSERT(sizeof(T) <= 16, "Type too large!");
 			SetFieldValueInternal(name, &value);
 		}
 
@@ -476,7 +484,7 @@ namespace Kargono::Utility
 		case Script::ScriptFieldType::Vector4:	return "Vector4";
 		case Script::ScriptFieldType::Entity:	return "Entity";
 		}
-		KG_CORE_ASSERT(false, "Unknown field type");
+		KG_ASSERT(false, "Unknown field type");
 		return "None";
 	}
 
@@ -500,7 +508,7 @@ namespace Kargono::Utility
 		if (fieldType == "Vector4")	return Script::ScriptFieldType::Vector4;
 		if (fieldType == "Entity")	return Script::ScriptFieldType::Entity;
 
-		KG_CORE_ASSERT(false, "Unknown field type");
+		KG_ASSERT(false, "Unknown field type");
 		return Script::ScriptFieldType::None;
 	}
 }

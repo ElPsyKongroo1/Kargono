@@ -16,8 +16,6 @@
 
 // Currently accepts at least the condition and one additional parameter (the message) being optional
 #define KG_ASSERT(...) KG_EXPAND_MACRO( KG_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
-#define KG_CORE_ASSERT(...) KG_EXPAND_MACRO( KG_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
 #else
 #define KG_ASSERT(...)
-#define KG_CORE_ASSERT(...)
 #endif

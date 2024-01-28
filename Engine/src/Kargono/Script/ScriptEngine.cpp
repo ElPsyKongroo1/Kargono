@@ -55,8 +55,8 @@ namespace Kargono::Utility
 		MonoClass* exceptionClass = mono_object_get_class(exception);
 		std::string className = mono_class_get_name(exceptionClass);
 		std::string assemblyName = mono_class_get_namespace(exceptionClass);
-		KG_CORE_ERROR("An exception was thrown in the InvokeMethod Function! \nException Type: {} \nException Message: {}", className, assemblyName);
-		KG_CORE_ASSERT(false);
+		KG_ERROR("An exception was thrown in the InvokeMethod Function! \nException Type: {} \nException Message: {}", className, assemblyName);
+		KG_ASSERT(false);
 	}
 
 	static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
@@ -84,7 +84,7 @@ namespace Kargono::Utility
 				ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
 
 				mono_debug_open_image_from_memory(image, pdbFileData.As<mono_byte>(), (uint32_t)pdbFileData.Size());
-				KG_CORE_INFO("Loaded PDB {}", pdbPath);
+				KG_INFO("Loaded PDB {}", pdbPath);
 
 			}
 		}
@@ -112,7 +112,7 @@ namespace Kargono::Utility
 			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
-			KG_CORE_TRACE("{}.{}", nameSpace, name);
+			KG_INFO("{}.{}", nameSpace, name);
 		}
 	}
 
@@ -124,7 +124,7 @@ namespace Kargono::Utility
 
 		if (it == Script::s_ScriptFieldTypeMap.end())
 		{
-			KG_CORE_ERROR("Unknown type: {}", typeName);
+			KG_ERROR("Unknown type: {}", typeName);
 			return Script::ScriptFieldType::None;
 		}
 		return it->second;
@@ -230,7 +230,7 @@ namespace Kargono::Script
 
 		bool status = InitializeRootDomain();
 
-		KG_CORE_ASSERT(status, "Failed to load Mono Root Domain!");
+		KG_ASSERT(status, "Failed to load Mono Root Domain!");
 
 		if (s_ScriptData->EnableDebugging)
 		{
@@ -243,8 +243,8 @@ namespace Kargono::Script
 	}
 	void ScriptEngine::ShutdownMono()
 	{
-		KG_CORE_ASSERT(s_ScriptData->RootDomain, "Mono Shutdown Initiated without valid root domain present!")
-		KG_CORE_WARN("Shutting down Mono. Root Domain is {}. App Domain is {}", static_cast<bool>(s_ScriptData->RootDomain), static_cast<bool>(s_ScriptData->AppDomain));
+		KG_ASSERT(s_ScriptData->RootDomain, "Mono Shutdown Initiated without valid root domain present!")
+		KG_WARN("Shutting down Mono. Root Domain is {}. App Domain is {}", static_cast<bool>(s_ScriptData->RootDomain), static_cast<bool>(s_ScriptData->AppDomain));
 
 		mono_domain_set(mono_get_root_domain(), false);
 		if (s_ScriptData->AppDomain)
@@ -310,21 +310,21 @@ namespace Kargono::Script
 		bool status = InitializeAppDomain();
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not initialize App Domain.");
+			KG_ERROR("[ScriptEngine] Could not initialize App Domain.");
 			return;
 		}
 
 		status = LoadCoreAssembly(s_ScriptData->CoreAssemblyFilepath);
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
+			KG_ERROR("[ScriptEngine] Could not load Kargono-ScriptCore assembly.");
 			return;
 		}
 		const auto scriptModulePath = Projects::Project::GetScriptModulePath(true);
 		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			KG_ERROR("[ScriptEngine] Could not load app assembly.");
 			return;
 		}
 
@@ -341,14 +341,14 @@ namespace Kargono::Script
 		bool status = InitializeAppDomain();
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not initialize App Domain.");
+			KG_ERROR("[ScriptEngine] Could not initialize App Domain.");
 			return;
 		}
 
 		status = LoadCoreAssembly("Resources/Scripts/ScriptEngine.dll");
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load ScriptEngine assembly.");
+			KG_ERROR("[ScriptEngine] Could not load ScriptEngine assembly.");
 			return;
 		}
 
@@ -356,7 +356,7 @@ namespace Kargono::Script
 		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
-			KG_CORE_ERROR("[ScriptEngine] Could not load app assembly.");
+			KG_ERROR("[ScriptEngine] Could not load app assembly.");
 			return;
 		}
 		LoadAssemblyClasses();
@@ -423,7 +423,7 @@ namespace Kargono::Script
 	{
 		UUID entityUUID = entity.GetUUID();
 
-		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(entityUUID), "Could not find ScriptInstance for entity");
+		KG_ASSERT(s_ScriptData->EntityInstances.contains(entityUUID), "Could not find ScriptInstance for entity");
 		Ref<ScriptClassEntityInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 		instance->InvokeOnUpdate(ts);
 	}
@@ -543,6 +543,25 @@ namespace Kargono::Script
 		}
 	}
 
+	void ScriptEngine::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
+	{
+		UUID entityOne = event.GetEntityOne();
+		UUID entityTwo = event.GetEntityTwo();
+		bool collisionHandled = false;
+
+		if (s_ScriptData->EntityInstances.contains(entityOne))
+		{
+			Ref<ScriptClassEntityInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityOne];
+			collisionHandled = monoEntityInstance->InvokeOnPhysicsCollisionEnd(entityTwo);
+		}
+
+		if (!collisionHandled && s_ScriptData->EntityInstances.contains(entityTwo))
+		{
+			Ref<ScriptClassEntityInstance> monoEntityInstance = s_ScriptData->EntityInstances[entityTwo];
+			monoEntityInstance->InvokeOnPhysicsCollisionEnd(entityOne);
+		}
+	}
+
 	void ScriptEngine::LoadAssemblyClasses()
 	{
 		s_ScriptData->EntityClasses.clear();
@@ -572,12 +591,13 @@ namespace Kargono::Script
 				s_ScriptData->CustomEngineCallInstance = ScriptClassCustomCallInstance(s_ScriptData->CustomEngineCalls);
 				void* iter = nullptr;
 				MonoMethod* method;
-				KG_CORE_WARN("{} class methods:", className);
+				KG_WARN("{} class methods:", className);
 				while (method = mono_class_get_methods(monoClass, &iter))
 				{
-					KG_CORE_WARN("	{}", mono_method_get_name(method));
+					KG_WARN("	{}", mono_method_get_name(method));
 					if (std::string(mono_method_get_name(method)) == ".ctor") { continue; }
-					ScriptMethod newMethod = ScriptMethod(mono_method_get_name(method), 0, method);
+					MonoMethodSignature* methodSignature = mono_method_get_signature(method, s_ScriptData->AppAssemblyImage, 0);
+					ScriptMethod newMethod = ScriptMethod(mono_method_get_name(method), mono_signature_get_param_count(methodSignature), method);
 					s_ScriptData->CustomEngineCalls->AddCustomMethod(newMethod);
 				}
 			}
@@ -592,11 +612,11 @@ namespace Kargono::Script
 
 			void* iter = nullptr;
 			MonoMethod* method;
-			KG_CORE_WARN("{} class methods:", className);
+			KG_WARN("{} class methods:", className);
 			while (method = mono_class_get_methods(monoClass, &iter))
 			{
 				std::string methodName = mono_method_get_name(method);
-				KG_CORE_WARN("	{}", methodName);
+				KG_WARN("	{}", methodName);
 				if (methodName == ".ctor" || methodName == "OnUpdate" || methodName == "OnPhysicsCollision" || methodName == "OnCreate") { continue; }
 				MonoMethodSignature* methodSignature = mono_method_get_signature(method, s_ScriptData->AppAssemblyImage, 0);
 				ScriptMethod newMethod = ScriptMethod(mono_method_get_name(method), mono_signature_get_param_count(methodSignature), method);
@@ -605,7 +625,7 @@ namespace Kargono::Script
 
 
 			int fieldCount = mono_class_num_fields(monoClass);
-			KG_CORE_WARN("{} has {} fields:", className, fieldCount);
+			KG_WARN("{} has {} fields:", className, fieldCount);
 			void* iterator = nullptr;
 			while (MonoClassField* field = mono_class_get_fields(monoClass, &iterator))
 			{
@@ -615,7 +635,7 @@ namespace Kargono::Script
 				{
 					MonoType* type = mono_field_get_type(field);
 					ScriptFieldType fieldType = Utility::MonoTypeToScriptFieldType(type);
-					KG_CORE_WARN("  {} ({})", fieldName, Utility::ScriptFieldTypeToString(fieldType));
+					KG_WARN("  {} ({})", fieldName, Utility::ScriptFieldTypeToString(fieldType));
 					scriptClass->AddField(fieldName, fieldType, field);
 				}
 			}
@@ -634,7 +654,7 @@ namespace Kargono::Script
 
 	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
 	{
-		KG_CORE_ASSERT(s_ScriptData->EntityInstances.contains(uuid))
+		KG_ASSERT(s_ScriptData->EntityInstances.contains(uuid))
 		return s_ScriptData->EntityInstances.at(uuid)->GetInstance();
 	}
 
@@ -662,7 +682,7 @@ namespace Kargono::Script
 
 	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
 	{
-		KG_CORE_ASSERT(entity)
+		KG_ASSERT(entity)
 		UUID entityID = entity.GetUUID();
 		//KG_CORE_ASSERT(s_ScriptData->EntityScriptFields.find(entity.GetUUID()) != s_ScriptData->EntityScriptFields.end())
 
@@ -678,6 +698,7 @@ namespace Kargono::Script
 		m_OnCreateMethod = GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = GetMethod("OnUpdate", 1);
 		m_OnCollisionMethod = GetMethod("OnPhysicsCollision", 1);
+		m_OnCollisionEndMethod = GetMethod("OnPhysicsCollisionEnd", 1);
 	}
 
 	void ScriptClass::SetConstructor(MonoClass* entityClass)
@@ -743,7 +764,7 @@ namespace Kargono::Script
 
 	void ScriptClass::InvokeOnUpdate(MonoObject* instance , float ts)
 	{
-		KG_CORE_ASSERT(instance, "Empty Script Instance!")
+		KG_ASSERT(instance, "Empty Script Instance!")
 		if (m_OnUpdateMethod)
 		{
 			void* param = &ts;
@@ -753,7 +774,7 @@ namespace Kargono::Script
 
 	bool ScriptClass::InvokeOnPhysicsCollision(MonoObject* instance , UUID otherEntity)
 	{
-		KG_CORE_ASSERT(instance, "Empty Script Instance!")
+		KG_ASSERT(instance, "Empty Script Instance!")
 			if (m_OnCollisionMethod)
 			{
 				void* param = &otherEntity;
@@ -762,9 +783,20 @@ namespace Kargono::Script
 		return false;
 	}
 
+	bool ScriptClass::InvokeOnPhysicsCollisionEnd(MonoObject* instance, UUID otherEntity)
+	{
+		KG_ASSERT(instance, "Empty Script Instance!")
+			if (m_OnCollisionEndMethod)
+			{
+				void* param = &otherEntity;
+				return *(bool*)InvokeMethod(instance, m_OnCollisionEndMethod, &param);
+			}
+		return false;
+	}
+
 	void ScriptClass::InvokeCustomMethod(MonoObject* instance , const std::string& methodName, void** params)
 	{
-		KG_CORE_ASSERT(instance, "Empty Script Instance!");
+		KG_ASSERT(instance, "Empty Script Instance!");
 		if (m_Methods.contains(methodName))
 		{
 			ScriptMethod& method = m_Methods.at(methodName);
@@ -816,6 +848,11 @@ namespace Kargono::Script
 		return m_ScriptClass->InvokeOnPhysicsCollision(m_Instance, otherEntity);
 	}
 
+	bool ScriptClassEntityInstance::InvokeOnPhysicsCollisionEnd(UUID otherEntity)
+	{
+		return m_ScriptClass->InvokeOnPhysicsCollisionEnd(m_Instance, otherEntity);
+	}
+
 	ScriptClassCustomCallInstance::ScriptClassCustomCallInstance(Ref<ScriptClass> scriptClass)
 		: m_ScriptClass(scriptClass)
 	{
@@ -826,7 +863,7 @@ namespace Kargono::Script
 	{
 		KG_PROFILE_FUNCTION()
 
-		KG_CORE_ASSERT(m_Instance, "Empty Script Instance!");
+		KG_ASSERT(m_Instance, "Empty Script Instance!");
 		m_ScriptClass->InvokeCustomMethod(m_Instance, methodName, params);
 	}
 

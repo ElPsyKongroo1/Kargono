@@ -1,4 +1,4 @@
-#include "Kargono/kgpch.h"
+#include "kgpch.h"
 
 #include "EditorLayer.h"
 
@@ -18,11 +18,14 @@ namespace Kargono
 
 	void EditorLayer::OnAttach()
 	{
+
+		Script::ScriptEngine::Init();
+		Audio::AudioEngine::Init();
+
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>();
 
 		m_EditorScene = CreateRef<Scene>();
 		Scene::SetActiveScene(m_EditorScene);
-
 		m_SceneState = SceneState::Edit;
 
 		if (!OpenProject())
@@ -505,6 +508,15 @@ namespace Kargono
 		}
 		ImGui::NewLine();
 
+		ImGui::TextUnformatted("Networking:");
+		ImGui::Separator();
+		bool appNetworked = Projects::Project::GetAppIsNetworked();
+		if (ImGui::Checkbox("Use Networking", &appNetworked))
+		{
+			Projects::Project::SetAppIsNetworked(appNetworked);
+		}
+		ImGui::NewLine();
+
 		ImGui::TextUnformatted("Target Application Resolution:");
 		ImGui::Separator();
 		if (ImGui::BeginCombo("##", Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution()).c_str()))
@@ -606,6 +618,197 @@ namespace Kargono
 			ImGui::EndCombo();
 		}
 		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnUpdateUserCount Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnUpdateUserCount", Projects::Project::GetProjectOnUpdateUserCount().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnUpdateUserCount("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnUpdateUserCount(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnApproveJoinSession Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnApproveJoinSession", Projects::Project::GetProjectOnApproveJoinSession().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnApproveJoinSession("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnApproveJoinSession(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnUserLeftSession Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnUserLeftSession", Projects::Project::GetProjectOnUserLeftSession().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnUserLeftSession("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnUserLeftSession(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnCurrentSessionInit Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnCurrentSessionInit", Projects::Project::GetProjectOnCurrentSessionInit().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnCurrentSessionInit("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnCurrentSessionInit(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnConnectionTerminated Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnConnectionTerminated", Projects::Project::GetProjectOnConnectionTerminated().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnConnectionTerminated("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnConnectionTerminated(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnUpdateSessionUserSlot Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnUpdateSessionUserSlot", Projects::Project::GetProjectOnUpdateSessionUserSlot().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnUpdateSessionUserSlot("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnUpdateSessionUserSlot(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnStartSession Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnStartSession", Projects::Project::GetProjectOnStartSession().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnStartSession("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnStartSession(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnSessionReadyCheckConfirm Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnSessionReadyCheckConfirm", Projects::Project::GetProjectOnSessionReadyCheckConfirm().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnSessionReadyCheckConfirm("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnSessionReadyCheckConfirm(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		ImGui::TextUnformatted("OnReceiveSignal Function:");
+		ImGui::Separator();
+		if (ImGui::BeginCombo("##ProjectOnReceiveSignal", Projects::Project::GetProjectOnReceiveSignal().c_str()))
+		{
+			if (ImGui::Selectable("None"))
+			{
+				Projects::Project::SetProjectOnReceiveSignal("None");
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (ImGui::Selectable(name.c_str()))
+				{
+					Projects::Project::SetProjectOnReceiveSignal(name);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::NewLine();
+
+		
 
 
 		ImGui::TextUnformatted("App Tick Generators:");
@@ -755,14 +958,16 @@ namespace Kargono
 		ImGui::Text("Time");
 		ImGui::Separator();
 		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
+		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(Application::GetCurrentApp().GetUpdateCount()));
 		if (Scene::GetActiveScene()->IsRunning())
 		{
-			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime()) - Application::GetCurrentApp().GetAppStartTime()).c_str());
+			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - Application::GetCurrentApp().GetAppStartTime())).c_str());
 		}
 		else
 		{
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
+
 		
 		ImGui::NewLine();
 
@@ -799,13 +1004,13 @@ namespace Kargono
 		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::Project::GetTargetResolution());
 		if (aspectRatio.x > aspectRatio.y && ((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y) < viewportPanelSize.y)
 		{
-			currentWindow.SetViewportWidth(viewportPanelSize.x);
-			currentWindow.SetViewportHeight((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y);
+			currentWindow.SetViewportWidth(static_cast<uint32_t>(viewportPanelSize.x));
+			currentWindow.SetViewportHeight(static_cast<uint32_t>((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y));
 		}
 		else
 		{
-			currentWindow.SetViewportWidth((viewportPanelSize.y / aspectRatio.y) * aspectRatio.x);
-			currentWindow.SetViewportHeight(viewportPanelSize.y);
+			currentWindow.SetViewportWidth (static_cast<uint32_t>((viewportPanelSize.y / aspectRatio.y) * aspectRatio.x));
+			currentWindow.SetViewportHeight(static_cast<uint32_t>(viewportPanelSize.y));
 		}
 
 		localViewportBounds[0] = {  (viewportPanelSize.x - static_cast<float>(currentWindow.GetViewportWidth())) * 0.5f, (viewportPanelSize.y - static_cast<float>(currentWindow.GetViewportHeight())) * 0.5f };
@@ -917,7 +1122,7 @@ namespace Kargono
 				break;
 			}
 		default:
-			KG_CORE_ASSERT(false, "Invalid Widget Type Presented!");
+			KG_ASSERT(false, "Invalid Widget Type Presented!");
 			break;
 		}
 	}
@@ -1258,7 +1463,7 @@ namespace Kargono
 				}
 				default:
 				{
-					KG_CORE_ASSERT(false, "Invalid widgetTypeToAdd value");
+					KG_ASSERT(false, "Invalid widgetTypeToAdd value");
 					break;
 				}
 			}
@@ -1287,6 +1492,7 @@ namespace Kargono
 			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		}
 		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(EditorLayer::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_EVENT_FN(EditorLayer::OnPhysicsCollisionEnd));
 
 		if (m_SceneState == SceneState::Play && m_IsPaused) { dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed)); }
 
@@ -1294,6 +1500,15 @@ namespace Kargono
 		{
 			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorLayer::OnKeyPressedRuntime));
 			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(EditorLayer::OnApplicationClose));
+			dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_EVENT_FN(EditorLayer::OnUpdateUserCount));
+			dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_EVENT_FN(EditorLayer::OnApproveJoinSession));
+			dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_EVENT_FN(EditorLayer::OnUserLeftSession));
+			dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_EVENT_FN(EditorLayer::OnCurrentSessionInit));
+			dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(EditorLayer::OnConnectionTerminated));
+			dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_EVENT_FN(EditorLayer::OnUpdateSessionUserSlot));
+			dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(EditorLayer::OnStartSession));
+			dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_EVENT_FN(EditorLayer::OnSessionReadyCheckConfirm));
+			dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_EVENT_FN(EditorLayer::OnReceiveSignal));
 		}
 	}
 
@@ -1441,6 +1656,78 @@ namespace Kargono
 		Script::ScriptEngine::OnPhysicsCollision(event);
 		return false;
 	}
+
+	bool EditorLayer::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
+	{
+		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
+		return false;
+	}
+
+	bool EditorLayer::OnUpdateUserCount(Events::UpdateOnlineUsers event)
+	{
+		uint32_t userCount = event.GetUserCount();
+		void* param = &userCount;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateUserCount(), &param);
+		return false;
+	}
+
+	bool EditorLayer::OnApproveJoinSession(Events::ApproveJoinSession event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnApproveJoinSession(), &param);
+		return false;
+	}
+
+	bool EditorLayer::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);
+		return false;
+	}
+
+	bool EditorLayer::OnUserLeftSession(Events::UserLeftSession event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUserLeftSession(), &param);
+		return false;
+	}
+
+	bool EditorLayer::OnCurrentSessionInit(Events::CurrentSessionInit event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnCurrentSessionInit());
+		return false;
+	}
+
+	bool EditorLayer::OnConnectionTerminated(Events::ConnectionTerminated event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnConnectionTerminated());
+		return false;
+	}
+
+	bool EditorLayer::OnStartSession(Events::StartSession event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnStartSession());
+		return false;
+	}
+
+	bool EditorLayer::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		return false;
+	}
+
+	bool EditorLayer::OnReceiveSignal(Events::ReceiveSignal event)
+	{
+		uint16_t signal = event.GetSignal();
+		void* param = &signal;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		return false;
+	}
+
+	
 
 	static RendererInputSpec s_CircleInputSpec{};
 	static RendererInputSpec s_LineInputSpec{};
@@ -1721,7 +2008,6 @@ namespace Kargono
 
 	bool EditorLayer::OpenProject()
 	{
-		
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
 
 		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
@@ -1762,7 +2048,6 @@ namespace Kargono
 			OpenScene(startSceneHandle);
 
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
-
 		}
 	}
 
@@ -1867,6 +2152,13 @@ namespace Kargono
 		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
 		Scene::GetActiveScene()->OnRuntimeStart();
 		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
+
+		if (Projects::Project::GetAppIsNetworked())
+		{
+			Network::Client::SetActiveClient(CreateRef<Network::Client>());
+			Network::Client::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::Client::GetActiveClient().get()));
+		}
+
 		AppTickEngine::LoadProjectGenerators();
 		Application::GetCurrentApp().SetAppStartTime();
 	}
@@ -1883,12 +2175,10 @@ namespace Kargono
 	void EditorLayer::OnStop()
 	{
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
-		KG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
+		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
 		if (m_SceneState == SceneState::Play) { Scene::GetActiveScene()->OnRuntimeStop(); }
 		else if (m_SceneState == SceneState::Simulate) { Scene::GetActiveScene()->OnSimulationStop(); }
-
-		m_SceneState = SceneState::Edit;
 
 		Scene::GetActiveScene()->DestroyAllEntities();
 		Scene::SetActiveScene(m_EditorScene);
@@ -1914,7 +2204,19 @@ namespace Kargono
 			InputMode::s_InputMode = nullptr;
 			InputMode::s_InputModeHandle = 0;
 		}
+
+		if (Projects::Project::GetAppIsNetworked() && m_SceneState == SceneState::Play)
+		{
+
+			Network::Client::GetActiveClient()->StopClient();
+			Network::Client::GetActiveNetworkThread()->join();
+			Network::Client::GetActiveNetworkThread().reset();
+			Network::Client::GetActiveClient().reset();
+		}
+
 		AppTickEngine::ClearGenerators();
+
+		m_SceneState = SceneState::Edit;
 	}
 
 	void EditorLayer::OnPause()

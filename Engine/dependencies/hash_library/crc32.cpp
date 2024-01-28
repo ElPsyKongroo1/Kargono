@@ -429,3 +429,10 @@ std::string CRC32::operator()(const std::string& text)
   add(text.c_str(), text.size());
   return getHash();
 }
+
+uint32_t CRC32::CalculateHash(const void* data, size_t numBytes)
+{
+	reset();
+	add(data, numBytes);
+	return m_hash;
+}

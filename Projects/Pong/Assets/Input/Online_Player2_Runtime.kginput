@@ -1,0 +1,19 @@
+KeyboardPolling:
+  []
+CustomCallsOnUpdate:
+  []
+ScriptClassOnUpdate:
+  - ClassName: Pong.Player2
+    AllBindings:
+      - BindingType: KeyboardAction
+        FunctionBinding: MoveUp
+        KeyBinding: 79
+      - BindingType: KeyboardAction
+        FunctionBinding: MoveDown
+        KeyBinding: 59
+CustomCallsOnKeyPressed:
+  - BindingType: KeyboardAction
+    FunctionBinding: LeaveOnlineGameplay
+    KeyBinding: 256
+ScriptClassOnKeyPressed:
+  []

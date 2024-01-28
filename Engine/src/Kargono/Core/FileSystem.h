@@ -46,6 +46,8 @@ namespace Kargono
 
 		static std::string ChecksumFromBuffer(Buffer buffer);
 
+		static uint32_t ChecksumCRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
+
 		static void CreateNewDirectory(const std::filesystem::path& filepath);
 	};
 }

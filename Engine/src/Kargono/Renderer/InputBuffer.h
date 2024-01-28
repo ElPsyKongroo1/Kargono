@@ -32,7 +32,7 @@ namespace Kargono::Utility
 		case InputDataType::Int4:		return 4 * 4;
 		case InputDataType::Bool:		return 1;
 		}
-		KG_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		KG_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 
@@ -47,7 +47,7 @@ namespace Kargono::Utility
 		if (type == "mat4") { return InputDataType::Mat4; }
 		if (type == "bool") { return InputDataType::Bool; }
 
-		KG_CORE_ASSERT(false, "Unknown String trying to convert to InputDataType!");
+		KG_ASSERT(false, "Unknown String trying to convert to InputDataType!");
 		return InputDataType::None;
 	}
 
@@ -65,7 +65,7 @@ namespace Kargono::Utility
 		case InputDataType::Bool:		return "bool";
 		}
 
-		KG_CORE_ASSERT(false, "Unknown DataType to String Conversion");
+		KG_ASSERT(false, "Unknown DataType to String Conversion");
 		return "";
 
 	}
@@ -107,7 +107,7 @@ namespace Kargono
 			case InputDataType::Mat4:		return 4; // 4* float4
 			case InputDataType::Bool:		return 1;
 			}
-			KG_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			KG_ASSERT(false, "Unknown ShaderDataType!");
 			return 0;
 		}
 
@@ -142,7 +142,7 @@ namespace Kargono
 		{
 			if (!m_ElementLocations.contains(name))
 			{
-				//KG_CORE_ERROR("Could not find element inside InputBufferLayout using name: {0}", name);
+				//KG_ERROR("Could not find element inside InputBufferLayout using name: {0}", name);
 				return {};
 			}
 

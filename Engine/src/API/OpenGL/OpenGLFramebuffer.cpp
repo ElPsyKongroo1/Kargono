@@ -82,7 +82,7 @@ namespace API::Utility
 		case Kargono::FramebufferDataFormat::RED_INTEGER: return	GL_RED_INTEGER;
 		}
 
-		KG_CORE_ASSERT(false, "Invalid framebuffertextureformat in KargonoTextureFormatToGL")
+		KG_ASSERT(false, "Invalid framebuffertextureformat in KargonoTextureFormatToGL")
 			return 0;
 	}
 }
@@ -177,7 +177,7 @@ namespace API::OpenGL
 		// This section specifies the buffers to be drawn to during a render pass.
 		if (m_ColorAttachmentIDs.size() > 1)
 		{
-			KG_CORE_ASSERT(m_ColorAttachmentIDs.size() <= 4, "Core error, we only support a maximum of 4 color attachments currently");
+			KG_ASSERT(m_ColorAttachmentIDs.size() <= 4, "Core error, we only support a maximum of 4 color attachments currently");
 			GLenum buffers[4] = {
 				GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
 			};
@@ -190,7 +190,7 @@ namespace API::OpenGL
 		}
 
 		// Final check to ensure framebuffer is created successfully
-		KG_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete");
+		KG_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -209,7 +209,7 @@ namespace API::OpenGL
 	{
 		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
 		{
-			KG_CORE_WARN("Attempted to resize framebuffer to {0}, {1}", width, height);
+			KG_WARN("Attempted to resize framebuffer to {0}, {1}", width, height);
 			return;
 		}
 
@@ -220,8 +220,8 @@ namespace API::OpenGL
 	}
 	int32_t OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int32_t x, int32_t y)
 	{
-		KG_CORE_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!");
-		KG_CORE_ASSERT(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == Kargono::FramebufferDataFormat::RED_INTEGER, "Attempt to use ReadPixel on a buffer that is not RED_INTEGER");
+		KG_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!");
+		KG_ASSERT(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == Kargono::FramebufferDataFormat::RED_INTEGER, "Attempt to use ReadPixel on a buffer that is not RED_INTEGER");
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
@@ -229,7 +229,7 @@ namespace API::OpenGL
 	}
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
-		KG_CORE_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!")
+		KG_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!")
 
 		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
 

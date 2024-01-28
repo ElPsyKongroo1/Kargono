@@ -25,7 +25,8 @@ project "Runtime"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/src",
         "%{wks.location}/Runtime/src",
-        "%{IncludeDir.optick}"
+        "%{IncludeDir.optick}",
+        "%{IncludeDir.asio}"
 
     }
 
@@ -82,6 +83,7 @@ project "Runtime"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
+        symbols "on"
 
     filter "configurations:Dist"
         kind "WindowedApp"
@@ -95,3 +97,4 @@ project "Runtime"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
+        symbols "off"

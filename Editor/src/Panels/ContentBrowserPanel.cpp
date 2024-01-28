@@ -1,4 +1,4 @@
-#include "Kargono/kgpch.h"
+#include "kgpch.h"
 
 #include "Kargono.h"
 
@@ -46,7 +46,7 @@ namespace Kargono::Utility
 		case BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
 		case BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
-		KG_CORE_ASSERT(false, "Invalid BrowserFileType provided");
+		KG_ASSERT(false, "Invalid BrowserFileType provided");
 		return "CONTENT_BROWSER_ITEM";
 	}
 }
@@ -367,7 +367,7 @@ namespace Kargono
 
 			case BrowserFileType::None: { return UI::EditorEngine::s_GenericFileIcon; }
 		}
-		KG_CORE_ASSERT(false, "Invalid BrowserFileType provided");
+		KG_ASSERT(false, "Invalid BrowserFileType provided");
 		return UI::EditorEngine::s_GenericFileIcon;
 	}
 }

@@ -3,6 +3,7 @@
 #include "Kargono/Core/FileSystem.h"
 
 #include <sha256.h>
+#include <crc32.h>
 #include "stb_image_write.h"
 #include "Kargono/Renderer/Texture.h"
 
@@ -21,7 +22,7 @@ namespace Kargono
 		if (!stream)
 		{
 			// Failed to open the file
-			KG_CORE_ERROR("Failed to open file in ReadFileBinary!");
+			KG_ERROR("Failed to open file in ReadFileBinary!");
 			return {};
 		}
 
@@ -57,7 +58,7 @@ namespace Kargono
 		std::ofstream output_file(filepath, std::ios::binary);
 		if (!output_file)
 		{
-			KG_CORE_ERROR("Failed to write binary data to file");
+			KG_ERROR("Failed to write binary data to file");
 			return false;
 		}
 
@@ -71,7 +72,7 @@ namespace Kargono
 		std::ofstream output_file(filepath, std::ios::binary);
 		if (!output_file)
 		{
-			KG_CORE_ERROR("Failed to write binary data to file");
+			KG_ERROR("Failed to write binary data to file");
 			return false;
 		}
 		for (auto& buffer : buffers)
@@ -87,7 +88,7 @@ namespace Kargono
 		std::ofstream output_file(filepath, std::ios::binary);
 		if (!output_file)
 		{
-			KG_CORE_ERROR("Failed to write binary data to file");
+			KG_ERROR("Failed to write binary data to file");
 			return false;
 		}
 
@@ -101,7 +102,7 @@ namespace Kargono
 		std::ofstream output_file(filepath);
 		if (!output_file)
 		{
-			KG_CORE_ERROR("Failed to write binary data to file");
+			KG_ERROR("Failed to write binary data to file");
 			return false;
 		}
 		output_file << string;
@@ -146,7 +147,7 @@ namespace Kargono
 			return true;
 		}
 		}
-		KG_CORE_ASSERT(false, "Invalid FileType enum provided to WriteFileImage function");
+		KG_ASSERT(false, "Invalid FileType enum provided to WriteFileImage function");
 		return false;
 	}
 
@@ -167,12 +168,12 @@ namespace Kargono
 			}
 			else
 			{
-				KG_CORE_ERROR("Could not read from file '{0}'", filepath);
+				KG_ERROR("Could not read from file '{0}'", filepath);
 			}
 		}
 		else
 		{
-			KG_CORE_ERROR("Could not open file '{0}'", filepath);
+			KG_ERROR("Could not open file '{0}'", filepath);
 		}
 
 		return result;
@@ -188,7 +189,7 @@ namespace Kargono
 	                                                  const std::filesystem::path& full)
 	{
 		// Ensure full path starts with the base path.
-		KG_CORE_ASSERT(DoesPathContainSubPath(base, full), "Get Relative Path Failed. Base is not a subpath of full!")
+		KG_ASSERT(DoesPathContainSubPath(base, full), "Get Relative Path Failed. Base is not a subpath of full!")
 
 		auto subPath = relative(full, base);
 		return relative(full, base);
@@ -202,7 +203,7 @@ namespace Kargono
 		// Error Checking input stream
 		if (!file)
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file");
+			KG_ERROR("Failed to generate checksum from file");
 			return {};
 		}
 
@@ -240,6 +241,12 @@ namespace Kargono
 		sha256stream.add(buffer.As<char>(), buffer.Size);
 
 		return sha256stream.getHash();
+	}
+
+	uint32_t FileSystem::ChecksumCRCFromBuffer(void* bufferPointer, uint64_t bufferSize)
+	{
+		CRC32 crc;
+		return crc.CalculateHash(bufferPointer, bufferSize);
 	}
 
 	void FileSystem::CreateNewDirectory(const std::filesystem::path& filepath)

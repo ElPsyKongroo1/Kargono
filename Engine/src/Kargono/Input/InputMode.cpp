@@ -102,7 +102,7 @@ namespace Kargono
 		{
 			return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
 		}
-		KG_CORE_TRACE("Atttempt to use key slot that does not exist in current InputMode. The slot is {}", slot);
+		KG_INFO("Atttempt to use key slot that does not exist in current InputMode. The slot is {}", slot);
 		return false;
 	}
 
@@ -159,7 +159,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside UpdateKeyboardClassOnUpdateName");
+			KG_ERROR("Iterator not found inside UpdateKeyboardClassOnUpdateName");
 			return;
 		}
 
@@ -203,7 +203,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside UpdateKeyboardClassOnKeyPressedName");
+			KG_ERROR("Iterator not found inside UpdateKeyboardClassOnKeyPressedName");
 			return;
 		}
 
@@ -371,7 +371,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside DeleteKeyboardCustomCallsOnUpdate");
+			KG_ERROR("Iterator not found inside DeleteKeyboardCustomCallsOnUpdate");
 			return;
 		}
 		
@@ -397,7 +397,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside DeleteKeyboardCustomCallsOnKeyPressed");
+			KG_ERROR("Iterator not found inside DeleteKeyboardCustomCallsOnKeyPressed");
 			return;
 		}
 
@@ -431,7 +431,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside DeleteKeyboardScriptClassOnUpdate");
+			KG_ERROR("Iterator not found inside DeleteKeyboardScriptClassOnUpdate");
 			return;
 		}
 
@@ -466,7 +466,7 @@ namespace Kargono
 
 		if (!refFound)
 		{
-			KG_CORE_ERROR("Iterator not found inside DeleteKeyboardScriptClassOnKeyPressed");
+			KG_ERROR("Iterator not found inside DeleteKeyboardScriptClassOnKeyPressed");
 			return;
 		}
 

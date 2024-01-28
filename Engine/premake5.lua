@@ -9,11 +9,13 @@ project "Engine"
     objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "kgpch.h"
-    pchsource "src/Kargono/kgpch.cpp"
+    pchsource "src/kgpch.cpp"
     
     files 
     {
 		"src/Kargono.h",
+		"src/kgpch.h",
+		"src/kgpch.cpp",
 		"src/Kargono/**.h",
 		"src/Kargono/**.cpp",
         "dependencies/stb_image/**.cpp",
@@ -22,6 +24,8 @@ project "Engine"
         "dependencies/ImGuizmo/ImGuizmo.cpp",
         "dependencies/hash_library/sha256.cpp",
         "dependencies/hash_library/sha256.h",
+        "dependencies/hash_library/crc32.cpp",
+        "dependencies/hash_library/crc32.h",
         "dependencies/optick/src/**.cpp",
         "dependencies/optick/src/**.h",
         "src/API/**.h",
@@ -60,7 +64,7 @@ project "Engine"
         "%{IncludeDir.entt}",
         "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
-        "%{IncludeDir.free_type}",
+        --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.OpenALSoft}",
@@ -68,7 +72,8 @@ project "Engine"
         "%{IncludeDir.hash_library}",
         "%{IncludeDir.msdf_atlas_gen}",
         "%{IncludeDir.msdfgen}",
-        "%{IncludeDir.optick}"
+        "%{IncludeDir.optick}",
+        "%{IncludeDir.asio}"
     }
 
     libdirs
@@ -86,7 +91,7 @@ project "Engine"
         "yaml-cpp",
         "msdf-atlas-gen",
         "%{Library.mono}",
-        "%{Library.free_type}",
+        --"%{Library.free_type}",
         "ScriptEngine"
     }
 
@@ -156,6 +161,7 @@ project "Engine"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
+        symbols "off"
 
         -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Dist" }

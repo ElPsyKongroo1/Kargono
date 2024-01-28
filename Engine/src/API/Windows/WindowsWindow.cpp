@@ -14,7 +14,7 @@ namespace API::Utility
 {
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		KG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		KG_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 }
 
@@ -54,15 +54,15 @@ namespace API::Windows
 		// Ensure Only One Window Instance is active
 		if (s_GLFWWindowCount > 0)
 		{
-			KG_CORE_ASSERT(false, "Attempt to initialize another glfwWindow.");
+			KG_ASSERT(false, "Attempt to initialize another glfwWindow.");
 			return;
 		}
 		// Start Initializing GLFW
-		KG_CORE_INFO("Creating window {0} ({1}, {2})", m_Data.Title, m_Data.Width, m_Data.Height);
+		KG_INFO("Creating window {0} ({1}, {2})", m_Data.Title, m_Data.Width, m_Data.Height);
 		
-		KG_CORE_INFO("Initializing GLFW");
+		KG_INFO("Initializing GLFW");
 		int success = glfwInit();
-		KG_CORE_ASSERT(success, "Could not initialize GLFW");
+		KG_ASSERT(success, "Could not initialize GLFW");
 		glfwSetErrorCallback(Utility::GLFWErrorCallback);
 
 		// Create New Window Through GLFW
@@ -75,13 +75,13 @@ namespace API::Windows
 		// Make Context Current and Load GLAD (GLAD obtains function pointers for OpenGL functions from GPU Drivers)
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		KG_CORE_ASSERT(status, "Failed to initialize Glad!");
+		KG_ASSERT(status, "Failed to initialize Glad!");
 
-		KG_CORE_INFO("OpenGL Info:");
-		KG_CORE_INFO("\tVendor: {0}", (const char*)glGetString(GL_VENDOR));
-		KG_CORE_INFO("\tRenderer: {0}", (const char*)glGetString(GL_RENDERER));
-		KG_CORE_INFO("\tVersion: {0}", (const char*)glGetString(GL_VERSION));
-		KG_CORE_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.5!");
+		KG_INFO("OpenGL Info:");
+		KG_INFO("\tVendor: {0}", (const char*)glGetString(GL_VENDOR));
+		KG_INFO("\tRenderer: {0}", (const char*)glGetString(GL_RENDERER));
+		KG_INFO("\tVersion: {0}", (const char*)glGetString(GL_VERSION));
+		KG_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.5!");
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(false);
@@ -189,7 +189,7 @@ namespace API::Windows
 			});
 
 		// Add App Logo
-		if (!std::filesystem::exists(logoPath)) { KG_CORE_ERROR("Path to Application Logo is invalid!"); return; }
+		if (!std::filesystem::exists(logoPath)) { KG_ERROR("Path to Application Logo is invalid!"); return; }
 		GLFWimage images[1];
 		images[0].pixels = stbi_load(logoPath.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
 		glfwSetWindowIcon(m_Window, 1, images);
@@ -204,7 +204,7 @@ namespace API::Windows
 
 		if (s_GLFWWindowCount == 0)
 		{
-			KG_CORE_INFO("All GLFW Windows have been closed and GLFW has terminated!");
+			KG_INFO("All GLFW Windows have been closed and GLFW has terminated!");
 			glfwTerminate();
 		}
 	}

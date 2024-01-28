@@ -73,7 +73,7 @@ namespace Kargono {
 			return;
 		}
 
-		KG_CORE_ASSERT(false, "Invalid Enum Type for m_MovementType");
+		KG_ASSERT(false, "Invalid Enum Type for m_MovementType");
 	}
 
 	void EditorCamera::OnUpdateModelView(Timestep ts)
@@ -163,7 +163,7 @@ namespace Kargono {
 			return false;
 		}
 
-		KG_CORE_ASSERT(false, "Invalid Enum Type for m_MovementType");
+		KG_ASSERT(false, "Invalid Enum Type for m_MovementType");
 		return false;
 	}
 

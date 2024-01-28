@@ -53,15 +53,15 @@ int RectanglePacker::pack(Rectangle *rectangles, int count) {
             for (size_t j = 0; j < remainingRects.size(); ++j) {
                 const Rectangle &rect = rectangles[remainingRects[j]];
                 if (rect.w == space.w && rect.h == space.h) {
-                    bestSpace = i;
-                    bestRect = j;
+                    bestSpace = (int)i;
+                    bestRect = (int)j;
                     goto BEST_FIT_FOUND;
                 }
                 if (rect.w <= space.w && rect.h <= space.h) {
                     int fit = rateFit(rect.w, rect.h, space.w, space.h);
                     if (fit < bestFit) {
-                        bestSpace = i;
-                        bestRect = j;
+                        bestSpace = (int)i;
+                        bestRect = (int)j;
                         bestFit = fit;
                     }
                 }
@@ -93,22 +93,22 @@ int RectanglePacker::pack(OrientedRectangle *rectangles, int count) {
             for (size_t j = 0; j < remainingRects.size(); ++j) {
                 const OrientedRectangle &rect = rectangles[remainingRects[j]];
                 if (rect.w == space.w && rect.h == space.h) {
-                    bestSpace = i;
-                    bestRect = j;
+                    bestSpace = (int)i;
+                    bestRect = (int)j;
                     bestRotated = false;
                     goto BEST_FIT_FOUND;
                 }
                 if (rect.h == space.w && rect.w == space.h) {
-                    bestSpace = i;
-                    bestRect = j;
+                    bestSpace = (int)i;
+                    bestRect = (int)j;
                     bestRotated = true;
                     goto BEST_FIT_FOUND;
                 }
                 if (rect.w <= space.w && rect.h <= space.h) {
                     int fit = rateFit(rect.w, rect.h, space.w, space.h);
                     if (fit < bestFit) {
-                        bestSpace = i;
-                        bestRect = j;
+                        bestSpace = (int)i;
+                        bestRect = (int)j;
                         bestRotated = false;
                         bestFit = fit;
                     }
@@ -116,8 +116,8 @@ int RectanglePacker::pack(OrientedRectangle *rectangles, int count) {
                 if (rect.h <= space.w && rect.w <= space.h) {
                     int fit = rateFit(rect.h, rect.w, space.w, space.h);
                     if (fit < bestFit) {
-                        bestSpace = i;
-                        bestRect = j;
+                        bestSpace = (int)i;
+                        bestRect = (int)j;
                         bestRotated = true;
                         bestFit = fit;
                     }

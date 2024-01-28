@@ -848,7 +848,7 @@
                     " (from %d to %ld)\n",
                     loader->num_glyphs,
                     ( limit - parser->root.cursor ) >> 2 ));
-        loader->num_glyphs = ( limit - parser->root.cursor ) >> 2;
+        loader->num_glyphs = (FT_Int)(( limit - parser->root.cursor ) >> 2);
       }
 
     }

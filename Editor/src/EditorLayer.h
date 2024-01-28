@@ -1,13 +1,13 @@
 #pragma once
 #include "Kargono.h"
 
-
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/InputEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 
 #include <filesystem>
+#include <thread>
 
 
 namespace Kargono {
@@ -129,6 +129,16 @@ namespace Kargono {
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		// This function responds to application collision events.
 		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
+		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
+		bool OnApproveJoinSession(Events::ApproveJoinSession event);
+		bool OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event);
+		bool OnUserLeftSession(Events::UserLeftSession event);
+		bool OnCurrentSessionInit(Events::CurrentSessionInit event);
+		bool OnConnectionTerminated(Events::ConnectionTerminated event);
+		bool OnStartSession(Events::StartSession event);
+		bool OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event);
+		bool OnReceiveSignal(Events::ReceiveSignal event);
 	public:
 		//=========================
 		// Getters/Setters

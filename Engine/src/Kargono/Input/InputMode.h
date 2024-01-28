@@ -137,7 +137,7 @@ namespace Kargono::Utility
 		case Kargono::InputMode::InputActionTypes::KeyboardAction: return "KeyboardAction";
 		case Kargono::InputMode::InputActionTypes::None: return "None";
 		}
-		KG_CORE_ASSERT(false, "Unknown Type of InputMode::InputActionTypes.");
+		KG_ASSERT(false, "Unknown Type of InputMode::InputActionTypes.");
 		return "";
 	}
 
@@ -146,7 +146,7 @@ namespace Kargono::Utility
 		if (type == "KeyboardAction") { return Kargono::InputMode::InputActionTypes::KeyboardAction; }
 		if (type == "None") { return Kargono::InputMode::InputActionTypes::None; }
 
-		KG_CORE_ASSERT(false, "Unknown Type of InputMode::InputActionTypes String.");
+		KG_ASSERT(false, "Unknown Type of InputMode::InputActionTypes String.");
 		return Kargono::InputMode::InputActionTypes::None;
 	}
 }
