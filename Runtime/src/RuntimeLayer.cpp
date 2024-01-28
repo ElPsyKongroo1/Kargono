@@ -1,4 +1,4 @@
-#include "Kargono/kgpch.h"
+#include "kgpch.h"
 #include "RuntimeLayer.h"
 
 #include <filesystem>
@@ -19,6 +19,9 @@ namespace Kargono
 
 	void RuntimeLayer::OnAttach()
 	{
+		Script::ScriptEngine::Init();
+		Audio::AudioEngine::Init();
+
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 
 		Scene::SetActiveScene(CreateRef<Scene>());
@@ -89,15 +92,24 @@ namespace Kargono
 		Events::EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnKeyPressed));
 		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_EVENT_FN(RuntimeLayer::OnPhysicsCollisionEnd));
 		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
 		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(RuntimeLayer::OnApplicationClose));
-
+		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_EVENT_FN(RuntimeLayer::OnUpdateUserCount));
+		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_EVENT_FN(RuntimeLayer::OnApproveJoinSession));
+		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_EVENT_FN(RuntimeLayer::OnUserLeftSession));
+		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_EVENT_FN(RuntimeLayer::OnCurrentSessionInit));
+		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(RuntimeLayer::OnConnectionTerminated));
+		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_EVENT_FN(RuntimeLayer::OnUpdateSessionUserSlot));
+		dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(RuntimeLayer::OnStartSession));
+		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_EVENT_FN(RuntimeLayer::OnSessionReadyCheckConfirm));
+		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_EVENT_FN(RuntimeLayer::OnReceiveSignal));
 	}
 
 	bool RuntimeLayer::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
-		Window::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
+		Events::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
 		eventCallback(windowEvent);
 		return false;
 	}
@@ -113,6 +125,12 @@ namespace Kargono
 	bool RuntimeLayer::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
 		Script::ScriptEngine::OnPhysicsCollision(event);
+		return false;
+	}
+
+	bool RuntimeLayer::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
+	{
+		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
 		return false;
 	}
 
@@ -139,6 +157,70 @@ namespace Kargono
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
 			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
+	}
+
+	bool RuntimeLayer::OnUpdateUserCount(Events::UpdateOnlineUsers event)
+	{
+		uint32_t userCount = event.GetUserCount();
+		void* param = &userCount;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateUserCount(), &param);
+		return false;
+	}
+
+	bool RuntimeLayer::OnApproveJoinSession(Events::ApproveJoinSession event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnApproveJoinSession(), &param);
+		return false;
+	}
+
+	bool RuntimeLayer::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);
+		return false;
+	}
+
+	bool RuntimeLayer::OnUserLeftSession(Events::UserLeftSession event)
+	{
+		uint16_t userSlot = event.GetUserSlot();
+		void* param = &userSlot;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUserLeftSession(), &param);
+		return false;
+	}
+
+	bool RuntimeLayer::OnCurrentSessionInit(Events::CurrentSessionInit event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnCurrentSessionInit());
+		return false;
+	}
+
+	bool RuntimeLayer::OnConnectionTerminated(Events::ConnectionTerminated event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnConnectionTerminated());
+		return false;
+	}
+
+	bool RuntimeLayer::OnStartSession(Events::StartSession event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnStartSession());
+		return false;
+	}
+
+	bool RuntimeLayer::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		return false;
+	}
+
+	bool RuntimeLayer::OnReceiveSignal(Events::ReceiveSignal event)
+	{
+		uint16_t signal = event.GetSignal();
+		void* param = &signal;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		return false;
 	}
 
 
@@ -199,12 +281,24 @@ namespace Kargono
 	{
 		Scene::GetActiveScene()->OnRuntimeStart();
 		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
+		if (Projects::Project::GetAppIsNetworked())
+		{
+			Network::Client::SetActiveClient(CreateRef<Network::Client>());
+			Network::Client::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::Client::GetActiveClient().get()));
+		}
 	}
 
 	void RuntimeLayer::OnStop()
 	{
 		Scene::GetActiveScene()->OnRuntimeStop();
 		Scene::GetActiveScene()->DestroyAllEntities();
+		if (Projects::Project::GetAppIsNetworked())
+		{
+			Network::Client::GetActiveClient()->StopClient();
+			Network::Client::GetActiveNetworkThread()->join();
+			Network::Client::GetActiveNetworkThread().reset();
+			Network::Client::GetActiveClient().reset();
+		}
 	}
 
 }

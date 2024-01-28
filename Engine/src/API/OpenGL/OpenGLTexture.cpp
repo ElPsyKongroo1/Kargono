@@ -16,7 +16,7 @@ namespace API::Utility
 		case Kargono::ImageFormat::RGBA8: return GL_RGBA;
 		default:
 		{
-			KG_CORE_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLDataFormat");
+			KG_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLDataFormat");
 			return 0;
 		}
 		}
@@ -30,7 +30,7 @@ namespace API::Utility
 		case Kargono::ImageFormat::RGBA8: return GL_RGBA8;
 		default:
 		{
-			KG_CORE_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLInternalFormat");
+			KG_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLInternalFormat");
 			return 0;
 		}
 				
@@ -92,7 +92,7 @@ namespace API::OpenGL
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			KG_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			KG_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 			// Instantiate texture into OpenGL
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -111,7 +111,7 @@ namespace API::OpenGL
 	}
 	OpenGLTexture2D::OpenGLTexture2D(Kargono::Buffer buffer, const Kargono::Assets::TextureMetaData& metadata)
 	{
-		KG_CORE_ASSERT(buffer.Data, "Buffer does not have any valid data to input into Texture2D!");
+		KG_ASSERT(buffer.Data, "Buffer does not have any valid data to input into Texture2D!");
 
 		m_Width = metadata.Width;
 		m_Height = metadata.Height;
@@ -131,7 +131,7 @@ namespace API::OpenGL
 		m_InternalFormat = internalFormat;
 		m_DataFormat = dataFormat;
 
-		KG_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+		KG_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
@@ -153,7 +153,7 @@ namespace API::OpenGL
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
 		const uint32_t bytesPerPixel = m_DataFormat == GL_RGBA ? 4 : 3;
-		KG_CORE_ASSERT(size == m_Width * m_Height * bytesPerPixel, "Data must be entire texture!");
+		KG_ASSERT(size == m_Width * m_Height * bytesPerPixel, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 	void OpenGLTexture2D::Bind(uint32_t slot) const

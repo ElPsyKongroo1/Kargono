@@ -46,6 +46,28 @@ namespace Kargono
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
 		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+
+		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
+
+		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
+
+		bool OnApproveJoinSession(Events::ApproveJoinSession event);
+
+		bool OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event);
+
+		bool OnUserLeftSession(Events::UserLeftSession event);
+
+		bool OnCurrentSessionInit(Events::CurrentSessionInit event);
+
+		bool OnConnectionTerminated(Events::ConnectionTerminated event);
+
+		bool OnStartSession(Events::StartSession event);
+
+		bool OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event);
+
+		bool OnReceiveSignal(Events::ReceiveSignal event);
+
+
 		// Logic to open the project and its main scene
 		//==========================
 		// Project Management

@@ -1,6 +1,7 @@
 #pragma once
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Application.h"
+#include "Kargono/Core/Timers.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 
@@ -16,6 +17,7 @@
 		Kargono::Application* app = Kargono::CreateApplication({ argc, argv });
 
 		app->Run();
+		Kargono::Timers::AsyncBusyTimer::CloseAllTimers();
 
 		delete app;
 	}
@@ -23,7 +25,7 @@
 	int main(int argc, char** argv)
 	{
 		EntryPoint(argc, argv);
-		KG_CORE_WARN("Application Shut Down Successfully!");
+		KG_WARN("Application Shut Down Successfully!");
 		return 0;
 	}
 
@@ -38,7 +40,7 @@
 
 		LocalFree(argv);
 
-		KG_CORE_WARN("Application Shut Down Successfully!");
+		KG_WARN("Application Shut Down Successfully!");
 		return 0;
 
 	}

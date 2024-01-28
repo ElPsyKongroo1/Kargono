@@ -13,6 +13,7 @@ namespace Kargono
 		double Accumulator;
 		uint64_t DelayMilliSeconds;
 		double DelaySeconds;
+		uint16_t UsageCount { 0 };
 	};
 
 	class AppTickEngine
@@ -23,7 +24,8 @@ namespace Kargono
 		static void UpdateGenerators(Timestep ts);
 		static void ClearGenerators();
 		static void ResetAllAccumulators();
-		static void AddGenerator(uint64_t delayMilliseconds);
+		static void AddGeneratorUsage(uint64_t delayMilliseconds);
+		static void RemoveGeneratorUsage(uint64_t delayMilliseconds);
 		
 	};
 }

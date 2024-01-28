@@ -1900,11 +1900,16 @@
        * pointers with a width of at least 32 bits.
        */
 
+
+#pragma warning( push )
+#pragma warning( disable : 4312 )
+
       /* clear the nodes filled by sibling chains */
       node = ft_list_get_node_at( &loader->composites, recurse_count );
       for ( node2 = node; node2; node2 = node2->next )
         node2->data = (void*)FT_ULONG_MAX;
 
+#pragma warning( pop )
       /* check whether we already have a composite glyph with this index */
       if ( FT_List_Find( &loader->composites,
                          FT_UINT_TO_POINTER( glyph_index ) ) )

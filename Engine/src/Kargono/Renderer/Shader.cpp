@@ -85,6 +85,6 @@ namespace Kargono
 			m_DrawFunctions.push_back(Renderer::DrawBufferTriangles);
 		}
 
-		KG_CORE_ASSERT(sizeof(ShaderSpecification) == sizeof(uint8_t) * 20, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
+		KG_ASSERT(sizeof(ShaderSpecification) == sizeof(uint8_t) * 20, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");
 	}
 }

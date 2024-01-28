@@ -246,7 +246,7 @@ namespace Kargono::Utility
 		case Rigidbody2DComponent::BodyType::Kinematic:	return "Kinematic";
 		}
 
-		KG_CORE_ASSERT(false, "Unknown body type")
+		KG_ASSERT(false, "Unknown body type")
 			return {};
 	}
 
@@ -256,7 +256,7 @@ namespace Kargono::Utility
 		if (bodyTypeString == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
 		if (bodyTypeString == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
 
-		KG_CORE_ASSERT(false, "Unknown body type")
+		KG_ASSERT(false, "Unknown body type")
 			return Rigidbody2DComponent::BodyType::Static;
 	}
 }

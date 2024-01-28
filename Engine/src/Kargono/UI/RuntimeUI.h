@@ -225,6 +225,14 @@ namespace Kargono::UI
 		static void SetSelectedWidgetColor(const Math::vec4& color);
 		static void SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
 
+		static void SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag);
+
+		static void SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+
+		static void SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+
+		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
+
 		static void SetFunctionOnMove(const std::string& function);
 		static std::string GetFunctionOnMove();
 
@@ -282,7 +290,7 @@ namespace Kargono::Utility
 		case UI::WidgetTypes::None: return "None";
 		default:
 		{
-			KG_CORE_ASSERT(false, "Invalid Widget Type at WidgetTypeToString");
+			KG_ASSERT(false, "Invalid Widget Type at WidgetTypeToString");
 			return "None";
 		}
 		}
@@ -297,7 +305,7 @@ namespace Kargono::Utility
 		if (widgetName == "PopupWidget") { return UI::WidgetTypes::PopupWidget; }
 		if (widgetName == "None") { return UI::WidgetTypes::None; }
 
-		KG_CORE_ASSERT(false, "Invalid Widget Type at StringToWidgetType");
+		KG_ASSERT(false, "Invalid Widget Type at StringToWidgetType");
 		return UI::WidgetTypes::None;
 	}
 }

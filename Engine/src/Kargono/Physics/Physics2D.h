@@ -49,6 +49,8 @@ namespace Kargono::Physics
 		//=========================
 		// Implemented function that receives box2d physics event through V-table.
 		virtual void BeginContact(b2Contact* contact) override;
+
+		virtual void EndContact(b2Contact* contact) override;
 	private:
 		// Event callback function pointer
 		Events::EventCallbackFn m_CallbackFunc;
@@ -124,7 +126,7 @@ namespace Kargono::Utility
 		case Rigidbody2DComponent::BodyType::Dynamic:	return b2_dynamicBody;
 		case Rigidbody2DComponent::BodyType::Kinematic:	return b2_kinematicBody;
 		}
-		KG_CORE_ASSERT(false, "Unknown body type");
+		KG_ASSERT(false, "Unknown body type");
 		return b2_staticBody;
 	}
 
@@ -136,7 +138,7 @@ namespace Kargono::Utility
 		case b2_dynamicBody:	return  Rigidbody2DComponent::BodyType::Dynamic;
 		case b2_kinematicBody:	return  Rigidbody2DComponent::BodyType::Kinematic;
 		}
-		KG_CORE_ASSERT(false, "Unknown body type");
+		KG_ASSERT(false, "Unknown body type");
 		return Rigidbody2DComponent::BodyType::Static;
 	}
 }

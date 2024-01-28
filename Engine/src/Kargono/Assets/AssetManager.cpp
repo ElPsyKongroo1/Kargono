@@ -3,7 +3,7 @@
 #include "Kargono/Assets/AssetManager.h"
 
 #include "Kargono/Core/FileSystem.h"
-#include "Kargono/Core/Timer.h"
+#include "Kargono/Core/Timers.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Scene/Scene.h"
@@ -35,12 +35,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_TextureRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
 
 		if (!std::filesystem::exists(textureRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -50,7 +50,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", textureRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", textureRegistryLocation.string(), e.what());
 			return;
 		}
 
@@ -58,7 +58,7 @@ namespace Kargono::Assets
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing Texture Registry");
+		KG_INFO("Deserializing Texture Registry");
 
 		// Opening all assets 
 		auto assets = data["Assets"];
@@ -97,7 +97,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeTextureRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -147,7 +147,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -166,7 +166,7 @@ namespace Kargono::Assets
 
 		if (isAssetDuplicate)
 		{
-			KG_CORE_ERROR("THERE IS A DUPLICATE!");
+			KG_ERROR("THERE IS A DUPLICATE!");
 			return currentHandle;
 		}
 
@@ -197,7 +197,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -216,7 +216,7 @@ namespace Kargono::Assets
 
 		if (isAssetDuplicate)
 		{
-			//KG_CORE_ERROR("THERE IS A DUPLICATE!");
+			//KG_ERROR("THERE IS A DUPLICATE!");
 			return currentHandle;
 		}
 
@@ -262,7 +262,7 @@ namespace Kargono::Assets
 		// Check that save was successful
 		if (!data)
 		{
-			KG_CORE_ERROR("Failed to load data from file in texture importer!");
+			KG_ERROR("Failed to load data from file in texture importer!");
 			buffer.Release();
 			return;
 		}
@@ -312,7 +312,7 @@ namespace Kargono::Assets
 
 	Ref<Texture2D> AssetManager::GetTexture(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving texture!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving texture!");
 
 		if (s_Textures.contains(handle)) { return s_Textures[handle]; }
 
@@ -325,7 +325,7 @@ namespace Kargono::Assets
 			return newTexture;
 		}
 
-		KG_CORE_ERROR("No texture is associated with provided handle!");
+		KG_ERROR("No texture is associated with provided handle!");
 		return nullptr;
 
 	}
@@ -347,7 +347,7 @@ namespace Kargono::Utility
 		if (type == "fragment" || type == "pixel")
 			return GL_FRAGMENT_SHADER;
 
-		KG_CORE_ASSERT(false, "Unknown shader type!");
+		KG_ASSERT(false, "Unknown shader type!");
 		return 0;
 	}
 
@@ -358,7 +358,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return "vertex";
 		case GL_FRAGMENT_SHADER: return "fragment";
 		}
-		KG_CORE_ASSERT(false, "Invalid Shader Type!");
+		KG_ASSERT(false, "Invalid Shader Type!");
 		return "";
 	}
 
@@ -369,7 +369,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
 		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 		}
-		KG_CORE_ASSERT(false, "Invalid Shader Type!");
+		KG_ASSERT(false, "Invalid Shader Type!");
 		return (shaderc_shader_kind)0;
 	}
 
@@ -380,7 +380,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		}
-		KG_CORE_ASSERT(false, "Invalid Shader Type!");
+		KG_ASSERT(false, "Invalid Shader Type!");
 		return nullptr;
 	}
 
@@ -391,7 +391,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:    return ".kgshadervert";
 		case GL_FRAGMENT_SHADER:  return ".kgshaderfrag";
 		}
-		KG_CORE_ASSERT(false);
+		KG_ASSERT(false);
 		return "";
 	}
 
@@ -405,13 +405,13 @@ namespace Kargono::Utility
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
-			KG_CORE_ASSERT(eol != std::string::npos, "Syntax error");
+			KG_ASSERT(eol != std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
 			std::string type = source.substr(begin, eol - begin);
-			KG_CORE_ASSERT(Utility::ShaderTypeFromString(type), "Invalid shader type specified");
+			KG_ASSERT(Utility::ShaderTypeFromString(type), "Invalid shader type specified");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
-			KG_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			KG_ASSERT(nextLinePos != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
 
 			shaderSources[Utility::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
@@ -444,18 +444,18 @@ namespace Kargono::Utility
 			}
 			catch (std::exception e)
 			{
-				KG_CORE_ERROR("Exception thrown inside shaderc!");
+				KG_ERROR("Exception thrown inside shaderc!");
 			}
 			if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 			{
 
-				KG_CORE_ERROR(module.GetErrorMessage());
-				KG_CORE_ERROR("Here are the shaders: ");
+				KG_ERROR(module.GetErrorMessage());
+				KG_ERROR("Here are the shaders: ");
 				for (auto& [enumName, text] : shaderSources)
 				{
-					KG_CORE_ERROR(text);
+					KG_ERROR(text);
 				}
-				KG_CORE_ASSERT(false);
+				KG_ASSERT(false);
 			}
 			// Add Newly Compiled Spirv to m_OpenGLSPIRV
 			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -473,12 +473,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_ShaderRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& shaderRegistryLocation = Projects::Project::GetAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
 
 		if (!std::filesystem::exists(shaderRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -488,14 +488,14 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgreg file '{0}'\n     {1}", shaderRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kgreg file '{0}'\n     {1}", shaderRegistryLocation.string(), e.what());
 			return;
 		}
 		// Opening registry node 
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing Shader Registry");
+		KG_INFO("Deserializing Shader Registry");
 		// Opening all assets 
 		auto assets = data["Assets"];
 		if (assets)
@@ -523,7 +523,7 @@ namespace Kargono::Assets
 					shaderMetaData->ShaderSpec.DrawOutline = metadata["DrawOutline"].as<bool>();
 					shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadata["RenderType"].as<std::string>());
 
-					KG_CORE_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+					KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
 					{
 						// InputBufferLayout Section
 						auto inputBufferLayout = metadata["InputBufferLayout"];
@@ -559,7 +559,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeShaderRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& shaderRegistryLocation = Projects::Project::GetAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -639,7 +639,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from shaderSpec!");
+			KG_ERROR("Failed to generate checksum from shaderSpec!");
 			return {};
 		}
 
@@ -682,7 +682,7 @@ namespace Kargono::Assets
 
 	Ref<Kargono::Shader> AssetManager::GetShader(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
 
 		if (s_Shaders.contains(handle)) { return s_Shaders[handle]; }
 
@@ -701,7 +701,7 @@ namespace Kargono::Assets
 
 	std::tuple<AssetHandle, Ref<Kargono::Shader>> AssetManager::GetShader(const ShaderSpecification& shaderSpec)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
 
 		for (const auto& [assetHandle, shaderRef] : s_Shaders)
 		{
@@ -823,7 +823,7 @@ namespace Kargono::Utility
 			ALenum error = alGetError();\
 			if( error != AL_NO_ERROR)\
 			{\
-				KG_CORE_ERROR("OpenAL Error: {} with call for {}", error, #message);\
+				KG_ERROR("OpenAL Error: {} with call for {}", error, #message);\
 			}\
 		}
 
@@ -842,12 +842,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_AudioRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& audioRegistryLocation = Projects::Project::GetAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
 
 		if (!std::filesystem::exists(audioRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -857,14 +857,14 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", audioRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", audioRegistryLocation.string(), e.what());
 			return;
 		}
 		// Opening registry node 
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing Audio Registry");
+		KG_INFO("Deserializing Audio Registry");
 		// Opening all assets 
 		auto assets = data["Assets"];
 		if (assets)
@@ -903,7 +903,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeAudioRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& audioRegistryLocation = Projects::Project::GetAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -952,7 +952,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -960,7 +960,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate audio asset");
+				KG_INFO("Attempt to instantiate duplicate audio asset");
 				return handle;
 			}
 		}
@@ -998,7 +998,7 @@ namespace Kargono::Assets
 
 	Ref<Audio::AudioBuffer> AssetManager::GetAudio(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving audio!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving audio!");
 
 		if (s_Audio.contains(handle)) { return s_Audio[handle]; }
 
@@ -1011,13 +1011,13 @@ namespace Kargono::Assets
 			return newAudio;
 		}
 
-		KG_CORE_ERROR("No audio is associated with provided handle!");
+		KG_ERROR("No audio is associated with provided handle!");
 		return nullptr;
 	}
 
 	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
 		for (auto& [assetHandle, asset] : s_AudioRegistry)
 		{
@@ -1028,7 +1028,7 @@ namespace Kargono::Assets
 			}
 		}
 		// Return empty audio if audio does not exist
-		KG_CORE_TRACE("Invalid filepath provided to GetAudio {}", filepath.string());
+		KG_INFO("Invalid filepath provided to GetAudio {}", filepath.string());
 		return std::make_tuple(0, nullptr);
 	}
 
@@ -1049,14 +1049,14 @@ namespace Kargono::Assets
 		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(filePath.string().c_str(), &channels, &sampleRate, &totalPcmFrameCount, nullptr);
 		if (!pSampleData)
 		{
-			KG_CORE_ERROR("Failed to load audio file");
+			KG_ERROR("Failed to load audio file");
 			drwav_free(pSampleData, nullptr);
 			return;
 		}
 		totalSize = totalPcmFrameCount * channels * 2;
 		if ((totalSize) > drwav_uint64(std::numeric_limits<size_t>::max()))
 		{
-			KG_CORE_ERROR("Too much data in file for 32bit addressed vector");
+			KG_ERROR("Too much data in file for 32bit addressed vector");
 			drwav_free(pSampleData, nullptr);
 			return;
 		}
@@ -1072,7 +1072,7 @@ namespace Kargono::Assets
 		// Check that save was successful
 		if (!pcmData)
 		{
-			KG_CORE_ERROR("Failed to load data from file in audio importer!");
+			KG_ERROR("Failed to load data from file in audio importer!");
 			return;
 		}
 
@@ -1153,12 +1153,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_FontRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& fontRegistryLocation = Projects::Project::GetAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
 
 		if (!std::filesystem::exists(fontRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -1168,7 +1168,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", fontRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", fontRegistryLocation.string(), e.what());
 			return;
 		}
 
@@ -1176,7 +1176,7 @@ namespace Kargono::Assets
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing Font Registry");
+		KG_INFO("Deserializing Font Registry");
 
 		// Opening all assets 
 		auto assets = data["Assets"];
@@ -1230,7 +1230,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeFontRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& fontRegistryLocation = Projects::Project::GetAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -1295,7 +1295,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -1304,7 +1304,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return handle;
 			}
 		}
@@ -1337,8 +1337,8 @@ namespace Kargono::Assets
 
 		// Create Texture
 		TextureSpecification spec;
-		spec.Width = metadata.AtlasWidth;
-		spec.Height = metadata.AtlasHeight;
+		spec.Width = static_cast<uint32_t>(metadata.AtlasWidth);
+		spec.Height = static_cast<uint32_t>(metadata.AtlasHeight);
 		spec.Format = ImageFormat::RGB8;
 		spec.GenerateMipMaps = false;
 		Ref<Texture2D> texture = Texture2D::Create(spec);
@@ -1359,7 +1359,7 @@ namespace Kargono::Assets
 
 	Ref<UI::Font> AssetManager::GetFont(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving font!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving font!");
 
 		if (s_Fonts.contains(handle)) { return s_Fonts[handle]; }
 
@@ -1372,7 +1372,7 @@ namespace Kargono::Assets
 			return newFont;
 		}
 
-		KG_CORE_ERROR("No font is associated with provided handle!");
+		KG_ERROR("No font is associated with provided handle!");
 		return nullptr;
 	}
 
@@ -1391,13 +1391,13 @@ namespace Kargono::Assets
 		std::vector<std::pair<unsigned char, UI::Character>> characters {};
 
 		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
-		KG_CORE_ASSERT(ft, "MSDFGEN failed to initialize!");
+		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
 
 		std::string fileString = filePath.string();
 		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fileString.c_str());
 		if (!font)
 		{
-			KG_CORE_ERROR("Font not loaded correctly from filepath: " + filePath.string());
+			KG_ERROR("Font not loaded correctly from filepath: " + filePath.string());
 			return;
 		}
 
@@ -1424,7 +1424,7 @@ namespace Kargono::Assets
 		double fontScale = 1.0;
 		fontGeometry = msdf_atlas::FontGeometry(&glyphs);
 		int glyphsLoaded = fontGeometry.loadCharset(font, fontScale, charset);
-		KG_CORE_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
+		KG_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
 
 		double emSize = 40.0;
 
@@ -1435,7 +1435,7 @@ namespace Kargono::Assets
 		atlasPacker.setPadding(0);
 		atlasPacker.setScale(emSize);
 		int32_t remaining = atlasPacker.pack(glyphs.data(), (int32_t)glyphs.size());
-		KG_CORE_ASSERT(remaining == 0);
+		KG_ASSERT(remaining == 0);
 
 		int32_t width, height;
 		atlasPacker.getDimensions(width, height);
@@ -1454,7 +1454,7 @@ namespace Kargono::Assets
 				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
 				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
 				return true;
-				}, glyphs.size()).finish(numAvailableThread);
+				}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
 		}
 		else {
 			unsigned long long glyphSeed = coloringSeed;
@@ -1472,7 +1472,7 @@ namespace Kargono::Assets
 		msdfgen::deinitializeFreetype(ft);
 
 		const auto& metrics = fontGeometry.getMetrics();
-		lineHeight = metrics.lineHeight;
+		lineHeight = static_cast<float>(metrics.lineHeight);
 
 		const auto& glyphMetrics = fontGeometry.getGlyphs();
 		for (auto& glyphGeometry : glyphMetrics)
@@ -1508,8 +1508,8 @@ namespace Kargono::Assets
 		newAsset.Data.Type = Assets::AssetType::Font;
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::FontMetaData> metadata = CreateRef<Assets::FontMetaData>();
-		metadata->AtlasWidth = textureSpec.Width;
-		metadata->AtlasHeight = textureSpec.Height;
+		metadata->AtlasWidth = static_cast<float>(textureSpec.Width);
+		metadata->AtlasHeight = static_cast<float>(textureSpec.Height);
 		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
 		metadata->InitialFileLocation = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
@@ -1524,7 +1524,7 @@ namespace Kargono::Utility
 {
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
-		KG_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have a component");
+		KG_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have a component");
 
 		out << YAML::BeginMap; // Entity Map
 		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
@@ -1623,7 +1623,7 @@ namespace Kargono::Utility
 			{
 				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
 			}
-			KG_CORE_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+			KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
 			if (shapeComponent.Shader)
 			{
 				// Add Shader Handle
@@ -1757,12 +1757,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_SceneRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& sceneRegistryLocation = Projects::Project::GetAssetDirectory() / "Scenes/SceneRegistry.kgreg";
 
 		if (!std::filesystem::exists(sceneRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -1772,7 +1772,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", sceneRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", sceneRegistryLocation.string(), e.what());
 			return;
 		}
 
@@ -1780,7 +1780,7 @@ namespace Kargono::Assets
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing Scene Registry");
+		KG_INFO("Deserializing Scene Registry");
 
 		// Opening all assets 
 		auto assets = data["Assets"];
@@ -1812,7 +1812,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeSceneRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& sceneRegistryLocation = Projects::Project::GetAssetDirectory() / "Scenes/SceneRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -1866,7 +1866,7 @@ namespace Kargono::Assets
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		KG_CORE_INFO("Successfully Serialized Scene at {}", filepath);
+		KG_INFO("Successfully Serialized Scene at {}", filepath);
 	}
 
 	bool AssetManager::CheckSceneExists(const std::string& sceneName)
@@ -1876,7 +1876,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -1884,7 +1884,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return true;
 			}
 		}
@@ -1901,11 +1901,11 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 
-		KG_CORE_TRACE("Deserializing scene");
+		KG_INFO("Deserializing scene");
 
 		auto physics = data["Physics"];
 		scene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
@@ -1989,7 +1989,7 @@ namespace Kargono::Assets
 						Ref<Script::ScriptClass> entityClass = Script::ScriptEngine::GetEntityClass(sc.ClassName);
 						if (entityClass)
 						{
-							KG_CORE_ASSERT(entityClass);
+							KG_ASSERT(entityClass);
 							const auto& fields = entityClass->GetFields();
 
 							auto& entityFields = Script::ScriptEngine::GetScriptFieldMap(deserializedEntity);
@@ -2002,7 +2002,7 @@ namespace Kargono::Assets
 
 								Script::ScriptFieldInstance& fieldInstance = entityFields[name];
 								// TODO(): Turn into Log Message
-								KG_CORE_ASSERT(fields.contains(name))
+								KG_ASSERT(fields.contains(name))
 									if (!fields.contains(name)) { continue; }
 								fieldInstance.Field = fields.at(name);
 
@@ -2141,7 +2141,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -2150,7 +2150,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return handle;
 			}
 		}
@@ -2184,7 +2184,7 @@ namespace Kargono::Assets
 
 	Ref<Kargono::Scene> AssetManager::GetScene(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving scene!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving scene!");
 
 		if (s_SceneRegistry.contains(handle))
 		{
@@ -2192,12 +2192,12 @@ namespace Kargono::Assets
 			return InstantiateScene(asset);
 		}
 
-		KG_CORE_ERROR("No scene is associated with provided handle!");
+		KG_ERROR("No scene is associated with provided handle!");
 		return nullptr;
 	}
 	std::tuple<AssetHandle, Ref<Kargono::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path scenePath {};
 
@@ -2218,7 +2218,7 @@ namespace Kargono::Assets
 			}
 		}
 		// Return empty scene if scene does not exist
-		KG_CORE_WARN("No Scene Associated with provided handle. Returned new empty scene");
+		KG_WARN("No Scene Associated with provided handle. Returned new empty scene");
 		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
 		return std::make_tuple(newHandle, GetScene(newHandle));
 	}
@@ -2259,12 +2259,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_UIObjectRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& uiObjectRegistryLocation = Projects::Project::GetAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
 
 		if (!std::filesystem::exists(uiObjectRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -2274,7 +2274,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kguiObject file '{0}'\n     {1}", uiObjectRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kguiObject file '{0}'\n     {1}", uiObjectRegistryLocation.string(), e.what());
 			return;
 		}
 
@@ -2282,7 +2282,7 @@ namespace Kargono::Assets
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing UIObject Registry");
+		KG_INFO("Deserializing UIObject Registry");
 
 		// Opening all assets 
 		auto assets = data["Assets"];
@@ -2314,7 +2314,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeUIObjectRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& uiObjectRegistryLocation = Projects::Project::GetAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -2437,7 +2437,7 @@ namespace Kargono::Assets
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		KG_CORE_INFO("Successfully Serialized UIObject at {}", filepath);
+		KG_INFO("Successfully Serialized UIObject at {}", filepath);
 	}
 
 	bool AssetManager::CheckUIObjectExists(const std::string& uiObjectName)
@@ -2447,7 +2447,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -2455,7 +2455,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return true;
 			}
 		}
@@ -2472,11 +2472,11 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 
-		KG_CORE_TRACE("Deserializing user interface object");
+		KG_INFO("Deserializing user interface object");
 
 		// Get SelectColor
 		uiObject->m_SelectColor = data["SelectColor"].as<Math::vec4>();
@@ -2541,7 +2541,7 @@ namespace Kargono::Assets
 						}
 						default:
 							{
-							KG_CORE_ASSERT("Invalid Widget Type in RuntimeUI Deserialization");
+							KG_ASSERT("Invalid Widget Type in RuntimeUI Deserialization");
 							return false;
 							}
 						}
@@ -2581,7 +2581,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -2590,7 +2590,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return handle;
 			}
 		}
@@ -2634,7 +2634,7 @@ namespace Kargono::Assets
 
 	Ref<UI::UIObject> AssetManager::GetUIObject(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving uiObject!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving uiObject!");
 
 		if (s_UIObjectRegistry.contains(handle))
 		{
@@ -2642,12 +2642,12 @@ namespace Kargono::Assets
 			return InstantiateUIObject(asset);
 		}
 
-		KG_CORE_ERROR("No uiObject is associated with provided handle!");
+		KG_ERROR("No uiObject is associated with provided handle!");
 		return nullptr;
 	}
 	std::tuple<AssetHandle, Ref<UI::UIObject>> AssetManager::GetUIObject(const std::filesystem::path& filepath)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 		std::filesystem::path uiObjectPath = filepath;
 
 		if (filepath.is_absolute())
@@ -2663,7 +2663,7 @@ namespace Kargono::Assets
 			}
 		}
 		// Return empty uiObject if uiObject does not exist
-		KG_CORE_WARN("No UIObject Associated with provided handle. Returned new empty uiObject");
+		KG_WARN("No UIObject Associated with provided handle. Returned new empty uiObject");
 		AssetHandle newHandle = CreateNewUIObject(filepath.stem().string());
 		return std::make_tuple(newHandle, GetUIObject(newHandle));
 	}
@@ -2705,12 +2705,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_InputModeRegistry.clear();
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& inputModeRegistryLocation = Projects::Project::GetAssetDirectory() / "Input/InputRegistry.kgreg";
 
 		if (!std::filesystem::exists(inputModeRegistryLocation))
 		{
-			KG_CORE_ERROR("No .kgregistry file exists in project path!");
+			KG_ERROR("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -2720,7 +2720,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kginputMode file '{0}'\n     {1}", inputModeRegistryLocation.string(), e.what());
+			KG_ERROR("Failed to load .kginputMode file '{0}'\n     {1}", inputModeRegistryLocation.string(), e.what());
 			return;
 		}
 
@@ -2728,7 +2728,7 @@ namespace Kargono::Assets
 		if (!data["Registry"]) { return; }
 
 		std::string registryName = data["Registry"].as<std::string>();
-		KG_CORE_TRACE("Deserializing InputMode Registry");
+		KG_INFO("Deserializing InputMode Registry");
 
 		// Opening all assets 
 		auto assets = data["Assets"];
@@ -2760,7 +2760,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeInputModeRegistry()
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
 		const auto& inputModeRegistryLocation = Projects::Project::GetAssetDirectory() / "Input/InputRegistry.kgreg";
 		YAML::Emitter out;
 
@@ -2836,7 +2836,7 @@ namespace Kargono::Assets
 				case InputMode::None:
 				default:
 					{
-					KG_CORE_ASSERT(false, "Invalid InputMode provided to InputMode serialization");
+					KG_ASSERT(false, "Invalid InputMode provided to InputMode serialization");
 					break;
 					}
 				}
@@ -2877,7 +2877,7 @@ namespace Kargono::Assets
 					case InputMode::None:
 					default:
 					{
-						KG_CORE_ASSERT("Invalid InputMode provided to InputMode serialization");
+						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
 						break;
 					}
 					}
@@ -2915,7 +2915,7 @@ namespace Kargono::Assets
 				case InputMode::None:
 				default:
 				{
-					KG_CORE_ASSERT("Invalid InputMode provided to InputMode serialization");
+					KG_ASSERT("Invalid InputMode provided to InputMode serialization");
 					break;
 				}
 				}
@@ -2956,7 +2956,7 @@ namespace Kargono::Assets
 					case InputMode::None:
 					default:
 					{
-						KG_CORE_ASSERT("Invalid InputMode provided to InputMode serialization");
+						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
 						break;
 					}
 					}
@@ -2976,7 +2976,7 @@ namespace Kargono::Assets
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		KG_CORE_INFO("Successfully Serialized InputMode at {}", filepath);
+		KG_INFO("Successfully Serialized InputMode at {}", filepath);
 	}
 
 	bool AssetManager::CheckInputModeExists(const std::string& inputModeName)
@@ -2986,7 +2986,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -2994,7 +2994,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate font asset");
+				KG_INFO("Attempt to instantiate duplicate font asset");
 				return true;
 			}
 		}
@@ -3011,11 +3011,11 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 
-		KG_CORE_TRACE("Deserializing input mode");
+		KG_INFO("Deserializing input mode");
 
 		// Get Keyboard Polling!
 		{
@@ -3054,7 +3054,7 @@ namespace Kargono::Assets
 						case InputMode::None:
 						default:
 						{
-							KG_CORE_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+							KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
 							break;
 						}
 					}
@@ -3095,7 +3095,7 @@ namespace Kargono::Assets
 							case InputMode::None:
 							default:
 							{
-								KG_CORE_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+								KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
 								break;
 							}
 							}
@@ -3130,7 +3130,7 @@ namespace Kargono::Assets
 					case InputMode::None:
 					default:
 					{
-						KG_CORE_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+						KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
 						break;
 					}
 					}
@@ -3171,7 +3171,7 @@ namespace Kargono::Assets
 							case InputMode::None:
 							default:
 							{
-								KG_CORE_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+								KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
 								break;
 							}
 							}
@@ -3196,7 +3196,7 @@ namespace Kargono::Assets
 
 		if (currentCheckSum.empty())
 		{
-			KG_CORE_ERROR("Failed to generate checksum from file!");
+			KG_ERROR("Failed to generate checksum from file!");
 			return {};
 		}
 
@@ -3205,7 +3205,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_CORE_INFO("Attempt to instantiate duplicate input asset");
+				KG_INFO("Attempt to instantiate duplicate input asset");
 				return handle;
 			}
 		}
@@ -3249,7 +3249,7 @@ namespace Kargono::Assets
 
 	Ref<Kargono::InputMode> AssetManager::GetInputMode(const AssetHandle& handle)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving inputMode!");
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving inputMode!");
 
 		if (s_InputModeRegistry.contains(handle))
 		{
@@ -3257,12 +3257,12 @@ namespace Kargono::Assets
 			return InstantiateInputMode(asset);
 		}
 
-		KG_CORE_ERROR("No inputMode is associated with provided handle!");
+		KG_ERROR("No inputMode is associated with provided handle!");
 		return nullptr;
 	}
 	std::tuple<AssetHandle, Ref<Kargono::InputMode>> AssetManager::GetInputMode(const std::filesystem::path& filepath)
 	{
-		KG_CORE_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path inputModePath = filepath;
 
@@ -3279,7 +3279,7 @@ namespace Kargono::Assets
 			}
 		}
 		// Return empty inputMode if inputMode does not exist
-		KG_CORE_WARN("No InputMode Associated with provided handle. Returned new empty inputMode");
+		KG_WARN("No InputMode Associated with provided handle. Returned new empty inputMode");
 		AssetHandle newHandle = CreateNewInputMode(filepath.stem().string());
 		return std::make_tuple(newHandle, GetInputMode(newHandle));
 	}
@@ -3312,6 +3312,37 @@ namespace Kargono::Assets
 		newAsset.Data.IntermediateLocation = inputModePath;
 		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
 		newAsset.Data.SpecificFileData = metadata;
+	}
+
+
+	bool AssetManager::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
+	{
+		auto& config = project->m_Config;
+
+		std::string filepath = (projectPath.parent_path() / "server_variables.env").string();
+
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath);
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load server variables '{0}'\n     {1}", filepath, e.what());
+			return false;
+		}
+		auto rootNode = data["ServerVariables"];
+		if (!rootNode) { return false; }
+
+		config.ServerIP = rootNode["ServerIP"].as<std::string>();
+		config.ServerPort = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
+		config.ServerLocation = rootNode["ServerLocation"].as<std::string>();
+		config.SecretOne = rootNode["SecretOne"].as<uint64_t>();
+		config.SecretTwo = rootNode["SecretTwo"].as<uint64_t>();
+		config.SecretThree = rootNode["SecretThree"].as<uint64_t>();
+		config.SecretFour = rootNode["SecretFour"].as<uint64_t>();
+
+		return true;
 	}
 
 
@@ -3361,6 +3392,16 @@ namespace Kargono::Assets
 				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
 				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
 				out << YAML::Key << "OnRuntimeStartFunction" << YAML::Value << config.OnRuntimeStartFunction;
+				out << YAML::Key << "OnUpdateUserCountFunction" << YAML::Value << config.OnUpdateUserCountFunction;
+				out << YAML::Key << "OnApproveJoinSessionFunction" << YAML::Value << config.OnApproveJoinSessionFunction;
+				out << YAML::Key << "OnUserLeftSessionFunction" << YAML::Value << config.OnUserLeftSessionFunction;
+				out << YAML::Key << "OnCurrentSessionInitFunction" << YAML::Value << config.OnCurrentSessionInitFunction;
+				out << YAML::Key << "OnConnectionTerminatedFunction" << YAML::Value << config.OnConnectionTerminatedFunction;
+				out << YAML::Key << "OnUpdateSessionUserSlotFunction" << YAML::Value << config.OnUpdateSessionUserSlotFunction;
+				out << YAML::Key << "OnStartSessionFunction" << YAML::Value << config.OnStartSessionFunction;
+				out << YAML::Key << "OnSessionReadyCheckConfirmFunction" << YAML::Value << config.OnSessionReadyCheckConfirmFunction;
+				out << YAML::Key << "OnReceiveSignalFunction" << YAML::Value << config.OnReceiveSignalFunction;
+				out << YAML::Key << "AppIsNetworked" << YAML::Value << config.AppIsNetworked;
 
 				if (config.AppTickGenerators.size() > 0)
 				{
@@ -3384,7 +3425,9 @@ namespace Kargono::Assets
 
 		return true;
 	}
-	
+
+
+
 	bool AssetManager::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
 	{
 		auto& config = project->m_Config;
@@ -3396,7 +3439,7 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_CORE_ERROR("Failed to load project file '{0}'\n     {1}", filepath, e.what());
+			KG_ERROR("Failed to load project file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 		auto projectNode = data["Project"];
@@ -3410,6 +3453,16 @@ namespace Kargono::Assets
 		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
 		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
 		config.OnRuntimeStartFunction = projectNode["OnRuntimeStartFunction"].as<std::string>();
+		config.OnUpdateUserCountFunction = projectNode["OnUpdateUserCountFunction"].as<std::string>();
+		config.OnApproveJoinSessionFunction = projectNode["OnApproveJoinSessionFunction"].as<std::string>();
+		config.OnUserLeftSessionFunction = projectNode["OnUserLeftSessionFunction"].as<std::string>();
+		config.OnCurrentSessionInitFunction = projectNode["OnCurrentSessionInitFunction"].as<std::string>();
+		config.OnConnectionTerminatedFunction = projectNode["OnConnectionTerminatedFunction"].as<std::string>();
+		config.OnUpdateSessionUserSlotFunction = projectNode["OnUpdateSessionUserSlotFunction"].as<std::string>();
+		config.OnStartSessionFunction = projectNode["OnStartSessionFunction"].as<std::string>();
+		config.OnSessionReadyCheckConfirmFunction = projectNode["OnSessionReadyCheckConfirmFunction"].as<std::string>();
+		config.OnReceiveSignalFunction = projectNode["OnReceiveSignalFunction"].as<std::string>();
+		config.AppIsNetworked = projectNode["AppIsNetworked"].as<bool>();
 
 		auto tickGenerators = projectNode["AppTickGenerators"];
 
@@ -3421,6 +3474,8 @@ namespace Kargono::Assets
 				config.AppTickGenerators.insert(value);
 			}
 		}
+
+		DeserializeServerVariables(project, filepath);
 
 		return true;
 	}

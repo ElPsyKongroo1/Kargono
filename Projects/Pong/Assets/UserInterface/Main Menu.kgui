@@ -2,7 +2,7 @@ SelectColor: [0.403921574, 0.0666666701, 0.686274529, 0.745098054]
 FunctionPointerOnMove: PlayMenuSelect
 Font: 7507720298335089313
 Windows:
-  - Tag: None
+  - Tag: main_window
     ScreenPosition: [0, 0, 0]
     Size: [1, 1]
     BackgroundColor: [1, 0.176470593, 1, 0.141176477]
@@ -11,7 +11,7 @@ Windows:
     ChildBufferSize: 0
     DefaultActiveWidget: 0
     WidgetCounts:
-      TextWidgetCount: 4
+      TextWidgetCount: 6
       TextWidgetLocation: 0
       ButtonWidgetCount: 0
       ButtonWidgetLocation: 0
@@ -22,9 +22,9 @@ Windows:
       PopupWidgetCount: 0
       PopupWidgetLocation: 0
     Widgets:
-      - Tag: None
-        WindowPosition: [0.119999997, 0.469999999]
-        Size: [0.129999995, 0.119999997]
+      - Tag: local_multiplayer
+        WindowPosition: [0.0500000007, 0.529999971]
+        Size: [0.280000001, 0.119999997]
         DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
         Selectable: true
@@ -34,14 +34,14 @@ Windows:
         DirectionPointerRight: -1
         FunctionPointerOnPress: OpenPongGameplay
         TextWidget:
-          Text: Play
-          TextSize: 0.720000029
+          Text: Local Multiplayer
+          TextSize: 0.430000007
           TextColor: [1, 1, 1, 1]
-          TextAbsoluteDimensions: [1.72802734, 0.833333313]
+          TextAbsoluteDimensions: [7.04638672, 0.833333313]
           TextCentered: true
       - Tag: None
-        WindowPosition: [0.129999995, 0.209999993]
-        Size: [0.109999999, 0.119999997]
+        WindowPosition: [0.129999995, 0.109999999]
+        Size: [0.100000001, 0.100000001]
         DefaultBackgroundColor: [0.403921574, 0.0666666701, 0.686274529, 0.211764708]
         WidgetType: TextWidget
         Selectable: true
@@ -52,7 +52,7 @@ Windows:
         FunctionPointerOnPress: CloseApplication
         TextWidget:
           Text: Exit
-          TextSize: 0.670000017
+          TextSize: 0.550000012
           TextColor: [1, 1, 1, 1]
           TextAbsoluteDimensions: [1.42773438, 0.833333313]
           TextCentered: true
@@ -89,4 +89,38 @@ Windows:
           TextSize: 0.300000012
           TextColor: [1, 1, 0.827450991, 1]
           TextAbsoluteDimensions: [11.3208008, 0.880952358]
+          TextCentered: true
+      - Tag: online_multiplayer
+        WindowPosition: [0.0399999991, 0.319999993]
+        Size: [0.300000012, 0.109999999]
+        DefaultBackgroundColor: [0.117647059, 0.117647059, 0.117647059, 0.145098045]
+        WidgetType: TextWidget
+        Selectable: false
+        DirectionPointerUp: 0
+        DirectionPointerDown: 1
+        DirectionPointerLeft: -1
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: OpenOnlineGameplay
+        TextWidget:
+          Text: Online Multiplayer
+          TextSize: 0.430000007
+          TextColor: [1, 1, 1, 0.870588243]
+          TextAbsoluteDimensions: [7.53369141, 0.857142866]
+          TextCentered: true
+      - Tag: online_count
+        WindowPosition: [0.769999981, 0.870000005]
+        Size: [0.140000001, 0.100000001]
+        DefaultBackgroundColor: [0.549019635, 0.172549024, 0.172549024, 0]
+        WidgetType: TextWidget
+        Selectable: false
+        DirectionPointerUp: -1
+        DirectionPointerDown: 0
+        DirectionPointerLeft: 0
+        DirectionPointerRight: -1
+        FunctionPointerOnPress: ""
+        TextWidget:
+          Text: Offline
+          TextSize: 0.469999999
+          TextColor: [1, 1, 1, 1]
+          TextAbsoluteDimensions: [2.70654297, 0.857142866]
           TextCentered: true

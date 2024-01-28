@@ -42,10 +42,32 @@ namespace Kargono
 			InternalCalls.UserInterface_SetWidgetText(windowTag, widgetTag, newText);
 		}
 
+		public static void SetSelectedWidget(string windowTag, string widgetTag)
+		{
+			InternalCalls.UserInterface_SetSelectedWidget(windowTag, widgetTag);
+		}
+
+		public static void SetWidgetTextColor(string windowTag, string widgetTag, Vector4 color)
+		{
+			InternalCalls.UserInterface_SetWidgetTextColor(windowTag, widgetTag, ref color);
+		}
+
+		public static void SetWidgetBackgroundColor(string windowTag, string widgetTag, Vector4 color)
+		{
+			InternalCalls.UserInterface_SetWidgetBackgroundColor(windowTag, widgetTag, ref color);
+		}
+
+		public static void SetWidgetSelectable(string windowTag, string widgetTag, bool selectable)
+		{
+			InternalCalls.UserInterface_SetWidgetSelectable(windowTag, widgetTag, selectable);
+		}
+
 		public static void SetDisplayWindow(string windowTag, bool display)
 		{
 			InternalCalls.UserInterface_SetDisplayWindow(windowTag, display);
 		}
+
+
 	}
 
 }

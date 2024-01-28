@@ -20,7 +20,7 @@ namespace Kargono
 	}
 	Ref<Kargono::Texture2D> Texture2D::CreateEditorTexture(const std::filesystem::path& path)
 	{
-		KG_CORE_ASSERT(path.is_absolute(), "Path provided to texture create function is not an absolute path!")
+		KG_ASSERT(path.is_absolute(), "Path provided to texture create function is not an absolute path!")
 			return CreateRef<API::OpenGL::OpenGLTexture2D>(path.string());
 	}
 }

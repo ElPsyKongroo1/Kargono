@@ -83,6 +83,26 @@ namespace Kargono
 		internal extern static void UserInterface_SetWidgetText(string windowTag, string widgetTag, string newText);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetSelectedWidget(string windowTag, string widgetTag);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetWidgetTextColor(string windowTag, string widgetTag, ref Vector4 color);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_SendAllEntityLocation(ulong id, ref Vector3 translation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_SendAllEntityPhysics(ulong id, ref Vector3 translation, ref Vector2 linearVelocity);
+
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetWidgetBackgroundColor(string windowTag, string widgetTag, ref Vector4 color);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void UserInterface_SetWidgetSelectable(string windowTag, string widgetTag, bool selectable);
+
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void UserInterface_SetDisplayWindow(string windowTag, bool display);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -90,5 +110,32 @@ namespace Kargono
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Core_CloseApplication();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_RequestJoinSession();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_RequestUserCount();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static UInt16 Network_GetSessionSlot();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_LeaveCurrentSession();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_EnableReadyCheck();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_SessionReadyCheck();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Network_SignalAll(UInt16 signal);
+
+
+
+
+
+
 	}
 }

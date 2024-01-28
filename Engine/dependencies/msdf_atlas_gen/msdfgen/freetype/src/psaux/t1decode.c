@@ -1990,7 +1990,7 @@
 
 
               if ( val )
-                idx = *val;
+              idx = (int)*val;
               else
                 idx = -1;
             }

@@ -572,6 +572,13 @@ namespace Kargono::Assets
 	// Load a single project
 	static bool DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
 
+	private:
+	//==============================
+	// Internal Functionality
+	//==============================
+
+	static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
 	//============================================================
 	// General API
 	//============================================================

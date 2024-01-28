@@ -12,7 +12,11 @@
 
 #include <functional>
 #include <mutex>
+#include <atomic>
 #include <filesystem>
+#include <chrono>
+
+#include "Kargono/Events/NetworkingEvent.h"
 
 
 int main(int argc, char** argv);
@@ -27,7 +31,7 @@ namespace Kargono
 
 		const char* operator[](int index) const
 		{
-			KG_CORE_ASSERT(index < Count, "Invalid attempt to access command line arguments");
+			KG_ASSERT(index < Count, "Invalid attempt to access command line arguments");
 			return Args[index];
 		}
 	};
@@ -60,7 +64,7 @@ namespace Kargono
 
 		void AddImGuiLayer()
 		{
-			KG_CORE_ASSERT(!m_ImGuiLayer, "An ImGui Layer already exists!");
+			KG_ASSERT(!m_ImGuiLayer, "An ImGui Layer already exists!");
 			m_ImGuiLayer = new ImGuiLayer();
 			PushOverlay(m_ImGuiLayer);
 		}
@@ -75,20 +79,33 @@ namespace Kargono
 
 		ImGuiLayer* GetImGuiLayer()
 		{
-			if (!m_ImGuiLayer) { KG_CORE_ERROR("Getting application ImGui Layer, but there is not ImGui Context!"); }
+			if (!m_ImGuiLayer) { KG_ERROR("Getting application ImGui Layer, but there is not ImGui Context!"); }
 			return m_ImGuiLayer;
 		}
 
-		double GetAppStartTime() { return m_AppStartTime; }
+		double GetAppStartTime() const { return m_AppStartTime; }
+		uint64_t GetUpdateCount() const { return m_UpdateCount; }
 		void SetAppStartTime();
 
 		void SubmitToMainThread(const std::function<void()>& function);
+
+		void SubmitToEventQueue(Ref<Events::Event> e);
+
+		void OnSkipUpdate(Events::SkipUpdateEvent event);
+		void OnAddExtraUpdate(Events::AddExtraUpdateEvent event);
+
 		void Run();
 	private:
 		bool OnWindowClose(Events::WindowCloseEvent& e);
 		bool OnWindowResize(Events::WindowResizeEvent& e);
-
+		bool OnCleanUpTimers(Events::CleanUpTimersEvent& e);
+		bool OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e);
+		bool OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e);
+		bool OnAppTickEvent(Events::AppTickEvent& e);
+		bool OnUpdateEntityLocation(Events::UpdateEntityLocation& e);
+		bool OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e);
 		void ExecuteMainThreadQueue();
+		void ProcessEventQueue();
 	private:
 		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
@@ -97,10 +114,15 @@ namespace Kargono
 		bool m_Running = true;
 		bool m_Minimized = false;
 		double m_AppStartTime = 0.0f;
+		std::chrono::nanoseconds m_Accumulator{0};
+		std::atomic<uint64_t> m_UpdateCount = 0;
 		LayerStack m_LayerStack;
 
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
+
+		std::vector<Ref<Events::Event>> m_EventQueue {};
+		std::mutex m_EventQueueMutex;
 
 	private:
 		static Application* s_Instance;

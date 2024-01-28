@@ -1002,7 +1002,7 @@
 
 
             if ( val )
-              subrNum = *val;
+              subrNum = (int)*val;
             else
               subrNum = -1;
           }

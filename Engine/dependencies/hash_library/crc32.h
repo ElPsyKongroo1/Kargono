@@ -52,6 +52,8 @@ public:
   /// compute CRC32 of a string, excluding final zero
   std::string operator()(const std::string& text);
 
+  uint32_t CalculateHash(const void* data, size_t numBytes);
+
   /// add arbitrary number of bytes
   void add(const void* data, size_t numBytes);
 

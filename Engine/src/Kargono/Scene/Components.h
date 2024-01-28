@@ -76,6 +76,20 @@ namespace Kargono
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	enum class NetworkType
+	{
+		None = 0,
+		ClientAuthoritative = 1,
+		ServerTime = 2,
+		TrustLastCollision = 3
+	};
+
+	struct NetworkComponent
+	{
+		bool NetworkPhysics = false;
+		NetworkType PhysicsType = NetworkType::None;
+	};
+
 	struct AudioComponent
 	{
 		std::string Name;
@@ -231,5 +245,5 @@ namespace Kargono
 
 	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent, ScriptComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
-	TagComponent>;
+	TagComponent, NetworkComponent>;
 }
