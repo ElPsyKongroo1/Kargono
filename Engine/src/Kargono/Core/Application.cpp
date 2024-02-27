@@ -19,6 +19,8 @@
 
 #include <windows.h>
 
+#include "Kargono/Scripting/Scripting.h"
+
 namespace Kargono
 {
 //#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -56,6 +58,7 @@ namespace Kargono
 		}
 
 		Script::ScriptEngine::Shutdown();
+		Scripting::ScriptCore::Terminate();
 		Audio::AudioEngine::Terminate();
 		// TODO: Add Renderer Shutdown!
 		

@@ -27,7 +27,7 @@ namespace Kargono
 		static bool WriteFileBinary(const std::filesystem::path& filepath, std::vector<Buffer>& buffers);
 		static bool WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer);
 
-		static bool WriteFileString(const std::filesystem::path& filepath, std::string& string);
+		static bool WriteFileString(const std::filesystem::path& filepath, const std::string& string);
 
 		static void MoveFileToDirectory(const std::filesystem::path& filepath, const std::filesystem::path& newDirectory);
 

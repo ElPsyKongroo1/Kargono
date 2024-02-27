@@ -1,4 +1,4 @@
-include "./dependencies/premake/premake_customization/solution_items.lua"
+-- include "./dependencies/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 workspace "Kargono"
     startproject "Editor"
@@ -10,10 +10,10 @@ workspace "Kargono"
         "Dist"
     }
 
-    solution_items
-	{
-		".editorconfig"
-	}
+    -- solution_items
+	-- {
+	-- 	".editorconfig"
+	-- }
 
     flags
 	{

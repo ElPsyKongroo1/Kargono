@@ -110,6 +110,8 @@ namespace Kargono {
 		//		loaded project.
 		void UI_Project();
 
+		void UI_Scripts();
+
 	private:
 		// Supporting functions for InputEditor. These functions display different sections of the InputEditor
 		//		user interface.
@@ -195,6 +197,7 @@ namespace Kargono {
 		bool m_ShowDemoWindow = false;
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowInputEditor = false;
+		bool m_ShowScriptEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;

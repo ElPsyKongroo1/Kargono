@@ -96,7 +96,7 @@ namespace Kargono
 		return true;
 	}
 
-	bool FileSystem::WriteFileString(const std::filesystem::path& filepath, std::string& string)
+	bool FileSystem::WriteFileString(const std::filesystem::path& filepath, const std::string& string)
 	{
 		CreateNewDirectory(filepath.parent_path());
 		std::ofstream output_file(filepath);
