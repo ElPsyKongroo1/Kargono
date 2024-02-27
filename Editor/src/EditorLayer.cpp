@@ -20,6 +20,7 @@ namespace Kargono
 	{
 
 		Script::ScriptEngine::Init();
+		Scripting::ScriptCore::Init();
 		Audio::AudioEngine::Init();
 
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>();
@@ -320,6 +321,7 @@ namespace Kargono
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputEditor);
+				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
 				ImGui::MenuItem("Project", NULL, &m_ShowProject);
@@ -343,6 +345,7 @@ namespace Kargono
 		if (m_ShowInputEditor) { m_InputEditorPanel->OnImGuiRender(); }
 		if (m_ShowToolbar) { UI_Toolbar(); }
 		if (m_ShowProject) { UI_Project(); }
+		if (m_ShowScriptEditor) { UI_Scripts(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
 		ImGui::End();
@@ -931,6 +934,80 @@ namespace Kargono
 
 		ImGui::NewLine();
 
+
+		ImGui::End();
+	}
+
+	void EditorLayer::UI_Scripts()
+	{
+		ImGui::Begin("Scripts");
+
+		bool deleteScript = false;
+		Assets::AssetHandle deleteHandle{};
+
+		uint32_t iterator{0};
+		for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+		{
+			ImGui::Text(script->m_ScriptName.c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::string(handle).c_str());
+			ImGui::SameLine();
+			if (ImGui::Button(("Delete Script##" + std::to_string(iterator)).c_str()))
+			{
+				deleteScript = true;
+				deleteHandle = handle;
+			}
+
+			if (ImGui::Button(("RunScript##" + std::to_string(iterator)).c_str()))
+			{
+				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				{
+					((WrappedVoidNone*)script->m_Function.get())->m_Value();
+				}
+			}
+
+			iterator++;
+		}
+
+		if (deleteScript)
+		{
+			Assets::AssetManager::DeleteScript(deleteHandle);
+		}
+
+		if (ImGui::Button("Create New Script"))
+		{
+			ImGui::OpenPopup("CreateScriptPopup");
+		}
+
+		if (ImGui::Button("CreateDLL")) // TODO: TEMPORARY
+		{
+			Scripting::ScriptCore::CreateDll();
+		}
+
+		if (ImGui::Button("OpenDll")) // TODO: AHHHHHHHHHHHHHHHHHHHHHHHHHHH
+		{
+			Scripting::ScriptCore::OpenDll();
+			//Scripting::ScriptCore::OpenDll("ExportBody.dll");
+		}
+
+		if (ImGui::BeginPopup("CreateScriptPopup"))
+		{
+			ImGui::Text("WE ARE CREATING A NEW SCRIPT");
+			if (ImGui::Button("Add New Item HAHAHA"))
+			{
+				std::string name{"Potato"};
+				static uint32_t testIterator {0};
+				name.append(std::to_string(testIterator));
+				testIterator++;
+				std::vector<WrappedVarType> parameters{};
+				WrappedVarType returnValue{ WrappedVarType::Void };
+				WrappedFuncType functionType{ WrappedFuncType::Void_None };
+
+				Assets::AssetManager::CreateNewScript(name, parameters, returnValue, functionType);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 
 		ImGui::End();
 	}
@@ -2028,6 +2105,8 @@ namespace Kargono
 				RenderCommand::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
+
+			Scripting::ScriptCore::OpenDll();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
 			else { Script::ScriptEngine::InitialAssemblyLoad(); }

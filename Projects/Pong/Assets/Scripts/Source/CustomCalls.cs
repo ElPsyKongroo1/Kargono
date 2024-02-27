@@ -241,7 +241,6 @@ namespace Pong
 
         static void StartGame()
         {
-
 			InputMode.LoadInputMode("Input/Runtime.kginput");
 			UserInterface.SetDisplayWindow("pre_game_warning", false);
 			UserInterface.SetDisplayWindow("online_lobby", false);

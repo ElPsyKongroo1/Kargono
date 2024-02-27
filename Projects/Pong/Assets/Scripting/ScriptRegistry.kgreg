@@ -1,0 +1,32 @@
+Registry: Script
+Assets:
+  - AssetHandle: 753079771072191180
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/753079771072191180.cpp
+      AssetType: Script
+      Name: Potato0
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
+  - AssetHandle: 3412061034672738214
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/3412061034672738214.cpp
+      AssetType: Script
+      Name: Potato0
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
+  - AssetHandle: 7448269885476125662
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/7448269885476125662.cpp
+      AssetType: Script
+      Name: Potato1
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None

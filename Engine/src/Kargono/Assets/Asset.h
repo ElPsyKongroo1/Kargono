@@ -3,10 +3,12 @@
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/UI/TextEngine.h"
+#include "Kargono/Core/WrappedData.h"
 
 #include <filesystem>
 #include <vector>
 #include <utility>
+
 
 namespace Kargono::Assets
 {
@@ -26,6 +28,7 @@ namespace Kargono::Assets
 		Scene = 5,
 		UIObject = 6,
 		InputMode = 7,
+		Script = 8
 	};
 
 	//==============================
@@ -153,6 +156,14 @@ namespace Kargono::Assets
 
 	};
 
+	struct ScriptMetaData
+	{
+		std::string Name{};
+		std::vector<WrappedVarType> Parameters{};
+		WrappedVarType ReturnValue{};
+		WrappedFuncType FunctionType{};
+	};
+
 	//==============================
 	// Asset Struct
 	//==============================
@@ -184,6 +195,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::Scene: return "Scene";
 		case Assets::AssetType::UIObject: return "UIObject";
 		case Assets::AssetType::InputMode: return "InputMode";
+		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ASSERT(false, "Unknown Type of AssetType.");
@@ -199,6 +211,7 @@ namespace Kargono::Utility
 		if (type == "Scene") { return Assets::AssetType::Scene; }
 		if (type == "UIObject") { return Assets::AssetType::UIObject; }
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
+		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ASSERT(false, "Unknown Type of AssetType String.");

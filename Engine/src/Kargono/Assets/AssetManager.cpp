@@ -3315,6 +3315,268 @@ namespace Kargono::Assets
 	}
 
 
+	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_ScriptRegistry {};
+	std::unordered_map<AssetHandle, Ref<Scripting::Script>> AssetManager::s_Scripts {};
+
+	void AssetManager::DeserializeScriptRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_ScriptRegistry.clear();
+		s_Scripts.clear();
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& ScriptRegistryLocation = Projects::Project::GetAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+
+		if (!std::filesystem::exists(ScriptRegistryLocation))
+		{
+			KG_ERROR("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(ScriptRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", ScriptRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing Script Registry");
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving Script specific metadata 
+				if (newAsset.Data.Type == Assets::Script)
+				{
+					Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+
+					std::string Name{};
+					std::vector<WrappedVarType> Parameters{};
+					WrappedVarType ReturnValue{};
+					WrappedFuncType FunctionType{};
+
+					ScriptMetaData->Name = metadata["Name"].as<std::string>();
+
+					ScriptMetaData->ReturnValue = Utility::StringToWrappedVarType(metadata["ReturnValue"].as<std::string>());
+					ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadata["FunctionType"].as<std::string>());
+
+					auto parameters = metadata["Parameters"];
+					auto& parameterVector = ScriptMetaData->Parameters;
+					for (auto parameter : parameters)
+					{
+						parameterVector.push_back(Utility::StringToWrappedVarType(parameter.as<std::string>()));
+					}
+
+					newAsset.Data.SpecificFileData = ScriptMetaData;
+
+				}
+
+				// Add asset to in memory registry 
+				s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
+
+				s_Scripts.insert({ newAsset.Handle, InstantiateScriptIntoMemory(newAsset) });
+
+			}
+		}
+	}
+
+	void AssetManager::SerializeScriptRegistry()
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& ScriptRegistryLocation = Projects::Project::GetAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "Script";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+		// Asset
+		for (auto& [handle, asset] : s_ScriptRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+			if (asset.Data.Type == Assets::AssetType::Script)
+			{
+				Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
+
+				std::string Name{};
+				std::vector<WrappedVarType> Parameters{};
+				WrappedVarType ReturnValue{};
+				WrappedFuncType FunctionType{};
+
+				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
+				out << YAML::Key << "Parameters" << YAML::Value << YAML::BeginSeq;
+				for (auto& parameter : metadata->Parameters)
+				{
+					out << YAML::Value << Utility::WrappedVarTypeToString(parameter);
+				}
+				out << YAML::EndSeq;
+				out << YAML::Key << "ReturnValue" << YAML::Value << Utility::WrappedVarTypeToString(metadata->ReturnValue);
+				out << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->FunctionType);
+			}
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		FileSystem::CreateNewDirectory(ScriptRegistryLocation.parent_path());
+
+		std::ofstream fout(ScriptRegistryLocation);
+		fout << out.c_str();
+	}
+
+	AssetHandle AssetManager::CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
+		WrappedVarType returnValue, WrappedFuncType functionType)
+	{
+		// Create Checksum
+		const std::string currentCheckSum {};
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		FillScriptMetadata(name, parameters, returnValue, functionType, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Script
+		s_ScriptRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeScriptRegistry(); // Update Registry File on Disk
+
+		s_Scripts.insert({ newHandle, InstantiateScriptIntoMemory(newAsset) });
+
+		return newHandle;
+	}
+
+	void AssetManager::DeleteScript(AssetHandle handle)
+	{
+		if (!s_ScriptRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete script in AssetManager");
+			return;
+		}
+
+		FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+			s_ScriptRegistry.at(handle).Data.IntermediateLocation);
+
+		s_ScriptRegistry.erase(handle);
+		if (s_Scripts.contains(handle))
+		{
+			s_Scripts.erase(handle);
+		}
+
+		SerializeScriptRegistry();
+	}
+
+	Ref<Scripting::Script> AssetManager::InstantiateScriptIntoMemory(Assets::Asset& asset)
+	{
+		Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
+		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
+
+		// TODO: Instantiate Script Function Pointer!
+		newScript->m_ID = asset.Handle;
+		newScript->m_ScriptName = metadata.Name;
+		newScript->m_Parameters = metadata.Parameters;
+		newScript->m_ReturnValue = metadata.ReturnValue;
+		Scripting::ScriptCore::LoadScriptFunction(newScript, metadata.FunctionType);
+
+		return newScript;
+
+	}
+
+	Ref<Scripting::Script> AssetManager::GetScript(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving Script!");
+
+		if (s_Scripts.contains(handle)) { return s_Scripts[handle]; }
+
+		if (s_ScriptRegistry.contains(handle))
+		{
+			auto asset = s_ScriptRegistry[handle];
+
+			Ref<Scripting::Script> newScript = InstantiateScriptIntoMemory(asset);
+			s_Scripts.insert({ asset.Handle, newScript });
+			return newScript;
+		}
+
+		KG_ERROR("No Script is associated with provided handle!");
+		return nullptr;
+	}
+
+	void AssetManager::ClearScriptRegistry()
+	{
+		s_ScriptRegistry.clear();
+		s_Scripts.clear();
+	}
+
+	void AssetManager::FillScriptMetadata(const std::string& name, const std::vector<WrappedVarType>& parameters,
+		WrappedVarType returnValue, WrappedFuncType functionType, Assets::Asset& newAsset)
+	{
+		// Create cpp file
+		std::string intermediatePath = "Scripting/" + (std::string)newAsset.Handle + ".cpp";
+		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+
+		// Write out return value and function name
+		std::stringstream outputStream {};
+		outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " KG_FUNC_" << newAsset.Handle << "(";
+
+		// Write out parameters into function signature
+		char letterIteration{ 'a' };
+		for (uint32_t iteration {0}; static_cast<size_t>(iteration) < parameters.size(); iteration++)
+		{ 
+			outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
+			if (iteration != parameters.size() - 1)
+			{
+				outputStream << ',';
+			}
+			letterIteration++;
+		}
+
+		outputStream << ")" << "\n";
+		outputStream << "{" << "\n";
+		outputStream << "}" << "\n";
+
+		FileSystem::WriteFileString(intermediateFullPath, outputStream.str());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Script;
+		newAsset.Data.IntermediateLocation = intermediatePath;
+		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
+		metadata->Name = name;
+		metadata->Parameters = parameters;
+		metadata->ReturnValue = returnValue;
+		metadata->FunctionType = functionType;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
 	bool AssetManager::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
 	{
 		auto& config = project->m_Config;
@@ -3389,6 +3651,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(config.StartSceneHandle);
 				out << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
 				out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
+				out << YAML::Key << "ScriptDLLPath" << YAML::Value << config.ScriptDLLPath.string();
 				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
 				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
 				out << YAML::Key << "OnRuntimeStartFunction" << YAML::Value << config.OnRuntimeStartFunction;
@@ -3450,6 +3713,7 @@ namespace Kargono::Assets
 		config.StartSceneHandle = static_cast<AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
+		config.ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
 		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
 		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
 		config.OnRuntimeStartFunction = projectNode["OnRuntimeStartFunction"].as<std::string>();

@@ -4,6 +4,7 @@ Project:
   StartSceneHandle: 13036162138140767594
   AssetDirectory: Assets
   ScriptModulePath: Scripts/Binaries/Pong.dll
+  ScriptDLLPath: Scripting/bin/Pong.dll
   DefaultFullscreen: false
   TargetResolution: 1280x720
   OnRuntimeStartFunction: OpenMainMenu
