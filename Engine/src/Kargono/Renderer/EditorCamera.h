@@ -142,7 +142,7 @@ namespace Kargono
 		float ZoomSpeed() const;
 	private:
 		// Camera Movement Type
-		EditorCamera::MovementType m_MovementType = MovementType::ModelView;
+		EditorCamera::MovementType m_MovementType = MovementType::FreeFly;
 
 		// Camera Projection Fields
 		float m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;

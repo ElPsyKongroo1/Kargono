@@ -151,6 +151,9 @@ namespace Kargono::Utility
 		std::string outputString = "start " + std::string("../Engine/dependencies/optick/Optick.exe");
 		system(outputString.c_str());
 	}
+
+
+
 #endif
 
 	std::filesystem::path FileDialogs::OpenFile(const char* filter)

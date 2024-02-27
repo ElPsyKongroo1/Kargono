@@ -11,6 +11,8 @@
 #include <filesystem>
 #include <tuple>
 
+#include "Kargono/Scripting/Scripting.h"
+
 
 namespace Kargono
 {
@@ -546,6 +548,81 @@ namespace Kargono::Assets
 		//		metadata that is necessary to load the intermediate file correctly.
 		static std::unordered_map<AssetHandle, Assets::Asset> s_InputModeRegistry;
 
+
+	//============================================================
+	// Script
+	//============================================================
+	public:
+		//==============================
+		// Manage Script Registry
+		//==============================
+		// Retrieve the current project's Script registry from disk and add to in-memory Registry
+		//		(s_ScriptRegistry). This involves:
+		//		1. Retrieving the registry file from the current project asset directory.
+		//		2. Verifying the file is a registry file and opening the root node
+		//		3. Read each asset, retrieve its metadata, retrieve its Script specific metadata,
+		//		and instatiate each asset into the s_ScriptRegistry.
+		static void DeserializeScriptRegistry();
+		// Save Current in-memory registry (s_ScriptRegistry) to disk location specified in
+		//		current project. This involves:
+		//		1. Open a new registry file that is located in the current project asset directory.
+		//		2. Write each asset with its metadata and Script specific metadata into the new yaml file.
+		//		3. Write the file to the output stream.
+		static void SerializeScriptRegistry();
+		// This function clears both the s_ScriptRegistry and s_Script which should also call
+		//		all destructors for in-memory Script.
+		static void ClearScriptRegistry();
+
+		//==============================
+		// Import New Script
+		//==============================
+
+		// This function registers a new Script with the asset system using the provided filepath.
+		//		This function takes the following steps:
+		//		1. Create a checksum from the raw file provided and determine if the file already
+		//		exists in the registry.
+		//		2. Create the intermediate file format and store this format on disk.
+		//		3. Register the new file with the in-memory s_ScriptRegistry and the on disk Script
+		//		registry
+		//		4. Instantiate the new Script into memory and return a handle to the new Script.
+		static AssetHandle CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
+			WrappedVarType returnValue, WrappedFuncType functionType);
+
+		static void DeleteScript(AssetHandle handle);
+
+		//==============================
+		// Load and Retrieve In-Memory Script
+		//==============================
+
+		// Function to get a texture with a given name
+		static Ref<Scripting::Script> GetScript(const AssetHandle& handle);
+		// Function to get an Script buffer from its initial file location
+		static std::tuple<AssetHandle, Ref<Scripting::Script>> GetScript(const std::filesystem::path& filepath);
+
+		static std::unordered_map<AssetHandle, Ref<Scripting::Script>>& GetScriptMap()
+		{
+			return s_Scripts;
+		}
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+
+		static void FillScriptMetadata(const std::string& name, const std::vector<WrappedVarType>& parameters,
+			WrappedVarType returnValue, WrappedFuncType functionType, Assets::Asset& newAsset);
+		// Function to Load a new Script from a buffer
+		static Ref<Scripting::Script> InstantiateScriptIntoMemory(Assets::Asset& asset);
+	private:
+		// This registry holds a reference to all of the available Script in the current project.
+		//		Since the registry only holds references, it does not instantiate any of the objects
+		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
+		//		metadata that is necessary to load the intermediate file correctly.
+		static std::unordered_map<AssetHandle, Assets::Asset> s_ScriptRegistry;
+
+		static std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
+
+		friend class Scripting::ScriptCore;
+
 	//============================================================
 	// Project
 	//============================================================
@@ -594,6 +671,7 @@ namespace Kargono::Assets
 			DeserializeSceneRegistry();
 			DeserializeUIObjectRegistry();
 			DeserializeInputModeRegistry();
+			DeserializeScriptRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -606,6 +684,7 @@ namespace Kargono::Assets
 			SerializeSceneRegistry();
 			SerializeUIObjectRegistry();
 			SerializeInputModeRegistry();
+			SerializeScriptRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -618,6 +697,7 @@ namespace Kargono::Assets
 			ClearSceneRegistry();
 			ClearUIObjectRegistry();
 			ClearInputModeRegistry();
+			ClearScriptRegistry();
 		}
 	};
 	

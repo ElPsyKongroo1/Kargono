@@ -15,7 +15,6 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Network/Client.h"
 
-
 #include "mono/jit/jit.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/reflection.h"
@@ -57,8 +56,6 @@ namespace Kargono::Script
 	{
 		return ScriptEngine::GetManagedInstance(entityID);
 	}
-
-	
 
 	static void TransformComponent_GetTranslation(UUID entityID, Math::vec3* outTranslation)
 	{
@@ -463,10 +460,6 @@ namespace Kargono::Script
 
 	void ScriptGlue::RegisterFunctions()
     {
-		//KG_ADD_INTERNAL_CALL(NativeLog);
-		//KG_ADD_INTERNAL_CALL(NativeLog_Vector);
-		//KG_ADD_INTERNAL_CALL(NativeLog_VectorDot);
-
 		KG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		KG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		KG_ADD_INTERNAL_CALL(GetScriptInstance);

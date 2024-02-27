@@ -56,6 +56,9 @@ namespace Kargono::Projects
 		// ScriptModulePath describes the path from the asset directory to the script
 		//		.dll that holds the scripts for the project.
 		std::filesystem::path ScriptModulePath;
+		// ScriptDLLPath describes the path from the asset directory to the script
+		//		.dll that holds the scripts for the project.
+		std::filesystem::path ScriptDLLPath;
 		// DefaultFullscreen describes the preference to start the application in the
 		//		runtime as fullscreen.
 		bool DefaultFullscreen = false;
@@ -161,6 +164,18 @@ namespace Kargono::Projects
 			}
 			// Return Relative Path
 			return s_ActiveProject->m_Config.ScriptModulePath;
+		}
+
+		static std::filesystem::path GetScriptDLLPath(bool absolute = true)
+		{
+			KG_ASSERT(s_ActiveProject);
+			if (absolute)
+			{
+				// Return Absolute Path
+				return GetAssetDirectory() / s_ActiveProject->m_Config.ScriptDLLPath;
+			}
+			// Return Relative Path
+			return s_ActiveProject->m_Config.ScriptDLLPath;
 		}
 
 		// This function returns the AssetHandle associated with the starting
