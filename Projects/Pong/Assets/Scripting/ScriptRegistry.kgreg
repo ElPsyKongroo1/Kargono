@@ -10,16 +10,6 @@ Assets:
         []
       ReturnValue: Void
       FunctionType: Void_None
-  - AssetHandle: 3412061034672738214
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/3412061034672738214.cpp
-      AssetType: Script
-      Name: Potato0
-      Parameters:
-        []
-      ReturnValue: Void
-      FunctionType: Void_None
   - AssetHandle: 7448269885476125662
     MetaData:
       CheckSum: ""
