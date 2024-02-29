@@ -96,22 +96,17 @@ namespace Kargono::Scripting
 		delete s_ScriptingData->DLLInstance;
 		s_ScriptingData->DLLInstance = nullptr;
 	}
-	void ScriptCore::CreateDll()
+	void ScriptCore::CreateDll(bool addDebugSymbols)
 	{
 		CloseDll();
 
 		CreateDllHeader();
 		CreateDllCPPFiles();
-		CompileDll();
+		CompileDll(addDebugSymbols);
 
 		OpenDll();
 		Assets::AssetManager::DeserializeScriptRegistry();
 	}
-
-	typedef void (*void_none)();
-	typedef bool (*bool_none)();
-
-	typedef void (*void_string_funcvoidnone)(const std::string&, std::function<void()>);
 
 	void ScriptCore::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
@@ -228,7 +223,7 @@ namespace Kargono::Scripting
 		FileSystem::WriteFileString(file, outputStream.str());
 	}
 
-	void ScriptCore::CompileDll()
+	void ScriptCore::CompileDll(bool addDebugSymbols)
 	{
 		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
 		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
@@ -246,6 +241,11 @@ namespace Kargono::Scripting
 		outputStream << "cl "; // Add Command
 		outputStream << "/LD "; // Make Output Shared Library
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros/Defines
+
+		if (addDebugSymbols)
+		{
+			outputStream << "/Z7 "; // Add debug info to executable
+		}
 		outputStream << "/Fo" << intermediatePath.string() << ' '; // Define Intermediate Location
 		outputStream << "/Fe" << binaryPath.string() << ' '; // Define Macros/Defines
 		outputStream << sourcePath.string(); // Add File(s) to compile

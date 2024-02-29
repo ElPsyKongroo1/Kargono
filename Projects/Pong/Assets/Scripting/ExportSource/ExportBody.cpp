@@ -21,8 +21,4 @@ void KG_FUNC_7448269885476125662()
 	testFunction();
 }
 
-void KG_FUNC_3412061034672738214()
-{
-}
-
 }

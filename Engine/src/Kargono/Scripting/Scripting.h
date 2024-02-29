@@ -26,12 +26,12 @@ namespace Kargono::Scripting
 	public:
 		static void OpenDll();
 		static void CloseDll();
-		static void CreateDll();
+		static void CreateDll(bool addDebugSymbols = true);
 		static void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
 	private:
 		static void CreateDllHeader();
 		static void CreateDllCPPFiles();
-		static void CompileDll();
+		static void CompileDll(bool addDebugSymbols);
 		static void AddEngineFuncsToDll();
 	private:
 		static std::function<void(const std::string&, std::function<void()>)> s_AddVoidNone;

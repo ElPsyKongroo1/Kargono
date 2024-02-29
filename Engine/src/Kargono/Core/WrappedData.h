@@ -2,9 +2,14 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 
 namespace Kargono
 {
+	typedef void (*void_none)();
+	typedef bool (*bool_none)();
+	typedef void (*void_string_funcvoidnone)(const std::string&, std::function<void()>);
+
 	enum class WrappedVarType
 	{
 		None = 0,

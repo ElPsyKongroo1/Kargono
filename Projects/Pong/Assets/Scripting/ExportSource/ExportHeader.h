@@ -13,6 +13,5 @@ extern "C"
 KARGONO_API void AddVoidNone(const std::string& funcName, std::function<void()> funcPtr);
 		KARGONO_API void KG_FUNC_753079771072191180();
 		KARGONO_API void KG_FUNC_7448269885476125662();
-		KARGONO_API void KG_FUNC_3412061034672738214();
 	}
 }
