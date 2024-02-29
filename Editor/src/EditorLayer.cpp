@@ -966,7 +966,7 @@ namespace Kargono
 				}
 			}
 
-			iterator++;
+   			iterator++;
 		}
 
 		if (deleteScript)
