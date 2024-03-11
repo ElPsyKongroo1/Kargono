@@ -162,22 +162,9 @@ namespace Kargono
 				ExecuteMainThreadQueue();
 				if (!m_Minimized)
 				{
+					for (Layer* layer : m_LayerStack)
 					{
-						for (Layer* layer : m_LayerStack)
-						{
-							layer->OnUpdate(k_ConstantFrameTimeStep);
-						}
-					}
-					if (m_ImGuiLayer)
-					{
-						m_ImGuiLayer->Begin();
-						{
-							for (Layer* layer : m_LayerStack)
-							{
-								layer->OnImGuiRender();
-							}
-						}
-						m_ImGuiLayer->End();
+						layer->OnUpdate(k_ConstantFrameTimeStep);
 					}
 				
 				}

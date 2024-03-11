@@ -4,7 +4,6 @@
 
 #include "EditorLayer.h"
 
-#include <imgui.h>
 #include "imgui_internal.h"
 
 
@@ -17,7 +16,7 @@
 
 namespace Kargono
 {
-	void SceneHierarchyPanel::OnImGuiRender()
+	void SceneHierarchyPanel::OnEditorUIRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
 
@@ -67,7 +66,7 @@ namespace Kargono
 		}
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			auto& editorCamera = EditorLayer::GetCurrentLayer()->GetEditorCamera();
+			auto& editorCamera = EditorLayer::GetCurrentLayer()->m_ViewportPanel->m_EditorCamera;
 			auto& transformComponent = entity.GetComponent<TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);

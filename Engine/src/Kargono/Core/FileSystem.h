@@ -17,7 +17,7 @@ namespace Kargono
 		static void RenameFile(const std::filesystem::path& oldPath, std::string newName);
 
 		static Buffer ReadFileBinary(const std::filesystem::path& filepath);
-		static void DeleteSelectedFile(const std::filesystem::path& filepath);
+		static bool DeleteSelectedFile(const std::filesystem::path& filepath);
 		static void DeleteSelectedDirectory(const std::filesystem::path& filepath);
 
 		static bool DoesPathContainSubPath(const std::filesystem::path& base, const std::filesystem::path& full);

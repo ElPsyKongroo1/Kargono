@@ -202,33 +202,33 @@ namespace Kargono::Script
 		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiLocation);
 		if (uiReference)
 		{
-			UI::RuntimeEngine::LoadUIObject(uiReference, handle);
+			UI::Runtime::LoadUIObject(uiReference, handle);
 		}
 	}
 
 	static void UserInterface_MoveRight()
 	{
-		UI::RuntimeEngine::MoveRight();
+		UI::Runtime::MoveRight();
 	}
 
 	static void UserInterface_MoveLeft()
 	{
-		UI::RuntimeEngine::MoveLeft();
+		UI::Runtime::MoveLeft();
 	}
 
 	static void UserInterface_MoveUp()
 	{
-		UI::RuntimeEngine::MoveUp();
+		UI::Runtime::MoveUp();
 	}
 
 	static void UserInterface_MoveDown()
 	{
-		UI::RuntimeEngine::MoveDown();
+		UI::Runtime::MoveDown();
 	}
 
 	static void UserInterface_OnPress()
 	{
-		UI::RuntimeEngine::OnPress();
+		UI::Runtime::OnPress();
 	}
 
 	static void UserInterface_SetWidgetText(MonoString* windowTag, MonoString* widgetTag, MonoString* newText )
@@ -236,14 +236,14 @@ namespace Kargono::Script
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
 		const std::string text = std::string(mono_string_to_utf8(newText));
-		UI::RuntimeEngine::SetWidgetText(window, widget, text);
+		UI::Runtime::SetWidgetText(window, widget, text);
 	}
 
 	static void UserInterface_SetSelectedWidget(MonoString* windowTag, MonoString* widgetTag)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::RuntimeEngine::SetSelectedWidget(window, widget);
+		UI::Runtime::SetSelectedWidget(window, widget);
 	}
 	
 
@@ -251,28 +251,28 @@ namespace Kargono::Script
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::RuntimeEngine::SetWidgetTextColor(window, widget, *color);
+		UI::Runtime::SetWidgetTextColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetBackgroundColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::RuntimeEngine::SetWidgetBackgroundColor(window, widget, *color);
+		UI::Runtime::SetWidgetBackgroundColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetSelectable(MonoString* windowTag, MonoString* widgetTag, bool selectable)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::RuntimeEngine::SetWidgetSelectable(window, widget, selectable);
+		UI::Runtime::SetWidgetSelectable(window, widget, selectable);
 	}
 
 	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		
-		UI::RuntimeEngine::SetDisplayWindow(window, display);
+		UI::Runtime::SetDisplayWindow(window, display);
 	}
 
 	static void InputMode_LoadInputMode(MonoString* inputModeLocation)

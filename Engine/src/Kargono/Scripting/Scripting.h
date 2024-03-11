@@ -48,17 +48,4 @@ namespace Kargono::Scripting
 	private:
 		friend class Assets::AssetManager;
 	};
-
-
-	class EntityClass
-	{ 
-	private:
-		std::string m_Name{};
-		std::vector<WrappedVarType> m_Fields{};
-	private:
-		Script* OnPhysicsCollisionStart {nullptr};
-		Script* OnPhysicsCollisionEnd {nullptr};
-		Script* OnCreate {nullptr};
-		Script* OnUpdate {nullptr};
-	};
 }

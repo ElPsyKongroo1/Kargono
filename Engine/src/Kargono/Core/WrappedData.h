@@ -40,7 +40,7 @@ namespace Kargono
 	public:
 		virtual WrappedVarType Type() override { return WrappedVarType::UInteger64; }
 	public:
-		int32_t m_Value{};
+		uint64_t m_Value{};
 	};
 
 	enum class WrappedFuncType

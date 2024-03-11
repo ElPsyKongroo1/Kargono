@@ -5,7 +5,6 @@
 #include "Kargono/Core/Window.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/ApplicationEvent.h"
-#include "Kargono/Core/ImGuiLayer.h"
 #include "Kargono/Renderer/InputBuffer.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Audio/AudioEngine.h"
@@ -62,12 +61,6 @@ namespace Kargono
 			contactListener.SetEventCallback(KG_BIND_EVENT_FN(Application::OnEvent));
 		}
 
-		void AddImGuiLayer()
-		{
-			KG_ASSERT(!m_ImGuiLayer, "An ImGui Layer already exists!");
-			m_ImGuiLayer = new ImGuiLayer();
-			PushOverlay(m_ImGuiLayer);
-		}
 
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
@@ -77,11 +70,6 @@ namespace Kargono
 
 		void Close();
 
-		ImGuiLayer* GetImGuiLayer()
-		{
-			if (!m_ImGuiLayer) { KG_ERROR("Getting application ImGui Layer, but there is not ImGui Context!"); }
-			return m_ImGuiLayer;
-		}
 
 		double GetAppStartTime() const { return m_AppStartTime; }
 		uint64_t GetUpdateCount() const { return m_UpdateCount; }
@@ -110,7 +98,6 @@ namespace Kargono
 		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
 		Audio::AudioEngine* m_AudioContext = nullptr;
-		ImGuiLayer* m_ImGuiLayer = nullptr;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		double m_AppStartTime = 0.0f;

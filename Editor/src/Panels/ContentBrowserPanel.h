@@ -19,7 +19,7 @@ namespace Kargono
 	public:
 		ContentBrowserPanel();
 
-		void OnImGuiRender();
+		void OnEditorUIRender();
 	private:
 		Ref<Texture2D> BrowserFileTypeToIcon(BrowserFileType type);
 	private:

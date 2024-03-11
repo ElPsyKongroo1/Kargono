@@ -255,7 +255,6 @@ namespace Kargono::Network
 
 			case CustomMsgTypes::UDPInit:
 			{
-				KG_TRACE("Submitted UDP INIT TO CLIENT");
 				Kargono::Network::Message newMessage;
 				newMessage.Header.ID = CustomMsgTypes::UDPInit;
 				MessageClientUDP(client, newMessage);
