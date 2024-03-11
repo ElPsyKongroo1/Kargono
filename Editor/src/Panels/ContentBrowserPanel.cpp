@@ -5,7 +5,6 @@
 #include "EditorLayer.h"
 #include "Panels/ContentBrowserPanel.h"
 
-#include <imgui.h>
 
 
 namespace Kargono::Utility
@@ -60,7 +59,7 @@ namespace Kargono
 		
 	}
 
-	void ContentBrowserPanel::OnImGuiRender()
+	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		ImGui::Begin("Content Browser");
 
@@ -73,7 +72,7 @@ namespace Kargono
 
 		if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
 		{
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::EditorEngine::s_BackIcon->GetRendererID(), { 22.4f, 22.4f }, { 0, 1 }, { 1, 0 }))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_BackIcon->GetRendererID(), { 22.4f, 22.4f }, { 0, 1 }, { 1, 0 }))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
@@ -207,7 +206,7 @@ namespace Kargono
 						Ref<UI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
-							UI::RuntimeEngine::SetFont(font, currentHandle);
+							UI::Runtime::SetFont(font, currentHandle);
 						}
 
 						else { KG_WARN("Could not load font {0}", path.filename().string()); }
@@ -353,21 +352,21 @@ namespace Kargono
 	{
 		switch (type)
 		{
-			case BrowserFileType::Directory: { return UI::EditorEngine::s_DirectoryIcon; }
-			case BrowserFileType::Image: { return UI::EditorEngine::s_ImageIcon; }
-			case BrowserFileType::Audio: { return UI::EditorEngine::s_AudioIcon; }
-			case BrowserFileType::Font: { return UI::EditorEngine::s_FontIcon; }
-			case BrowserFileType::UserInterface: { return UI::EditorEngine::s_UserInterfaceIcon; }
+			case BrowserFileType::Directory: { return UI::Editor::s_DirectoryIcon; }
+			case BrowserFileType::Image: { return UI::Editor::s_ImageIcon; }
+			case BrowserFileType::Audio: { return UI::Editor::s_AudioIcon; }
+			case BrowserFileType::Font: { return UI::Editor::s_FontIcon; }
+			case BrowserFileType::UserInterface: { return UI::Editor::s_UserInterfaceIcon; }
 
-			case BrowserFileType::Binary: { return UI::EditorEngine::s_BinaryIcon; }
-			case BrowserFileType::Registry: { return UI::EditorEngine::s_RegistryIcon; }
-			case BrowserFileType::Scene: { return UI::EditorEngine::s_SceneIcon; }
-			case BrowserFileType::ScriptProject: { return UI::EditorEngine::s_ScriptProjectIcon; }
-			case BrowserFileType::Input: { return UI::EditorEngine::s_InputIcon; }
+			case BrowserFileType::Binary: { return UI::Editor::s_BinaryIcon; }
+			case BrowserFileType::Registry: { return UI::Editor::s_RegistryIcon; }
+			case BrowserFileType::Scene: { return UI::Editor::s_SceneIcon; }
+			case BrowserFileType::ScriptProject: { return UI::Editor::s_ScriptProjectIcon; }
+			case BrowserFileType::Input: { return UI::Editor::s_InputIcon; }
 
-			case BrowserFileType::None: { return UI::EditorEngine::s_GenericFileIcon; }
+			case BrowserFileType::None: { return UI::Editor::s_GenericFileIcon; }
 		}
 		KG_ASSERT(false, "Invalid BrowserFileType provided");
-		return UI::EditorEngine::s_GenericFileIcon;
+		return UI::Editor::s_GenericFileIcon;
 	}
 }

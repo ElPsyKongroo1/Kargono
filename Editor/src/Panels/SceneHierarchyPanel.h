@@ -9,7 +9,7 @@ namespace Kargono
 	public:
 		SceneHierarchyPanel() = default;
 
-		void OnImGuiRender();
+		void OnEditorUIRender();
 
 		void SetSelectedEntity(Entity entity);
 	private:

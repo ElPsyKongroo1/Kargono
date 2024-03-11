@@ -4,8 +4,8 @@
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Audio/AudioEngine.h"
-#include "Kargono/UI/TextEngine.h"
-#include "Kargono/UI/RuntimeUI.h"
+#include "Kargono/UI/Text.h"
+#include "Kargono/UI/Runtime.h"
 #include "Kargono/Input/InputMode.h"
 
 #include <filesystem>

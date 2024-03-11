@@ -42,9 +42,9 @@ namespace Kargono
 		return buffer;
 	}
 
-	void FileSystem::DeleteSelectedFile(const std::filesystem::path& filepath)
+	bool FileSystem::DeleteSelectedFile(const std::filesystem::path& filepath)
 	{
-		std::filesystem::remove(filepath);
+		return std::filesystem::remove(filepath);
 	}
 
 	void FileSystem::DeleteSelectedDirectory(const std::filesystem::path& filepath)

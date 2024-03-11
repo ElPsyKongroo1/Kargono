@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/UI/RuntimeUI.h"
+#include "Kargono/UI/Runtime.h"
 
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Core/Application.h"
@@ -13,7 +13,7 @@
 
 namespace Kargono::UI
 {
-	RuntimeEngine RuntimeEngine::s_Engine{};
+	Runtime Runtime::s_Engine{};
 	Ref<Font> s_DefaultFont = nullptr;
 
 	static RendererInputSpec s_BackgroundInputSpec{};
@@ -28,11 +28,11 @@ namespace Kargono::UI
 	static int32_t s_SelectedWidget { -1 };
 
 
-	void RuntimeEngine::Init()
+	void Runtime::Init()
 	{
 		s_Engine.m_CurrentUI = nullptr;
 		s_Engine.m_CurrentUIHandle = 0;
-		s_DefaultFont = TextEngine::InstantiateEditorFont("resources/fonts/arial.ttf");
+		s_DefaultFont = Text::InstantiateEditorFont("resources/fonts/arial.ttf");
 		s_Engine.m_CurrentFont = s_DefaultFont;
 		s_Engine.m_FontHandle = 0;
 		// Initialize Window Spec Data
@@ -54,11 +54,11 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::Terminate()
+	void Runtime::Terminate()
 	{
 	}
 
-	void RuntimeEngine::LoadUIObject(Ref<UIObject> uiObject, Assets::AssetHandle uiHandle)
+	void Runtime::LoadUIObject(Ref<UIObject> uiObject, Assets::AssetHandle uiHandle)
 	{
 		ClearUIEngine();
 
@@ -106,7 +106,7 @@ namespace Kargono::UI
 	}
 
 
-	bool RuntimeEngine::SaveCurrentUIIntoUIObject()
+	bool Runtime::SaveCurrentUIIntoUIObject()
 	{
 		if (!static_cast<bool>(s_Engine.m_CurrentUI) || s_Engine.m_CurrentUIHandle == 0)
 		{
@@ -137,16 +137,16 @@ namespace Kargono::UI
 		return true;
 	}
 
-	void RuntimeEngine::DeleteWindow(uint32_t windowLocation)
+	void Runtime::DeleteWindow(uint32_t windowLocation)
 	{
 		auto& windows = s_Engine.GetAllWindows();
 		std::vector<Window>::iterator windowPointer = windows.begin() + static_cast<uint32_t>(windowLocation);
 		windows.erase(windowPointer);
 
-		RuntimeEngine::RefreshDisplayedWindows();
+		Runtime::RefreshDisplayedWindows();
 	}
 
-	void RuntimeEngine::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
+	void Runtime::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		RenderCommand::ClearDepthBuffer();
 		// Iterate through all characters
@@ -183,14 +183,14 @@ namespace Kargono::UI
 
 	}
 
-	void RuntimeEngine::AddWindow(Window& window)
+	void Runtime::AddWindow(Window& window)
 	{
 		window.DisplayWindow();
 		s_Engine.m_Windows.push_back(window);
-		RuntimeEngine::RefreshDisplayedWindows();
+		Runtime::RefreshDisplayedWindows();
 	}
 
-	void RuntimeEngine::SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
+	void Runtime::SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
 	{
 		s_Engine.m_CurrentFont = newFont;
 		s_Engine.m_FontHandle = fontHandle;
@@ -206,7 +206,7 @@ namespace Kargono::UI
 		}
 	}
 
-	std::vector<Window>& RuntimeEngine::GetAllWindows()
+	std::vector<Window>& Runtime::GetAllWindows()
 	{
 		return s_Engine.m_Windows;
 	}
@@ -233,7 +233,7 @@ namespace Kargono::UI
 		if (WidgetCounts.PopupWidgetLocation > iterator) { WidgetCounts.PopupWidgetLocation--; }
 	}
 
-	void RuntimeEngine::RefreshDisplayedWindows()
+	void Runtime::RefreshDisplayedWindows()
 	{
 		s_Engine.m_DisplayedWindows.clear();
 		for (auto& window : s_Engine.GetAllWindows())
@@ -242,7 +242,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::ClearUIEngine()
+	void Runtime::ClearUIEngine()
 	{
 		s_Engine.m_CurrentUI = nullptr;
 		s_Engine.m_CurrentUIHandle = 0;
@@ -264,32 +264,32 @@ namespace Kargono::UI
 		s_SelectedWidget = -1;
 	}
 
-	Ref<UIObject> RuntimeEngine::GetCurrentUIObject()
+	Ref<UIObject> Runtime::GetCurrentUIObject()
 	{
 		return s_Engine.m_CurrentUI;
 	}
 
-	Assets::AssetHandle RuntimeEngine::GetCurrentUIHandle()
+	Assets::AssetHandle Runtime::GetCurrentUIHandle()
 	{
 		return s_Engine.m_CurrentUIHandle;
 	}
 
-	void RuntimeEngine::SetCurrentUIObject(Ref<UIObject> newUI)
+	void Runtime::SetCurrentUIObject(Ref<UIObject> newUI)
 	{
 		s_Engine.m_CurrentUI = newUI;
 	}
 
-	void RuntimeEngine::SetCurrentUIHandle(Assets::AssetHandle newHandle)
+	void Runtime::SetCurrentUIHandle(Assets::AssetHandle newHandle)
 	{
 		s_Engine.m_CurrentUIHandle = newHandle;
 	}
 
-	void RuntimeEngine::SetSelectedWidgetColor(const Math::vec4& color)
+	void Runtime::SetSelectedWidgetColor(const Math::vec4& color)
 	{
 		s_Engine.m_SelectedWidget->ActiveBackgroundColor = color;
 	}
 
-	void RuntimeEngine::SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
+	void Runtime::SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -311,7 +311,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
+	void Runtime::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -332,7 +332,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void Runtime::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -354,7 +354,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void Runtime::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -372,7 +372,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
+	void Runtime::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -390,17 +390,17 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::SetFunctionOnMove(const std::string& function)
+	void Runtime::SetFunctionOnMove(const std::string& function)
 	{
 		s_Engine.m_FunctionPointers.OnMove = function;
 	}
 
-	std::string RuntimeEngine::GetFunctionOnMove()
+	std::string Runtime::GetFunctionOnMove()
 	{
 		return s_Engine.m_FunctionPointers.OnMove;
 	}
 
-	void RuntimeEngine::SetDisplayWindow(const std::string& windowTag, bool display)
+	void Runtime::SetDisplayWindow(const std::string& windowTag, bool display)
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -419,7 +419,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::MoveRight()
+	void Runtime::MoveRight()
 	{
 		if (s_Engine.m_CurrentUI && s_Engine.m_SelectedWidget && 
 			s_Engine.m_ActiveWindow && s_Engine.m_SelectedWidget->DirectionPointer.Right != -1)
@@ -431,7 +431,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::MoveLeft()
+	void Runtime::MoveLeft()
 	{
 		if (s_Engine.m_CurrentUI && s_Engine.m_SelectedWidget &&
 			s_Engine.m_ActiveWindow && s_Engine.m_SelectedWidget->DirectionPointer.Left != -1)
@@ -443,7 +443,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::MoveUp()
+	void Runtime::MoveUp()
 	{
 		if (s_Engine.m_CurrentUI && s_Engine.m_SelectedWidget &&
 			s_Engine.m_ActiveWindow && s_Engine.m_SelectedWidget->DirectionPointer.Up != -1)
@@ -455,7 +455,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::MoveDown()
+	void Runtime::MoveDown()
 	{
 		if (s_Engine.m_CurrentUI && s_Engine.m_SelectedWidget &&
 			s_Engine.m_ActiveWindow && s_Engine.m_SelectedWidget->DirectionPointer.Down != -1)
@@ -467,13 +467,13 @@ namespace Kargono::UI
 		}
 	}
 
-	void RuntimeEngine::OnPress()
+	void Runtime::OnPress()
 	{
 		if (!s_Engine.m_SelectedWidget) { return; }
 		Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_SelectedWidget->FunctionPointers.OnPress);
 	}
 
-	void RuntimeEngine::CalculateDirections()
+	void Runtime::CalculateDirections()
 	{
 		for (auto& window : s_Engine.m_Windows)
 		{
@@ -717,42 +717,42 @@ namespace Kargono::UI
 		}
 	}
 
-	int32_t& RuntimeEngine::GetWindowToDelete()
+	int32_t& Runtime::GetWindowToDelete()
 	{
 		return s_WindowToDelete;
 	}
 
-	int32_t& RuntimeEngine::GetWidgetToDelete()
+	int32_t& Runtime::GetWidgetToDelete()
 	{
 		return s_WidgetToDelete;
 	}
 
-	int32_t& RuntimeEngine::GetWindowsToAddWidget()
+	int32_t& Runtime::GetWindowsToAddWidget()
 	{
 		return s_WindowsToAddWidget;
 	}
 
-	UI::WidgetTypes& RuntimeEngine::GetWidgetTypeToAdd()
+	UI::WidgetTypes& Runtime::GetWidgetTypeToAdd()
 	{
 		return s_WidgetTypeToAdd;
 	}
 
-	uint32_t& RuntimeEngine::GetWindowToAdd()
+	uint32_t& Runtime::GetWindowToAdd()
 	{
 		return s_WindowToAdd;
 	}
 
-	int32_t& RuntimeEngine::GetSelectedWindow()
+	int32_t& Runtime::GetSelectedWindow()
 	{
 		return s_SelectedWindow;
 	}
 
-	int32_t& RuntimeEngine::GetSelectedWidget()
+	int32_t& Runtime::GetSelectedWidget()
 	{
 		return s_SelectedWidget;
 	}
 
-	Math::vec4& RuntimeEngine::GetSelectColor()
+	Math::vec4& Runtime::GetSelectColor()
 	{
 		return s_Engine.m_SelectColor;
 	}
@@ -763,7 +763,7 @@ namespace Kargono::UI
 
 		WindowDisplayed = true;
 
-		RuntimeEngine::RefreshDisplayedWindows();
+		Runtime::RefreshDisplayedWindows();
 
 	}
 
@@ -773,7 +773,7 @@ namespace Kargono::UI
 
 		WindowDisplayed = false;
 
-		RuntimeEngine::RefreshDisplayedWindows();
+		Runtime::RefreshDisplayedWindows();
 	}
 
 	bool Window::GetWindowDisplayed()
@@ -904,12 +904,12 @@ namespace Kargono::UI
 		//KG_CORE_INFO("Text Absolute Size is {} {}", TextAbsoluteDimensions.x, TextAbsoluteDimensions.y);
 		//textSize += 50.0f;
 
-		RuntimeEngine::s_Engine.m_CurrentFont->PushTextData(Text, widgetTranslation, TextColor, textSize);
+		Runtime::s_Engine.m_CurrentFont->PushTextData(Text, widgetTranslation, TextColor, textSize);
 	}
 
 	void TextWidget::CalculateTextSize()
 	{
-		TextAbsoluteDimensions = RuntimeEngine::s_Engine.m_CurrentFont->CalculateTextSize(Text);
+		TextAbsoluteDimensions = Runtime::s_Engine.m_CurrentFont->CalculateTextSize(Text);
 	}
 
 	void TextWidget::SetText(const std::string& newText)

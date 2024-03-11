@@ -23,7 +23,7 @@ namespace Kargono::UI
 	//============================================================
 	// This class provides static functions to manage the creation of an unmanaged
 	//		font (Editor Font) and initialize the rendering pipeline for all text.
-	class TextEngine
+	class Text
 	{
 	public:
 		//==============================
@@ -84,7 +84,7 @@ namespace Kargono::UI
 		float m_LineHeight {0};
 		std::unordered_map<unsigned char, Character> m_Characters{};
 		friend class Assets::AssetManager;
-		friend class TextEngine;
+		friend class Text;
 	};
 
 

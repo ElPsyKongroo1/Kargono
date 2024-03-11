@@ -13,7 +13,7 @@ namespace Kargono
 		InputEditorPanel() = default;
 
 		// This panel allows the editor to create different input modes that can be swapped out
-		void OnImGuiRender();
+		void OnEditorUIRender();
 	private:
 		// This function displays the events section for keyboard input which currently only includes the OnUpdate()
 		//		function.

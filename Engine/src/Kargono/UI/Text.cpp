@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/UI/TextEngine.h"
+#include "Kargono/UI/Text.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Core/Application.h"
@@ -49,7 +49,7 @@ namespace Kargono::UI
 	static Ref<std::vector<Math::vec3>> s_Vertices;
 	static Ref<std::vector<Math::vec2>> s_TexCoordinates;
 
-	void TextEngine::Init()
+	void Text::Init()
 	{
 		// TODO: Change to Proper Boolean Check
 		if (!s_TextInputSpec.Shader)
@@ -80,7 +80,7 @@ namespace Kargono::UI
 		}
 	}
 
-	Ref<Font> TextEngine::InstantiateEditorFont(const std::filesystem::path& filepath)
+	Ref<Font> Text::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;

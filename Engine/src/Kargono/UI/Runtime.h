@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/EditorCamera.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/UI/TextEngine.h"
+#include "Kargono/UI/Text.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 
@@ -92,7 +92,7 @@ namespace Kargono::UI
 		Math::vec2 TextAbsoluteDimensions {};
 		Math::vec4 TextColor{0.5f};
 		bool TextCentered = true;
-		friend class RuntimeEngine;
+		friend class Runtime;
 	};
 
 	class ButtonWidget : public Widget
@@ -204,7 +204,7 @@ namespace Kargono::UI
 	};
 
 
-	class RuntimeEngine
+	class Runtime
 	{
 	public:
 		static void Init();
@@ -259,7 +259,7 @@ namespace Kargono::UI
 		Assets::AssetHandle m_FontHandle {0};
 		Math::vec4 m_SelectColor {1.0f};
 
-		static RuntimeEngine s_Engine;
+		static Runtime s_Engine;
 
 		friend class TextWidget;
 

@@ -20,7 +20,6 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Core/Layer.h"
-#include "Kargono/Core/ImGuiLayer.h"
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/AppTick.h"
@@ -55,7 +54,7 @@
 #include "Kargono/Renderer/EditorCamera.h"
 
 //-----------------Text-----------------//
-#include "Kargono/UI/TextEngine.h"
+#include "Kargono/UI/Text.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scene/Scene.h"
@@ -67,8 +66,8 @@
 #include "Kargono/Scripting/Scripting.h"
 
 //-----------------UserInterface-----------------//
-#include "Kargono/UI/EditorUI.h"
-#include "Kargono/UI/RuntimeUI.h"
+#include "Kargono/UI/Editor.h"
+#include "Kargono/UI/Runtime.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utils/PlatformUtils.h"
