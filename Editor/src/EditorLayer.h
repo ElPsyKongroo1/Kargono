@@ -5,12 +5,27 @@
 #include "Panels/InputEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
+#include "Panels/ProjectPanel.h"
+#include "Panels/SettingsPanel.h"
+#include "Panels/StatisticsPanel.h"
+#include "Panels/ToolbarPanel.h"
+#include "Panels/UIEditorPanel.h"
+#include "Panels/ViewportPanel.h"
+#include "Panels/EntityClassEditor.h"
+#include "Panels/ScriptEditorPanel.h"
 
 #include <filesystem>
 #include <thread>
 
 
-namespace Kargono {
+
+namespace Kargono
+{
+	// Current Editor State Enum and Field
+	enum class SceneState
+	{
+		Edit = 0, Play = 1, Simulate = 2
+	};
 
 	//============================================================
 	// Editor Layer Class
@@ -40,10 +55,7 @@ namespace Kargono {
 		//		project. There are other things this function does, take a look at it.
 		virtual void OnAttach() override;
 		// This function simply closes and cleans up the audio system.
-	private:
-		// This function initializes the static data used by the OnOverlayRender()
-		//		function below. This function is called in OnAttach().
-		void InitializeOverlayData();
+
 	public:
 		virtual void OnDetach() override;
 		// This is a fairly large function and is at the heart of this application.
@@ -59,24 +71,6 @@ namespace Kargono {
 		//		text/ui, etc...
 		virtual void OnUpdate(Timestep ts) override;
 	private:
-		// This function runs the overlay code that displays visualization for physics colliders,
-		//		entity selection, Text/UI, and Camera Frustrums. This private function is called
-		//		in OnUpdate().
-		void OnOverlayRender();
-		// This function holds the underlying logic to draw Camera Frustrum visualizations.
-		//		This function is called in OnOverlayRender().
-		void DrawFrustrum(Entity& entity);
-
-		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
-		//		update physics, and update scripts for m_ActiveScene.
-		// These functions are called in OnUpdate() depending on the current scene state (Edit, Runtime, and Simulation)
-
-		// This function simply renders the active scene
-		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
-		// This function renders the active scene, updates scripts, and updates the scene's physics.
-		void OnUpdateRuntime(Timestep ts);
-		// This functions renders the active scene and updates the scene's physics.
-		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
 		// Increments step
 		void Step(int frames = 1);
 		
@@ -91,26 +85,7 @@ namespace Kargono {
 		//		3. The following code manages the top-left menu bar adn its options.
 		//		4. The final section conditionally displays UI_Panels based on set boolean values(these are
 		//		set in the toolbar above).
-		virtual void OnImGuiRender() override;
-	private:
-		// These functions represent UI Panel code that gets optionally called based on boolean values
-		//		set in the editor.
-		// This toolbar allows the changing of the scene state between Edit, Play, and Simulate.
-		//		This toolbar can also pause and step an application that is Playing.
-		void UI_Toolbar();
-		// This function provides access to various editor settings. Take a look.
-		void UI_Settings();
-		// This function displays various editor statistics such as drawcall data and whatnot from the renderer.
-		void UI_Stats();
-		// This is the actual viewport that shows the current Scene world.
-		void UI_Viewport();
-		// This panel allows the editor to create and manage runtime user interfaces
-		void UI_UserInterface();
-		// This function exposes project details and allows certain settings to be changed for the currently
-		//		loaded project.
-		void UI_Project();
-
-		void UI_Scripts();
+		virtual void OnEditorUIRender() override;
 
 	private:
 		// Supporting functions for InputEditor. These functions display different sections of the InputEditor
@@ -146,7 +121,6 @@ namespace Kargono {
 		// Getters/Setters
 		//=========================
 		static EditorLayer* GetCurrentLayer() { return s_EditorLayer; }
-		EditorCamera& GetEditorCamera() { return m_EditorCamera; }
 	private:
 		//=========================
 		// Scene/Project Management
@@ -198,6 +172,7 @@ namespace Kargono {
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowInputEditor = false;
 		bool m_ShowScriptEditor = false;
+		bool m_ShowClassEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -207,39 +182,35 @@ namespace Kargono {
 		// Editor Scenes
 		Ref<Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;
+		SceneState m_SceneState = SceneState::Edit;
 
+		// Cached Scene Data
 		Ref<UI::UIObject> m_EditorUIObject = nullptr;
 		Assets::AssetHandle m_EditorUIObjectHandle{0};
-
 		Ref<InputMode> m_EditorInputMode = nullptr;
 		Assets::AssetHandle m_EditorInputModeHandle{0};
 
-		// Misc
-		EditorCamera m_EditorCamera;
-
-		// Viewport Resources
-		Ref<Framebuffer> m_ViewportFramebuffer;
-		bool m_ViewportFocused = false, m_ViewportHovered = false;
-		Math::vec2 m_ViewportBounds[2];
-
-		// ImGuizmo Resources
-		int m_GizmoType = -1;
-
-		// Current Editor State Enum and Field
-		enum class SceneState
-		{
-			Edit = 0, Play = 1, Simulate = 2
-		};
-		SceneState m_SceneState = SceneState::Edit;
-		// Fields allow Stepping
+		// Stepping Fields
 		bool m_IsPaused = false;
 		int m_StepFrames = 0;
-
+	public:
 		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<LogPanel>  m_LogPanel;
 		Scope<InputEditorPanel>  m_InputEditorPanel;
+		Scope<StatisticsPanel>  m_StatisticsPanel;
+		Scope<ProjectPanel>  m_ProjectPanel;
+		Scope<SettingsPanel>  m_SettingsPanel;
+		Scope<ToolbarPanel>  m_ToolbarPanel;
+		Scope<UIEditorPanel>  m_UIEditorPanel;
+		Scope<ViewportPanel>  m_ViewportPanel;
+		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
+		Scope<EntityClassEditor>  m_EntityClassEditor;
+	private:
+		friend SettingsPanel;
+		friend ToolbarPanel;
+		friend ViewportPanel;
 	};
 
 }

@@ -18,6 +18,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <regex>
 
 #include <string>
 #include <string_view>

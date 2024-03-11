@@ -47,8 +47,8 @@ namespace Kargono
 
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
-		UI::TextEngine::Init();
-		UI::RuntimeEngine::Init();
+		UI::Text::Init();
+		UI::Runtime::Init();
 
 		OnPlay();
 	}
@@ -82,7 +82,7 @@ namespace Kargono
 
 		if (mainCamera)
 		{
-			UI::RuntimeEngine::PushRenderData(glm::inverse(cameraTransform), 
+			UI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
 				Application::GetCurrentApp().GetWindow().GetWidth(), Application::GetCurrentApp().GetWindow().GetHeight());
 		}
 	}

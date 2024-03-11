@@ -50,8 +50,8 @@ namespace Kargono::Scripting
 
 		if (s_ScriptingData->DLLInstance)
 		{
-			KG_CRITICAL("Attempt to open new scripting dll when a dll already exists in the engine");
-			return;
+			KG_INFO("Closing existing script dll");
+			CloseDll();
 		}
 
 		s_ScriptingData->DLLInstance = new HINSTANCE();
@@ -80,13 +80,13 @@ namespace Kargono::Scripting
 
 		if (!s_ScriptingData->DLLInstance)
 		{
-			KG_CRITICAL("Attempt to close scripting dll, however, DLLInstance is a nullptr");
+			KG_WARN("Attempt to close scripting dll, however, DLLInstance is a nullptr");
 			return;
 		}
 
 		if (*s_ScriptingData->DLLInstance == NULL)
 		{
-			KG_CRITICAL("Attempt to close scripting dll, however, DLLInstance value is 0 (NULL)");
+			KG_WARN("Attempt to close scripting dll, however, DLLInstance value is 0 (NULL)");
 			s_ScriptingData->DLLInstance = nullptr;
 			return;
 		}
@@ -99,7 +99,6 @@ namespace Kargono::Scripting
 	void ScriptCore::CreateDll(bool addDebugSymbols)
 	{
 		CloseDll();
-
 		CreateDllHeader();
 		CreateDllCPPFiles();
 		CompileDll(addDebugSymbols);
@@ -230,16 +229,22 @@ namespace Kargono::Scripting
 
 		std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
 		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };
+		std::filesystem::path binaryFile { binaryPath / "ExportBody.dll" };
+		std::filesystem::path objectPath { intermediatePath / "ExportBody.obj" };
+
+		UUID pdbID = UUID();
+		std::string pdbFileName = std::string(pdbID) + ".pdb";
+		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
 		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
 		// Access visual studio toolset console
-		//outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\VsDevCmd.bat\" && ";
 		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
 
 		// Cl command for compiling binary code
 		outputStream << "cl "; // Add Command
-		outputStream << "/LD "; // Make Output Shared Library
+		outputStream << "/c "; // Tell cl command to only compile code
+		outputStream << "/MDd "; // Specify Runtime Library
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros/Defines
 
 		if (addDebugSymbols)
@@ -247,8 +252,19 @@ namespace Kargono::Scripting
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
 		outputStream << "/Fo" << intermediatePath.string() << ' '; // Define Intermediate Location
-		outputStream << "/Fe" << binaryPath.string() << ' '; // Define Macros/Defines
-		outputStream << sourcePath.string(); // Add File(s) to compile
+		outputStream << sourcePath.string() << " "; // Add File(s) to compile
+
+		outputStream << " && "; // Combine commands
+		// Start Linking Stage
+		outputStream << "link "; // Start link command
+		outputStream << "/DLL "; // Specify output as a shared library
+		if (addDebugSymbols)
+		{
+			outputStream << "/DEBUG "; // Specifies output as debug files
+			outputStream << "/PDB:" << debugSymbolsPath.string() << " "; // Specify .pdb file location/name
+		}
+		outputStream << "/OUT:" << binaryFile.string() << " "; // Specify output directory
+		outputStream << objectPath.string(); // Object File to Link
 		system(outputStream.str().c_str());
 	}
 

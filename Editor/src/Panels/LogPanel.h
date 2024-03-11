@@ -35,7 +35,7 @@ namespace Kargono
 	public:
 		LogPanel();
 
-		void OnImGuiRender();
+		void OnEditorUIRender();
 		void LoadBuffer();
 	private:
 		ImGuiLog m_Log;

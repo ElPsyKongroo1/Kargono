@@ -8,9 +8,11 @@
 #include "Kargono/Renderer/Shape.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Scene/EntityClass.h"
 
 #include <string>
 #include <unordered_map>
+
 
 
 namespace Kargono
@@ -148,6 +150,17 @@ namespace Kargono
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
+	struct ClassInstanceComponent
+	{
+	public:
+		Assets::AssetHandle ClassHandle{};
+		EntityClass* ClassReference{ nullptr };
+		std::vector<Ref<WrappedVariable>> Fields{};
+
+		ClassInstanceComponent() = default;
+		ClassInstanceComponent(const ClassInstanceComponent&) = default;
+	};
+
 	struct CircleCollider2DComponent
 	{
 		Math::vec2 Offset = { 0.0f, 0.0f };
@@ -244,6 +257,6 @@ namespace Kargono
 	};
 
 	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent, ScriptComponent,
-	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
+	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }

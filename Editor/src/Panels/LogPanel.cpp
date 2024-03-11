@@ -1,10 +1,8 @@
 #include "kgpch.h"
 
-#include "LogPanel.h"
+#include "Panels/LogPanel.h"
 
 #include "Kargono.h"
-
-#include "imgui.h"
 
 
 //----------------------------------------------//
@@ -111,7 +109,7 @@ Kargono::LogPanel::LogPanel()
 }
 
 // Demonstrate creating a simple log window with basic filtering.
-void Kargono::LogPanel::OnImGuiRender()
+void Kargono::LogPanel::OnEditorUIRender()
 {
 	// For the demo: add a debug button _BEFORE_ the normal log window contents
 	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
