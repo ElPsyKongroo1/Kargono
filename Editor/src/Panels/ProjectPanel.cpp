@@ -5,8 +5,8 @@
 namespace Kargono
 {
 	static UI::SelectOptionSpec s_SelectStartSceneSpec {};
-	static UI::SimpleCheckboxSpec s_DefaultFullscreenSpec {};
-	static UI::SimpleCheckboxSpec s_ToggleNetworkSpec {};
+	static UI::CheckboxSpec s_DefaultFullscreenSpec {};
+	static UI::CheckboxSpec s_ToggleNetworkSpec {};
 	static UI::SelectOptionSpec s_SelectResolutionSpec {};
 	static UI::SelectOptionSpec s_SelectRuntimeStartSpec {};
 	static UI::SelectOptionSpec s_SelectUpdateUserCountSpec {};
@@ -424,15 +424,13 @@ namespace Kargono
 	void ProjectPanel::OnEditorUIRender()
 	{
 		ImGui::Begin("Project");
-		ImGui::TextUnformatted("Project Name:");
-		ImGui::Separator();
-		ImGui::Text(Projects::Project::GetProjectName().c_str());
-		ImGui::NewLine();
+		// Project Name
+		UI::Editor::Text("Project Name", Projects::Project::GetProjectName());
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("Project Directory:");
-		ImGui::Separator();
-		ImGui::Text(Projects::Project::GetProjectDirectory().string().c_str());
-		ImGui::NewLine();
+		// Project Directory
+		UI::Editor::Text("Project Directory", Projects::Project::GetProjectDirectory().string());
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select Starting Scene
 		s_SelectStartSceneSpec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
@@ -441,12 +439,12 @@ namespace Kargono
 
 		// Default Fullscreen
 		s_DefaultFullscreenSpec.ToggleBoolean = Projects::Project::GetIsFullscreen();;
-		UI::Editor::SimpleCheckbox(s_DefaultFullscreenSpec);
+		UI::Editor::Checkbox(s_DefaultFullscreenSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Networking Checkbox
 		s_ToggleNetworkSpec.ToggleBoolean = Projects::Project::GetAppIsNetworked();
-		UI::Editor::SimpleCheckbox(s_ToggleNetworkSpec);
+		UI::Editor::Checkbox(s_ToggleNetworkSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Resolution Select Option

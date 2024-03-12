@@ -4,3 +4,9 @@ F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\Inter
 F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\Intermediates\Debug\ScriptEngine.pdb
 F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\ScriptEngine.dll
 F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\ScriptEngine.pdb
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\Intermediates\Debug\ScriptEngine.csproj.AssemblyReference.cache
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\Intermediates\Debug\ScriptEngine.csproj.CoreCompileInputs.cache
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\Intermediates\Debug\ScriptEngine.dll
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\Intermediates\Debug\ScriptEngine.pdb
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\ScriptEngine.dll
+C:\Users\Charles-Breuer\Desktop\repos\Kargono\Editor\Resources\Scripts\ScriptEngine.pdb
