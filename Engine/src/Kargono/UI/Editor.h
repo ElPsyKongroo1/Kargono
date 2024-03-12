@@ -55,10 +55,10 @@ namespace Kargono::UI
 	struct SelectOptionSpec
 	{
 	public:
+		UUID WidgetID;
 		std::string Label;
 		std::string CurrentOption;
 		uint32_t LineCount{ 3 };
-		UUID WidgetID;
 		std::function<void(const std::string&)> ConfirmAction {nullptr};
 		std::function<void(SelectOptionSpec&)> PopupAction {nullptr};
 		void ClearOptionsList()
@@ -85,11 +85,11 @@ namespace Kargono::UI
 		OptionsList OptionsList {};
 	};
 
-	struct SimpleCheckboxSpec
+	struct CheckboxSpec
 	{
 	public:
-		std::string Label;
 		UUID WidgetID;
+		std::string Label;
 		bool ToggleBoolean;
 		std::function<void(bool)> ConfirmAction;
 	};
@@ -117,7 +117,8 @@ namespace Kargono::UI
 		static void Spacing(SpacingAmount space);
 
 		static void SelectOption(SelectOptionSpec& spec);
-		static void SimpleCheckbox(SimpleCheckboxSpec& spec);
+		static void Checkbox(CheckboxSpec& spec);
+		static void Text(const std::string& Label, const std::string& Text);
 
 		static uint32_t GetActiveWidgetID();
 
