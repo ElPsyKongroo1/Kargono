@@ -16,7 +16,7 @@
 
 namespace Kargono
 {
-	static UI::SimpleCheckboxSpec s_PrimaryCameraCheckboxSpec {};
+	static UI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
@@ -291,7 +291,7 @@ namespace Kargono
 					component.Primary = value;
 				};
 				UI::Editor::Spacing(UI::SpacingAmount::Small);
-				UI::Editor::SimpleCheckbox(s_PrimaryCameraCheckboxSpec);
+				UI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
 				UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 

@@ -5,10 +5,10 @@
 
 namespace Kargono
 {
-	static UI::SimpleCheckboxSpec s_PrimaryCameraCheckboxSpec {};
-	static UI::SimpleCheckboxSpec s_DisplayCameraFrustrumSpec {};
-	static UI::SimpleCheckboxSpec s_DisplayRuntimeUISpec {};
-	static UI::SimpleCheckboxSpec s_FullscreenRuntimeSpec {};
+	static UI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
+	static UI::CheckboxSpec s_DisplayCameraFrustrumSpec {};
+	static UI::CheckboxSpec s_DisplayRuntimeUISpec {};
+	static UI::CheckboxSpec s_FullscreenRuntimeSpec {};
 	static EditorLayer* s_EditorLayer { nullptr };
 
 	SettingsPanel::SettingsPanel()
@@ -49,22 +49,22 @@ namespace Kargono
 
 		// Toggle Physics Colliders
 		s_PrimaryCameraCheckboxSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;
-		UI::Editor::SimpleCheckbox(s_PrimaryCameraCheckboxSpec);
+		UI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Toggle Camera Frustrums
 		s_DisplayCameraFrustrumSpec.ToggleBoolean = s_EditorLayer->m_ShowCameraFrustrums;
-		UI::Editor::SimpleCheckbox(s_DisplayCameraFrustrumSpec);
+		UI::Editor::Checkbox(s_DisplayCameraFrustrumSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Toggle Runtime User Interface
 		s_DisplayRuntimeUISpec.ToggleBoolean = s_EditorLayer->m_ShowUserInterface;
-		UI::Editor::SimpleCheckbox(s_DisplayRuntimeUISpec);
+		UI::Editor::Checkbox(s_DisplayRuntimeUISpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Toggle Runtime Fullscreen
 		s_FullscreenRuntimeSpec.ToggleBoolean = s_EditorLayer->m_RuntimeFullscreen;
-		UI::Editor::SimpleCheckbox(s_FullscreenRuntimeSpec);
+		UI::Editor::Checkbox(s_FullscreenRuntimeSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		static float musicVolume = 10.0f;

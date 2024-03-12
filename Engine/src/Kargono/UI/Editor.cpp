@@ -279,30 +279,30 @@ namespace Kargono::UI
 		return returnList;
 	}
 
-	void Editor::SelectOption(SelectOptionSpec& spec)
+	void WriteMultilineText(const std::string& text)
 	{
-		// Local Variables
-		static std::unordered_map<std::string, std::string> s_CachedSelections {};
-		static std::unordered_map<std::string, bool> s_CachedSearching {};
-		static std::unordered_map<std::string, OptionsList> s_CachedRegexSearch {};
-		std::string id = "##" + std::to_string(spec.WidgetID);
-		std::string popUpLabel = "Set " + spec.Label;
-
-		// Display Menu Item
-		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
-
 		std::string previewOutput{};
-		std::string previewRemainder{spec.CurrentOption};
+		std::string previewRemainder{ text };
 		uint32_t iteration{ 0 };
-		float cachedDistance {0.0f};
+		float cachedDistance{ 0.0f };
 		do
 		{
 			ImVec2 textSize = ImGui::CalcTextSize(previewRemainder.c_str());
 			if (textSize.x > 240.0f)
 			{
-				previewOutput = previewRemainder.substr(0, 22);
-				previewRemainder = previewRemainder.substr(22, std::string::npos);
-				textSize = ImGui::CalcTextSize(previewOutput.c_str());
+				if (iteration == 0)
+				{
+					previewOutput = previewRemainder.substr(0, 29);
+					previewRemainder = previewRemainder.substr(29, std::string::npos);
+					textSize = ImGui::CalcTextSize(previewOutput.c_str());
+				}
+				else 
+				{
+					previewOutput = previewRemainder.substr(0, 27);
+					previewRemainder = previewRemainder.substr(27, std::string::npos);
+					textSize = ImGui::CalcTextSize(previewOutput.c_str());
+				}
+				
 			}
 			else
 			{
@@ -321,9 +321,24 @@ namespace Kargono::UI
 			}
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iteration * 20.0f);
-			ImGui::TextColored(s_PearlBlue, previewOutput.c_str());
+			ImGui::TextColored(UI::Editor::s_PearlBlue, previewOutput.c_str());
 			iteration++;
 		} while (!previewRemainder.empty());
+	}
+
+	void Editor::SelectOption(SelectOptionSpec& spec)
+	{
+		// Local Variables
+		static std::unordered_map<std::string, std::string> s_CachedSelections {};
+		static std::unordered_map<std::string, bool> s_CachedSearching {};
+		static std::unordered_map<std::string, OptionsList> s_CachedRegexSearch {};
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		std::string popUpLabel = "Set " + spec.Label;
+
+		// Display Menu Item
+		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
+
+		WriteMultilineText(spec.CurrentOption);
 
 		ImGui::SameLine(ImGui::GetWindowWidth() - 40);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 0.0f);
@@ -508,7 +523,9 @@ namespace Kargono::UI
 			ImGui::EndPopup();
 		}
 	}
-	void Editor::SimpleCheckbox(SimpleCheckboxSpec& spec)
+	
+
+	void Editor::Checkbox(CheckboxSpec& spec)
 	{
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
@@ -589,6 +606,15 @@ namespace Kargono::UI
 			ImGui::TextColored(s_PearlBlue, s_CachedEditing.at(spec.WidgetID) ? "Cancel Editing" : "Edit");
 			ImGui::EndTooltip();
 		}
+
+	}
+
+	void Editor::Text(const std::string& label, const std::string& text)
+	{
+		// Display Menu Item
+		ImGui::TextColored(s_PureWhite, label.c_str());
+
+		WriteMultilineText(text);
 
 	}
 }
