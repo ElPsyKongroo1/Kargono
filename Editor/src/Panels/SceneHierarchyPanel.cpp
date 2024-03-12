@@ -16,6 +16,14 @@
 
 namespace Kargono
 {
+	static UI::SimpleCheckboxSpec s_PrimaryCameraCheckboxSpec {};
+
+	SceneHierarchyPanel::SceneHierarchyPanel()
+	{
+		// Set Primary Camera Checkbox
+		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
+		s_PrimaryCameraCheckboxSpec.WidgetID = 0xe6e13a3812c94bf3;
+	}
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
@@ -276,7 +284,15 @@ namespace Kargono
 			{
 				auto& camera = component.Camera;
 
-				ImGui::Checkbox("Primary", &component.Primary);
+				// Set Primary Camera Checkbox
+				s_PrimaryCameraCheckboxSpec.ToggleBoolean = component.Primary;
+				s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
+				{
+					component.Primary = value;
+				};
+				UI::Editor::Spacing(UI::SpacingAmount::Small);
+				UI::Editor::SimpleCheckbox(s_PrimaryCameraCheckboxSpec);
+				UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 
 				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
@@ -700,6 +716,7 @@ namespace Kargono
 			auto AddTextureSection = [&]()
 			{
 				static bool s_CheckBox = component.ShaderSpecification.TextureInput == TextureInputType::ColorTexture ? true : false;
+
 				if (ImGui::Checkbox("Add Texture", &s_CheckBox))
 				{
 					s_CheckBox ? component.ShaderSpecification.TextureInput = TextureInputType::ColorTexture :

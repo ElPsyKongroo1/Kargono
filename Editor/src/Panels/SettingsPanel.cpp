@@ -5,7 +5,7 @@
 
 namespace Kargono
 {
-	static UI::SimpleCheckboxSpec s_PhysicsColliderSpec {};
+	static UI::SimpleCheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static UI::SimpleCheckboxSpec s_DisplayCameraFrustrumSpec {};
 	static UI::SimpleCheckboxSpec s_DisplayRuntimeUISpec {};
 	static UI::SimpleCheckboxSpec s_FullscreenRuntimeSpec {};
@@ -15,9 +15,9 @@ namespace Kargono
 	{
 		s_EditorLayer = EditorLayer::GetCurrentLayer();
 
-		s_PhysicsColliderSpec.Label = "Display Physics Colliders";
-		s_PhysicsColliderSpec.WidgetID = 0x185f537c52e34c35;
-		s_PhysicsColliderSpec.ConfirmAction = [&](bool value)
+		s_PrimaryCameraCheckboxSpec.Label = "Display Physics Colliders";
+		s_PrimaryCameraCheckboxSpec.WidgetID = 0x185f537c52e34c35;
+		s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowPhysicsColliders = value;
 		};
@@ -48,8 +48,8 @@ namespace Kargono
 		ImGui::Begin("Settings");
 
 		// Toggle Physics Colliders
-		s_PhysicsColliderSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;
-		UI::Editor::SimpleCheckbox(s_PhysicsColliderSpec);
+		s_PrimaryCameraCheckboxSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;
+		UI::Editor::SimpleCheckbox(s_PrimaryCameraCheckboxSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Toggle Camera Frustrums
