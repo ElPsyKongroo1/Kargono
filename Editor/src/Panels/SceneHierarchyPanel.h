@@ -7,7 +7,7 @@ namespace Kargono
 	class SceneHierarchyPanel
 	{
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel();
 
 		void OnEditorUIRender();
 

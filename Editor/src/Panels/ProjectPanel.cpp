@@ -4,15 +4,61 @@
 
 namespace Kargono
 {
+	static UI::SelectOptionSpec s_SelectStartSceneSpec {};
+	static UI::SimpleCheckboxSpec s_DefaultFullscreenSpec {};
+	static UI::SimpleCheckboxSpec s_ToggleNetworkSpec {};
 	static UI::SelectOptionSpec s_SelectResolutionSpec {};
-	static UI::SimpleCheckboxSpec ToggleNetworkSpec {};
+	static UI::SelectOptionSpec s_SelectRuntimeStartSpec {};
+	static UI::SelectOptionSpec s_SelectUpdateUserCountSpec {};
+	static UI::SelectOptionSpec s_SelectApproveJoinSessionSpec {};
+	static UI::SelectOptionSpec s_SelectUserLeftSessionSpec {};
+	static UI::SelectOptionSpec s_SelectSessionStartSpec {};
+	static UI::SelectOptionSpec s_SelectConnectionTerminatedSpec {};
+	static UI::SelectOptionSpec s_SelectUpdateSessionSlotSpec {};
+	static UI::SelectOptionSpec s_SelectStartSessionSpec {};
+	static UI::SelectOptionSpec s_SelectSessionReadyCheckSpec {};
+	static UI::SelectOptionSpec s_SelectReceiveSignalSpec {};
 
 	void InitializeStaticResources()
 	{
-		// Networking Specification
-		ToggleNetworkSpec.Label = "Networking";
-		ToggleNetworkSpec.WidgetID = 0xef051e3d9bce4b41;
-		ToggleNetworkSpec.ConfirmAction = [](bool value)
+		// Resolution Specification
+		s_SelectStartSceneSpec.Label = "Starting Scene";
+		s_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
+		s_SelectStartSceneSpec.LineCount = 2;
+		s_SelectStartSceneSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+			for (auto& [handle, asset] : Assets::AssetManager::GetSceneRegistry())
+			{
+				spec.AddToOptionsList("All Options", asset.Data.IntermediateLocation.string());
+			}
+		};
+		s_SelectStartSceneSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			for (auto& [handle, asset] : Assets::AssetManager::GetSceneRegistry())
+			{
+				if (asset.Data.IntermediateLocation == std::filesystem::path(selection))
+				{
+					Projects::Project::SetStartingScene(handle, asset.Data.IntermediateLocation);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate starting scene in ProjectPanel");
+			
+		};
+
+		// Default Full Screen
+		s_DefaultFullscreenSpec.Label = "Default Fullscreen";
+		s_DefaultFullscreenSpec.WidgetID = 0x3c6130198495483f;
+		s_DefaultFullscreenSpec.ConfirmAction = [](bool value)
+		{
+			Projects::Project::SetIsFullscreen(value);
+		};
+
+		// Set Networking Specification
+		s_ToggleNetworkSpec.Label = "Networking";
+		s_ToggleNetworkSpec.WidgetID = 0xef051e3d9bce4b41;
+		s_ToggleNetworkSpec.ConfirmAction = [](bool value)
 		{
 			Projects::Project::SetAppIsNetworked(value);
 		};
@@ -20,6 +66,7 @@ namespace Kargono
 		// Resolution Specification
 		s_SelectResolutionSpec.Label = "Target Resolution";
 		s_SelectResolutionSpec.WidgetID = 0x46a8cd8fbde44223;
+		s_SelectResolutionSpec.LineCount = 4;
 		s_SelectResolutionSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			Projects::Project::SetTargetResolution(Utility::StringToScreenResolution(selection));
@@ -35,6 +82,339 @@ namespace Kargono
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: 4:3 (Fullscreen)", "1152x864");
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: 4:3 (Fullscreen)", "1024x768");
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: Automatic (Based on Device Used)", "Match Device");
+
+		// Runtime Start Spec
+		s_SelectRuntimeStartSpec.Label = "Runtime Start";
+		s_SelectRuntimeStartSpec.WidgetID = 0xe8527560bb194a06;
+		s_SelectRuntimeStartSpec.LineCount = 3;
+		s_SelectRuntimeStartSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectRuntimeStartSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnRuntimeStart("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnRuntimeStart(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate runtime start function in ProjectPanel");
+
+		};
+
+		// Update User Count Spec
+		s_SelectUpdateUserCountSpec.Label = "Update User Count";
+		s_SelectUpdateUserCountSpec.WidgetID = 0x329248441b45489b;
+		s_SelectUpdateUserCountSpec.LineCount = 3;
+		s_SelectUpdateUserCountSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectUpdateUserCountSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnUpdateUserCount("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnUpdateUserCount(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate update user count function in ProjectPanel");
+
+		};
+
+		// Update Approve Join Session
+		s_SelectApproveJoinSessionSpec.Label = "Approve Join Session";
+		s_SelectApproveJoinSessionSpec.WidgetID = 0xb1c13beef2044d2b;
+		s_SelectApproveJoinSessionSpec.LineCount = 3;
+		s_SelectApproveJoinSessionSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectApproveJoinSessionSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnApproveJoinSession("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnApproveJoinSession(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate approve join session function in ProjectPanel");
+		};
+
+		// Update User Left Session
+		s_SelectUserLeftSessionSpec.Label = "User Left Session";
+		s_SelectUserLeftSessionSpec.WidgetID = 0x98f9288e1cd04962;
+		s_SelectUserLeftSessionSpec.LineCount = 3;
+		s_SelectUserLeftSessionSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectUserLeftSessionSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnUserLeftSession("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnUserLeftSession(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate user left session function in ProjectPanel");
+		};
+
+		// Update User Left Session
+		s_SelectSessionStartSpec.Label = "Session Start";
+		s_SelectSessionStartSpec.WidgetID = 0xe8dbc36fd6774a8f;
+		s_SelectSessionStartSpec.LineCount = 3;
+		s_SelectSessionStartSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectSessionStartSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnCurrentSessionInit("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnCurrentSessionInit(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate current session function in ProjectPanel");
+		};
+
+		// Update Connection Terminated
+		s_SelectConnectionTerminatedSpec.Label = "Connection Terminated";
+		s_SelectConnectionTerminatedSpec.WidgetID = 0xad3c8300fda24bb7;
+		s_SelectConnectionTerminatedSpec.LineCount = 3;
+		s_SelectConnectionTerminatedSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectConnectionTerminatedSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnConnectionTerminated("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnConnectionTerminated(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate connection terminated function in ProjectPanel");
+		};
+
+		// Update Session User Slot
+		s_SelectUpdateSessionSlotSpec.Label = "Update Session User Slot";
+		s_SelectUpdateSessionSlotSpec.WidgetID = 0x182e65506c2843f4;
+		s_SelectUpdateSessionSlotSpec.LineCount = 3;
+		s_SelectUpdateSessionSlotSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectUpdateSessionSlotSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnUpdateSessionUserSlot("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnUpdateSessionUserSlot(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate update session user slot function in ProjectPanel");
+		};
+
+		// Update On Start Session
+		s_SelectStartSessionSpec.Label = "Start Session";
+		s_SelectStartSessionSpec.WidgetID = 0xdda2adc6a5f44e58;
+		s_SelectStartSessionSpec.LineCount = 3;
+		s_SelectStartSessionSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectStartSessionSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnStartSession("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnStartSession(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate start session function in ProjectPanel");
+		};
+
+		// Update On Session Ready Check
+		s_SelectSessionReadyCheckSpec.Label = "Session Ready Check";
+		s_SelectSessionReadyCheckSpec.WidgetID = 0x352214211be04ab5;
+		s_SelectSessionReadyCheckSpec.LineCount = 3;
+		s_SelectSessionReadyCheckSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectSessionReadyCheckSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnSessionReadyCheckConfirm("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnSessionReadyCheckConfirm(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate session ready check function in ProjectPanel");
+		};
+
+		// Update On Receive Signal
+		s_SelectReceiveSignalSpec.Label = "Receive Signal";
+		s_SelectReceiveSignalSpec.WidgetID = 0x97a9f99e14df4139;
+		s_SelectReceiveSignalSpec.LineCount = 3;
+		s_SelectReceiveSignalSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				spec.AddToOptionsList("All Options", name);
+			}
+		};
+		s_SelectReceiveSignalSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				Projects::Project::SetProjectOnReceiveSignal("None");
+				return;
+			}
+
+			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			{
+				if (name == selection)
+				{
+					Projects::Project::SetProjectOnReceiveSignal(name);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate receive signal function in ProjectPanel");
+		};
+
 	}
 
 	ProjectPanel::ProjectPanel()
@@ -54,33 +434,19 @@ namespace Kargono
 		ImGui::Text(Projects::Project::GetProjectDirectory().string().c_str());
 		ImGui::NewLine();
 
-		ImGui::TextUnformatted("Starting Scene:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##Select Starting Scene", Projects::Project::GetStartScenePath(false).string().c_str()))
-		{
-			for (auto& [uuid, asset] : Assets::AssetManager::GetSceneRegistry())
-			{
-				if (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))
-				{
-					Projects::Project::SetStartingScene(uuid, asset.Data.IntermediateLocation);
-				}
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
+		// Select Starting Scene
+		s_SelectStartSceneSpec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
+		UI::Editor::SelectOption(s_SelectStartSceneSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("Default Game Fullscreen:");
-		ImGui::Separator();
-		bool projectFullscreen = Projects::Project::GetIsFullscreen();
-		if (ImGui::Checkbox("Default Game Fullscreen", &projectFullscreen))
-		{
-			Projects::Project::SetIsFullscreen(projectFullscreen);
-		}
-		ImGui::NewLine();
+		// Default Fullscreen
+		s_DefaultFullscreenSpec.ToggleBoolean = Projects::Project::GetIsFullscreen();;
+		UI::Editor::SimpleCheckbox(s_DefaultFullscreenSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Networking Checkbox
-		ToggleNetworkSpec.ToggleBoolean = Projects::Project::GetAppIsNetworked();
-		UI::Editor::SimpleCheckbox(ToggleNetworkSpec);
+		s_ToggleNetworkSpec.ToggleBoolean = Projects::Project::GetAppIsNetworked();
+		UI::Editor::SimpleCheckbox(s_ToggleNetworkSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Resolution Select Option
@@ -88,222 +454,59 @@ namespace Kargono
 		UI::Editor::SelectOption(s_SelectResolutionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("OnRuntimeStart Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnRuntimeStart", Projects::Project::GetProjectOnRuntimeStart().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnRuntimeStart("None");
-			}
+		// Select On Runtime Start
+		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetProjectOnRuntimeStart();
+		UI::Editor::SelectOption(s_SelectRuntimeStartSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnRuntimeStart(name);
-				}
-			}
+		// Select On Update User Count
+		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetProjectOnUpdateUserCount();
+		UI::Editor::SelectOption(s_SelectUpdateUserCountSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
+		// Select On Approve Join Session
+		s_SelectApproveJoinSessionSpec.CurrentOption = Projects::Project::GetProjectOnApproveJoinSession();
+		UI::Editor::SelectOption(s_SelectApproveJoinSessionSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("OnUpdateUserCount Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnUpdateUserCount", Projects::Project::GetProjectOnUpdateUserCount().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnUpdateUserCount("None");
-			}
+		// Select On User Left Session
+		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetProjectOnUserLeftSession();
+		UI::Editor::SelectOption(s_SelectUserLeftSessionSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnUpdateUserCount(name);
-				}
-			}
+		// Select On Current Session Start
+		s_SelectSessionStartSpec.CurrentOption = Projects::Project::GetProjectOnCurrentSessionInit();
+		UI::Editor::SelectOption(s_SelectSessionStartSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
+		// Select On Connection Terminated
+		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetProjectOnConnectionTerminated();
+		UI::Editor::SelectOption(s_SelectConnectionTerminatedSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("OnApproveJoinSession Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnApproveJoinSession", Projects::Project::GetProjectOnApproveJoinSession().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnApproveJoinSession("None");
-			}
+		// Select On Update Session User Slot
+		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetProjectOnUpdateSessionUserSlot();
+		UI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnApproveJoinSession(name);
-				}
-			}
+		// Select On Start Session
+		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetProjectOnStartSession();
+		UI::Editor::SelectOption(s_SelectStartSessionSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
+		// Select On Session Ready Check
+		s_SelectSessionReadyCheckSpec.CurrentOption = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
+		UI::Editor::SelectOption(s_SelectSessionReadyCheckSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
-		ImGui::TextUnformatted("OnUserLeftSession Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnUserLeftSession", Projects::Project::GetProjectOnUserLeftSession().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnUserLeftSession("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnUserLeftSession(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnCurrentSessionInit Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnCurrentSessionInit", Projects::Project::GetProjectOnCurrentSessionInit().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnCurrentSessionInit("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnCurrentSessionInit(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnConnectionTerminated Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnConnectionTerminated", Projects::Project::GetProjectOnConnectionTerminated().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnConnectionTerminated("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnConnectionTerminated(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnUpdateSessionUserSlot Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnUpdateSessionUserSlot", Projects::Project::GetProjectOnUpdateSessionUserSlot().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnUpdateSessionUserSlot("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnUpdateSessionUserSlot(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnStartSession Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnStartSession", Projects::Project::GetProjectOnStartSession().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnStartSession("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnStartSession(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnSessionReadyCheckConfirm Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnSessionReadyCheckConfirm", Projects::Project::GetProjectOnSessionReadyCheckConfirm().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnSessionReadyCheckConfirm("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnSessionReadyCheckConfirm(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-		ImGui::TextUnformatted("OnReceiveSignal Function:");
-		ImGui::Separator();
-		if (ImGui::BeginCombo("##ProjectOnReceiveSignal", Projects::Project::GetProjectOnReceiveSignal().c_str()))
-		{
-			if (ImGui::Selectable("None"))
-			{
-				Projects::Project::SetProjectOnReceiveSignal("None");
-			}
-
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
-			{
-				if (ImGui::Selectable(name.c_str()))
-				{
-					Projects::Project::SetProjectOnReceiveSignal(name);
-				}
-			}
-
-			ImGui::EndCombo();
-		}
-		ImGui::NewLine();
-
-
+		// Select On Receive Signal Function
+		s_SelectReceiveSignalSpec.CurrentOption = Projects::Project::GetProjectOnReceiveSignal();
+		UI::Editor::SelectOption(s_SelectReceiveSignalSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 
 		ImGui::TextUnformatted("App Tick Generators:");
 		ImGui::Separator();
-
 		// Enable Delete Option
 		static bool deleteMenuToggle = false;
 		bool deleteGenerator = false;

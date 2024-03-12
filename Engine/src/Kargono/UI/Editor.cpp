@@ -18,6 +18,7 @@
 namespace Kargono::UI
 {
 	ImFont* Editor::s_AntaRegular{ nullptr };
+	ImFont* Editor::s_AntaSmall{ nullptr };
 	ImFont* Editor::s_PlexBold{ nullptr };
 	ImFont* Editor::s_OpenSansRegular{ nullptr };
 	ImFont* Editor::s_OpenSansBold{ nullptr };
@@ -105,9 +106,10 @@ namespace Kargono::UI
 		s_OpenSansBold = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Bold.ttf", fontSize);
 		s_OpenSansRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Regular.ttf", fontSize);
 		s_AntaRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 20.0f);
+		s_AntaSmall = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 18.0f);
 		s_PlexBold = io.Fonts->AddFontFromFileTTF("resources/fonts/IBMPlexMono-Bold.ttf", 29.0f);
 		s_RobotoRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/Roboto-Regular.ttf", 18.0f);
-		io.FontDefault = s_RobotoRegular;
+		io.FontDefault = s_AntaSmall;
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
@@ -287,10 +289,42 @@ namespace Kargono::UI
 		std::string popUpLabel = "Set " + spec.Label;
 
 		// Display Menu Item
-		ImGui::PushFont(UI::Editor::s_AntaRegular);
 		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
-		ImGui::SameLine(ImGui::GetWindowWidth() - 47 - ImGui::CalcTextSize(spec.CurrentOption.c_str()).x);
-		ImGui::TextColored(s_PearlBlue, spec.CurrentOption.c_str());
+
+		std::string previewOutput{};
+		std::string previewRemainder{spec.CurrentOption};
+		uint32_t iteration{ 0 };
+		float cachedDistance {0.0f};
+		do
+		{
+			ImVec2 textSize = ImGui::CalcTextSize(previewRemainder.c_str());
+			if (textSize.x > 240.0f)
+			{
+				previewOutput = previewRemainder.substr(0, 22);
+				previewRemainder = previewRemainder.substr(22, std::string::npos);
+				textSize = ImGui::CalcTextSize(previewOutput.c_str());
+			}
+			else
+			{
+				previewOutput = previewRemainder.c_str();
+				previewRemainder.clear();
+			}
+
+			if (iteration == 0)
+			{
+				cachedDistance = ImGui::GetWindowWidth() - 47 - textSize.x;
+				ImGui::SameLine(cachedDistance);
+			}
+			else
+			{
+				ImGui::SameLine(cachedDistance);
+			}
+
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iteration * 20.0f);
+			ImGui::TextColored(s_PearlBlue, previewOutput.c_str());
+			iteration++;
+		} while (!previewRemainder.empty());
+
 		ImGui::SameLine(ImGui::GetWindowWidth() - 40);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 0.0f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -309,12 +343,16 @@ namespace Kargono::UI
 			ImGui::TextColored(s_PearlBlue, "Edit");
 			ImGui::EndTooltip();
 		}
-		ImGui::PopFont();
 
 		// Display Popup
 		ImGui::SetNextWindowSize(ImVec2(700.0f, 0.0f));
 		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
 		{
+			if (spec.PopupAction)
+			{
+				spec.PopupAction(spec);
+			}
+
 			static char searchBuffer[256];
 
 			if (!s_CachedSelections.contains(spec.WidgetID))
@@ -332,7 +370,6 @@ namespace Kargono::UI
 			ImGui::PopFont();
 
 			ImGui::PushFont(UI::Editor::s_AntaRegular);
-
 			if (s_CachedSearching.at(spec.WidgetID))
 			{
 				ImGui::SameLine(ImGui::GetWindowWidth() - 124.0f - 200.0f);
@@ -452,7 +489,7 @@ namespace Kargono::UI
 						spec.CurrentOption = option;
 						s_CachedSelections.insert_or_assign(spec.WidgetID, option);
 					}
-					if (iteration % 4 != 0 && iteration != 0 && iteration != options.size())
+					if (iteration % spec.LineCount != 0 && iteration != 0 && iteration != options.size())
 					{
 						ImGui::SameLine();
 					}
@@ -468,7 +505,6 @@ namespace Kargono::UI
 			}
 
 			ImGui::PopFont();
-
 			ImGui::EndPopup();
 		}
 	}
@@ -484,7 +520,6 @@ namespace Kargono::UI
 		}
 
 		// Display Item
-		ImGui::PushFont(UI::Editor::s_AntaRegular);
 
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -554,7 +589,6 @@ namespace Kargono::UI
 			ImGui::TextColored(s_PearlBlue, s_CachedEditing.at(spec.WidgetID) ? "Cancel Editing" : "Edit");
 			ImGui::EndTooltip();
 		}
-		ImGui::PopFont();
 
 	}
 }

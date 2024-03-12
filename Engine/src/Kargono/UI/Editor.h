@@ -57,8 +57,14 @@ namespace Kargono::UI
 	public:
 		std::string Label;
 		std::string CurrentOption;
+		uint32_t LineCount{ 3 };
 		UUID WidgetID;
-		std::function<void(const std::string&)> ConfirmAction;
+		std::function<void(const std::string&)> ConfirmAction {nullptr};
+		std::function<void(SelectOptionSpec&)> PopupAction {nullptr};
+		void ClearOptionsList()
+		{
+			OptionsList.clear();
+		}
 		void AddToOptionsList(const std::string& title, const std::string& option)
 		{
 			if (!OptionsList.contains(title))
@@ -121,6 +127,7 @@ namespace Kargono::UI
 		}
 
 		static ImFont* s_AntaRegular;
+		static ImFont* s_AntaSmall;
 		static ImFont* s_PlexBold;
 		static ImFont* s_OpenSansRegular;
 		static ImFont* s_OpenSansBold;
