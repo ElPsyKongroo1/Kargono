@@ -187,6 +187,7 @@ namespace Kargono::Audio
 		//		The API simply needs to know what audio should be played! This function
 		//		calls the other PlaySound function with default values btw.
 		static void PlaySound(Ref<AudioBuffer> audioBuffer);
+		static void PlaySoundFromName(const std::string& audioName);
 		// This function provides a method to stop all audio from playing. This function
 		//		function simply iterates through the audio source queue and stops any
 		//		audio currently playing.

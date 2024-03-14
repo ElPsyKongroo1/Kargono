@@ -617,4 +617,10 @@ namespace Kargono::UI
 		WriteMultilineText(text);
 
 	}
+	void Editor::TextInput(TextInputSpec& spec)
+	{
+		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
+
+		WriteMultilineText(spec.CurrentOption);
+	}
 }

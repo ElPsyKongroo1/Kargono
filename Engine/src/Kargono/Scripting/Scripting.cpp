@@ -1,26 +1,33 @@
 #include "kgpch.h"
 
 #include "Kargono/Scripting/Scripting.h"
+
+#include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/Audio/AudioEngine.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "Windows.h"
 #endif
 
-
 namespace Kargono::Scripting
 {
-	std::function<void(const std::string&, std::function<void()>)> ScriptCore::s_AddVoidNone {};
-
 	struct ScriptingData
 	{
 		HINSTANCE* DLLInstance = nullptr;
 	};
 
 	static ScriptingData* s_ScriptingData = nullptr;
+}
 
+namespace Kargono::Scripting
+{
+	typedef void (*void_none)();
+	typedef bool (*bool_none)();
+
+	
 
 	void ScriptCore::Init()
 	{
@@ -67,7 +74,7 @@ namespace Kargono::Scripting
 
 		KG_INFO("Script Dll successfully opened!");
 
-		AddEngineFuncsToDll();
+		ScriptModuleBuilder::AddEngineFuncsToDll();
 
 	}
 	void ScriptCore::CloseDll()
@@ -95,16 +102,6 @@ namespace Kargono::Scripting
 
 		delete s_ScriptingData->DLLInstance;
 		s_ScriptingData->DLLInstance = nullptr;
-	}
-	void ScriptCore::CreateDll(bool addDebugSymbols)
-	{
-		CloseDll();
-		CreateDllHeader();
-		CreateDllCPPFiles();
-		CompileDll(addDebugSymbols);
-
-		OpenDll();
-		Assets::AssetManager::DeserializeScriptRegistry();
 	}
 
 	void ScriptCore::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
@@ -138,8 +135,94 @@ namespace Kargono::Scripting
 		}
 		}
 	}
+}
 
-	void ScriptCore::CreateDllHeader()
+namespace Kargono::Utility
+{
+#define DefineInsertFunction(name, returnType,...) \
+	typedef void (*Void_String_Func##name)(const std::string&, std::function<returnType(__VA_ARGS__)>); \
+	std::function<returnType(const std::string&, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
+
+#define ImportInsertFunction(name, returnType) \
+	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*s_ScriptingData->DLLInstance, "Add"#name ));\
+	if (!s_Add##name)\
+	{\
+		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
+		return;\
+	}
+#define AddImportFunctionToHeaderFile(name, returnType, ...) \
+	outputStream << "KARGONO_API void Add" << #name << "(const std::string& funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr);\n");
+
+#define AddImportFunctionToCPPFile(name, returnType, ...) \
+	outputStream << "void Add" << #name << "(const std::string& funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr)\n");
+
+#define AddEngineFunctionToCPPFileNoParameters(name, returnType) \
+	outputStream << "static std::function<" #returnType "()> " #name "Ptr {};\n"; \
+	outputStream << #returnType " PlaySoundFromName()\n"; \
+	outputStream << "{\n"; \
+	outputStream << "\t" #name "Ptr();\n"; \
+	outputStream << "}\n";
+#define AddEngineFunctionToCPPFileOneParameters(name, returnType, parameter1)\
+	outputStream << "static std::function<" #returnType "(" #parameter1 " a)> " #name "Ptr {};\n"; \
+	outputStream << #returnType " PlaySoundFromName(" #parameter1 " a)\n"; \
+	outputStream << "{\n"; \
+	outputStream << "\t" #name "Ptr(a);\n"; \
+	outputStream << "}\n";
+#define AddEngineFunctionToCPPFileTwoParameters(name, returnType, parameter1, parameter2)\
+	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b)> " #name "Ptr {};\n"; \
+	outputStream << #returnType " PlaySoundFromName(" #parameter1 " a, " #parameter2 " b)\n"; \
+	outputStream << "{\n"; \
+	outputStream << "\t" #name "Ptr(a, b);\n"; \
+	outputStream << "}\n";
+
+#define AddEngineFunctionToCPPFileEnd(name) \
+	outputStream << "if (funcName == \"" #name "\") { " #name "Ptr = funcPtr; return; }\n";
+
+#define AddEngineFunctionPointerToDll(name, funcDef, funcSignatureName) \
+	s_Add##funcSignatureName(#name, funcDef);
+}
+
+namespace Kargono::Scripting
+{
+	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the dll)
+	DefineInsertFunction(VoidNone, void)
+	DefineInsertFunction(VoidString, void, const std::string&)
+
+	// This macro adds insertion function declarations to the header file
+#define AddEngineFunctionsToHeaderFiles() \
+	AddImportFunctionToHeaderFile(VoidNone, void) \
+	AddImportFunctionToHeaderFile(VoidString, void, const std::string&)
+
+	// This	macro adds insertion function definitions and func pointers into the CPP file
+#define AddEngineFunctionsToCPPFiles() \
+	AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)\
+	AddImportFunctionToCPPFile(VoidNone, void) \
+	outputStream << "{\n"; \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidString, void, const std::string&) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(PlaySoundFromName) \
+	outputStream << "}\n";
+
+	// This macro provide the point where insertion functions are pulled from the dll when opening
+#define AddEngineFunctionsPointersToDll() \
+	ImportInsertFunction(VoidNone, void)\
+	ImportInsertFunction(VoidString, void) \
+	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString)
+
+	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)
+	{
+		ScriptCore::CloseDll();
+
+		CreateDllHeader();
+		CreateDllCPPFiles();
+		CompileDll(addDebugSymbols);
+
+		ScriptCore::OpenDll();
+		Assets::AssetManager::DeserializeScriptRegistry();
+	}
+
+	void ScriptModuleBuilder::CreateDllHeader()
 	{
 		// Write out return value and function name
 		std::stringstream outputStream {};
@@ -158,8 +241,7 @@ namespace Kargono::Scripting
 		outputStream << "extern \"C\"" << "\n";
 		outputStream << "\t{" << "\n";
 
-		outputStream << "KARGONO_API void AddVoidNone(const std::string& funcName, std::function<void()> funcPtr);\n";
-		//outputStream << "KARGONO_API void AddBoolNone(const std::string& funcName, std::function<bool()> funcPtr);\n";
+		AddEngineFunctionsToHeaderFiles()
 
 		// Add Script Function Declarations
 		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
@@ -185,11 +267,12 @@ namespace Kargono::Scripting
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
 
-		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportHeader.h"};
+		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportHeader.h" };
 
 		FileSystem::WriteFileString(headerFile, outputStream.str());
 	}
-	void ScriptCore::CreateDllCPPFiles()
+
+	void ScriptModuleBuilder::CreateDllCPPFiles()
 	{
 		std::stringstream outputStream {};
 		outputStream << "#include \"ExportHeader.h\"\n";
@@ -197,17 +280,7 @@ namespace Kargono::Scripting
 		outputStream << "namespace Kargono\n";
 		outputStream << "{\n";
 
-		outputStream << "static std::function<void()> testFuncPtr {};\n";
-		outputStream << "void testFunction()\n";
-		outputStream << "{\n";
-		outputStream << "testFuncPtr();\n";
-		outputStream << "}\n";
-
-		outputStream << "void AddVoidNone(const std::string& funcName, std::function<void()> funcPtr)\n";
-
-		outputStream << "{\n";
-		outputStream << "if (funcName == \"testFunction\") { testFuncPtr = funcPtr; return; }\n";
-		outputStream << "}\n";
+		AddEngineFunctionsToCPPFiles()
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
@@ -222,7 +295,7 @@ namespace Kargono::Scripting
 		FileSystem::WriteFileString(file, outputStream.str());
 	}
 
-	void ScriptCore::CompileDll(bool addDebugSymbols)
+	void ScriptModuleBuilder::CompileDll(bool addDebugSymbols)
 	{
 		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
 		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
@@ -268,21 +341,10 @@ namespace Kargono::Scripting
 		system(outputStream.str().c_str());
 	}
 
-	void TestFunc()
+
+	void ScriptModuleBuilder::AddEngineFuncsToDll()
 	{
-		std::cout << "This function was called in the engine ahahahahahhaa\n";
-	}
-
-	void ScriptCore::AddEngineFuncsToDll()
-	{
-		s_AddVoidNone = reinterpret_cast<void_string_funcvoidnone>(GetProcAddress(*s_ScriptingData->DLLInstance, "AddVoidNone"));
-
-		if (!s_AddVoidNone)
-		{
-			KG_CRITICAL("Could not load AddVoidNone function from scripting dll");
-			return;
-		}
-
-		s_AddVoidNone("testFunction", TestFunc);
+		AddEngineFunctionsPointersToDll()
 	}
 }
+

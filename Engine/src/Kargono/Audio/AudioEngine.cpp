@@ -122,6 +122,15 @@ namespace Kargono::Audio
 		s_DefaultSourceSpec.CurrentBuffer = audioBuffer;
 		PlaySound(s_DefaultSourceSpec);
 	}
+
+	void AudioEngine::PlaySoundFromName(const std::string& audioName)
+	{
+		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
+		if (audioBuffer)
+		{
+			Audio::AudioEngine::PlaySound(audioBuffer);
+		}
+	}
 	void AudioEngine::StopAllAudio()
 	{
 		for (uint32_t iterator{0}; iterator < s_AudioContext->m_AudioSourceQueue.size(); iterator++)
