@@ -6,9 +6,6 @@
 
 namespace Kargono
 {
-	typedef void (*void_none)();
-	typedef bool (*bool_none)();
-	typedef void (*void_string_funcvoidnone)(const std::string&, std::function<void()>);
 
 	enum class WrappedVarType
 	{
@@ -16,7 +13,8 @@ namespace Kargono
 		Void,
 		Bool,
 		Integer32,
-		UInteger64
+		UInteger64,
+		String
 	};
 
 	class WrappedVariable
@@ -43,10 +41,19 @@ namespace Kargono
 		uint64_t m_Value{};
 	};
 
+	class WrappedString : public WrappedVariable
+	{
+	public:
+		virtual WrappedVarType Type() override { return WrappedVarType::UInteger64; }
+	public:
+		std::string m_Value{};
+	};
+
 	enum class WrappedFuncType
 	{
 		None = 0,
 		Void_None,
+		Void_String,
 		Bool_None
 	};
 
@@ -74,6 +81,14 @@ namespace Kargono
 		std::function<bool()> m_Value{};
 	};
 
+	class WrappedVoidString : public WrappedFunction
+	{
+	public:
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_String; }
+	public:
+		std::function<void(const std::string&)> m_Value{};
+	};
+
 	namespace Utility
 	{
 		inline std::string WrappedVarTypeToString(WrappedVarType type)
@@ -82,6 +97,7 @@ namespace Kargono
 			{
 			case WrappedVarType::Integer32: return "Integer32";
 			case WrappedVarType::UInteger64: return "UInteger64";
+			case WrappedVarType::String: return "String";
 			case WrappedVarType::Void: return "Void";
 			case WrappedVarType::Bool: return "Bool";
 			case WrappedVarType::None: return "None";
@@ -96,6 +112,7 @@ namespace Kargono
 			{
 			case WrappedVarType::Integer32: return "int32_t";
 			case WrappedVarType::UInteger64: return "int64_t";
+			case WrappedVarType::String: return "std::string";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
 			case WrappedVarType::None: return "None";
@@ -108,6 +125,7 @@ namespace Kargono
 		{
 			if (type == "Integer32") { return WrappedVarType::Integer32; }
 			if (type == "UInteger64") { return WrappedVarType::UInteger64; }
+			if (type == "String") { return WrappedVarType::String; }
 			if (type == "Void") { return WrappedVarType::Void; }
 			if (type == "Bool") { return WrappedVarType::Bool; }
 			if (type == "None") { return WrappedVarType::None; }
@@ -121,6 +139,7 @@ namespace Kargono
 			switch (type)
 			{
 			case WrappedFuncType::Void_None: return "Void_None";
+			case WrappedFuncType::Void_String: return "Void_String";
 			case WrappedFuncType::Bool_None: return "Bool_None";
 			case WrappedFuncType::None: return "None";
 			}
@@ -131,6 +150,7 @@ namespace Kargono
 		inline WrappedFuncType StringToWrappedFuncType(std::string type)
 		{
 			if (type == "Void_None") { return WrappedFuncType::Void_None; }
+			if (type == "Void_String") { return WrappedFuncType::Void_String; }
 			if (type == "Bool_None") { return WrappedFuncType::Bool_None; }
 			if (type == "None") { return WrappedFuncType::None; }
 

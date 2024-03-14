@@ -12,6 +12,7 @@
 #include <tuple>
 
 #include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptModuleBuilder.h"
 
 
 namespace Kargono
@@ -622,6 +623,7 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
 
 		friend class Scripting::ScriptCore;
+		friend class Scripting::ScriptModuleBuilder;
 
 	//============================================================
 	// Project

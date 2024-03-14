@@ -64,6 +64,7 @@
 //-----------------Scripting-----------------//
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptModuleBuilder.h"
 
 //-----------------UserInterface-----------------//
 #include "Kargono/UI/Editor.h"
