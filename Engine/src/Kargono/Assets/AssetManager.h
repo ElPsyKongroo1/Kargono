@@ -586,7 +586,7 @@ namespace Kargono::Assets
 		//		3. Register the new file with the in-memory s_ScriptRegistry and the on disk Script
 		//		registry
 		//		4. Instantiate the new Script into memory and return a handle to the new Script.
-		static AssetHandle CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
+		static std::tuple<AssetHandle, bool> CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
 			WrappedVarType returnValue, WrappedFuncType functionType);
 
 		static void DeleteScript(AssetHandle handle);

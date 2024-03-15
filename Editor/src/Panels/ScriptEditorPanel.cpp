@@ -6,6 +6,20 @@
 
 namespace Kargono
 {
+
+	static UI::TextInputSpec s_InputScriptNameSpec{};
+	static std::string s_InputScriptName{ "Empty"};
+
+	ScriptEditorPanel::ScriptEditorPanel()
+	{
+		s_InputScriptNameSpec.Label = "Script Name";
+		s_InputScriptNameSpec.WidgetID = 0xb321694eb9a94fc0;
+		s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
+		s_InputScriptNameSpec.ConfirmAction = [&](const std::string& scriptName)
+		{
+				s_InputScriptName = scriptName;
+		};
+	}
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		ImGui::Begin("Scripts");
@@ -60,18 +74,15 @@ namespace Kargono
 
 		if (ImGui::BeginPopup("CreateScriptPopup"))
 		{
-			ImGui::Text("WE ARE CREATING A NEW SCRIPT");
-			if (ImGui::Button("Add New Item HAHAHA"))
+			ImGui::Text("New Script Creator===================");
+			s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
+			UI::Editor::TextInputModal(s_InputScriptNameSpec);
+			if (ImGui::Button("Create Script"))
 			{
-				std::string name{"Potato"};
-				static uint32_t testIterator {0};
-				name.append(std::to_string(testIterator));
-				testIterator++;
 				std::vector<WrappedVarType> parameters{};
 				WrappedVarType returnValue{ WrappedVarType::Void };
 				WrappedFuncType functionType{ WrappedFuncType::Void_None };
-
-				Assets::AssetManager::CreateNewScript(name, parameters, returnValue, functionType);
+				auto [handle, successful] = Assets::AssetManager::CreateNewScript(s_InputScriptName, parameters, returnValue, functionType);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
