@@ -3452,9 +3452,20 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
+	std::tuple<AssetHandle, bool> AssetManager::CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
 		WrappedVarType returnValue, WrappedFuncType functionType)
 	{
+
+		// Ensure all scripts have unique names
+		for (auto& [handle, asset] : s_ScriptRegistry)
+		{
+			Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
+			if (metadata.Name == name)
+			{
+				return std::make_tuple(0, false);
+			}
+		}
+
 		// Create Checksum
 		const std::string currentCheckSum {};
 
@@ -3473,7 +3484,7 @@ namespace Kargono::Assets
 
 		s_Scripts.insert({ newHandle, InstantiateScriptIntoMemory(newAsset) });
 
-		return newHandle;
+		return std::make_tuple(newHandle, true);
 	}
 
 	void AssetManager::DeleteScript(AssetHandle handle)
