@@ -14,10 +14,6 @@ void AddVoidString(const std::string& funcName, std::function<void(const std::st
 {
 if (funcName == "PlaySoundFromName") { PlaySoundFromNamePtr = funcPtr; return; }
 }
-void KG_FUNC_753079771072191180()
-{
-}
-
 void KG_FUNC_7448269885476125662()
 {
 	std::cout << "Hello world! HAHAHAHAA\n";

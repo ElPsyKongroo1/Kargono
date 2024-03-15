@@ -2,10 +2,10 @@
 
 namespace Kargono
 {
-	class ScriptEditorPanel
+	class TextEditorPanel
 	{
 	public:
-		ScriptEditorPanel();
+		TextEditorPanel() = default;
 
 		void OnEditorUIRender();
 

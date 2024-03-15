@@ -100,7 +100,7 @@ namespace Kargono::UI
 		UUID WidgetID;
 		std::string Label;
 		std::string CurrentOption;
-		std::function<void(bool)> ConfirmAction;
+		std::function<void(const std::string&)> ConfirmAction;
 	};
 
 	enum class SpacingAmount
@@ -128,7 +128,7 @@ namespace Kargono::UI
 		static void SelectOption(SelectOptionSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
 		static void Text(const std::string& Label, const std::string& Text);
-		static void TextInput(TextInputSpec& spec);
+		static void TextInputModal(TextInputSpec& spec);
 
 		static uint32_t GetActiveWidgetID();
 
