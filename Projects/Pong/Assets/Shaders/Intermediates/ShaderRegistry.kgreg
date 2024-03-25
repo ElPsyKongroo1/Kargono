@@ -1,37 +1,5 @@
 Registry: Untitled
 Assets:
-  - AssetHandle: 16075931647133155393
-    MetaData:
-      CheckSum: 553ed1ff5106292988ee791056095771ba8553e59e09e5718dc10e18532388d8
-      IntermediateLocation: Shaders/Intermediates/16075931647133155393
-      AssetType: Shader
-      ColorInputType: FlatColor
-      AddProjectionMatrix: true
-      AddEntityID: true
-      AddCircleShape: false
-      TextureInput: ColorTexture
-      DrawOutline: false
-      RenderType: DrawIndex
-      InputBufferLayout:
-        Elements:
-          - Name: a_Position
-            Type: vec3
-          - Name: a_Color
-            Type: vec4
-          - Name: a_EntityID
-            Type: int
-          - Name: a_TexCoord
-            Type: vec2
-          - Name: a_TexIndex
-            Type: float
-          - Name: a_TilingFactor
-            Type: float
-      UniformBufferList:
-        Elements:
-          - Name: u_ViewProjection
-            Type: mat4
-          - Name: u_Textures
-            Type: sampler2D
   - AssetHandle: 9995091926620131545
     MetaData:
       CheckSum: 4224a0b0374c535eec82c261a1bc65925ced79ecbcbbeb7c87d8d0a0dc6c8703
@@ -84,6 +52,38 @@ Assets:
         Elements:
           - Name: u_ViewProjection
             Type: mat4
+  - AssetHandle: 16075931647133155393
+    MetaData:
+      CheckSum: 553ed1ff5106292988ee791056095771ba8553e59e09e5718dc10e18532388d8
+      IntermediateLocation: Shaders/Intermediates/16075931647133155393
+      AssetType: Shader
+      ColorInputType: FlatColor
+      AddProjectionMatrix: true
+      AddEntityID: true
+      AddCircleShape: false
+      TextureInput: ColorTexture
+      DrawOutline: false
+      RenderType: DrawIndex
+      InputBufferLayout:
+        Elements:
+          - Name: a_Position
+            Type: vec3
+          - Name: a_Color
+            Type: vec4
+          - Name: a_EntityID
+            Type: int
+          - Name: a_TexCoord
+            Type: vec2
+          - Name: a_TexIndex
+            Type: float
+          - Name: a_TilingFactor
+            Type: float
+      UniformBufferList:
+        Elements:
+          - Name: u_ViewProjection
+            Type: mat4
+          - Name: u_Textures
+            Type: sampler2D
   - AssetHandle: 12997310174580324402
     MetaData:
       CheckSum: 4f1f0aff5e6abccc885e24d8055f0266f15b54d9ae85dd6c0fe304ee1c6aac94
@@ -138,6 +138,28 @@ Assets:
             Type: mat4
           - Name: u_Textures
             Type: sampler2D
+  - AssetHandle: 5839883367054652083
+    MetaData:
+      CheckSum: 7a09379c059ddd92d4139f7bf07f80071221612f3145f890dbf43128b6b66809
+      IntermediateLocation: Shaders/Intermediates/5839883367054652083
+      AssetType: Shader
+      ColorInputType: FlatColor
+      AddProjectionMatrix: true
+      AddEntityID: false
+      AddCircleShape: false
+      TextureInput: None
+      DrawOutline: false
+      RenderType: DrawLine
+      InputBufferLayout:
+        Elements:
+          - Name: a_Position
+            Type: vec3
+          - Name: a_Color
+            Type: vec4
+      UniformBufferList:
+        Elements:
+          - Name: u_ViewProjection
+            Type: mat4
   - AssetHandle: 13003070490235285011
     MetaData:
       CheckSum: 3c8876332468a0607975812d6a74127d5eeb5097d63b2098bd9185db0ffc701f
@@ -162,34 +184,40 @@ Assets:
         Elements:
           - Name: u_ViewProjection
             Type: mat4
-  - AssetHandle: 5839883367054652083
-    MetaData:
-      CheckSum: 7a09379c059ddd92d4139f7bf07f80071221612f3145f890dbf43128b6b66809
-      IntermediateLocation: Shaders/Intermediates/5839883367054652083
-      AssetType: Shader
-      ColorInputType: FlatColor
-      AddProjectionMatrix: true
-      AddEntityID: false
-      AddCircleShape: false
-      TextureInput: None
-      DrawOutline: false
-      RenderType: DrawLine
-      InputBufferLayout:
-        Elements:
-          - Name: a_Position
-            Type: vec3
-          - Name: a_Color
-            Type: vec4
-      UniformBufferList:
-        Elements:
-          - Name: u_ViewProjection
-            Type: mat4
   - AssetHandle: 15356815333361611020
     MetaData:
       CheckSum: c05d377cab3fa1c4598e9193e9dd384e189df01bebf309b3a55982f48c30cee9
       IntermediateLocation: Shaders/Intermediates/15356815333361611020
       AssetType: Shader
       ColorInputType: FlatColor
+      AddProjectionMatrix: true
+      AddEntityID: false
+      AddCircleShape: true
+      TextureInput: None
+      DrawOutline: false
+      RenderType: DrawIndex
+      InputBufferLayout:
+        Elements:
+          - Name: a_Position
+            Type: vec3
+          - Name: a_LocalPosition
+            Type: vec3
+          - Name: a_Thickness
+            Type: float
+          - Name: a_Fade
+            Type: float
+          - Name: a_Color
+            Type: vec4
+      UniformBufferList:
+        Elements:
+          - Name: u_ViewProjection
+            Type: mat4
+  - AssetHandle: 15063107650358859542
+    MetaData:
+      CheckSum: 8d3aecfa6827c276f4a94f05c3752fc0077773272b893d296dade8944938dd85
+      IntermediateLocation: Shaders/Intermediates/15063107650358859542
+      AssetType: Shader
+      ColorInputType: VertexColor
       AddProjectionMatrix: true
       AddEntityID: false
       AddCircleShape: true
@@ -380,3 +408,64 @@ Assets:
             Type: mat4
           - Name: u_Textures
             Type: sampler2D
+  - AssetHandle: 7164639201845731564
+    MetaData:
+      CheckSum: 6d7f69345ecb85423cce1ddc8a83822e153fdc00b807ff9272a6ae386a9bddfb
+      IntermediateLocation: Shaders/Intermediates/7164639201845731564
+      AssetType: Shader
+      ColorInputType: VertexColor
+      AddProjectionMatrix: true
+      AddEntityID: true
+      AddCircleShape: false
+      TextureInput: ColorTexture
+      DrawOutline: false
+      RenderType: DrawIndex
+      InputBufferLayout:
+        Elements:
+          - Name: a_Position
+            Type: vec3
+          - Name: a_Color
+            Type: vec4
+          - Name: a_EntityID
+            Type: int
+          - Name: a_TexCoord
+            Type: vec2
+          - Name: a_TexIndex
+            Type: float
+          - Name: a_TilingFactor
+            Type: float
+      UniformBufferList:
+        Elements:
+          - Name: u_ViewProjection
+            Type: mat4
+          - Name: u_Textures
+            Type: sampler2D
+  - AssetHandle: 3014334540969681215
+    MetaData:
+      CheckSum: 23b8753b3b95fd5ac4d78251a99bba92151fc2793d99974806837afcee54eaaf
+      IntermediateLocation: Shaders/Intermediates/3014334540969681215
+      AssetType: Shader
+      ColorInputType: VertexColor
+      AddProjectionMatrix: false
+      AddEntityID: true
+      AddCircleShape: true
+      TextureInput: None
+      DrawOutline: false
+      RenderType: DrawIndex
+      InputBufferLayout:
+        Elements:
+          - Name: a_Position
+            Type: vec3
+          - Name: a_LocalPosition
+            Type: vec3
+          - Name: a_Thickness
+            Type: float
+          - Name: a_Fade
+            Type: float
+          - Name: a_Color
+            Type: vec4
+          - Name: a_EntityID
+            Type: int
+      UniformBufferList:
+        Elements:
+          []

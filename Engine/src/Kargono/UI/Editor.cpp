@@ -17,6 +17,7 @@
 
 namespace Kargono::UI
 {
+	ImFont* Editor::s_AntaLarge{ nullptr };
 	ImFont* Editor::s_AntaRegular{ nullptr };
 	ImFont* Editor::s_AntaSmall{ nullptr };
 	ImFont* Editor::s_PlexBold{ nullptr };
@@ -105,6 +106,7 @@ namespace Kargono::UI
 		float fontSize = 18.0f;
 		s_OpenSansBold = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Bold.ttf", fontSize);
 		s_OpenSansRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Regular.ttf", fontSize);
+		s_AntaLarge = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 23.0f);
 		s_AntaRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 20.0f);
 		s_AntaSmall = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 18.0f);
 		s_PlexBold = io.Fonts->AddFontFromFileTTF("resources/fonts/IBMPlexMono-Bold.ttf", 29.0f);
@@ -176,7 +178,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void Editor::Begin()
+	void Editor::StartRendering()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -184,7 +186,7 @@ namespace Kargono::UI
 		ImGuizmo::BeginFrame();
 	}
 
-	void Editor::End()
+	void Editor::EndRendering()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::GetCurrentApp();
@@ -200,6 +202,16 @@ namespace Kargono::UI
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+	}
+
+	void Editor::StartWindow(const std::string& label, int32_t flags)
+	{
+		ImGui::Begin(label.c_str(), 0, flags);
+	}
+
+	void Editor::EndWindow()
+	{
+		ImGui::End();
 	}
 
 	uint32_t Editor::GetActiveWidgetID()
@@ -228,6 +240,13 @@ namespace Kargono::UI
 	void Editor::Spacing(float space)
 	{
 		ImGui::Dummy(ImVec2(0.0f, space));
+	}
+
+	void Editor::TitleText(const std::string& text)
+	{
+		ImGui::PushFont(UI::Editor::s_PlexBold);
+		ImGui::TextColored(s_PearlBlue, text.c_str());
+		ImGui::PopFont();
 	}
 
 	void Editor::Spacing(SpacingAmount space)
@@ -401,6 +420,25 @@ namespace Kargono::UI
 		} while (!previewRemainder.empty());
 	}
 
+	void Editor::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
+	{
+		ImVec2 screenDimensions = ImGui::GetContentRegionAvail();
+		ImVec2 originalLocation = ImGui::GetCursorScreenPos();
+		ImVec2 screenLocation = ImVec2(originalLocation.x + screenDimensions.x / 2 - (screenDimensions.x / 3.0f), originalLocation.y + screenDimensions.y / 2 - (screenDimensions.y / 8));
+		ImGui::SetCursorScreenPos(screenLocation);
+		ImGui::PushFont(UI::Editor::s_AntaLarge);
+		if (ImGui::Button(label1.c_str(), ImVec2(screenDimensions.x / 3.0f, screenDimensions.y / 4.0f)))
+		{
+			onPress1();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(label2.c_str(), ImVec2(screenDimensions.x / 3.0f, screenDimensions.y / 4.0f)))
+		{
+			onPress2();
+		}
+		ImGui::PopFont();
+	}
+
 	void Editor::SelectOption(SelectOptionSpec& spec)
 	{
 		// Local Variables
@@ -444,9 +482,7 @@ namespace Kargono::UI
 				s_CachedSearching.insert_or_assign(spec.WidgetID, false);
 			}
 
-			ImGui::PushFont(UI::Editor::s_PlexBold);
-			ImGui::TextColored(s_PearlBlue, popUpLabel.c_str());
-			ImGui::PopFont();
+			UI::Editor::TitleText(popUpLabel);
 
 			ImGui::PushFont(UI::Editor::s_AntaRegular);
 			if (s_CachedSearching.at(spec.WidgetID))
@@ -666,9 +702,7 @@ namespace Kargono::UI
 		{
 			static char stringBuffer[256];
 
-			ImGui::PushFont(UI::Editor::s_PlexBold);
-			ImGui::TextColored(s_PearlBlue, popUpLabel.c_str());
-			ImGui::PopFont();
+			UI::Editor::TitleText(popUpLabel);
 
 			ImGui::PushFont(UI::Editor::s_AntaRegular);
 

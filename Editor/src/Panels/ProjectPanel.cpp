@@ -292,24 +292,27 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_UInt16)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectUpdateSessionSlotSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnUpdateSessionUserSlot("None");
+				Projects::Project::SetOnUpdateSessionUserSlot(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnUpdateSessionUserSlot(name);
+					Projects::Project::SetOnUpdateSessionUserSlot(id);
 					return;
 				}
 			}
@@ -423,7 +426,7 @@ namespace Kargono
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Project");
+		UI::Editor::StartWindow("Project");
 		// Project Name
 		UI::Editor::Text("Project Name", Projects::Project::GetProjectName());
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
@@ -483,7 +486,15 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update Session User Slot
-		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetProjectOnUpdateSessionUserSlot();
+		Assets::AssetHandle id = Projects::Project::GetOnUpdateSessionUserSlot();
+		if (id == 0)
+		{
+			s_SelectUpdateSessionSlotSpec.CurrentOption = "None";
+		}
+		else
+		{
+			s_SelectUpdateSessionSlotSpec.CurrentOption = Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName;
+		}
 		UI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
@@ -623,6 +634,6 @@ namespace Kargono
 		ImGui::NewLine();
 
 
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

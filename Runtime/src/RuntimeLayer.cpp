@@ -177,9 +177,14 @@ namespace Kargono
 
 	bool RuntimeLayer::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
+		/*uint16_t userSlot = event.GetUserSlot();
 		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);*/
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
 		return false;
 	}
 

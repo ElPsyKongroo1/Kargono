@@ -19,7 +19,7 @@ namespace Kargono
 		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
-		ImGui::Begin("##toolbar", nullptr, 0);
+		UI::Editor::StartWindow("##toolbar");
 
 		bool toolbarEnabled = (bool)Scene::GetActiveScene();
 
@@ -86,6 +86,6 @@ namespace Kargono
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

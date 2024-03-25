@@ -3671,7 +3671,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "OnUserLeftSessionFunction" << YAML::Value << config.OnUserLeftSessionFunction;
 				out << YAML::Key << "OnCurrentSessionInitFunction" << YAML::Value << config.OnCurrentSessionInitFunction;
 				out << YAML::Key << "OnConnectionTerminatedFunction" << YAML::Value << config.OnConnectionTerminatedFunction;
-				out << YAML::Key << "OnUpdateSessionUserSlotFunction" << YAML::Value << config.OnUpdateSessionUserSlotFunction;
+				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(config.OnUpdateSessionUserSlot);
 				out << YAML::Key << "OnStartSessionFunction" << YAML::Value << config.OnStartSessionFunction;
 				out << YAML::Key << "OnSessionReadyCheckConfirmFunction" << YAML::Value << config.OnSessionReadyCheckConfirmFunction;
 				out << YAML::Key << "OnReceiveSignalFunction" << YAML::Value << config.OnReceiveSignalFunction;
@@ -3699,8 +3699,6 @@ namespace Kargono::Assets
 
 		return true;
 	}
-
-
 
 	bool AssetManager::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
 	{
@@ -3733,7 +3731,7 @@ namespace Kargono::Assets
 		config.OnUserLeftSessionFunction = projectNode["OnUserLeftSessionFunction"].as<std::string>();
 		config.OnCurrentSessionInitFunction = projectNode["OnCurrentSessionInitFunction"].as<std::string>();
 		config.OnConnectionTerminatedFunction = projectNode["OnConnectionTerminatedFunction"].as<std::string>();
-		config.OnUpdateSessionUserSlotFunction = projectNode["OnUpdateSessionUserSlotFunction"].as<std::string>();
+		config.OnUpdateSessionUserSlot = static_cast<AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
 		config.OnStartSessionFunction = projectNode["OnStartSessionFunction"].as<std::string>();
 		config.OnSessionReadyCheckConfirmFunction = projectNode["OnSessionReadyCheckConfirmFunction"].as<std::string>();
 		config.OnReceiveSignalFunction = projectNode["OnReceiveSignalFunction"].as<std::string>();

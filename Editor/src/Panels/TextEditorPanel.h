@@ -5,7 +5,7 @@ namespace Kargono
 	class TextEditorPanel
 	{
 	public:
-		TextEditorPanel() = default;
+		TextEditorPanel();
 
 		void OnEditorUIRender();
 
