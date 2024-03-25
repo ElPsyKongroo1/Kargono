@@ -7,6 +7,7 @@
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/UI/Runtime.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "Windows.h"
@@ -25,6 +26,7 @@ namespace Kargono::Scripting
 namespace Kargono::Scripting
 {
 	typedef void (*void_none)();
+	typedef void (*void_uint16)(uint16_t);
 	typedef bool (*bool_none)();
 
 	
@@ -122,9 +124,16 @@ namespace Kargono::Scripting
 			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
 			break;
 		}
+
+		case WrappedFuncType::Void_UInt16:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt16>();
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
 		case WrappedFuncType::Bool_None:
 		{
-			script->m_Function = CreateRef<WrappedVoidNone>();
+			script->m_Function = CreateRef<WrappedBoolNone>();
 			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
 			break;
 		}
@@ -158,21 +167,28 @@ namespace Kargono::Utility
 
 #define AddEngineFunctionToCPPFileNoParameters(name, returnType) \
 	outputStream << "static std::function<" #returnType "()> " #name "Ptr {};\n"; \
-	outputStream << #returnType " PlaySoundFromName()\n"; \
+	outputStream << #returnType " " #name "()\n"; \
 	outputStream << "{\n"; \
 	outputStream << "\t" #name "Ptr();\n"; \
 	outputStream << "}\n";
 #define AddEngineFunctionToCPPFileOneParameters(name, returnType, parameter1)\
 	outputStream << "static std::function<" #returnType "(" #parameter1 " a)> " #name "Ptr {};\n"; \
-	outputStream << #returnType " PlaySoundFromName(" #parameter1 " a)\n"; \
+	outputStream << #returnType " " #name "(" #parameter1 " a)\n"; \
 	outputStream << "{\n"; \
 	outputStream << "\t" #name "Ptr(a);\n"; \
 	outputStream << "}\n";
 #define AddEngineFunctionToCPPFileTwoParameters(name, returnType, parameter1, parameter2)\
 	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b)> " #name "Ptr {};\n"; \
-	outputStream << #returnType " PlaySoundFromName(" #parameter1 " a, " #parameter2 " b)\n"; \
+	outputStream << #returnType " " #name "(" #parameter1 " a, " #parameter2 " b)\n"; \
 	outputStream << "{\n"; \
 	outputStream << "\t" #name "Ptr(a, b);\n"; \
+	outputStream << "}\n";
+
+#define AddEngineFunctionToCPPFileThreeParameters(name, returnType, parameter1, parameter2, parameter3)\
+	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c)> " #name "Ptr {};\n"; \
+	outputStream << #returnType " " #name "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c)\n"; \
+	outputStream << "{\n"; \
+	outputStream << "\t" #name "Ptr(a, b, c);\n"; \
 	outputStream << "}\n";
 
 #define AddEngineFunctionToCPPFileEnd(name) \
@@ -187,28 +203,37 @@ namespace Kargono::Scripting
 	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the dll)
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
+	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 
 	// This macro adds insertion function declarations to the header file
 #define AddEngineFunctionsToHeaderFiles() \
 	AddImportFunctionToHeaderFile(VoidNone, void) \
-	AddImportFunctionToHeaderFile(VoidString, void, const std::string&)
+	AddImportFunctionToHeaderFile(VoidString, void, const std::string&) \
+	AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 
 	// This	macro adds insertion function definitions and func pointers into the CPP file
 #define AddEngineFunctionsToCPPFiles() \
 	AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)\
+	AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)\
 	AddImportFunctionToCPPFile(VoidNone, void) \
 	outputStream << "{\n"; \
 	outputStream << "}\n"; \
 	AddImportFunctionToCPPFile(VoidString, void, const std::string&) \
 	outputStream << "{\n"; \
 	AddEngineFunctionToCPPFileEnd(PlaySoundFromName) \
-	outputStream << "}\n";
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetWidgetText) \
+	outputStream << "}\n"; 
 
 	// This macro provide the point where insertion functions are pulled from the dll when opening
 #define AddEngineFunctionsPointersToDll() \
 	ImportInsertFunction(VoidNone, void)\
 	ImportInsertFunction(VoidString, void) \
-	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString)
+	ImportInsertFunction(VoidStringStringString, void) \
+	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) \
+	AddEngineFunctionPointerToDll(SetWidgetText, UI::Runtime::SetWidgetText,VoidStringStringString)
 
 	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)
 	{
@@ -267,7 +292,7 @@ namespace Kargono::Scripting
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
 
-		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportHeader.h" };
+		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
 
 		FileSystem::WriteFileString(headerFile, outputStream.str());
 	}
@@ -290,25 +315,25 @@ namespace Kargono::Scripting
 		}
 		outputStream << "}\n";
 
-		std::filesystem::path file = { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportBody.cpp" };
+		std::filesystem::path file = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
 		FileSystem::WriteFileString(file, outputStream.str());
 	}
 
 	void ScriptModuleBuilder::CompileDll(bool addDebugSymbols)
 	{
-		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
+		//FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
 		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
 
-		std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
+		//std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
 		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };
 		std::filesystem::path binaryFile { binaryPath / "ExportBody.dll" };
-		std::filesystem::path objectPath { intermediatePath / "ExportBody.obj" };
+		std::filesystem::path objectPath { binaryPath / "ExportBody.obj" };
 
 		UUID pdbID = UUID();
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
-		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/ExportSource/ExportBody.cpp" };
+		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
 		// Access visual studio toolset console
@@ -324,7 +349,7 @@ namespace Kargono::Scripting
 		{
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
-		outputStream << "/Fo" << intermediatePath.string() << ' '; // Define Intermediate Location
+		outputStream << "/Fo" << binaryPath.string() << ' '; // Define Intermediate Location
 		outputStream << sourcePath.string() << " "; // Add File(s) to compile
 
 		outputStream << " && "; // Combine commands

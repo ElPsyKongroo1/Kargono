@@ -117,14 +117,19 @@ namespace Kargono::UI
 		static void Init();
 		static void Terminate();
 
-		static void Begin();
-		static void End();
+		static void StartRendering();
+		static void EndRendering();
+
+		static void StartWindow(const std::string& label, int32_t flags = 0);
+		static void EndWindow();
 
 		static void OnEvent(Events::Event& e);
 
 		static void Spacing(float space);
+		static void TitleText(const std::string& text);
 		static void Spacing(SpacingAmount space);
 
+		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void SelectOption(SelectOptionSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
 		static void Text(const std::string& Label, const std::string& Text);
@@ -137,6 +142,7 @@ namespace Kargono::UI
 			s_BlockEvents = block;
 		}
 
+		static ImFont* s_AntaLarge;
 		static ImFont* s_AntaRegular;
 		static ImFont* s_AntaSmall;
 		static ImFont* s_PlexBold;

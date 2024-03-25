@@ -79,7 +79,7 @@ namespace Kargono::Projects
 
 		std::string OnConnectionTerminatedFunction {"None"};
 
-		std::string OnUpdateSessionUserSlotFunction {"None"};
+		Assets::AssetHandle OnUpdateSessionUserSlot {0};
 
 		std::string OnStartSessionFunction {"None"};
 
@@ -335,16 +335,16 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.OnConnectionTerminatedFunction = name;
 		}
 
-		static std::string& GetProjectOnUpdateSessionUserSlot()
+		static Assets::AssetHandle GetOnUpdateSessionUserSlot()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUpdateSessionUserSlotFunction;
+			return s_ActiveProject->m_Config.OnUpdateSessionUserSlot;
 		}
 
-		static void SetProjectOnUpdateSessionUserSlot(const std::string& name)
+		static void SetOnUpdateSessionUserSlot(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUpdateSessionUserSlotFunction = name;
+			s_ActiveProject->m_Config.OnUpdateSessionUserSlot = id;
 		}
 
 		static std::string& GetProjectOnStartSession()

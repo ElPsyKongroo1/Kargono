@@ -626,7 +626,7 @@ namespace Kargono
 
 	void InputEditorPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Input Mode Editor");
+		UI::Editor::StartWindow("Input Mode Editor");
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))
 		{
@@ -677,7 +677,7 @@ namespace Kargono
 
 		if (!InputMode::s_InputMode)
 		{
-			ImGui::End();
+			UI::Editor::EndWindow();
 			return;
 		}
 
@@ -704,6 +704,6 @@ namespace Kargono
 			}
 			ImGui::EndTabBar();
 		}
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

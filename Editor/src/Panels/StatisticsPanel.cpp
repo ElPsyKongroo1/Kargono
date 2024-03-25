@@ -6,7 +6,7 @@ namespace Kargono
 {
 	void StatisticsPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Stats");
+		UI::Editor::StartWindow("Statistics");
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
@@ -48,7 +48,6 @@ namespace Kargono
 		}
 		ImGui::NewLine();
 
-
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

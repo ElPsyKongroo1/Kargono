@@ -58,7 +58,7 @@ namespace Kargono
 		int32_t& selectedWindow = UI::Runtime::GetSelectedWindow();
 		int32_t& selectedWidget = UI::Runtime::GetSelectedWidget();
 
-		ImGui::Begin("User Interface Editor");
+		UI::Editor::StartWindow("User Interface Editor");
 
 		Assets::AssetHandle currentUIHandle = UI::Runtime::GetCurrentUIHandle();
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(currentUIHandle) ? Assets::AssetManager::GetUIObjectLocation(currentUIHandle).string().c_str() : "None"))
@@ -114,7 +114,7 @@ namespace Kargono
 
 		if (!UI::Runtime::GetCurrentUIObject())
 		{
-			ImGui::End();
+			UI::Editor::EndWindow();
 			return;
 		}
 
@@ -349,8 +349,7 @@ namespace Kargono
 			ImGui::EndTable();
 		}
 
-
-		ImGui::End();
+		UI::Editor::EndWindow();
 
 		if (windowToDelete != -1)
 		{

@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <thread>
 
+#include "Panels/TextEditorPanel.h"
 
 
 namespace Kargono
@@ -173,6 +174,7 @@ namespace Kargono
 		bool m_ShowInputEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
+		bool m_ShowTextEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -207,6 +209,7 @@ namespace Kargono
 		Scope<ViewportPanel>  m_ViewportPanel;
 		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
 		Scope<EntityClassEditor>  m_EntityClassEditor;
+		Scope<TextEditorPanel>  m_TextEditorPanel;
 	private:
 		friend SettingsPanel;
 		friend ToolbarPanel;
