@@ -99,7 +99,7 @@ namespace Kargono
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
-		ImGui::Begin("Viewport", 0, window_flags);
+		UI::Editor::StartWindow("Viewport", window_flags);
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		Math::vec2 localViewportBounds[2];
@@ -189,7 +189,7 @@ namespace Kargono
 			}
 		}
 
-		ImGui::End();
+		UI::Editor::EndWindow();
 		ImGui::PopStyleVar();
 	}
 	void ViewportPanel::ProcessMousePicking()

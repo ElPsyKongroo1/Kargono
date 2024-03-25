@@ -45,7 +45,7 @@ namespace Kargono
 	}
 	void SettingsPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Settings");
+		UI::Editor::StartWindow("Settings");
 
 		// Toggle Physics Colliders
 		s_PrimaryCameraCheckboxSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;
@@ -98,6 +98,6 @@ namespace Kargono
 				Scene::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorLayer->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

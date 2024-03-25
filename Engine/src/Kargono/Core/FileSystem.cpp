@@ -251,6 +251,10 @@ namespace Kargono
 
 	void FileSystem::CreateNewDirectory(const std::filesystem::path& filepath)
 	{
+		if (filepath == "")
+		{
+			return;
+		}
 		if (!std::filesystem::exists(filepath))
 		{
 			std::filesystem::create_directories(filepath);

@@ -61,7 +61,7 @@ namespace Kargono
 
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Content Browser");
+		UI::Editor::StartWindow("Content Browser");
 
 		static float padding = 25.0f;
 		static float thumbnailSize = 140;
@@ -344,8 +344,7 @@ namespace Kargono
 		ImGui::Columns(1);
 		
 
-		// TODO: Status bar
-		ImGui::End();
+		UI::Editor::EndWindow();
 
 	}
 	Ref<Texture2D> ContentBrowserPanel::BrowserFileTypeToIcon(BrowserFileType type)

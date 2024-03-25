@@ -41,6 +41,7 @@ namespace Kargono
 		m_ViewportPanel = CreateScope<ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<ScriptEditorPanel>();
 		m_EntityClassEditor = CreateScope<EntityClassEditor>();
+		m_TextEditorPanel = CreateScope<TextEditorPanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
@@ -95,7 +96,7 @@ namespace Kargono
 	void EditorLayer::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		UI::Editor::Begin();
+		UI::Editor::StartRendering();
 
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
@@ -157,8 +158,8 @@ namespace Kargono
 		{
 			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 			if (m_ShowToolbar) { m_ToolbarPanel->OnEditorUIRender(); }
-			ImGui::End();
-			UI::Editor::End();
+			UI::Editor::EndWindow();
+			UI::Editor::EndRendering();
 			return;
 		}
 
@@ -204,6 +205,7 @@ namespace Kargono
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
+				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
@@ -218,6 +220,7 @@ namespace Kargono
 			ImGui::EndMenuBar();
 		}
 
+		// Display other panels
 		if (m_ShowSceneHierarchy) { m_SceneHierarchyPanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
@@ -230,11 +233,12 @@ namespace Kargono
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
+		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
-		ImGui::End();
+		UI::Editor::EndWindow();
 
-		UI::Editor::End();
+		UI::Editor::EndRendering();
 	}
 
 
@@ -439,9 +443,12 @@ namespace Kargono
 
 	bool EditorLayer::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
+
 		return false;
 	}
 

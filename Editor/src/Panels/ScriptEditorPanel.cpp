@@ -8,7 +8,9 @@ namespace Kargono
 {
 
 	static UI::TextInputSpec s_InputScriptNameSpec{};
+	static UI::SelectOptionSpec s_InputScriptFuncSpec{};
 	static std::string s_InputScriptName{ "Empty"};
+	static WrappedFuncType s_InputScriptFunc{ WrappedFuncType::Void_None};
 
 	ScriptEditorPanel::ScriptEditorPanel()
 	{
@@ -19,10 +21,22 @@ namespace Kargono
 		{
 				s_InputScriptName = scriptName;
 		};
+
+		s_InputScriptFuncSpec.Label = "Function Name";
+		s_InputScriptFuncSpec.WidgetID = 0x2b84d1b4e4304b26;
+		s_InputScriptFuncSpec.CurrentOption = "Void_None";
+		for (auto func : s_AllWrappedFuncs)
+		{
+			s_InputScriptFuncSpec.AddToOptionsList("All Options", Utility::WrappedFuncTypeToString(func));
+		}
+		s_InputScriptFuncSpec.ConfirmAction = [&](const std::string& scriptName)
+		{
+			s_InputScriptFunc = Utility::StringToWrappedFuncType(scriptName);
+		};
 	}
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
-		ImGui::Begin("Scripts");
+		UI::Editor::StartWindow("Scripts");
 
 		bool deleteScript = false;
 		Assets::AssetHandle deleteHandle{};
@@ -39,10 +53,9 @@ namespace Kargono
 				deleteScript = true;
 				deleteHandle = handle;
 			}
-
-			if (ImGui::Button(("RunScript##" + std::to_string(iterator)).c_str()))
+			if (script->m_Function->Type() == WrappedFuncType::Void_None)
 			{
-				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				if (ImGui::Button(("RunScript##" + std::to_string(iterator)).c_str()))
 				{
 					((WrappedVoidNone*)script->m_Function.get())->m_Value();
 				}
@@ -77,17 +90,19 @@ namespace Kargono
 			ImGui::Text("New Script Creator===================");
 			s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
 			UI::Editor::TextInputModal(s_InputScriptNameSpec);
+			s_InputScriptFuncSpec.CurrentOption = Utility::WrappedFuncTypeToString(s_InputScriptFunc);
+			UI::Editor::SelectOption(s_InputScriptFuncSpec);
 			if (ImGui::Button("Create Script"))
 			{
-				std::vector<WrappedVarType> parameters{};
-				WrappedVarType returnValue{ WrappedVarType::Void };
-				WrappedFuncType functionType{ WrappedFuncType::Void_None };
+				std::vector<WrappedVarType> parameters{ Utility::WrappedFuncTypeToParameterTypes(s_InputScriptFunc) };
+				WrappedVarType returnValue{ Utility::WrappedFuncTypeToReturnType(s_InputScriptFunc)};
+				WrappedFuncType functionType{ s_InputScriptFunc };
 				auto [handle, successful] = Assets::AssetManager::CreateNewScript(s_InputScriptName, parameters, returnValue, functionType);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		ImGui::End();
+		UI::Editor::EndWindow();
 	}
 }

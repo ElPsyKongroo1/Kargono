@@ -10,3 +10,13 @@ Assets:
         []
       ReturnValue: Void
       FunctionType: Void_None
+  - AssetHandle: 3176244785148247992
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/3176244785148247992.cpp
+      AssetType: Script
+      Name: UpdateSessionUserSlot
+      Parameters:
+        - UInteger16
+      ReturnValue: Void
+      FunctionType: Void_UInt16
