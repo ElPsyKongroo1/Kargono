@@ -13,8 +13,6 @@
 #include "ImGuizmo.h"
 #include "imgui_internal.h"
 
-
-
 namespace Kargono::UI
 {
 	ImFont* Editor::s_AntaLarge{ nullptr };
@@ -327,7 +325,7 @@ namespace Kargono::UI
 		}
 	}
 
-	void CreatePopupCancelButton(ImGuiID widgetID, std::function<void()> pressFunction)
+	void CreatePopupCancelButton(ImGuiID widgetID, std::function<void()> pressFunction = nullptr)
 	{
 		ImGui::SameLine(ImGui::GetWindowWidth() - 75.0f);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -0.6f);
@@ -336,7 +334,10 @@ namespace Kargono::UI
 			ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
 			UI::Editor::s_PureWhite, 0))
 		{
-			pressFunction();
+			if (pressFunction)
+			{
+				pressFunction();
+			}
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::PopStyleColor();
@@ -418,6 +419,42 @@ namespace Kargono::UI
 			ImGui::TextColored(UI::Editor::s_PearlBlue, previewOutput.c_str());
 			iteration++;
 		} while (!previewRemainder.empty());
+	}
+
+	void Editor::WarningMessage(WarningMessageSpec& spec)
+	{
+		// Local Variables
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		if (spec.PopupActive)
+		{
+			ImGui::OpenPopup(id.c_str());
+			spec.PopupActive = false;
+		}
+
+		// Display Popup
+		ImGui::SetNextWindowSize(ImVec2(700.0f, 0.0f));
+		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
+		{
+			UI::Editor::TitleText(spec.Label);
+
+			ImGui::PushFont(UI::Editor::s_AntaRegular);
+
+			// Cancel Tool Bar Button
+			CreatePopupCancelButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)));
+
+			// Confirm Tool Bar Button
+			CreatePopupConfirmButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
+				spec.ConfirmAction);
+
+			ImGui::Separator();
+
+			spec.WarningContents();
+
+			ImGui::PopFont();
+			ImGui::EndPopup();
+		}
 	}
 
 	void Editor::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
@@ -672,7 +709,7 @@ namespace Kargono::UI
 
 	}
 
-	void Editor::Text(const std::string& label, const std::string& text)
+	void Editor::LabeledText(const std::string& label, const std::string& text)
 	{
 		// Display Menu Item
 		ImGui::TextColored(s_PureWhite, label.c_str());

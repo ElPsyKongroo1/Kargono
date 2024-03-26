@@ -231,7 +231,12 @@ namespace Kargono
 
 	bool RuntimeLayer::OpenProject()
 	{
-		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
+		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
+		if (!std::filesystem::exists(initialDirectory))
+		{
+			initialDirectory = "";
+		}
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0", initialDirectory.string().c_str());
 		if (filepath.empty()) { return false; }
 
 		OpenProject(filepath);
