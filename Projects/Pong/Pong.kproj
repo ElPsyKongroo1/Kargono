@@ -13,7 +13,6 @@ Project:
   OnUserLeftSessionFunction: UserLeftSession
   OnCurrentSessionInitFunction: OnCurrentSessionInit
   OnConnectionTerminatedFunction: OnConnectionTerminated
-  OnUpdateSessionUserSlotFunction: OnUpdateSessionUserSlot
   OnUpdateSessionUserSlot: 3176244785148247992
   OnStartSessionFunction: OnStartSession
   OnSessionReadyCheckConfirmFunction: OnSessionReadyCheckConfirm

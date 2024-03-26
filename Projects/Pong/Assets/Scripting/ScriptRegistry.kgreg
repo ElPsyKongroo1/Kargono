@@ -20,3 +20,13 @@ Assets:
         - UInteger16
       ReturnValue: Void
       FunctionType: Void_UInt16
+  - AssetHandle: 7445822592925037095
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/7445822592925037095.cpp
+      AssetType: Script
+      Name: UserLeftSession
+      Parameters:
+        - UInteger16
+      ReturnValue: Void
+      FunctionType: Void_UInt16

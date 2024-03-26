@@ -168,11 +168,17 @@ namespace Kargono
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Open Project ...", "Ctrl+O")) { OpenProject(); }
+				if (ImGui::MenuItem("Open Project ...", "Ctrl+O"))
+				{
+					OpenProject();
+				}
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("New Scene", "Ctrl+N")){ NewScene();}
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+				{
+					NewScene();
+				}
 
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 				{
@@ -180,7 +186,10 @@ namespace Kargono
 					SaveProject();
 				}
 
-				if (ImGui::MenuItem("Exit")) { Application::GetCurrentApp().Close(); }
+				if (ImGui::MenuItem("Exit"))
+				{
+					Application::GetCurrentApp().Close();
+				}
 				ImGui::EndMenu();
 
 			}
@@ -245,6 +254,10 @@ namespace Kargono
 	void EditorLayer::OnEvent(Events::Event& event)
 	{
 		UI::Editor::OnEvent(event);
+		if (event.Handled)
+		{
+			return;
+		}
 
 		Events::EventDispatcher dispatcher(event);
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
@@ -500,8 +513,12 @@ namespace Kargono
 	bool EditorLayer::OpenProject()
 	{
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
-
-		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0");
+		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
+		if (!std::filesystem::exists(initialDirectory))
+		{
+			initialDirectory = "";
+		}
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0", initialDirectory.string().c_str());
 		if (filepath.empty()) { return false; }
 
 		OpenProject(filepath);
@@ -551,7 +568,8 @@ namespace Kargono
 
 	void EditorLayer::NewScene()
 	{
-		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
+		std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory() / "Scenes";
+		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
 		if (filepath.empty()) { return; }
 		if (Assets::AssetManager::CheckSceneExists(filepath.stem().string()))
 		{
@@ -567,7 +585,9 @@ namespace Kargono
 
 	void EditorLayer::OpenScene()
 	{
-		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0");
+		std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
+		
 		if (!filepath.empty())
 		{
 			OpenScene(filepath);
