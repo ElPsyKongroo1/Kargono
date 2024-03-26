@@ -52,6 +52,16 @@ namespace Kargono::UI
 
 	using OptionsList = std::unordered_map<std::string, std::vector<std::string>>;
 
+	struct WarningMessageSpec
+	{
+	public:
+		UUID WidgetID;
+		std::string Label;
+		std::function<void()> WarningContents {nullptr};
+		std::function<void()> ConfirmAction {nullptr};
+		bool PopupActive {false};
+	};
+
 	struct SelectOptionSpec
 	{
 	public:
@@ -129,10 +139,11 @@ namespace Kargono::UI
 		static void TitleText(const std::string& text);
 		static void Spacing(SpacingAmount space);
 
+		static void WarningMessage(WarningMessageSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void SelectOption(SelectOptionSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
-		static void Text(const std::string& Label, const std::string& Text);
+		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void TextInputModal(TextInputSpec& spec);
 
 		static uint32_t GetActiveWidgetID();

@@ -428,11 +428,11 @@ namespace Kargono
 	{
 		UI::Editor::StartWindow("Project");
 		// Project Name
-		UI::Editor::Text("Project Name", Projects::Project::GetProjectName());
+		UI::Editor::LabeledText("Project Name", Projects::Project::GetProjectName());
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Project Directory
-		UI::Editor::Text("Project Directory", Projects::Project::GetProjectDirectory().string());
+		UI::Editor::LabeledText("Project Directory", Projects::Project::GetProjectDirectory().string());
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select Starting Scene
@@ -486,15 +486,8 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update Session User Slot
-		Assets::AssetHandle id = Projects::Project::GetOnUpdateSessionUserSlot();
-		if (id == 0)
-		{
-			s_SelectUpdateSessionSlotSpec.CurrentOption = "None";
-		}
-		else
-		{
-			s_SelectUpdateSessionSlotSpec.CurrentOption = Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName;
-		}
+		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetOnUpdateSessionUserSlot() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None";
 		UI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
