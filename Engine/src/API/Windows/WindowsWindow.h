@@ -101,6 +101,7 @@ namespace API::Windows
 		virtual void ResizeWindow(Kargono::Math::vec2 newWindowSize) override;
 		// This function enables or disables the mouse cursor over the GLFW window
 		virtual void SetMouseCursorVisible(bool choice) override;
+		virtual void SetVisible(bool visible) override;
 	
 
 		//==============================

@@ -6,14 +6,13 @@
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/UI/Text.h"
 #include "Kargono/UI/Runtime.h"
+#include "Kargono/Scene/GameState.h"
 #include "Kargono/Input/InputMode.h"
-
-#include <filesystem>
-#include <tuple>
-
 #include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 
+#include <filesystem>
+#include <tuple>
 
 namespace Kargono
 {
@@ -467,7 +466,6 @@ namespace Kargono::Assets
 		//		metadata that is necessary to load the intermediate file correctly.
 		static std::unordered_map<AssetHandle, Assets::Asset> s_UIObjectRegistry;
 
-
 	//============================================================
 	// InputMode
 	//============================================================
@@ -548,6 +546,87 @@ namespace Kargono::Assets
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
 		static std::unordered_map<AssetHandle, Assets::Asset> s_InputModeRegistry;
+
+	//============================================================
+	// GameState
+	//============================================================
+	public:
+		//==============================
+		// Manage GameState Registry
+		//==============================
+		// Retrieve the current project's GameState registry from disk and add to in-memory Registry
+		//		(s_GameStateRegistry). This involves:
+		//		1. Retrieving the registry file from the current project asset directory.
+		//		2. Verifying the file is a registry file and opening the root node
+		//		3. Read each asset, retrieve its metadata, retrieve its GameState specific metadata,
+		//		and instatiate each asset into the s_GameStateRegistry.
+		static void DeserializeGameStateRegistry();
+		// Save Current in-memory registry (s_GameStateRegistry) to disk location specified in
+		//		current project. This involves:
+		//		1. Open a new registry file that is located in the current project asset directory.
+		//		2. Write each asset with its metadata and GameState specific metadata into the new yaml file.
+		//		3. Write the file to the output stream.
+		static void SerializeGameStateRegistry();
+		// This function clears both the s_GameStateRegistry and s_GameStates which should also call
+		//		all destructors for in-memory GameStates.
+		static void ClearGameStateRegistry();
+
+		//==============================
+		// Create New GameState
+		//==============================
+
+		// This function registers a new GameState with the asset system using the provided filepath.
+		//		This function takes the following steps:
+		//		1. Create a checksum from the raw file provided and determine if the file already
+		//		exists in the registry.
+		//		2. Create the GameState file on disk.
+		//		3. Register the new file with the in-memory s_GameStateRegistry and the on disk GameState
+		//		registry
+		//		4. Return the GameState handle
+		static AssetHandle CreateNewGameState(const std::string& GameStateName);
+
+		//==============================
+		// Save a GameState
+		//==============================
+		// Save Current GameState
+		static void SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::GameState> GameState);
+
+		//==============================
+		// Load and Retrieve In-Memory GameState
+		//==============================
+		// Function to get a texture with a given name
+		static Ref<Kargono::GameState> GetGameState(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Kargono::GameState>> GetGameState(const std::filesystem::path& filepath);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Check if name already exists in registry
+		static bool CheckGameStateExists(const std::string& GameStateName);
+
+		// Returns the relative path from project directory of intermediate file
+		static std::filesystem::path GetGameStateLocation(const AssetHandle& handle);
+
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetGameStateRegistry() { return s_GameStateRegistry; }
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		// This function creates a .GameState file with the specified name and fills the provided asset file
+		//		with relevant metadata.
+		static void CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset);
+		// Save a single GameState
+		static void SerializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath);
+		// Load a single GameState
+		static bool DeserializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath);
+		// Instantiate a new GameState
+		static Ref<Kargono::GameState> InstantiateGameState(const Assets::Asset& GameStateAsset);
+	private:
+		// This registry holds a reference to all of the available GameState in the current project.
+		//		Since the registry only holds references, it does not instantiate any of the objects
+		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
+		//		metadata that is necessary to load the intermediate file correctly.
+		static std::unordered_map<AssetHandle, Assets::Asset> s_GameStateRegistry;
 
 
 	//============================================================

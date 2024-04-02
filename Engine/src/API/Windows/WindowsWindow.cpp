@@ -67,8 +67,12 @@ namespace API::Windows
 
 		// Create New Window Through GLFW
 		#if defined(KG_DEBUG)
-		if (Kargono::Renderer::GetAPI() == Kargono::RenderAPI::OpenGL) { glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); }
+		if (Kargono::Renderer::GetAPI() == Kargono::RenderAPI::OpenGL)
+		{
+			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		}
 		#endif
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWWindowCount;
 
@@ -278,5 +282,16 @@ namespace API::Windows
 	{
 		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
 		glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);
+	}
+	void WindowsWindow::SetVisible(bool visible)
+	{
+		if (visible)
+		{
+			glfwShowWindow(m_Window);
+		}
+		else
+		{
+			glfwHideWindow(m_Window);
+		}
 	}
 }

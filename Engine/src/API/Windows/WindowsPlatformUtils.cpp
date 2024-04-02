@@ -195,10 +195,10 @@ namespace Kargono::Utility
 
 	}
 
+		CHAR szFile[260] = { 0 };
 	std::filesystem::path FileDialogs::SaveFile(const char* filter, const char* initialDirectory)
 	{
 		OPENFILENAMEA ofn;
-		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);

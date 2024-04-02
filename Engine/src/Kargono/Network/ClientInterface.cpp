@@ -91,7 +91,7 @@ namespace Kargono::Network
 					KG_TRACE("Submitted a UDP INIT BITCH");
 					// Do checks for UDP connection
 					Message newMessage{};
-					newMessage.Header.ID = CustomMsgTypes::UDPInit;
+					newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UDPInit);
 					SendUDP(newMessage);
 				});
 				WakeUpNetworkThread();

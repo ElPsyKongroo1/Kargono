@@ -209,6 +209,7 @@ namespace Kargono::UI
 	public:
 		static void Init();
 		static void LoadUIObject(Ref<UIObject> uiObject, Assets::AssetHandle uiHandle);
+		static void LoadUserInterfaceFromName(const std::string& uiName);
 		static void Terminate();
 		static bool SaveCurrentUIIntoUIObject();
 		static void DeleteWindow(uint32_t windowLocation);

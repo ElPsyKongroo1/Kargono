@@ -12,7 +12,7 @@ namespace Kargono
 	static UI::SelectOptionSpec s_SelectUpdateUserCountSpec {};
 	static UI::SelectOptionSpec s_SelectApproveJoinSessionSpec {};
 	static UI::SelectOptionSpec s_SelectUserLeftSessionSpec {};
-	static UI::SelectOptionSpec s_SelectSessionStartSpec {};
+	static UI::SelectOptionSpec s_SelectSessionInitSpec {};
 	static UI::SelectOptionSpec s_SelectConnectionTerminatedSpec {};
 	static UI::SelectOptionSpec s_SelectUpdateSessionSlotSpec {};
 	static UI::SelectOptionSpec s_SelectStartSessionSpec {};
@@ -92,29 +92,31 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectRuntimeStartSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnRuntimeStart("None");
+				Projects::Project::SetOnRuntimeStart(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnRuntimeStart(name);
+					Projects::Project::SetOnRuntimeStart(id);
 					return;
 				}
 			}
 			KG_ERROR("Could not locate runtime start function in ProjectPanel");
-
 		};
 
 		// Update User Count Spec
@@ -126,24 +128,27 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_UInt32)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectUpdateUserCountSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnUpdateUserCount("None");
+				Projects::Project::SetOnUpdateUserCount(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnUpdateUserCount(name);
+					Projects::Project::SetOnUpdateUserCount(id);
 					return;
 				}
 			}
@@ -193,57 +198,63 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_UInt16)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectUserLeftSessionSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnUserLeftSession("None");
+				Projects::Project::SetOnUserLeftSession(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnUserLeftSession(name);
+					Projects::Project::SetOnUserLeftSession(id);
 					return;
 				}
 			}
 			KG_ERROR("Could not locate user left session function in ProjectPanel");
 		};
 
-		// Update User Left Session
-		s_SelectSessionStartSpec.Label = "Session Start";
-		s_SelectSessionStartSpec.WidgetID = 0xe8dbc36fd6774a8f;
-		s_SelectSessionStartSpec.LineCount = 3;
-		s_SelectSessionStartSpec.PopupAction = [](UI::SelectOptionSpec& spec)
+		// Update Start Session
+		s_SelectSessionInitSpec.Label = "Session Initialization";
+		s_SelectSessionInitSpec.WidgetID = 0xe8dbc36fd6774a8f;
+		s_SelectSessionInitSpec.LineCount = 3;
+		s_SelectSessionInitSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
-		s_SelectSessionStartSpec.ConfirmAction = [&](const std::string& selection)
+		s_SelectSessionInitSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnCurrentSessionInit("None");
+				Projects::Project::SetOnCurrentSessionInit(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnCurrentSessionInit(name);
+					Projects::Project::SetOnCurrentSessionInit(id);
 					return;
 				}
 			}
@@ -259,24 +270,27 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectConnectionTerminatedSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnConnectionTerminated("None");
+				Projects::Project::SetOnConnectionTerminated(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnConnectionTerminated(name);
+					Projects::Project::SetOnConnectionTerminated(id);
 					return;
 				}
 			}
@@ -328,24 +342,27 @@ namespace Kargono
 			spec.GetOptionsList().clear();
 
 			spec.AddToOptionsList("Clear", "None");
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				spec.AddToOptionsList("All Options", name);
+				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				{
+					spec.AddToOptionsList("All Options", script->m_ScriptName);
+				}
 			}
 		};
 		s_SelectStartSessionSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			if (selection == "None")
 			{
-				Projects::Project::SetProjectOnStartSession("None");
+				Projects::Project::SetOnStartSession(0);
 				return;
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [id, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (name == selection)
+				if (script->m_ScriptName == selection)
 				{
-					Projects::Project::SetProjectOnStartSession(name);
+					Projects::Project::SetOnStartSession(id);
 					return;
 				}
 			}
@@ -456,12 +473,14 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Runtime Start
-		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetProjectOnRuntimeStart();
+		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetOnRuntimeStart() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None";
 		UI::Editor::SelectOption(s_SelectRuntimeStartSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update User Count
-		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetProjectOnUpdateUserCount();
+		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetOnUpdateUserCount() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None";
 		UI::Editor::SelectOption(s_SelectUpdateUserCountSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
@@ -471,17 +490,20 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On User Left Session
-		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetProjectOnUserLeftSession();
+		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetOnUserLeftSession() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None";
 		UI::Editor::SelectOption(s_SelectUserLeftSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Current Session Start
-		s_SelectSessionStartSpec.CurrentOption = Projects::Project::GetProjectOnCurrentSessionInit();
-		UI::Editor::SelectOption(s_SelectSessionStartSpec);
+		s_SelectSessionInitSpec.CurrentOption = Projects::Project::GetOnCurrentSessionInit() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None";
+		UI::Editor::SelectOption(s_SelectSessionInitSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Connection Terminated
-		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetProjectOnConnectionTerminated();
+		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetOnConnectionTerminated() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None";
 		UI::Editor::SelectOption(s_SelectConnectionTerminatedSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
@@ -492,7 +514,9 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Start Session
-		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetProjectOnStartSession();
+		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetOnStartSession() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None";
+		
 		UI::Editor::SelectOption(s_SelectStartSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 

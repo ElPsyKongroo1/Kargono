@@ -1,15 +1,5 @@
 Registry: Script
 Assets:
-  - AssetHandle: 7448269885476125662
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/7448269885476125662.cpp
-      AssetType: Script
-      Name: Potato1
-      Parameters:
-        []
-      ReturnValue: Void
-      FunctionType: Void_None
   - AssetHandle: 3176244785148247992
     MetaData:
       CheckSum: ""
@@ -20,6 +10,16 @@ Assets:
         - UInteger16
       ReturnValue: Void
       FunctionType: Void_UInt16
+  - AssetHandle: 8444652895326507655
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/8444652895326507655.cpp
+      AssetType: Script
+      Name: OnCurrentSessionInit
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
   - AssetHandle: 7445822592925037095
     MetaData:
       CheckSum: ""
@@ -30,3 +30,43 @@ Assets:
         - UInteger16
       ReturnValue: Void
       FunctionType: Void_UInt16
+  - AssetHandle: 18163504705534252383
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/18163504705534252383.cpp
+      AssetType: Script
+      Name: UpdateOnlineCount
+      Parameters:
+        - UInteger32
+      ReturnValue: Void
+      FunctionType: Void_UInt32
+  - AssetHandle: 1819971799574496652
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/1819971799574496652.cpp
+      AssetType: Script
+      Name: OnStartSession
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
+  - AssetHandle: 14683932765512752045
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/14683932765512752045.cpp
+      AssetType: Script
+      Name: OpenMainMenu
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
+  - AssetHandle: 4342390925410131221
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/4342390925410131221.cpp
+      AssetType: Script
+      Name: OnConnectionTerminated
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None

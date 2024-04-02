@@ -67,21 +67,21 @@ namespace Kargono::Projects
 		ScreenResolutionOptions TargetResolution{ ScreenResolutionOptions::MatchDevice };
 		// OnRuntimeStartFunction holds the name of the custom call that is run when
 		//		the application is started.
-		std::string OnRuntimeStartFunction {"None"};
+		Assets::AssetHandle OnRuntimeStart {0};
 
-		std::string OnUpdateUserCountFunction {"None"};
+		Assets::AssetHandle OnUpdateUserCount {0};
 
 		std::string OnApproveJoinSessionFunction {"None"};
 
-		std::string OnUserLeftSessionFunction {"None"};
+		Assets::AssetHandle OnUserLeftSession {0};
 
-		std::string OnCurrentSessionInitFunction {"None"};
+		Assets::AssetHandle OnCurrentSessionInit {0};
 
-		std::string OnConnectionTerminatedFunction {"None"};
+		Assets::AssetHandle OnConnectionTerminated {0};
 
 		Assets::AssetHandle OnUpdateSessionUserSlot {0};
 
-		std::string OnStartSessionFunction {"None"};
+		Assets::AssetHandle OnStartSession {0};
 
 		std::string OnSessionReadyCheckConfirmFunction {"None"};
 
@@ -260,31 +260,28 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.AppIsNetworked = isNetworked;
 		}
 
-		// This function gets the name of the function from the ScriptEngine CustomCalls that is
-		//		run when the application starts.
-		static std::string& GetProjectOnRuntimeStart()
+		static Assets::AssetHandle GetOnRuntimeStart()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnRuntimeStartFunction;
+			return s_ActiveProject->m_Config.OnRuntimeStart;
 		}
 
-		// This function allows the function pointer to be updated when the application begins.
-		static void SetProjectOnRuntimeStart(const std::string& name)
+		static void SetOnRuntimeStart(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnRuntimeStartFunction = name;
+			s_ActiveProject->m_Config.OnRuntimeStart = id;
 		}
 
-		static std::string& GetProjectOnUpdateUserCount()
+		static Assets::AssetHandle GetOnUpdateUserCount()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUpdateUserCountFunction;
+			return s_ActiveProject->m_Config.OnUpdateUserCount;
 		}
 
-		static void SetProjectOnUpdateUserCount(const std::string& name)
+		static void SetOnUpdateUserCount(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUpdateUserCountFunction = name;
+			s_ActiveProject->m_Config.OnUpdateUserCount = id;
 		}
 
 		static std::string& GetProjectOnApproveJoinSession()
@@ -299,40 +296,41 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.OnApproveJoinSessionFunction = name;
 		}
 
-		static std::string& GetProjectOnUserLeftSession()
+		static Assets::AssetHandle GetOnUserLeftSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUserLeftSessionFunction;
+			return s_ActiveProject->m_Config.OnUserLeftSession;
 		}
 
-		static void SetProjectOnUserLeftSession(const std::string& name)
+		static void SetOnUserLeftSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUserLeftSessionFunction = name;
+			s_ActiveProject->m_Config.OnUserLeftSession = id;
 		}
 
-		static std::string& GetProjectOnCurrentSessionInit()
+		static Assets::AssetHandle GetOnCurrentSessionInit()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnCurrentSessionInitFunction;
+			return s_ActiveProject->m_Config.OnCurrentSessionInit;
 		}
 
-		static void SetProjectOnCurrentSessionInit(const std::string& name)
+		static void SetOnCurrentSessionInit(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnCurrentSessionInitFunction = name;
+			s_ActiveProject->m_Config.OnCurrentSessionInit = id;
+		}
+		
+
+		static Assets::AssetHandle GetOnConnectionTerminated()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.OnConnectionTerminated;
 		}
 
-		static std::string& GetProjectOnConnectionTerminated()
+		static void SetOnConnectionTerminated(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnConnectionTerminatedFunction;
-		}
-
-		static void SetProjectOnConnectionTerminated(const std::string& name)
-		{
-			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnConnectionTerminatedFunction = name;
+			s_ActiveProject->m_Config.OnConnectionTerminated = id;
 		}
 
 		static Assets::AssetHandle GetOnUpdateSessionUserSlot()
@@ -347,16 +345,16 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.OnUpdateSessionUserSlot = id;
 		}
 
-		static std::string& GetProjectOnStartSession()
+		static Assets::AssetHandle GetOnStartSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnStartSessionFunction;
+			return s_ActiveProject->m_Config.OnStartSession;
 		}
 
-		static void SetProjectOnStartSession(const std::string& name)
+		static void SetOnStartSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnStartSessionFunction = name;
+			s_ActiveProject->m_Config.OnStartSession = id;
 		}
 
 		static std::string& GetProjectOnSessionReadyCheckConfirm()

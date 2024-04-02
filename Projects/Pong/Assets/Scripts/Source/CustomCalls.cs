@@ -107,7 +107,7 @@ namespace Pong
 
 		}
 
-        static void OnStartSession()
+		static void OnStartSession()
         {
 	        UInt16 userSlot = Network.GetSessionSlot();
 	        UserInterface.SetDisplayWindow("pre_game_warning", true);

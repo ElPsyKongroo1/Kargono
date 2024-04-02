@@ -101,9 +101,8 @@ namespace Kargono::UI
 		//io.ConfigViewportsNoAutoMerge = true;
 		//io.ConfigViewportsNoTaskBarIcon = true;
 
-		float fontSize = 18.0f;
-		s_OpenSansBold = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Bold.ttf", fontSize);
-		s_OpenSansRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Regular.ttf", fontSize);
+		s_OpenSansBold = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Bold.ttf", 18.0f);
+		s_OpenSansRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/opensans/static/OpenSans-Regular.ttf", 18.0f);
 		s_AntaLarge = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 23.0f);
 		s_AntaRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 20.0f);
 		s_AntaSmall = io.Fonts->AddFontFromFileTTF("resources/fonts/Anta-Regular.ttf", 18.0f);

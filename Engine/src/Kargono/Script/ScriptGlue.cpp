@@ -319,7 +319,6 @@ namespace Kargono::Script
 
 	static uint16_t Network_GetSessionSlot()
 	{
-
 		if (Network::Client::GetActiveClient())
 		{
 			return Network::Client::GetActiveClient()->GetSessionSlot();

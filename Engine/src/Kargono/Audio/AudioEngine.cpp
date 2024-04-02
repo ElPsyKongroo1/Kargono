@@ -87,6 +87,14 @@ namespace Kargono::Audio
 		alec(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 		alec(alSourcePlay(sourceID));
 	}
+	void AudioEngine::PlayStereoSoundFromName(const std::string& audioName)
+	{
+		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
+		if (audioBuffer)
+		{
+			PlayStereoSound(audioBuffer);
+		}
+	}
 	void AudioEngine::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
 	{
 		auto audioSource = s_AudioContext->m_AudioSourceQueue.front();

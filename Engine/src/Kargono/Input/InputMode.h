@@ -11,7 +11,6 @@
 #include <string>
 
 namespace Kargono::Assets { class AssetManager; }
-
 namespace Kargono
 {
 	class InputMode
@@ -64,7 +63,9 @@ namespace Kargono
 
 	public:
 		static void ClearInputEngine();
+
 		static void LoadInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle);
+		static void LoadInputModeByName(const std::string& inputMode);
 	public:
 		//=========================
 		// Editor Management Functions
