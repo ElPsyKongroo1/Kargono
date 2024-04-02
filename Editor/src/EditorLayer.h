@@ -13,11 +13,12 @@
 #include "Panels/ViewportPanel.h"
 #include "Panels/EntityClassEditor.h"
 #include "Panels/ScriptEditorPanel.h"
+#include "Panels/GameStatePanel.h"
+#include "Panels/TextEditorPanel.h"
 
 #include <filesystem>
 #include <thread>
 
-#include "Panels/TextEditorPanel.h"
 
 
 namespace Kargono
@@ -175,6 +176,7 @@ namespace Kargono
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
+		bool m_GameStateEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -210,6 +212,7 @@ namespace Kargono
 		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
 		Scope<EntityClassEditor>  m_EntityClassEditor;
 		Scope<TextEditorPanel>  m_TextEditorPanel;
+		Scope<GameStatePanel>  m_GameStatePanel;
 	private:
 		friend SettingsPanel;
 		friend ToolbarPanel;

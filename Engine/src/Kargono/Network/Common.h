@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-enum CustomMsgTypes : uint32_t
+enum class CustomMsgTypes : uint32_t
 {
 	AcceptConnection = 0,
 	DenyConnection,
@@ -38,3 +38,5 @@ enum CustomMsgTypes : uint32_t
 	SignalAll,
 	ReceiveSignal
 };
+
+

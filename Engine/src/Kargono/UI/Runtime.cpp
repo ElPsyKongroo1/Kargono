@@ -101,8 +101,15 @@ namespace Kargono::UI
 			}
 
 		}
+	}
 
-
+	void Runtime::LoadUserInterfaceFromName(const std::string& uiName)
+	{
+		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiName);
+		if (uiReference)
+		{
+			LoadUIObject(uiReference, handle);
+		}
 	}
 
 

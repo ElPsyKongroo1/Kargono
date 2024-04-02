@@ -42,17 +42,20 @@ namespace Kargono
 		m_ScriptEditorPanel = CreateScope<ScriptEditorPanel>();
 		m_EntityClassEditor = CreateScope<EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<TextEditorPanel>();
+		m_GameStatePanel = CreateScope<GameStatePanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
 		Renderer::Init();
-		Renderer::SetLineWidth(4.0f);
+		Renderer::SetLineWidth(1.0f);
 		UI::Text::Init();
 		UI::Runtime::Init();
 
 		m_ViewportPanel->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
 		m_ViewportPanel->InitializeOverlayData();
+
+		Application::GetCurrentApp().GetWindow().SetVisible(true);
 	}
 
 	void EditorLayer::OnDetach()
@@ -216,6 +219,7 @@ namespace Kargono
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
+				ImGui::MenuItem("Game State Editor", NULL, &m_GameStateEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
 				ImGui::MenuItem("Project", NULL, &m_ShowProject);
@@ -243,6 +247,7 @@ namespace Kargono
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
+		if (m_GameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
 		UI::Editor::EndWindow();
@@ -440,9 +445,12 @@ namespace Kargono
 
 	bool EditorLayer::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
-		uint32_t userCount = event.GetUserCount();
-		void* param = &userCount;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateUserCount(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateUserCount();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+		}
+
 		return false;
 	}
 
@@ -467,27 +475,41 @@ namespace Kargono
 
 	bool EditorLayer::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUserLeftSession(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUserLeftSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
 		return false;
 	}
 
 	bool EditorLayer::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnCurrentSessionInit());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnCurrentSessionInit();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool EditorLayer::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnConnectionTerminated());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnConnectionTerminated();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool EditorLayer::OnStartSession(Events::StartSession event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnStartSession());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnStartSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
@@ -664,7 +686,11 @@ namespace Kargono
 		m_SceneState = SceneState::Play;
 		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
 		Scene::GetActiveScene()->OnRuntimeStart();
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 
 		if (Projects::Project::GetAppIsNetworked())
 		{

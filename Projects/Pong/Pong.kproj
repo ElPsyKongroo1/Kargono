@@ -7,14 +7,14 @@ Project:
   ScriptDLLPath: Scripting/bin/Pong.dll
   DefaultFullscreen: false
   TargetResolution: 1280x720
-  OnRuntimeStartFunction: OpenMainMenu
-  OnUpdateUserCountFunction: UpdateOnlineCount
+  OnRuntimeStart: 14683932765512752045
+  OnUpdateUserCount: 18163504705534252383
   OnApproveJoinSessionFunction: ApproveJoinSession
-  OnUserLeftSessionFunction: UserLeftSession
-  OnCurrentSessionInitFunction: OnCurrentSessionInit
-  OnConnectionTerminatedFunction: OnConnectionTerminated
+  OnUserLeftSession: 7445822592925037095
+  OnCurrentSessionInit: 8444652895326507655
+  OnConnectionTerminated: 4342390925410131221
   OnUpdateSessionUserSlot: 3176244785148247992
-  OnStartSessionFunction: OnStartSession
+  OnStartSession: 1819971799574496652
   OnSessionReadyCheckConfirmFunction: OnSessionReadyCheckConfirm
   OnReceiveSignalFunction: OnReceiveSignal
   AppIsNetworked: true

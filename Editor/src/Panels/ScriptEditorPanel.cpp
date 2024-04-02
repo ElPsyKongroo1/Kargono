@@ -48,18 +48,14 @@ namespace Kargono
 			ImGui::SameLine();
 			ImGui::Text(std::string(handle).c_str());
 			ImGui::SameLine();
-			if (ImGui::Button(("Delete Script##" + std::to_string(iterator)).c_str()))
+			ImGui::Text(Utility::WrappedFuncTypeToString(script->m_Function->Type()).c_str());
+
+			//ImGui::SameLine();
+			/*if (ImGui::Button(("Delete Script##" + std::to_string(iterator)).c_str()))
 			{
 				deleteScript = true;
 				deleteHandle = handle;
-			}
-			if (script->m_Function->Type() == WrappedFuncType::Void_None)
-			{
-				if (ImGui::Button(("RunScript##" + std::to_string(iterator)).c_str()))
-				{
-					((WrappedVoidNone*)script->m_Function.get())->m_Value();
-				}
-			}
+			}*/
 
 			iterator++;
 		}

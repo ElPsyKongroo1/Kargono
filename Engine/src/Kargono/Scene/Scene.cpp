@@ -261,6 +261,16 @@ namespace Kargono
 		s_ActiveScene->OnRuntimeStart();
 	}
 
+	void Scene::TransitionSceneFromName(const std::string& sceneName)
+	{
+		auto [handle, sceneReference] = Assets::AssetManager::GetScene(sceneName);
+		if (sceneReference)
+		{
+			TransitionScene(sceneReference);
+		}
+	}
+
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();

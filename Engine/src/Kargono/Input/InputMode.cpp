@@ -1,8 +1,10 @@
 #include "kgpch.h"
 
 #include "Kargono/Input/InputMode.h"
+#include "Kargono/Assets/AssetManager.h"
 
 #include "InputPolling.h"
+#include "Kargono/Core/Application.h"
 
 namespace Kargono
 {
@@ -93,6 +95,24 @@ namespace Kargono
 
 		s_InputMode = newInput;
 		s_InputModeHandle = newHandle;
+	}
+
+	void InputMode::LoadInputModeByName(const std::string& inputMode)
+	{
+		static Ref<InputMode> s_InputRef {nullptr};
+		static Assets::AssetHandle s_InputHandle {0};
+
+		auto [handle, inputReference] = Assets::AssetManager::GetInputMode(inputMode);
+		s_InputRef = inputReference;
+		s_InputHandle = handle;
+		if (inputReference)
+		{
+			Application::GetCurrentApp().SubmitToMainThread([&]()
+				{
+					LoadInputMode(s_InputRef, s_InputHandle);
+				});
+
+		}
 	}
 
 	bool InputMode::IsKeyboardSlotPressed(uint16_t slot)

@@ -73,6 +73,7 @@ namespace Kargono
 		std::weak_ptr<T> weakReference = scope;
 		return weakReference;
 	}
+
 }
 
 #include "Kargono/Core/Log.h"
