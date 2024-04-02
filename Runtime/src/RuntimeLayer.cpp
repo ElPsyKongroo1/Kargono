@@ -51,6 +51,7 @@ namespace Kargono
 		UI::Runtime::Init();
 
 		OnPlay();
+		currentWindow.SetVisible(true);
 	}
 
 	void RuntimeLayer::OnDetach()
@@ -161,9 +162,11 @@ namespace Kargono
 
 	bool RuntimeLayer::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
-		uint32_t userCount = event.GetUserCount();
-		void* param = &userCount;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateUserCount(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateUserCount();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+		}
 		return false;
 	}
 
@@ -177,9 +180,6 @@ namespace Kargono
 
 	bool RuntimeLayer::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		/*uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUpdateSessionUserSlot(), &param);*/
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();
 		if (scriptHandle != 0)
 		{
@@ -190,27 +190,41 @@ namespace Kargono
 
 	bool RuntimeLayer::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnUserLeftSession(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUserLeftSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
 		return false;
 	}
 
 	bool RuntimeLayer::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnCurrentSessionInit());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnCurrentSessionInit();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool RuntimeLayer::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnConnectionTerminated());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnConnectionTerminated();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool RuntimeLayer::OnStartSession(Events::StartSession event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnStartSession());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnStartSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
@@ -290,7 +304,11 @@ namespace Kargono
 	void RuntimeLayer::OnPlay()
 	{
 		Scene::GetActiveScene()->OnRuntimeStart();
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnRuntimeStart());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		if (Projects::Project::GetAppIsNetworked())
 		{
 			Network::Client::SetActiveClient(CreateRef<Network::Client>());

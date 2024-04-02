@@ -5,8 +5,6 @@
 #include "EditorLayer.h"
 #include "Panels/ContentBrowserPanel.h"
 
-
-
 namespace Kargono::Utility
 {
 	static BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
@@ -70,52 +68,72 @@ namespace Kargono
 		int columnCount = (int)(panelWidth / cellSize);
 		columnCount = columnCount > 0 ? columnCount : 1;
 
-		if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
+		
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_BackIcon->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_BackIcon->GetRendererID(), { 22.4f, 22.4f }, { 0, 1 }, { 1, 0 }))
+			if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
-			if (ImGui::BeginDragDropTarget())
+		}
+		if (ImGui::BeginDragDropTarget())
+		{
+			static std::array<std::string, 6> acceptablePayloads
 			{
-				static std::array<std::string, 6> acceptablePayloads
-				{
-					"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-						"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-				};
+				"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
+					"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
+			};
 
-				for (auto& payloadName : acceptablePayloads)
+			for (auto& payloadName : acceptablePayloads)
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
-					{
-						const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-						std::filesystem::path payloadPath(payloadPathPointer);
-						KG_CRITICAL(payloadPath.string());
-						KG_CRITICAL(m_CurrentDirectory.parent_path());
-						FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
-						KG_CRITICAL("-----------------");
-						break;
-					}
+					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
+					std::filesystem::path payloadPath(payloadPathPointer);
+					KG_CRITICAL(payloadPath.string());
+					KG_CRITICAL(m_CurrentDirectory.parent_path());
+					FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+					KG_CRITICAL("-----------------");
+					break;
 				}
-				ImGui::EndDragDropTarget();
+			}
+			ImGui::EndDragDropTarget();
+		}
+		
+
+		//if (ImGui::BeginPopup("Options"))
+		//{
+		//	ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
+		//	ImGui::SliderFloat("Padding", &padding, 0, 32);
+		//	ImGui::EndPopup();
+		//}
+		//// Main window
+		//if (ImGui::Button("Options", { 70, 28 }))
+		//	ImGui::OpenPopup("Options");
+
+		std::filesystem::path activeDirectory = FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
+
+		std::vector<std::string> tokenizedDirectoryPath{};
+
+		while (activeDirectory.filename() != "Assets")
+		{
+			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
+			activeDirectory = activeDirectory.parent_path();
+		}
+		tokenizedDirectoryPath.push_back("Assets");
+
+		ImGui::PushFont(UI::Editor::s_PlexBold);
+		for (int32_t i = tokenizedDirectoryPath.size() - 1; i >= 0; --i)
+		{
+			ImGui::SameLine();
+			ImGui::TextColored(UI::Editor::s_PearlBlue, tokenizedDirectoryPath.at(i).c_str());
+			if (i != 0)
+			{
+				ImGui::SameLine();
+				ImGui::Text("/");
 			}
 		}
-
-		ImGui::SameLine();
-		if (ImGui::BeginPopup("Options"))
-		{
-			ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-			ImGui::SliderFloat("Padding", &padding, 0, 32);
-			ImGui::EndPopup();
-		}
-		// Main window
-		if (ImGui::Button("Options", { 70, 28 }))
-			ImGui::OpenPopup("Options");
-
-		std::string outputDirectory = "Current Directory: " + FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory).string();
-
-		ImGui::SameLine();
-		ImGui::TextWrapped(outputDirectory.c_str());
+		ImGui::PopFont();
 
 		ImGui::Separator();
 

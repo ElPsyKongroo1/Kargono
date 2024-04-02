@@ -63,6 +63,9 @@ namespace Kargono::Network
 		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
 		void SetSessionStartFrame(uint64_t startFrame) { m_SessionStartFrame = startFrame; }
 
+		static uint16_t GetActiveSessionSlot();
+		static void EnableReadyCheck();
+		static void RequestUserCount();
 		static Ref<Network::Client> GetActiveClient() { return s_Client; }
 		static void SetActiveClient(Ref<Network::Client> newClient) { s_Client = newClient; }
 

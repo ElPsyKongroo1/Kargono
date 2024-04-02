@@ -4,10 +4,13 @@
 
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Scene/Scene.h"
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/UI/Runtime.h"
+#include "Kargono/Input/InputMode.h"
+#include "Kargono/Network/Client.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "Windows.h"
@@ -27,9 +30,8 @@ namespace Kargono::Scripting
 {
 	typedef void (*void_none)();
 	typedef void (*void_uint16)(uint16_t);
+	typedef void (*void_uint32)(uint32_t);
 	typedef bool (*bool_none)();
-
-	
 
 	void ScriptCore::Init()
 	{
@@ -131,6 +133,12 @@ namespace Kargono::Scripting
 			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
 			break;
 		}
+		case WrappedFuncType::Void_UInt32:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt32>();
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
@@ -150,9 +158,9 @@ namespace Kargono::Utility
 {
 #define DefineInsertFunction(name, returnType,...) \
 	typedef void (*Void_String_Func##name)(const std::string&, std::function<returnType(__VA_ARGS__)>); \
-	std::function<returnType(const std::string&, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
+	std::function<void(const std::string&, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
 
-#define ImportInsertFunction(name, returnType) \
+#define ImportInsertFunction(name) \
 	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*s_ScriptingData->DLLInstance, "Add"#name ));\
 	if (!s_Add##name)\
 	{\
@@ -169,26 +177,46 @@ namespace Kargono::Utility
 	outputStream << "static std::function<" #returnType "()> " #name "Ptr {};\n"; \
 	outputStream << #returnType " " #name "()\n"; \
 	outputStream << "{\n"; \
-	outputStream << "\t" #name "Ptr();\n"; \
+	outputStream << "\t"; \
+	if (!std::is_same<returnType, void>::value) \
+	{\
+	outputStream << "return "; \
+	}\
+	outputStream << #name "Ptr();\n"; \
 	outputStream << "}\n";
 #define AddEngineFunctionToCPPFileOneParameters(name, returnType, parameter1)\
 	outputStream << "static std::function<" #returnType "(" #parameter1 " a)> " #name "Ptr {};\n"; \
 	outputStream << #returnType " " #name "(" #parameter1 " a)\n"; \
 	outputStream << "{\n"; \
-	outputStream << "\t" #name "Ptr(a);\n"; \
+	outputStream << "\t"; \
+	if (!std::is_same<returnType, void>::value) \
+	{\
+	outputStream << "return "; \
+	}\
+	outputStream << #name "Ptr(a);\n"; \
 	outputStream << "}\n";
 #define AddEngineFunctionToCPPFileTwoParameters(name, returnType, parameter1, parameter2)\
 	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b)> " #name "Ptr {};\n"; \
 	outputStream << #returnType " " #name "(" #parameter1 " a, " #parameter2 " b)\n"; \
 	outputStream << "{\n"; \
-	outputStream << "\t" #name "Ptr(a, b);\n"; \
+	outputStream << "\t"; \
+	if (!std::is_same<returnType, void>::value) \
+	{\
+	outputStream << "return "; \
+	}\
+	outputStream << #name "Ptr(a, b);\n"; \
 	outputStream << "}\n";
 
 #define AddEngineFunctionToCPPFileThreeParameters(name, returnType, parameter1, parameter2, parameter3)\
 	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c)> " #name "Ptr {};\n"; \
 	outputStream << #returnType " " #name "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c)\n"; \
 	outputStream << "{\n"; \
-	outputStream << "\t" #name "Ptr(a, b, c);\n"; \
+	outputStream << "\t"; \
+	if (!std::is_same<returnType, void>::value) \
+	{\
+	outputStream << "return "; \
+	}\
+	outputStream << #name "Ptr(a, b, c);\n"; \
 	outputStream << "}\n";
 
 #define AddEngineFunctionToCPPFileEnd(name) \
@@ -203,37 +231,103 @@ namespace Kargono::Scripting
 	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the dll)
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
+	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
+	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
+	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+	DefineInsertFunction(UInt16None, uint16_t)
 
 	// This macro adds insertion function declarations to the header file
 #define AddEngineFunctionsToHeaderFiles() \
 	AddImportFunctionToHeaderFile(VoidNone, void) \
 	AddImportFunctionToHeaderFile(VoidString, void, const std::string&) \
-	AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+	AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) \
+	AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) \
+	AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) \
+	AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
+	AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) \
+	AddImportFunctionToHeaderFile(UInt16None, uint16_t) \
 
 	// This	macro adds insertion function definitions and func pointers into the CPP file
 #define AddEngineFunctionsToCPPFiles() \
+	AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)\
+	AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)\
+	AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)\
 	AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)\
+	AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)\
+	AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)\
+	AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)\
+	AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)\
+	AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)\
+	AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)\
+	AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)\
 	AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)\
+	AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)\
+	AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)\
 	AddImportFunctionToCPPFile(VoidNone, void) \
 	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(EnableReadyCheck) \
+	AddEngineFunctionToCPPFileEnd(RequestUserCount) \
 	outputStream << "}\n"; \
 	AddImportFunctionToCPPFile(VoidString, void, const std::string&) \
 	outputStream << "{\n"; \
 	AddEngineFunctionToCPPFileEnd(PlaySoundFromName) \
+	AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName) \
+	AddEngineFunctionToCPPFileEnd(LoadInputModeByName) \
+	AddEngineFunctionToCPPFileEnd(TransitionSceneFromName) \
+	AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetDisplayWindow) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetSelectedWidget) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetWidgetSelectable) \
 	outputStream << "}\n"; \
 	AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
 	outputStream << "{\n"; \
 	AddEngineFunctionToCPPFileEnd(SetWidgetText) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetWidgetTextColor) \
+	AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(UInt16None, uint16_t) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(GetActiveSessionSlot) \
 	outputStream << "}\n"; 
 
 	// This macro provide the point where insertion functions are pulled from the dll when opening
 #define AddEngineFunctionsPointersToDll() \
-	ImportInsertFunction(VoidNone, void)\
-	ImportInsertFunction(VoidString, void) \
-	ImportInsertFunction(VoidStringStringString, void) \
+	ImportInsertFunction(VoidNone)\
+	ImportInsertFunction(VoidString) \
+	ImportInsertFunction(VoidStringBool) \
+	ImportInsertFunction(VoidStringString) \
+	ImportInsertFunction(VoidStringStringBool) \
+	ImportInsertFunction(VoidStringStringString) \
+	ImportInsertFunction(VoidStringStringVec4) \
+	ImportInsertFunction(UInt16None)\
+	AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) \
+	AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) \
 	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) \
-	AddEngineFunctionPointerToDll(SetWidgetText, UI::Runtime::SetWidgetText,VoidStringStringString)
+	AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) \
+	AddEngineFunctionPointerToDll(LoadInputModeByName, InputMode::LoadInputModeByName,VoidString) \
+	AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, UI::Runtime::LoadUserInterfaceFromName,VoidString) \
+	AddEngineFunctionPointerToDll(TransitionSceneFromName, Scene::TransitionSceneFromName,VoidString) \
+	AddEngineFunctionPointerToDll(SetDisplayWindow, UI::Runtime::SetDisplayWindow,VoidStringBool) \
+	AddEngineFunctionPointerToDll(SetWidgetText, UI::Runtime::SetWidgetText,VoidStringStringString) \
+	AddEngineFunctionPointerToDll(SetSelectedWidget, UI::Runtime::SetSelectedWidget,VoidStringString) \
+	AddEngineFunctionPointerToDll(SetWidgetTextColor, UI::Runtime::SetWidgetTextColor,VoidStringStringVec4) \
+	AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, UI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) \
+	AddEngineFunctionPointerToDll(SetWidgetSelectable, UI::Runtime::SetWidgetSelectable,VoidStringStringBool) \
+	AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 
 	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)
 	{
@@ -260,6 +354,8 @@ namespace Kargono::Scripting
 
 		outputStream << "#include <functional>\n";
 		outputStream << "#include <string>\n";
+		std::filesystem::path mathPath = std::filesystem::current_path().parent_path() / "Engine/src/Kargono/Math/MathAliases.h";
+		outputStream << "#include \"" << mathPath.string() << "\"\n";
 
 		outputStream << "namespace Kargono\n";
 		outputStream << "{" << "\n";
@@ -343,6 +439,9 @@ namespace Kargono::Scripting
 		outputStream << "cl "; // Add Command
 		outputStream << "/c "; // Tell cl command to only compile code
 		outputStream << "/MDd "; // Specify Runtime Library
+		outputStream << "/std:c++20 "; // Specify Language Version
+		outputStream << "/I../Engine/dependencies/glm "; // Include GLM
+		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros/Defines
 
 		if (addDebugSymbols)
@@ -356,6 +455,7 @@ namespace Kargono::Scripting
 		// Start Linking Stage
 		outputStream << "link "; // Start link command
 		outputStream << "/DLL "; // Specify output as a shared library
+		outputStream << "/ignore:4099 "; // Ignores warning about missing pbd files for .obj files (I generate the symbols inside of the .obj file with /Z7 flag) 
 		if (addDebugSymbols)
 		{
 			outputStream << "/DEBUG "; // Specifies output as debug files

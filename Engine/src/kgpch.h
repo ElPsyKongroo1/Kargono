@@ -39,6 +39,7 @@
 #include <cstdint>
 #include <fstream>
 #include <random>
+#include <type_traits>
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"

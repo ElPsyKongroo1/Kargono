@@ -102,6 +102,7 @@ namespace Kargono
 		//		The current scene is held in s_ActiveScene btw.
 		static void TransitionScene(Assets::AssetHandle newSceneHandle);
 		static void TransitionScene(Ref<Scene> newScene);
+		static void TransitionSceneFromName(const std::string& sceneName);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================

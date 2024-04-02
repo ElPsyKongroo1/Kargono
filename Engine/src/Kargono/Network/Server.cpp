@@ -50,11 +50,11 @@ namespace Kargono::Network
 	bool Server::OnClientConnect(Ref<Kargono::Network::ConnectionToClient> client)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = CustomMsgTypes::AcceptConnection;
+		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::AcceptConnection);
 		uint32_t numberOfUsers = static_cast<uint32_t>(m_Connections.size() + 1);
 		msg << numberOfUsers;
 		client->Send(msg);
-		msg.Header.ID = CustomMsgTypes::UpdateUserCount;
+		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateUserCount);
 		MessageAllClients(msg, client);
 		return true;
 	}
@@ -62,7 +62,7 @@ namespace Kargono::Network
 	{
 		KG_INFO("Removing client [{}]", client->GetID());
 		Kargono::Network::Message msg;
-		msg.Header.ID = CustomMsgTypes::UpdateUserCount;
+		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateUserCount);
 		uint32_t numberOfUsers = static_cast<uint32_t>(m_Connections.size() - 1);
 		msg << numberOfUsers;
 		MessageAllClients(msg, client);
@@ -71,7 +71,7 @@ namespace Kargono::Network
 		if (m_OnlySession.GetAllClients().contains(client->GetID()))
 		{
 			Kargono::Network::Message newMessage;
-			newMessage.Header.ID = CustomMsgTypes::UserLeftSession;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UserLeftSession);
 			newMessage << m_OnlySession.RemoveClient(client->GetID());
 
 			// Notify all users in the same session that a client left
@@ -81,182 +81,182 @@ namespace Kargono::Network
 			}
 		}
 
-		
+
 	}
 	void Server::OnMessage(Ref<Kargono::Network::ConnectionToClient> client, Kargono::Network::Message& incomingMessage)
 	{
-		switch (incomingMessage.Header.ID)
+		switch (static_cast<CustomMsgTypes>(incomingMessage.Header.ID))
 		{
-			case CustomMsgTypes::ServerPing:
+		case CustomMsgTypes::ServerPing:
+		{
+			KG_INFO("[{}]: Server Ping", client->GetID());
+			client->Send(incomingMessage);
+			break;
+		}
+
+		case CustomMsgTypes::MessageAll:
+		{
+			KG_INFO("[{}]: Message All", client->GetID());
+			Kargono::Network::Message newMessage;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::ServerMessage);
+			newMessage << client->GetID();
+			MessageAllClients(newMessage, client);
+			break;
+		}
+		case CustomMsgTypes::ClientChat:
+		{
+			KG_INFO("[{}]: Sent Chat", client->GetID());
+			incomingMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::ServerChat);
+			incomingMessage << client->GetID();
+			MessageAllClients(incomingMessage, client);
+			break;
+		}
+		case CustomMsgTypes::RequestJoinSession:
+		{
+			Kargono::Network::Message newMessage;
+
+			// Deny Client Join if session slots are full
+			if (m_OnlySession.GetClientCount() >= Session::k_MaxClients)
 			{
-				KG_INFO("[{}]: Server Ping", client->GetID());
-				client->Send(incomingMessage);
-				break;
-			}
-
-			case CustomMsgTypes::MessageAll:
-			{
-				KG_INFO("[{}]: Message All", client->GetID());
-				Kargono::Network::Message newMessage;
-				newMessage.Header.ID = CustomMsgTypes::ServerMessage;
-				newMessage << client->GetID();
-				MessageAllClients(newMessage, client);
-				break;
-			}
-			case CustomMsgTypes::ClientChat:
-			{
-				KG_INFO("[{}]: Sent Chat", client->GetID());
-				incomingMessage.Header.ID = CustomMsgTypes::ServerChat;
-				incomingMessage << client->GetID();
-				MessageAllClients(incomingMessage, client);
-				break;
-			}
-			case CustomMsgTypes::RequestJoinSession:
-			{
-				Kargono::Network::Message newMessage;
-
-				// Deny Client Join if session slots are full
-				if (m_OnlySession.GetClientCount() >= Session::k_MaxClients)
-				{
-					newMessage.Header.ID = CustomMsgTypes::DenyJoinSession;
-					client->Send(newMessage);
-					break;
-				}
-
-				// Add Client to session
-				newMessage.Header.ID = CustomMsgTypes::ApproveJoinSession;
-				uint16_t clientSlot = m_OnlySession.AddClient(client);
-				if (clientSlot == 0xFFFF)
-				{
-					return;
-				}
-				newMessage << clientSlot;
-
-				// Send Approval Message to New Client
-				client->Send(newMessage);
-
-				// Notify all other session clients that new client has been added
-				newMessage.Header.ID = CustomMsgTypes::UpdateSessionUserSlot;
-				for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
-				{
-					if (clientID == client->GetID()) { continue; }
-					connection->Send(newMessage);
-				}
-
-				// Updated new client with all other client data
-				for (auto& [slot, clientID] : m_OnlySession.GetAllSlots())
-				{
-					if (clientID == client->GetID()) { continue; }
-
-					Kargono::Network::Message otherClientMessage;
-					otherClientMessage.Header.ID = CustomMsgTypes::UpdateSessionUserSlot;
-					otherClientMessage << slot;
-					client->Send(otherClientMessage);
-				}
-
-				// If enough clients are connected, start the session
-				if (m_OnlySession.GetClientCount() == Session::k_MaxClients)
-				{
-					m_OnlySession.InitSession();
-				}
-
-				break;
-			}
-
-			case CustomMsgTypes::RequestUserCount:
-			{
-				KG_INFO("[{}]: User Count Request", client->GetID());
-				Kargono::Network::Message newMessage;
-				newMessage.Header.ID = CustomMsgTypes::UpdateUserCount;
-				uint32_t numberOfUsers = static_cast<uint32_t>(m_Connections.size());
-				newMessage << numberOfUsers;
+				newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::DenyJoinSession);
 				client->Send(newMessage);
 				break;
 			}
 
-			case CustomMsgTypes::LeaveCurrentSession:
+			// Add Client to session
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::ApproveJoinSession);
+			uint16_t clientSlot = m_OnlySession.AddClient(client);
+			if (clientSlot == 0xFFFF)
 			{
-				KG_INFO("[{}]: User Leaving Session", client->GetID());
-				Kargono::Network::Message newMessage;
-				newMessage.Header.ID = CustomMsgTypes::UserLeftSession;
-				newMessage << m_OnlySession.RemoveClient(client->GetID());
+				return;
+			}
+			newMessage << clientSlot;
 
-				// Notify all users in the same session that a client left
-				for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
-				{
-					connection->Send(newMessage);
-				}
-				client->Send(newMessage);
+			// Send Approval Message to New Client
+			client->Send(newMessage);
 
-				break;
+			// Notify all other session clients that new client has been added
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateSessionUserSlot);
+			for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
+			{
+				if (clientID == client->GetID()) { continue; }
+				connection->Send(newMessage);
 			}
 
-			case CustomMsgTypes::InitSyncPing:
+			// Updated new client with all other client data
+			for (auto& [slot, clientID] : m_OnlySession.GetAllSlots())
 			{
-				m_OnlySession.ReceiveSyncPing(client->GetID());
-				break;
+				if (clientID == client->GetID()) { continue; }
+
+				Kargono::Network::Message otherClientMessage;
+				otherClientMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateSessionUserSlot);
+				otherClientMessage << slot;
+				client->Send(otherClientMessage);
 			}
 
-			case CustomMsgTypes::SessionReadyCheck:
+			// If enough clients are connected, start the session
+			if (m_OnlySession.GetClientCount() == Session::k_MaxClients)
 			{
-				m_OnlySession.ReadyCheck(client->GetID());
-				break;
+				m_OnlySession.InitSession();
 			}
 
-			case CustomMsgTypes::EnableReadyCheck:
-			{
-				m_OnlySession.EnableReadyCheck();
-				break;
-			}
+			break;
+		}
 
-			case CustomMsgTypes::SendAllEntityLocation:
-			{
-				incomingMessage.Header.ID = CustomMsgTypes::UpdateEntityLocation;
-				// Forward entity location to all other clients
-				for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
-				{
-					if (clientID == client->GetID()) { continue; }
-					MessageClientUDP(connection, incomingMessage);
-				}
-				break;
-			}
+		case CustomMsgTypes::RequestUserCount:
+		{
+			KG_INFO("[{}]: User Count Request", client->GetID());
+			Kargono::Network::Message newMessage;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateUserCount);
+			uint32_t numberOfUsers = static_cast<uint32_t>(m_Connections.size());
+			newMessage << numberOfUsers;
+			client->Send(newMessage);
+			break;
+		}
 
-			case CustomMsgTypes::SendAllEntityPhysics:
-			{
-				incomingMessage.Header.ID = CustomMsgTypes::UpdateEntityPhysics;
-				// Forward entity Physics to all other clients
-				for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
-				{
-					if (clientID == client->GetID()) { continue; }
-					MessageClientUDP(connection, incomingMessage);
-				}
-				break;
-			}
+		case CustomMsgTypes::LeaveCurrentSession:
+		{
+			KG_INFO("[{}]: User Leaving Session", client->GetID());
+			Kargono::Network::Message newMessage;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UserLeftSession);
+			newMessage << m_OnlySession.RemoveClient(client->GetID());
 
-			case CustomMsgTypes::SignalAll:
+			// Notify all users in the same session that a client left
+			for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
 			{
-				incomingMessage.Header.ID = CustomMsgTypes::ReceiveSignal;
-				// Forward signal to all other session clients
-				for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
-				{
-					if (clientID == client->GetID()) { continue; }
-					connection->Send(incomingMessage);
-				}
-				break;
+				connection->Send(newMessage);
 			}
+			client->Send(newMessage);
 
-			case CustomMsgTypes::KeepAlive:
+			break;
+		}
+
+		case CustomMsgTypes::InitSyncPing:
+		{
+			m_OnlySession.ReceiveSyncPing(client->GetID());
+			break;
+		}
+
+		case CustomMsgTypes::SessionReadyCheck:
+		{
+			m_OnlySession.ReadyCheck(client->GetID());
+			break;
+		}
+
+		case CustomMsgTypes::EnableReadyCheck:
+		{
+			m_OnlySession.EnableReadyCheck();
+			break;
+		}
+
+		case CustomMsgTypes::SendAllEntityLocation:
+		{
+			incomingMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateEntityLocation);
+			// Forward entity location to all other clients
+			for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
 			{
-				Kargono::Network::Message newMessage;
-				newMessage.Header.ID = CustomMsgTypes::KeepAlive;
-				MessageClientUDP(client, newMessage);
-				break;
+				if (clientID == client->GetID()) { continue; }
+				MessageClientUDP(connection, incomingMessage);
 			}
+			break;
+		}
 
-			case CustomMsgTypes::UDPInit:
+		case CustomMsgTypes::SendAllEntityPhysics:
+		{
+			incomingMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UpdateEntityPhysics);
+			// Forward entity Physics to all other clients
+			for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
 			{
-				Kargono::Network::Message newMessage;
-				newMessage.Header.ID = CustomMsgTypes::UDPInit;
+				if (clientID == client->GetID()) { continue; }
+				MessageClientUDP(connection, incomingMessage);
+			}
+			break;
+		}
+
+		case CustomMsgTypes::SignalAll:
+		{
+			incomingMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::ReceiveSignal);
+			// Forward signal to all other session clients
+			for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
+			{
+				if (clientID == client->GetID()) { continue; }
+				connection->Send(incomingMessage);
+			}
+			break;
+		}
+
+		case CustomMsgTypes::KeepAlive:
+		{
+			Kargono::Network::Message newMessage;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::KeepAlive);
+			MessageClientUDP(client, newMessage);
+			break;
+		}
+
+		case CustomMsgTypes::UDPInit:
+		{
+			Kargono::Network::Message newMessage;
+			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UDPInit);
 				MessageClientUDP(client, newMessage);
 				break;
 			}

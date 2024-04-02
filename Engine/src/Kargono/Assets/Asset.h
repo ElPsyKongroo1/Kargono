@@ -28,7 +28,8 @@ namespace Kargono::Assets
 		Scene = 5,
 		UIObject = 6,
 		InputMode = 7,
-		Script = 8
+		Script = 8,
+		GameState = 9
 	};
 
 	//==============================
@@ -156,6 +157,11 @@ namespace Kargono::Assets
 
 	};
 
+	struct GameStateMetaData
+	{
+		std::string Name{};
+	};
+
 	struct ScriptMetaData
 	{
 		std::string Name{};
@@ -196,6 +202,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::UIObject: return "UIObject";
 		case Assets::AssetType::InputMode: return "InputMode";
 		case Assets::AssetType::Script: return "Script";
+		case Assets::AssetType::GameState: return "GameState";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ASSERT(false, "Unknown Type of AssetType.");
@@ -212,6 +219,7 @@ namespace Kargono::Utility
 		if (type == "UIObject") { return Assets::AssetType::UIObject; }
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
 		if (type == "Script") { return Assets::AssetType::Script; }
+		if (type == "GameState") { return Assets::AssetType::GameState; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ASSERT(false, "Unknown Type of AssetType String.");
