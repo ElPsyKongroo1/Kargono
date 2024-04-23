@@ -753,6 +753,7 @@ namespace Kargono::Assets
 			DeserializeUIObjectRegistry();
 			DeserializeInputModeRegistry();
 			DeserializeScriptRegistry();
+			DeserializeGameStateRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -766,6 +767,7 @@ namespace Kargono::Assets
 			SerializeUIObjectRegistry();
 			SerializeInputModeRegistry();
 			SerializeScriptRegistry();
+			SerializeGameStateRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -779,6 +781,7 @@ namespace Kargono::Assets
 			ClearUIObjectRegistry();
 			ClearInputModeRegistry();
 			ClearScriptRegistry();
+			ClearGameStateRegistry();
 		}
 	};
 	

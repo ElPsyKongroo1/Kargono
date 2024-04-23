@@ -1,12 +1,19 @@
 #include "Panels/StatisticsPanel.h"
 
+#include "EditorLayer.h"
 #include "Kargono.h"
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
+	StatisticsPanel::StatisticsPanel()
+	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+	}
 	void StatisticsPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Statistics");
+		UI::Editor::StartWindow("Statistics", &s_EditorLayer->m_ShowStats);
 
 		ImGui::Text("Scene");
 		ImGui::Separator();

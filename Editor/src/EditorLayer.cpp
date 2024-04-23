@@ -2,6 +2,8 @@
 
 #include "EditorLayer.h"
 
+#include "imgui_internal.h"
+
 namespace Kargono
 {
 
@@ -40,6 +42,7 @@ namespace Kargono
 		m_UIEditorPanel = CreateScope<UIEditorPanel>();
 		m_ViewportPanel = CreateScope<ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<ScriptEditorPanel>();
+		m_InputEditorPanel = CreateScope<InputEditorPanel>();
 		m_EntityClassEditor = CreateScope<EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<TextEditorPanel>();
 		m_GameStatePanel = CreateScope<GameStatePanel>();
@@ -130,6 +133,7 @@ namespace Kargono
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
+		dockspace_flags |= ImGuiDockNodeFlags_NoCloseButton;
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
 		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
 		// all active windows docked into it will lose their parent and become undocked.
@@ -137,7 +141,7 @@ namespace Kargono
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace", &dockspaceOpen, window_flags);
+		UI::Editor::StartWindow("DockSpace", &dockspaceOpen, window_flags);
 		if (!opt_padding)
 			ImGui::PopStyleVar();
 
@@ -219,7 +223,7 @@ namespace Kargono
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
-				ImGui::MenuItem("Game State Editor", NULL, &m_GameStateEditor);
+				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
 				ImGui::MenuItem("Project", NULL, &m_ShowProject);
@@ -247,7 +251,7 @@ namespace Kargono
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
-		if (m_GameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
+		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
 		UI::Editor::EndWindow();

@@ -1,8 +1,10 @@
 #include "Panels/InputEditorPanel.h"
 
+#include "EditorLayer.h"
+
 namespace Kargono
 {
-
+	static EditorLayer* s_EditorLayer { nullptr };
 
 	void InputEditorPanel::InputEditor_Keyboard_OnUpdate()
 	{
@@ -624,9 +626,14 @@ namespace Kargono
 		if (deleteKeySlot) { InputMode::DeleteKeyboardPollingSlot(slotToDelete); }
 	}
 
+	InputEditorPanel::InputEditorPanel()
+	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+	}
+
 	void InputEditorPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Input Mode Editor");
+		UI::Editor::StartWindow("Input Mode Editor", &(s_EditorLayer->m_ShowInputEditor));
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))
 		{

@@ -50,10 +50,17 @@ namespace Kargono::Assets
 	//		rate.
 	struct Metadata
 	{
+	public:
 		std::filesystem::path IntermediateLocation;
 		std::string CheckSum;
 		Assets::AssetType Type = Assets::AssetType::None;
 		Ref<void> SpecificFileData = nullptr;
+	public:
+		template <typename T>
+		T* GetSpecificFileData()
+		{
+			return static_cast<T*>(SpecificFileData.get());
+		}
 	};
 
 	//==============================

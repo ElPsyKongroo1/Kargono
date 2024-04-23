@@ -1,0 +1,8 @@
+Registry: GameState
+Assets:
+  - AssetHandle: 10214009201369737561
+    MetaData:
+      CheckSum: 7264f0c561f9abe29e2fa5cec745b270359883ca6a140b0fb944af394e31935f
+      IntermediateLocation: GameState/The new options.kgstate
+      AssetType: GameState
+      Name: The new options

@@ -5,7 +5,7 @@ namespace Kargono
 	class EntityClassEditor
 	{
 	public:
-		EntityClassEditor() = default;
+		EntityClassEditor();
 
 		void OnEditorUIRender();
 

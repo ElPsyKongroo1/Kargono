@@ -50,16 +50,17 @@ namespace Kargono::Utility
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer{ nullptr };
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Content Browser");
+		UI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
 
 		static float padding = 25.0f;
 		static float thumbnailSize = 140;

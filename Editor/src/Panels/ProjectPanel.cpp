@@ -1,9 +1,12 @@
 #include "Panels/ProjectPanel.h"
 
 #include "Kargono.h"
+#include "EditorLayer.h"
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
 	static UI::SelectOptionSpec s_SelectStartSceneSpec {};
 	static UI::CheckboxSpec s_DefaultFullscreenSpec {};
 	static UI::CheckboxSpec s_ToggleNetworkSpec {};
@@ -439,11 +442,12 @@ namespace Kargono
 
 	ProjectPanel::ProjectPanel()
 	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
 		InitializeStaticResources();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Project");
+		UI::Editor::StartWindow("Project", &s_EditorLayer->m_ShowProject);
 		// Project Name
 		UI::Editor::LabeledText("Project Name", Projects::Project::GetProjectName());
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
@@ -454,7 +458,7 @@ namespace Kargono
 
 		// Select Starting Scene
 		s_SelectStartSceneSpec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
-		UI::Editor::SelectOption(s_SelectStartSceneSpec);
+		UI::Editor::SelectOptionInline(s_SelectStartSceneSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Default Fullscreen
@@ -469,65 +473,65 @@ namespace Kargono
 
 		// Resolution Select Option
 		s_SelectResolutionSpec.CurrentOption = Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution());
-		UI::Editor::SelectOption(s_SelectResolutionSpec);
+		UI::Editor::SelectOptionInline(s_SelectResolutionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Runtime Start
 		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetOnRuntimeStart() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectRuntimeStartSpec);
+		UI::Editor::SelectOptionInline(s_SelectRuntimeStartSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update User Count
 		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetOnUpdateUserCount() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectUpdateUserCountSpec);
+		UI::Editor::SelectOptionInline(s_SelectUpdateUserCountSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Approve Join Session
 		s_SelectApproveJoinSessionSpec.CurrentOption = Projects::Project::GetProjectOnApproveJoinSession();
-		UI::Editor::SelectOption(s_SelectApproveJoinSessionSpec);
+		UI::Editor::SelectOptionInline(s_SelectApproveJoinSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On User Left Session
 		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetOnUserLeftSession() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectUserLeftSessionSpec);
+		UI::Editor::SelectOptionInline(s_SelectUserLeftSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Current Session Start
 		s_SelectSessionInitSpec.CurrentOption = Projects::Project::GetOnCurrentSessionInit() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectSessionInitSpec);
+		UI::Editor::SelectOptionInline(s_SelectSessionInitSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Connection Terminated
 		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetOnConnectionTerminated() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectConnectionTerminatedSpec);
+		UI::Editor::SelectOptionInline(s_SelectConnectionTerminatedSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update Session User Slot
 		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetOnUpdateSessionUserSlot() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None";
-		UI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
+		UI::Editor::SelectOptionInline(s_SelectUpdateSessionSlotSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Start Session
 		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetOnStartSession() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None";
 		
-		UI::Editor::SelectOption(s_SelectStartSessionSpec);
+		UI::Editor::SelectOptionInline(s_SelectStartSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Session Ready Check
 		s_SelectSessionReadyCheckSpec.CurrentOption = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
-		UI::Editor::SelectOption(s_SelectSessionReadyCheckSpec);
+		UI::Editor::SelectOptionInline(s_SelectSessionReadyCheckSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Receive Signal Function
 		s_SelectReceiveSignalSpec.CurrentOption = Projects::Project::GetProjectOnReceiveSignal();
-		UI::Editor::SelectOption(s_SelectReceiveSignalSpec);
+		UI::Editor::SelectOptionInline(s_SelectReceiveSignalSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 

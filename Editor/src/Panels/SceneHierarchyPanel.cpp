@@ -16,6 +16,8 @@
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
 	static UI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static UI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
 	static UI::CheckboxSpec s_ShapeAddCircleSpec {};
@@ -25,6 +27,8 @@ namespace Kargono
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+
 		// Set Primary Camera Checkbox
 		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
 		s_PrimaryCameraCheckboxSpec.WidgetID = 0xe6e13a3812c94bf3;
@@ -53,7 +57,7 @@ namespace Kargono
 	}
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Scene Hierarchy");
+		UI::Editor::StartWindow("Scene Hierarchy", &s_EditorLayer->m_ShowSceneHierarchy);
 
 		if (Scene::GetActiveScene())
 		{

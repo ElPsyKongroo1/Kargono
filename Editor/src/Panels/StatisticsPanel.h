@@ -5,7 +5,7 @@ namespace Kargono
 	class StatisticsPanel
 	{
 	public:
-		StatisticsPanel() = default;
+		StatisticsPanel();
 
 		void OnEditorUIRender();
 

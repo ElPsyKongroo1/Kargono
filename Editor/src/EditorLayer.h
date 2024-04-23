@@ -176,7 +176,7 @@ namespace Kargono
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
-		bool m_GameStateEditor = false;
+		bool m_ShowGameStateEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -217,6 +217,18 @@ namespace Kargono
 		friend SettingsPanel;
 		friend ToolbarPanel;
 		friend ViewportPanel;
+		friend SceneHierarchyPanel;
+		friend ContentBrowserPanel;
+		friend LogPanel;
+		friend StatisticsPanel;
+		friend ProjectPanel;
+		friend UIEditorPanel;
+		friend InputEditorPanel;
+		friend ScriptEditorPanel;
+		friend EntityClassEditor;
+		friend TextEditorPanel;
+		friend GameStatePanel;
+
 	};
 
 }
