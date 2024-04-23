@@ -10,7 +10,7 @@ namespace Kargono
 	class InputEditorPanel
 	{
 	public:
-		InputEditorPanel() = default;
+		InputEditorPanel();
 
 		// This panel allows the editor to create different input modes that can be swapped out
 		void OnEditorUIRender();

@@ -6,6 +6,7 @@
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
 
 	static UI::TextInputSpec s_InputScriptNameSpec{};
 	static UI::SelectOptionSpec s_InputScriptFuncSpec{};
@@ -14,6 +15,8 @@ namespace Kargono
 
 	ScriptEditorPanel::ScriptEditorPanel()
 	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+
 		s_InputScriptNameSpec.Label = "Script Name";
 		s_InputScriptNameSpec.WidgetID = 0xb321694eb9a94fc0;
 		s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
@@ -36,7 +39,7 @@ namespace Kargono
 	}
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Scripts");
+		UI::Editor::StartWindow("Scripts", &s_EditorLayer->m_ShowScriptEditor);
 
 		bool deleteScript = false;
 		Assets::AssetHandle deleteHandle{};
@@ -87,7 +90,7 @@ namespace Kargono
 			s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
 			UI::Editor::TextInputModal(s_InputScriptNameSpec);
 			s_InputScriptFuncSpec.CurrentOption = Utility::WrappedFuncTypeToString(s_InputScriptFunc);
-			UI::Editor::SelectOption(s_InputScriptFuncSpec);
+			UI::Editor::SelectOptionInline(s_InputScriptFuncSpec);
 			if (ImGui::Button("Create Script"))
 			{
 				std::vector<WrappedVarType> parameters{ Utility::WrappedFuncTypeToParameterTypes(s_InputScriptFunc) };

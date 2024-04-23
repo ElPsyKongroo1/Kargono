@@ -2,6 +2,8 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/WrappedData.h"
+#include "Kargono/Assets/Asset.h"
+
 #include <unordered_map>
 #include <string>
 
@@ -32,10 +34,12 @@ namespace Kargono
 		{
 			m_Name = name;
 		}
+	public:
+		static Ref<GameState> s_GameState;
+		static Assets::AssetHandle s_GameStateHandle;
 	private:
 		std::string m_Name{};
 		std::unordered_map<std::string, Ref<WrappedVariable>> m_Fields {};
-
 		friend class Assets::AssetManager;
 	};
 }

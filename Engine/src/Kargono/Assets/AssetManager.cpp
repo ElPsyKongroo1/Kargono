@@ -3703,6 +3703,7 @@ namespace Kargono::Assets
 	{
 		// Create Temporary GameState
 		Ref<Kargono::GameState> temporaryGameState = CreateRef<Kargono::GameState>();
+		temporaryGameState->SetName(GameStateName);
 
 		// Save Binary Intermediate into File
 		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";

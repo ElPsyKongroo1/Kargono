@@ -9,7 +9,7 @@ namespace Kargono
 	class ViewportPanel
 	{
 	public:
-		ViewportPanel() = default;
+		ViewportPanel();
 
 		void OnUpdate(Timestep ts);
 

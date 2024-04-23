@@ -1,31 +1,37 @@
 #include "Panels/TextEditorPanel.h"
 
+#include "EditorLayer.h"
 #include "imgui_internal.h"
 #include "Kargono.h"
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
 	static std::function<void()> s_OnOpenFile { nullptr };
 	static std::function<void()> s_OnCreateFile { nullptr };
 	static std::function<void()> s_OnSaveFile { nullptr };
 	static std::function<void()> s_OnDeleteFile { nullptr };
 	static std::function<void()> s_OnCloseFile { nullptr };
 	static std::filesystem::path s_CurrentPath { "" };
-	static char s_StringBuffer[4096];
+	static Buffer s_TextBuffer {};
 	static bool s_DocumentEdited{ false };
 	static bool s_DocumentOpen{ false };
 
-	static UI::WarningMessageSpec s_DeleteWarningSpec {};
+	static UI::GenericPopupSpec s_DeleteWarningSpec {};
 
 	TextEditorPanel::TextEditorPanel()
 	{
+		s_TextBuffer.Allocate(4096);
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+
 		s_OnCreateFile = [&]()
 		{
 			std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
 			std::filesystem::path filepath = Utility::FileDialogs::SaveFile("", initialDirectory.string().c_str());
 			if (!filepath.empty())
 			{
-				memset(s_StringBuffer, 0, sizeof(s_StringBuffer));
+				memset(s_TextBuffer.Data, 0, s_TextBuffer.Size);
 				FileSystem::WriteFileString(filepath, "");
 				s_CurrentPath = filepath;
 				s_DocumentEdited = false;
@@ -38,9 +44,13 @@ namespace Kargono
 			std::filesystem::path filepath = Utility::FileDialogs::OpenFile("", initialDirectory.string().c_str());
 			if (!filepath.empty())
 			{
-				memset(s_StringBuffer, 0, sizeof(s_StringBuffer));
 				std::string fileString = FileSystem::ReadFileString(filepath);
-				memcpy(s_StringBuffer, fileString.data(), fileString.size());
+				if (fileString.size() > s_TextBuffer.Size)
+				{
+					s_TextBuffer.Allocate(fileString.size());
+				}
+				memset(s_TextBuffer.Data, 0, s_TextBuffer.Size);
+				memcpy(s_TextBuffer.Data, fileString.data(), fileString.size());
 				s_CurrentPath = filepath;
 				s_DocumentEdited = false;
 				s_DocumentOpen = true;
@@ -48,14 +58,14 @@ namespace Kargono
 		};
 		s_OnSaveFile = [&]()
 		{
-			FileSystem::WriteFileString(s_CurrentPath, s_StringBuffer);
+			FileSystem::WriteFileBinary(s_CurrentPath, s_TextBuffer);
 			s_DocumentEdited = false;
 		};
 		s_OnDeleteFile = [&]()
 		{
 			if (FileSystem::DeleteSelectedFile(s_CurrentPath))
 			{
-				memset(s_StringBuffer, 0, sizeof(s_StringBuffer));
+				memset(s_TextBuffer.Data, 0, s_TextBuffer.Size);
 				s_CurrentPath = "";
 				s_DocumentEdited = false;
 				s_DocumentOpen = false;
@@ -64,7 +74,7 @@ namespace Kargono
 
 		s_OnCloseFile = [&]()
 		{
-			memset(s_StringBuffer, 0, sizeof(s_StringBuffer));
+			memset(s_TextBuffer.Data, 0, s_TextBuffer.Size);
 			s_CurrentPath = "";
 			s_DocumentEdited = false;
 			s_DocumentOpen = false;
@@ -74,14 +84,14 @@ namespace Kargono
 		s_DeleteWarningSpec.Label = "Delete File";
 		s_DeleteWarningSpec.WidgetID = 0x7e3a1a046d694789;
 		s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;
-		s_DeleteWarningSpec.WarningContents = [&]()
+		s_DeleteWarningSpec.PopupContents = [&]()
 		{
 			ImGui::Text("Are you sure you want to delete this file?");
 		};
 	}
 	void TextEditorPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Text Editor", ImGuiWindowFlags_MenuBar);
+		UI::Editor::StartWindow("Text Editor", &s_EditorLayer->m_ShowTextEditor, ImGuiWindowFlags_MenuBar);
 
 		if (s_CurrentPath == "")
 		{
@@ -116,7 +126,7 @@ namespace Kargono
 				}
 				ImGui::EndMenuBar();
 			}
-			UI::Editor::WarningMessage(s_DeleteWarningSpec);
+			UI::Editor::GenericPopup(s_DeleteWarningSpec);
 
 			ImGui::BeginTabBar("##TextTabBar");
 			bool tabColorModifed = false;
@@ -129,15 +139,13 @@ namespace Kargono
 			{
 				ImGui::PushStyleColor(ImGuiCol_Text, UI::Editor::s_PureWhite);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.0f);
-				ImGui::PushFont(UI::Editor::s_RobotoRegular);
-				if (ImGui::InputTextMultiline("##textLabel", s_StringBuffer,
-					sizeof(s_StringBuffer), ImGui::GetContentRegionAvail(),
+				if (ImGui::InputTextMultiline("##textLabel", s_TextBuffer.As<char>(),
+					s_TextBuffer.Size, ImGui::GetContentRegionAvail(),
 					ImGuiInputTextFlags_AllowTabInput))
 				{
 					s_DocumentEdited = true;
 				}
 				ImGui::PopStyleColor();
-				ImGui::PopFont();
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();

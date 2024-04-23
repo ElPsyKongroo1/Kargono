@@ -7,10 +7,14 @@
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
+	ViewportPanel::ViewportPanel()
+	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
-		EditorLayer* editorLayer = EditorLayer::GetCurrentLayer();
-
 		// Adjust Framebuffer Size Based on Viewport
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
@@ -31,7 +35,7 @@ namespace Kargono
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
 
 		// Update Scene
-		switch (editorLayer->m_SceneState)
+		switch (s_EditorLayer->m_SceneState)
 		{
 		case SceneState::Edit:
 		{
@@ -57,10 +61,10 @@ namespace Kargono
 
 		OnOverlayRender();
 
-		if (editorLayer->m_ShowUserInterface)
+		if (s_EditorLayer->m_ShowUserInterface)
 		{
 			auto& currentApplication = Application::GetCurrentApp().GetWindow();
-			if (editorLayer->m_SceneState == SceneState::Play)
+			if (s_EditorLayer->m_SceneState == SceneState::Play)
 			{
 				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 				Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
@@ -91,15 +95,13 @@ namespace Kargono
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
-		EditorLayer* editorLayer = EditorLayer::GetCurrentLayer();
-
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
-		UI::Editor::StartWindow("Viewport", window_flags);
+		UI::Editor::StartWindow("Viewport", &s_EditorLayer->m_ShowViewport, window_flags);
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		Math::vec2 localViewportBounds[2];
@@ -140,12 +142,12 @@ namespace Kargono
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_SCENE"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				editorLayer->OpenScene(path);
+				s_EditorLayer->OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-		if (editorLayer->m_SceneState == SceneState::Edit || editorLayer->m_SceneState == SceneState::Simulate)
+		if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate)
 
 		{
 			// Gizmos
@@ -217,9 +219,8 @@ namespace Kargono
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
-		EditorLayer* editorLayer = EditorLayer::GetCurrentLayer();
 
-		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
+		if (!s_EditorLayer->m_IsPaused || s_EditorLayer->m_StepFrames-- > 0)
 		{
 			// Update Scripts
 
@@ -371,9 +372,7 @@ namespace Kargono
 
 	void ViewportPanel::OnOverlayRender()
 	{
-		EditorLayer* editorLayer = EditorLayer::GetCurrentLayer();
-
-		if (editorLayer->m_SceneState == SceneState::Play)
+		if (s_EditorLayer->m_SceneState == SceneState::Play)
 		{
 			Entity camera = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
@@ -384,7 +383,7 @@ namespace Kargono
 			Renderer::BeginScene(m_EditorCamera);
 		}
 
-		if (editorLayer->m_ShowPhysicsColliders)
+		if (s_EditorLayer->m_ShowPhysicsColliders)
 		{
 			// Circle Colliders
 			{
@@ -450,7 +449,7 @@ namespace Kargono
 			}
 		}
 
-		if (editorLayer->m_SceneState == SceneState::Edit || editorLayer->m_SceneState == SceneState::Simulate || (editorLayer->m_SceneState == SceneState::Play && editorLayer->m_IsPaused))
+		if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate || (s_EditorLayer->m_SceneState == SceneState::Play && s_EditorLayer->m_IsPaused))
 		{
 			// Draw selected entity outline 
 			if (Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity()) {
@@ -474,7 +473,7 @@ namespace Kargono
 					Renderer::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<CameraComponent>() && editorLayer->m_ShowCameraFrustrums)
+				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorLayer->m_ShowCameraFrustrums)
 				{
 					DrawFrustrum(selectedEntity);
 				}

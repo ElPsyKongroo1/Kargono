@@ -5,7 +5,7 @@ namespace Kargono
 	class UIEditorPanel
 	{
 	public:
-		UIEditorPanel() = default;
+		UIEditorPanel();
 
 		void OnEditorUIRender();
 

@@ -6,6 +6,8 @@
 
 namespace Kargono
 {
+	static EditorLayer* s_EditorLayer { nullptr };
+
 	static void DisplayWidgetSpecificInfo(Ref<UI::Widget> widget, int32_t selectedWidget)
 	{
 		switch (widget->WidgetType)
@@ -47,6 +49,11 @@ namespace Kargono
 		}
 	}
 
+	UIEditorPanel::UIEditorPanel()
+	{
+		s_EditorLayer = EditorLayer::GetCurrentLayer();
+	}
+
 	void UIEditorPanel::OnEditorUIRender()
 	{
 		int32_t windowIteration{ 1 };
@@ -58,7 +65,7 @@ namespace Kargono
 		int32_t& selectedWindow = UI::Runtime::GetSelectedWindow();
 		int32_t& selectedWidget = UI::Runtime::GetSelectedWidget();
 
-		UI::Editor::StartWindow("User Interface Editor");
+		UI::Editor::StartWindow("User Interface Editor", &s_EditorLayer->m_ShowUserInterfaceEditor);
 
 		Assets::AssetHandle currentUIHandle = UI::Runtime::GetCurrentUIHandle();
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(currentUIHandle) ? Assets::AssetManager::GetUIObjectLocation(currentUIHandle).string().c_str() : "None"))
