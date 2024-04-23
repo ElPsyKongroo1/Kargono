@@ -5,7 +5,7 @@ namespace Kargono
 	class ToolbarPanel
 	{
 	public:
-		ToolbarPanel() = default;
+		ToolbarPanel();
 
 		void OnEditorUIRender();
 

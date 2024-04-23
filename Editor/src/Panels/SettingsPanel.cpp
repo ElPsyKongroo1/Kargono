@@ -17,6 +17,7 @@ namespace Kargono
 
 		s_PrimaryCameraCheckboxSpec.Label = "Display Physics Colliders";
 		s_PrimaryCameraCheckboxSpec.WidgetID = 0x185f537c52e34c35;
+		s_PrimaryCameraCheckboxSpec.LeftLean = false;
 		s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowPhysicsColliders = value;
@@ -24,6 +25,7 @@ namespace Kargono
 
 		s_DisplayCameraFrustrumSpec.Label = "Display Camera Frustrum";
 		s_DisplayCameraFrustrumSpec.WidgetID = 0x6616b45b13e842f0;
+		s_DisplayCameraFrustrumSpec.LeftLean = false;
 		s_DisplayCameraFrustrumSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowCameraFrustrums = value;
@@ -31,6 +33,7 @@ namespace Kargono
 
 		s_DisplayRuntimeUISpec.Label = "Display Runtime UI";
 		s_DisplayRuntimeUISpec.WidgetID = 0x0c3f03918b504bc0;
+		s_DisplayRuntimeUISpec.LeftLean = false;
 		s_DisplayRuntimeUISpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowUserInterface = value;
@@ -38,6 +41,7 @@ namespace Kargono
 
 		s_FullscreenRuntimeSpec.Label = "Fullscreen While Running";
 		s_FullscreenRuntimeSpec.WidgetID = 0x53f5366b41484bbd;
+		s_FullscreenRuntimeSpec.LeftLean = false;
 		s_FullscreenRuntimeSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_RuntimeFullscreen = value;
@@ -45,7 +49,7 @@ namespace Kargono
 	}
 	void SettingsPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Settings");
+		UI::Editor::StartWindow("Settings", &s_EditorLayer->m_ShowSettings);
 
 		// Toggle Physics Colliders
 		s_PrimaryCameraCheckboxSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;

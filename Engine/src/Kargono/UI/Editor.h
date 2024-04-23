@@ -52,12 +52,13 @@ namespace Kargono::UI
 
 	using OptionsList = std::unordered_map<std::string, std::vector<std::string>>;
 
-	struct WarningMessageSpec
+	struct GenericPopupSpec
 	{
 	public:
 		UUID WidgetID;
 		std::string Label;
-		std::function<void()> WarningContents {nullptr};
+		float PopupWidth { 700.0f };
+		std::function<void()> PopupContents {nullptr};
 		std::function<void()> ConfirmAction {nullptr};
 		bool PopupActive {false};
 	};
@@ -100,6 +101,7 @@ namespace Kargono::UI
 	public:
 		UUID WidgetID;
 		std::string Label;
+		bool LeftLean{ true };
 		bool ToggleBoolean;
 		std::function<void(bool)> ConfirmAction;
 	};
@@ -130,7 +132,7 @@ namespace Kargono::UI
 		static void StartRendering();
 		static void EndRendering();
 
-		static void StartWindow(const std::string& label, int32_t flags = 0);
+		static void StartWindow(const std::string& label, bool* closeWindow = nullptr, int32_t flags = 0);
 		static void EndWindow();
 
 		static void OnEvent(Events::Event& e);
@@ -138,11 +140,14 @@ namespace Kargono::UI
 		static void Spacing(float space);
 		static void TitleText(const std::string& text);
 		static void Spacing(SpacingAmount space);
+		static void Separator();
 
-		static void WarningMessage(WarningMessageSpec& spec);
+		static void GenericPopup(GenericPopupSpec& spec);
+		static void SelectOptionPopup(SelectOptionPopup& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
-		static void SelectOption(SelectOptionSpec& spec);
+		static void SelectOptionInline(SelectOptionSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
+		static void SelectorHeader(const std::string& label);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void TextInputModal(TextInputSpec& spec);
 
@@ -160,13 +165,15 @@ namespace Kargono::UI
 		static ImFont* s_OpenSansRegular;
 		static ImFont* s_OpenSansBold;
 		static ImFont* s_RobotoRegular;
+		static ImFont* s_RobotoMono;
+		static ImFont* s_AnonymousRegular;
 
 		static Ref<Texture2D> s_IconPlay, s_IconPause, s_IconStop,
 			s_IconStep, s_IconSimulate, s_IconAddItem,
 			s_IconSettings, s_IconDelete, s_IconEdit, s_IconEdit_Active, s_IconCancel,
 			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,
 			s_IconCheckbox_Check_Disabled, s_IconCheckbox_Empty_Enabled,
-			s_IconCheckbox_Check_Enabled;
+			s_IconCheckbox_Check_Enabled, s_IconOptions;
 
 		static Ref<Texture2D> s_DirectoryIcon, s_GenericFileIcon, s_BackIcon,
 			s_AudioIcon, s_ImageIcon, s_BinaryIcon,
