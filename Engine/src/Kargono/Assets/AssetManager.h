@@ -592,6 +592,11 @@ namespace Kargono::Assets
 		static void SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::GameState> GameState);
 
 		//==============================
+		// Delete a GameState
+		//==============================
+		static void DeleteGameState(AssetHandle handle);
+
+		//==============================
 		// Load and Retrieve In-Memory GameState
 		//==============================
 		// Function to get a texture with a given name

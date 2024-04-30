@@ -3639,6 +3639,22 @@ namespace Kargono::Assets
 		SerializeGameState(GameState, (Projects::Project::GetAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
 	}
 
+	void AssetManager::DeleteGameState(AssetHandle handle)
+	{
+		if (!s_GameStateRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete GameState in AssetManager");
+			return;
+		}
+
+		FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+			s_GameStateRegistry.at(handle).Data.IntermediateLocation);
+
+		s_GameStateRegistry.erase(handle);
+
+		SerializeGameStateRegistry();
+	}
+
 	std::filesystem::path AssetManager::GetGameStateLocation(const AssetHandle& handle)
 	{
 		if (!s_GameStateRegistry.contains(handle))
@@ -4064,6 +4080,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "Name" << YAML::Value << config.Name;
 				out << YAML::Key << "StartScene" << YAML::Value << config.StartScenePath.string();
 				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(config.StartSceneHandle);
+				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(config.StartGameState);
 				out << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
 				out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
 				out << YAML::Key << "ScriptDLLPath" << YAML::Value << config.ScriptDLLPath.string();
@@ -4124,6 +4141,7 @@ namespace Kargono::Assets
 		config.Name = projectNode["Name"].as<std::string>();
 		config.StartScenePath = projectNode["StartScene"].as<std::string>();
 		config.StartSceneHandle = static_cast<AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
+		config.StartGameState = static_cast<AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
 		config.ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
