@@ -1,8 +1,8 @@
 Registry: GameState
 Assets:
-  - AssetHandle: 10214009201369737561
+  - AssetHandle: 4139772486063840769
     MetaData:
-      CheckSum: 7264f0c561f9abe29e2fa5cec745b270359883ca6a140b0fb944af394e31935f
-      IntermediateLocation: GameState/The new options.kgstate
+      CheckSum: f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b
+      IntermediateLocation: GameState/asdf.kgstate
       AssetType: GameState
-      Name: The new options
+      Name: asdf

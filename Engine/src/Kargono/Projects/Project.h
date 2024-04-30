@@ -69,6 +69,8 @@ namespace Kargono::Projects
 		//		the application is started.
 		Assets::AssetHandle OnRuntimeStart {0};
 
+		Assets::AssetHandle StartGameState {0};
+
 		Assets::AssetHandle OnUpdateUserCount {0};
 
 		std::string OnApproveJoinSessionFunction {"None"};
@@ -258,6 +260,18 @@ namespace Kargono::Projects
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->m_Config.AppIsNetworked = isNetworked;
+		}
+
+		static Assets::AssetHandle GetStartGameState()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_Config.StartGameState;
+		}
+
+		static void SetStartGameState(Assets::AssetHandle id)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_Config.StartGameState = id;
 		}
 
 		static Assets::AssetHandle GetOnRuntimeStart()

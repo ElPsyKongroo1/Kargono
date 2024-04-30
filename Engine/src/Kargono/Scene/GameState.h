@@ -25,6 +25,59 @@ namespace Kargono
 			return m_Fields.at(fieldName)->GetWrappedValue<T>();
 		}
 
+		Ref<WrappedVariable> GetField(const std::string& fieldName)
+		{
+			if (!m_Fields.contains(fieldName))
+			{
+				KG_CRITICAL("Could not get field from game state {}", fieldName);
+				return nullptr;
+			}
+			return m_Fields.at(fieldName);
+		}
+
+		bool AddField(const std::string& fieldName, WrappedVarType fieldType)
+		{
+			if (m_Fields.contains(fieldName))
+			{
+				KG_WARN("Attempt to add field to Game State that already exists");
+				return false;
+			}
+			Ref<WrappedVariable> newVariable = nullptr;
+
+			switch (fieldType)
+			{
+				case WrappedVarType::UInteger16:
+				{
+					newVariable = CreateRef<WrappedUInteger16>();
+					m_Fields.insert_or_assign(fieldName, newVariable);
+					return true;
+				}
+				default:
+				{
+					KG_WARN("Could not add field to Game State. Invalid fieldType Given.");
+					return false;
+				}
+			}
+		}
+
+		bool DeleteField(const std::string& fieldName)
+		{
+			if (!m_Fields.contains(fieldName))
+			{
+				KG_WARN("Attempt to delete field to Game State that does not exist");
+				return false;
+			}
+
+			m_Fields.erase(fieldName);
+			return true;
+		}
+
+		std::unordered_map<std::string, Ref<WrappedVariable>>& GetAllFields()
+		{
+			return m_Fields;
+		}
+
+
 		std::string GetName()
 		{
 			return m_Name;

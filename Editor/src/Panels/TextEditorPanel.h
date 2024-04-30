@@ -1,4 +1,6 @@
 #pragma once
+#include <filesystem>
+
 
 namespace Kargono
 {
@@ -8,6 +10,8 @@ namespace Kargono
 		TextEditorPanel();
 
 		void OnEditorUIRender();
+
+		void OpenFile(const std::filesystem::path& path);
 
 	};
 }

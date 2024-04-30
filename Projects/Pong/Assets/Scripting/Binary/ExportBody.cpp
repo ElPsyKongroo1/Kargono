@@ -116,9 +116,13 @@ void KG_FUNC_3176244785148247992(uint16_t userSlot)
 	SetWidgetText("online_lobby", selectedWidget, "Connected!");
 }
 
-void KG_FUNC_8444652895326507655()
+void KG_FUNC_18163504705534252383(uint32_t count)
 {
-	SetWidgetText("online_lobby", "main_text", "Starting Session...");
+	std::string onlineCount = "Online: " + count;
+	SetWidgetText("main_window", "online_count", onlineCount);
+	SetWidgetSelectable("main_window", "online_multiplayer", true);
+	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
+	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
 }
 
 void KG_FUNC_7445822592925037095(uint16_t userSlot)
@@ -131,13 +135,9 @@ void KG_FUNC_7445822592925037095(uint16_t userSlot)
 	SetWidgetText("online_lobby", "main_text", "Waiting for Players...");
 }
 
-void KG_FUNC_18163504705534252383(uint32_t count)
+void KG_FUNC_8444652895326507655()
 {
-	std::string onlineCount = "Online: " + count;
-	SetWidgetText("main_window", "online_count", onlineCount);
-	SetWidgetSelectable("main_window", "online_multiplayer", true);
-	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
-	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+	SetWidgetText("online_lobby", "main_text", "Starting Session...");
 }
 
 void KG_FUNC_1819971799574496652()
@@ -159,15 +159,6 @@ void KG_FUNC_1819971799574496652()
 		EnableReadyCheck();
 }
 
-void KG_FUNC_14683932765512752045()
-{
-	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
-	TransitionSceneFromName("Scenes/main_menu.kgscene");
-	LoadInputModeByName("Input/MainMenu.kginput");
-	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
-	RequestUserCount();
-}
-
 void KG_FUNC_4342390925410131221()
 {
 	SetWidgetText("main_window", "online_count", "Offline");
@@ -176,5 +167,14 @@ void KG_FUNC_4342390925410131221()
 	SetWidgetBackgroundColor("main_window", "online_multiplayer", {30.0f / 255.0f, 30.0f / 255.0f, 30.0f / 255.0f, 37.0f / 255.0f});
 	SetSelectedWidget("main_window", "local_multiplayer");
 }
+
+void KG_FUNC_14683932765512752045()
+{
+	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
+	TransitionSceneFromName("Scenes/main_menu.kgscene");
+	LoadInputModeByName("Input/MainMenu.kginput");
+	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
+	RequestUserCount();
+}
 
 }

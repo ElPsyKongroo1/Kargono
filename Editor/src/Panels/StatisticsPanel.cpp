@@ -44,17 +44,6 @@ namespace Kargono
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
 
-
-		ImGui::NewLine();
-
-		ImGui::Text("Debugging");
-		ImGui::Separator();
-		if (ImGui::Button("Open Profiler"))
-		{
-			Utility::OSCommands::OpenProfiler();
-		}
-		ImGui::NewLine();
-
 		UI::Editor::EndWindow();
 	}
 }

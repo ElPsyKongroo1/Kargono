@@ -2,6 +2,7 @@ Project:
   Name: Pong
   StartScene: Scenes/main_gameplay.kgscene
   StartSceneHandle: 13036162138140767594
+  StartGameState: 4139772486063840769
   AssetDirectory: Assets
   ScriptModulePath: Scripts/Binaries/Pong.dll
   ScriptDLLPath: Scripting/bin/Pong.dll

@@ -90,7 +90,7 @@ namespace Kargono
 			s_InputScriptNameSpec.CurrentOption = s_InputScriptName;
 			UI::Editor::TextInputModal(s_InputScriptNameSpec);
 			s_InputScriptFuncSpec.CurrentOption = Utility::WrappedFuncTypeToString(s_InputScriptFunc);
-			UI::Editor::SelectOptionInline(s_InputScriptFuncSpec);
+			UI::Editor::SelectOption(s_InputScriptFuncSpec);
 			if (ImGui::Button("Create Script"))
 			{
 				std::vector<WrappedVarType> parameters{ Utility::WrappedFuncTypeToParameterTypes(s_InputScriptFunc) };

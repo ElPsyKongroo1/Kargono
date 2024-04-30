@@ -20,11 +20,11 @@ KARGONO_API void AddVoidStringStringString(const std::string& funcName, std::fun
 KARGONO_API void AddVoidStringStringVec4(const std::string& funcName, std::function<void(const std::string&, const std::string&, Math::vec4)> funcPtr);
 KARGONO_API void AddUInt16None(const std::string& funcName, std::function<uint16_t()> funcPtr);
 		KARGONO_API void KG_FUNC_3176244785148247992(uint16_t a);
-		KARGONO_API void KG_FUNC_8444652895326507655();
-		KARGONO_API void KG_FUNC_7445822592925037095(uint16_t a);
 		KARGONO_API void KG_FUNC_18163504705534252383(uint32_t a);
+		KARGONO_API void KG_FUNC_7445822592925037095(uint16_t a);
+		KARGONO_API void KG_FUNC_8444652895326507655();
 		KARGONO_API void KG_FUNC_1819971799574496652();
-		KARGONO_API void KG_FUNC_14683932765512752045();
 		KARGONO_API void KG_FUNC_4342390925410131221();
+		KARGONO_API void KG_FUNC_14683932765512752045();
 	}
 }
