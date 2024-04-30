@@ -180,6 +180,12 @@ namespace Kargono
 					OpenProject();
 				}
 
+				if (ImGui::MenuItem("Save Project", "Ctrl+S"))
+				{
+					SaveScene();
+					SaveProject();
+				}
+
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
@@ -187,11 +193,15 @@ namespace Kargono
 					NewScene();
 				}
 
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Reload Scripts", "Ctrl+R"))
 				{
-					SaveScene();
-					SaveProject();
+					if (m_SceneState != SceneState::Edit) { OnStop(); }
+					Script::ScriptEngine::ReloadAssembly();
 				}
+
+				ImGui::Separator();
 
 				if (ImGui::MenuItem("Exit"))
 				{
@@ -199,16 +209,6 @@ namespace Kargono
 				}
 				ImGui::EndMenu();
 
-			}
-
-			if (ImGui::BeginMenu("Script"))
-			{
-				if (ImGui::MenuItem("Reload Assembly", "Ctrl+R"))
-				{
-					if (m_SceneState != SceneState::Edit) { OnStop(); }
-					Script::ScriptEngine::ReloadAssembly();
-				}
-				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Panels"))
@@ -227,9 +227,17 @@ namespace Kargono
 				ImGui::Separator();
 				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
 				ImGui::MenuItem("Project", NULL, &m_ShowProject);
-				ImGui::Separator();
-				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Debug"))
+			{
 				ImGui::MenuItem("Log", NULL, &m_ShowLog);
+				if (ImGui::MenuItem("Profiler"))
+				{
+					Utility::OSCommands::OpenProfiler();
+				}
+				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
 				ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
 				ImGui::EndMenu();
 			}
@@ -684,6 +692,18 @@ namespace Kargono
 			m_EditorInputModeHandle = InputMode::s_InputModeHandle;
 		}
 
+		// Load Default Game State
+		if (Projects::Project::GetStartGameState() == 0)
+		{
+			GameState::s_GameState = nullptr;
+			GameState::s_GameStateHandle = 0;
+		}
+		else
+		{
+			GameState::s_GameState = Assets::AssetManager::GetGameState(Projects::Project::GetStartGameState());
+			GameState::s_GameStateHandle = Projects::Project::GetStartGameState();
+		}
+
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
@@ -747,6 +767,9 @@ namespace Kargono
 			InputMode::s_InputMode = nullptr;
 			InputMode::s_InputModeHandle = 0;
 		}
+
+		GameState::s_GameState = nullptr;
+		GameState::s_GameStateHandle = 0;
 
 		if (Projects::Project::GetAppIsNetworked() && m_SceneState == SceneState::Play)
 		{

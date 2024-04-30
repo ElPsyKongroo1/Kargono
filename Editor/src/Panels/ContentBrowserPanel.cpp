@@ -62,6 +62,7 @@ namespace Kargono
 	{
 		UI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
 
+		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
 		static float thumbnailSize = 140;
 		float cellSize = thumbnailSize + padding;
@@ -69,14 +70,55 @@ namespace Kargono
 		int columnCount = (int)(panelWidth / cellSize);
 		columnCount = columnCount > 0 ? columnCount : 1;
 
-		
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_BackIcon->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		if (!backActive)
 		{
-			if (m_CurrentDirectory != std::filesystem::path(m_BaseDirectory))
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+		}
+
+
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? UI::Editor::s_BackIcon : UI::Editor::s_BackInactiveIcon)->GetRendererID(),
+			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		{
+			if (backActive)
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
 		}
+		if (!backActive)
+		{
+			ImGui::PopStyleColor(2);
+		}
+		bool forwardActive = m_CurrentDirectory != s_LongestRecentPath && !s_LongestRecentPath.empty();
+
+		ImGui::SameLine();
+		if (!forwardActive)
+		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+		}
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? UI::Editor::s_ForwardIcon : UI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		{
+			if (forwardActive && FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+			{
+				std::filesystem::path currentIterationPath{s_LongestRecentPath};
+				std::filesystem::path recentIterationPath{s_LongestRecentPath};
+				while (currentIterationPath != m_CurrentDirectory)
+				{
+					recentIterationPath = currentIterationPath;
+					currentIterationPath = currentIterationPath.parent_path();
+				}
+				m_CurrentDirectory = recentIterationPath;
+			}
+		}
+		if (!forwardActive)
+		{
+			ImGui::PopStyleColor(2);
+		}
+		ImGui::PopStyleColor();
 		if (ImGui::BeginDragDropTarget())
 		{
 			static std::array<std::string, 6> acceptablePayloads
@@ -100,7 +142,6 @@ namespace Kargono
 			}
 			ImGui::EndDragDropTarget();
 		}
-		
 
 		//if (ImGui::BeginPopup("Options"))
 		//{
@@ -124,10 +165,10 @@ namespace Kargono
 		tokenizedDirectoryPath.push_back("Assets");
 
 		ImGui::PushFont(UI::Editor::s_PlexBold);
-		for (int32_t i = tokenizedDirectoryPath.size() - 1; i >= 0; --i)
+		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
 			ImGui::SameLine();
-			ImGui::TextColored(UI::Editor::s_PearlBlue, tokenizedDirectoryPath.at(i).c_str());
+			ImGui::Text(tokenizedDirectoryPath.at(i).c_str());
 			if (i != 0)
 			{
 				ImGui::SameLine();
@@ -186,7 +227,15 @@ namespace Kargono
 			}
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				if (directoryEntry.is_directory()) { m_CurrentDirectory /= path.filename(); }
+				if (directoryEntry.is_directory())
+				{
+					m_CurrentDirectory /= path.filename();
+					if (!FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+					{
+						s_LongestRecentPath = m_CurrentDirectory;
+					}
+						
+				}
 			}
 
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
@@ -201,6 +250,14 @@ namespace Kargono
 
 			if (ImGui::BeginPopup("RightClickItemOptions"))
 			{
+				if (fileType != BrowserFileType::Directory)
+				{
+					if (ImGui::Selectable("Open File In Text Editor"))
+					{
+						s_EditorLayer->m_TextEditorPanel->OpenFile(path);
+					}
+				}
+
 				if (fileType == BrowserFileType::ScriptProject)
 				{
 					if (ImGui::Selectable("Open Scripting Project"))
@@ -242,8 +299,7 @@ namespace Kargono
 					}
 				}
 
-				if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory &&
-					fileType != BrowserFileType::None)
+				if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
 				{
 					if (ImGui::Selectable("Delete File"))
 					{

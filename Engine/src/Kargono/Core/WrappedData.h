@@ -29,6 +29,7 @@ namespace Kargono
 		{
 			return *reinterpret_cast<T*>(GetValue());
 		}
+
 		virtual WrappedVarType Type() = 0;
 		virtual void* GetValue() = 0;
 	};

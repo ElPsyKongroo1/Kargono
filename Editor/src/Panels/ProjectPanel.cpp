@@ -11,6 +11,7 @@ namespace Kargono
 	static UI::CheckboxSpec s_DefaultFullscreenSpec {};
 	static UI::CheckboxSpec s_ToggleNetworkSpec {};
 	static UI::SelectOptionSpec s_SelectResolutionSpec {};
+	static UI::SelectOptionSpec s_SelectStartGameStateSpec {};
 	static UI::SelectOptionSpec s_SelectRuntimeStartSpec {};
 	static UI::SelectOptionSpec s_SelectUpdateUserCountSpec {};
 	static UI::SelectOptionSpec s_SelectApproveJoinSessionSpec {};
@@ -28,6 +29,7 @@ namespace Kargono
 		s_SelectStartSceneSpec.Label = "Starting Scene";
 		s_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
 		s_SelectStartSceneSpec.LineCount = 2;
+		s_SelectStartSceneSpec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
 		s_SelectStartSceneSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -35,6 +37,7 @@ namespace Kargono
 			{
 				spec.AddToOptionsList("All Options", asset.Data.IntermediateLocation.string());
 			}
+			spec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
 		};
 		s_SelectStartSceneSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -70,9 +73,14 @@ namespace Kargono
 		s_SelectResolutionSpec.Label = "Target Resolution";
 		s_SelectResolutionSpec.WidgetID = 0x46a8cd8fbde44223;
 		s_SelectResolutionSpec.LineCount = 4;
+		s_SelectResolutionSpec.CurrentOption = Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution());
 		s_SelectResolutionSpec.ConfirmAction = [&](const std::string& selection)
 		{
 			Projects::Project::SetTargetResolution(Utility::StringToScreenResolution(selection));
+		};
+		s_SelectResolutionSpec.PopupAction = [&](UI::SelectOptionSpec& spec)
+		{
+			s_SelectResolutionSpec.CurrentOption = Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution());
 		};
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: 1:1 (Box)", "800x800");
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: 1:1 (Box)", "400x400");
@@ -86,10 +94,66 @@ namespace Kargono
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: 4:3 (Fullscreen)", "1024x768");
 		s_SelectResolutionSpec.AddToOptionsList("Aspect Ratio: Automatic (Based on Device Used)", "Match Device");
 
+		// Select Start Game State
+		s_SelectStartGameStateSpec.Label = "Start Game State";
+		s_SelectStartGameStateSpec.WidgetID = 0xf0677abbde44495b;
+		s_SelectStartGameStateSpec.LineCount = 3;
+		if (Projects::Project::GetStartGameState() != 0)
+		{
+			s_SelectStartGameStateSpec.CurrentOption = Assets::AssetManager::GetGameStateRegistry().at
+			(Projects::Project::GetStartGameState()).Data.IntermediateLocation.string();
+		}
+		else
+		{
+			s_SelectStartGameStateSpec.CurrentOption = "None";
+		}
+		s_SelectStartGameStateSpec.PopupAction = [&](UI::SelectOptionSpec& spec)
+		{
+			spec.GetOptionsList().clear();
+			spec.AddToOptionsList("Clear", "None");
+			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
+			{
+				spec.AddToOptionsList("All Options", asset.Data.IntermediateLocation.string());
+			}
+			
+			if (Projects::Project::GetStartGameState() != 0)
+			{
+				spec.CurrentOption = Assets::AssetManager::GetGameStateRegistry().at
+				(Projects::Project::GetStartGameState()).Data.IntermediateLocation.string();
+			}
+			else
+			{
+				spec.CurrentOption = "None";
+			}
+
+		};
+
+		s_SelectStartGameStateSpec.ConfirmAction = [&](const std::string& selection)
+		{
+			if (selection == "None")
+			{
+				// Set Game State to null value
+				Projects::Project::SetStartGameState(0);
+				return;
+			}
+
+			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
+			{
+				if (asset.Data.IntermediateLocation == std::filesystem::path(selection))
+				{
+					Projects::Project::SetStartGameState(handle);
+					return;
+				}
+			}
+			KG_ERROR("Could not locate starting game state in ProjectPanel");
+		};
+
 		// Runtime Start Spec
 		s_SelectRuntimeStartSpec.Label = "Runtime Start";
 		s_SelectRuntimeStartSpec.WidgetID = 0xe8527560bb194a06;
 		s_SelectRuntimeStartSpec.LineCount = 3;
+		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetOnRuntimeStart() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None";
 		s_SelectRuntimeStartSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -102,6 +166,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnRuntimeStart() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None";
 		};
 		s_SelectRuntimeStartSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -126,6 +193,8 @@ namespace Kargono
 		s_SelectUpdateUserCountSpec.Label = "Update User Count";
 		s_SelectUpdateUserCountSpec.WidgetID = 0x329248441b45489b;
 		s_SelectUpdateUserCountSpec.LineCount = 3;
+		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetOnUpdateUserCount() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None";
 		s_SelectUpdateUserCountSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -138,6 +207,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnUpdateUserCount() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None";
 		};
 		s_SelectUpdateUserCountSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -196,6 +268,8 @@ namespace Kargono
 		s_SelectUserLeftSessionSpec.Label = "User Left Session";
 		s_SelectUserLeftSessionSpec.WidgetID = 0x98f9288e1cd04962;
 		s_SelectUserLeftSessionSpec.LineCount = 3;
+		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetOnUserLeftSession() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None";
 		s_SelectUserLeftSessionSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -208,6 +282,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnUserLeftSession() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None";
 		};
 		s_SelectUserLeftSessionSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -232,6 +309,8 @@ namespace Kargono
 		s_SelectSessionInitSpec.Label = "Session Initialization";
 		s_SelectSessionInitSpec.WidgetID = 0xe8dbc36fd6774a8f;
 		s_SelectSessionInitSpec.LineCount = 3;
+		s_SelectSessionInitSpec.CurrentOption = Projects::Project::GetOnCurrentSessionInit() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None";
 		s_SelectSessionInitSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -244,6 +323,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnCurrentSessionInit() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None";
 		};
 		s_SelectSessionInitSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -268,6 +350,8 @@ namespace Kargono
 		s_SelectConnectionTerminatedSpec.Label = "Connection Terminated";
 		s_SelectConnectionTerminatedSpec.WidgetID = 0xad3c8300fda24bb7;
 		s_SelectConnectionTerminatedSpec.LineCount = 3;
+		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetOnConnectionTerminated() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None";
 		s_SelectConnectionTerminatedSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -280,6 +364,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnConnectionTerminated() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None";
 		};
 		s_SelectConnectionTerminatedSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -304,6 +391,8 @@ namespace Kargono
 		s_SelectUpdateSessionSlotSpec.Label = "Update Session User Slot";
 		s_SelectUpdateSessionSlotSpec.WidgetID = 0x182e65506c2843f4;
 		s_SelectUpdateSessionSlotSpec.LineCount = 3;
+		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetOnUpdateSessionUserSlot() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None";
 		s_SelectUpdateSessionSlotSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -316,6 +405,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnUpdateSessionUserSlot() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None";
 		};
 		s_SelectUpdateSessionSlotSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -340,6 +432,8 @@ namespace Kargono
 		s_SelectStartSessionSpec.Label = "Start Session";
 		s_SelectStartSessionSpec.WidgetID = 0xdda2adc6a5f44e58;
 		s_SelectStartSessionSpec.LineCount = 3;
+		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetOnStartSession() ?
+			Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None";
 		s_SelectStartSessionSpec.PopupAction = [](UI::SelectOptionSpec& spec)
 		{
 			spec.GetOptionsList().clear();
@@ -352,6 +446,9 @@ namespace Kargono
 					spec.AddToOptionsList("All Options", script->m_ScriptName);
 				}
 			}
+
+			spec.CurrentOption = Projects::Project::GetOnStartSession() ?
+				Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None";
 		};
 		s_SelectStartSessionSpec.ConfirmAction = [&](const std::string& selection)
 		{
@@ -457,12 +554,11 @@ namespace Kargono
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select Starting Scene
-		s_SelectStartSceneSpec.CurrentOption = Projects::Project::GetStartScenePath(false).string();
-		UI::Editor::SelectOptionInline(s_SelectStartSceneSpec);
+		UI::Editor::SelectOption(s_SelectStartSceneSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Default Fullscreen
-		s_DefaultFullscreenSpec.ToggleBoolean = Projects::Project::GetIsFullscreen();;
+		s_DefaultFullscreenSpec.ToggleBoolean = Projects::Project::GetIsFullscreen();
 		UI::Editor::Checkbox(s_DefaultFullscreenSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
@@ -471,67 +567,55 @@ namespace Kargono
 		UI::Editor::Checkbox(s_ToggleNetworkSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
+		// Select Starting Game State
+		UI::Editor::SelectOption(s_SelectStartGameStateSpec);
+		UI::Editor::Spacing(UI::SpacingAmount::Small);
+
 		// Resolution Select Option
-		s_SelectResolutionSpec.CurrentOption = Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution());
-		UI::Editor::SelectOptionInline(s_SelectResolutionSpec);
+		UI::Editor::SelectOption(s_SelectResolutionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Runtime Start
-		s_SelectRuntimeStartSpec.CurrentOption = Projects::Project::GetOnRuntimeStart() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectRuntimeStartSpec);
+		UI::Editor::SelectOption(s_SelectRuntimeStartSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update User Count
-		s_SelectUpdateUserCountSpec.CurrentOption = Projects::Project::GetOnUpdateUserCount() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectUpdateUserCountSpec);
+		UI::Editor::SelectOption(s_SelectUpdateUserCountSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Approve Join Session
 		s_SelectApproveJoinSessionSpec.CurrentOption = Projects::Project::GetProjectOnApproveJoinSession();
-		UI::Editor::SelectOptionInline(s_SelectApproveJoinSessionSpec);
+		UI::Editor::SelectOption(s_SelectApproveJoinSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On User Left Session
-		s_SelectUserLeftSessionSpec.CurrentOption = Projects::Project::GetOnUserLeftSession() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectUserLeftSessionSpec);
+		UI::Editor::SelectOption(s_SelectUserLeftSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Current Session Start
-		s_SelectSessionInitSpec.CurrentOption = Projects::Project::GetOnCurrentSessionInit() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectSessionInitSpec);
+		UI::Editor::SelectOption(s_SelectSessionInitSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Connection Terminated
-		s_SelectConnectionTerminatedSpec.CurrentOption = Projects::Project::GetOnConnectionTerminated() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectConnectionTerminatedSpec);
+		UI::Editor::SelectOption(s_SelectConnectionTerminatedSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Update Session User Slot
-		s_SelectUpdateSessionSlotSpec.CurrentOption = Projects::Project::GetOnUpdateSessionUserSlot() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None";
-		UI::Editor::SelectOptionInline(s_SelectUpdateSessionSlotSpec);
+		UI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Start Session
-		s_SelectStartSessionSpec.CurrentOption = Projects::Project::GetOnStartSession() ?
-			Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None";
-		
-		UI::Editor::SelectOptionInline(s_SelectStartSessionSpec);
+		UI::Editor::SelectOption(s_SelectStartSessionSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Session Ready Check
 		s_SelectSessionReadyCheckSpec.CurrentOption = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
-		UI::Editor::SelectOptionInline(s_SelectSessionReadyCheckSpec);
+		UI::Editor::SelectOption(s_SelectSessionReadyCheckSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 		// Select On Receive Signal Function
 		s_SelectReceiveSignalSpec.CurrentOption = Projects::Project::GetProjectOnReceiveSignal();
-		UI::Editor::SelectOptionInline(s_SelectReceiveSignalSpec);
+		UI::Editor::SelectOption(s_SelectReceiveSignalSpec);
 		UI::Editor::Spacing(UI::SpacingAmount::Small);
 
 
