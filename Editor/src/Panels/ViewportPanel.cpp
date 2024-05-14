@@ -72,13 +72,13 @@ namespace Kargono
 
 				if (mainCamera)
 				{
-					UI::Runtime::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+					RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 				}
 			}
 			else
 			{
 				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-				UI::Runtime::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+				RuntimeUI::Runtime::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 			}
 
 		}
@@ -101,14 +101,14 @@ namespace Kargono
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
-		UI::Editor::StartWindow("Viewport", &s_EditorLayer->m_ShowViewport, window_flags);
+		EditorUI::Editor::StartWindow("Viewport", &s_EditorLayer->m_ShowViewport, window_flags);
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		Math::vec2 localViewportBounds[2];
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		UI::Editor::BlockEvents(!m_ViewportHovered);
+		EditorUI::Editor::BlockEvents(!m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::Project::GetTargetResolution());
@@ -191,7 +191,7 @@ namespace Kargono
 			}
 		}
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 		ImGui::PopStyleVar();
 	}
 	void ViewportPanel::ProcessMousePicking()

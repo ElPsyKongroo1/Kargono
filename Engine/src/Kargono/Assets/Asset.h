@@ -2,8 +2,9 @@
 
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Renderer/Shader.h"
-#include "Kargono/UI/Text.h"
+#include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Core/WrappedData.h"
+#include "Kargono/Scripting/ScriptingResources.h"
 
 #include <filesystem>
 #include <vector>
@@ -15,6 +16,8 @@ namespace Kargono::Assets
 
 	// An AssetHandle is a unique identifier for an Asset.
 	using AssetHandle = Kargono::UUID;
+
+	static inline uint64_t EmptyHandle { 0 };
 
 	// This enum provides a method to distinguish between different specific
 	//		asset types in an Asset. The metadata struct will hold an AssetType.
@@ -29,7 +32,8 @@ namespace Kargono::Assets
 		UIObject = 6,
 		InputMode = 7,
 		Script = 8,
-		GameState = 9
+		GameState = 9,
+		EntityClass = 10
 	};
 
 	//==============================
@@ -130,7 +134,7 @@ namespace Kargono::Assets
 		float AtlasWidth;
 		float AtlasHeight;
 		float LineHeight{};
-		std::vector<std::pair<unsigned char, UI::Character>> Characters{};
+		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
 		std::filesystem::path InitialFileLocation;
 	};
 
@@ -169,9 +173,16 @@ namespace Kargono::Assets
 		std::string Name{};
 	};
 
+	struct EntityClassMetaData
+	{
+		std::string Name{};
+	};
+
 	struct ScriptMetaData
 	{
 		std::string Name{};
+		Scripting::ScriptType ScriptType {Scripting::ScriptType::None };
+		std::string SectionLabel{};
 		std::vector<WrappedVarType> Parameters{};
 		WrappedVarType ReturnValue{};
 		WrappedFuncType FunctionType{};
@@ -210,6 +221,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::InputMode: return "InputMode";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
+		case Assets::AssetType::EntityClass: return "EntityClass";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ASSERT(false, "Unknown Type of AssetType.");
@@ -227,6 +239,7 @@ namespace Kargono::Utility
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
+		if (type == "EntityClass") { return Assets::AssetType::EntityClass; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ASSERT(false, "Unknown Type of AssetType String.");

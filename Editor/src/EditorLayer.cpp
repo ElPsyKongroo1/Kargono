@@ -32,7 +32,7 @@ namespace Kargono
 			Application::GetCurrentApp().Close();
 			return;
 		}
-		UI::Editor::Init();
+		EditorUI::Editor::Init();
 
 		m_LogPanel = CreateScope<LogPanel>();
 		m_StatisticsPanel = CreateScope<StatisticsPanel>();
@@ -51,8 +51,8 @@ namespace Kargono
 
 		Renderer::Init();
 		Renderer::SetLineWidth(1.0f);
-		UI::Text::Init();
-		UI::Runtime::Init();
+		RuntimeUI::Text::Init();
+		RuntimeUI::Runtime::Init();
 
 		m_ViewportPanel->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
@@ -81,7 +81,7 @@ namespace Kargono
 			}
 		}
 
-		UI::Editor::Terminate();
+		EditorUI::Editor::Terminate();
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -102,7 +102,7 @@ namespace Kargono
 	void EditorLayer::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		UI::Editor::StartRendering();
+		EditorUI::Editor::StartRendering();
 
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
@@ -141,7 +141,7 @@ namespace Kargono
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		UI::Editor::StartWindow("DockSpace", &dockspaceOpen, window_flags);
+		EditorUI::Editor::StartWindow("DockSpace", &dockspaceOpen, window_flags);
 		if (!opt_padding)
 			ImGui::PopStyleVar();
 
@@ -165,8 +165,8 @@ namespace Kargono
 		{
 			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 			if (m_ShowToolbar) { m_ToolbarPanel->OnEditorUIRender(); }
-			UI::Editor::EndWindow();
-			UI::Editor::EndRendering();
+			EditorUI::Editor::EndWindow();
+			EditorUI::Editor::EndRendering();
 			return;
 		}
 
@@ -195,10 +195,13 @@ namespace Kargono
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Reload Scripts", "Ctrl+R"))
+				if (ImGui::MenuItem("Reload Script DLL"))
 				{
-					if (m_SceneState != SceneState::Edit) { OnStop(); }
-					Script::ScriptEngine::ReloadAssembly();
+					Scripting::ScriptCore::OpenDll();
+				}
+				if (ImGui::MenuItem("Rebuild Script DLL"))
+				{
+					Scripting::ScriptModuleBuilder::CreateDll();
 				}
 
 				ImGui::Separator();
@@ -262,15 +265,15 @@ namespace Kargono
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 
-		UI::Editor::EndRendering();
+		EditorUI::Editor::EndRendering();
 	}
 
 
 	void EditorLayer::OnEvent(Events::Event& event)
 	{
-		UI::Editor::OnEvent(event);
+		EditorUI::Editor::OnEvent(event);
 		if (event.Handled)
 		{
 			return;
@@ -396,7 +399,7 @@ namespace Kargono
 		}
 		case Key::Delete:
 			{
-			if (UI::Editor::GetActiveWidgetID() == 0)
+			if (EditorUI::Editor::GetActiveWidgetID() == 0)
 			{
 				Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
@@ -468,9 +471,12 @@ namespace Kargono
 
 	bool EditorLayer::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnApproveJoinSession(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnApproveJoinSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
+
 		return false;
 	}
 
@@ -677,12 +683,12 @@ namespace Kargono
 	void EditorLayer::OnPlay()
 	{
 		// Cache Current UIObject/InputMode in editor
-		if (!UI::Runtime::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
+		if (!RuntimeUI::Runtime::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
 		else
 		{
-			UI::Runtime::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = UI::Runtime::GetCurrentUIObject();
-			m_EditorUIObjectHandle = UI::Runtime::GetCurrentUIHandle();
+			RuntimeUI::Runtime::SaveCurrentUIIntoUIObject();
+			m_EditorUIObject = RuntimeUI::Runtime::GetCurrentUIObject();
+			m_EditorUIObjectHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
 		}
 
 		if (!InputMode::s_InputMode) { m_EditorInputMode = nullptr; }
@@ -750,11 +756,11 @@ namespace Kargono
 		// Clear UIObjects during runtime.
 		if (m_EditorUIObject)
 		{
-			UI::Runtime::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::Runtime::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
 		}
 		else
 		{
-			UI::Runtime::ClearUIEngine();
+			RuntimeUI::Runtime::ClearUIEngine();
 		}
 
 		// Clear InputModes during runtime.

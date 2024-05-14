@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/UI/Runtime.h"
+#include "Kargono/RuntimeUI/Runtime.h"
 
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Core/Application.h"
@@ -11,7 +11,7 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Script/ScriptEngine.h"
 
-namespace Kargono::UI
+namespace Kargono::RuntimeUI
 {
 	Runtime Runtime::s_Engine{};
 	Ref<Font> s_DefaultFont = nullptr;
@@ -22,7 +22,7 @@ namespace Kargono::UI
 	static int32_t s_WindowToDelete { -1 };
 	static int32_t s_WidgetToDelete { -1 };
 	static int32_t s_WindowsToAddWidget { -1 };
-	static UI::WidgetTypes s_WidgetTypeToAdd {UI::WidgetTypes::None };
+	static RuntimeUI::WidgetTypes s_WidgetTypeToAdd {RuntimeUI::WidgetTypes::None };
 	static uint32_t s_WindowToAdd {0};
 	static int32_t s_SelectedWindow { -1 };
 	static int32_t s_SelectedWidget { -1 };
@@ -265,7 +265,7 @@ namespace Kargono::UI
 		s_WindowToDelete = -1;
 		s_WidgetToDelete = -1;
 		s_WindowsToAddWidget = -1;
-		s_WidgetTypeToAdd = UI::WidgetTypes::None;
+		s_WidgetTypeToAdd = RuntimeUI::WidgetTypes::None;
 		s_WindowToAdd = 0;
 		s_SelectedWindow = -1;
 		s_SelectedWidget = -1;
@@ -739,7 +739,7 @@ namespace Kargono::UI
 		return s_WindowsToAddWidget;
 	}
 
-	UI::WidgetTypes& Runtime::GetWidgetTypeToAdd()
+	RuntimeUI::WidgetTypes& Runtime::GetWidgetTypeToAdd()
 	{
 		return s_WidgetTypeToAdd;
 	}

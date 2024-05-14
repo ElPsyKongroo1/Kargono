@@ -12,11 +12,24 @@ namespace Kargono
 		None = 0,
 		Void,
 		Bool,
+		Float,
 		Integer32,
 		UInteger16,
 		UInteger32,
 		UInteger64,
 		String
+	};
+
+	inline WrappedVarType s_AllWrappedVarTypes[] =
+	{
+		WrappedVarType::Integer32,
+		WrappedVarType::UInteger16,
+		WrappedVarType::UInteger32,
+		WrappedVarType::UInteger64,
+		WrappedVarType::String,
+		WrappedVarType::Void,
+		WrappedVarType::Bool,
+		WrappedVarType::Float
 	};
 
 	class WrappedVariable
@@ -32,6 +45,7 @@ namespace Kargono
 
 		virtual WrappedVarType Type() = 0;
 		virtual void* GetValue() = 0;
+		virtual void SetValue(void* value) = 0;
 	};
 
 	class WrappedInteger32 : public WrappedVariable
@@ -45,6 +59,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(int32_t*)value;
 		}
 		int32_t m_Value{};
 	};
@@ -61,6 +80,11 @@ namespace Kargono
 		{
 			return (void*)&m_Value;
 		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(uint16_t*)value;
+		}
 		uint16_t m_Value{};
 	};
 
@@ -75,6 +99,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(uint32_t*)value;
 		}
 		uint32_t m_Value{};
 	};
@@ -91,6 +120,11 @@ namespace Kargono
 		{
 			return (void*)&m_Value;
 		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(uint64_t*)value;
+		}
 		uint64_t m_Value{};
 	};
 
@@ -105,6 +139,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(std::string*)value;
 		}
 		std::string m_Value{};
 	};
@@ -121,7 +160,32 @@ namespace Kargono
 		{
 			return (void*)&m_Value;
 		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(bool*)value;
+		}
 		bool m_Value{};
+	};
+
+	class WrappedFloat : public WrappedVariable
+	{
+	public:
+		WrappedFloat() = default;
+		WrappedFloat(float value) : m_Value{ value } {}
+	public:
+		virtual WrappedVarType Type() override { return WrappedVarType::Float; }
+	public:
+		void* GetValue() override
+		{
+			return (void*)&m_Value;
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(float*)value;
+		}
+		float m_Value{};
 	};
 
 	enum class WrappedFuncType
@@ -129,19 +193,34 @@ namespace Kargono
 		None = 0,
 		Void_None,
 		Void_String,
+		Void_Float,
 		Void_UInt16,
 		Void_UInt32,
-		Bool_None
+		Void_UInt64,
+		Bool_None,
+		Bool_UInt64
 	};
 
 	inline WrappedFuncType s_AllWrappedFuncs[] = 
 	{
 		WrappedFuncType::Void_None,
 		WrappedFuncType::Void_String,
+		WrappedFuncType::Void_Float,
 		WrappedFuncType::Void_UInt16,
 		WrappedFuncType::Void_UInt32,
-		WrappedFuncType::Bool_None
+		WrappedFuncType::Void_UInt64,
+		WrappedFuncType::Bool_None,
+		WrappedFuncType::Bool_UInt64,
 	};
+
+	typedef void (*void_none)();
+	typedef void (*void_string)(std::string);
+	typedef void (*void_float)(float);
+	typedef void (*void_uint16)(uint16_t);
+	typedef void (*void_uint32)(uint32_t);
+	typedef void (*void_uint64)(uint64_t);
+	typedef bool (*bool_none)();
+	typedef bool (*bool_uint64)(uint64_t);
 
 	class WrappedFunction
 	{
@@ -167,6 +246,14 @@ namespace Kargono
 		std::function<void(const std::string&)> m_Value{};
 	};
 
+	class WrappedVoidFloat : public WrappedFunction
+	{
+	public:
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_Float; }
+	public:
+		std::function<void(float)> m_Value{};
+	};
+
 	class WrappedVoidUInt16 : public WrappedFunction
 	{
 	public:
@@ -183,6 +270,13 @@ namespace Kargono
 		std::function<void(uint32_t)> m_Value{};
 	};
 
+	class WrappedVoidUInt64 : public WrappedFunction
+	{
+	public:
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt64; }
+	public:
+		std::function<void(uint64_t)> m_Value{};
+	};
 
 	class WrappedBoolNone : public WrappedFunction
 	{
@@ -190,6 +284,14 @@ namespace Kargono
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_None; }
 	public:
 		std::function<bool()> m_Value{};
+	};
+
+	class WrappedBoolUInt64 : public WrappedFunction
+	{
+	public:
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_UInt64; }
+	public:
+		std::function<bool(uint64_t)> m_Value{};
 	};
 
 	
@@ -207,6 +309,7 @@ namespace Kargono
 			case WrappedVarType::String: return "String";
 			case WrappedVarType::Void: return "Void";
 			case WrappedVarType::Bool: return "Bool";
+			case WrappedVarType::Float: return "Float";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
@@ -224,6 +327,7 @@ namespace Kargono
 			case WrappedVarType::String: return "std::string";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
+			case WrappedVarType::Float: return "float";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
@@ -239,6 +343,7 @@ namespace Kargono
 			if (type == "String") { return WrappedVarType::String; }
 			if (type == "Void") { return WrappedVarType::Void; }
 			if (type == "Bool") { return WrappedVarType::Bool; }
+			if (type == "Float") { return WrappedVarType::Float; }
 			if (type == "None") { return WrappedVarType::None; }
 
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType String.");
@@ -251,9 +356,12 @@ namespace Kargono
 			{
 			case WrappedFuncType::Void_None: return "Void_None";
 			case WrappedFuncType::Void_String: return "Void_String";
+			case WrappedFuncType::Void_Float: return "Void_Float";
 			case WrappedFuncType::Void_UInt16: return "Void_UInt16";
 			case WrappedFuncType::Void_UInt32: return "Void_UInt32";
+			case WrappedFuncType::Void_UInt64: return "Void_UInt64";
 			case WrappedFuncType::Bool_None: return "Bool_None";
+			case WrappedFuncType::Bool_UInt64: return "Bool_UInt64";
 			case WrappedFuncType::None: return "None";
 			}
 			KG_ASSERT(false, "Unknown Type of WrappedType.");
@@ -264,9 +372,12 @@ namespace Kargono
 		{
 			if (type == "Void_None") { return WrappedFuncType::Void_None; }
 			if (type == "Void_String") { return WrappedFuncType::Void_String; }
+			if (type == "Void_Float") { return WrappedFuncType::Void_Float; }
 			if (type == "Void_UInt16") { return WrappedFuncType::Void_UInt16; }
 			if (type == "Void_UInt32") { return WrappedFuncType::Void_UInt32; }
+			if (type == "Void_UInt64") { return WrappedFuncType::Void_UInt64; }
 			if (type == "Bool_None") { return WrappedFuncType::Bool_None; }
+			if (type == "Bool_UInt64") { return WrappedFuncType::Bool_UInt64; }
 			if (type == "None") { return WrappedFuncType::None; }
 
 			KG_ASSERT(false, "Unknown Type of WrappedFuncType String.");
@@ -279,12 +390,19 @@ namespace Kargono
 			{
 			case WrappedFuncType::Void_None:
 			case WrappedFuncType::Void_String:
+			case WrappedFuncType::Void_Float:
 			case WrappedFuncType::Void_UInt16:
 			case WrappedFuncType::Void_UInt32:
+			case WrappedFuncType::Void_UInt64:
 				return WrappedVarType::Void;
 			case WrappedFuncType::Bool_None:
+			case WrappedFuncType::Bool_UInt64:
 				return WrappedVarType::Bool;
 			case WrappedFuncType::None:
+			{
+				KG_ERROR("None type provided to return type utility function");
+				return WrappedVarType::None;
+			}
 			default:
 				KG_ASSERT(false, "Unknown Type of WrappedType.")
 				return WrappedVarType::None;
@@ -300,11 +418,21 @@ namespace Kargono
 				return {};
 			case WrappedFuncType::Void_String:
 				return { WrappedVarType::String };
+			case WrappedFuncType::Void_Float:
+				return { WrappedVarType::Float };
 			case WrappedFuncType::Void_UInt16:
 				return { WrappedVarType::UInteger16 };
 			case WrappedFuncType::Void_UInt32:
 				return { WrappedVarType::UInteger32 };
+			case WrappedFuncType::Void_UInt64:
+			case WrappedFuncType::Bool_UInt64:
+				return { WrappedVarType::UInteger64 };
 			case WrappedFuncType::None:
+			{
+				KG_ERROR("None type provided to parameter list utility function");
+				return {};
+			}
+				
 			default:
 				KG_ASSERT(false, "Unknown Type of WrappedFuncType.")
 				return {};

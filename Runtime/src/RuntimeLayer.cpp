@@ -47,8 +47,8 @@ namespace Kargono
 
 		Renderer::Init();
 		Renderer::SetLineWidth(4.0f);
-		UI::Text::Init();
-		UI::Runtime::Init();
+		RuntimeUI::Text::Init();
+		RuntimeUI::Runtime::Init();
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -83,7 +83,7 @@ namespace Kargono
 
 		if (mainCamera)
 		{
-			UI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
+			RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
 				Application::GetCurrentApp().GetWindow().GetWidth(), Application::GetCurrentApp().GetWindow().GetHeight());
 		}
 	}
@@ -172,9 +172,11 @@ namespace Kargono
 
 	bool RuntimeLayer::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		uint16_t userSlot = event.GetUserSlot();
-		void* param = &userSlot;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnApproveJoinSession(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnApproveJoinSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
 		return false;
 	}
 

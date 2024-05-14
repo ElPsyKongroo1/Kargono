@@ -23,7 +23,7 @@ namespace Kargono
 		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
-		UI::Editor::StartWindow("##toolbar", &s_EditorLayer->m_ShowToolbar);
+		EditorUI::Editor::StartWindow("##toolbar", &s_EditorLayer->m_ShowToolbar);
 
 		bool toolbarEnabled = (bool)Scene::GetActiveScene();
 
@@ -40,7 +40,7 @@ namespace Kargono
 
 		if (hasPlayButton)
 		{
-			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate) ? UI::Editor::s_IconPlay : UI::Editor::s_IconStop;
+			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate) ? EditorUI::Editor::s_IconPlay : EditorUI::Editor::s_IconStop;
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
@@ -52,7 +52,7 @@ namespace Kargono
 		{
 			if (hasPlayButton) { ImGui::SameLine(); }
 
-			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Play) ? UI::Editor::s_IconSimulate : UI::Editor::s_IconStop;
+			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Play) ? EditorUI::Editor::s_IconSimulate : EditorUI::Editor::s_IconStop;
 			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
@@ -67,7 +67,7 @@ namespace Kargono
 		{
 			ImGui::SameLine();
 			{
-				Ref<Texture2D> icon = UI::Editor::s_IconPause;
+				Ref<Texture2D> icon = EditorUI::Editor::s_IconPause;
 				if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 					&& toolbarEnabled)
 				{
@@ -78,7 +78,7 @@ namespace Kargono
 			{
 				ImGui::SameLine();
 				{
-					Ref<Texture2D> icon = UI::Editor::s_IconStep;
+					Ref<Texture2D> icon = EditorUI::Editor::s_IconStep;
 					if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 						&& toolbarEnabled)
 					{
@@ -90,6 +90,6 @@ namespace Kargono
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 }

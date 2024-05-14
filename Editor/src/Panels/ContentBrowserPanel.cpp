@@ -60,7 +60,7 @@ namespace Kargono
 
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
+		EditorUI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
 
 		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
@@ -80,7 +80,7 @@ namespace Kargono
 		}
 
 
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? UI::Editor::s_BackIcon : UI::Editor::s_BackInactiveIcon)->GetRendererID(),
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::Editor::s_BackIcon : EditorUI::Editor::s_BackInactiveIcon)->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (backActive)
@@ -100,7 +100,7 @@ namespace Kargono
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? UI::Editor::s_ForwardIcon : UI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::Editor::s_ForwardIcon : EditorUI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (forwardActive && FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 			{
@@ -164,7 +164,7 @@ namespace Kargono
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(UI::Editor::s_PlexBold);
+		ImGui::PushFont(EditorUI::Editor::s_PlexBold);
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
 			ImGui::SameLine();
@@ -279,10 +279,10 @@ namespace Kargono
 					if (ImGui::Selectable("Use Font In Current User Interface"))
 					{
 						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(path);
-						Ref<UI::Font> font = Assets::AssetManager::GetFont(currentHandle);
+						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
-							UI::Runtime::SetFont(font, currentHandle);
+							RuntimeUI::Runtime::SetFont(font, currentHandle);
 						}
 
 						else { KG_WARN("Could not load font {0}", path.filename().string()); }
@@ -419,28 +419,28 @@ namespace Kargono
 		ImGui::Columns(1);
 		
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 
 	}
 	Ref<Texture2D> ContentBrowserPanel::BrowserFileTypeToIcon(BrowserFileType type)
 	{
 		switch (type)
 		{
-			case BrowserFileType::Directory: { return UI::Editor::s_DirectoryIcon; }
-			case BrowserFileType::Image: { return UI::Editor::s_ImageIcon; }
-			case BrowserFileType::Audio: { return UI::Editor::s_AudioIcon; }
-			case BrowserFileType::Font: { return UI::Editor::s_FontIcon; }
-			case BrowserFileType::UserInterface: { return UI::Editor::s_UserInterfaceIcon; }
+			case BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
+			case BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
+			case BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
+			case BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
+			case BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
 
-			case BrowserFileType::Binary: { return UI::Editor::s_BinaryIcon; }
-			case BrowserFileType::Registry: { return UI::Editor::s_RegistryIcon; }
-			case BrowserFileType::Scene: { return UI::Editor::s_SceneIcon; }
-			case BrowserFileType::ScriptProject: { return UI::Editor::s_ScriptProjectIcon; }
-			case BrowserFileType::Input: { return UI::Editor::s_InputIcon; }
+			case BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
+			case BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
+			case BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
+			case BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
+			case BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
 
-			case BrowserFileType::None: { return UI::Editor::s_GenericFileIcon; }
+			case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
 		}
 		KG_ASSERT(false, "Invalid BrowserFileType provided");
-		return UI::Editor::s_GenericFileIcon;
+		return EditorUI::Editor::s_GenericFileIcon;
 	}
 }

@@ -166,6 +166,54 @@ namespace Kargono::Script
 		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
 	}
 
+	static void* GameState_GetField(MonoString* fieldName)
+	{
+		const std::string name = std::string(mono_string_to_utf8(fieldName));
+		if (!GameState::s_GameState)
+		{
+			KG_ERROR("Unable to get active Game State when getting field in C# marshalling method");
+			return nullptr;
+		}
+
+		Ref<WrappedVariable> field = GameState::s_GameState->GetField(name);
+		if (!field)
+		{
+			KG_ERROR("Unable to get field from active game state in C# marshalling method");
+			return nullptr;
+		}
+
+		if (field->Type() == WrappedVarType::UInteger16)
+		{
+			return (void*)&(field->GetWrappedValue<uint16_t>());
+		}
+		return nullptr;
+	}
+
+	static void GameState_SetField(MonoString* fieldName, void* value)
+	{
+		const std::string name = std::string(mono_string_to_utf8(fieldName));
+		if (!GameState::s_GameState)
+		{
+			KG_ERROR("Unable to get active Game State when getting field in C# marshalling method");
+			return;
+		}
+
+		Ref<WrappedVariable> field = GameState::s_GameState->GetField(name);
+		if (!field)
+		{
+			KG_ERROR("Unable to get field from active game state in C# marshalling method");
+			return;
+		}
+
+		if (field->Type() == WrappedVarType::UInteger16)
+		{
+			((WrappedUInteger16*)field.get())->m_Value = *(uint16_t*)value;
+			return;
+		}
+		KG_ERROR("Unable to find type in Set Field Method");
+		return;
+	}
+
 	static void Audio_PlayAudio(MonoString* audioFileLocation)
 	{
 		const std::string audio = std::string(mono_string_to_utf8(audioFileLocation));
@@ -202,33 +250,33 @@ namespace Kargono::Script
 		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiLocation);
 		if (uiReference)
 		{
-			UI::Runtime::LoadUIObject(uiReference, handle);
+			RuntimeUI::Runtime::LoadUIObject(uiReference, handle);
 		}
 	}
 
 	static void UserInterface_MoveRight()
 	{
-		UI::Runtime::MoveRight();
+		RuntimeUI::Runtime::MoveRight();
 	}
 
 	static void UserInterface_MoveLeft()
 	{
-		UI::Runtime::MoveLeft();
+		RuntimeUI::Runtime::MoveLeft();
 	}
 
 	static void UserInterface_MoveUp()
 	{
-		UI::Runtime::MoveUp();
+		RuntimeUI::Runtime::MoveUp();
 	}
 
 	static void UserInterface_MoveDown()
 	{
-		UI::Runtime::MoveDown();
+		RuntimeUI::Runtime::MoveDown();
 	}
 
 	static void UserInterface_OnPress()
 	{
-		UI::Runtime::OnPress();
+		RuntimeUI::Runtime::OnPress();
 	}
 
 	static void UserInterface_SetWidgetText(MonoString* windowTag, MonoString* widgetTag, MonoString* newText )
@@ -236,14 +284,14 @@ namespace Kargono::Script
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
 		const std::string text = std::string(mono_string_to_utf8(newText));
-		UI::Runtime::SetWidgetText(window, widget, text);
+		RuntimeUI::Runtime::SetWidgetText(window, widget, text);
 	}
 
 	static void UserInterface_SetSelectedWidget(MonoString* windowTag, MonoString* widgetTag)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::Runtime::SetSelectedWidget(window, widget);
+		RuntimeUI::Runtime::SetSelectedWidget(window, widget);
 	}
 	
 
@@ -251,28 +299,28 @@ namespace Kargono::Script
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::Runtime::SetWidgetTextColor(window, widget, *color);
+		RuntimeUI::Runtime::SetWidgetTextColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetBackgroundColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::Runtime::SetWidgetBackgroundColor(window, widget, *color);
+		RuntimeUI::Runtime::SetWidgetBackgroundColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetSelectable(MonoString* windowTag, MonoString* widgetTag, bool selectable)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		UI::Runtime::SetWidgetSelectable(window, widget, selectable);
+		RuntimeUI::Runtime::SetWidgetSelectable(window, widget, selectable);
 	}
 
 	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		
-		UI::Runtime::SetDisplayWindow(window, display);
+		RuntimeUI::Runtime::SetDisplayWindow(window, display);
 	}
 
 	static void InputMode_LoadInputMode(MonoString* inputModeLocation)
@@ -462,6 +510,9 @@ namespace Kargono::Script
 		KG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		KG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		KG_ADD_INTERNAL_CALL(GetScriptInstance);
+
+		KG_ADD_INTERNAL_CALL(GameState_GetField);
+		KG_ADD_INTERNAL_CALL(GameState_SetField);
 
 		KG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		KG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);

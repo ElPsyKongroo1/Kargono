@@ -4,13 +4,14 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
+#include "Kargono/Scripting/ScriptingResources.h"
+#include "Kargono/Script/ScriptEngine.h"
 
 #include <filesystem>
 #include <functional>
 #include <string>
 #include <vector>
 
-#include "Kargono/Script/ScriptEngine.h"
 
 namespace Kargono::Assets { class AssetManager; }
 
@@ -34,6 +35,8 @@ namespace Kargono::Scripting
 	{
 	public:
 		std::string m_ScriptName{};
+		ScriptType m_ScriptType{ ScriptType::None };
+		std::string m_SectionLabel {"None"};
 		std::vector<WrappedVarType> m_Parameters{};
 		WrappedVarType m_ReturnValue{WrappedVarType::None};
 		UUID m_ID{};
