@@ -1,0 +1,8 @@
+Registry: EntityClass
+Assets:
+  - AssetHandle: 9855043163489593156
+    MetaData:
+      CheckSum: 4c348a86761b8ffbbd44cbe810ab320b6e785fa2e69fdf1e2562cb4bb9395590
+      IntermediateLocation: EntityClass/Player1.kgclass
+      AssetType: EntityClass
+      Name: Player1

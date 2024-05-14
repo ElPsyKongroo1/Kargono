@@ -53,13 +53,11 @@
 #include "Kargono/Renderer/VertexArray.h"
 #include "Kargono/Renderer/EditorCamera.h"
 
-//-----------------Text-----------------//
-#include "Kargono/UI/Text.h"
-
 //-----------------Scene-----------------//
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scene/Entity.h"
+#include "Kargono/Scene/EntityClass.h"
 #include "Kargono/Scene/GameState.h"
 
 //-----------------Scripting-----------------//
@@ -67,9 +65,12 @@
 #include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 
-//-----------------UserInterface-----------------//
-#include "Kargono/UI/Editor.h"
-#include "Kargono/UI/Runtime.h"
+//-----------------Runtime-UserInterface-----------------//
+#include "Kargono/RuntimeUI/Runtime.h"
+#include "Kargono/RuntimeUI/Text.h"
+
+//-----------------Editor-UserInterface-----------------//
+#include "Kargono/EditorUI/Editor.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utils/PlatformUtils.h"

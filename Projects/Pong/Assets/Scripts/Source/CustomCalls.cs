@@ -11,8 +11,6 @@ namespace Pong
 {
 	public class CustomCalls
 	{
-		static UInt16 s_BallDirection = 1;
-
 		static void UpdateOnlineCount(UInt32 count)
 		{
 			string onlineCount = "Online: " + count;
@@ -55,17 +53,20 @@ namespace Pong
 			Random rnd = new Random();
 			Vector2 velocity = Vector2.Zero;
 
-			if (s_BallDirection == 0)
+			//InputMode.GetField<UInt16>("BallDirection");
+
+			UInt16 ballDirection = GameState.GetField<UInt16>("BallDirection");
+
+			if (ballDirection == 0)
 			{
 				velocity.X = -1.0f;
-				s_BallDirection = 1;
+				GameState.SetField<UInt16>("BallDirection", 1);
 			}
 			else
 			{
 				velocity.X = 1.0f;
-				s_BallDirection = 0;
+				GameState.SetField<UInt16>("BallDirection", 0);
 			}
-
 
 			ball.m_Rigidbody.LinearVelocity = velocity * ball.Speed;
 		}
@@ -77,7 +78,7 @@ namespace Pong
 
 		static void ApproveJoinSession(UInt16 userSlot)
 		{
-			s_BallDirection = 0;
+			GameState.SetField<UInt16>("BallDirection", 0);
 			UserInterface.LoadUserInterface("UserInterface/RuntimeUI.kgui");
 			UserInterface.SetDisplayWindow("online_lobby", true);
 			UserInterface.SetDisplayWindow("base_window", false);

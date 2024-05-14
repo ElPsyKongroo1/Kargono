@@ -1,0 +1,9 @@
+Name: Player1
+FieldTypes:
+  []
+OnPhysicsCollisionStart: 0
+OnPhysicsCollisionEnd: 0
+OnCreate: 0
+OnUpdate: 0
+AllScripts:
+  []

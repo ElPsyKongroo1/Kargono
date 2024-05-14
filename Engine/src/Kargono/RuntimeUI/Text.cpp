@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/UI/Text.h"
+#include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Core/Application.h"
@@ -43,7 +43,7 @@ namespace Kargono::Utility
 	}
 }
 
-namespace Kargono::UI
+namespace Kargono::RuntimeUI
 {
 	static RendererInputSpec s_TextInputSpec{};
 	static Ref<std::vector<Math::vec3>> s_Vertices;

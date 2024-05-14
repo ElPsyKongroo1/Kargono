@@ -30,7 +30,7 @@ namespace Kargono
 			ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 			{
 				ImGui::OpenPopup("KeyboardOnUpdateSettings");
 			}
@@ -124,7 +124,7 @@ namespace Kargono
 						ImGui::TableSetColumnIndex(3);
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-						if (ImGui::ImageButton(("Delete Slot##KeyboardCustomCallsOnUpdateDelete" + std::to_string(customCallsIterator)).c_str(), (ImTextureID)(uint64_t)UI::Editor::s_IconDelete->GetRendererID(),
+						if (ImGui::ImageButton(("Delete Slot##KeyboardCustomCallsOnUpdateDelete" + std::to_string(customCallsIterator)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
 							ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 						{
 							deleteCustomCalls = true;
@@ -224,7 +224,7 @@ namespace Kargono
 						ImGui::TableSetColumnIndex(3);
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-						if (ImGui::ImageButton(("Delete Slot##KeyboardScriptClassOnUpdateDelete" + std::to_string(scriptClassIterator)).c_str(), (ImTextureID)(uint64_t)UI::Editor::s_IconDelete->GetRendererID(),
+						if (ImGui::ImageButton(("Delete Slot##KeyboardScriptClassOnUpdateDelete" + std::to_string(scriptClassIterator)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
 							ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 						{
 							deleteScriptClass = true;
@@ -286,7 +286,7 @@ namespace Kargono
 			ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 			{
 				ImGui::OpenPopup("KeyboardOnKeyPressedSettings");
 			}
@@ -380,7 +380,7 @@ namespace Kargono
 						ImGui::TableSetColumnIndex(3);
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-						if (ImGui::ImageButton(("Delete Slot##KeyboardCustomCallsOnKeyPressedDelete" + std::to_string(customCallsIterator)).c_str(), (ImTextureID)(uint64_t)UI::Editor::s_IconDelete->GetRendererID(),
+						if (ImGui::ImageButton(("Delete Slot##KeyboardCustomCallsOnKeyPressedDelete" + std::to_string(customCallsIterator)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
 							ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 						{
 							deleteCustomCalls = true;
@@ -480,7 +480,7 @@ namespace Kargono
 						ImGui::TableSetColumnIndex(3);
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-						if (ImGui::ImageButton(("Delete Slot##KeyboardScriptClassOnKeyPressedDelete" + std::to_string(scriptClassIterator)).c_str(), (ImTextureID)(uint64_t)UI::Editor::s_IconDelete->GetRendererID(),
+						if (ImGui::ImageButton(("Delete Slot##KeyboardScriptClassOnKeyPressedDelete" + std::to_string(scriptClassIterator)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
 							ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 						{
 							deleteScriptClass = true;
@@ -534,7 +534,7 @@ namespace Kargono
 		ImGui::SameLine();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4.0f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)UI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 		{
 			ImGui::OpenPopup("KeyboardPollingSettings");
 		}
@@ -608,7 +608,7 @@ namespace Kargono
 					//ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x + 6.0f);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-					if (ImGui::ImageButton(("Delete Slot##KeyboardPollingDelete" + std::to_string(key)).c_str(), (ImTextureID)(uint64_t)UI::Editor::s_IconDelete->GetRendererID(),
+					if (ImGui::ImageButton(("Delete Slot##KeyboardPollingDelete" + std::to_string(key)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
 						ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 					{
 						deleteKeySlot = true;
@@ -633,7 +633,7 @@ namespace Kargono
 
 	void InputEditorPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Input Mode Editor", &(s_EditorLayer->m_ShowInputEditor));
+		EditorUI::Editor::StartWindow("Input Mode Editor", &(s_EditorLayer->m_ShowInputEditor));
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))
 		{
@@ -684,7 +684,7 @@ namespace Kargono
 
 		if (!InputMode::s_InputMode)
 		{
-			UI::Editor::EndWindow();
+			EditorUI::Editor::EndWindow();
 			return;
 		}
 
@@ -711,6 +711,6 @@ namespace Kargono
 			}
 			ImGui::EndTabBar();
 		}
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 }

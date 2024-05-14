@@ -14,7 +14,7 @@ namespace Kargono::Assets { class AssetManager; }
 // This namespace holds all of the classes that enable the usage of the runtime
 //		user interface, accessory classes for the Editor user interface, and
 //		the font class to enable text rendering.
-namespace Kargono::UI
+namespace Kargono::RuntimeUI
 {
 	class Font;
 

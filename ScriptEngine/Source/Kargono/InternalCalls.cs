@@ -132,10 +132,10 @@ namespace Kargono
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Network_SignalAll(UInt16 signal);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static IntPtr GameState_GetField(string fieldName);
 
-
-
-
-
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void GameState_SetField(string fieldName, IntPtr value);
 	}
 }

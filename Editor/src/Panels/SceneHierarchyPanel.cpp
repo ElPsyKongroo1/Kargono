@@ -18,12 +18,12 @@ namespace Kargono
 {
 	static EditorLayer* s_EditorLayer { nullptr };
 
-	static UI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
-	static UI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
-	static UI::CheckboxSpec s_ShapeAddCircleSpec {};
-	static UI::CheckboxSpec s_ShapeAddProjectionSpec {};
-	static UI::CheckboxSpec s_ShapeAddEntityIDSpec {};
-	static UI::CheckboxSpec s_RigidBodyFixedRotSpec {};
+	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
+	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
@@ -31,33 +31,27 @@ namespace Kargono
 
 		// Set Primary Camera Checkbox
 		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
-		s_PrimaryCameraCheckboxSpec.WidgetID = 0xe6e13a3812c94bf3;
 
 		// Set Shape Add Texture Checkbox
 		s_ShapeAddTextureCheckboxSpec.Label = "Use Texture";
-		s_ShapeAddTextureCheckboxSpec.WidgetID = 0x9f69d2a2f6674c7e;
 
 		// Set Shape Circle Option
 		s_ShapeAddCircleSpec.Label = "Use Circle Shape";
-		s_ShapeAddCircleSpec.WidgetID = 0x43eb696a2d4a479c;
 
 		// Set Shape Add Projection Option
 		s_ShapeAddProjectionSpec.Label = "Use Projection Matrix";
-		s_ShapeAddProjectionSpec.WidgetID = 0x00051bb1c82b40be;
 
 		// Set Shape Add Entity ID Option
 		s_ShapeAddEntityIDSpec.Label = "Use Entity ID";
-		s_ShapeAddEntityIDSpec.WidgetID = 0x3bc03bfec46b4853;
 
 		// Set Shape Add Fixed Rotation Option
 		s_RigidBodyFixedRotSpec.Label = "Use Fixed Rotation";
-		s_RigidBodyFixedRotSpec.WidgetID = 0x94fb6083683d479e;
 
 
 	}
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Scene Hierarchy", &s_EditorLayer->m_ShowSceneHierarchy);
+		EditorUI::Editor::StartWindow("Scene Hierarchy", &s_EditorLayer->m_ShowSceneHierarchy);
 
 		if (Scene::GetActiveScene())
 		{
@@ -77,15 +71,15 @@ namespace Kargono
 			}
 
 		}
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 
-		UI::Editor::StartWindow("Properties");
+		EditorUI::Editor::StartWindow("Properties");
 		if (*Scene::GetActiveScene()->GetSelectedEntity())
 		{
 			DrawComponents(*Scene::GetActiveScene()->GetSelectedEntity());
 		}
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
 	{
@@ -321,9 +315,9 @@ namespace Kargono
 				{
 					component.Primary = value;
 				};
-				UI::Editor::Spacing(UI::SpacingAmount::Small);
-				UI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
-				UI::Editor::Spacing(UI::SpacingAmount::Small);
+				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
+				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 
 
 				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
@@ -747,7 +741,7 @@ namespace Kargono
 			auto AddTextureSection = [&]()
 			{
 				s_ShapeAddTextureCheckboxSpec.ToggleBoolean = component.ShaderSpecification.TextureInput == TextureInputType::ColorTexture ? true : false;
-				UI::Editor::Checkbox(s_ShapeAddTextureCheckboxSpec);
+				EditorUI::Editor::Checkbox(s_ShapeAddTextureCheckboxSpec);
 				s_ShapeAddTextureCheckboxSpec.ConfirmAction = [&](bool value)
 				{
 					value ? component.ShaderSpecification.TextureInput = TextureInputType::ColorTexture :
@@ -818,7 +812,7 @@ namespace Kargono
 					}
 				};
 				s_ShapeAddCircleSpec.ToggleBoolean = component.ShaderSpecification.AddCircleShape;
-				UI::Editor::Checkbox(s_ShapeAddCircleSpec);
+				EditorUI::Editor::Checkbox(s_ShapeAddCircleSpec);
 				if (component.ShaderSpecification.AddCircleShape)
 				{
 					float* thickness = Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
@@ -837,7 +831,7 @@ namespace Kargono
 					updateComponent();
 				};
 				s_ShapeAddProjectionSpec.ToggleBoolean = component.ShaderSpecification.AddProjectionMatrix;
-				UI::Editor::Checkbox(s_ShapeAddProjectionSpec);
+				EditorUI::Editor::Checkbox(s_ShapeAddProjectionSpec);
 			};
 
 			auto AddEntityIDSection = [&]()
@@ -848,7 +842,7 @@ namespace Kargono
 					updateComponent();
 				};
 				s_ShapeAddEntityIDSpec.ToggleBoolean = component.ShaderSpecification.AddEntityID;
-				UI::Editor::Checkbox(s_ShapeAddEntityIDSpec);
+				EditorUI::Editor::Checkbox(s_ShapeAddEntityIDSpec);
 			};
 			
 
@@ -939,7 +933,7 @@ namespace Kargono
 					component.FixedRotation = value;
 				};
 				s_RigidBodyFixedRotSpec.ToggleBoolean = component.FixedRotation;
-				UI::Editor::Checkbox(s_RigidBodyFixedRotSpec);
+				EditorUI::Editor::Checkbox(s_RigidBodyFixedRotSpec);
 			});
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)

@@ -8,9 +8,10 @@
 #include "Kargono/Core/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Audio/AudioEngine.h"
-#include "Kargono/UI/Runtime.h"
+#include "Kargono/RuntimeUI/Runtime.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Network/Client.h"
+#include "Kargono/Scene/GameState.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "Windows.h"
@@ -28,11 +29,6 @@ namespace Kargono::Scripting
 
 namespace Kargono::Scripting
 {
-	typedef void (*void_none)();
-	typedef void (*void_uint16)(uint16_t);
-	typedef void (*void_uint32)(uint32_t);
-	typedef bool (*bool_none)();
-
 	void ScriptCore::Init()
 	{
 		s_ScriptingData = new ScriptingData();
@@ -127,6 +123,20 @@ namespace Kargono::Scripting
 			break;
 		}
 
+		case WrappedFuncType::Void_String:
+		{
+			script->m_Function = CreateRef<WrappedVoidString>();
+			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
+
+		case WrappedFuncType::Void_Float:
+		{
+			script->m_Function = CreateRef<WrappedVoidFloat>();
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
+
 		case WrappedFuncType::Void_UInt16:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
@@ -139,10 +149,24 @@ namespace Kargono::Scripting
 			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
 			break;
 		}
+
+		case WrappedFuncType::Void_UInt64:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt64>();
+			((WrappedVoidUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
 			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			break;
+		}
+
+		case WrappedFuncType::Bool_UInt64:
+		{
+			script->m_Function = CreateRef<WrappedBoolUInt64>();
+			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
 			break;
 		}
 		default:
@@ -232,6 +256,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
+	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
@@ -243,6 +268,7 @@ namespace Kargono::Scripting
 	AddImportFunctionToHeaderFile(VoidNone, void) \
 	AddImportFunctionToHeaderFile(VoidString, void, const std::string&) \
 	AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) \
+	AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) \
 	AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) \
 	AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) \
 	AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
@@ -261,6 +287,7 @@ namespace Kargono::Scripting
 	AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)\
 	AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)\
 	AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)\
+	AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)\
 	AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)\
 	AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)\
 	AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)\
@@ -281,6 +308,10 @@ namespace Kargono::Scripting
 	AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool) \
 	outputStream << "{\n"; \
 	AddEngineFunctionToCPPFileEnd(SetDisplayWindow) \
+	outputStream << "}\n"; \
+	AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*) \
+	outputStream << "{\n"; \
+	AddEngineFunctionToCPPFileEnd(SetGameStateField) \
 	outputStream << "}\n"; \
 	AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&) \
 	outputStream << "{\n"; \
@@ -309,6 +340,7 @@ namespace Kargono::Scripting
 	ImportInsertFunction(VoidNone)\
 	ImportInsertFunction(VoidString) \
 	ImportInsertFunction(VoidStringBool) \
+	ImportInsertFunction(VoidStringVoidPtr) \
 	ImportInsertFunction(VoidStringString) \
 	ImportInsertFunction(VoidStringStringBool) \
 	ImportInsertFunction(VoidStringStringString) \
@@ -319,14 +351,15 @@ namespace Kargono::Scripting
 	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) \
 	AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) \
 	AddEngineFunctionPointerToDll(LoadInputModeByName, InputMode::LoadInputModeByName,VoidString) \
-	AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, UI::Runtime::LoadUserInterfaceFromName,VoidString) \
+	AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) \
 	AddEngineFunctionPointerToDll(TransitionSceneFromName, Scene::TransitionSceneFromName,VoidString) \
-	AddEngineFunctionPointerToDll(SetDisplayWindow, UI::Runtime::SetDisplayWindow,VoidStringBool) \
-	AddEngineFunctionPointerToDll(SetWidgetText, UI::Runtime::SetWidgetText,VoidStringStringString) \
-	AddEngineFunctionPointerToDll(SetSelectedWidget, UI::Runtime::SetSelectedWidget,VoidStringString) \
-	AddEngineFunctionPointerToDll(SetWidgetTextColor, UI::Runtime::SetWidgetTextColor,VoidStringStringVec4) \
-	AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, UI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) \
-	AddEngineFunctionPointerToDll(SetWidgetSelectable, UI::Runtime::SetWidgetSelectable,VoidStringStringBool) \
+	AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) \
+	AddEngineFunctionPointerToDll(SetGameStateField, GameState::SetActiveGameStateField, VoidStringVoidPtr) \
+	AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::Runtime::SetWidgetText,VoidStringStringString) \
+	AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::Runtime::SetSelectedWidget,VoidStringString) \
+	AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) \
+	AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) \
+	AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) \
 	AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 
 	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)

@@ -73,7 +73,7 @@ namespace Kargono::Projects
 
 		Assets::AssetHandle OnUpdateUserCount {0};
 
-		std::string OnApproveJoinSessionFunction {"None"};
+		Assets::AssetHandle OnApproveJoinSession {0};
 
 		Assets::AssetHandle OnUserLeftSession {0};
 
@@ -298,16 +298,16 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.OnUpdateUserCount = id;
 		}
 
-		static std::string& GetProjectOnApproveJoinSession()
+		static Assets::AssetHandle GetOnApproveJoinSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnApproveJoinSessionFunction;
+			return s_ActiveProject->m_Config.OnApproveJoinSession;
 		}
 
-		static void SetProjectOnApproveJoinSession(const std::string& name)
+		static void SetOnApproveJoinSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnApproveJoinSessionFunction = name;
+			s_ActiveProject->m_Config.OnApproveJoinSession = id;
 		}
 
 		static Assets::AssetHandle GetOnUserLeftSession()
