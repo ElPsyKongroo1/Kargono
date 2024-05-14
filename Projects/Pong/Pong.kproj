@@ -2,7 +2,7 @@ Project:
   Name: Pong
   StartScene: Scenes/main_gameplay.kgscene
   StartSceneHandle: 13036162138140767594
-  StartGameState: 4139772486063840769
+  StartGameState: 13630226515263756832
   AssetDirectory: Assets
   ScriptModulePath: Scripts/Binaries/Pong.dll
   ScriptDLLPath: Scripting/bin/Pong.dll
@@ -10,7 +10,7 @@ Project:
   TargetResolution: 1280x720
   OnRuntimeStart: 14683932765512752045
   OnUpdateUserCount: 18163504705534252383
-  OnApproveJoinSessionFunction: ApproveJoinSession
+  OnApproveJoinSession: 14942570159458352892
   OnUserLeftSession: 7445822592925037095
   OnCurrentSessionInit: 8444652895326507655
   OnConnectionTerminated: 4342390925410131221

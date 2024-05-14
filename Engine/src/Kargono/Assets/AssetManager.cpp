@@ -1147,7 +1147,7 @@ namespace Kargono::Utility
 namespace Kargono::Assets
 {
 	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_FontRegistry {};
-	std::unordered_map<AssetHandle, Ref<UI::Font>> AssetManager::s_Fonts {};
+	std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> AssetManager::s_Fonts {};
 
 	void AssetManager::DeserializeFontRegistry()
 	{
@@ -1206,14 +1206,14 @@ namespace Kargono::Assets
 					auto& characterVector = fontMetaData->Characters;
 					for (auto character : characters)
 					{
-						UI::Character newCharacter{};
+						RuntimeUI::Character newCharacter{};
 						newCharacter.Size = character["Size"].as<Math::vec2>();
 						newCharacter.Advance = character["Advance"].as<float>();
 						newCharacter.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
 						newCharacter.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
 						newCharacter.QuadMin = character["QuadMin"].as<Math::vec2>();
 						newCharacter.QuadMax = character["QuadMax"].as<Math::vec2>();
-						characterVector.push_back(std::pair<unsigned char, UI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
+						characterVector.push_back(std::pair<unsigned char, RuntimeUI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
 					}
 
 					fontMetaData->InitialFileLocation = metadata["InitialFileLocation"].as<std::string>();
@@ -1327,12 +1327,12 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	Ref<UI::Font> AssetManager::InstantiateFontIntoMemory(Assets::Asset& asset)
+	Ref<RuntimeUI::Font> AssetManager::InstantiateFontIntoMemory(Assets::Asset& asset)
 	{
 		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
 		currentResource = FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<UI::Font> newFont = CreateRef<UI::Font>();
+		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
 		auto& fontCharacters = newFont->GetCharacters();
 
 		// Create Texture
@@ -1349,7 +1349,7 @@ namespace Kargono::Assets
 
 		for (auto& [character, characterStruct] : metadata.Characters)
 		{
-			fontCharacters.insert(std::pair<unsigned char, UI::Character>(character, characterStruct));
+			fontCharacters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
 		}
 
 		currentResource.Release();
@@ -1357,7 +1357,7 @@ namespace Kargono::Assets
 
 	}
 
-	Ref<UI::Font> AssetManager::GetFont(const AssetHandle& handle)
+	Ref<RuntimeUI::Font> AssetManager::GetFont(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving font!");
 
@@ -1367,7 +1367,7 @@ namespace Kargono::Assets
 		{
 			auto asset = s_FontRegistry[handle];
 
-			Ref<UI::Font> newFont = InstantiateFontIntoMemory(asset);
+			Ref<RuntimeUI::Font> newFont = InstantiateFontIntoMemory(asset);
 			s_Fonts.insert({ asset.Handle, newFont });
 			return newFont;
 		}
@@ -1388,7 +1388,7 @@ namespace Kargono::Assets
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;
 		float lineHeight{ 0 };
-		std::vector<std::pair<unsigned char, UI::Character>> characters {};
+		std::vector<std::pair<unsigned char, RuntimeUI::Character>> characters {};
 
 		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
 		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
@@ -1478,7 +1478,7 @@ namespace Kargono::Assets
 		for (auto& glyphGeometry : glyphMetrics)
 		{
 			unsigned char character = static_cast<uint8_t>(glyphGeometry.getCodepoint());
-			UI::Character characterStruct{};
+			RuntimeUI::Character characterStruct{};
 
 			// Fill the texture location inside Atlas
 			double al, ab, ar, at;
@@ -2345,7 +2345,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	void AssetManager::SerializeUIObject(Ref<UI::UIObject> uiObject, const std::filesystem::path& filepath)
+	void AssetManager::SerializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -2408,9 +2408,9 @@ namespace Kargono::Assets
 				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << widget->FunctionPointers.OnPress;
 				switch (widget->WidgetType)
 				{
-				case UI::WidgetTypes::TextWidget:
+				case RuntimeUI::WidgetTypes::TextWidget:
 					{
-						UI::TextWidget* textWidget = static_cast<UI::TextWidget*>(widget.get());
+						RuntimeUI::TextWidget* textWidget = static_cast<RuntimeUI::TextWidget*>(widget.get());
 						out << YAML::Key << "TextWidget" << YAML::Value;
 						out << YAML::BeginMap; // Begin TextWidget Map
 						out << YAML::Key << "Text" << YAML::Value << textWidget->Text;
@@ -2429,7 +2429,7 @@ namespace Kargono::Assets
 			out << YAML::EndSeq; // End Widget Sequence
 
 			out << YAML::EndMap; // End Window Map
-			std::vector<Ref<UI::Widget>> Widgets {};
+			std::vector<Ref<RuntimeUI::Widget>> Widgets {};
 		}
 
 		out << YAML::EndSeq; // End of Windows Seq
@@ -2463,7 +2463,7 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::DeserializeUIObject(Ref<UI::UIObject> uiObject, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
 		try
@@ -2492,7 +2492,7 @@ namespace Kargono::Assets
 			auto& newWindowsList = uiObject->Windows;
 			for (auto window : windows)
 			{
-				UI::Window newWindow{};
+				RuntimeUI::Window newWindow{};
 				newWindow.Tag = window["Tag"].as<std::string>();
 				newWindow.ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
 				newWindow.Size = window["Size"].as<Math::vec2>();
@@ -2521,17 +2521,17 @@ namespace Kargono::Assets
 					auto& newWidgetsList = newWindow.Widgets;
 					for (auto widget : widgets)
 					{
-						UI::WidgetTypes widgetType = Utility::StringToWidgetType(widget["WidgetType"].as<std::string>());
-						Ref<UI::Widget> newWidget = nullptr;
+						RuntimeUI::WidgetTypes widgetType = Utility::StringToWidgetType(widget["WidgetType"].as<std::string>());
+						Ref<RuntimeUI::Widget> newWidget = nullptr;
 						YAML::Node specificWidget;
 						switch (widgetType)
 						{
-						case UI::WidgetTypes::TextWidget:
+						case RuntimeUI::WidgetTypes::TextWidget:
 						{
 							specificWidget = widget["TextWidget"];
-							newWidget = CreateRef<UI::TextWidget>();
+							newWidget = CreateRef<RuntimeUI::TextWidget>();
 							newWidget->WidgetType = widgetType;
-							UI::TextWidget* textWidget = static_cast<UI::TextWidget*>(newWidget.get());
+							RuntimeUI::TextWidget* textWidget = static_cast<RuntimeUI::TextWidget*>(newWidget.get());
 							textWidget->Text = specificWidget["Text"].as<std::string>();
 							textWidget->TextSize = specificWidget["TextSize"].as<float>();
 							textWidget->TextColor = specificWidget["TextColor"].as<glm::vec4>();
@@ -2611,7 +2611,7 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveUIObject(AssetHandle uiObjectHandle, Ref<UI::UIObject> uiObject)
+	void AssetManager::SaveUIObject(AssetHandle uiObjectHandle, Ref<RuntimeUI::UIObject> uiObject)
 	{
 		if (!s_UIObjectRegistry.contains(uiObjectHandle))
 		{
@@ -2632,7 +2632,7 @@ namespace Kargono::Assets
 		return s_UIObjectRegistry[handle].Data.IntermediateLocation;
 	}
 
-	Ref<UI::UIObject> AssetManager::GetUIObject(const AssetHandle& handle)
+	Ref<RuntimeUI::UIObject> AssetManager::GetUIObject(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving uiObject!");
 
@@ -2645,7 +2645,7 @@ namespace Kargono::Assets
 		KG_ERROR("No uiObject is associated with provided handle!");
 		return nullptr;
 	}
-	std::tuple<AssetHandle, Ref<UI::UIObject>> AssetManager::GetUIObject(const std::filesystem::path& filepath)
+	std::tuple<AssetHandle, Ref<RuntimeUI::UIObject>> AssetManager::GetUIObject(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 		std::filesystem::path uiObjectPath = filepath;
@@ -2668,9 +2668,9 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetUIObject(newHandle));
 	}
 
-	Ref<UI::UIObject> AssetManager::InstantiateUIObject(const Assets::Asset& uiObjectAsset)
+	Ref<RuntimeUI::UIObject> AssetManager::InstantiateUIObject(const Assets::Asset& uiObjectAsset)
 	{
-		Ref<UI::UIObject> newUIObject = CreateRef<UI::UIObject>();
+		Ref<RuntimeUI::UIObject> newUIObject = CreateRef<RuntimeUI::UIObject>();
 		DeserializeUIObject(newUIObject, (Projects::Project::GetAssetDirectory() / uiObjectAsset.Data.IntermediateLocation).string());
 		return newUIObject;
 	}
@@ -2684,7 +2684,7 @@ namespace Kargono::Assets
 	void AssetManager::CreateUIObjectFile(const std::string& uiObjectName, Assets::Asset& newAsset)
 	{
 		// Create Temporary UIObject
-		Ref<UI::UIObject> temporaryUIObject = CreateRef<UI::UIObject>();
+		Ref<RuntimeUI::UIObject> temporaryUIObject = CreateRef<RuntimeUI::UIObject>();
 
 		// Save Binary Intermediate into File
 		std::string uiObjectPath = "UserInterface/" + uiObjectName + ".kgui";
@@ -3454,6 +3454,7 @@ namespace Kargono::Assets
 				if (newAsset.Data.Type == Assets::GameState)
 				{
 					Ref<Assets::GameStateMetaData> GameStateMetaData = CreateRef<Assets::GameStateMetaData>();
+					GameStateMetaData->Name = metadata["Name"].as<std::string>();
 					newAsset.Data.SpecificFileData = GameStateMetaData;
 				}
 
@@ -3734,9 +3735,405 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
+	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_EntityClassRegistry {};
+
+	void AssetManager::DeserializeEntityClassRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_EntityClassRegistry.clear();
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+
+		if (!std::filesystem::exists(EntityClassRegistryLocation))
+		{
+			KG_ERROR("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(EntityClassRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgstate file '{0}'\n     {1}", EntityClassRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing EntityClass Registry");
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving EntityClass specific metadata 
+				if (newAsset.Data.Type == Assets::EntityClass)
+				{
+					Ref<Assets::EntityClassMetaData> EntityClassMetaData = CreateRef<Assets::EntityClassMetaData>();
+					EntityClassMetaData->Name = metadata["Name"].as<std::string>();
+
+					newAsset.Data.SpecificFileData = EntityClassMetaData;
+				}
+
+				// Add asset to in memory registry 
+				s_EntityClassRegistry.insert({ newAsset.Handle, newAsset });
+			}
+		}
+	}
+
+	void AssetManager::SerializeEntityClassRegistry()
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "EntityClass";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+		// Asset
+		for (auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+			if (asset.Data.Type == Assets::AssetType::EntityClass)
+			{
+				Assets::EntityClassMetaData* metadata = static_cast<Assets::EntityClassMetaData*>(asset.Data.SpecificFileData.get());
+
+				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
+			}
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		FileSystem::CreateNewDirectory(EntityClassRegistryLocation.parent_path());
+
+		std::ofstream fout(EntityClassRegistryLocation);
+		fout << out.c_str();
+	}
+
+	void AssetManager::SerializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+
+		out << YAML::Key << "Name" << YAML::Value << EntityClass->GetName(); // Output State Name
+		out << YAML::Key << "FieldTypes" << YAML::Value;
+		out << YAML::BeginSeq; // Start Fields
+
+		for (auto& [name, field] : EntityClass->m_FieldTypes)
+		{
+			out << YAML::BeginMap; // Start Field
+
+			out << YAML::Key << "Name" << YAML::Value << name; // Name/Map Key
+			out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(field); // Field Type
+
+			out << YAML::EndMap; // End Field
+		}
+
+		out << YAML::EndSeq; // End Fields
+
+		out << YAML::Key << "OnPhysicsCollisionStart" << YAML::Value << 
+			static_cast<uint64_t>(EntityClass->m_Scripts.OnPhysicsCollisionStartHandle);
+		out << YAML::Key << "OnPhysicsCollisionEnd" << YAML::Value <<
+			static_cast<uint64_t>(EntityClass->m_Scripts.OnPhysicsCollisionEndHandle);
+		out << YAML::Key << "OnCreate" << YAML::Value <<
+			static_cast<uint64_t>(EntityClass->m_Scripts.OnCreateHandle);
+		out << YAML::Key << "OnUpdate" << YAML::Value <<
+			static_cast<uint64_t>(EntityClass->m_Scripts.OnUpdateHandle);
+
+		out << YAML::Key << "AllScripts" << YAML::Value;
+		out << YAML::BeginSeq; // Start AllScripts
+
+		for (auto& script : EntityClass->m_Scripts.AllClassScripts)
+		{
+			out << YAML::Value << static_cast<uint64_t>(script); // Script ID
+		}
+
+		out << YAML::EndSeq; // End AllScripts
+
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(filepath);
+		fout << out.c_str();
+		KG_INFO("Successfully Serialized EntityClass at {}", filepath);
+	}
+
+	bool AssetManager::CheckEntityClassExists(const std::string& EntityClassName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = FileSystem::ChecksumFromString(EntityClassName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool AssetManager::DeserializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath)
+	{
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
+			return false;
+		}
+
+		KG_INFO("Deserializing game state");
+
+		EntityClass->m_Name = data["Name"].as<std::string>();
+
+		// Get Fields
+		{
+			auto fields = data["FieldTypes"];
+			if (fields)
+			{
+				auto& newFieldsMap = EntityClass->m_FieldTypes;
+				for (auto field : fields)
+				{
+					std::string fieldName = field["Name"].as<std::string>();
+					WrappedVarType fieldType = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
+					newFieldsMap.insert_or_assign(fieldName, fieldType);
+				}
+			}
+		}
+
+		// Get Function Slots
+		{
+			EntityScripts& scripts = EntityClass->m_Scripts;
+			scripts.OnPhysicsCollisionStartHandle = 
+				static_cast<Assets::AssetHandle>(data["OnPhysicsCollisionStart"].as<uint64_t>());
+			if (scripts.OnPhysicsCollisionStartHandle != Assets::EmptyHandle)
+			{
+				scripts.OnPhysicsCollisionStart = 
+					Assets::AssetManager::GetScript(scripts.OnPhysicsCollisionStartHandle).get();
+			}
+			scripts.OnPhysicsCollisionEndHandle =
+				static_cast<Assets::AssetHandle>(data["OnPhysicsCollisionEnd"].as<uint64_t>());
+			if (scripts.OnPhysicsCollisionEndHandle != Assets::EmptyHandle)
+			{
+				scripts.OnPhysicsCollisionEnd =
+					Assets::AssetManager::GetScript(scripts.OnPhysicsCollisionEndHandle).get();
+			}
+			scripts.OnCreateHandle =
+				static_cast<Assets::AssetHandle>(data["OnCreate"].as<uint64_t>());
+			if (scripts.OnCreateHandle != Assets::EmptyHandle)
+			{
+				scripts.OnCreate =
+					Assets::AssetManager::GetScript(scripts.OnCreateHandle).get();
+			}
+			scripts.OnUpdateHandle =
+				static_cast<Assets::AssetHandle>(data["OnUpdate"].as<uint64_t>());
+			if (scripts.OnUpdateHandle != Assets::EmptyHandle)
+			{
+				scripts.OnUpdate =
+					Assets::AssetManager::GetScript(scripts.OnUpdateHandle).get();
+			}
+		}
+
+		// Get Class Functions
+		{
+			auto allScripts = data["AllScripts"];
+			if (allScripts)
+			{
+				std::set<Assets::AssetHandle>& classScripts  = EntityClass->m_Scripts.AllClassScripts;
+				for (auto script : allScripts)
+				{
+					classScripts.insert(static_cast<Assets::AssetHandle>(script.as<uint64_t>()));
+				}
+			}
+		}
+
+		return true;
+
+	}
+
+	AssetHandle AssetManager::CreateNewEntityClass(const std::string& EntityClassName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = FileSystem::ChecksumFromString(EntityClassName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate game state asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create File
+		CreateEntityClassFile(EntityClassName, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and return handle.
+		s_EntityClassRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeEntityClassRegistry(); // Update Registry File on Disk
+
+		return newHandle;
+	}
+
+	void AssetManager::SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass)
+	{
+		if (!s_EntityClassRegistry.contains(EntityClassHandle))
+		{
+			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
+			return;
+		}
+		Assets::Asset EntityClassAsset = s_EntityClassRegistry[EntityClassHandle];
+		SerializeEntityClass(EntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+	}
+
+	void AssetManager::DeleteEntityClass(AssetHandle handle)
+	{
+		if (!s_EntityClassRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete EntityClass in AssetManager");
+			return;
+		}
+
+		FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+			s_EntityClassRegistry.at(handle).Data.IntermediateLocation);
+
+		s_EntityClassRegistry.erase(handle);
+
+		SerializeEntityClassRegistry();
+	}
+
+	std::filesystem::path AssetManager::GetEntityClassLocation(const AssetHandle& handle)
+	{
+		if (!s_EntityClassRegistry.contains(handle))
+		{
+			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
+			return "";
+		}
+		return s_EntityClassRegistry[handle].Data.IntermediateLocation;
+	}
+
+	Ref<Kargono::EntityClass> AssetManager::GetEntityClass(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving EntityClass!");
+
+		if (s_EntityClassRegistry.contains(handle))
+		{
+			auto asset = s_EntityClassRegistry[handle];
+			return InstantiateEntityClass(asset);
+		}
+
+		KG_ERROR("No EntityClass is associated with provided handle!");
+		return nullptr;
+	}
+	std::tuple<AssetHandle, Ref<Kargono::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+
+		std::filesystem::path EntityClassPath = filepath;
+
+		if (filepath.is_absolute())
+		{
+			EntityClassPath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		}
+
+		for (auto& [assetHandle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.IntermediateLocation.compare(EntityClassPath) == 0)
+			{
+				return std::make_tuple(assetHandle, InstantiateEntityClass(asset));
+			}
+		}
+		// Return empty EntityClass if EntityClass does not exist
+		KG_WARN("No EntityClass Associated with provided handle. Returned new empty EntityClass");
+		AssetHandle newHandle = CreateNewEntityClass(filepath.stem().string());
+		return std::make_tuple(newHandle, GetEntityClass(newHandle));
+	}
+
+	Ref<Kargono::EntityClass> AssetManager::InstantiateEntityClass(const Assets::Asset& EntityClassAsset)
+	{
+		Ref<Kargono::EntityClass> newEntityClass = CreateRef<Kargono::EntityClass>();
+		DeserializeEntityClass(newEntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+		return newEntityClass;
+	}
+
+
+	void AssetManager::ClearEntityClassRegistry()
+	{
+		s_EntityClassRegistry.clear();
+	}
+
+	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
+	{
+		// Create Temporary EntityClass
+		Ref<Kargono::EntityClass> temporaryEntityClass = CreateRef<Kargono::EntityClass>();
+		temporaryEntityClass->SetName(EntityClassName);
+
+		// Save Binary Intermediate into File
+		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
+		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / EntityClassPath;
+		SerializeEntityClass(temporaryEntityClass, intermediateFullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::EntityClass;
+		newAsset.Data.IntermediateLocation = EntityClassPath;
+		Ref<Assets::EntityClassMetaData> metadata = CreateRef<Assets::EntityClassMetaData>();
+		metadata->Name = EntityClassName;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
 
 	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_ScriptRegistry {};
 	std::unordered_map<AssetHandle, Ref<Scripting::Script>> AssetManager::s_Scripts {};
+	std::unordered_set<std::string> AssetManager::s_ScriptSectionLabels {};
 
 	void AssetManager::DeserializeScriptRegistry()
 	{
@@ -3768,6 +4165,19 @@ namespace Kargono::Assets
 		std::string registryName = data["Registry"].as<std::string>();
 		KG_INFO("Deserializing Script Registry");
 
+		// Get Section Labels
+		{
+			s_ScriptSectionLabels.clear();
+			auto sectionLabels = data["SectionLabels"];
+			if (sectionLabels)
+			{
+				for (auto label : sectionLabels)
+				{
+					s_ScriptSectionLabels.insert(label.as<std::string>());
+				}
+			}
+		}
+
 		// Opening all assets 
 		auto assets = data["Assets"];
 		if (assets)
@@ -3790,11 +4200,11 @@ namespace Kargono::Assets
 
 					std::string Name{};
 					std::vector<WrappedVarType> Parameters{};
-					WrappedVarType ReturnValue{};
-					WrappedFuncType FunctionType{};
 
 					ScriptMetaData->Name = metadata["Name"].as<std::string>();
 
+					ScriptMetaData->SectionLabel = metadata["SectionLabel"].as<std::string>();
+					ScriptMetaData->ScriptType = Utility::StringToScriptType(metadata["ScriptType"].as<std::string>());
 					ScriptMetaData->ReturnValue = Utility::StringToWrappedVarType(metadata["ReturnValue"].as<std::string>());
 					ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadata["FunctionType"].as<std::string>());
 
@@ -3826,9 +4236,20 @@ namespace Kargono::Assets
 
 		out << YAML::BeginMap;
 		out << YAML::Key << "Registry" << YAML::Value << "Script";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 
-		// Asset
+		// Section Labels
+		out << YAML::Key << "SectionLabels" << YAML::Value;
+		out << YAML::BeginSeq; // Start SectionLabels
+
+		for (auto& section : s_ScriptSectionLabels)
+		{
+			out << YAML::Value << section; // Section Name
+		}
+
+		out << YAML::EndSeq; // End SectionLabels
+
+		// Assets
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
 			out << YAML::BeginMap; // Asset Map
@@ -3846,10 +4267,10 @@ namespace Kargono::Assets
 
 				std::string Name{};
 				std::vector<WrappedVarType> Parameters{};
-				WrappedVarType ReturnValue{};
-				WrappedFuncType FunctionType{};
 
 				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
+				out << YAML::Key << "SectionLabel" << YAML::Value << metadata->SectionLabel;
+				out << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->ScriptType);
 				out << YAML::Key << "Parameters" << YAML::Value << YAML::BeginSeq;
 				for (auto& parameter : metadata->Parameters)
 				{
@@ -3872,16 +4293,49 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	std::tuple<AssetHandle, bool> AssetManager::CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
-		WrappedVarType returnValue, WrappedFuncType functionType)
+	std::tuple<AssetHandle, bool> AssetManager::CreateNewScript(ScriptSpec& spec)
 	{
-
 		// Ensure all scripts have unique names
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
 			Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
-			if (metadata.Name == name)
+			if (metadata.Name == spec.Name)
 			{
+				KG_WARN("Unable to create new script. Script Name already exists in asset manager");
+				return std::make_tuple(0, false);
+			}
+		}
+
+		// Check if function type is valid
+		if (spec.FunctionType == WrappedFuncType::None)
+		{
+			KG_WARN("Unable to create new script. Invalid Function Type Provided!");
+			return std::make_tuple(0, false);
+		}
+
+		// If script is associated with a class, ensure class exists
+		Assets::AssetHandle classHandle {0};
+		if (spec.Type == Scripting::ScriptType::Class)
+		{
+			if (spec.SectionLabel == "None")
+			{
+				KG_WARN("Unable to create new script. Empty Section label in spec.");
+				return std::make_tuple(0, false);
+			}
+
+			bool isValid = false;
+			for (auto& [handle, asset] : s_EntityClassRegistry)
+			{
+				if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+				{
+					isValid = true;
+					classHandle = handle;
+					break;
+				}
+			}
+			if (!isValid)
+			{
+				KG_WARN("Unable to create new script. No Valid Entity Class Selected!");
 				return std::make_tuple(0, false);
 			}
 		}
@@ -3894,8 +4348,22 @@ namespace Kargono::Assets
 		Assets::Asset newAsset{};
 		newAsset.Handle = newHandle;
 
+		// If script is associated with a class, add script to class's scripts
+		if (spec.Type == Scripting::ScriptType::Class)
+		{
+			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			if (!entityClass)
+			{
+				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
+				return std::make_tuple(0, false);
+			}
+
+			entityClass->m_Scripts.AllClassScripts.insert(newHandle);
+			SaveEntityClass(classHandle, entityClass);
+		}
+
 		// Create Intermediate
-		FillScriptMetadata(name, parameters, returnValue, functionType, newAsset);
+		FillScriptMetadata(spec, newAsset);
 		newAsset.Data.CheckSum = currentCheckSum;
 
 		// Register New Asset and Create Script
@@ -3907,24 +4375,207 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, true);
 	}
 
-	void AssetManager::DeleteScript(AssetHandle handle)
+	bool AssetManager::UpdateScript(AssetHandle scriptHandle, ScriptSpec& spec)
 	{
-		if (!s_ScriptRegistry.contains(handle))
+		// Check if script exists in registry
+		if (!s_ScriptRegistry.contains(scriptHandle))
+		{
+			KG_WARN("Unable to update script. Does not exist in registry.");
+			return false;
+		}
+
+		// Update Registry
+		ScriptMetaData* metadata = s_ScriptRegistry.at(scriptHandle).Data.GetSpecificFileData<ScriptMetaData>();
+
+		// Update AllScripts inside Entity Class if needed
+		if (metadata->ScriptType == Scripting::ScriptType::Class && (spec.Type == Scripting::ScriptType::Global || metadata->SectionLabel != spec.SectionLabel))
+		{
+			// Erase Script inside original entity class
+			for (auto& [classHandle, asset] : s_EntityClassRegistry)
+			{
+				Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+				if (!entityClass)
+				{
+					continue;
+				}
+				if (entityClass->GetScripts().AllClassScripts.contains(scriptHandle))
+				{
+					entityClass->GetScripts().AllClassScripts.erase(scriptHandle);
+					SaveEntityClass(classHandle, entityClass);
+				}
+			}
+
+			// Add script to new class if necessary
+			if (spec.Type == Scripting::ScriptType::Class)
+			{
+				AssetHandle classHandle{ 0 };
+				for (auto& [handle, asset] : s_EntityClassRegistry)
+				{
+					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+					{
+						classHandle = handle;
+						break;
+					}
+				}
+				// Save script into entity class
+				Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+				if (!entityClass)
+				{
+					KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
+					return false;
+				}
+
+				entityClass->m_Scripts.AllClassScripts.insert(scriptHandle);
+				SaveEntityClass(classHandle, entityClass);
+			}
+		}
+
+		metadata->Name = spec.Name;
+		metadata->Parameters = spec.Parameters;
+		metadata->ScriptType = spec.Type;
+		metadata->SectionLabel = spec.SectionLabel;
+		metadata->ReturnValue = spec.ReturnType;
+		metadata->FunctionType = spec.FunctionType;
+
+		SerializeScriptRegistry();
+
+		// Update In-Memory Script
+		if (s_Scripts.contains(scriptHandle))
+		{
+			Ref<Scripting::Script> script = s_Scripts.at(scriptHandle);
+			script->m_ScriptName = spec.Name;
+			script->m_Parameters = spec.Parameters;
+			script->m_ReturnValue = spec.ReturnType;
+			script->m_ScriptType = spec.Type;
+			script->m_SectionLabel = spec.SectionLabel;
+		}
+
+		return true;
+	}
+
+	bool AssetManager::DeleteScript(AssetHandle scriptHandle)
+	{
+		if (!s_ScriptRegistry.contains(scriptHandle))
 		{
 			KG_WARN("Failed to delete script in AssetManager");
-			return;
+			return false;
+		}
+
+		// Delete Handle inside associated class
+		for (auto& [classHandle, asset] : s_EntityClassRegistry)
+		{
+			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			if (!entityClass)
+			{
+				continue;
+			}
+			if (entityClass->GetScripts().AllClassScripts.contains(scriptHandle))
+			{
+				entityClass->GetScripts().AllClassScripts.erase(scriptHandle);
+				SaveEntityClass(classHandle, entityClass);
+			}
 		}
 
 		FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
-			s_ScriptRegistry.at(handle).Data.IntermediateLocation);
+			s_ScriptRegistry.at(scriptHandle).Data.IntermediateLocation);
 
-		s_ScriptRegistry.erase(handle);
-		if (s_Scripts.contains(handle))
+		s_ScriptRegistry.erase(scriptHandle);
+		if (s_Scripts.contains(scriptHandle))
 		{
-			s_Scripts.erase(handle);
+			s_Scripts.erase(scriptHandle);
 		}
 
 		SerializeScriptRegistry();
+		return true;
+	}
+
+	bool AssetManager::AddScriptSectionLabel(const std::string& newLabel)
+	{
+		if (newLabel == "None")
+		{
+			KG_WARN("Failed to add section label. Cannot add None Label");
+			return false;
+		}
+		if (s_ScriptSectionLabels.contains(newLabel))
+		{
+			KG_WARN("Failed to add section label. Label already exists in registry");
+			return false;
+		}
+
+		s_ScriptSectionLabels.insert(newLabel);
+		SerializeScriptRegistry();
+
+		return true;
+	}
+
+	bool AssetManager::EditScriptSectionLabel(const std::string& oldLabel, const std::string& newLabel)
+	{
+		if (!s_ScriptSectionLabels.contains(oldLabel))
+		{
+			KG_WARN("Failed to delete old section label. Label does not exist in registry");
+			return false;
+		}
+
+		if (s_ScriptSectionLabels.contains(newLabel))
+		{
+			KG_WARN("Failed to add new section label. Label already exists in registry");
+			return false;
+		}
+
+		s_ScriptSectionLabels.erase(oldLabel);
+		s_ScriptSectionLabels.insert(newLabel);
+
+		// Change label for all scripts
+		for (auto& [handle, script] : s_Scripts)
+		{
+			if (script->m_SectionLabel == oldLabel)
+			{
+				script->m_SectionLabel = newLabel;
+			}
+		}
+
+		for (auto& [handle, asset] : s_ScriptRegistry)
+		{
+			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel == oldLabel)
+			{
+				asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel = newLabel;
+			}
+		}
+
+		SerializeScriptRegistry();
+		return true;
+	}
+
+	bool AssetManager::DeleteScriptSectionLabel(const std::string& label)
+	{
+		if (!s_ScriptSectionLabels.contains(label))
+		{
+			KG_WARN("Failed to delete section label. Label does not exist in registry");
+			return false;
+		}
+
+		s_ScriptSectionLabels.erase(label);
+
+		// Remove this label from all scripts
+		for (auto& [handle, script] : s_Scripts)
+		{
+			if (script->m_SectionLabel == label)
+			{
+				script->m_SectionLabel = "None";
+			}
+		}
+
+		for (auto& [handle, asset] : s_ScriptRegistry)
+		{
+			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel == label)
+			{
+				asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel = "None";
+			}
+		}
+
+		SerializeScriptRegistry();
+
+		return true;
 	}
 
 	Ref<Scripting::Script> AssetManager::InstantiateScriptIntoMemory(Assets::Asset& asset)
@@ -3932,15 +4583,15 @@ namespace Kargono::Assets
 		Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 
-		// TODO: Instantiate Script Function Pointer!
 		newScript->m_ID = asset.Handle;
 		newScript->m_ScriptName = metadata.Name;
 		newScript->m_Parameters = metadata.Parameters;
 		newScript->m_ReturnValue = metadata.ReturnValue;
+		newScript->m_ScriptType = metadata.ScriptType;
+		newScript->m_SectionLabel = metadata.SectionLabel;
 		Scripting::ScriptCore::LoadScriptFunction(newScript, metadata.FunctionType);
 
 		return newScript;
-
 	}
 
 	Ref<Scripting::Script> AssetManager::GetScript(const AssetHandle& handle)
@@ -3962,14 +4613,44 @@ namespace Kargono::Assets
 		return nullptr;
 	}
 
+	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
+	{
+		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+
+		std::filesystem::path ScriptPath = filepath;
+
+		if (filepath.is_absolute())
+		{
+			ScriptPath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+		}
+
+		for (auto& [assetHandle, asset] : s_ScriptRegistry)
+		{
+			if (asset.Data.IntermediateLocation.compare(ScriptPath) == 0)
+			{
+				if (s_Scripts.contains(assetHandle))
+				{
+					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
+				}
+				else
+				{
+					s_Scripts.insert_or_assign(assetHandle, InstantiateScriptIntoMemory(asset));
+					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
+				}
+			}
+		}
+		// Return empty Script if Script does not exist
+		KG_WARN("No Script Associated with provided handle. Returned empty Script");
+		return std::make_tuple(0, nullptr);
+	}
+
 	void AssetManager::ClearScriptRegistry()
 	{
 		s_ScriptRegistry.clear();
 		s_Scripts.clear();
 	}
 
-	void AssetManager::FillScriptMetadata(const std::string& name, const std::vector<WrappedVarType>& parameters,
-		WrappedVarType returnValue, WrappedFuncType functionType, Assets::Asset& newAsset)
+	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
 	{
 		// Create cpp file
 		std::string intermediatePath = "Scripting/" + (std::string)newAsset.Handle + ".cpp";
@@ -3977,14 +4658,14 @@ namespace Kargono::Assets
 
 		// Write out return value and function name
 		std::stringstream outputStream {};
-		outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " KG_FUNC_" << newAsset.Handle << "(";
+		outputStream << Utility::WrappedVarTypeToCPPString(spec.ReturnType) << " KG_FUNC_" << newAsset.Handle << "(";
 
 		// Write out parameters into function signature
 		char letterIteration{ 'a' };
-		for (uint32_t iteration {0}; static_cast<size_t>(iteration) < parameters.size(); iteration++)
+		for (uint32_t iteration {0}; static_cast<size_t>(iteration) < spec.Parameters.size(); iteration++)
 		{ 
-			outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
-			if (iteration != parameters.size() - 1)
+			outputStream << Utility::WrappedVarTypeToCPPString(spec.Parameters.at(iteration)) << " " << letterIteration;
+			if (iteration != spec.Parameters.size() - 1)
 			{
 				outputStream << ',';
 			}
@@ -4001,10 +4682,12 @@ namespace Kargono::Assets
 		newAsset.Data.Type = Assets::AssetType::Script;
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
-		metadata->Name = name;
-		metadata->Parameters = parameters;
-		metadata->ReturnValue = returnValue;
-		metadata->FunctionType = functionType;
+		metadata->Name = spec.Name;
+		metadata->Parameters = spec.Parameters;
+		metadata->ScriptType = spec.Type;
+		metadata->SectionLabel = spec.SectionLabel;
+		metadata->ReturnValue = spec.ReturnType;
+		metadata->FunctionType = spec.FunctionType;
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
@@ -4088,7 +4771,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
 				out << YAML::Key << "OnRuntimeStart" << YAML::Value << static_cast<uint64_t>(config.OnRuntimeStart);
 				out << YAML::Key << "OnUpdateUserCount" << YAML::Value << static_cast<uint64_t>(config.OnUpdateUserCount);
-				out << YAML::Key << "OnApproveJoinSessionFunction" << YAML::Value << config.OnApproveJoinSessionFunction;
+				out << YAML::Key << "OnApproveJoinSession" << YAML::Value << static_cast<uint64_t>(config.OnApproveJoinSession);
 				out << YAML::Key << "OnUserLeftSession" << YAML::Value << static_cast<uint64_t>(config.OnUserLeftSession);
 				out << YAML::Key << "OnCurrentSessionInit" << YAML::Value << static_cast<uint64_t>(config.OnCurrentSessionInit);
 				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(config.OnConnectionTerminated);
@@ -4149,7 +4832,7 @@ namespace Kargono::Assets
 		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
 		config.OnRuntimeStart = static_cast<AssetHandle>(projectNode["OnRuntimeStart"].as<uint64_t>());
 		config.OnUpdateUserCount = static_cast<AssetHandle>(projectNode["OnUpdateUserCount"].as<uint64_t>());
-		config.OnApproveJoinSessionFunction = projectNode["OnApproveJoinSessionFunction"].as<std::string>();
+		config.OnApproveJoinSession = static_cast<AssetHandle>(projectNode["OnApproveJoinSession"].as<uint64_t>());
 		config.OnUserLeftSession = static_cast<AssetHandle>(projectNode["OnUserLeftSession"].as<uint64_t>());
 		config.OnCurrentSessionInit = static_cast<AssetHandle>(projectNode["OnCurrentSessionInit"].as<uint64_t>());
 		config.OnConnectionTerminated = static_cast<AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());

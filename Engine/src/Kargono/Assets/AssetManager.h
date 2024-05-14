@@ -4,8 +4,8 @@
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Audio/AudioEngine.h"
-#include "Kargono/UI/Text.h"
-#include "Kargono/UI/Runtime.h"
+#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Runtime.h"
 #include "Kargono/Scene/GameState.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Scripting/Scripting.h"
@@ -13,6 +13,10 @@
 
 #include <filesystem>
 #include <tuple>
+#include <unordered_set>
+#include <unordered_map>
+
+#include "Kargono/Scene/EntityClass.h"
 
 namespace Kargono
 {
@@ -285,9 +289,9 @@ namespace Kargono::Assets
 		// Load and Retrieve In-Memory Font
 		//==============================
 		// Function to Load a new Font from a buffer
-		static Ref<UI::Font> InstantiateFontIntoMemory(Assets::Asset& asset);
+		static Ref<RuntimeUI::Font> InstantiateFontIntoMemory(Assets::Asset& asset);
 		// Function to get a texture with a given name
-		static Ref<UI::Font> GetFont(const AssetHandle& handle);
+		static Ref<RuntimeUI::Font> GetFont(const AssetHandle& handle);
 	private:
 		//==============================
 		// Internal Functionality
@@ -304,7 +308,7 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Assets::Asset> s_FontRegistry;
 		// This map holds all of the audio that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<UI::Font>> s_Fonts;
+		static std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> s_Fonts;
 
 	//============================================================
 	// Scene
@@ -427,14 +431,14 @@ namespace Kargono::Assets
 		// Save a UIObject
 		//==============================
 		// Save Current UIObject
-		static void SaveUIObject(AssetHandle uiObjectHandle, Ref<UI::UIObject> uiObject);
+		static void SaveUIObject(AssetHandle uiObjectHandle, Ref<RuntimeUI::UIObject> uiObject);
 
 		//==============================
 		// Load and Retrieve In-Memory UIObject
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<UI::UIObject> GetUIObject(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<UI::UIObject>> GetUIObject(const std::filesystem::path& filepath);
+		static Ref<RuntimeUI::UIObject> GetUIObject(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<RuntimeUI::UIObject>> GetUIObject(const std::filesystem::path& filepath);
 
 		//==============================
 		// Getters/Setters
@@ -454,11 +458,11 @@ namespace Kargono::Assets
 		//		with relevant metadata.
 		static void CreateUIObjectFile(const std::string& uiObjectName, Assets::Asset& newAsset);
 		// Save a single uiObject
-		static void SerializeUIObject(Ref<UI::UIObject> uiObject, const std::filesystem::path& filepath);
+		static void SerializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath);
 		// Load a single uiObject
-		static bool DeserializeUIObject(Ref<UI::UIObject> uiObject, const std::filesystem::path& filepath);
+		static bool DeserializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath);
 		// Instantiate a new uiObject
-		static Ref<UI::UIObject> InstantiateUIObject(const Assets::Asset& uiObjectAsset);
+		static Ref<RuntimeUI::UIObject> InstantiateUIObject(const Assets::Asset& uiObjectAsset);
 	private:
 		// This registry holds a reference to all of the available UIObject in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects
@@ -635,6 +639,92 @@ namespace Kargono::Assets
 
 
 	//============================================================
+	// EntityClass
+	//============================================================
+	public:
+		//==============================
+		// Manage EntityClass Registry
+		//==============================
+		// Retrieve the current project's EntityClass registry from disk and add to in-memory Registry
+		//		(s_EntityClassRegistry). This involves:
+		//		1. Retrieving the registry file from the current project asset directory.
+		//		2. Verifying the file is a registry file and opening the root node
+		//		3. Read each asset, retrieve its metadata, retrieve its EntityClass specific metadata,
+		//		and instatiate each asset into the s_EntityClassRegistry.
+		static void DeserializeEntityClassRegistry();
+		// Save Current in-memory registry (s_EntityClassRegistry) to disk location specified in
+		//		current project. This involves:
+		//		1. Open a new registry file that is located in the current project asset directory.
+		//		2. Write each asset with its metadata and EntityClass specific metadata into the new yaml file.
+		//		3. Write the file to the output stream.
+		static void SerializeEntityClassRegistry();
+		// This function clears both the s_EntityClassRegistry and s_EntityClasss which should also call
+		//		all destructors for in-memory EntityClasss.
+		static void ClearEntityClassRegistry();
+
+		//==============================
+		// Create New EntityClass
+		//==============================
+
+		// This function registers a new EntityClass with the asset system using the provided filepath.
+		//		This function takes the following steps:
+		//		1. Create a checksum from the raw file provided and determine if the file already
+		//		exists in the registry.
+		//		2. Create the EntityClass file on disk.
+		//		3. Register the new file with the in-memory s_EntityClassRegistry and the on disk EntityClass
+		//		registry
+		//		4. Return the EntityClass handle
+		static AssetHandle CreateNewEntityClass(const std::string& EntityClassName);
+
+		//==============================
+		// Save a EntityClass
+		//==============================
+		// Save Current EntityClass
+		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass);
+
+		//==============================
+		// Delete a EntityClass
+		//==============================
+		static void DeleteEntityClass(AssetHandle handle);
+
+		//==============================
+		// Load and Retrieve In-Memory EntityClass
+		//==============================
+		// Function to get a texture with a given name
+		static Ref<Kargono::EntityClass> GetEntityClass(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Kargono::EntityClass>> GetEntityClass(const std::filesystem::path& filepath);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Check if name already exists in registry
+		static bool CheckEntityClassExists(const std::string& EntityClassName);
+
+		// Returns the relative path from project directory of intermediate file
+		static std::filesystem::path GetEntityClassLocation(const AssetHandle& handle);
+
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetEntityClassRegistry() { return s_EntityClassRegistry; }
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		// This function creates a .EntityClass file with the specified name and fills the provided asset file
+		//		with relevant metadata.
+		static void CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset);
+		// Save a single EntityClass
+		static void SerializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath);
+		// Load a single EntityClass
+		static bool DeserializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath);
+		// Instantiate a new EntityClass
+		static Ref<Kargono::EntityClass> InstantiateEntityClass(const Assets::Asset& EntityClassAsset);
+	private:
+		// This registry holds a reference to all of the available EntityClass in the current project.
+		//		Since the registry only holds references, it does not instantiate any of the objects
+		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
+		//		metadata that is necessary to load the intermediate file correctly.
+		static std::unordered_map<AssetHandle, Assets::Asset> s_EntityClassRegistry;
+
+	//============================================================
 	// Script
 	//============================================================
 	public:
@@ -662,6 +752,15 @@ namespace Kargono::Assets
 		// Import New Script
 		//==============================
 
+		struct ScriptSpec
+		{
+			std::string Name {};
+			Scripting::ScriptType Type {Scripting::ScriptType::None };
+			std::string SectionLabel {};
+			std::vector<WrappedVarType> Parameters {};
+			WrappedVarType ReturnType { WrappedVarType::None };
+			WrappedFuncType FunctionType{ WrappedFuncType::None };
+		};
 		// This function registers a new Script with the asset system using the provided filepath.
 		//		This function takes the following steps:
 		//		1. Create a checksum from the raw file provided and determine if the file already
@@ -670,10 +769,15 @@ namespace Kargono::Assets
 		//		3. Register the new file with the in-memory s_ScriptRegistry and the on disk Script
 		//		registry
 		//		4. Instantiate the new Script into memory and return a handle to the new Script.
-		static std::tuple<AssetHandle, bool> CreateNewScript(const std::string& name, const std::vector<WrappedVarType>& parameters,
-			WrappedVarType returnValue, WrappedFuncType functionType);
+		static std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec);
 
-		static void DeleteScript(AssetHandle handle);
+		static bool UpdateScript(AssetHandle scriptHandle , ScriptSpec& spec);
+
+		static bool DeleteScript(AssetHandle scriptHandle);
+
+		static bool AddScriptSectionLabel(const std::string& newLabel);
+		static bool EditScriptSectionLabel(const std::string& oldLabel, const std::string& newLabel);
+		static bool DeleteScriptSectionLabel(const std::string& label);
 
 		//==============================
 		// Load and Retrieve In-Memory Script
@@ -688,13 +792,22 @@ namespace Kargono::Assets
 		{
 			return s_Scripts;
 		}
+
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetScriptRegistryMap()
+		{
+			return s_ScriptRegistry;
+		}
+
+		static std::unordered_set<std::string>& GetScriptSectionLabels()
+		{
+			return s_ScriptSectionLabels;
+		}
 	private:
 		//==============================
 		// Internal Functionality
 		//==============================
 
-		static void FillScriptMetadata(const std::string& name, const std::vector<WrappedVarType>& parameters,
-			WrappedVarType returnValue, WrappedFuncType functionType, Assets::Asset& newAsset);
+		static void FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset);
 		// Function to Load a new Script from a buffer
 		static Ref<Scripting::Script> InstantiateScriptIntoMemory(Assets::Asset& asset);
 	private:
@@ -703,8 +816,8 @@ namespace Kargono::Assets
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
 		static std::unordered_map<AssetHandle, Assets::Asset> s_ScriptRegistry;
-
 		static std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
+		static std::unordered_set<std::string> s_ScriptSectionLabels;
 
 		friend class Scripting::ScriptCore;
 		friend class Scripting::ScriptModuleBuilder;
@@ -759,6 +872,7 @@ namespace Kargono::Assets
 			DeserializeInputModeRegistry();
 			DeserializeScriptRegistry();
 			DeserializeGameStateRegistry();
+			DeserializeEntityClassRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -773,6 +887,7 @@ namespace Kargono::Assets
 			SerializeInputModeRegistry();
 			SerializeScriptRegistry();
 			SerializeGameStateRegistry();
+			SerializeEntityClassRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -787,6 +902,7 @@ namespace Kargono::Assets
 			ClearInputModeRegistry();
 			ClearScriptRegistry();
 			ClearGameStateRegistry();
+			ClearEntityClassRegistry();
 		}
 	};
 	

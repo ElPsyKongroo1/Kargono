@@ -8,11 +8,20 @@
 
 namespace Kargono::Utility
 {
+	class Operations
+	{
+	public:
+		static void ToggleBoolean(bool& boolToToggle)
+		{
+			boolToToggle ? boolToToggle = false : boolToToggle = true;
+		}
+	};
+
 	class Conversions
 	{
 	public:
 		template<typename T>
-		static bool BufferToVariable(Buffer buffer , T& variable)
+		static bool CharBufferToVariable(Buffer buffer , T& variable)
 		{
 			//std::string stringValue{buffer.As<char>()};
 			auto [ptr, ec] = std::from_chars(buffer.As<char>(), buffer.As<char>() + buffer.Size, variable);
@@ -33,7 +42,6 @@ namespace Kargono::Utility
 				KG_ERROR("Unknown error in Buffer to Variable conversion function");
 				return false;
 			}
-
 			return true;
 		}
 	};

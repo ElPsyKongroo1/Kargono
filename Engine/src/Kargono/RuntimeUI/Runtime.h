@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/EditorCamera.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/UI/Text.h"
+#include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 
@@ -12,7 +12,7 @@
 #include <functional>
 
 
-namespace Kargono::UI
+namespace Kargono::RuntimeUI
 {
 	//============================
 	// Function Callbacks Struct
@@ -269,7 +269,7 @@ namespace Kargono::UI
 		static int32_t& GetWindowToDelete();
 		static int32_t& GetWidgetToDelete();
 		static int32_t& GetWindowsToAddWidget();
-		static UI::WidgetTypes& GetWidgetTypeToAdd();
+		static RuntimeUI::WidgetTypes& GetWidgetTypeToAdd();
 		static uint32_t& GetWindowToAdd();
 		static int32_t& GetSelectedWindow();
 		static int32_t& GetSelectedWidget();
@@ -279,16 +279,16 @@ namespace Kargono::UI
 
 namespace Kargono::Utility
 {
-	static std::string WidgetTypeToString(UI::WidgetTypes widgetType)
+	static std::string WidgetTypeToString(RuntimeUI::WidgetTypes widgetType)
 	{
 		switch (widgetType)
 		{
-		case UI::WidgetTypes::TextWidget: return "TextWidget";
-		case UI::WidgetTypes::ButtonWidget: return "ButtonWidget";
-		case UI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
-		case UI::WidgetTypes::ComboWidget: return "ComboWidget";
-		case UI::WidgetTypes::PopupWidget: return "PopupWidget";
-		case UI::WidgetTypes::None: return "None";
+		case RuntimeUI::WidgetTypes::TextWidget: return "TextWidget";
+		case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
+		case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
+		case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
+		case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
+		case RuntimeUI::WidgetTypes::None: return "None";
 		default:
 		{
 			KG_ASSERT(false, "Invalid Widget Type at WidgetTypeToString");
@@ -297,17 +297,17 @@ namespace Kargono::Utility
 		}
 	}
 
-	static UI::WidgetTypes StringToWidgetType(const std::string& widgetName)
+	static RuntimeUI::WidgetTypes StringToWidgetType(const std::string& widgetName)
 	{
-		if (widgetName == "TextWidget") { return UI::WidgetTypes::TextWidget; }
-		if (widgetName == "ButtonWidget") { return UI::WidgetTypes::ButtonWidget; }
-		if (widgetName == "CheckboxWidget") { return UI::WidgetTypes::CheckboxWidget; }
-		if (widgetName == "ComboWidget") { return UI::WidgetTypes::ComboWidget; }
-		if (widgetName == "PopupWidget") { return UI::WidgetTypes::PopupWidget; }
-		if (widgetName == "None") { return UI::WidgetTypes::None; }
+		if (widgetName == "TextWidget") { return RuntimeUI::WidgetTypes::TextWidget; }
+		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
+		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
+		if (widgetName == "ComboWidget") { return RuntimeUI::WidgetTypes::ComboWidget; }
+		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
+		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
 		KG_ASSERT(false, "Invalid Widget Type at StringToWidgetType");
-		return UI::WidgetTypes::None;
+		return RuntimeUI::WidgetTypes::None;
 	}
 }
 

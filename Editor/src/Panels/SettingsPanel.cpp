@@ -5,10 +5,10 @@
 
 namespace Kargono
 {
-	static UI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
-	static UI::CheckboxSpec s_DisplayCameraFrustrumSpec {};
-	static UI::CheckboxSpec s_DisplayRuntimeUISpec {};
-	static UI::CheckboxSpec s_FullscreenRuntimeSpec {};
+	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
+	static EditorUI::CheckboxSpec s_DisplayCameraFrustrumSpec {};
+	static EditorUI::CheckboxSpec s_DisplayRuntimeUISpec {};
+	static EditorUI::CheckboxSpec s_FullscreenRuntimeSpec {};
 	static EditorLayer* s_EditorLayer { nullptr };
 
 	SettingsPanel::SettingsPanel()
@@ -16,7 +16,6 @@ namespace Kargono
 		s_EditorLayer = EditorLayer::GetCurrentLayer();
 
 		s_PrimaryCameraCheckboxSpec.Label = "Display Physics Colliders";
-		s_PrimaryCameraCheckboxSpec.WidgetID = 0x185f537c52e34c35;
 		s_PrimaryCameraCheckboxSpec.LeftLean = false;
 		s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
 		{
@@ -24,7 +23,6 @@ namespace Kargono
 		};
 
 		s_DisplayCameraFrustrumSpec.Label = "Display Camera Frustrum";
-		s_DisplayCameraFrustrumSpec.WidgetID = 0x6616b45b13e842f0;
 		s_DisplayCameraFrustrumSpec.LeftLean = false;
 		s_DisplayCameraFrustrumSpec.ConfirmAction = [&](bool value)
 		{
@@ -32,7 +30,6 @@ namespace Kargono
 		};
 
 		s_DisplayRuntimeUISpec.Label = "Display Runtime UI";
-		s_DisplayRuntimeUISpec.WidgetID = 0x0c3f03918b504bc0;
 		s_DisplayRuntimeUISpec.LeftLean = false;
 		s_DisplayRuntimeUISpec.ConfirmAction = [&](bool value)
 		{
@@ -40,7 +37,6 @@ namespace Kargono
 		};
 
 		s_FullscreenRuntimeSpec.Label = "Fullscreen While Running";
-		s_FullscreenRuntimeSpec.WidgetID = 0x53f5366b41484bbd;
 		s_FullscreenRuntimeSpec.LeftLean = false;
 		s_FullscreenRuntimeSpec.ConfirmAction = [&](bool value)
 		{
@@ -49,27 +45,27 @@ namespace Kargono
 	}
 	void SettingsPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Settings", &s_EditorLayer->m_ShowSettings);
+		EditorUI::Editor::StartWindow("Settings", &s_EditorLayer->m_ShowSettings);
 
 		// Toggle Physics Colliders
 		s_PrimaryCameraCheckboxSpec.ToggleBoolean = s_EditorLayer->m_ShowPhysicsColliders;
-		UI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
-		UI::Editor::Spacing(UI::SpacingAmount::Small);
+		EditorUI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
+		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Toggle Camera Frustrums
 		s_DisplayCameraFrustrumSpec.ToggleBoolean = s_EditorLayer->m_ShowCameraFrustrums;
-		UI::Editor::Checkbox(s_DisplayCameraFrustrumSpec);
-		UI::Editor::Spacing(UI::SpacingAmount::Small);
+		EditorUI::Editor::Checkbox(s_DisplayCameraFrustrumSpec);
+		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Toggle Runtime User Interface
 		s_DisplayRuntimeUISpec.ToggleBoolean = s_EditorLayer->m_ShowUserInterface;
-		UI::Editor::Checkbox(s_DisplayRuntimeUISpec);
-		UI::Editor::Spacing(UI::SpacingAmount::Small);
+		EditorUI::Editor::Checkbox(s_DisplayRuntimeUISpec);
+		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Toggle Runtime Fullscreen
 		s_FullscreenRuntimeSpec.ToggleBoolean = s_EditorLayer->m_RuntimeFullscreen;
-		UI::Editor::Checkbox(s_FullscreenRuntimeSpec);
-		UI::Editor::Spacing(UI::SpacingAmount::Small);
+		EditorUI::Editor::Checkbox(s_FullscreenRuntimeSpec);
+		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 
 		static float musicVolume = 10.0f;
 		ImGui::Separator();
@@ -102,6 +98,6 @@ namespace Kargono
 				Scene::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorLayer->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 }

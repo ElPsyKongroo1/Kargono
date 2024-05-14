@@ -1,0 +1,5 @@
+Name: RuntimeState
+Fields:
+  - Name: BallDirection
+    Type: UInteger16
+    Value: 1

@@ -25,8 +25,8 @@ namespace Kargono
 	static std::function<void()> s_OnDeleteFile { nullptr };
 	static std::function<void()> s_OnCloseFile { nullptr };
 
-	static UI::GenericPopupSpec s_DeleteWarningSpec {};
-	static UI::GenericPopupSpec s_DiscardChangesWarningSpec {};
+	static EditorUI::GenericPopupSpec s_DeleteWarningSpec {};
+	static EditorUI::GenericPopupSpec s_DiscardChangesWarningSpec {};
 	
 	TextEditorPanel::TextEditorPanel()
 	{
@@ -40,14 +40,14 @@ namespace Kargono
 			{
 				Document newDocument{};
 				newDocument.TextBuffer.Allocate(4096);
-				memset(newDocument.TextBuffer.Data, 0, newDocument.TextBuffer.Size);
+				newDocument.TextBuffer.SetDataToByte(0);
 				FileSystem::WriteFileString(filepath, "");
 				newDocument.FilePath = filepath;
 				newDocument.Edited = false;
 				newDocument.Opened = true;
 				newDocument.SetActive = true;
 				s_AllDocuments.push_back(newDocument);
-				s_ActiveDocument = s_AllDocuments.size() - 1;
+				s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
 			}
 		};
 		s_OnOpenFile = [&]()
@@ -59,7 +59,9 @@ namespace Kargono
 		s_OnSaveFile = [&]()
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
-			FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
+
+			FileSystem::WriteFileString(activeDocument.FilePath, std::string(activeDocument.TextBuffer.As<char>()));
+			//FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 		};
 		s_OnDeleteFile = [&]()
@@ -89,7 +91,6 @@ namespace Kargono
 		};
 
 		s_DeleteWarningSpec.Label = "Delete File";
-		s_DeleteWarningSpec.WidgetID = 0x7e3a1a046d694789;
 		s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;
 		s_DeleteWarningSpec.PopupContents = [&]()
 		{
@@ -97,7 +98,6 @@ namespace Kargono
 		};
 
 		s_DiscardChangesWarningSpec.Label = "Close File";
-		s_DiscardChangesWarningSpec.WidgetID = 0xc18a36679b144f55;
 		s_DiscardChangesWarningSpec.ConfirmAction = s_OnCloseFile;
 		s_DiscardChangesWarningSpec.PopupContents = [&]()
 		{
@@ -113,11 +113,11 @@ namespace Kargono
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		UI::Editor::StartWindow("Text Editor", &s_EditorLayer->m_ShowTextEditor, flags);
+		EditorUI::Editor::StartWindow("Text Editor", &s_EditorLayer->m_ShowTextEditor, flags);
 
 		if (s_AllDocuments.size() == 0)
 		{
-			UI::Editor::NewItemScreen("Open Existing File", s_OnOpenFile, "Create New File", s_OnCreateFile);
+			EditorUI::Editor::NewItemScreen("Open Existing File", s_OnOpenFile, "Create New File", s_OnCreateFile);
 		}
 		else
 		{
@@ -148,8 +148,8 @@ namespace Kargono
 				}
 				ImGui::EndMenuBar();
 			}
-			UI::Editor::GenericPopup(s_DeleteWarningSpec);
-			UI::Editor::GenericPopup(s_DiscardChangesWarningSpec);
+			EditorUI::Editor::GenericPopup(s_DeleteWarningSpec);
+			EditorUI::Editor::GenericPopup(s_DiscardChangesWarningSpec);
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };
@@ -158,7 +158,7 @@ namespace Kargono
 				bool setColorBlue = false;
 				if (document.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, UI::Editor::s_PearlBlue);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PearlBlue);
 					setColorBlue = true;
 				}
 
@@ -173,11 +173,28 @@ namespace Kargono
 					&document.Opened, tabItemFlags))
 				{
 					s_ActiveDocument = iteration;
-					ImGui::PushStyleColor(ImGuiCol_Text, UI::Editor::s_PureWhite);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PureWhite);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.0f);
+
+					ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
+					{
+						if ((float)data->BufTextLen / (float)data->BufSize > 0.75f)
+						{
+							Document& activeDocument	= *(Document*)data->UserData;
+							Buffer newBuffer{};
+							newBuffer.Allocate(activeDocument.TextBuffer.Size * 2);
+							newBuffer.SetDataToByte(0);
+							memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
+							activeDocument.TextBuffer.Release();
+							activeDocument.TextBuffer = newBuffer;
+						}
+						return 0;
+					};
+
 					if (ImGui::InputTextMultiline("##textLabel", document.TextBuffer.As<char>(),
 						document.TextBuffer.Size, ImGui::GetContentRegionAvail(),
-						ImGuiInputTextFlags_AllowTabInput))
+						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackEdit,
+						typeCallback, (void*)&document))
 					{
 						document.Edited = true;
 					}
@@ -215,7 +232,7 @@ namespace Kargono
 			
 		}
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 	void TextEditorPanel::OpenFile(const std::filesystem::path& filepath)
 	{
@@ -238,15 +255,15 @@ namespace Kargono
 
 			Document newDocument{};
 			std::string fileString = FileSystem::ReadFileString(filepath);
-			newDocument.TextBuffer.Allocate(fileString.size() * 1.5f);
-			memset(newDocument.TextBuffer.Data, 0, newDocument.TextBuffer.Size);
+			newDocument.TextBuffer.Allocate(static_cast<uint64_t>(fileString.size() * 1.5f));
+			newDocument.TextBuffer.SetDataToByte(0);
 			memcpy(newDocument.TextBuffer.Data, fileString.data(), fileString.size());
 			newDocument.FilePath = filepath;
 			newDocument.Edited = false;
 			newDocument.Opened = true;
 			newDocument.SetActive = true;
 			s_AllDocuments.push_back(newDocument);
-			s_ActiveDocument = s_AllDocuments.size() - 1;
+			s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
 		}
 	}
 }

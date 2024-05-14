@@ -13,7 +13,7 @@ namespace Kargono
 	}
 	void StatisticsPanel::OnEditorUIRender()
 	{
-		UI::Editor::StartWindow("Statistics", &s_EditorLayer->m_ShowStats);
+		EditorUI::Editor::StartWindow("Statistics", &s_EditorLayer->m_ShowStats);
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
@@ -44,6 +44,6 @@ namespace Kargono
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
 
-		UI::Editor::EndWindow();
+		EditorUI::Editor::EndWindow();
 	}
 }

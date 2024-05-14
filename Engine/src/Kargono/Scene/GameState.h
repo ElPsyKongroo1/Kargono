@@ -35,6 +35,17 @@ namespace Kargono
 			return m_Fields.at(fieldName);
 		}
 
+		void SetField(const std::string& fieldName, void* value)
+		{
+			if (!m_Fields.contains(fieldName))
+			{
+				KG_CRITICAL("Could not get field from game state {}", fieldName);
+				return;
+			}
+
+			m_Fields.at(fieldName)->SetValue(value);
+		}
+
 		bool AddField(const std::string& fieldName, WrappedVarType fieldType)
 		{
 			if (m_Fields.contains(fieldName))
@@ -86,6 +97,17 @@ namespace Kargono
 		void SetName(const std::string& name)
 		{
 			m_Name = name;
+		}
+	public:
+		static void SetActiveGameStateField(const std::string& fieldName, void* value)
+		{
+			if (!s_GameState)
+			{
+				KG_WARN("Attempt to set a field on active game state that is inactive");
+				return;
+			}
+
+			s_GameState->SetField(fieldName, value);
 		}
 	public:
 		static Ref<GameState> s_GameState;

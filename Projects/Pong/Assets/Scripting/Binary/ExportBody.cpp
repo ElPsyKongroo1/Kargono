@@ -52,6 +52,11 @@ void SetSelectedWidget(const std::string& a, const std::string& b)
 {
 	SetSelectedWidgetPtr(a, b);
 }
+static std::function<void(const std::string& a, void* b)> SetGameStateFieldPtr {};
+void SetGameStateField(const std::string& a, void* b)
+{
+	SetGameStateFieldPtr(a, b);
+}
 static std::function<void(const std::string& a, const std::string& b, bool c)> SetWidgetSelectablePtr {};
 void SetWidgetSelectable(const std::string& a, const std::string& b, bool c)
 {
@@ -89,6 +94,10 @@ void AddVoidStringBool(const std::string& funcName, std::function<void(const std
 {
 if (funcName == "SetDisplayWindow") { SetDisplayWindowPtr = funcPtr; return; }
 }
+void AddVoidStringVoidPtr(const std::string& funcName, std::function<void(const std::string&, void*)> funcPtr)
+{
+if (funcName == "SetGameStateField") { SetGameStateFieldPtr = funcPtr; return; }
+}
 void AddVoidStringString(const std::string& funcName, std::function<void(const std::string&, const std::string&)> funcPtr)
 {
 if (funcName == "SetSelectedWidget") { SetSelectedWidgetPtr = funcPtr; return; }
@@ -116,13 +125,9 @@ void KG_FUNC_3176244785148247992(uint16_t userSlot)
 	SetWidgetText("online_lobby", selectedWidget, "Connected!");
 }
 
-void KG_FUNC_18163504705534252383(uint32_t count)
+void KG_FUNC_8444652895326507655()
 {
-	std::string onlineCount = "Online: " + count;
-	SetWidgetText("main_window", "online_count", onlineCount);
-	SetWidgetSelectable("main_window", "online_multiplayer", true);
-	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
-	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+	SetWidgetText("online_lobby", "main_text", "Starting Session...");
 }
 
 void KG_FUNC_7445822592925037095(uint16_t userSlot)
@@ -135,29 +140,56 @@ void KG_FUNC_7445822592925037095(uint16_t userSlot)
 	SetWidgetText("online_lobby", "main_text", "Waiting for Players...");
 }
 
-void KG_FUNC_8444652895326507655()
+void KG_FUNC_18163504705534252383(uint32_t count)
 {
-	SetWidgetText("online_lobby", "main_text", "Starting Session...");
+	std::string onlineCount = std::string("Online: ") + std::to_string(count);
+	SetWidgetText("main_window", "online_count", onlineCount);
+	SetWidgetSelectable("main_window", "online_multiplayer", true);
+	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
+	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+}
+void KG_FUNC_1819971799574496652()
+{	
+		uint16_t userSlot = GetActiveSessionSlot();
+		SetDisplayWindow("pre_game_warning", true);
+		SetDisplayWindow("base_window", false);
+		SetDisplayWindow("online_lobby", false);
+		LoadInputModeByName("Input/Online_Pre_Start.kginput");
+		PlaySoundFromName("Audio/menu_confirm.wav");
+		if (userSlot == 0)
+		{
+			SetWidgetText("pre_game_warning", "controls_2", "");
+		}
+		else if (userSlot == 1)
+		{
+			SetWidgetText("pre_game_warning", "controls_1", "");
+		}
+		EnableReadyCheck();
 }
 
-void KG_FUNC_1819971799574496652()
-{
-		uint16_t userSlot = GetActiveSessionSlot();
-		SetDisplayWindow("pre_game_warning", true);
-		SetDisplayWindow("base_window", false);
-		SetDisplayWindow("online_lobby", false);
-		LoadInputModeByName("Input/Online_Pre_Start.kginput");
-		PlaySoundFromName("Audio/menu_confirm.wav");
-		if (userSlot == 0)
-		{
-			SetWidgetText("pre_game_warning", "controls_2", "");
-		}
-		else if (userSlot == 1)
-		{
-			SetWidgetText("pre_game_warning", "controls_1", "");
-		}
-		EnableReadyCheck();
-}
+void KG_FUNC_14942570159458352892(uint16_t userSlot)
+{
+	uint16_t direction = 0;
+	SetGameStateField("BallDirection", &direction);
+	LoadUserInterfaceFromName("UserInterface/RuntimeUI.kgui");
+	SetDisplayWindow("online_lobby", true);
+	SetDisplayWindow("base_window", false);
+	TransitionSceneFromName("Scenes/main_gameplay.kgscene");
+	LoadInputModeByName("Input/Online_Lobby_Input.kginput");
+	PlaySoundFromName("Audio/menu_confirm.wav");
+	PlayStereoSoundFromName("Audio/mechanist-theme.wav");
+	
+	std::string selectedWidget = std::string("player_slot_") + std::to_string(userSlot);
+	SetWidgetText("online_lobby", selectedWidget, "Connected!");
+}
+void KG_FUNC_14683932765512752045()
+{
+	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
+	TransitionSceneFromName("Scenes/main_menu.kgscene");
+	LoadInputModeByName("Input/MainMenu.kginput");
+	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
+	RequestUserCount();
+}
 
 void KG_FUNC_4342390925410131221()
 {
@@ -168,13 +200,8 @@ void KG_FUNC_4342390925410131221()
 	SetSelectedWidget("main_window", "local_multiplayer");
 }
 
-void KG_FUNC_14683932765512752045()
+void KG_FUNC_12649725487150938405(float a)
 {
-	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
-	TransitionSceneFromName("Scenes/main_menu.kgscene");
-	LoadInputModeByName("Input/MainMenu.kginput");
-	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
-	RequestUserCount();
-}
+}
 
 }
