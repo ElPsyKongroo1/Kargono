@@ -45,6 +45,7 @@ namespace Kargono
 	}
 	void SettingsPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Settings", &s_EditorLayer->m_ShowSettings);
 
 		// Toggle Physics Colliders

@@ -200,8 +200,4 @@ void KG_FUNC_4342390925410131221()
 	SetSelectedWidget("main_window", "local_multiplayer");
 }
 
-void KG_FUNC_12649725487150938405(float a)
-{
-}
-
 }

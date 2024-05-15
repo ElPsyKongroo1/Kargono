@@ -95,6 +95,7 @@ namespace Kargono
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		auto& currentWindow = Application::GetCurrentApp().GetWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;

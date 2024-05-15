@@ -56,6 +56,7 @@ namespace Kargono
 
 	void UIEditorPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		int32_t windowIteration{ 1 };
 		int32_t& windowToDelete = RuntimeUI::Runtime::GetWindowToDelete();
 		int32_t& widgetToDelete = RuntimeUI::Runtime::GetWidgetToDelete();

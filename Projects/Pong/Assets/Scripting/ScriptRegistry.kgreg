@@ -1,6 +1,6 @@
 Registry: Script
 SectionLabels:
-  - Network
+  []
 Assets:
   - AssetHandle: 3176244785148247992
     MetaData:
@@ -8,30 +8,6 @@ Assets:
       IntermediateLocation: Scripting/3176244785148247992.cpp
       AssetType: Script
       Name: UpdateSessionUserSlot
-      SectionLabel: None
-      ScriptType: Global
-      Parameters:
-        - UInteger16
-      ReturnValue: Void
-      FunctionType: Void_UInt16
-  - AssetHandle: 8444652895326507655
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/8444652895326507655.cpp
-      AssetType: Script
-      Name: OnCurrentSessionInit
-      SectionLabel: None
-      ScriptType: Global
-      Parameters:
-        []
-      ReturnValue: Void
-      FunctionType: Void_None
-  - AssetHandle: 7445822592925037095
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/7445822592925037095.cpp
-      AssetType: Script
-      Name: UserLeftSession
       SectionLabel: None
       ScriptType: Global
       Parameters:
@@ -50,12 +26,24 @@ Assets:
         - UInteger32
       ReturnValue: Void
       FunctionType: Void_UInt32
-  - AssetHandle: 1819971799574496652
+  - AssetHandle: 7445822592925037095
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/1819971799574496652.cpp
+      IntermediateLocation: Scripting/7445822592925037095.cpp
       AssetType: Script
-      Name: OnStartSession
+      Name: UserLeftSession
+      SectionLabel: None
+      ScriptType: Global
+      Parameters:
+        - UInteger16
+      ReturnValue: Void
+      FunctionType: Void_UInt16
+  - AssetHandle: 8444652895326507655
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/8444652895326507655.cpp
+      AssetType: Script
+      Name: OnCurrentSessionInit
       SectionLabel: None
       ScriptType: Global
       Parameters:
@@ -74,12 +62,12 @@ Assets:
         - UInteger16
       ReturnValue: Void
       FunctionType: Void_UInt16
-  - AssetHandle: 14683932765512752045
+  - AssetHandle: 1819971799574496652
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/14683932765512752045.cpp
+      IntermediateLocation: Scripting/1819971799574496652.cpp
       AssetType: Script
-      Name: OpenMainMenu
+      Name: OnStartSession
       SectionLabel: None
       ScriptType: Global
       Parameters:
@@ -92,6 +80,18 @@ Assets:
       IntermediateLocation: Scripting/4342390925410131221.cpp
       AssetType: Script
       Name: OnConnectionTerminated
+      SectionLabel: None
+      ScriptType: Global
+      Parameters:
+        []
+      ReturnValue: Void
+      FunctionType: Void_None
+  - AssetHandle: 14683932765512752045
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/14683932765512752045.cpp
+      AssetType: Script
+      Name: OpenMainMenu
       SectionLabel: None
       ScriptType: Global
       Parameters:

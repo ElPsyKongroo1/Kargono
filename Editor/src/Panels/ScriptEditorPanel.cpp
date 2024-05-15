@@ -327,6 +327,7 @@ namespace Kargono
 	}
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Scripts", &s_EditorLayer->m_ShowScriptEditor);
 
 		EditorUI::Editor::Table(s_AllScriptsTable);
