@@ -14,6 +14,7 @@ namespace Kargono
 	}
 	void ToolbarPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));

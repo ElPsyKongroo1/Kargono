@@ -184,6 +184,83 @@ namespace Kargono::EditorUI
 		s_UserInterfaceIcon = Texture2D::CreateEditorTexture(Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/user_interface_icon.png");
 		s_InputIcon = Texture2D::CreateEditorTexture(Application::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/input_icon.png");
 
+		s_SmallEditButton = {
+				390.0f,
+				0.0f,
+				13.0f,
+				EditorUI::Editor::s_IconEdit_Active,
+				EditorUI::Editor::s_IconEdit,
+				"Cancel Editing",
+				"Edit",
+				PositionType::Absolute
+		};
+
+		s_SmallExpandButton = {
+				-1.2f,
+				4.0f,
+				14.0f,
+				EditorUI::Editor::s_IconDown,
+				EditorUI::Editor::s_IconRight,
+				"Collapse",
+				"Expand",
+				PositionType::Inline
+		};
+
+		s_SmallOptionsButton = {
+				386.0f,
+				1.0f,
+				19.0f,
+				EditorUI::Editor::s_IconOptions,
+				EditorUI::Editor::s_IconOptions,
+				"Options",
+				"Options",
+				PositionType::Absolute
+		};
+
+		s_LargeDeleteButton = {
+				-112.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::Editor::s_IconDeleteActive,
+				EditorUI::Editor::s_IconDeleteActive,
+				"Delete",
+				"Delete",
+				PositionType::Relative
+		};
+
+		s_LargeCancelButton = {
+				-75.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::Editor::s_IconCancel,
+				EditorUI::Editor::s_IconCancel,
+				"Cancel",
+				"Cancel",
+				PositionType::Relative
+		};
+
+		s_LargeConfirmButton = {
+				-38.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::Editor::s_IconConfirm,
+				EditorUI::Editor::s_IconConfirm,
+				"Confirm",
+				"Confirm",
+				PositionType::Relative
+		};
+
+		s_LargeSearchButton = {
+				-112.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::Editor::s_IconSearch,
+				EditorUI::Editor::s_IconSearch,
+				"Cancel Search",
+				"Search",
+				PositionType::Relative
+		};
+
 		s_Running = true;
 	}
 
@@ -249,7 +326,6 @@ namespace Kargono::EditorUI
 			e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
 			e.Handled |= e.IsInCategory(Events::Keyboard) & io.WantCaptureKeyboard;
 		}
-
 	}
 
 	uint32_t WidgetIterator(uint32_t& count)
@@ -328,151 +404,50 @@ namespace Kargono::EditorUI
 		return returnList;
 	}
 
-	void CreateEditButton(ImGuiID widgetID, std::function<void()> pressFunction, bool editingActive = false)
+	void CreateInlineButton(ImGuiID widgetID, std::function<void()> onPress, const InlineButtonSpec& spec, bool active = false)
 	{
-		ImGui::SameLine(390.0f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 0.0f);
+		switch (spec.XPositionType)
+		{
+			case PositionType::Inline:
+			{
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + spec.XPosition);
+				break;
+			}
+			case PositionType::Absolute:
+			{
+				ImGui::SetCursorPosX(spec.XPosition);
+				break;
+			}
+			case PositionType::Relative:
+			{
+				ImGui::SetCursorPosX(ImGui::GetWindowWidth() + spec.XPosition);
+				break;
+			}
+			default:
+			{
+				break;	
+			}
+		}
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spec.YPosition);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		Ref<Texture2D> iconChoice = editingActive ? EditorUI::Editor::s_IconEdit_Active : EditorUI::Editor::s_IconEdit;
+		Ref<Texture2D> iconChoice = active ? spec.ActiveIcon : spec.InactiveIcon;
 		if (ImGui::ImageButtonEx(widgetID,
 			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-			ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			ImVec2(spec.IconSize, spec.IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
 			EditorUI::Editor::s_PureWhite, 0))
 		{
-			pressFunction();
+			onPress();
 		}
 		ImGui::PopStyleColor();
 
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, editingActive ? "Cancel Editing" : "Edit");
+			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, active ? spec.ActiveTooltip.c_str() : spec.InactiveTooltip.c_str());
 			ImGui::EndTooltip();
 		}
-	}
-
-	void CreateToggleExpandButton(ImGuiID widgetID, std::function<void()> openFunction, bool listOpen = false)
-	{
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		Ref<Texture2D> iconChoice = listOpen ? EditorUI::Editor::s_IconDown : EditorUI::Editor::s_IconRight;
-		if (ImGui::ImageButtonEx(widgetID,
-			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-			EditorUI::Editor::s_PureWhite, 0))
-		{
-			openFunction();
-		}
-		ImGui::PopStyleColor();
-
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, listOpen ? "Collapse" : "Expand");
-			ImGui::EndTooltip();
-		}
-	}
-
-	void CreateOptionsButton(ImGuiID widgetID, std::function<void()> pressFunction, float iconSize = 25, float offset = 380.0f, float yOffset = 0.0f)
-	{
-		ImGui::SameLine(offset);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		Ref<Texture2D> iconChoice = EditorUI::Editor::s_IconOptions;
-		if (ImGui::ImageButtonEx(widgetID,
-			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-			ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-			EditorUI::Editor::s_PureWhite, 0))
-		{
-			pressFunction();
-		}
-		ImGui::PopStyleColor();
-
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Options");
-			ImGui::EndTooltip();
-		}
-	}
-
-	void CreatePopupDeleteButton(ImGuiID widgetID, std::function<void()> pressFunction = nullptr)
-	{
-		ImGui::SameLine(ImGui::GetWindowWidth() - 112.0f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -0.6f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButtonEx(widgetID, (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDeleteActive->GetRendererID(), ImVec2(28, 28),
-			ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-			EditorUI::Editor::s_PureWhite, 0))
-		{
-			if (pressFunction)
-			{
-				pressFunction();
-			}
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::PopStyleColor();
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Delete");
-			ImGui::EndTooltip();
-		}
-
-	}
-
-	void CreatePopupCancelButton(ImGuiID widgetID, std::function<void()> pressFunction = nullptr)
-	{
-		ImGui::SameLine(ImGui::GetWindowWidth() - 75.0f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -0.6f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButtonEx(widgetID, (ImTextureID)(uint64_t)EditorUI::Editor::s_IconCancel->GetRendererID(), ImVec2(28, 28),
-			ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-			EditorUI::Editor::s_PureWhite, 0))
-		{
-			if (pressFunction)
-			{
-				pressFunction();
-			}
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::PopStyleColor();
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Cancel");
-			ImGui::EndTooltip();
-		}
-
-	}
-
-	void CreatePopupConfirmButton(ImGuiID widgetID, std::function<void()> pressFunction)
-	{
-		ImGui::SameLine(ImGui::GetWindowWidth() - 38);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -0.6f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButtonEx(widgetID,
-			(ImTextureID)(uint64_t)EditorUI::Editor::s_IconConfirm->GetRendererID(),
-			ImVec2(28, 28), ImVec2{ 0, 1 },
-			ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-			EditorUI::Editor::s_PureWhite, 0))
-		{
-			if (pressFunction)
-			{
-				pressFunction();
-			}
-
-			ImGui::CloseCurrentPopup();
-		}
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Confirm");
-			ImGui::EndTooltip();
-		}
-		ImGui::PopStyleColor();
 	}
 
 	void WriteMultilineText(const std::string& text, const float leftHandOffset, const uint32_t charPerLine)
@@ -550,16 +525,34 @@ namespace Kargono::EditorUI
 			if (spec.DeleteAction)
 			{
 				// Optional Delete Tool Bar Button
-				CreatePopupDeleteButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-					spec.DeleteAction);
+				ImGui::SameLine();
+				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				{
+					if (spec.DeleteAction)
+					{
+						spec.DeleteAction();
+					}
+					ImGui::CloseCurrentPopup();
+				}, s_LargeDeleteButton);
 			}
 
 			// Cancel Tool Bar Button
-			CreatePopupCancelButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)));
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				ImGui::CloseCurrentPopup();
+			}, s_LargeCancelButton);
 
 			// Confirm Tool Bar Button
-			CreatePopupConfirmButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				spec.ConfirmAction);
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+				ImGui::CloseCurrentPopup();
+			}, s_LargeConfirmButton);
 
 			ImGui::Separator();
 
@@ -642,7 +635,8 @@ namespace Kargono::EditorUI
 			WriteMultilineText(spec.CurrentOption.Label, 200.0f, 23);
 			ImGui::PopStyleColor();
 
-			std::function<void()> editButtonOnPress = [&]()
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				ImGui::OpenPopup(id.c_str());
 				if (spec.PopupAction)
@@ -650,9 +644,8 @@ namespace Kargono::EditorUI
 					spec.PopupAction(spec);
 				}
 				spec.CachedSelection = spec.CurrentOption;
-			};
-
-			CreateEditButton(spec.WidgetID + WidgetIterator(widgetCount), editButtonOnPress);
+			},
+			Editor::s_SmallEditButton);
 
 		}
 		
@@ -682,11 +675,9 @@ namespace Kargono::EditorUI
 				ImGui::InputText((id + "InputText").c_str(), searchBuffer, sizeof(searchBuffer), ImGuiInputTextFlags_CallbackEdit, callback, (void*)&spec);
 			}
 
-			ImGui::SameLine(ImGui::GetWindowWidth() - 112.0f);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -0.6f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconSearch->GetRendererID(), ImVec2(28, 28),
-				ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), s_PureWhite, 0))
+			// Search Tool Bar Button
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.Searching)
 				{
@@ -697,27 +688,20 @@ namespace Kargono::EditorUI
 					spec.Searching = true;
 					spec.CachedSearchResults = GenerateRegexCache(spec.ActiveOptions, searchBuffer);
 				}
-			}
-			ImGui::PopStyleColor();
-			if (ImGui::IsItemHovered())
-			{
-				const char* searchTooltip = spec.Searching ? "Cancel Search" : "Search";
-				ImGui::BeginTooltip();
-				ImGui::TextColored(s_PearlBlue, searchTooltip);
-				ImGui::EndTooltip();
-			}
+			}, s_LargeSearchButton, spec.Searching);
 
 			// Cancel Tool Bar Button
-			std::function<void()> cancelButtonOnPress = [&]()
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.Searching = false;
 				memset(searchBuffer, 0, sizeof(searchBuffer));
-			};
-			CreatePopupCancelButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				cancelButtonOnPress);
+				ImGui::CloseCurrentPopup();
+			}, s_LargeCancelButton);
 
 			// Confirm Tool Bar Button
-			std::function<void()> confirmButtonOnPress = [&]()
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.CurrentOption = spec.CachedSelection;
 				if (spec.ConfirmAction)
@@ -727,9 +711,8 @@ namespace Kargono::EditorUI
 
 				spec.Searching = false;
 				memset(searchBuffer, 0, sizeof(searchBuffer));
-			};
-			CreatePopupConfirmButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				confirmButtonOnPress);
+				ImGui::CloseCurrentPopup();
+			}, s_LargeConfirmButton);
 
 			ImGui::Separator();
 
@@ -815,8 +798,6 @@ namespace Kargono::EditorUI
 			ImGui::Text(spec.Label.c_str());
 			ImGui::SameLine(360.0f);
 		}
-		//ImGui::TextColored(s_PureWhite, spec.Label.c_str());
-		//ImGui::SameLine(ImGui::GetWindowWidth() - 52 - 14);
 
 		if (spec.Editing)
 		{
@@ -853,13 +834,13 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::PopStyleColor(2);
-
-		std::function<void()> editButtonOnPress = [&]()
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
-		};
-		CreateEditButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), 
-			editButtonOnPress, spec.Editing);
+		},
+		Editor::s_SmallEditButton,
+		spec.Editing);
 	}
 
 	void Editor::RadioSelector(RadioSelectorSpec& spec)
@@ -948,13 +929,13 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::PopStyleColor(2);
-
-		std::function<void()> editButtonOnPress = [&]()
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
-		};
-		CreateEditButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-			editButtonOnPress, spec.Editing);
+		},
+		Editor::s_SmallEditButton,
+		spec.Editing);
 	}
 
 	void Editor::Table(TableSpec& spec)
@@ -965,22 +946,23 @@ namespace Kargono::EditorUI
 		TruncateText(spec.Label, 40);
 		ImGui::PopFont();
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 1.2f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4.0f);
-		CreateToggleExpandButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), [&]()
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
-		}, spec.Expanded);
+		}, 
+		s_SmallExpandButton ,spec.Expanded);
 		
 		if (spec.Expanded)
 		{
 			if (!spec.EditTableSelectionList.empty())
 			{
-				CreateOptionsButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), [&]()
-					{
-						ImGui::OpenPopup(static_cast<ImGuiID>(spec.WidgetID - 1));
-					}, 19, 386.0f, 1.0f);
-				if (ImGui::BeginPopupEx(static_cast<ImGuiID>(spec.WidgetID - 1), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
+				ImGui::SameLine();
+				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				{
+					ImGui::OpenPopup(spec.WidgetID - 1);
+				}, s_SmallOptionsButton);
+
+				if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 				{
 					for (auto& [label, func] : spec.EditTableSelectionList)
 					{
@@ -1025,14 +1007,15 @@ namespace Kargono::EditorUI
 				ImGui::PopStyleColor();
 				if (tableEntry.OnEdit)
 				{
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.2f);
-					CreateEditButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), [&]()
+					ImGui::SameLine();
+					CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+					{
+						if (tableEntry.OnEdit)
 						{
-							if (tableEntry.OnEdit)
-							{
-								tableEntry.OnEdit(tableEntry);
-							}
-						});
+							tableEntry.OnEdit(tableEntry);
+						}
+					},
+					Editor::s_SmallEditButton);
 				}
 			}
 		}
@@ -1044,11 +1027,13 @@ namespace Kargono::EditorUI
 		ImGui::PushFont(Editor::s_AntaLarge);
 		ImGui::TextColored(spec.EditColorActive ? Editor::s_PearlBlue : Editor::s_PureWhite , spec.Label.c_str());
 		ImGui::PopFont();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -10.0f);
-		CreateOptionsButton(spec.WidgetID, [&]()
+		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -10.0f);
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID, [&]()
 		{
 			ImGui::OpenPopup(id.c_str());
-		}, 19, 386, 1.0f);
+		}, s_SmallOptionsButton);
+		
 		if (ImGui::BeginPopup(id.c_str()))
 		{
 			for (auto& [label, func] : spec.GetSelectionList())
@@ -1071,12 +1056,12 @@ namespace Kargono::EditorUI
 		ImGui::Text(spec.Label.c_str());
 		ImGui::PopFont();
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 1.2f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4.0f);
-		CreateToggleExpandButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), [&]()
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
-		}, spec.Expanded);
+		},
+		s_SmallExpandButton, spec.Expanded);
+
 		if (spec.Expanded && spec.OnExpand)
 		{
 			spec.OnExpand();
@@ -1121,13 +1106,14 @@ namespace Kargono::EditorUI
 			WriteMultilineText(spec.CurrentOption, 200.0f, 23);
 			ImGui::PopStyleColor();
 
-			std::function<void()> editButtonOnPress = [&]()
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount),[&]()
 			{
 				ImGui::OpenPopup(id.c_str());
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				memcpy_s(stringBuffer, sizeof(stringBuffer), spec.CurrentOption.data(), spec.CurrentOption.size());
-			};
-			CreateEditButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)), editButtonOnPress);
+			},
+			Editor::s_SmallEditButton);
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
@@ -1138,15 +1124,16 @@ namespace Kargono::EditorUI
 			ImGui::PushFont(EditorUI::Editor::s_AntaRegular);
 
 			// Cancel Tool Bar Button
-			std::function<void()> cancelButtonOnPress = [&]()
-				{
-					memset(stringBuffer, 0, sizeof(stringBuffer));
-				};
-			CreatePopupCancelButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				cancelButtonOnPress);
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				memset(stringBuffer, 0, sizeof(stringBuffer));
+				ImGui::CloseCurrentPopup();
+			}, s_LargeCancelButton);
 
 			// Confirm Tool Bar Button
-			std::function<void()> confirmButtonOnPress = [&]()
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.CurrentOption = std::string(stringBuffer);
 				if (spec.ConfirmAction)
@@ -1154,9 +1141,9 @@ namespace Kargono::EditorUI
 					spec.ConfirmAction(stringBuffer);
 				}
 				memset(stringBuffer, 0, sizeof(stringBuffer));
-			};
-			CreatePopupConfirmButton(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				confirmButtonOnPress);
+				ImGui::CloseCurrentPopup();
+			}, s_LargeConfirmButton);
+
 			ImGui::SetNextItemWidth(583.0f);
 			ImGui::InputText((id + "InputText").c_str(), stringBuffer, sizeof(stringBuffer));
 			ImGui::PopFont();

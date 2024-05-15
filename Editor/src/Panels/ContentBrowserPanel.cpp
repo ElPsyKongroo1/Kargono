@@ -60,6 +60,7 @@ namespace Kargono
 
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
 
 		static std::filesystem::path s_LongestRecentPath {};

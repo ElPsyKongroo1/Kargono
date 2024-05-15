@@ -108,6 +108,7 @@ namespace Kargono
 	}
 	void TextEditorPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		ImGuiWindowFlags flags = 0;
 		if (s_AllDocuments.size() != 0)
 		{

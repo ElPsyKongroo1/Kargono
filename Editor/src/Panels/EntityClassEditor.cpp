@@ -532,6 +532,7 @@ namespace Kargono
 	}
 	void EntityClassEditor::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Class Editor", &s_EditorLayer->m_ShowClassEditor);
 
 		if (!s_EditorEntityClass)
