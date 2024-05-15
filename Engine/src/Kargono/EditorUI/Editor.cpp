@@ -124,6 +124,7 @@ namespace Kargono::EditorUI
 		s_RobotoMono = io.Fonts->AddFontFromFileTTF("resources/fonts/RobotoMono-SemiBold.ttf", 17.0f);
 		s_AnonymousRegular = io.Fonts->AddFontFromFileTTF("resources/fonts/AnonymousPro-Regular.ttf", 16.0f);
 		io.FontDefault = s_RobotoMono;
+
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
