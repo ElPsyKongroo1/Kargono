@@ -51,6 +51,7 @@ namespace Kargono
 	}
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Scene Hierarchy", &s_EditorLayer->m_ShowSceneHierarchy);
 
 		if (Scene::GetActiveScene())

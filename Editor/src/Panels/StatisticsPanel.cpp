@@ -13,6 +13,7 @@ namespace Kargono
 	}
 	void StatisticsPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Statistics", &s_EditorLayer->m_ShowStats);
 
 		ImGui::Text("Scene");

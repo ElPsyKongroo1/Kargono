@@ -633,6 +633,7 @@ namespace Kargono
 
 	void InputEditorPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Input Mode Editor", &(s_EditorLayer->m_ShowInputEditor));
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))

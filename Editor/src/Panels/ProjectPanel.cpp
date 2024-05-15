@@ -480,6 +480,7 @@ namespace Kargono
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Project", &s_EditorLayer->m_ShowProject);
 		// Project Name
 		EditorUI::Editor::LabeledText("Project Name", Projects::Project::GetProjectName());

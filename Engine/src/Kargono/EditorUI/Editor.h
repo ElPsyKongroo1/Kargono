@@ -47,6 +47,27 @@ namespace Kargono::EditorUI
 		Large
 	};
 
+	enum class PositionType
+	{
+		None = 0,
+		Absolute,
+		Relative,
+		Inline
+	};
+
+	struct InlineButtonSpec
+	{
+	public:
+		float XPosition {0.0f};
+		float YPosition {0.0f};
+		float IconSize{ 0.0f };
+		Ref<Texture2D> ActiveIcon { nullptr };
+		Ref<Texture2D> InactiveIcon { nullptr };
+		std::string ActiveTooltip {};
+		std::string InactiveTooltip{};
+		PositionType XPositionType{ PositionType::Inline };
+	};
+
 	class Editor
 	{
 	public:
@@ -121,6 +142,14 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
+
+		inline static InlineButtonSpec s_SmallEditButton;
+		inline static InlineButtonSpec s_SmallExpandButton;
+		inline static InlineButtonSpec s_SmallOptionsButton;
+		inline static InlineButtonSpec s_LargeDeleteButton;
+		inline static InlineButtonSpec s_LargeCancelButton;
+		inline static InlineButtonSpec s_LargeConfirmButton;
+		inline static InlineButtonSpec s_LargeSearchButton;
 	private:
 		// Internal Data
 		inline static bool s_BlockEvents = true;

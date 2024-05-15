@@ -65,7 +65,7 @@ namespace Kargono
 				return;
 			}
 
-			const Assets::Asset asset = Assets::AssetManager::GetEntityClassRegistry().at(selection.Handle);
+			const Assets::Asset asset = Assets::AssetManager::GetGameStateRegistry().at(selection.Handle);
 			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(asset.Handle);
 			s_GameStatePanel->m_EditorGameStateHandle = asset.Handle;
 			s_MainHeader.EditColorActive = false;
@@ -341,6 +341,7 @@ namespace Kargono
 	}
 	void GameStatePanel::OnEditorUIRender()
 	{
+		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow("Game State Editor", &s_EditorLayer->m_ShowGameStateEditor);
 
 		if (!m_EditorGameState)
