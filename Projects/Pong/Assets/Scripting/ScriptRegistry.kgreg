@@ -74,12 +74,12 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
-  - AssetHandle: 15663041083782351750
+  - AssetHandle: 1058797724736767605
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/15663041083782351750.cpp
+      IntermediateLocation: Scripting/1058797724736767605.cpp
       AssetType: Script
-      Name: hgfd
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_String
+      Name: Scriptyyy
+      SectionLabel: Player1
+      ScriptType: Class
+      FunctionType: Void_UInt64

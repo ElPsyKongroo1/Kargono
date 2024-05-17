@@ -102,7 +102,7 @@ namespace Kargono::EditorUI
 	static InlineButtonSpec s_TableEditButton {};
 	static InlineButtonSpec s_TableLinkButton {};
 
-	void InitializeTableResources()
+	static void InitializeTableResources()
 	{
 		s_TableEditButton = Editor::s_SmallEditButton;
 		s_TableEditButton.YPosition = -3.5f;
@@ -414,18 +414,15 @@ namespace Kargono::EditorUI
 		ImGui::Separator();
 	}
 
-	OptionList GenerateRegexCache(OptionList& originalList, std::string regexQuery)
+	static OptionList GenerateSearchCache(OptionList& originalList, const std::string& searchQuery)
 	{
-		std::regex searchQuery {"(" + regexQuery + ")"};
-		std::smatch matches;
 		OptionList returnList{};
-
 		for (auto& [title, options] : originalList)
 		{
 			std::vector<OptionEntry> returnOptions {};
 			for (auto& option : options)
 			{
-				if (!std::regex_search(option.Label, matches, searchQuery))
+				if (!Utility::Regex::GetMatchSuccess(option.Label, searchQuery, false))
 				{
 					continue;
 				}
@@ -436,11 +433,10 @@ namespace Kargono::EditorUI
 				returnList.insert_or_assign(title, returnOptions);
 			}
 		}
-
 		return returnList;
 	}
 
-	void CreateImage(Ref<Texture2D> image, float size)
+	static void CreateImage(Ref<Texture2D> image, float size)
 	{
 		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
 		ImGui::Image((ImTextureID)(uint64_t)image->GetRendererID(), ImVec2(size, size),
@@ -453,7 +449,7 @@ namespace Kargono::EditorUI
 		return 390.0f - (22.0f * slot);
 	}
 
-	void CreateInlineButton(ImGuiID widgetID, std::function<void()> onPress, const InlineButtonSpec& spec, bool active = false)
+	static void CreateInlineButton(ImGuiID widgetID, std::function<void()> onPress, const InlineButtonSpec& spec, bool active = false)
 	{
 		switch (spec.XPositionType)
 		{
@@ -499,7 +495,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void WriteMultilineText(const std::string& text, float leftHandOffset, const uint32_t charPerLine, float yOffset = 0)
+	static void WriteMultilineText(const std::string& text, float leftHandOffset, const uint32_t charPerLine, float yOffset = 0)
 	{
 		std::string previewOutput{};
 		std::string previewRemainder{ text };
@@ -529,7 +525,7 @@ namespace Kargono::EditorUI
 		} while (!previewRemainder.empty());
 	}
 
-	void TruncateText(const std::string& text, uint32_t maxTextSize)
+	static void TruncateText(const std::string& text, uint32_t maxTextSize)
 	{
 		if (text.size() > maxTextSize)
 		{
@@ -718,7 +714,7 @@ namespace Kargono::EditorUI
 				{
 					std::string currentData = std::string(data->Buf);
 					SelectOptionSpec* providedSpec = (SelectOptionSpec*)data->UserData;
-					providedSpec->CachedSearchResults = GenerateRegexCache(providedSpec->GetAllOptions(), currentData);
+					providedSpec->CachedSearchResults = GenerateSearchCache(providedSpec->GetAllOptions(), currentData);
 					return 0;
 				};
 
@@ -736,7 +732,7 @@ namespace Kargono::EditorUI
 				else
 				{
 					spec.Searching = true;
-					spec.CachedSearchResults = GenerateRegexCache(spec.ActiveOptions, searchBuffer);
+					spec.CachedSearchResults = GenerateSearchCache(spec.ActiveOptions, searchBuffer);
 				}
 			}, s_LargeSearchButton, spec.Searching);
 

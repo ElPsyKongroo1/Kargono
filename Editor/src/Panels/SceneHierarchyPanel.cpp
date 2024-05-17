@@ -25,6 +25,19 @@ namespace Kargono
 	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
 	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
 
+	// Class Instance Component
+	static EditorUI::CollapsingHeaderSpec s_ClassInstanceHeader{};
+
+	static void InitializeClassInstanceComponent()
+	{
+		s_ClassInstanceHeader.Label = "Class Instance";
+		s_ClassInstanceHeader.Expanded = true;
+		s_ClassInstanceHeader.OnExpand = [&]()
+		{
+			EditorUI::Editor::TitleText("HAHAHHA BRUHHHHH");
+		};
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		s_EditorLayer = EditorLayer::GetCurrentLayer();
@@ -46,6 +59,8 @@ namespace Kargono
 
 		// Set Shape Add Fixed Rotation Option
 		s_RigidBodyFixedRotSpec.Label = "Use Fixed Rotation";
+
+		InitializeClassInstanceComponent();
 
 
 	}
@@ -284,6 +299,8 @@ namespace Kargono
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
+
+			DisplayAddComponentEntry<ClassInstanceComponent>("Class Instance");
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<ScriptComponent>("Script");
 			DisplayAddComponentEntry<ShapeComponent>("Shape");
@@ -358,6 +375,11 @@ namespace Kargono
 					if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
 				}
 			});
+
+		if (entity.HasComponent<ClassInstanceComponent>())
+		{
+			EditorUI::Editor::CollapsingHeader(s_ClassInstanceHeader);
+		}
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
 		{
