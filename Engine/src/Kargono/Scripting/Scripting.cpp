@@ -400,15 +400,18 @@ namespace Kargono::Scripting
 		// Add Script Function Declarations
 		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
 		{
+			WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
+			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
+
 			outputStream << "\t\tKARGONO_API ";
-			outputStream << Utility::WrappedVarTypeToCPPString(script->m_ReturnValue) << " KG_FUNC_" << handle << "(";
+			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " KG_FUNC_" << handle << "(";
 
 			// Write out parameters into function signature
 			char letterIteration{ 'a' };
-			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < script->m_Parameters.size(); iteration++)
+			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameters.size(); iteration++)
 			{
-				outputStream << Utility::WrappedVarTypeToCPPString(script->m_Parameters.at(iteration)) << " " << letterIteration;
-				if (iteration != script->m_Parameters.size() - 1)
+				outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
+				if (iteration != parameters.size() - 1)
 				{
 					outputStream << ',';
 				}

@@ -1,4 +1,5 @@
 #pragma once
+#include "Kargono.h"
 
 namespace Kargono
 {
@@ -8,6 +9,9 @@ namespace Kargono
 		EntityClassEditor();
 
 		void OnEditorUIRender();
+
+	public:
+		void RefreshEntityScripts(Assets::AssetHandle handle);
 
 	};
 }

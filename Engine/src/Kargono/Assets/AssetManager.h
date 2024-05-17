@@ -757,8 +757,6 @@ namespace Kargono::Assets
 			std::string Name {};
 			Scripting::ScriptType Type {Scripting::ScriptType::None };
 			std::string SectionLabel {};
-			std::vector<WrappedVarType> Parameters {};
-			WrappedVarType ReturnType { WrappedVarType::None };
 			WrappedFuncType FunctionType{ WrappedFuncType::None };
 		};
 		// This function registers a new Script with the asset system using the provided filepath.

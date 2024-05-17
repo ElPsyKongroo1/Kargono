@@ -132,6 +132,8 @@ namespace Kargono::Physics
 			transform.Translation.x = position.x;
 			transform.Translation.y = position.y;
 			transform.Rotation.z = body->GetAngle();
+			// TODO FOR DEBUGGING
+			KG_ASSERT(!std::isnan(position.x) && !std::isnan(position.y) && !std::isnan(body->GetAngle()));
 		}
 		
 	}
