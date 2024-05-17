@@ -65,10 +65,11 @@ namespace Kargono
 				return;
 			}
 
-			const Assets::Asset asset = Assets::AssetManager::GetGameStateRegistry().at(selection.Handle);
-			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(asset.Handle);
-			s_GameStatePanel->m_EditorGameStateHandle = asset.Handle;
+			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(selection.Handle);
+			s_GameStatePanel->m_EditorGameStateHandle = selection.Handle;
 			s_MainHeader.EditColorActive = false;
+			s_MainHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
 
@@ -98,6 +99,8 @@ namespace Kargono
 			s_GameStatePanel->m_EditorGameStateHandle = Assets::AssetManager::CreateNewGameState(s_SelectClassNameSpec.CurrentOption);
 			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
 			s_MainHeader.EditColorActive = false;
+			s_MainHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
@@ -352,7 +355,6 @@ namespace Kargono
 		}
 		else
 		{
-			s_MainHeader.Label = m_EditorGameState->GetName();
 			EditorUI::Editor::SelectorHeader(s_MainHeader);
 			EditorUI::Editor::GenericPopup(s_DeleteEntityClassWarning);
 			EditorUI::Editor::GenericPopup(s_CloseEntityClassWarning);

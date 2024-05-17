@@ -183,8 +183,6 @@ namespace Kargono::Assets
 		std::string Name{};
 		Scripting::ScriptType ScriptType {Scripting::ScriptType::None };
 		std::string SectionLabel{};
-		std::vector<WrappedVarType> Parameters{};
-		WrappedVarType ReturnValue{};
 		WrappedFuncType FunctionType{};
 	};
 

@@ -49,11 +49,30 @@ namespace Kargono
 			{
 				std::string scriptType = script->m_ScriptType == Scripting::ScriptType::Class ? "Class" : "Global";
 				std::string label = scriptType + std::string("::") + script->m_SectionLabel;
-				s_AllScriptsTable.InsertTableEntry(label, script->m_ScriptName, [&](EditorUI::TableEntry& entry)
+				auto onEdit = [&](EditorUI::TableEntry& entry)
 				{
 					s_ActiveScriptHandle = entry.Handle;
 					s_EditScriptPopup.PopupActive = true;
-				}, handle);
+				};
+				auto onLink = [&](EditorUI::TableEntry& entry)
+				{
+					if (!Assets::AssetManager::GetScriptRegistryMap().contains(entry.Handle))
+					{
+						KG_WARN("Unable to open script in text editor. Script does not exist in registry");
+						return;
+					}
+					Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
+					s_EditorLayer->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+				};
+				EditorUI::TableEntry newEntry
+				{
+					label,
+					script->m_ScriptName,
+					handle,
+					onEdit,
+					onLink
+				};
+				s_AllScriptsTable.InsertTableEntry(newEntry);
 			}
 		};
 		s_AllScriptsTable.OnRefresh();
@@ -64,6 +83,8 @@ namespace Kargono
 		{
 			s_CreateScriptName.CurrentOption = "Empty";
 			s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
+			s_CreateScriptType.SelectedOption = 1;
+			s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 		s_CreateScriptPopup.PopupContents = [&]()
 		{
@@ -79,13 +100,24 @@ namespace Kargono
 			spec.Type = s_CreateScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_CreateScriptSectionLabel.CurrentOption.Label;
 			spec.FunctionType = Utility::StringToWrappedFuncType(s_CreateScriptFuncType.CurrentOption.Label);
-			spec.Parameters = Utility::WrappedFuncTypeToParameterTypes(spec.FunctionType);
-			spec.ReturnType = Utility::WrappedFuncTypeToReturnType(spec.FunctionType);
 			auto [handle, successful] = Assets::AssetManager::CreateNewScript(spec);
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
 			}
+
+			if (spec.Type == Scripting::ScriptType::Class)
+			{
+				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				{
+					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+					{
+						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						break;
+					}
+				}
+			}
+
 			s_AllScriptsTable.OnRefresh();
 		};
 
@@ -109,7 +141,18 @@ namespace Kargono
 		s_CreateScriptType.SecondOptionLabel = "Global";
 		s_CreateScriptType.SelectAction = [&](uint16_t option)
 		{
-			s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+			if (option == 0)
+			{
+				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
+				{
+					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
+					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
+				}
+			}
+			else
+			{
+				s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+			}
 			s_CreateScriptSectionLabel.PopupAction(s_CreateScriptSectionLabel);
 		};
 
@@ -120,7 +163,7 @@ namespace Kargono
 			if (s_CreateScriptType.SelectedOption == 0)
 			{
 				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
 					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
@@ -144,7 +187,7 @@ namespace Kargono
 		{
 			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
 			s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(
-				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_Function->Type());
+				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType);
 			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
 				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
 			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
@@ -162,18 +205,37 @@ namespace Kargono
 		};
 		s_EditScriptPopup.ConfirmAction = [&]()
 		{
+			Ref<Scripting::Script> script = Assets::AssetManager::GetScript(s_ActiveScriptHandle);
+			if (!script)
+			{
+				KG_WARN("No script pointer available from asset manager when editing script in script editor");
+				return;
+			}
+			Scripting::ScriptType originalType = script->m_ScriptType;
+			std::string originalLabel = script->m_SectionLabel;
 			Assets::AssetManager::ScriptSpec spec {};
 			spec.Name = s_EditScriptName.CurrentOption;
 			spec.Type = s_EditScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_EditScriptSectionLabel.CurrentOption.Label;
 			spec.FunctionType = Utility::StringToWrappedFuncType(s_EditScriptFuncType.CurrentOption.Label);
-			spec.Parameters = Utility::WrappedFuncTypeToParameterTypes(spec.FunctionType);
-			spec.ReturnType = Utility::WrappedFuncTypeToReturnType(spec.FunctionType);
 			auto successful = Assets::AssetManager::UpdateScript(s_ActiveScriptHandle, spec);
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
 			}
+			if (spec.Type == Scripting::ScriptType::Class || originalType == Scripting::ScriptType::Class)
+			{
+				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				{
+					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
+						|| asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == originalLabel)
+					{
+						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						break;
+					}
+				}
+			}
+
 			s_AllScriptsTable.OnRefresh();
 		};
 
@@ -184,11 +246,29 @@ namespace Kargono
 		};
 		s_DeleteScriptWarning.ConfirmAction = [&]()
 		{
+			Ref<Scripting::Script> script = Assets::AssetManager::GetScript(s_ActiveScriptHandle);
+			Scripting::ScriptType type = script->m_ScriptType;
+			std::string sectionLabel = script->m_SectionLabel;
+
 			bool success = Assets::AssetManager::DeleteScript(s_ActiveScriptHandle);
 			if (!success)
 			{
 				KG_WARN("Unable to delete script!");
+				return;
 			}
+
+			if (type == Scripting::ScriptType::Class)
+			{
+				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				{
+					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == sectionLabel)
+					{
+						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						break;
+					}
+				}
+			}
+
 			s_AllScriptsTable.OnRefresh();
 		};
 
@@ -214,7 +294,18 @@ namespace Kargono
 		s_EditScriptType.SecondOptionLabel = "Global";
 		s_EditScriptType.SelectAction = [&](uint16_t option)
 		{
-			s_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+			if (option == 0)
+			{
+				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
+				{
+					s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
+					s_EditScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
+				}
+			}
+			else
+			{
+				s_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+			}
 			s_EditScriptSectionLabel.PopupAction(s_EditScriptSectionLabel);
 		};
 
@@ -225,7 +316,7 @@ namespace Kargono
 			if (s_EditScriptType.SelectedOption == 0)
 			{
 				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
 					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,

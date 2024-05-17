@@ -98,9 +98,10 @@ namespace Kargono
 				return;
 			}
 
-			Assets::Asset asset = Assets::AssetManager::GetEntityClassRegistry().at(selection.Handle);
-			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(asset.Handle);
-			s_EditorEntityClassHandle = asset.Handle;
+			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(selection.Handle);
+			s_EditorEntityClassHandle = selection.Handle;
+			s_MainHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+				selection.Handle).Data.IntermediateLocation.string();
 			s_MainHeader.EditColorActive = false;
 			s_OnRefreshData();
 		};
@@ -131,6 +132,8 @@ namespace Kargono
 			s_EditorEntityClassHandle = Assets::AssetManager::CreateNewEntityClass(s_SelectClassNameSpec.CurrentOption);
 			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(s_EditorEntityClassHandle);
 			s_MainHeader.EditColorActive = false;
+			s_MainHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+				s_EditorEntityClassHandle).Data.IntermediateLocation.string();
 			s_OnRefreshData();
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
@@ -511,9 +514,26 @@ namespace Kargono
 						continue;
 					}
 
-					s_AllScriptsTableSpec.InsertTableEntry(currentScript->m_ScriptName,
-						scriptHandle,
-						nullptr);
+					auto onLink = [&](EditorUI::TableEntry& entry)
+					{
+						if (!Assets::AssetManager::GetScriptRegistryMap().contains(entry.Handle))
+						{
+							KG_WARN("Unable to open script in text editor. Script does not exist in registry");
+							return;
+						}
+						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
+						s_EditorLayer->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+					};
+
+					EditorUI::TableEntry newEntry
+					{
+						currentScript->m_ScriptName,
+							scriptHandle,
+							scriptHandle,
+							nullptr,
+							onLink
+					};
+					s_AllScriptsTableSpec.InsertTableEntry(newEntry);
 				}
 			}
 		};
@@ -543,7 +563,6 @@ namespace Kargono
 		}
 		else
 		{
-			s_MainHeader.Label = s_EditorEntityClass->GetName();
 			EditorUI::Editor::SelectorHeader(s_MainHeader);
 			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
 			EditorUI::Editor::GenericPopup(s_DeleteEntityClassWarning);
@@ -575,5 +594,23 @@ namespace Kargono
 			EditorUI::Editor::GenericPopup(s_EditFieldPopup);
 		}
 		EditorUI::Editor::EndWindow();
+	}
+	void EntityClassEditor::RefreshEntityScripts(Assets::AssetHandle handle)
+	{
+		if (s_EditorEntityClassHandle != handle)
+		{
+			return;
+		}
+
+		Ref<Kargono::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
+		if (!entityClass)
+		{
+			KG_WARN("Invalid entity class pointer returned when attempting to refresh entity scripts");
+			return;
+		}
+
+		s_EditorEntityClass->GetScripts().AllClassScripts = entityClass->GetScripts().AllClassScripts;
+		s_OnRefreshData();
+
 	}
 }

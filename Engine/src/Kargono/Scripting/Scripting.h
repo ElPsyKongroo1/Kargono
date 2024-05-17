@@ -37,8 +37,7 @@ namespace Kargono::Scripting
 		std::string m_ScriptName{};
 		ScriptType m_ScriptType{ ScriptType::None };
 		std::string m_SectionLabel {"None"};
-		std::vector<WrappedVarType> m_Parameters{};
-		WrappedVarType m_ReturnValue{WrappedVarType::None};
+		WrappedFuncType m_FuncType{ WrappedFuncType::None };
 		UUID m_ID{};
 		Ref<WrappedFunction> m_Function {nullptr};
 	private:

@@ -13,7 +13,6 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Math/Math.h"
 
-#include "stb_image.h"
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_cross.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
@@ -24,319 +23,6 @@
 #include "msdf-atlas-gen/msdf-atlas-gen.h"
 #include "msdf-atlas-gen/FontGeometry.h"
 #include "Kargono/Renderer/ShaderBuilder.h"
-
-
-namespace Kargono::Assets
-{
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_TextureRegistry {};
-	std::unordered_map<AssetHandle, Ref<Texture2D>> AssetManager::s_Textures {};
-
-	void AssetManager::DeserializeTextureRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_TextureRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
-
-		if (!std::filesystem::exists(textureRegistryLocation))
-		{
-			KG_ERROR("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(textureRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", textureRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Texture Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving texture specific metadata 
-				if (newAsset.Data.Type == Assets::Texture)
-				{
-					Ref<Assets::TextureMetaData> texMetaData = CreateRef<Assets::TextureMetaData>();
-
-					texMetaData->Height = metadata["TextureHeight"].as<int32_t>();
-					texMetaData->Width = metadata["TextureWidth"].as<int32_t>();
-					texMetaData->Channels = metadata["TextureChannels"].as<int32_t>();
-					texMetaData->InitialFileLocation = metadata["InitialFileLocation"].as<std::string>();
-
-					newAsset.Data.SpecificFileData = texMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_TextureRegistry.insert({ newAsset.Handle, newAsset });
-
-			}
-		}
-	}
-
-	void AssetManager::SerializeTextureRegistry()
-	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Untitled";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_TextureRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			if (asset.Data.Type == Assets::AssetType::Texture)
-			{
-				Assets::TextureMetaData* metadata = static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
-				out << YAML::Key << "TextureHeight" << YAML::Value << metadata->Height;
-				out << YAML::Key << "TextureWidth" << YAML::Value << metadata->Width;
-				out << YAML::Key << "TextureChannels" << YAML::Value << metadata->Channels;
-				out << YAML::Key << "InitialFileLocation" << YAML::Value << metadata->InitialFileLocation.string();
-			}
-
-			out << YAML::EndMap; // MetaData Map
-
-			out << YAML::EndMap; // Asset Map
-		}
-
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		FileSystem::CreateNewDirectory(textureRegistryLocation.parent_path());
-
-		std::ofstream fout(textureRegistryLocation);
-		fout << out.c_str();
-	}
-
-	AssetHandle AssetManager::ImportNewTextureFromFile(const std::filesystem::path& filePath)
-	{
-		// Create Checksum
-		std::string currentCheckSum = FileSystem::ChecksumFromFile(filePath);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		bool isAssetDuplicate = false;
-		AssetHandle currentHandle{};
-		for (const auto& [handle, asset] : s_TextureRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				isAssetDuplicate = true;
-				currentHandle = handle;
-				break;
-			}
-		}
-
-		if (isAssetDuplicate)
-		{
-			KG_ERROR("THERE IS A DUPLICATE!");
-			return currentHandle;
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateTextureIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeTextureRegistry(); // Update Registry File on Disk
-
-		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
-
-		return newHandle;
-
-	}
-
-	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
-	{
-		// Create Checksum
-		std::string currentCheckSum = FileSystem::ChecksumFromBuffer(buffer);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		bool isAssetDuplicate = false;
-		AssetHandle currentHandle{};
-		for (const auto& [handle, asset] : s_TextureRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				isAssetDuplicate = true;
-				currentHandle = handle;
-				break;
-			}
-		}
-
-		if (isAssetDuplicate)
-		{
-			//KG_ERROR("THERE IS A DUPLICATE!");
-			return currentHandle;
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeTextureRegistry(); // Update Registry File on Disk
-
-		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
-
-		return newHandle;
-
-	}
-
-	void AssetManager::CreateTextureIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
-	{
-		// Create Texture Binary Intermediate
-		int32_t width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
-		Buffer buffer{};
-		stbi_uc* data = nullptr;
-		{
-			data = stbi_load(filePath.string().c_str(), &width, &height, &channels, 0);
-		}
-
-		buffer.Allocate(static_cast<unsigned long long>(width) * height * channels * sizeof(uint8_t));
-		buffer.Data = data;
-
-		// Save Binary Intermediate into File
-		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
-		FileSystem::WriteFileBinary(intermediateFullPath, buffer);
-
-		// Check that save was successful
-		if (!data)
-		{
-			KG_ERROR("Failed to load data from file in texture importer!");
-			buffer.Release();
-			return;
-		}
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Texture;
-		newAsset.Data.IntermediateLocation = intermediatePath;
-		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
-		metadata->Width = width;
-		metadata->Height = height;
-		metadata->Channels = channels;
-		metadata->InitialFileLocation = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
-		newAsset.Data.SpecificFileData = metadata;
-
-		buffer.Release();
-
-	}
-
-	void AssetManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset)
-	{
-		// Save Binary Intermediate into File
-		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
-		FileSystem::WriteFileBinary(intermediateFullPath, buffer);
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Texture;
-		newAsset.Data.IntermediateLocation = intermediatePath;
-		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
-		metadata->Width = width;
-		metadata->Height = height;
-		metadata->Channels = channels;
-		metadata->InitialFileLocation = "None";
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	Ref<Texture2D> AssetManager::InstantiateTextureIntoMemory(Assets::Asset& asset)
-	{
-		Assets::TextureMetaData metadata = *static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<Texture2D> newTexture = Texture2D::Create(currentResource, metadata);
-
-		currentResource.Release();
-		return newTexture;
-	}
-
-	Ref<Texture2D> AssetManager::GetTexture(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving texture!");
-
-		if (s_Textures.contains(handle)) { return s_Textures[handle]; }
-
-		if (s_TextureRegistry.contains(handle))
-		{
-			auto asset = s_TextureRegistry[handle];
-
-			Ref<Texture2D> newTexture = InstantiateTextureIntoMemory(asset);
-			s_Textures.insert({ asset.Handle, newTexture });
-			return newTexture;
-		}
-
-		KG_ERROR("No texture is associated with provided handle!");
-		return nullptr;
-
-	}
-
-	void AssetManager::ClearTextureRegistry()
-	{
-		s_TextureRegistry.clear();
-		s_Textures.clear();
-	}
-
-}
 
 namespace Kargono::Utility
 {
@@ -4205,16 +3891,7 @@ namespace Kargono::Assets
 
 					ScriptMetaData->SectionLabel = metadata["SectionLabel"].as<std::string>();
 					ScriptMetaData->ScriptType = Utility::StringToScriptType(metadata["ScriptType"].as<std::string>());
-					ScriptMetaData->ReturnValue = Utility::StringToWrappedVarType(metadata["ReturnValue"].as<std::string>());
 					ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadata["FunctionType"].as<std::string>());
-
-					auto parameters = metadata["Parameters"];
-					auto& parameterVector = ScriptMetaData->Parameters;
-					for (auto parameter : parameters)
-					{
-						parameterVector.push_back(Utility::StringToWrappedVarType(parameter.as<std::string>()));
-					}
-
 					newAsset.Data.SpecificFileData = ScriptMetaData;
 
 				}
@@ -4265,19 +3942,9 @@ namespace Kargono::Assets
 			{
 				Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
 
-				std::string Name{};
-				std::vector<WrappedVarType> Parameters{};
-
 				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
 				out << YAML::Key << "SectionLabel" << YAML::Value << metadata->SectionLabel;
 				out << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->ScriptType);
-				out << YAML::Key << "Parameters" << YAML::Value << YAML::BeginSeq;
-				for (auto& parameter : metadata->Parameters)
-				{
-					out << YAML::Value << Utility::WrappedVarTypeToString(parameter);
-				}
-				out << YAML::EndSeq;
-				out << YAML::Key << "ReturnValue" << YAML::Value << Utility::WrappedVarTypeToString(metadata->ReturnValue);
 				out << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->FunctionType);
 			}
 
@@ -4385,10 +4052,11 @@ namespace Kargono::Assets
 		}
 
 		// Update Registry
+		Asset asset = s_ScriptRegistry.at(scriptHandle);
 		ScriptMetaData* metadata = s_ScriptRegistry.at(scriptHandle).Data.GetSpecificFileData<ScriptMetaData>();
 
 		// Update AllScripts inside Entity Class if needed
-		if (metadata->ScriptType == Scripting::ScriptType::Class && (spec.Type == Scripting::ScriptType::Global || metadata->SectionLabel != spec.SectionLabel))
+		if (metadata->ScriptType == Scripting::ScriptType::Class)
 		{
 			// Erase Script inside original entity class
 			for (auto& [classHandle, asset] : s_EntityClassRegistry)
@@ -4404,37 +4072,83 @@ namespace Kargono::Assets
 					SaveEntityClass(classHandle, entityClass);
 				}
 			}
-
-			// Add script to new class if necessary
-			if (spec.Type == Scripting::ScriptType::Class)
-			{
-				AssetHandle classHandle{ 0 };
-				for (auto& [handle, asset] : s_EntityClassRegistry)
-				{
-					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
-					{
-						classHandle = handle;
-						break;
-					}
-				}
-				// Save script into entity class
-				Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
-				if (!entityClass)
-				{
-					KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
-					return false;
-				}
-
-				entityClass->m_Scripts.AllClassScripts.insert(scriptHandle);
-				SaveEntityClass(classHandle, entityClass);
-			}
 		}
 
+		// Add script to new class if necessary
+		if (spec.Type == Scripting::ScriptType::Class)
+		{
+			AssetHandle classHandle{ 0 };
+			for (auto& [handle, asset] : s_EntityClassRegistry)
+			{
+				if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+				{
+					classHandle = handle;
+					break;
+				}
+			}
+			// Save script into entity class
+			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			if (!entityClass)
+			{
+				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
+				return false;
+			}
+
+			entityClass->m_Scripts.AllClassScripts.insert(scriptHandle);
+			SaveEntityClass(classHandle, entityClass);
+		}
+
+		if (metadata->FunctionType != spec.FunctionType)
+		{
+			// Load file into std::string
+			std::string scriptFile = FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+			if (scriptFile.empty())
+			{
+				KG_WARN("Attempt to open script file failed");
+				return false;
+			}
+
+			// Build Match Regular Expression
+			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->FunctionType))};
+			std::string functionName { std::string("KG_FUNC_") + std::string(scriptHandle)};
+			std::stringstream parameters {};
+			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->FunctionType))
+			{
+				std::string parameterString { Utility::WrappedVarTypeToCPPString(parameter) };
+				std::string parameterRegex { std::string("\\s*") + parameterString + std::string("\\s+") + 
+					std::string("\\w+") + std::string("\\s*") + std::string(",?") };
+				parameters << parameterRegex;
+			}
+
+			std::regex matchingExpression { std::string("\\s*") + "^" + returnType};
+
+			bool successful = std::regex_match(scriptFile, matchingExpression);
+			if (successful)
+			{
+				KG_TRACE("Ayeee, it was successful fam");
+			}
+			else
+			{
+				KG_TRACE("Bruhhhh, nah you suck!");
+			}
+
+			std::string debugRegex { std::string("\\s*") + "^" + returnType +
+				std::string("\\s+") + functionName +
+				std::string("\\s*") + "(" + parameters.str() +
+				")"};
+
+			KG_TRACE("BTW, the regex is" + debugRegex);
+			KG_TRACE("Also, btw, the file is: " + scriptFile);
+
+			// Replace with new signature
+
+			// Write back out to file
+		}
+		
+
 		metadata->Name = spec.Name;
-		metadata->Parameters = spec.Parameters;
 		metadata->ScriptType = spec.Type;
 		metadata->SectionLabel = spec.SectionLabel;
-		metadata->ReturnValue = spec.ReturnType;
 		metadata->FunctionType = spec.FunctionType;
 
 		SerializeScriptRegistry();
@@ -4444,10 +4158,10 @@ namespace Kargono::Assets
 		{
 			Ref<Scripting::Script> script = s_Scripts.at(scriptHandle);
 			script->m_ScriptName = spec.Name;
-			script->m_Parameters = spec.Parameters;
-			script->m_ReturnValue = spec.ReturnType;
+			script->m_FuncType = spec.FunctionType;
 			script->m_ScriptType = spec.Type;
 			script->m_SectionLabel = spec.SectionLabel;
+			script->m_Function = nullptr;
 		}
 
 		return true;
@@ -4585,8 +4299,7 @@ namespace Kargono::Assets
 
 		newScript->m_ID = asset.Handle;
 		newScript->m_ScriptName = metadata.Name;
-		newScript->m_Parameters = metadata.Parameters;
-		newScript->m_ReturnValue = metadata.ReturnValue;
+		newScript->m_FuncType = metadata.FunctionType;
 		newScript->m_ScriptType = metadata.ScriptType;
 		newScript->m_SectionLabel = metadata.SectionLabel;
 		Scripting::ScriptCore::LoadScriptFunction(newScript, metadata.FunctionType);
@@ -4655,17 +4368,19 @@ namespace Kargono::Assets
 		// Create cpp file
 		std::string intermediatePath = "Scripting/" + (std::string)newAsset.Handle + ".cpp";
 		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(spec.FunctionType);
+		std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(spec.FunctionType);
 
 		// Write out return value and function name
 		std::stringstream outputStream {};
-		outputStream << Utility::WrappedVarTypeToCPPString(spec.ReturnType) << " KG_FUNC_" << newAsset.Handle << "(";
+		outputStream << Utility::WrappedVarTypeToCPPString(returnType) << " KG_FUNC_" << newAsset.Handle << "(";
 
 		// Write out parameters into function signature
 		char letterIteration{ 'a' };
-		for (uint32_t iteration {0}; static_cast<size_t>(iteration) < spec.Parameters.size(); iteration++)
+		for (uint32_t iteration {0}; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
 		{ 
-			outputStream << Utility::WrappedVarTypeToCPPString(spec.Parameters.at(iteration)) << " " << letterIteration;
-			if (iteration != spec.Parameters.size() - 1)
+			outputStream << Utility::WrappedVarTypeToCPPString(parameterTypes.at(iteration)) << " " << letterIteration;
+			if (iteration != parameterTypes.size() - 1)
 			{
 				outputStream << ',';
 			}
@@ -4683,10 +4398,8 @@ namespace Kargono::Assets
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
 		metadata->Name = spec.Name;
-		metadata->Parameters = spec.Parameters;
 		metadata->ScriptType = spec.Type;
 		metadata->SectionLabel = spec.SectionLabel;
-		metadata->ReturnValue = spec.ReturnType;
 		metadata->FunctionType = spec.FunctionType;
 		newAsset.Data.SpecificFileData = metadata;
 	}
