@@ -333,7 +333,7 @@ namespace Kargono
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_Function->Type() == WrappedFuncType::Bool_UInt64)
+				if (script->m_FuncType == WrappedFuncType::Bool_UInt64)
 				{
 					spec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
@@ -377,7 +377,7 @@ namespace Kargono
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_Function->Type() == WrappedFuncType::Bool_UInt64)
+				if (script->m_FuncType == WrappedFuncType::Bool_UInt64)
 				{
 					spec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
@@ -421,7 +421,7 @@ namespace Kargono
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_Function->Type() == WrappedFuncType::Void_None)
+				if (script->m_FuncType == WrappedFuncType::Void_None)
 				{
 					spec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
@@ -465,7 +465,7 @@ namespace Kargono
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_Function->Type() == WrappedFuncType::Void_Float)
+				if (script->m_FuncType == WrappedFuncType::Void_Float)
 				{
 					spec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}

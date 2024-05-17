@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 
 namespace Kargono::Assets { class AssetManager; }
 
@@ -27,7 +28,7 @@ namespace Kargono
 	class EntityClass
 	{
 	public:
-		std::unordered_map<std::string, WrappedVarType>& GetFields()
+		std::map<std::string, WrappedVarType>& GetFields()
 		{
 			return m_FieldTypes;
 		}
@@ -81,7 +82,7 @@ namespace Kargono
 	private:
 		std::string m_Name{};
 		EntityScripts m_Scripts{};
-		std::unordered_map<std::string, WrappedVarType> m_FieldTypes {};
+		std::map<std::string, WrappedVarType> m_FieldTypes {};
 	private:
 		friend class Assets::AssetManager;
 	};
