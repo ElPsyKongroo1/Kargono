@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "Kargono/Assets/Asset.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
@@ -10,7 +11,9 @@
 #include <filesystem>
 #include <functional>
 #include <string>
+#include <sstream>
 #include <vector>
+
 
 
 namespace Kargono::Assets { class AssetManager; }
@@ -43,4 +46,41 @@ namespace Kargono::Scripting
 	private:
 		friend class Assets::AssetManager;
 	};
+}
+
+namespace Kargono::Utility
+{
+	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, Assets::AssetHandle handle)
+	{
+		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+		std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(funcType);
+		// Write out return value and function name
+		std::stringstream outputStream {};
+		outputStream << Utility::WrappedVarTypeToCPPString(returnType) << " KG_FUNC_" << handle << "(";
+
+		// Write out parameters into function signature
+		char letterIteration{ 'a' };
+		for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
+		{
+			outputStream << Utility::WrappedVarTypeToCPPString(parameterTypes.at(iteration)) << " " << letterIteration;
+			if (iteration != parameterTypes.size() - 1)
+			{
+				outputStream << ',';
+			}
+			letterIteration++;
+		}
+		outputStream << ")";
+		return outputStream.str();
+	}
+
+	inline std::string GenerateFunctionStub(WrappedFuncType funcType, Assets::AssetHandle handle)
+	{
+		std::stringstream outputStream {};
+		outputStream << GenerateFunctionSignature(funcType, handle);
+		outputStream << '\n';
+		outputStream << "{" << "\n";
+		outputStream << "}" << "\n";
+
+		return outputStream.str();
+	}
 }

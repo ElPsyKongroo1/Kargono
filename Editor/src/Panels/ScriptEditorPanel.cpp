@@ -8,15 +8,18 @@ namespace Kargono
 {
 	static EditorLayer* s_EditorLayer { nullptr };
 
-	// Script Table
+	// Script Table (Create)
 	static EditorUI::TableSpec s_AllScriptsTable {};
 	static EditorUI::GenericPopupSpec s_CreateScriptPopup {};
 	static EditorUI::TextInputSpec s_CreateScriptName{};
 	static EditorUI::SelectOptionSpec s_CreateScriptFuncType{};
 	static EditorUI::RadioSelectorSpec s_CreateScriptType{};
 	static EditorUI::SelectOptionSpec s_CreateScriptSectionLabel{};
+	// Script Table (Edit)
+	static std::function<void()> s_UpdateScript {};
 	static EditorUI::GenericPopupSpec s_EditScriptPopup {};
 	static EditorUI::GenericPopupSpec s_DeleteScriptWarning {};
+	static EditorUI::GenericPopupSpec s_EditScriptFuncTypeWarning {};
 	static EditorUI::TextInputSpec s_EditScriptName{};
 	static EditorUI::SelectOptionSpec s_EditScriptFuncType{};
 	static EditorUI::RadioSelectorSpec s_EditScriptType{};
@@ -181,29 +184,7 @@ namespace Kargono
 			}
 		};
 
-		s_EditScriptPopup.Label = "Edit New Script";
-		s_EditScriptPopup.PopupWidth = 420.0f;
-		s_EditScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
-		{
-			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
-			s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(
-				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType);
-			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
-				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
-			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
-		};
-		s_EditScriptPopup.PopupContents = [&]()
-		{
-			EditorUI::Editor::TextInputPopup(s_EditScriptName);
-			EditorUI::Editor::SelectOption(s_EditScriptFuncType);
-			EditorUI::Editor::RadioSelector(s_EditScriptType);
-			EditorUI::Editor::SelectOption(s_EditScriptSectionLabel);
-		};
-		s_EditScriptPopup.DeleteAction = [&]()
-		{
-			s_DeleteScriptWarning.PopupActive = true;
-		};
-		s_EditScriptPopup.ConfirmAction = [&]()
+		s_UpdateScript = [&]()
 		{
 			Ref<Scripting::Script> script = Assets::AssetManager::GetScript(s_ActiveScriptHandle);
 			if (!script)
@@ -239,6 +220,41 @@ namespace Kargono
 			s_AllScriptsTable.OnRefresh();
 		};
 
+		s_EditScriptPopup.Label = "Edit New Script";
+		s_EditScriptPopup.PopupWidth = 420.0f;
+		s_EditScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		{
+			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
+			s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(
+				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType);
+			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
+				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
+			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
+		};
+		s_EditScriptPopup.PopupContents = [&]()
+		{
+			EditorUI::Editor::TextInputPopup(s_EditScriptName);
+			EditorUI::Editor::SelectOption(s_EditScriptFuncType);
+			EditorUI::Editor::RadioSelector(s_EditScriptType);
+			EditorUI::Editor::SelectOption(s_EditScriptSectionLabel);
+		};
+		s_EditScriptPopup.DeleteAction = [&]()
+		{
+			s_DeleteScriptWarning.PopupActive = true;
+		};
+		s_EditScriptPopup.ConfirmAction = [&]()
+		{
+			if (Utility::StringToWrappedFuncType(s_EditScriptFuncType.CurrentOption.Label) != 
+				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType)
+			{
+				s_EditScriptFuncTypeWarning.PopupActive = true;
+			}
+			else
+			{
+				s_UpdateScript();
+			}
+		};
+
 		s_DeleteScriptWarning.Label = "Delete Script";
 		s_DeleteScriptWarning.PopupContents = [&]()
 		{
@@ -272,6 +288,17 @@ namespace Kargono
 			s_AllScriptsTable.OnRefresh();
 		};
 
+		s_EditScriptFuncTypeWarning.Label = "Edit Script";
+		s_EditScriptFuncTypeWarning.PopupContents = [&]()
+		{
+			EditorUI::Editor::Text("Changing the function type can cause the existing function code to not compile.");
+			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::Editor::Text("Are you sure you want to modify the function type?");
+		};
+		s_EditScriptFuncTypeWarning.ConfirmAction = [&]()
+		{
+			s_UpdateScript();
+		};
 
 		s_EditScriptName.Label = "Name";
 		s_EditScriptName.CurrentOption = "Empty";
@@ -431,6 +458,7 @@ namespace Kargono
 		EditorUI::Editor::GenericPopup(s_CreateScriptPopup);
 		EditorUI::Editor::GenericPopup(s_EditScriptPopup);
 		EditorUI::Editor::GenericPopup(s_DeleteScriptWarning);
+		EditorUI::Editor::GenericPopup(s_EditScriptFuncTypeWarning);
 		EditorUI::Editor::TextInputPopup(s_CreateGroupLabelPopup);
 		EditorUI::Editor::GenericPopup(s_EditGroupLabelPopup);
 
