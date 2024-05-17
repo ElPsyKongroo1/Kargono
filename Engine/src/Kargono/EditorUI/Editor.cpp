@@ -97,7 +97,18 @@ namespace Kargono::EditorUI
 		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+	}
 
+	static InlineButtonSpec s_TableEditButton {};
+	static InlineButtonSpec s_TableLinkButton {};
+
+	void InitializeTableResources()
+	{
+		s_TableEditButton = Editor::s_SmallEditButton;
+		s_TableEditButton.YPosition = -3.5f;
+
+		s_TableLinkButton = Editor::s_SmallLinkButton;
+		s_TableLinkButton.YPosition = -3.5f;
 	}
 
 	void Editor::Init()
@@ -218,6 +229,28 @@ namespace Kargono::EditorUI
 				PositionType::Absolute
 		};
 
+		s_SmallCheckboxButton = {
+				0.0,
+				0.0f,
+				14.0f,
+				EditorUI::Editor::s_IconCheckbox_Check_Enabled,
+				EditorUI::Editor::s_IconCheckbox_Empty_Enabled,
+				"Uncheck",
+				"Check",
+				PositionType::Inline
+		};
+
+		s_SmallLinkButton = {
+				390.0,
+				0.0f,
+				14.0f,
+				EditorUI::Editor::s_ForwardInactiveIcon,
+				EditorUI::Editor::s_ForwardInactiveIcon,
+				"Open",
+				"Open",
+				PositionType::Absolute
+		};
+
 		s_LargeDeleteButton = {
 				-112.0f,
 				-0.6f,
@@ -261,6 +294,8 @@ namespace Kargono::EditorUI
 				"Search",
 				PositionType::Relative
 		};
+
+		InitializeTableResources();
 
 		s_Running = true;
 	}
@@ -405,6 +440,19 @@ namespace Kargono::EditorUI
 		return returnList;
 	}
 
+	void CreateImage(Ref<Texture2D> image, float size)
+	{
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
+		ImGui::Image((ImTextureID)(uint64_t)image->GetRendererID(), ImVec2(size, size),
+			ImVec2{ 0, 1 }, ImVec2(1, 0), Editor::s_PureWhite,
+			Editor::s_PureEmpty);
+	}
+
+	static float SmallButtonAbsoluteLocation(uint32_t slot)
+	{
+		return 390.0f - (22.0f * slot);
+	}
+
 	void CreateInlineButton(ImGuiID widgetID, std::function<void()> onPress, const InlineButtonSpec& spec, bool active = false)
 	{
 		switch (spec.XPositionType)
@@ -431,12 +479,12 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spec.YPosition);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, Editor::s_PureEmpty);
 		Ref<Texture2D> iconChoice = active ? spec.ActiveIcon : spec.InactiveIcon;
 		if (ImGui::ImageButtonEx(widgetID,
 			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
 			ImVec2(spec.IconSize, spec.IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+			Editor::s_PureEmpty,
 			EditorUI::Editor::s_PureWhite, 0))
 		{
 			onPress();
@@ -451,7 +499,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void WriteMultilineText(const std::string& text, const float leftHandOffset, const uint32_t charPerLine)
+	void WriteMultilineText(const std::string& text, float leftHandOffset, const uint32_t charPerLine, float yOffset = 0)
 	{
 		std::string previewOutput{};
 		std::string previewRemainder{ text };
@@ -473,8 +521,9 @@ namespace Kargono::EditorUI
 			{
 				ImGui::SameLine(leftHandOffset);
 			}
-
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iteration * 20.0f);
+			
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset + (iteration * 20.0f));
+			
 			ImGui::Text(previewOutput.c_str());
 			iteration++;
 		} while (!previewRemainder.empty());
@@ -787,8 +836,6 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 
 		// Display Item
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		if (spec.LeftLean)
 		{
 			TruncateText(spec.Label, 23);
@@ -802,12 +849,9 @@ namespace Kargono::EditorUI
 
 		if (spec.Editing)
 		{
-			Ref<Texture2D> iconChoice = spec.ToggleBoolean ? EditorUI::Editor::s_IconCheckbox_Check_Enabled : EditorUI::Editor::s_IconCheckbox_Empty_Enabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, Editor::s_PureEmpty);
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.ToggleBoolean)
 				{
@@ -817,24 +861,17 @@ namespace Kargono::EditorUI
 				{
 					spec.ConfirmAction(true);
 				}
-			}
+			}, s_SmallCheckboxButton, spec.ToggleBoolean);
+			ImGui::PopStyleColor(2);
 		}
 		else
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-			Ref<Texture2D> iconChoice = spec.ToggleBoolean ? EditorUI::Editor::s_IconCheckbox_Check_Disabled : EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
-			{
-				
-			}
-			ImGui::PopStyleColor();
+			CreateImage(spec.ToggleBoolean ?
+				EditorUI::Editor::s_IconCheckbox_Check_Disabled :
+				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				14);
 		}
 
-		ImGui::PopStyleColor(2);
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
@@ -851,21 +888,16 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 
 		// Display Item
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		TruncateText(spec.Label, 23);
 		ImGui::SameLine(200.0f);
 
 		if (spec.Editing)
 		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 			TruncateText(spec.FirstOptionLabel, 12);
 			ImGui::SameLine();
-			Ref<Texture2D> iconChoice = spec.SelectedOption == 0 ? EditorUI::Editor::s_IconCheckbox_Check_Enabled : EditorUI::Editor::s_IconCheckbox_Empty_Enabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 0)
 				{
@@ -876,17 +908,12 @@ namespace Kargono::EditorUI
 					spec.SelectedOption = 0;
 				}
 				spec.SelectAction(spec.SelectedOption);
-			}
+			}, s_SmallCheckboxButton, spec.SelectedOption == 0);
 
 			ImGui::SameLine(300.0f);
 			TruncateText(spec.SecondOptionLabel, 12);
 			ImGui::SameLine();
-			iconChoice = spec.SelectedOption == 1 ? EditorUI::Editor::s_IconCheckbox_Check_Enabled : EditorUI::Editor::s_IconCheckbox_Empty_Enabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 1)
 				{
@@ -897,39 +924,27 @@ namespace Kargono::EditorUI
 					spec.SelectedOption = 1;
 				}
 				spec.SelectAction(spec.SelectedOption);
-			}
+			}, s_SmallCheckboxButton, spec.SelectedOption == 1);
+			ImGui::PopStyleColor(2);
 		}
 		else
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			TruncateText(spec.FirstOptionLabel, 12);
 			ImGui::SameLine();
-			Ref<Texture2D> iconChoice = spec.SelectedOption == 0 ? EditorUI::Editor::s_IconCheckbox_Check_Disabled : EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
-			{
-				
-			}
+			CreateImage(spec.SelectedOption == 0 ? 
+				EditorUI::Editor::s_IconCheckbox_Check_Disabled : 
+				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				14);
 
 			ImGui::SameLine(300.0f);
 			TruncateText(spec.SecondOptionLabel, 12);
 			ImGui::SameLine();
-			iconChoice = spec.SelectedOption == 1 ? EditorUI::Editor::s_IconCheckbox_Check_Disabled : EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
-			if (ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-				(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				s_PureWhite, 0))
-			{
-				
-			}
-			ImGui::PopStyleColor();
+			CreateImage(spec.SelectedOption == 1 ?
+				EditorUI::Editor::s_IconCheckbox_Check_Disabled :
+				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				14);
 		}
 
-		ImGui::PopStyleColor(2);
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
@@ -943,6 +958,8 @@ namespace Kargono::EditorUI
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		uint32_t smallButtonCount{ 0 };
+
 		ImGui::PushFont(Editor::s_AntaLarge);
 		TruncateText(spec.Label, 40);
 		ImGui::PopFont();
@@ -979,7 +996,7 @@ namespace Kargono::EditorUI
 			if (!spec.TableValues.empty())
 			{
 				// Column Titles
-				ImGui::SetCursorPosX(36.5f);
+				ImGui::SetCursorPosX(30.5f);
 				TruncateText(spec.Column1Title, 12);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(200.0f);
@@ -989,35 +1006,41 @@ namespace Kargono::EditorUI
 
 			for (auto& tableEntry : spec.TableValues)
 			{
-				ImGui::SetCursorPosX(10.0f);
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-				ImGui::ImageButtonEx(static_cast<ImGuiID>(spec.WidgetID + WidgetIterator(widgetCount)),
-					(ImTextureID)(uint64_t)s_IconDash->GetRendererID(),
-					ImVec2(10, 10), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-					ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-					EditorUI::Editor::s_PureWhite, 0);
-				ImGui::PopStyleColor(3);
+				smallButtonCount = 0;
+				CreateImage(s_IconDash, 10);
 				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.2f);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3.2f);
 				TruncateText(tableEntry.Label, 16);
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.2f);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
-				WriteMultilineText(tableEntry.Value, 200.0f, 23);
+				WriteMultilineText(tableEntry.Value, 200.0f, 21, -3.2f);
 				ImGui::PopStyleColor();
-				if (tableEntry.OnEdit)
+				
+				if (tableEntry.OnLink)
 				{
+					s_TableLinkButton.XPosition = SmallButtonAbsoluteLocation(smallButtonCount++);
 					ImGui::SameLine();
 					CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 					{
-						if (tableEntry.OnEdit)
+						if (tableEntry.OnLink)
 						{
-							tableEntry.OnEdit(tableEntry);
+							tableEntry.OnLink(tableEntry);
 						}
-					},
-					Editor::s_SmallEditButton);
+					}, s_TableLinkButton);
 				}
+
+				if (tableEntry.OnEdit)
+				{
+					s_TableEditButton.XPosition = SmallButtonAbsoluteLocation(smallButtonCount++);
+					ImGui::SameLine();
+					CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+						{
+							if (tableEntry.OnEdit)
+							{
+								tableEntry.OnEdit(tableEntry);
+							}
+						}, s_TableEditButton);
+				}
+				
 			}
 		}
 	}
@@ -1028,7 +1051,7 @@ namespace Kargono::EditorUI
 		ImGui::PushFont(Editor::s_AntaLarge);
 		ImGui::TextColored(spec.EditColorActive ? Editor::s_PearlBlue : Editor::s_PureWhite , spec.Label.c_str());
 		ImGui::PopFont();
-		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + -10.0f);
+
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID, [&]()
 		{

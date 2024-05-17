@@ -139,6 +139,8 @@ namespace Kargono::EditorUI
 			s_UserInterfaceIcon, s_FontIcon, s_InputIcon;
 
 		inline static ImVec4 s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f};
+		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
+		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
@@ -146,6 +148,8 @@ namespace Kargono::EditorUI
 		inline static InlineButtonSpec s_SmallEditButton;
 		inline static InlineButtonSpec s_SmallExpandButton;
 		inline static InlineButtonSpec s_SmallOptionsButton;
+		inline static InlineButtonSpec s_SmallCheckboxButton;
+		inline static InlineButtonSpec s_SmallLinkButton;
 		inline static InlineButtonSpec s_LargeDeleteButton;
 		inline static InlineButtonSpec s_LargeCancelButton;
 		inline static InlineButtonSpec s_LargeConfirmButton;
@@ -292,6 +296,7 @@ namespace Kargono::EditorUI
 		std::string Value;
 		UUID Handle;
 		std::function<void(TableEntry& entry)> OnEdit { nullptr };
+		std::function<void(TableEntry& entry)> OnLink { nullptr };
 	};
 
 	struct TableSpec
@@ -311,8 +316,13 @@ namespace Kargono::EditorUI
 		void InsertTableEntry(const std::string& label, const std::string& value, 
 			std::function<void(TableEntry& entry)> func, Assets::AssetHandle handle = 0)
 		{
-			TableEntry newEntry{label, value, handle, func };
+			TableEntry newEntry{label, value, handle, func, nullptr };
 			TableValues.push_back(newEntry);
+		}
+
+		void InsertTableEntry(const TableEntry& entry)
+		{
+			TableValues.push_back(entry);
 		}
 		void ClearTable()
 		{

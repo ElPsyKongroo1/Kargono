@@ -8,6 +8,15 @@
 
 namespace Kargono::Utility
 {
+	// Good Agnostic Regex Grammar Video: https://www.youtube.com/watch?v=sa-TUpSx1JA
+	// Regular Expressions in C++: https://en.cppreference.com/w/cpp/regex
+	// Grammar Reference: https://learn.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp?view=msvc-170#grammarsummary
+	class Regex
+	{
+	public:
+
+	};
+
 	class Operations
 	{
 	public:
