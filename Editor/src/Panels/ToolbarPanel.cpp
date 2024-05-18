@@ -1,16 +1,16 @@
 #include "Panels/ToolbarPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 #include "Kargono.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer{ nullptr };
+	static EditorApp* s_EditorLayer{ nullptr };
 
 	ToolbarPanel::ToolbarPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 	void ToolbarPanel::OnEditorUIRender()
 	{

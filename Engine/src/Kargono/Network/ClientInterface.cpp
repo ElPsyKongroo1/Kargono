@@ -4,7 +4,7 @@
 #include "Kargono/Network/Client.h"
 
 #include "Kargono/Network/Common.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/Timers.h"
 
 namespace Kargono::Network

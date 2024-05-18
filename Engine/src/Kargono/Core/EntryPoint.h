@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/Timers.h"
 
 #ifdef KG_PLATFORM_WINDOWS
@@ -8,18 +8,18 @@
 #include <Windows.h>
 #include <shellapi.h>
 	
-	extern Kargono::Core* Kargono::CreateApplication(ApplicationCommandLineArgs args);
+	extern Kargono::EngineCore* Kargono::InitEngineAndCreateApp(CommandLineArgs args);
 
 	void EntryPoint (int argc, char** argv)
 	{
 		Kargono::Log::Init();
 
-		Kargono::Core* app = Kargono::CreateApplication({ argc, argv });
+		Kargono::EngineCore* core = Kargono::InitEngineAndCreateApp({ argc, argv });
 
-		app->Run();
+		core->Run();
 		Kargono::Timers::AsyncBusyTimer::CloseAllTimers();
 
-		delete app;
+		delete core;
 	}
 
 	int main(int argc, char** argv)

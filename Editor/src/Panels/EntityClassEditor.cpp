@@ -1,11 +1,11 @@
 #include "Panels/EntityClassEditor.h"
 
 #include "Kargono.h"
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 	static Ref<EntityClass> s_EditorEntityClass { nullptr };
 	static Assets::AssetHandle s_EditorEntityClassHandle { Assets::EmptyHandle };
 
@@ -540,7 +540,7 @@ namespace Kargono
 
 	EntityClassEditor::EntityClassEditor()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 
 		InitializeOpeningScreen();
 

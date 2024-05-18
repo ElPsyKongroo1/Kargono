@@ -6,7 +6,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Script/ScriptEngine.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Renderer/Shader.h"
 
 
