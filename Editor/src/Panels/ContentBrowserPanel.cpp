@@ -103,7 +103,7 @@ namespace Kargono
 		}
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::Editor::s_ForwardIcon : EditorUI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
-			if (forwardActive && FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 			{
 				std::filesystem::path currentIterationPath{s_LongestRecentPath};
 				std::filesystem::path recentIterationPath{s_LongestRecentPath};
@@ -136,7 +136,7 @@ namespace Kargono
 					std::filesystem::path payloadPath(payloadPathPointer);
 					KG_CRITICAL(payloadPath.string());
 					KG_CRITICAL(m_CurrentDirectory.parent_path());
-					FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
 					KG_CRITICAL("-----------------");
 					break;
 				}
@@ -154,7 +154,7 @@ namespace Kargono
 		//if (ImGui::Button("Options", { 70, 28 }))
 		//	ImGui::OpenPopup("Options");
 
-		std::filesystem::path activeDirectory = FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
+		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
 
 		std::vector<std::string> tokenizedDirectoryPath{};
 
@@ -219,7 +219,7 @@ namespace Kargono
 						{
 							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 							std::filesystem::path payloadPath(payloadPathPointer);
-							FileSystem::MoveFileToDirectory(payloadPath, path);
+							Utility::FileSystem::MoveFileToDirectory(payloadPath, path);
 							break;
 						}
 					}
@@ -231,7 +231,7 @@ namespace Kargono
 				if (directoryEntry.is_directory())
 				{
 					m_CurrentDirectory /= path.filename();
-					if (!FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 					{
 						s_LongestRecentPath = m_CurrentDirectory;
 					}
@@ -335,7 +335,7 @@ namespace Kargono
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					FileSystem::DeleteSelectedFile(path);
+					Utility::FileSystem::DeleteSelectedFile(path);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -352,7 +352,7 @@ namespace Kargono
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					FileSystem::DeleteSelectedDirectory(path);
+					Utility::FileSystem::DeleteSelectedDirectory(path);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -369,7 +369,7 @@ namespace Kargono
 				ImGui::InputText("New File Name", buffer, sizeof(buffer));
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 				{
-					FileSystem::RenameFile(path, std::string(buffer));
+					Utility::FileSystem::RenameFile(path, std::string(buffer));
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndPopup();
@@ -412,7 +412,7 @@ namespace Kargono
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
 				std::filesystem::path newPath = m_CurrentDirectory / std::string(buffer);
-				FileSystem::CreateNewDirectory(newPath);
+				Utility::FileSystem::CreateNewDirectory(newPath);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();

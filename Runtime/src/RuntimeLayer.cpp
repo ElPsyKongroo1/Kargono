@@ -13,7 +13,7 @@ namespace Kargono
 	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
 
 	RuntimeLayer::RuntimeLayer()
-		: Layer("RuntimeLayer")
+		: Application("RuntimeLayer")
 	{
 	}
 
@@ -22,13 +22,13 @@ namespace Kargono
 		Script::ScriptEngine::Init();
 		Audio::AudioEngine::Init();
 
-		auto& currentWindow = Application::GetCurrentApp().GetWindow();
+		auto& currentWindow = Core::GetCurrentApp().GetWindow();
 
 		Scene::SetActiveScene(CreateRef<Scene>());
 		#if KG_EXPORT == 0
 		if (!OpenProject())
 		{
-			Application::GetCurrentApp().Close();
+			Core::GetCurrentApp().Close();
 			return;
 		}
 		#else
@@ -84,7 +84,7 @@ namespace Kargono
 		if (mainCamera)
 		{
 			RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
-				Application::GetCurrentApp().GetWindow().GetWidth(), Application::GetCurrentApp().GetWindow().GetHeight());
+				Core::GetCurrentApp().GetWindow().GetWidth(), Core::GetCurrentApp().GetWindow().GetHeight());
 		}
 	}
 
@@ -110,15 +110,15 @@ namespace Kargono
 	bool RuntimeLayer::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
-		Events::EventCallbackFn eventCallback = Application::GetCurrentApp().GetWindow().GetEventCallback();
+		Events::EventCallbackFn eventCallback = Core::GetCurrentApp().GetWindow().GetEventCallback();
 		eventCallback(windowEvent);
 		return false;
 	}
 
 	bool RuntimeLayer::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		Application::GetCurrentApp().GetWindow().SetViewportWidth(event.GetWidth());
-		Application::GetCurrentApp().GetWindow().SetViewportHeight(event.GetHeight());
+		Core::GetCurrentApp().GetWindow().SetViewportWidth(event.GetWidth());
+		Core::GetCurrentApp().GetWindow().SetViewportHeight(event.GetHeight());
 		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
@@ -263,7 +263,7 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!Application::GetCurrentApp().GetWindow().GetNativeWindow())
+			if (!Core::GetCurrentApp().GetWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
 				WindowProps projectProps =
@@ -273,7 +273,7 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.y)
 				};
 				#if KG_EXPORT == 0
-				Application::GetCurrentApp().GetWindow().Init(projectProps);
+				Core::GetCurrentApp().GetWindow().Init(projectProps);
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif

@@ -27,14 +27,50 @@ namespace Kargono
 
 	// Class Instance Component
 	static EditorUI::CollapsingHeaderSpec s_ClassInstanceHeader{};
+	static EditorUI::SelectOptionSpec s_SelectClassOption{};
 
 	static void InitializeClassInstanceComponent()
 	{
 		s_ClassInstanceHeader.Label = "Class Instance";
 		s_ClassInstanceHeader.Expanded = true;
-		s_ClassInstanceHeader.OnExpand = [&]()
+
+		s_SelectClassOption.Label = "Class";
+		s_SelectClassOption.Indented = true;
+		s_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
+		s_SelectClassOption.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			EditorUI::Editor::TitleText("HAHAHHA BRUHHHHH");
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+			{
+				spec.AddToOptions("All Options", 
+					asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name, handle);
+			}
+		};
+		s_SelectClassOption.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		{
+			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
+			auto& component = entity.GetComponent<ClassInstanceComponent>();
+
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.ClassHandle = Assets::EmptyHandle;
+				component.Fields.clear();
+				component.ClassReference = nullptr;
+				return;
+			}
+
+			if (component.ClassHandle == entry.Handle)
+			{
+				return;
+			}
+
+			component.ClassHandle = entry.Handle;
+			component.ClassReference = Assets::AssetManager::GetEntityClass(entry.Handle).get();
+			// TODO, fill fields with new types
+			//component.Fields.clear();
+
+
 		};
 	}
 
@@ -72,10 +108,10 @@ namespace Kargono
 		if (Scene::GetActiveScene())
 		{
 			Scene::GetActiveScene()->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID, Scene::GetActiveScene().get() };
-					DrawEntityNode(entity);
-				});
+			{
+				Entity entity{ entityID, Scene::GetActiveScene().get() };
+				DrawEntityNode(entity);
+			});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) { *Scene::GetActiveScene()->GetSelectedEntity() = {}; }
 
@@ -379,6 +415,11 @@ namespace Kargono
 		if (entity.HasComponent<ClassInstanceComponent>())
 		{
 			EditorUI::Editor::CollapsingHeader(s_ClassInstanceHeader);
+			if (s_ClassInstanceHeader.Expanded)
+			{
+				EditorUI::Editor::SelectOption(s_SelectClassOption);
+			}
+			//entity.GetComponent<ClassInstanceComponent>().ClassReference->GetFields()
 		}
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, this](auto& component) mutable

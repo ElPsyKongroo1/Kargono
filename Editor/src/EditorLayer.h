@@ -36,7 +36,7 @@ namespace Kargono
 	//		layers is in its infancy currently. This class holds the logic for
 	//		all of the different systems that the editor uses such as scene management,
 	//		ImGui code for editor windows, and project management.
-	class EditorLayer : public Layer
+	class EditorLayer : public Application
 	{
 	public:
 		//=========================

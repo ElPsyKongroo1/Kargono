@@ -11,24 +11,6 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
-  - AssetHandle: 8444652895326507655
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/8444652895326507655.cpp
-      AssetType: Script
-      Name: OnCurrentSessionInit
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_None
-  - AssetHandle: 7445822592925037095
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/7445822592925037095.cpp
-      AssetType: Script
-      Name: UserLeftSession
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_UInt16
   - AssetHandle: 18163504705534252383
     MetaData:
       CheckSum: ""
@@ -38,12 +20,21 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt32
-  - AssetHandle: 1819971799574496652
+  - AssetHandle: 7445822592925037095
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/1819971799574496652.cpp
+      IntermediateLocation: Scripting/7445822592925037095.cpp
       AssetType: Script
-      Name: OnStartSession
+      Name: UserLeftSession
+      SectionLabel: None
+      ScriptType: Global
+      FunctionType: Void_UInt16
+  - AssetHandle: 8444652895326507655
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/8444652895326507655.cpp
+      AssetType: Script
+      Name: OnCurrentSessionInit
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
@@ -56,12 +47,12 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
-  - AssetHandle: 14683932765512752045
+  - AssetHandle: 1819971799574496652
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/14683932765512752045.cpp
+      IntermediateLocation: Scripting/1819971799574496652.cpp
       AssetType: Script
-      Name: OpenMainMenu
+      Name: OnStartSession
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
@@ -74,12 +65,12 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
-  - AssetHandle: 1058797724736767605
+  - AssetHandle: 14683932765512752045
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/1058797724736767605.cpp
+      IntermediateLocation: Scripting/14683932765512752045.cpp
       AssetType: Script
-      Name: Scriptyyy
-      SectionLabel: Player1
-      ScriptType: Class
-      FunctionType: Void_UInt64
+      Name: OpenMainMenu
+      SectionLabel: None
+      ScriptType: Global
+      FunctionType: Void_None

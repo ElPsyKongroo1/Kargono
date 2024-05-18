@@ -10,18 +10,18 @@ namespace Kargono
 		
 	}
 
-	void LayerStack::PushLayer(Layer* layer)
+	void LayerStack::PushLayer(Application* layer)
 	{
 		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
 	}
 
-	void LayerStack::PushOverlay(Layer* overlay)
+	void LayerStack::PushOverlay(Application* overlay)
 	{
 		m_Layers.emplace_back(overlay);
 	}
 
-	void LayerStack::PopLayer(Layer* layer)
+	void LayerStack::PopLayer(Application* layer)
 	{
 		auto location = std::find(m_Layers.begin(), m_Layers.end(), layer);
 		if (location != m_Layers.end())
@@ -31,7 +31,7 @@ namespace Kargono
 		}
 	}
 
-	void LayerStack::PopOverlay(Layer* overlay)
+	void LayerStack::PopOverlay(Application* overlay)
 	{
 		auto location = std::find(m_Layers.begin(), m_Layers.end(), overlay);
 		if (location != m_Layers.end())

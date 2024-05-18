@@ -10,13 +10,13 @@
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
+#include "Kargono/Scene/EntityClass.h"
 
 #include <filesystem>
 #include <tuple>
 #include <unordered_set>
 #include <unordered_map>
 
-#include "Kargono/Scene/EntityClass.h"
 
 namespace Kargono
 {

@@ -3,7 +3,7 @@
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Scene/Scene.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Utility/FileSystem.h"
 #include "API/OpenGL/OpenGLShader.h"
 
 #include <spdlog/fmt/ostr.h>

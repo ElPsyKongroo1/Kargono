@@ -13,7 +13,7 @@ namespace Kargono
 	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
 
 	ServerLayer::ServerLayer()
-		: Layer("ServerLayer")
+		: Application("ServerLayer")
 	{
 	}
 
@@ -21,7 +21,7 @@ namespace Kargono
 	{
 		if (!OpenProject())
 		{
-			Application::GetCurrentApp().Close();
+			Core::GetCurrentApp().Close();
 			return;
 		}
 

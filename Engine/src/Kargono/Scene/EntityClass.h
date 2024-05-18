@@ -25,44 +25,83 @@ namespace Kargono
 		std::set<Assets::AssetHandle> AllClassScripts {};
 	};
 
+	struct ClassField
+	{
+		std::string Name {};
+		WrappedVarType Type {WrappedVarType::None};
+	};
+
 	class EntityClass
 	{
 	public:
-		std::map<std::string, WrappedVarType>& GetFields()
+		const std::vector<ClassField>& GetFields()
 		{
 			return m_FieldTypes;
 		}
-		WrappedVarType GetField(const std::string& fieldName)
+		WrappedVarType GetField(const std::string& fieldName) const
 		{
-			if (!m_FieldTypes.contains(fieldName))
+			for (auto& field : m_FieldTypes)
 			{
-				KG_CRITICAL("Could not get field type from class {}", fieldName);
-				return WrappedVarType::None;
+				if (field.Name == fieldName)
+				{
+					return field.Type;
+				}
 			}
-			return m_FieldTypes.at(fieldName);
+
+			KG_WARN("Could not get field type from class {}", fieldName);
+			return WrappedVarType::None;
+		}
+
+		bool ContainsField(const std::string& fieldName) const
+		{
+			for (auto& field : m_FieldTypes)
+			{
+				if (field.Name == fieldName)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		bool AddField(const std::string& fieldName, WrappedVarType fieldType)
 		{
-			if (m_FieldTypes.contains(fieldName))
+			for (auto& field : m_FieldTypes)
 			{
-				KG_WARN("Attempt to add field to Entity Class that already exists");
-				return false;
+				if (field.Name == fieldName)
+				{
+					KG_WARN("Attempt to add field to Entity Class that already exists");
+					return false;
+				}
 			}
 
-			m_FieldTypes.insert_or_assign(fieldName, fieldType);
+			m_FieldTypes.push_back({ fieldName, fieldType });
 			return true;
 		}
 
 		bool DeleteField(const std::string& fieldName)
 		{
-			if (!m_FieldTypes.contains(fieldName))
+			bool foundField = false;
+			uint32_t fieldLocation{ 0 };
+			uint32_t iteration{ 0 };
+			for (auto& field : m_FieldTypes)
+			{
+				if (field.Name == fieldName)
+				{
+					foundField = true;
+					fieldLocation = iteration;
+					break;
+				}
+				iteration++;
+			}
+
+			if (!foundField)
 			{
 				KG_WARN("Attempt to delete field to Entity Class that does not exist");
 				return false;
 			}
 
-			m_FieldTypes.erase(fieldName);
+			m_FieldTypes.erase(m_FieldTypes.begin() + fieldLocation);
 			return true;
 		}
 
@@ -82,7 +121,7 @@ namespace Kargono
 	private:
 		std::string m_Name{};
 		EntityScripts m_Scripts{};
-		std::map<std::string, WrappedVarType> m_FieldTypes {};
+		std::vector<ClassField> m_FieldTypes {};
 	private:
 		friend class Assets::AssetManager;
 	};

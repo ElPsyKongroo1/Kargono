@@ -2,7 +2,7 @@
 
 #include "Kargono/Network/Server.h"
 
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 
 namespace Kargono::Network
 {

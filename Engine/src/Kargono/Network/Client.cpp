@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Projects/Project.h"
 
@@ -50,7 +50,7 @@ namespace Kargono::Network
 
 	bool Client::OnStartSession(Events::StartSession event)
 	{
-		m_SessionStartFrame = Application::GetCurrentApp().GetUpdateCount();
+		m_SessionStartFrame = Core::GetCurrentApp().GetUpdateCount();
 		return true;
 	}
 
@@ -161,7 +161,7 @@ namespace Kargono::Network
 		if (m_UDPClient && IsConnected())
 		{
 			// Start timer for keep alive packets
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::AddTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::AddTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
 		}
 
 		while (!m_Quit)
@@ -183,7 +183,7 @@ namespace Kargono::Network
 
 		if (m_UDPClient)
 		{
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::RemoveTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::RemoveTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
 		}
 	}
 
@@ -196,7 +196,7 @@ namespace Kargono::Network
 			KG_INFO("[SERVER]: Connection has been accepted!");
 			uint32_t userCount{};
 			msg >> userCount;
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateOnlineUsers>(userCount));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateOnlineUsers>(userCount));
 			break;
 		}
 
@@ -204,7 +204,7 @@ namespace Kargono::Network
 		{
 			uint32_t userCount{};
 			msg >> userCount;
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateOnlineUsers>(userCount));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateOnlineUsers>(userCount));
 			break;
 		}
 
@@ -227,7 +227,7 @@ namespace Kargono::Network
 			uint16_t userSlot{};
 			msg >> userSlot;
 			m_SessionSlot = userSlot;
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::ApproveJoinSession>(userSlot));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::ApproveJoinSession>(userSlot));
 			break;
 		}
 
@@ -235,7 +235,7 @@ namespace Kargono::Network
 		{
 			uint16_t userSlot{};
 			msg >> userSlot;
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateSessionUserSlot>(userSlot));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UpdateSessionUserSlot>(userSlot));
 			KG_INFO("[SERVER]: Updated User Slot {}", userSlot);
 			break;
 		}
@@ -245,7 +245,7 @@ namespace Kargono::Network
 			KG_INFO("[SERVER]: A User Left the Current Session");
 			uint16_t userSlot{};
 			msg >> userSlot;
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UserLeftSession>(userSlot));
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::UserLeftSession>(userSlot));
 			break;
 		}
 
@@ -258,7 +258,7 @@ namespace Kargono::Network
 		case CustomMsgTypes::CurrentSessionInit:
 		{
 			KG_INFO("[SERVER]: Active Session is initializing...");
-			Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::CurrentSessionInit>());
+			Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::CurrentSessionInit>());
 			break;
 		}
 
@@ -280,7 +280,7 @@ namespace Kargono::Network
 					Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::StartSession>());
 
 					// Open Gameplay
-					Application::GetCurrentApp().Application::SubmitToEventQueue(CreateRef<Events::StartSession>());
+					Core::GetCurrentApp().Core::SubmitToEventQueue(CreateRef<Events::StartSession>());
 				});
 				
 				break;
@@ -293,7 +293,7 @@ namespace Kargono::Network
 				Timers::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Open Gameplay
-					Application::GetCurrentApp().Application::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
+					Core::GetCurrentApp().Core::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
 				});
 
 				break;
@@ -308,7 +308,7 @@ namespace Kargono::Network
 				msg >> x;
 				msg >> id;
 				Math::vec3 trans{x, y, z};
-				Application::GetCurrentApp().Application::SubmitToEventQueue(CreateRef<Events::UpdateEntityLocation>(id, trans));
+				Core::GetCurrentApp().Core::SubmitToEventQueue(CreateRef<Events::UpdateEntityLocation>(id, trans));
 
 				break;
 			}
@@ -326,7 +326,7 @@ namespace Kargono::Network
 				msg >> id;
 				Math::vec3 trans{x, y, z};
 				Math::vec2 linearV{linx, liny};
-				Application::GetCurrentApp().Application::SubmitToEventQueue(CreateRef<Events::UpdateEntityPhysics>(id, trans, linearV));
+				Core::GetCurrentApp().Core::SubmitToEventQueue(CreateRef<Events::UpdateEntityPhysics>(id, trans, linearV));
 
 				break;
 			}
@@ -335,7 +335,7 @@ namespace Kargono::Network
 			{
 				uint16_t signal{};
 				msg >> signal;
-				Application::GetCurrentApp().Application::SubmitToEventQueue(CreateRef<Events::ReceiveSignal>(signal));
+				Core::GetCurrentApp().Core::SubmitToEventQueue(CreateRef<Events::ReceiveSignal>(signal));
 				break;
 			}
 
