@@ -1,7 +1,10 @@
 #include "kgpch.h"
 
-#include "Kargono/Utils/PlatformUtils.h"
-#include "Kargono/Core/Application.h"
+#include "Kargono/Utility/Time.h"
+#include "Kargono/Utility/OSCommands.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Core/Core.h"
 
 #include <windows.h>
 #include <shellapi.h>
@@ -10,7 +13,6 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
-#include "Kargono/Core/FileSystem.h"
 
 
 namespace Kargono::Utility
@@ -166,7 +168,7 @@ namespace Kargono::Utility
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::GetCurrentApp().GetWindow().GetNativeWindow());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Core::GetCurrentApp().GetWindow().GetNativeWindow());
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
 		if (initialDirectory == "")
@@ -202,7 +204,7 @@ namespace Kargono::Utility
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::GetCurrentApp().GetWindow().GetNativeWindow());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Core::GetCurrentApp().GetWindow().GetNativeWindow());
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
 

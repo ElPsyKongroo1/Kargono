@@ -10,7 +10,7 @@ namespace Kargono {
 	//============================================================
 	// This class represents the actual runtime application. The runtime
 	//		application holds layers that can further subdivide the application.
-	class Runtime : public Application
+	class Runtime : public Core
 	{
 	public:
 		//==========================
@@ -21,7 +21,7 @@ namespace Kargono {
 		//		the RuntimeLayer onto its Layer Stack. This initializes
 		//		the RuntimeLayer and calls OnAttach().
 		Runtime(const ApplicationSpecification& spec)
-			: Application(spec)
+			: Core(spec)
 		{
 			PushLayer(new RuntimeLayer());
 		}
@@ -34,7 +34,7 @@ namespace Kargono {
 	// This function is defined in the engine in Core/Application.h.
 	//		This function is linked by the linker and provides an external
 	//		method for starting the application.
-	Application* CreateApplication(ApplicationCommandLineArgs args)
+	Core* CreateApplication(ApplicationCommandLineArgs args)
 	{
 		ApplicationSpecification spec;
 		spec.Name = "Runtime";

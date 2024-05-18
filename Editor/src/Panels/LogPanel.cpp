@@ -150,5 +150,5 @@ void Kargono::LogPanel::LoadBuffer()
 {
 	if (m_LogPathRelative.empty()) { KG_ERROR("Log File Path is empty!"); return; }
 
-	m_Buffer = FileSystem::ReadFileBinary(m_LogPathRelative);
+	m_Buffer = Utility::FileSystem::ReadFileBinary(m_LogPathRelative);
 }

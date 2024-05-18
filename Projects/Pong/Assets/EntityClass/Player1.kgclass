@@ -1,10 +1,10 @@
 Name: Player1
 FieldTypes:
-  - Name: name3
-    Type: UInteger64
+  - Name: fdsa
+    Type: UInteger32
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
 OnCreate: 0
 OnUpdate: 0
 AllScripts:
-  - 1058797724736767605
+  []

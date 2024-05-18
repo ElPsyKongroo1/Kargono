@@ -2,9 +2,9 @@
 
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Utility/Regex.h"
 #include "API/Serialization/SerializationAPI.h"
-#include "Kargono/Utils/Utility.h"
 
 namespace Kargono::Assets
 {
@@ -145,7 +145,7 @@ namespace Kargono::Assets
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
-		FileSystem::CreateNewDirectory(ScriptRegistryLocation.parent_path());
+		Utility::FileSystem::CreateNewDirectory(ScriptRegistryLocation.parent_path());
 
 		std::ofstream fout(ScriptRegistryLocation);
 		fout << out.c_str();
@@ -274,7 +274,7 @@ namespace Kargono::Assets
 		if (metadata->FunctionType != spec.FunctionType)
 		{
 			// Load file into scriptFile
-			scriptFile = FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+			scriptFile = Utility::FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 			if (scriptFile.empty())
 			{
 				KG_WARN("Attempt to open script file failed");
@@ -345,7 +345,7 @@ namespace Kargono::Assets
 				Utility::GenerateFunctionSignature(spec.FunctionType, scriptHandle));
 			
 			// Write back out to file
-			FileSystem::WriteFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation, output);
+			Utility::FileSystem::WriteFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation, output);
 		}
 
 		// Update registry metadata
@@ -393,7 +393,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
 			s_ScriptRegistry.at(scriptHandle).Data.IntermediateLocation);
 
 		s_ScriptRegistry.erase(scriptHandle);
@@ -537,7 +537,7 @@ namespace Kargono::Assets
 
 		if (filepath.is_absolute())
 		{
-			ScriptPath = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			ScriptPath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_ScriptRegistry)
@@ -572,7 +572,7 @@ namespace Kargono::Assets
 		std::string intermediatePath = "Scripting/" + (std::string)newAsset.Handle + ".cpp";
 		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
 
-		FileSystem::WriteFileString(intermediateFullPath, Utility::GenerateFunctionStub(spec.FunctionType, newAsset.Handle));
+		Utility::FileSystem::WriteFileString(intermediateFullPath, Utility::GenerateFunctionStub(spec.FunctionType, newAsset.Handle));
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Script;

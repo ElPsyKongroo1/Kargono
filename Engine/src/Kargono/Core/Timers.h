@@ -2,7 +2,6 @@
 
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Utils/PlatformUtils.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
 

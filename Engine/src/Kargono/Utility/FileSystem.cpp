@@ -1,13 +1,13 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Renderer/Texture.h"
 
 #include <sha256.h>
 #include <crc32.h>
 #include "stb_image_write.h"
-#include "Kargono/Renderer/Texture.h"
 
-namespace Kargono
+namespace Kargono::Utility
 {
 	void FileSystem::RenameFile(const std::filesystem::path& oldPath, std::string newName)
 	{

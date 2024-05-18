@@ -3,7 +3,7 @@
 #include "Kargono/Network/ConnectionToClient.h"
 
 #include "Client.h"
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Network/ClientInterface.h"
 #include "Kargono/Network/ServerInterface.h"

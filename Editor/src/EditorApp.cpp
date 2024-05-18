@@ -5,18 +5,18 @@
 
 namespace Kargono {
 
-	class KargonoEditor : public Application
+	class KargonoEditor : public Core
 	{
 	public:
 		KargonoEditor(const ApplicationSpecification& spec)
-			: Application(spec)
+			: Core(spec)
 		{
 			PushLayer(new EditorLayer());
 		}
 		~KargonoEditor() = default;
 	};
 
-	Application* CreateApplication(ApplicationCommandLineArgs args)
+	Core* CreateApplication(ApplicationCommandLineArgs args)
 	{
 		ApplicationSpecification spec;
 		spec.Name = "Kargono Editor";

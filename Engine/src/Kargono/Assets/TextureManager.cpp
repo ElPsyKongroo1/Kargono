@@ -3,7 +3,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Utility/FileSystem.h"
 #include "API/Serialization/SerializationAPI.h"
 
 #include "stb_image.h"
@@ -116,7 +116,7 @@ namespace Kargono::Assets
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
-		FileSystem::CreateNewDirectory(textureRegistryLocation.parent_path());
+		Utility::FileSystem::CreateNewDirectory(textureRegistryLocation.parent_path());
 
 		std::ofstream fout(textureRegistryLocation);
 		fout << out.c_str();
@@ -125,7 +125,7 @@ namespace Kargono::Assets
 	AssetHandle AssetManager::ImportNewTextureFromFile(const std::filesystem::path& filePath)
 	{
 		// Create Checksum
-		std::string currentCheckSum = FileSystem::ChecksumFromFile(filePath);
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
 
 		if (currentCheckSum.empty())
 		{
@@ -175,7 +175,7 @@ namespace Kargono::Assets
 	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
 	{
 		// Create Checksum
-		std::string currentCheckSum = FileSystem::ChecksumFromBuffer(buffer);
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromBuffer(buffer);
 
 		if (currentCheckSum.empty())
 		{
@@ -239,7 +239,7 @@ namespace Kargono::Assets
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
 		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
-		FileSystem::WriteFileBinary(intermediateFullPath, buffer);
+		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Check that save was successful
 		if (!data)
@@ -256,7 +256,7 @@ namespace Kargono::Assets
 		metadata->Width = width;
 		metadata->Height = height;
 		metadata->Channels = channels;
-		metadata->InitialFileLocation = FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
+		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 
 		buffer.Release();
@@ -268,7 +268,7 @@ namespace Kargono::Assets
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
 		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
-		FileSystem::WriteFileBinary(intermediateFullPath, buffer);
+		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Texture;
@@ -285,7 +285,7 @@ namespace Kargono::Assets
 	{
 		Assets::TextureMetaData metadata = *static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
-		currentResource = FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<Texture2D> newTexture = Texture2D::Create(currentResource, metadata);
 
 		currentResource.Release();

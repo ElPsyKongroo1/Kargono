@@ -3,7 +3,7 @@
 #include "Kargono/RuntimeUI/Runtime.h"
 
 #include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Renderer/RenderCommand.h"
 #include "Kargono/Renderer/Renderer.h"

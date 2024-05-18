@@ -41,7 +41,7 @@ namespace Kargono
 				Document newDocument{};
 				newDocument.TextBuffer.Allocate(4096);
 				newDocument.TextBuffer.SetDataToByte(0);
-				FileSystem::WriteFileString(filepath, "");
+				Utility::FileSystem::WriteFileString(filepath, "");
 				newDocument.FilePath = filepath;
 				newDocument.Edited = false;
 				newDocument.Opened = true;
@@ -60,14 +60,14 @@ namespace Kargono
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 
-			FileSystem::WriteFileString(activeDocument.FilePath, std::string(activeDocument.TextBuffer.As<char>()));
-			//FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
+			Utility::FileSystem::WriteFileString(activeDocument.FilePath, std::string(activeDocument.TextBuffer.As<char>()));
+			//Utility::FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 		};
 		s_OnDeleteFile = [&]()
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
-			if (FileSystem::DeleteSelectedFile(activeDocument.FilePath))
+			if (Utility::FileSystem::DeleteSelectedFile(activeDocument.FilePath))
 			{
 				activeDocument.TextBuffer.Release();
 				s_AllDocuments.erase(s_AllDocuments.begin() + s_ActiveDocument);
@@ -255,7 +255,7 @@ namespace Kargono
 			}
 
 			Document newDocument{};
-			std::string fileString = FileSystem::ReadFileString(filepath);
+			std::string fileString = Utility::FileSystem::ReadFileString(filepath);
 			newDocument.TextBuffer.Allocate(static_cast<uint64_t>(fileString.size() * 1.5f));
 			newDocument.TextBuffer.SetDataToByte(0);
 			memcpy(newDocument.TextBuffer.Data, fileString.data(), fileString.size());
