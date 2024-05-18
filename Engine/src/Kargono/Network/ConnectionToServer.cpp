@@ -3,7 +3,7 @@
 #include "Kargono/Network/ConnectionToServer.h"
 
 #include "Client.h"
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Network/ClientInterface.h"
 #include "Kargono/Network/ServerInterface.h"
@@ -73,7 +73,7 @@ namespace Kargono::Network
 		}
 		KG_INFO("[CLIENT]: Connection has been terminated");
 		
-		Application::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
+		Core::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
 		Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
 		
 	}

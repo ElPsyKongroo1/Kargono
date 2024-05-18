@@ -6,8 +6,8 @@
 #include "Kargono/Script/ScriptGlue.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Core/Application.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Core/Core.h"
+#include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
@@ -61,7 +61,7 @@ namespace Kargono::Utility
 
 	static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 	{
-		Buffer fileData = FileSystem::ReadFileBinary(assemblyPath);
+		Buffer fileData = Utility::FileSystem::ReadFileBinary(assemblyPath);
 
 		// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 		MonoImageOpenStatus status;
@@ -81,7 +81,7 @@ namespace Kargono::Utility
 
 			if (std::filesystem::exists(pdbPath))
 			{
-				ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
+				ScopedBuffer pdbFileData = Utility::FileSystem::ReadFileBinary(pdbPath);
 
 				mono_debug_open_image_from_memory(image, pdbFileData.As<mono_byte>(), (uint32_t)pdbFileData.Size());
 				KG_INFO("Loaded PDB {}", pdbPath);
@@ -187,7 +187,7 @@ namespace Kargono::Script
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
 			// add reload to main thread queue
-			Application::GetCurrentApp().SubmitToMainThread([]()
+			Core::GetCurrentApp().SubmitToMainThread([]()
 				{
 					s_ScriptData->AppAssemblyFileWatcher.reset();
 					ScriptEngine::ReloadAssembly();

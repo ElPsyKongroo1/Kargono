@@ -13,14 +13,14 @@
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Core.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
-#include "Kargono/Core/Layer.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Core/Application.h"
+#include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/AppTick.h"
 
@@ -73,5 +73,9 @@
 #include "Kargono/EditorUI/Editor.h"
 
 //-----------------Utilities-----------------//
-#include "Kargono/Utils/PlatformUtils.h"
-#include "Kargono/Utils/Utility.h"
+#include "Kargono/Utility/Time.h"
+#include "Kargono/Utility/OSCommands.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Utility/Regex.h"
+#include "Kargono/Utility/Operations.h"
+#include "Kargono/Utility/Conversions.h"

@@ -12,7 +12,7 @@ namespace Kargono
 	// Server Layer Class
 	//============================================================
 	
-	class ServerLayer : public Layer
+	class ServerLayer : public Application
 	{
 	public:
 		//==========================

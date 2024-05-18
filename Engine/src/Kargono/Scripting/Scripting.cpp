@@ -5,7 +5,7 @@
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Scene/Scene.h"
-#include "Kargono/Core/FileSystem.h"
+#include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/RuntimeUI/Runtime.h"
@@ -426,7 +426,7 @@ namespace Kargono::Scripting
 
 		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
 
-		FileSystem::WriteFileString(headerFile, outputStream.str());
+		Utility::FileSystem::WriteFileString(headerFile, outputStream.str());
 	}
 
 	void ScriptModuleBuilder::CreateDllCPPFiles()
@@ -442,20 +442,20 @@ namespace Kargono::Scripting
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
 		{
-			outputStream << FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+			outputStream << Utility::FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 			outputStream << '\n';
 		}
 		outputStream << "}\n";
 
 		std::filesystem::path file = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
-		FileSystem::WriteFileString(file, outputStream.str());
+		Utility::FileSystem::WriteFileString(file, outputStream.str());
 	}
 
 	void ScriptModuleBuilder::CompileDll(bool addDebugSymbols)
 	{
-		//FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
-		FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
+		//Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
+		Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
 
 		//std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
 		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };

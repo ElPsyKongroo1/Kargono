@@ -35,10 +35,10 @@ namespace Kargono
 		ImGui::Text("Time");
 		ImGui::Separator();
 		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
-		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(Application::GetCurrentApp().GetUpdateCount()));
+		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(Core::GetCurrentApp().GetUpdateCount()));
 		if (Scene::GetActiveScene()->IsRunning())
 		{
-			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - Application::GetCurrentApp().GetAppStartTime())).c_str());
+			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - Core::GetCurrentApp().GetAppStartTime())).c_str());
 		}
 		else
 		{

@@ -297,16 +297,13 @@ namespace Kargono
 		};
 		s_EditFieldPopup.ConfirmAction = [&]()
 		{
-			auto& fieldMap = s_EditorEntityClass->GetFields();
-
-			if (!fieldMap.contains(s_CurrentField))
+			if (!s_EditorEntityClass->ContainsField(s_CurrentField))
 			{
 				KG_ERROR("Could not find reference to original entity class in field map");
 				return;
 			}
-
-			fieldMap.erase(s_CurrentField);
-			fieldMap.insert_or_assign(s_EditFieldName.CurrentOption,
+			s_EditorEntityClass->DeleteField(s_CurrentField);
+			s_EditorEntityClass->AddField(s_EditFieldName.CurrentOption, 
 				Utility::StringToWrappedVarType(s_EditFieldType.CurrentOption.Label));
 			s_MainHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();

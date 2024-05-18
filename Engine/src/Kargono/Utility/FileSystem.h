@@ -9,7 +9,9 @@
 namespace Kargono
 {
 	class Texture2D;
-
+}
+namespace Kargono::Utility
+{
 	class FileSystem
 	{
 	public:
