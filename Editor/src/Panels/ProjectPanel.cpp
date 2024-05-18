@@ -1,11 +1,11 @@
 #include "Panels/ProjectPanel.h"
 
 #include "Kargono.h"
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	static EditorUI::SelectOptionSpec s_SelectStartSceneSpec {};
 	static EditorUI::CheckboxSpec s_DefaultFullscreenSpec {};
@@ -475,7 +475,7 @@ namespace Kargono
 
 	ProjectPanel::ProjectPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 		InitializeStaticResources();
 	}
 	void ProjectPanel::OnEditorUIRender()

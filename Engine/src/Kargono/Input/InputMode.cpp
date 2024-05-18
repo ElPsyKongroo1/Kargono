@@ -4,7 +4,7 @@
 #include "Kargono/Assets/AssetManager.h"
 
 #include "InputPolling.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 
 namespace Kargono
 {
@@ -107,7 +107,7 @@ namespace Kargono
 		s_InputHandle = handle;
 		if (inputReference)
 		{
-			Core::GetCurrentApp().SubmitToMainThread([&]()
+			EngineCore::GetCurrentApp().SubmitToMainThread([&]()
 				{
 					LoadInputMode(s_InputRef, s_InputHandle);
 				});

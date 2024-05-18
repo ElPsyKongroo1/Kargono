@@ -2,7 +2,7 @@
 
 #include "Panels/LogPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 #include "Kargono.h"
 
 
@@ -103,12 +103,12 @@ void Kargono::ImGuiLog::Draw(const char* title, bool* p_open)
 // ImGuiLog 
 //----------------------------------------------//
 
-static Kargono::EditorLayer* s_EditorLayer { nullptr };
+static Kargono::EditorApp* s_EditorLayer { nullptr };
 
 Kargono::LogPanel::LogPanel()
 	: m_Log({})
 {
-	s_EditorLayer = EditorLayer::GetCurrentLayer();
+	s_EditorLayer = EditorApp::GetCurrentLayer();
 	LoadBuffer();
 }
 

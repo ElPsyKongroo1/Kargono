@@ -1,12 +1,12 @@
 #include "Panels/UIEditorPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 #include "Kargono.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	static void DisplayWidgetSpecificInfo(Ref<RuntimeUI::Widget> widget, int32_t selectedWidget)
 	{
@@ -51,7 +51,7 @@ namespace Kargono
 
 	UIEditorPanel::UIEditorPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 
 	void UIEditorPanel::OnEditorUIRender()

@@ -2,21 +2,21 @@
 
 #include "Kargono.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	ViewportPanel::ViewportPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
 		// Adjust Framebuffer Size Based on Viewport
-		auto& currentWindow = Core::GetCurrentApp().GetWindow();
+		auto& currentWindow = EngineCore::GetCurrentApp().GetWindow();
 		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
 			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
@@ -63,7 +63,7 @@ namespace Kargono
 
 		if (s_EditorLayer->m_ShowUserInterface)
 		{
-			auto& currentApplication = Core::GetCurrentApp().GetWindow();
+			auto& currentApplication = EngineCore::GetCurrentApp().GetWindow();
 			if (s_EditorLayer->m_SceneState == SceneState::Play)
 			{
 				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
@@ -89,14 +89,14 @@ namespace Kargono
 	{
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferDataFormat::RGBA8, FramebufferDataFormat::RED_INTEGER,  FramebufferDataFormat::Depth };
-		fbSpec.Width = Core::GetCurrentApp().GetWindow().GetWidth();
-		fbSpec.Height = Core::GetCurrentApp().GetWindow().GetHeight();
+		fbSpec.Width = EngineCore::GetCurrentApp().GetWindow().GetWidth();
+		fbSpec.Height = EngineCore::GetCurrentApp().GetWindow().GetHeight();
 		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		auto& currentWindow = Core::GetCurrentApp().GetWindow();
+		auto& currentWindow = EngineCore::GetCurrentApp().GetWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -245,7 +245,7 @@ namespace Kargono
 
 	void ViewportPanel::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		EditorLayer* editorLayer = EditorLayer::GetCurrentLayer();
+		EditorApp* editorLayer = EditorApp::GetCurrentLayer();
 
 		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
 		{
@@ -488,8 +488,8 @@ namespace Kargono
 	{
 		auto& transform = entity.GetComponent<TransformComponent>();
 		auto& camera = entity.GetComponent<CameraComponent>();
-		float windowWidth = (float)Core::GetCurrentApp().GetWindow().GetWidth();
-		float windowHeight = (float)Core::GetCurrentApp().GetWindow().GetHeight();
+		float windowWidth = (float)EngineCore::GetCurrentApp().GetWindow().GetWidth();
+		float windowHeight = (float)EngineCore::GetCurrentApp().GetWindow().GetHeight();
 		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
 		auto cameraProjectionType = camera.Camera.GetProjectionType();
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };

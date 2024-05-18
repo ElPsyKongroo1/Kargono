@@ -1,6 +1,6 @@
 #include "Panels/TextEditorPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 #include "imgui_internal.h"
 #include "Kargono.h"
 
@@ -15,7 +15,7 @@ namespace Kargono
 		bool SetActive{ false };
 	};
 
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	static uint32_t s_ActiveDocument = 0;
 	static std::vector<Document> s_AllDocuments {};
@@ -30,7 +30,7 @@ namespace Kargono
 	
 	TextEditorPanel::TextEditorPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 
 		s_OnCreateFile = [&]()
 		{

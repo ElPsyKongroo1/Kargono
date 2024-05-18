@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/LayerStack.h"
+#include "Kargono/Core/Application.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/ApplicationEvent.h"
@@ -23,7 +23,7 @@ int main(int argc, char** argv);
 namespace Kargono
 {
 
-	struct ApplicationCommandLineArgs
+	struct CommandLineArgs
 	{
 		int Count = 0;
 		char** Args = nullptr;
@@ -35,34 +35,30 @@ namespace Kargono
 		}
 	};
 
-	struct ApplicationSpecification
+	struct AppSpec
 	{
 		std::string Name = "Kargono Application";
 		std::filesystem::path WorkingDirectory;
-		ApplicationCommandLineArgs CommandLineArgs;
+		CommandLineArgs CommandLineArgs;
 		uint32_t Width, Height;
 	};
 
-	class Core
+	class EngineCore
 	{
 	public:
-		Core(const ApplicationSpecification& specification);
-		virtual ~Core();
-
+		EngineCore(const AppSpec& specification, Application* app);
+		~EngineCore();
 		void OnEvent(Events::Event& e);
 
-		void PushLayer(Application* layer);
-		void PushOverlay(Application* layer);
-
-		static Core& GetCurrentApp() { return *s_Instance; }
+		static EngineCore& GetCurrentApp() { return *s_Instance; }
 
 		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
 		{
-			contactListener.SetEventCallback(KG_BIND_EVENT_FN(Core::OnEvent));
+			contactListener.SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
 		}
 
 
-		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+		const AppSpec& GetSpecification() const { return m_Specification; }
 
 		Window& GetWindow() { return *m_Window; }
 
@@ -95,7 +91,8 @@ namespace Kargono
 		void ExecuteMainThreadQueue();
 		void ProcessEventQueue();
 	private:
-		ApplicationSpecification m_Specification;
+		AppSpec m_Specification;
+		Application* m_CurrentApp{ nullptr };
 		Scope<Window> m_Window;
 		Audio::AudioEngine* m_AudioContext = nullptr;
 		bool m_Running = true;
@@ -103,7 +100,6 @@ namespace Kargono
 		double m_AppStartTime = 0.0f;
 		std::chrono::nanoseconds m_Accumulator{0};
 		std::atomic<uint64_t> m_UpdateCount = 0;
-		LayerStack m_LayerStack;
 
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
@@ -112,11 +108,11 @@ namespace Kargono
 		std::mutex m_EventQueueMutex;
 
 	private:
-		static Core* s_Instance;
+		static EngineCore* s_Instance;
 		friend int ::main(int argc, char** argv);
 	};
 
 	// To be defined in client
-	Core* CreateApplication(ApplicationCommandLineArgs args);
+	EngineCore* InitEngineAndCreateApp(CommandLineArgs args);
 }
 

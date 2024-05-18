@@ -6,7 +6,7 @@
 #include "Kargono/Script/ScriptGlue.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Events/ApplicationEvent.h"
@@ -187,7 +187,7 @@ namespace Kargono::Script
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
 			// add reload to main thread queue
-			Core::GetCurrentApp().SubmitToMainThread([]()
+			EngineCore::GetCurrentApp().SubmitToMainThread([]()
 				{
 					s_ScriptData->AppAssemblyFileWatcher.reset();
 					ScriptEngine::ReloadAssembly();

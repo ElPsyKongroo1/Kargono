@@ -2,7 +2,7 @@
 
 #include "Panels/SceneHierarchyPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 #include "imgui_internal.h"
 
@@ -16,7 +16,7 @@
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
@@ -76,7 +76,7 @@ namespace Kargono
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 
 		// Set Primary Camera Checkbox
 		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
@@ -151,7 +151,7 @@ namespace Kargono
 		}
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			auto& editorCamera = EditorLayer::GetCurrentLayer()->m_ViewportPanel->m_EditorCamera;
+			auto& editorCamera = EditorApp::GetCurrentLayer()->m_ViewportPanel->m_EditorCamera;
 			auto& transformComponent = entity.GetComponent<TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);

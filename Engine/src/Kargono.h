@@ -13,7 +13,7 @@
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Timestep.h"

@@ -30,13 +30,13 @@ namespace Kargono
 	};
 
 	//============================================================
-	// Editor Layer Class
+	// Editor App Class
 	//============================================================
 	// This class holds all of the editor application logic. The concept of
 	//		layers is in its infancy currently. This class holds the logic for
 	//		all of the different systems that the editor uses such as scene management,
 	//		ImGui code for editor windows, and project management.
-	class EditorLayer : public Application
+	class EditorApp : public Application
 	{
 	public:
 		//=========================
@@ -44,8 +44,8 @@ namespace Kargono
 		//=========================
 		// The constructor simply calls the parent constructor and initializes
 		//		the ImGui layer for window use.
-		EditorLayer();
-		virtual ~EditorLayer() override = default;
+		EditorApp();
+		virtual ~EditorApp() override = default;
 		//=========================
 		// LifeCycle Functions
 		//=========================
@@ -122,7 +122,7 @@ namespace Kargono
 		//=========================
 		// Getters/Setters
 		//=========================
-		static EditorLayer* GetCurrentLayer() { return s_EditorLayer; }
+		static EditorApp* GetCurrentLayer() { return s_EditorLayer; }
 	private:
 		//=========================
 		// Scene/Project Management
@@ -160,7 +160,7 @@ namespace Kargono
 		//=========================
 		// Private Fields
 		//=========================
-		static EditorLayer* s_EditorLayer;
+		static EditorApp* s_EditorLayer;
 		// Booleans to display UI Windows
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowContentBrowser = true;

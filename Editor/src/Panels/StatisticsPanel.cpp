@@ -1,15 +1,15 @@
 #include "Panels/StatisticsPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 #include "Kargono.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	StatisticsPanel::StatisticsPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 	void StatisticsPanel::OnEditorUIRender()
 	{
@@ -35,10 +35,10 @@ namespace Kargono
 		ImGui::Text("Time");
 		ImGui::Separator();
 		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
-		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(Core::GetCurrentApp().GetUpdateCount()));
+		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(EngineCore::GetCurrentApp().GetUpdateCount()));
 		if (Scene::GetActiveScene()->IsRunning())
 		{
-			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - Core::GetCurrentApp().GetAppStartTime())).c_str());
+			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - EngineCore::GetCurrentApp().GetAppStartTime())).c_str());
 		}
 		else
 		{

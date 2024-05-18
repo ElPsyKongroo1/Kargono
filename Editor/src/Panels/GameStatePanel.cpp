@@ -1,11 +1,11 @@
 #include "GameStatePanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 #include "Kargono.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 	static GameStatePanel* s_GameStatePanel { nullptr };
 
 	static std::string s_CurrentField {};
@@ -334,7 +334,7 @@ namespace Kargono
 
 	GameStatePanel::GameStatePanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 		s_GameStatePanel = this;
 
 		InitializeOpeningScreen();
