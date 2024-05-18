@@ -12,15 +12,15 @@ namespace Kargono
 	// Server Layer Class
 	//============================================================
 	
-	class ServerLayer : public Application
+	class ServerApp : public Application
 	{
 	public:
 		//==========================
 		// Constructor/Destructor
 		//==========================
 
-		ServerLayer();
-		virtual ~ServerLayer() = default;
+		ServerApp();
+		virtual ~ServerApp() = default;
 		//==========================
 		// LifeCycle Functions
 		//==========================

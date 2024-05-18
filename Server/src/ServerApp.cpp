@@ -1,48 +1,63 @@
-#include <Kargono.h>
-#include "Kargono/Core/EntryPoint.h"
+#include "kgpch.h"
+#include "ServerApp.h"
 
-#include "ServerLayer.h"
+#include <filesystem>
 
-namespace Kargono {
+namespace Kargono
+{
+	// Final Export Values
+	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
+	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
 
-	//============================================================
-	// Server Class
-	//============================================================
-	// This class represents the actual runtime application. The runtime
-	//		application holds layers that can further subdivide the application.
-	class ServerApp : public Core
+	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
+	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
+
+	ServerApp::ServerApp()
+		: Application("ServerLayer")
 	{
-	public:
-		//==========================
-		// Constructors and Destructors
-		//==========================
-
-		// This constructor calls its parent constructor and pushes
-		//		the ServerLayer onto its Layer Stack. This initializes
-		//		the ServerLayer and calls OnAttach().
-		ServerApp(const ApplicationSpecification& spec)
-			: Core(spec)
-		{
-			PushLayer(new ServerLayer());
-		}
-		~ServerApp() = default;
-	};
-
-	//============================================================
-	// CreateApplication Function
-	//============================================================
-	// This function is defined in the engine in Core/Application.h.
-	//		This function is linked by the linker and provides an external
-	//		method for starting the application.
-	Core* CreateApplication(ApplicationCommandLineArgs args)
-	{
-		ApplicationSpecification spec;
-		spec.Name = "Server";
-		spec.CommandLineArgs = args;
-		spec.WorkingDirectory = std::filesystem::current_path();
-		spec.Width = 0;
-		spec.Height = 0;
-
-		return new ServerApp(spec);
 	}
+
+	void ServerApp::OnAttach()
+	{
+		if (!OpenProject())
+		{
+			EngineCore::GetCurrentApp().Close();
+			return;
+		}
+
+		bool isLocal = Projects::Project::GetServerLocation() == "LocalMachine";
+
+		Network::Server::SetActiveServer(CreateRef<Network::Server>(Projects::Project::GetServerPort(), isLocal));
+		Network::Server::GetActiveServer()->RunServer();
+	}
+
+	bool ServerApp::OpenProject()
+	{
+		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
+		if (!std::filesystem::exists(initialDirectory))
+		{
+			initialDirectory = "";
+		}
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0", initialDirectory.string().c_str());
+		if (filepath.empty()) { return false; }
+
+		OpenProject(filepath);
+		return true;
+	}
+
+	void ServerApp::OpenProject(const std::filesystem::path& path)
+	{
+		if (Assets::AssetManager::OpenProject(path)) {}
+	}
+
+
+	void ServerApp::OnDetach()
+	{
+	}
+
+	void ServerApp::OnUpdate(Timestep ts)
+	{
+		
+	}
+
 }

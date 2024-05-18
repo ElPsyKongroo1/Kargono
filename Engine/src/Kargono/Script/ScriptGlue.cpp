@@ -8,7 +8,7 @@
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Audio/AudioEngine.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Events/ApplicationEvent.h"
@@ -334,7 +334,7 @@ namespace Kargono::Script
 		s_InputHandle = handle;
 		if (inputReference)
 		{
-			Core::GetCurrentApp().SubmitToMainThread([&]()
+			EngineCore::GetCurrentApp().SubmitToMainThread([&]()
 			{
 				InputMode::LoadInputMode(s_InputRef, s_InputHandle);
 			});
@@ -344,10 +344,10 @@ namespace Kargono::Script
 
 	static void Core_CloseApplication()
 	{
-		Core::GetCurrentApp().SubmitToMainThread([&]()
+		EngineCore::GetCurrentApp().SubmitToMainThread([&]()
 			{
 				Events::ApplicationCloseEvent event {};
-				Events::EventCallbackFn eventCallback = Core::GetCurrentApp().GetWindow().GetEventCallback();
+				Events::EventCallbackFn eventCallback = EngineCore::GetCurrentApp().GetWindow().GetEventCallback();
 				eventCallback(event);
 			});
 	}

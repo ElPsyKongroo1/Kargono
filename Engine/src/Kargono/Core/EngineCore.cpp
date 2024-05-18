@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Script/ScriptEngine.h"
@@ -28,32 +28,29 @@ namespace Kargono
 	std::chrono::nanoseconds k_ConstantFrameTime { 1'000 * 1'000 * 1'000 / 60 };
 	Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };
 
-	Core* Core::s_Instance = nullptr;
+	EngineCore* EngineCore::s_Instance = nullptr;
 
-	Core::Core(const ApplicationSpecification& specification)
+	EngineCore::EngineCore(const AppSpec& specification, Application* app)
 		: m_Specification(specification)
 		
 	{
 		// Ensure Application is a Singleton
 		KG_ASSERT(!s_Instance, "Application already exists!")
 		s_Instance = this;
-
+		m_CurrentApp = app;
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
-		m_Window->SetEventCallback(KG_BIND_EVENT_FN(Core::OnEvent));
-		AppTickEngine::SetAppTickCallback(KG_BIND_EVENT_FN(Core::OnEvent));
+		m_Window->SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
+		AppTickEngine::SetAppTickCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
+		app->OnAttach();
 	}
 
-	Core::~Core()
+	EngineCore::~EngineCore()
 	{
-
-		for (Application* layer : m_LayerStack.GetLayers())
+		if (m_CurrentApp)
 		{
-			if (layer)
-			{
-				layer->OnDetach();
-				delete layer;
-				layer = nullptr;
-			}
+			m_CurrentApp->OnDetach();
+			delete m_CurrentApp;
+			m_CurrentApp = nullptr;
 		}
 
 		Script::ScriptEngine::Shutdown();
@@ -63,76 +60,66 @@ namespace Kargono
 		
 	}
 
-	void Core::PushLayer(Application* layer)
-	{
-		m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
-	}
-
-	void Core::PushOverlay(Application* layer)
-	{
-		m_LayerStack.PushOverlay(layer);
-		layer->OnAttach();
-	}
-
-
-	void Core::OnEvent(Events::Event& e) 
+	void EngineCore::OnEvent(Events::Event& e) 
 	{
 		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::WindowCloseEvent>(KG_BIND_EVENT_FN(Core::OnWindowClose));
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(Core::OnWindowResize));
-		dispatcher.Dispatch<Events::CleanUpTimersEvent>(KG_BIND_EVENT_FN(Core::OnCleanUpTimers));
-		dispatcher.Dispatch<Events::AddTickGeneratorUsage>(KG_BIND_EVENT_FN(Core::OnAddTickGeneratorUsage));
-		dispatcher.Dispatch<Events::RemoveTickGeneratorUsage>(KG_BIND_EVENT_FN(Core::OnRemoveTickGeneratorUsage));
-		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_EVENT_FN(Core::OnAppTickEvent));
+		dispatcher.Dispatch<Events::WindowCloseEvent>(KG_BIND_EVENT_FN(EngineCore::OnWindowClose));
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(EngineCore::OnWindowResize));
+		dispatcher.Dispatch<Events::CleanUpTimersEvent>(KG_BIND_EVENT_FN(EngineCore::OnCleanUpTimers));
+		dispatcher.Dispatch<Events::AddTickGeneratorUsage>(KG_BIND_EVENT_FN(EngineCore::OnAddTickGeneratorUsage));
+		dispatcher.Dispatch<Events::RemoveTickGeneratorUsage>(KG_BIND_EVENT_FN(EngineCore::OnRemoveTickGeneratorUsage));
+		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_EVENT_FN(EngineCore::OnAppTickEvent));
 
-		dispatcher.Dispatch<Events::UpdateEntityLocation>(KG_BIND_EVENT_FN(Core::OnUpdateEntityLocation));
-		dispatcher.Dispatch<Events::UpdateEntityPhysics>(KG_BIND_EVENT_FN(Core::OnUpdateEntityPhysics));
+		dispatcher.Dispatch<Events::UpdateEntityLocation>(KG_BIND_EVENT_FN(EngineCore::OnUpdateEntityLocation));
+		dispatcher.Dispatch<Events::UpdateEntityPhysics>(KG_BIND_EVENT_FN(EngineCore::OnUpdateEntityPhysics));
 
-		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++ it)
+		if (e.Handled)
 		{
-			if (e.Handled) { break; }
-			(*it)->OnEvent(e);
+			return;
+		}
+		if (m_CurrentApp)
+		{
+			m_CurrentApp->OnEvent(e);
 		}
 	}
 
 	
 
-	void Core::Close()
+	void EngineCore::Close()
 	{
 		m_Running = false;
 	}
 
-	void Core::SetAppStartTime()
+	void EngineCore::SetAppStartTime()
 	{
 		m_AppStartTime = Utility::Time::GetTime();
 	}
 
-	void Core::SubmitToMainThread(const std::function<void()>& function)
+	void EngineCore::SubmitToMainThread(const std::function<void()>& function)
 	{
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
 
 		m_MainThreadQueue.emplace_back(function);
 	}
 
-	void Core::SubmitToEventQueue(Ref<Events::Event> e)
+	void EngineCore::SubmitToEventQueue(Ref<Events::Event> e)
 	{
 		std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
 
 		m_EventQueue.emplace_back(e);
 	}
 
-	void Core::OnSkipUpdate(Events::SkipUpdateEvent event)
+	void EngineCore::OnSkipUpdate(Events::SkipUpdateEvent event)
 	{
 		m_Accumulator -= event.GetSkipCount() * k_ConstantFrameTime;
 	}
 
-	void Core::OnAddExtraUpdate(Events::AddExtraUpdateEvent event)
+	void EngineCore::OnAddExtraUpdate(Events::AddExtraUpdateEvent event)
 	{
 		m_Accumulator += event.GetExtraUpdateCount() * k_ConstantFrameTime;
 	}
 
-	void Core::Run()
+	void EngineCore::Run()
 	{
 		using namespace std::chrono_literals;
 
@@ -161,11 +148,7 @@ namespace Kargono
 				ExecuteMainThreadQueue();
 				if (!m_Minimized)
 				{
-					for (Application* layer : m_LayerStack)
-					{
-						layer->OnUpdate(k_ConstantFrameTimeStep);
-					}
-				
+					m_CurrentApp->OnUpdate(k_ConstantFrameTimeStep);
 				}
 				ProcessEventQueue();
 				m_Window->OnUpdate();
@@ -173,12 +156,12 @@ namespace Kargono
 		}
 	}
 
-	bool Core::OnWindowClose(Events::WindowCloseEvent& e) 
+	bool EngineCore::OnWindowClose(Events::WindowCloseEvent& e) 
 	{
 		m_Running = false;
 		return true;
 	}
-	bool Core::OnWindowResize(Events::WindowResizeEvent& e)
+	bool EngineCore::OnWindowResize(Events::WindowResizeEvent& e)
 	{
 
 		if(e.GetWidth() == 0 || e.GetHeight() == 0)
@@ -193,25 +176,25 @@ namespace Kargono
 		return false;
 	}
 
-	bool Core::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
+	bool EngineCore::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
 		Timers::AsyncBusyTimer::CleanUpClosedTimers();
 		return false;
 	}
 
-	bool Core::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e)
+	bool EngineCore::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e)
 	{
 		AppTickEngine::AddGeneratorUsage(e.GetDelayMilliseconds());
 		return false;
 	}
 
-	bool Core::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e)
+	bool EngineCore::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e)
 	{
 		AppTickEngine::RemoveGeneratorUsage(e.GetDelayMilliseconds());
 		return false;
 	}
 
-	bool Core::OnAppTickEvent(Events::AppTickEvent& e)
+	bool EngineCore::OnAppTickEvent(Events::AppTickEvent& e)
 	{
 		auto client = Network::Client::GetActiveClient();
 		if (client)
@@ -221,7 +204,7 @@ namespace Kargono
 		return false;
 	}
 
-	bool Core::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
+	bool EngineCore::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
 		Scene* scene = Script::ScriptEngine::GetSceneContext();
 		if (!scene) { return false; }
@@ -239,7 +222,7 @@ namespace Kargono
 		return false;
 	}
 
-	bool Core::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
+	bool EngineCore::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
 		Scene* scene = Script::ScriptEngine::GetSceneContext();
 		if (!scene) { return false; }
@@ -262,7 +245,7 @@ namespace Kargono
 
 	
 
-	void Core::ExecuteMainThreadQueue()
+	void EngineCore::ExecuteMainThreadQueue()
 	{
 		KG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
@@ -271,7 +254,7 @@ namespace Kargono
 		m_MainThreadQueue.clear();
 	}
 
-	void Core::ProcessEventQueue()
+	void EngineCore::ProcessEventQueue()
 	{
 		KG_PROFILE_FUNCTION();
 

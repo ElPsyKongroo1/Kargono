@@ -14,15 +14,15 @@ namespace Kargono
 	//		layers is in its infancy currently. This class holds the logic for
 	//		all of the different systems that the runtime uses such as rendering,
 	//		audio, and physics.
-	class RuntimeLayer : public Application
+	class RuntimeApp : public Application
 	{
 	public:
 		//==========================
 		// Constructor/Destructor
 		//==========================
 		// Does nothing other than calling parent constructor
-		RuntimeLayer();
-		virtual ~RuntimeLayer() = default;
+		RuntimeApp();
+		virtual ~RuntimeApp() = default;
 		//==========================
 		// LifeCycle Functions
 		//==========================

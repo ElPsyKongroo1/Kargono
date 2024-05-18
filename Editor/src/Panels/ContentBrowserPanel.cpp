@@ -2,7 +2,7 @@
 
 #include "Kargono.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 #include "Panels/ContentBrowserPanel.h"
 
 namespace Kargono::Utility
@@ -50,12 +50,12 @@ namespace Kargono::Utility
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer{ nullptr };
+	static EditorApp* s_EditorLayer{ nullptr };
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
@@ -271,7 +271,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open Scene"))
 					{
-						EditorLayer::GetCurrentLayer()->OpenScene(path);
+						EditorApp::GetCurrentLayer()->OpenScene(path);
 					}
 				}
 

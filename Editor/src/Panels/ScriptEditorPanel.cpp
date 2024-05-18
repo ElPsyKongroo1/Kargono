@@ -1,12 +1,12 @@
 #include "Panels/ScriptEditorPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 #include "Kargono.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	// Script Table (Create)
 	static EditorUI::TableSpec s_AllScriptsTable {};
@@ -35,7 +35,7 @@ namespace Kargono
 
 	ScriptEditorPanel::ScriptEditorPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	
 		s_AllScriptsTable.Label = "All Scripts";
 		s_AllScriptsTable.Column1Title = "Group";

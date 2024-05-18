@@ -1,5 +1,5 @@
 #include "Panels/SettingsPanel.h"
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 #include "Kargono.h"
 
@@ -9,11 +9,11 @@ namespace Kargono
 	static EditorUI::CheckboxSpec s_DisplayCameraFrustrumSpec {};
 	static EditorUI::CheckboxSpec s_DisplayRuntimeUISpec {};
 	static EditorUI::CheckboxSpec s_FullscreenRuntimeSpec {};
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	SettingsPanel::SettingsPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 
 		s_PrimaryCameraCheckboxSpec.Label = "Display Physics Colliders";
 		s_PrimaryCameraCheckboxSpec.LeftLean = false;

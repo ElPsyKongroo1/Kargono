@@ -4,7 +4,7 @@
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
-#include "Kargono/Core/Core.h"
+#include "Kargono/Core/EngineCore.h"
 
 #include <glfw/glfw3.h>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -135,7 +135,7 @@ namespace Kargono {
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			Core::GetCurrentApp().GetWindow().SetMouseCursorVisible(true);
+			EngineCore::GetCurrentApp().GetWindow().SetMouseCursorVisible(true);
 			m_MousePaused = true;
 		}
 		return false;
@@ -145,7 +145,7 @@ namespace Kargono {
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			Core::GetCurrentApp().GetWindow().SetMouseCursorVisible(false);
+			EngineCore::GetCurrentApp().GetWindow().SetMouseCursorVisible(false);
 			m_MousePaused = true;
 		}
 		return false;

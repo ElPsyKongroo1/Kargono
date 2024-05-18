@@ -1,48 +1,334 @@
-#include <Kargono.h>
-#include "Kargono/Core/EntryPoint.h"
+#include "kgpch.h"
+#include "RuntimeApp.h"
 
-#include "RuntimeLayer.h"
+#include <filesystem>
 
-namespace Kargono {
+namespace Kargono
+{
+	// Final Export Values
+	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
+	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
 
-	//============================================================
-	// Runtime Class
-	//============================================================
-	// This class represents the actual runtime application. The runtime
-	//		application holds layers that can further subdivide the application.
-	class Runtime : public Core
+	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
+	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
+
+	RuntimeApp::RuntimeApp()
+		: Application("RuntimeLayer")
 	{
-	public:
-		//==========================
-		// Constructors and Destructors
-		//==========================
-
-		// This constructor calls its parent constructor and pushes
-		//		the RuntimeLayer onto its Layer Stack. This initializes
-		//		the RuntimeLayer and calls OnAttach().
-		Runtime(const ApplicationSpecification& spec)
-			: Core(spec)
-		{
-			PushLayer(new RuntimeLayer());
-		}
-		~Runtime() = default;
-	};
-
-	//============================================================
-	// CreateApplication Function
-	//============================================================
-	// This function is defined in the engine in Core/Application.h.
-	//		This function is linked by the linker and provides an external
-	//		method for starting the application.
-	Core* CreateApplication(ApplicationCommandLineArgs args)
-	{
-		ApplicationSpecification spec;
-		spec.Name = "Runtime";
-		spec.CommandLineArgs = args;
-		spec.WorkingDirectory = std::filesystem::current_path();
-		spec.Width = 1600;
-		spec.Height = 900;
-
-		return new Runtime(spec);
 	}
+
+	void RuntimeApp::OnAttach()
+	{
+		Script::ScriptEngine::Init();
+		Audio::AudioEngine::Init();
+
+		auto& currentWindow = EngineCore::GetCurrentApp().GetWindow();
+
+		Scene::SetActiveScene(CreateRef<Scene>());
+		#if KG_EXPORT == 0
+		if (!OpenProject())
+		{
+			EngineCore::GetCurrentApp().Close();
+			return;
+		}
+		#else
+		OpenProject(runtimePath);
+		if (!Projects::Project::GetActive())
+		{
+			Application::GetCurrentApp().Close();
+			return;
+		}
+		#endif
+		
+
+		Projects::Project::GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
+		currentWindow.SetResizable(false);
+
+		Renderer::Init();
+		Renderer::SetLineWidth(4.0f);
+		RuntimeUI::Text::Init();
+		RuntimeUI::Runtime::Init();
+
+		OnPlay();
+		currentWindow.SetVisible(true);
+	}
+
+	void RuntimeApp::OnDetach()
+	{
+		
+		auto view = Scene::GetActiveScene()->GetAllEntitiesWith<AudioComponent>();
+		for (auto& entity : view)
+		{
+			Entity e = { entity, Scene::GetActiveScene().get() };
+			auto& audioComponent = e.GetComponent<AudioComponent>();
+			audioComponent.Audio.reset();
+		}
+		OnStop();
+
+	}
+
+	void RuntimeApp::OnUpdate(Timestep ts)
+	{
+		
+		// Render
+		Renderer::ResetStats();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RenderCommand::Clear();
+
+		OnUpdateRuntime(ts);
+		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+
+		if (mainCamera)
+		{
+			RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
+				EngineCore::GetCurrentApp().GetWindow().GetWidth(), EngineCore::GetCurrentApp().GetWindow().GetHeight());
+		}
+	}
+
+	void RuntimeApp::OnEvent(Events::Event& event)
+	{
+		Events::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnKeyPressed));
+		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_EVENT_FN(RuntimeApp::OnPhysicsCollisionEnd));
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnWindowResize));
+		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnApplicationClose));
+		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_EVENT_FN(RuntimeApp::OnUpdateUserCount));
+		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_EVENT_FN(RuntimeApp::OnApproveJoinSession));
+		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_EVENT_FN(RuntimeApp::OnUserLeftSession));
+		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_EVENT_FN(RuntimeApp::OnCurrentSessionInit));
+		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(RuntimeApp::OnConnectionTerminated));
+		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_EVENT_FN(RuntimeApp::OnUpdateSessionUserSlot));
+		dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(RuntimeApp::OnStartSession));
+		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_EVENT_FN(RuntimeApp::OnSessionReadyCheckConfirm));
+		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_EVENT_FN(RuntimeApp::OnReceiveSignal));
+	}
+
+	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
+	{
+		Events::WindowCloseEvent windowEvent {};
+		Events::EventCallbackFn eventCallback = EngineCore::GetCurrentApp().GetWindow().GetEventCallback();
+		eventCallback(windowEvent);
+		return false;
+	}
+
+	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
+	{
+		EngineCore::GetCurrentApp().GetWindow().SetViewportWidth(event.GetWidth());
+		EngineCore::GetCurrentApp().GetWindow().SetViewportHeight(event.GetHeight());
+		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		return false;
+	}
+
+	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
+	{
+		Script::ScriptEngine::OnPhysicsCollision(event);
+		return false;
+	}
+
+	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
+	{
+		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
+		return false;
+	}
+
+	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
+	{
+		Script::ScriptEngine::OnKeyPressed(event);
+		return false;
+	}
+
+	void RuntimeApp::OnUpdateRuntime(Timestep ts)
+	{
+		// Update Scripts
+		Script::ScriptEngine::OnUpdate(ts);
+
+		Scene::GetActiveScene()->OnUpdatePhysics(ts);
+
+		// Render 2D
+		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+
+		if (mainCamera)
+		{
+			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
+			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+		}
+	}
+
+	bool RuntimeApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateUserCount();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnApproveJoinSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUserLeftSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnCurrentSessionInit();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnConnectionTerminated();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnStartSession(Events::StartSession event)
+	{
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnStartSession();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
+	{
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		return false;
+	}
+
+	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
+	{
+		uint16_t signal = event.GetSignal();
+		void* param = &signal;
+		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		return false;
+	}
+
+
+	bool RuntimeApp::OpenProject()
+	{
+		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
+		if (!std::filesystem::exists(initialDirectory))
+		{
+			initialDirectory = "";
+		}
+		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0", initialDirectory.string().c_str());
+		if (filepath.empty()) { return false; }
+
+		OpenProject(filepath);
+		return true;
+	}
+
+	void RuntimeApp::OpenProject(const std::filesystem::path& path)
+	{
+		if (Assets::AssetManager::OpenProject(path))
+		{
+			if (!EngineCore::GetCurrentApp().GetWindow().GetNativeWindow())
+			{
+				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
+				WindowProps projectProps =
+				{
+					Projects::Project::GetProjectName(),
+					static_cast<uint32_t>(screenSize.x),
+					static_cast<uint32_t>(screenSize.y)
+				};
+				#if KG_EXPORT == 0
+				EngineCore::GetCurrentApp().GetWindow().Init(projectProps);
+				#else
+				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
+				#endif
+				RenderCommand::Init();
+			}
+			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
+
+			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
+			else { Script::ScriptEngine::InitialAssemblyLoad(); }
+			if (Scene::GetActiveScene())
+			{
+				Scene::GetActiveScene()->DestroyAllEntities();
+			}
+			Assets::AssetManager::ClearAll();
+			Assets::AssetManager::DeserializeAll();
+			OpenScene(startSceneHandle);
+
+		}
+	}
+
+
+	void RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)
+	{
+		Ref<Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		if (!newScene) { newScene = CreateRef<Scene>(); }
+		Scene::SetActiveScene(newScene);
+	}
+
+
+	void RuntimeApp::OnPlay()
+	{
+		Scene::GetActiveScene()->OnRuntimeStart();
+		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
+		if (scriptHandle != 0)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
+		if (Projects::Project::GetAppIsNetworked())
+		{
+			Network::Client::SetActiveClient(CreateRef<Network::Client>());
+			Network::Client::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::Client::GetActiveClient().get()));
+		}
+	}
+
+	void RuntimeApp::OnStop()
+	{
+		Scene::GetActiveScene()->OnRuntimeStop();
+		Scene::GetActiveScene()->DestroyAllEntities();
+		if (Projects::Project::GetAppIsNetworked())
+		{
+			Network::Client::GetActiveClient()->StopClient();
+			Network::Client::GetActiveNetworkThread()->join();
+			Network::Client::GetActiveNetworkThread().reset();
+			Network::Client::GetActiveClient().reset();
+		}
+	}
+
 }

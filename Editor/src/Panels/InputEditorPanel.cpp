@@ -1,10 +1,10 @@
 #include "Panels/InputEditorPanel.h"
 
-#include "EditorLayer.h"
+#include "EditorApp.h"
 
 namespace Kargono
 {
-	static EditorLayer* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorLayer { nullptr };
 
 	void InputEditorPanel::InputEditor_Keyboard_OnUpdate()
 	{
@@ -628,7 +628,7 @@ namespace Kargono
 
 	InputEditorPanel::InputEditorPanel()
 	{
-		s_EditorLayer = EditorLayer::GetCurrentLayer();
+		s_EditorLayer = EditorApp::GetCurrentLayer();
 	}
 
 	void InputEditorPanel::OnEditorUIRender()
