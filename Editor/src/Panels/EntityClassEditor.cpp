@@ -71,8 +71,8 @@ namespace Kargono
 		};
 
 		s_OpenClassPopupSpec.Label = "Open Class";
+		s_OpenClassPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_OpenClassPopupSpec.PopupOnly = true;
 		s_OpenClassPopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			spec.GetAllOptions().clear();
@@ -218,7 +218,7 @@ namespace Kargono
 			});
 
 		s_AddFieldPopup.Label = "Add New Field";
-		s_AddFieldPopup.PopupOnly = true;
+		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
 		s_AddFieldPopup.LineCount = 2;
 		s_AddFieldPopup.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
@@ -255,7 +255,6 @@ namespace Kargono
 		};
 
 		s_EditFieldType.Label = "Field Type";
-		s_EditFieldType.PopupOnly = false;
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
 		s_EditFieldType.LineCount = 2;
 		s_EditFieldType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
@@ -320,9 +319,9 @@ namespace Kargono
 
 		// Update OnPhysicsCollisionStart
 		s_SelectOnPhysicsCollisionStartSpec.Label = "On Collision Start";
+		s_SelectOnPhysicsCollisionStartSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionStartSpec.LineCount = 3;
 		s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnPhysicsCollisionStartSpec.Indented = true;
 		s_SelectOnPhysicsCollisionStartSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
 		{
 			spec.GetAllOptions().clear();
@@ -365,7 +364,7 @@ namespace Kargono
 		// Update OnPhysicsCollisionEnd
 		s_SelectOnPhysicsCollisionEndSpec.Label = "On Collision End";
 		s_SelectOnPhysicsCollisionEndSpec.LineCount = 3;
-		s_SelectOnPhysicsCollisionEndSpec.Indented = true;
+		s_SelectOnPhysicsCollisionEndSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		s_SelectOnPhysicsCollisionEndSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
 		{
@@ -409,7 +408,7 @@ namespace Kargono
 		// Update OnCreate
 		s_SelectOnCreateSpec.Label = "On Create";
 		s_SelectOnCreateSpec.LineCount = 3;
-		s_SelectOnCreateSpec.Indented = true;
+		s_SelectOnCreateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnCreateSpec.CurrentOption = { "None", Assets::EmptyHandle};
 		s_SelectOnCreateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
 		{
@@ -453,7 +452,7 @@ namespace Kargono
 		// Update OnUpdate
 		s_SelectOnUpdateSpec.Label = "On Update";
 		s_SelectOnUpdateSpec.LineCount = 3;
-		s_SelectOnUpdateSpec.Indented = true;
+		s_SelectOnUpdateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnUpdateSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		s_SelectOnUpdateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
 		{

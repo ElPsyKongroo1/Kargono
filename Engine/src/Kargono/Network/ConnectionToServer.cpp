@@ -73,7 +73,7 @@ namespace Kargono::Network
 		}
 		KG_INFO("[CLIENT]: Connection has been terminated");
 		
-		EngineCore::GetCurrentApp().SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
+		EngineCore::GetCurrentEngineCore().SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
 		Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
 		
 	}

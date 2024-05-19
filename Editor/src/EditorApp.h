@@ -19,8 +19,6 @@
 #include <filesystem>
 #include <thread>
 
-
-
 namespace Kargono
 {
 	// Current Editor State Enum and Field

@@ -107,7 +107,7 @@ namespace Kargono
 		s_InputHandle = handle;
 		if (inputReference)
 		{
-			EngineCore::GetCurrentApp().SubmitToMainThread([&]()
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 				{
 					LoadInputMode(s_InputRef, s_InputHandle);
 				});

@@ -28,14 +28,16 @@ namespace Kargono
 	// Class Instance Component
 	static EditorUI::CollapsingHeaderSpec s_ClassInstanceHeader{};
 	static EditorUI::SelectOptionSpec s_SelectClassOption{};
+	static EditorUI::TableSpec s_InstanceFieldsTable{};
 
 	static void InitializeClassInstanceComponent()
 	{
 		s_ClassInstanceHeader.Label = "Class Instance";
+		s_ClassInstanceHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		s_ClassInstanceHeader.Expanded = true;
 
 		s_SelectClassOption.Label = "Class";
-		s_SelectClassOption.Indented = true;
+		s_SelectClassOption.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
 		s_SelectClassOption.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
@@ -69,9 +71,34 @@ namespace Kargono
 			component.ClassReference = Assets::AssetManager::GetEntityClass(entry.Handle).get();
 			// TODO, fill fields with new types
 			//component.Fields.clear();
-
-
 		};
+
+		s_InstanceFieldsTable.Label = "Instance Fields";
+		s_InstanceFieldsTable.Flags |= EditorUI::Table_Indented;
+		s_InstanceFieldsTable.Column1Title = "Field Name";
+		s_InstanceFieldsTable.Column2Title = "Field Value";
+		s_InstanceFieldsTable.Expanded = true;
+		s_InstanceFieldsTable.OnRefresh = [&]()
+		{
+			s_InstanceFieldsTable.ClearTable();
+			s_InstanceFieldsTable.InsertTableEntry(
+				{
+					"Booty",
+					"Booty Value",
+					Assets::EmptyHandle,
+					nullptr,
+					nullptr
+				});
+			s_InstanceFieldsTable.InsertTableEntry(
+				{
+					"lody",
+					"lody Value",
+					Assets::EmptyHandle,
+					nullptr,
+					nullptr
+				});
+		};
+		s_InstanceFieldsTable.OnRefresh();
 	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -418,6 +445,7 @@ namespace Kargono
 			if (s_ClassInstanceHeader.Expanded)
 			{
 				EditorUI::Editor::SelectOption(s_SelectClassOption);
+				EditorUI::Editor::Table(s_InstanceFieldsTable);
 			}
 			//entity.GetComponent<ClassInstanceComponent>().ClassReference->GetFields()
 		}

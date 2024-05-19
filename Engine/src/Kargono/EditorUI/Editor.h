@@ -30,6 +30,7 @@ namespace Kargono::EditorUI
 
 	using WidgetID = uint32_t;
 	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
+	using WidgetFlags = uint8_t;
 
 	// Maintain unique id for each widget
 	static uint32_t widgetCounter { 1 };
@@ -181,6 +182,12 @@ namespace Kargono::EditorUI
 		friend void Editor::GenericPopup(GenericPopupSpec& spec);
 	};
 
+	enum CheckboxFlags
+	{
+		Checkbox_None = 0,
+		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
+	};
+
 	struct CheckboxSpec
 	{
 	public:
@@ -190,7 +197,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
-		bool LeftLean{ true };
+		WidgetFlags Flags{ Checkbox_LeftLean };
 		bool ToggleBoolean{ false };
 		std::function<void(bool)> ConfirmAction;
 	private:
@@ -220,6 +227,12 @@ namespace Kargono::EditorUI
 		friend void Editor::RadioSelector(RadioSelectorSpec& spec);
 	};
 
+	enum TextInputFlags
+	{
+		TextInput_None = 0,
+		TextInput_PopupOnly = BIT(0), // Only use a popup and remove inline text
+	};
+
 	struct TextInputSpec
 	{
 	public:
@@ -229,14 +242,20 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
+		WidgetFlags Flags{ TextInput_None };
 		std::string CurrentOption;
 		std::function<void(const std::string&)> ConfirmAction;
-		bool PopupOnly{ false };
 		bool StartPopup{ false };
 	private:
 		WidgetID WidgetID;
 	private:
 		friend void Editor::TextInputPopup(TextInputSpec& spec);
+	};
+
+	enum CollapsingHeaderFlags
+	{
+		CollapsingHeader_None = 0,
+		CollapsingHeader_UnderlineTitle = BIT(0), // Underlines the title text
 	};
 
 	struct CollapsingHeaderSpec
@@ -248,6 +267,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
+		WidgetFlags Flags{ CollapsingHeader_None };
 		bool Expanded{ false };
 		std::function<void()> OnExpand { nullptr };
 	private:
@@ -290,6 +310,13 @@ namespace Kargono::EditorUI
 		friend void Editor::SelectorHeader(SelectorHeaderSpec& spec);
 	};
 
+	enum TableFlags
+	{
+		Table_None = 0,
+		Table_Indented = BIT(0), // Indents the table over once
+		Table_UnderlineTitle = BIT(1) // Adds an underline to the title
+	};
+
 	struct TableEntry
 	{
 		std::string Label;
@@ -308,6 +335,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
+		WidgetFlags Flags{ Table_None };
 		std::string Column1Title {};
 		std::string Column2Title {};
 		bool Expanded{ false };
@@ -368,6 +396,12 @@ namespace Kargono::EditorUI
 		}
 	};
 
+	enum SelectOptionFlags
+	{
+		SelectOption_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
+		SelectOption_PopupOnly = BIT(1) // Determines if line of text is generated for options
+	};
+
 	using OptionList = std::unordered_map<std::string, std::vector<OptionEntry>>;
 
 	struct SelectOptionSpec
@@ -385,9 +419,7 @@ namespace Kargono::EditorUI
 		std::function<void(SelectOptionSpec&)> PopupAction {nullptr};
 		// Only used if PopupOnly is true
 		bool StartPopup{ false };
-		// Determines if line of text is generated for options
-		bool PopupOnly{ false };
-		bool Indented{ false };
+		WidgetFlags Flags{ 0 };
 		void ClearOptions()
 		{
 			ActiveOptions.clear();

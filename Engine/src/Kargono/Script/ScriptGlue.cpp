@@ -334,7 +334,7 @@ namespace Kargono::Script
 		s_InputHandle = handle;
 		if (inputReference)
 		{
-			EngineCore::GetCurrentApp().SubmitToMainThread([&]()
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
 				InputMode::LoadInputMode(s_InputRef, s_InputHandle);
 			});
@@ -344,10 +344,10 @@ namespace Kargono::Script
 
 	static void Core_CloseApplication()
 	{
-		EngineCore::GetCurrentApp().SubmitToMainThread([&]()
+		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
 				Events::ApplicationCloseEvent event {};
-				Events::EventCallbackFn eventCallback = EngineCore::GetCurrentApp().GetWindow().GetEventCallback();
+				Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
 				eventCallback(event);
 			});
 	}
