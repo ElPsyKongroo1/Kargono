@@ -21,7 +21,7 @@ namespace Kargono
 	{
 		if (!OpenProject())
 		{
-			EngineCore::GetCurrentApp().Close();
+			EngineCore::GetCurrentEngineCore().Close();
 			return;
 		}
 

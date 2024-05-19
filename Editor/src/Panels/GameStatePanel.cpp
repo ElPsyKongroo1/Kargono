@@ -39,7 +39,7 @@ namespace Kargono
 
 		s_OpenClassPopupSpec.Label = "Open Game State";
 		s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_OpenClassPopupSpec.PopupOnly = true;
+		s_OpenClassPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_OpenClassPopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			spec.GetAllOptions().clear();
@@ -198,7 +198,7 @@ namespace Kargono
 			});
 
 		s_AddFieldPopup.Label = "Add New Field";
-		s_AddFieldPopup.PopupOnly = true;
+		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
 		s_AddFieldPopup.LineCount = 2;
 		s_AddFieldPopup.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
@@ -234,7 +234,7 @@ namespace Kargono
 		};
 
 		s_EditFieldType.Label = "Field Type";
-		s_EditFieldType.PopupOnly = false;
+		s_EditFieldType.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
 		s_EditFieldType.LineCount = 2;
 		s_EditFieldType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
@@ -244,10 +244,6 @@ namespace Kargono
 		};
 		s_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.Label == "UInteger16")
-			{
-				// TODO Set Field
-			}
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldValue.Label = "Field Value";

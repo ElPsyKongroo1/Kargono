@@ -29,7 +29,7 @@ namespace Kargono
 
 		if (!OpenProject())
 		{
-			EngineCore::GetCurrentApp().Close();
+			EngineCore::GetCurrentEngineCore().Close();
 			return;
 		}
 		EditorUI::Editor::Init();
@@ -58,7 +58,7 @@ namespace Kargono
 		
 		m_ViewportPanel->InitializeOverlayData();
 
-		EngineCore::GetCurrentApp().GetWindow().SetVisible(true);
+		EngineCore::GetCurrentEngineCore().GetWindow().SetVisible(true);
 	}
 
 	void EditorApp::OnDetach()
@@ -97,7 +97,6 @@ namespace Kargono
 	{
 		m_StepFrames = frames;
 	}
-
 
 	void EditorApp::OnEditorUIRender()
 	{
@@ -208,7 +207,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineCore::GetCurrentApp().Close();
+					EngineCore::GetCurrentEngineCore().Close();
 				}
 				ImGui::EndMenu();
 
@@ -569,10 +568,10 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!EngineCore::GetCurrentApp().GetWindow().GetNativeWindow())
+			if (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())
 			{
 				
-				EngineCore::GetCurrentApp().GetWindow().Init();
+				EngineCore::GetCurrentEngineCore().GetWindow().Init();
 				RenderCommand::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
@@ -729,7 +728,7 @@ namespace Kargono
 		}
 
 		AppTickEngine::LoadProjectGenerators();
-		EngineCore::GetCurrentApp().SetAppStartTime();
+		EngineCore::GetCurrentEngineCore().SetAppStartTime();
 	}
 
 	void EditorApp::OnSimulate()

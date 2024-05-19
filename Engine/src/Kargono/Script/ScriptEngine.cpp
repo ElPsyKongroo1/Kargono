@@ -187,7 +187,7 @@ namespace Kargono::Script
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
 			// add reload to main thread queue
-			EngineCore::GetCurrentApp().SubmitToMainThread([]()
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
 				{
 					s_ScriptData->AppAssemblyFileWatcher.reset();
 					ScriptEngine::ReloadAssembly();

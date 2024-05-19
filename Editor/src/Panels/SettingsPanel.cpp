@@ -16,28 +16,28 @@ namespace Kargono
 		s_EditorLayer = EditorApp::GetCurrentLayer();
 
 		s_PrimaryCameraCheckboxSpec.Label = "Display Physics Colliders";
-		s_PrimaryCameraCheckboxSpec.LeftLean = false;
+		s_PrimaryCameraCheckboxSpec.Flags = 0;
 		s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowPhysicsColliders = value;
 		};
 
 		s_DisplayCameraFrustrumSpec.Label = "Display Camera Frustrum";
-		s_DisplayCameraFrustrumSpec.LeftLean = false;
+		s_DisplayCameraFrustrumSpec.Flags = 0;
 		s_DisplayCameraFrustrumSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowCameraFrustrums = value;
 		};
 
 		s_DisplayRuntimeUISpec.Label = "Display Runtime UI";
-		s_DisplayRuntimeUISpec.LeftLean = false;
+		s_DisplayRuntimeUISpec.Flags = 0;
 		s_DisplayRuntimeUISpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_ShowUserInterface = value;
 		};
 
 		s_FullscreenRuntimeSpec.Label = "Fullscreen While Running";
-		s_FullscreenRuntimeSpec.LeftLean = false;
+		s_FullscreenRuntimeSpec.Flags = 0;
 		s_FullscreenRuntimeSpec.ConfirmAction = [&](bool value)
 		{
 			s_EditorLayer->m_RuntimeFullscreen = value;
