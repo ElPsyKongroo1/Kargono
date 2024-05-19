@@ -28,15 +28,15 @@ namespace Kargono
 	std::chrono::nanoseconds k_ConstantFrameTime { 1'000 * 1'000 * 1'000 / 60 };
 	Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };
 
-	EngineCore* EngineCore::s_Instance = nullptr;
+	EngineCore* EngineCore::s_CurrentEngineCore = nullptr;
 
 	EngineCore::EngineCore(const AppSpec& specification, Application* app)
 		: m_Specification(specification)
 		
 	{
 		// Ensure Application is a Singleton
-		KG_ASSERT(!s_Instance, "Application already exists!")
-		s_Instance = this;
+		KG_ASSERT(!s_CurrentEngineCore, "Application already exists!")
+		s_CurrentEngineCore = this;
 		m_CurrentApp = app;
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));

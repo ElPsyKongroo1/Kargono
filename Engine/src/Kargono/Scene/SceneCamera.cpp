@@ -35,7 +35,7 @@ namespace Kargono
 	}
 	void SceneCamera::RecalculateProjection()
 	{
-		auto& application = EngineCore::GetCurrentApp().GetWindow();
+		auto& application = EngineCore::GetCurrentEngineCore().GetWindow();
 		float aspectRatio = static_cast<float>(application.GetViewportWidth()) / static_cast<float>(application.GetViewportHeight());
 
 		if (m_ProjectionType == ProjectionType::Perspective)

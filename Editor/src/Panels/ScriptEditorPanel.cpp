@@ -386,7 +386,7 @@ namespace Kargono
 		s_GroupLabelsTable.OnRefresh();
 
 		s_CreateGroupLabelPopup.Label = "Create New Group Label";
-		s_CreateGroupLabelPopup.PopupOnly = true;
+		s_CreateGroupLabelPopup.Flags |= EditorUI::TextInput_PopupOnly;
 		s_CreateGroupLabelPopup.ConfirmAction = [&](const std::string& text)
 		{
 			// Create new group label
@@ -436,7 +436,7 @@ namespace Kargono
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
-		s_EditGroupLabelText.PopupOnly = false;
+		s_EditGroupLabelText.Flags = 0;
 		s_EditGroupLabelText.CurrentOption = "Empty";
 		s_EditGroupLabelText.ConfirmAction = [&](const std::string& text)
 		{

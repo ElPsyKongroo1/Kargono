@@ -102,14 +102,17 @@ namespace Kargono::EditorUI
 
 	static InlineButtonSpec s_TableEditButton {};
 	static InlineButtonSpec s_TableLinkButton {};
+	static InlineButtonSpec s_TableExpandButton {};
 
 	static void InitializeTableResources()
 	{
 		s_TableEditButton = Editor::s_SmallEditButton;
-		s_TableEditButton.YPosition = -3.5f;
+		s_TableEditButton.YPosition = -5.5f;
 
 		s_TableLinkButton = Editor::s_SmallLinkButton;
-		s_TableLinkButton.YPosition = -3.5f;
+		s_TableLinkButton.YPosition = -5.5f;
+
+		s_TableExpandButton = Editor::s_SmallExpandButton;
 	}
 
 	void Editor::Init()
@@ -151,51 +154,51 @@ namespace Kargono::EditorUI
 		SetDarkThemeColors();
 
 		// Setup Platform/Renderer backends
-		EngineCore& app = EngineCore::GetCurrentApp();
+		EngineCore& app = EngineCore::GetCurrentEngineCore();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 
 		// Set Up Editor Resources
-		s_IconPlay = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
-		s_IconPause = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
-		s_IconSimulate = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
-		s_IconStop = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
-		s_IconStep = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
-		s_IconAddItem = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/add_item.png").string());
-		s_IconSettings = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/settings_icon.png").string());
-		s_IconDelete = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/delete_icon.png").string());
-		s_IconDeleteActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/delete_active_icon.png").string());
-		s_IconEdit = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/edit_icon.png").string());
-		s_IconEdit_Active = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/edit_active_icon.png").string());
-		s_IconCancel = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/cancel_icon.png").string());
-		s_IconConfirm = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/confirm_icon.png").string());
-		s_IconSearch = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/search_icon.png").string());
-		s_IconOptions = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/options_icon.png").string());
-		s_IconDown = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/down_icon.png").string());
-		s_IconRight = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/right_icon.png").string());
-		s_IconDash = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/dash_icon.png").string());
+		s_IconPlay = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/play_icon.png").string());
+		s_IconPause = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/pause_icon.png").string());
+		s_IconSimulate = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/simulate_icon.png").string());
+		s_IconStop = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/stop_icon.png").string());
+		s_IconStep = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/step_icon.png").string());
+		s_IconAddItem = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/add_item.png").string());
+		s_IconSettings = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/settings_icon.png").string());
+		s_IconDelete = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/delete_icon.png").string());
+		s_IconDeleteActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/delete_active_icon.png").string());
+		s_IconEdit = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/edit_icon.png").string());
+		s_IconEdit_Active = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/edit_active_icon.png").string());
+		s_IconCancel = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/cancel_icon.png").string());
+		s_IconConfirm = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/confirm_icon.png").string());
+		s_IconSearch = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/search_icon.png").string());
+		s_IconOptions = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/options_icon.png").string());
+		s_IconDown = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/down_icon.png").string());
+		s_IconRight = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/right_icon.png").string());
+		s_IconDash = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/dash_icon.png").string());
 
-		s_IconCheckbox_Empty_Disabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
-		s_IconCheckbox_Check_Disabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
-		s_IconCheckbox_Empty_Enabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_enabled_empty_icon.png").string());
-		s_IconCheckbox_Check_Enabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_enabled_check_icon.png").string());
+		s_IconCheckbox_Empty_Disabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
+		s_IconCheckbox_Check_Disabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
+		s_IconCheckbox_Empty_Enabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_enabled_empty_icon.png").string());
+		s_IconCheckbox_Check_Enabled = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/checkbox/checkbox_enabled_check_icon.png").string());
 
-		s_DirectoryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/directory_icon.png");
-		s_GenericFileIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/generic_file_icon.png");
-		s_BackIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/back_icon.png");
-		s_BackInactiveIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/back_inactive_icon.png");
-		s_ForwardIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/forward_icon.png");
-		s_ForwardInactiveIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/forward_inactive_icon.png");
-		s_AudioIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/audio_icon.png");
-		s_ImageIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/image_icon.png");
-		s_BinaryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/binary_icon.png");
-		s_SceneIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/scene_icon.png");
-		s_RegistryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/registry_icon.png");
-		s_ScriptProjectIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/script_project.png");
-		s_FontIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/font.png");
-		s_UserInterfaceIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/user_interface_icon.png");
-		s_InputIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentApp().GetWorkingDirectory() / "resources/icons/content_browser/input_icon.png");
+		s_DirectoryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/directory_icon.png");
+		s_GenericFileIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/generic_file_icon.png");
+		s_BackIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/back_icon.png");
+		s_BackInactiveIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/back_inactive_icon.png");
+		s_ForwardIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/forward_icon.png");
+		s_ForwardInactiveIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/forward_inactive_icon.png");
+		s_AudioIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/audio_icon.png");
+		s_ImageIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/image_icon.png");
+		s_BinaryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/binary_icon.png");
+		s_SceneIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/scene_icon.png");
+		s_RegistryIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/registry_icon.png");
+		s_ScriptProjectIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/script_project.png");
+		s_FontIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/font.png");
+		s_UserInterfaceIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/user_interface_icon.png");
+		s_InputIcon = Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "resources/icons/content_browser/input_icon.png");
 
 		s_SmallEditButton = {
 				390.0f,
@@ -323,7 +326,7 @@ namespace Kargono::EditorUI
 	void Editor::EndRendering()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		EngineCore& app = EngineCore::GetCurrentApp();
+		EngineCore& app = EngineCore::GetCurrentEngineCore();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
 		ImGui::Render();
@@ -656,7 +659,7 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
-		if (spec.PopupOnly)
+		if (spec.Flags & SelectOption_PopupOnly)
 		{
 			if (spec.StartPopup)
 			{
@@ -672,11 +675,11 @@ namespace Kargono::EditorUI
 		else
 		{
 			// Display Menu Item
-			if (spec.Indented)
+			if (spec.Flags & SelectOption_Indented)
 			{
-				ImGui::SetCursorPosX(36.5f);
+				ImGui::SetCursorPosX(30.5f);
 			}
-			TruncateText(spec.Label, spec.Indented? 20: 23);
+			TruncateText(spec.Label, spec.Flags & SelectOption_Indented ? 20: 23);
 
 			ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
 			WriteMultilineText(spec.CurrentOption.Label, 200.0f, 23);
@@ -833,7 +836,7 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 
 		// Display Item
-		if (spec.LeftLean)
+		if (spec.Flags & Checkbox_LeftLean)
 		{
 			TruncateText(spec.Label, 23);
 			ImGui::SameLine(197.5f);
@@ -957,15 +960,33 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		uint32_t smallButtonCount{ 0 };
 
-		ImGui::PushFont(Editor::s_AntaLarge);
+		if (spec.Flags & Table_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+		else
+		{
+			ImGui::PushFont(Editor::s_AntaLarge);
+		}
 		TruncateText(spec.Label, 40);
-		ImGui::PopFont();
+
+		if (spec.Flags & Table_UnderlineTitle)
+		{
+			ImGui::Separator();
+		}
+
+		if (!(spec.Flags & Table_Indented))
+		{
+			ImGui::PopFont();
+		}
+		s_TableExpandButton.IconSize = (spec.Flags & Table_Indented) ? 12.0f : 14.0f;
+		s_TableExpandButton.YPosition = spec.Flags & Table_Indented ? -0.0f : 4.5f;
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		}, 
-		s_SmallExpandButton ,spec.Expanded);
+		s_TableExpandButton ,spec.Expanded);
 		
 		if (spec.Expanded)
 		{
@@ -993,7 +1014,7 @@ namespace Kargono::EditorUI
 			if (!spec.TableValues.empty())
 			{
 				// Column Titles
-				ImGui::SetCursorPosX(30.5f);
+				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: 30.5f);
 				TruncateText(spec.Column1Title, 12);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(200.0f);
@@ -1004,12 +1025,14 @@ namespace Kargono::EditorUI
 			for (auto& tableEntry : spec.TableValues)
 			{
 				smallButtonCount = 0;
-				CreateImage(s_IconDash, 10);
+				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 42.5f : 12.0f);
+				CreateImage(s_IconDash, 8);
 				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3.2f);
+				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f : 30.5f);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				TruncateText(tableEntry.Label, 16);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
-				WriteMultilineText(tableEntry.Value, 200.0f, 21, -3.2f);
+				WriteMultilineText(tableEntry.Value,200.0f, 21, -5.2f);
 				ImGui::PopStyleColor();
 				
 				if (tableEntry.OnLink)
@@ -1083,6 +1106,11 @@ namespace Kargono::EditorUI
 		},
 		s_SmallExpandButton, spec.Expanded);
 
+		if ((spec.Flags & CollapsingHeader_UnderlineTitle) && spec.Expanded)
+		{
+			ImGui::Separator();
+		}
+
 		if (spec.Expanded && spec.OnExpand)
 		{
 			spec.OnExpand();
@@ -1110,7 +1138,7 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		std::string popUpLabel = spec.Label;
 
-		if (spec.PopupOnly)
+		if (spec.Flags & TextInput_PopupOnly)
 		{
 			if (spec.StartPopup)
 			{

@@ -50,13 +50,12 @@ namespace Kargono
 		~EngineCore();
 		void OnEvent(Events::Event& e);
 
-		static EngineCore& GetCurrentApp() { return *s_Instance; }
+		static EngineCore& GetCurrentEngineCore() { return *s_CurrentEngineCore; }
 
 		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
 		{
 			contactListener.SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
 		}
-
 
 		const AppSpec& GetSpecification() const { return m_Specification; }
 
@@ -92,7 +91,6 @@ namespace Kargono
 		void ProcessEventQueue();
 	private:
 		AppSpec m_Specification;
-		Application* m_CurrentApp{ nullptr };
 		Scope<Window> m_Window;
 		Audio::AudioEngine* m_AudioContext = nullptr;
 		bool m_Running = true;
@@ -108,7 +106,8 @@ namespace Kargono
 		std::mutex m_EventQueueMutex;
 
 	private:
-		static EngineCore* s_Instance;
+		Application* m_CurrentApp{ nullptr };
+		static EngineCore* s_CurrentEngineCore;
 		friend int ::main(int argc, char** argv);
 	};
 

@@ -16,7 +16,7 @@ namespace Kargono
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
 		// Adjust Framebuffer Size Based on Viewport
-		auto& currentWindow = EngineCore::GetCurrentApp().GetWindow();
+		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
 			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
@@ -63,7 +63,7 @@ namespace Kargono
 
 		if (s_EditorLayer->m_ShowUserInterface)
 		{
-			auto& currentApplication = EngineCore::GetCurrentApp().GetWindow();
+			auto& currentApplication = EngineCore::GetCurrentEngineCore().GetWindow();
 			if (s_EditorLayer->m_SceneState == SceneState::Play)
 			{
 				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
@@ -89,14 +89,14 @@ namespace Kargono
 	{
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferDataFormat::RGBA8, FramebufferDataFormat::RED_INTEGER,  FramebufferDataFormat::Depth };
-		fbSpec.Width = EngineCore::GetCurrentApp().GetWindow().GetWidth();
-		fbSpec.Height = EngineCore::GetCurrentApp().GetWindow().GetHeight();
+		fbSpec.Width = EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
+		fbSpec.Height = EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
 		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		auto& currentWindow = EngineCore::GetCurrentApp().GetWindow();
+		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -488,8 +488,8 @@ namespace Kargono
 	{
 		auto& transform = entity.GetComponent<TransformComponent>();
 		auto& camera = entity.GetComponent<CameraComponent>();
-		float windowWidth = (float)EngineCore::GetCurrentApp().GetWindow().GetWidth();
-		float windowHeight = (float)EngineCore::GetCurrentApp().GetWindow().GetHeight();
+		float windowWidth = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
+		float windowHeight = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
 		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
 		auto cameraProjectionType = camera.Camera.GetProjectionType();
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };

@@ -6,7 +6,6 @@
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scene/Entity.h"
 
-
 #include "box2d/b2_contact.h"
 #include "box2d/Box2d.h"
 #include "box2d/b2_world.h"
@@ -47,7 +46,7 @@ namespace Kargono::Physics
 		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(gravity.x, gravity.y));
 		m_PhysicsWorld->SetAllowSleeping(false);
 		m_ContactListener = CreateScope<ContactListener>();
-		EngineCore::GetCurrentApp().RegisterCollisionEventListener(*m_ContactListener);
+		EngineCore::GetCurrentEngineCore().RegisterCollisionEventListener(*m_ContactListener);
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld
