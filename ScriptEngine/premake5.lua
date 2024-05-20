@@ -3,11 +3,11 @@ project "ScriptEngine"
     language "C#"
     dotnetframework "4.7.2"
     
-    targetdir ("../Editor/resources/Scripts")
-    objdir ("../Editor/resources/Scripts/Intermediates")
+    targetdir ("../Editor/Resources/Scripts")
+    objdir ("../Editor/Resources/Scripts/Intermediates")
     
     filter { "system:windows" }
-        postbuildcommands { "{COPYDIR} \"%{wks.location}Editor/resources/Scripts\" \"%{wks.location}Runtime/resources/Scripts\"" }
+        postbuildcommands { "{COPYDIR} \"%{wks.location}Editor/Resources/Scripts\" \"%{wks.location}Runtime/Resources/Scripts\"" }
 
     files 
     {

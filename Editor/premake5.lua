@@ -3,13 +3,13 @@ project "Editor"
     cppdialect "C++20"
     staticruntime "off"
     linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099" }
-    targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
 
     files 
     {
-        "src/**.h",
-        "src/**.cpp"
+        "Source/**.h",
+        "Source/**.cpp"
     }
 
     includedirs 
@@ -23,8 +23,8 @@ project "Editor"
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
-        "%{wks.location}/Engine/src",
-        "%{wks.location}/Editor/src",
+        "%{wks.location}/Engine/Source",
+        "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}"
 

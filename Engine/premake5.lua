@@ -5,36 +5,36 @@ project "Engine"
     staticruntime "off"
     linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099" }
 
-    targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
 
     pchheader "kgpch.h"
-    pchsource "src/kgpch.cpp"
+    pchsource "Source/kgpch.cpp"
     
     files 
     {
-		"src/Kargono.h",
-		"src/kgpch.h",
-		"src/kgpch.cpp",
-		"src/Kargono/**.h",
-		"src/Kargono/**.cpp",
-        "dependencies/stb_image/**.cpp",
-        "dependencies/stb_image/**.h",
-        "dependencies/ImGuizmo/ImGuizmo.h",
-        "dependencies/ImGuizmo/ImGuizmo.cpp",
-        "dependencies/hash_library/sha256.cpp",
-        "dependencies/hash_library/sha256.h",
-        "dependencies/hash_library/crc32.cpp",
-        "dependencies/hash_library/crc32.h",
-        "dependencies/optick/src/**.cpp",
-        "dependencies/optick/src/**.h",
-        "src/API/**.h",
-        "src/API/**.cpp"
+		"Source/Kargono.h",
+		"Source/kgpch.h",
+		"Source/kgpch.cpp",
+		"Source/Kargono/**.h",
+		"Source/Kargono/**.cpp",
+        "%{wks.location}/Dependencies/stb_image/**.cpp",
+        "%{wks.location}/Dependencies/stb_image/**.h",
+        "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
+        "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.cpp",
+        "%{wks.location}/Dependencies/hash_library/sha256.cpp",
+        "%{wks.location}/Dependencies/hash_library/sha256.h",
+        "%{wks.location}/Dependencies/hash_library/crc32.cpp",
+        "%{wks.location}/Dependencies/hash_library/crc32.h",
+        "%{wks.location}/Dependencies/optick/src/**.cpp",
+        "%{wks.location}/Dependencies/optick/src/**.h",
+        "Source/API/**.h",
+        "Source/API/**.cpp"
     }
 
     -- prebuildcommands 
         -- {
-        --     "{COPYDIR} \"%{wks.location}Engine/dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
+        --     "{COPYDIR} \"%{wks.location}Dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
         -- } 
         -- postbuildcommands 
         -- {
@@ -52,7 +52,7 @@ project "Engine"
     }
     includedirs 
     {
-        "src",
+        "Source",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.filewatch}",
@@ -95,13 +95,13 @@ project "Engine"
         "ScriptEngine"
     }
 
-    filter "files:dependencies/ImGuizmo/**.cpp"
+    filter "files:../Dependencies/ImGuizmo/**.cpp"
         flags{ "NoPCH" }
 
-    filter "files:dependencies/hash_library/**.cpp"
+    filter "files:../Dependencies/hash_library/**.cpp"
         flags{ "NoPCH" }
 
-    filter "files:dependencies/optick/src/**.cpp"
+    filter "files:../Dependencies/optick/src/**.cpp"
         flags{ "NoPCH" }
 
     filter "system:windows"
