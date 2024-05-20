@@ -1,55 +1,59 @@
 # About Project
 
-This project is currently a simple 2D and 3D renderer. The end goal of the project is game engine! Currently there is an editor for creating projects. There is also a runtime project to simulate final product.
+This project is a simple game editor for 2D projects (3D in the future). The project includes: a game editor (Editor), an exporting project (Runtime), a multiplayer server (Server), and a core engine library (Engine). The Editor, Server, and Runtime are all stand alone executables that depend on the Engine library. 
 
+Feel free to try creating a game using the Editor or use an existing project (Currently only Pong is available and supported). Game Projects are stored in the Projects directory. New Projects need to be created by copy/pasting another project (I wil work on adding a new project button soon). 
+
+The Editor only supports Windows. I do not have plans for supporting Linux or Mac for the Editor. The Runtime and Server executables are intended to be multi-platform, however, it only supports Windows currently. The latest version of this project exists in the Development-Branch. The Original-Kargono branch is an old version of the engine that probably will not build haha. I keep it there for reference.
 # Quickstart
 
 ## Requirements
-- Currently only supports Windows
-- Visual Studio with C++ and C# support for projects. My build is vs2022, with a code standard of C++ 20.
-- Vulkan SDK with Debug Binaries. Version should be 3.0 or above.
+- Windows 64 bit is currently required for all executables.
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/) with C++ and C# support for projects. My build is vs2022. These configurations can be added on a fresh install of VS. Adding C#/C++ support to an existing installation requires opening the Visual Studio Installer Standalone app.
+- C++ code standard of at least C++ 20. The build scripts deal with this, but I though I would mention it anyways.
+- [Git](https://git-scm.com/downloads) for Windows.
+- [Vulkan](https://vulkan.lunarg.com/) SDK with Debug Binaries. Version should be 3.0 or above.
 ## Instructions
-- Clone repository. No need to use recursive.
-- For Windows (Only Support Currently for Editor and Runtime), run .bat file inside scripts directory.
-- Open .sln built in central directory.
-- Choose either Kargono-Editor or Runtime in Tools virtual directory as Set up Project.
+- Clone this repository. No need to use recursive. Here is the command to run in a terminal/bash: git clone https://github.com/Charles-Breuer/Kargono.git
+- Run BuildScripts/VS_GenProjects.bat to build Visual Studio Solution/Project files.
+- Open Kargono.sln in central directory.
+- Inside the Applications virtual directory, set either the Editor, Runtime, or Server as the default startup project.
 - Build and Run!
 
-# Current Game Projects Ideas
+# Games
+## Games in Progress
+- Pong Clone
+## Game Projects Ideas
 
 - Breakout Clone
 - Multiplayer Slap Game
 - Dungeon Crawler
 
-# Documentation
+# Third-Party Dependencies
 
-[Doxygen Documentation](https://raw.githack.com/Charles-Breuer/Kargono/Development-Branch/doc/html/index.html)
+## ImGui ([Docs](https://github.com/ocornut/imgui))
+Immediate Mode Graphical User Interface library for creating GUIs in C++. Used for EditorUI.
 
-# Dependencies
+## OpenGL ([Docs](https://www.khronos.org/opengl/))
+Current Back-End Graphics API for rendering 2D and 3D graphics.
 
-## ImGui
-Immediate Mode Graphical User Interface library for creating GUIs in C++. Documentation: [ImGui Documentation](https://github.com/ocornut/imgui)
+## OpenAL Soft ([Docs](https://github.com/kcat/openal-soft))
+Cross-platform audio API for spatialized sound. Used as back-end for AudioEngine.
 
-## OpenGL
-Graphics API for rendering 2D and 3D graphics. Documentation: [OpenGL Documentation](https://www.khronos.org/opengl/)
+## Dr_wav ([Docs](https://github.com/mackron/dr_libs/tree/master))
+Single-header library for decoding and encoding .wav audio files.
 
-## OpenAL Soft
-Cross-platform audio API for spatialized sound. Documentation: [OpenAL Documentation](https://github.com/kcat/openal-soft)
+## stb_image ([Docs](https://github.com/nothings/stb/tree/master))
+Single-header library for loading various image file formats.
 
-## Dr_wav
-Single-header library for decoding and encoding WAV audio files. Documentation: [Dr_wav GitHub](https://github.com/mackron/dr_libs/tree/master)
+## GLFW ([Docs](https://www.glfw.org/documentation.html))
+Cross-Platform Library for creating and managing OS windows, OpenGL contexts, and handling input.
 
-## stb_image
-Single-header library for loading various image file formats. Documentation: [stb_image GitHub](https://github.com/nothings/stb/tree/master)
+## GLEW ([Docs](https://glew.sourceforge.net/))
+The OpenGL Extension Wrangler Library for handling OpenGL extensions.
 
-## GLFW
-Library for creating and managing windows, OpenGL contexts, and handling input. Documentation: [GLFW Documentation](https://www.glfw.org/documentation.html)
+## GLM ([Docs](https://github.com/g-truc/glm))
+Mathematics library for graphics programming, providing vectors, matrices, and transformations.
 
-## GLEW
-The OpenGL Extension Wrangler Library for handling OpenGL extensions. Documentation: [GLEW Documentation](https://glew.sourceforge.net/)
-
-## GLM
-Mathematics library for graphics programming, providing vectors, matrices, and transformations. Documentation: [GLM Documentation](https://github.com/g-truc/glm)
-
-## Assimp
-Open Asset Import Library for loading and processing various 3D model file formats. Documentation: [Assimp Documentation](https://assimp-docs.readthedocs.io/en/latest/)https://assimp-docs.readthedocs.io/en/latest/
+## Assimp ([Docs](https://assimp-docs.readthedocs.io/en/latest/))
+Open Asset Import Library for loading and processing various 3D model file formats.
