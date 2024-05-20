@@ -11,9 +11,13 @@
 # Binaries
 **/bin
 bin/**
+**/Binary
+Binary/**
 !dependencies/premake/bin/
 **/bin-int
 bin-int/**
+**/Intermediates
+Intermediates/**
 *openai_keys.py
 *.tlog
 **.tlog
@@ -394,16 +398,16 @@ scripts/__pycache__
 
 # # Fody - auto-generated XML schema
 # FodyWeavers.xsd
-/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.command.1.tlog
-/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.read.1.tlog
-/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.write.1.tlog
-/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/Cl.items.tlog
-/bin-int/Debug-windows-x86_64/Kargono/Application.obj
-/bin-int/Debug-windows-x86_64/Kargono/kgpch.obj
-/bin-int/Debug-windows-x86_64/Kargono/Log.obj
+/Intermediates/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.command.1.tlog
+/Intermediates/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.read.1.tlog
+/Intermediates/Debug-windows-x86_64/Kargono/Kargono.tlog/CL.write.1.tlog
+/Intermediates/Debug-windows-x86_64/Kargono/Kargono.tlog/Cl.items.tlog
+/Intermediates/Debug-windows-x86_64/Kargono/Application.obj
+/Intermediates/Debug-windows-x86_64/Kargono/kgpch.obj
+/Intermediates/Debug-windows-x86_64/Kargono/Log.obj
 /Kargono/Kargono.vcxproj
 /Kargono/Kargono.vcxproj.filters
-/bin-int/Debug-windows-x86_64/Kargono/Kargono.tlog/Kargono.lastbuildstate
+/Intermediates/Debug-windows-x86_64/Kargono/Kargono.tlog/Kargono.lastbuildstate
 /Kargono/dependencies/mono/include/mono/cil/opcode.def
 /Kargono-Editor/resources/Scripts/Kargono-ScriptCore.dll
 /Kargono-Editor/resources/Scripts/Kargono-ScriptCore.pdb
