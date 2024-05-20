@@ -2,57 +2,57 @@
 
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
--- Include Directories: Header files for external dependencies
+-- Include Directories: Header files for external Dependencies
 IncludeDir = {}
-IncludeDir["GLFW"] = "%{wks.location}/Engine/dependencies/GLFW/include"
-IncludeDir["GLAD"] = "%{wks.location}/Engine/dependencies/GLAD/include"
-IncludeDir["Box2D"] = "%{wks.location}/Engine/dependencies/Box2D/include"
-IncludeDir["spdlog"] = "%{wks.location}/Engine/dependencies/spdlog"
-IncludeDir["filewatch"] = "%{wks.location}/Engine/dependencies/filewatch"
-IncludeDir["imGui"] = "%{wks.location}/Engine/dependencies/imgui"
-IncludeDir["glm"] = "%{wks.location}/Engine/dependencies/glm"
-IncludeDir["stb_image"] = "%{wks.location}/Engine/dependencies/stb_image"
-IncludeDir["entt"] = "%{wks.location}/Engine/dependencies/entt/include"
-IncludeDir["yaml_cpp"] = "%{wks.location}/Engine/dependencies/yaml-cpp/include"
-IncludeDir["ImGuizmo"] = "%{wks.location}/Engine/dependencies/ImGuizmo"
---IncludeDir["free_type"] = "%{wks.location}/Engine/dependencies/free_type/include"
-IncludeDir["hash_library"] = "%{wks.location}/Engine/dependencies/hash_library"
+IncludeDir["GLFW"] = "%{wks.location}/Dependencies/GLFW/include"
+IncludeDir["GLAD"] = "%{wks.location}/Dependencies/GLAD/include"
+IncludeDir["Box2D"] = "%{wks.location}/Dependencies/Box2D/include"
+IncludeDir["spdlog"] = "%{wks.location}/Dependencies/spdlog"
+IncludeDir["filewatch"] = "%{wks.location}/Dependencies/filewatch"
+IncludeDir["imGui"] = "%{wks.location}/Dependencies/imgui"
+IncludeDir["glm"] = "%{wks.location}/Dependencies/glm"
+IncludeDir["stb_image"] = "%{wks.location}/Dependencies/stb_image"
+IncludeDir["entt"] = "%{wks.location}/Dependencies/entt/include"
+IncludeDir["yaml_cpp"] = "%{wks.location}/Dependencies/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "%{wks.location}/Dependencies/ImGuizmo"
+--IncludeDir["free_type"] = "%{wks.location}/Dependencies/free_type/include"
+IncludeDir["hash_library"] = "%{wks.location}/Dependencies/hash_library"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
-IncludeDir["mono"] = "%{wks.location}/Engine/dependencies/mono/include"
-IncludeDir["OpenALSoft"] = "%{wks.location}/Engine/dependencies/OpenAL/include"
-IncludeDir["msdfgen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/msdfgen"
-IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen"
-IncludeDir["dr_wav"] = "%{wks.location}/Engine/dependencies/dr_wav/include"
-IncludeDir["optick"] = "%{wks.location}/Engine/dependencies/optick/include"
-IncludeDir["asio"] = "%{wks.location}/Engine/dependencies/asio/include"
+IncludeDir["mono"] = "%{wks.location}/Dependencies/mono/include"
+IncludeDir["OpenALSoft"] = "%{wks.location}/Dependencies/OpenAL/include"
+IncludeDir["msdfgen"] = "%{wks.location}/Dependencies/msdf_atlas_gen/msdfgen"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Dependencies/msdf_atlas_gen"
+IncludeDir["dr_wav"] = "%{wks.location}/Dependencies/dr_wav/include"
+IncludeDir["optick"] = "%{wks.location}/Dependencies/optick/include"
+IncludeDir["asio"] = "%{wks.location}/Dependencies/asio/include"
 
 -- Include Directories: Points to a directory with a variable number if library files.
 -- Linker will check these paths when finding external libraries.
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
-LibraryDir["mono"] = "%{wks.location}/Engine/dependencies/mono/lib/%{cfg.buildcfg}"
+LibraryDir["mono"] = "%{wks.location}/Dependencies/mono/lib/%{cfg.buildcfg}"
 
 -- Library Locations: Points to a specific library file for Linker to link to final .exe
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
-Library["OpenALSoft_Debug"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/debug/OpenAL32.lib"
-Library["OpenALSoft_Release"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/release/OpenAL32.lib"
-Library["OpenALSoft_Dist"] = "%{wks.location}/Engine/dependencies/OpenAL/lib/dist/OpenAL32.lib"
+Library["OpenALSoft_Debug"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/OpenAL32.lib"
+Library["OpenALSoft_Release"] = "%{wks.location}/Dependencies/OpenAL/lib/release/OpenAL32.lib"
+Library["OpenALSoft_Dist"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/OpenAL32.lib"
 
--- Library["msdf_gen_Debug"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/debug/msdfgen-core.lib"
--- Library["msdf_gen_Release"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/release/msdfgen-core.lib"
--- Library["msdf_gen_Dist"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/dist/msdfgen-core.lib"
+-- Library["msdf_gen_Debug"] = "%{wks.location}/Dependencies/msdf_gen/lib/debug/msdfgen-core.lib"
+-- Library["msdf_gen_Release"] = "%{wks.location}/Dependencies/msdf_gen/lib/release/msdfgen-core.lib"
+-- Library["msdf_gen_Dist"] = "%{wks.location}/Dependencies/msdf_gen/lib/dist/msdfgen-core.lib"
 
--- Library["msdf_gen_ext_Debug"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/debug/msdfgen-ext.lib"
--- Library["msdf_gen_ext_Release"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/release/msdfgen-ext.lib"
--- Library["msdf_gen_ext_Dist"] = "%{wks.location}/Engine/dependencies/msdf_gen/lib/dist/msdfgen-ext.lib"
+-- Library["msdf_gen_ext_Debug"] = "%{wks.location}/Dependencies/msdf_gen/lib/debug/msdfgen-ext.lib"
+-- Library["msdf_gen_ext_Release"] = "%{wks.location}/Dependencies/msdf_gen/lib/release/msdfgen-ext.lib"
+-- Library["msdf_gen_ext_Dist"] = "%{wks.location}/Dependencies/msdf_gen/lib/dist/msdfgen-ext.lib"
 
--- Library["msdf_atlas_gen_Debug"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/debug/msdf-atlas-gen.lib"
--- Library["msdf_atlas_gen_Release"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/release/msdf-atlas-gen.lib"
--- Library["msdf_atlas_gen_Dist"] = "%{wks.location}/Engine/dependencies/msdf_atlas_gen/lib/dist/msdf-atlas-gen.lib"
+-- Library["msdf_atlas_gen_Debug"] = "%{wks.location}/Dependencies/msdf_atlas_gen/lib/debug/msdf-atlas-gen.lib"
+-- Library["msdf_atlas_gen_Release"] = "%{wks.location}/Dependencies/msdf_atlas_gen/lib/release/msdf-atlas-gen.lib"
+-- Library["msdf_atlas_gen_Dist"] = "%{wks.location}/Dependencies/msdf_atlas_gen/lib/dist/msdf-atlas-gen.lib"
 
---Library["free_type"] = "%{wks.location}/Engine/dependencies/free_type/lib/Release/freetype.lib"
+--Library["free_type"] = "%{wks.location}/Dependencies/free_type/lib/Release/freetype.lib"
 
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK}/VkLayer_utils.lib"
@@ -76,6 +76,6 @@ Library["BCrypt"] = "Bcrypt.lib"
 -- These files are usually copied to final working directory of .exe in a pre-build command.
 DynamicLibrary = {}
 
-DynamicLibrary["OpenALSoft_Debug"] = "%{wks.location}Engine\\dependencies\\OpenAL\\lib\\debug\\OpenAL32.dll"
-DynamicLibrary["OpenALSoft_Release"] = "%{wks.location}Engine\\dependencies\\OpenAL\\lib\\release\\OpenAL32.dll"
-DynamicLibrary["OpenALSoft_Dist"] = "%{wks.location}Engine\\dependencies\\OpenAL\\lib\\dist\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Debug"] = "%{wks.location}Dependencies\\OpenAL\\lib\\debug\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Release"] = "%{wks.location}Dependencies\\OpenAL\\lib\\release\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Dist"] = "%{wks.location}Dependencies\\OpenAL\\lib\\dist\\OpenAL32.dll"

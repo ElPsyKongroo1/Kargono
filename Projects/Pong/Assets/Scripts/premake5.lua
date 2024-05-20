@@ -1,5 +1,5 @@
 KargonoRootDir = "../../../.."
-include (KargonoRootDir .. "/dependencies/premake/premake_customization/solution_items.lua")
+include (KargonoRootDir .. "/Dependencies/premake/premake_customization/solution_items.lua")
 
 workspace "Pong"
 architecture "x86_64"
