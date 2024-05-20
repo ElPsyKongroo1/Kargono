@@ -14,7 +14,7 @@ The Editor only supports Windows. I do not have plans for supporting Linux or Ma
 - [Git](https://git-scm.com/downloads) for Windows.
 - [Vulkan](https://vulkan.lunarg.com/) SDK with Debug Binaries. Version should be 3.0 or above.
 ## Instructions
-- Clone this repository. No need to use recursive. Here is the command to run in a terminal/bash: git clone https://github.com/Charles-Breuer/Kargono.git
+- Clone this repository. No need to use recursive. Here is the command to run in a terminal/bash: git clone https://github.com/ElPsyKongroo1/Kargono.git
 - Run BuildScripts/VS_GenProjects.bat to build Visual Studio Solution/Project files.
 - Open Kargono.sln in central directory.
 - Inside the Applications virtual directory, set either the Editor, Runtime, or Server as the default startup project.
