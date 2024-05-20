@@ -3,10 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-
-**Sandbox/KargonoProfile-Runtime.json
-**Sandbox/KargonoProfile-Shutdown.json
-**Sandbox/KargonoProfile-Startup.json
 # User-specific files
 # Binaries
 **/bin
