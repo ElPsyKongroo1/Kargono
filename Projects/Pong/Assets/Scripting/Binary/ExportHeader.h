@@ -6,7 +6,7 @@
 #endif
 #include <functional>
 #include <string>
-#include "F:\Charles_Files\Personal_Projects\Personal_Games\Engine/src/Kargono/Math/MathAliases.h"
+#include "F:\Charles_Files\Personal_Projects\Personal_Games\Engine/Source/Kargono/Math/MathAliases.h"
 namespace Kargono
 {
 extern "C"
