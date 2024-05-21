@@ -154,7 +154,7 @@ namespace Kargono
 	{
 	public:
 		Assets::AssetHandle ClassHandle{ Assets::EmptyHandle };
-		EntityClass* ClassReference{ nullptr };
+		Ref<EntityClass> ClassReference{ nullptr };
 		std::vector<Ref<WrappedVariable>> Fields{};
 
 		ClassInstanceComponent() = default;

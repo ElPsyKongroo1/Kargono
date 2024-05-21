@@ -2,6 +2,7 @@
 
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Core/WrappedData.h"
 
 #include "box2d/b2_body.h"
 #include <yaml-cpp/yaml.h>
@@ -233,9 +234,103 @@ namespace Kargono::Utility
 		fieldInstance.SetValue(data);                       \
 		break;                                              \
 	}
+
 	//==============================
 	// Extra Conversions
 	//==============================
+	// API for Serializing and Deserializing Wrapped Variable Data
+	inline void SerializeWrappedVariableData(Ref<WrappedVariable> variable, YAML::Emitter& out)
+	{
+		switch (variable->Type())
+		{
+		case WrappedVarType::Integer32:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<int32_t>();
+			return;
+		}
+		case WrappedVarType::UInteger16:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<uint16_t>();
+			return;
+		}
+		case WrappedVarType::UInteger32:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<uint32_t>();
+			return;
+		}
+		case WrappedVarType::UInteger64:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<int64_t>();
+			return;
+		}
+		case WrappedVarType::String:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<std::string>();
+			return;
+		}
+		case WrappedVarType::Float:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<float>();
+			return;
+		}
+		case WrappedVarType::Bool:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<bool>();
+			return;
+		}
+		case WrappedVarType::Void:
+		case WrappedVarType::None:
+		{
+			KG_CRITICAL("Use of Void or None when serializing value");
+			return;
+		}
+		}
+		KG_ASSERT(false, "Unknown Type of WrappedVariableType when serializing");
+	}
+
+	inline Ref<WrappedVariable> DeserializeWrappedVariableData(WrappedVarType type, YAML::detail::iterator_value& field)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer32:
+		{
+			return CreateRef<WrappedInteger32>(field["Value"].as<int32_t>());
+		}
+		case WrappedVarType::UInteger16:
+		{
+			return CreateRef<WrappedUInteger16>(field["Value"].as<uint16_t>());
+		}
+		case WrappedVarType::UInteger32:
+		{
+			return CreateRef<WrappedUInteger32>(field["Value"].as<uint32_t>());
+		}
+		case WrappedVarType::UInteger64:
+		{
+			return CreateRef<WrappedUInteger64>(field["Value"].as<uint64_t>());
+		}
+		case WrappedVarType::String:
+		{
+			return CreateRef<WrappedString>(field["Value"].as<std::string>());
+		}
+		case WrappedVarType::Float:
+		{
+			return CreateRef<WrappedFloat>(field["Value"].as<float>());
+		}
+		case WrappedVarType::Bool:
+		{
+			return CreateRef<WrappedBool>(field["Value"].as<bool>());
+		}
+		case WrappedVarType::Void:
+		case WrappedVarType::None:
+		{
+			KG_CRITICAL("Use of Void or None when serializing value");
+			return nullptr;
+		}
+		}
+		KG_ASSERT(false, "Unknown Type of WrappedVariableType when deserializing");
+		return nullptr;
+	}
+
 	// These are simply here to help with serialization for the rigid body components in an entity
 	inline std::string RigidBody2DBodyTypeToString(Rigidbody2DComponent::BodyType bodyType)
 	{
