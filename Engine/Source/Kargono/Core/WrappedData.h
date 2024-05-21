@@ -45,6 +45,7 @@ namespace Kargono
 
 		virtual WrappedVarType Type() = 0;
 		virtual void* GetValue() = 0;
+		const virtual std::string GetValueAsString() = 0;
 		virtual void SetValue(void* value) = 0;
 	};
 
@@ -59,6 +60,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
 		}
 
 		virtual void SetValue(void* value) override
@@ -81,6 +87,11 @@ namespace Kargono
 			return (void*)&m_Value;
 		}
 
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
+		}
+
 		virtual void SetValue(void* value) override
 		{
 			m_Value = *(uint16_t*)value;
@@ -99,6 +110,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
 		}
 
 		virtual void SetValue(void* value) override
@@ -121,6 +137,11 @@ namespace Kargono
 			return (void*)&m_Value;
 		}
 
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
+		}
+
 		virtual void SetValue(void* value) override
 		{
 			m_Value = *(uint64_t*)value;
@@ -139,6 +160,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			return m_Value;
 		}
 
 		virtual void SetValue(void* value) override
@@ -161,6 +187,11 @@ namespace Kargono
 			return (void*)&m_Value;
 		}
 
+		const std::string GetValueAsString() override
+		{
+			return m_Value ? "True" : "False";
+		}
+
 		virtual void SetValue(void* value) override
 		{
 			m_Value = *(bool*)value;
@@ -179,6 +210,11 @@ namespace Kargono
 		void* GetValue() override
 		{
 			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
 		}
 
 		virtual void SetValue(void* value) override
@@ -314,6 +350,24 @@ namespace Kargono
 			}
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
 			return "";
+		}
+
+		inline Ref<WrappedVariable> WrappedVarTypeToWrappedVariable(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32: return CreateRef<WrappedInteger32>();
+			case WrappedVarType::UInteger16: return CreateRef<WrappedUInteger16>();
+			case WrappedVarType::UInteger32: return CreateRef<WrappedUInteger32>();
+			case WrappedVarType::UInteger64: return CreateRef<WrappedUInteger64>();
+			case WrappedVarType::String: return CreateRef<WrappedString>();
+			case WrappedVarType::Bool: return CreateRef<WrappedBool>();
+			case WrappedVarType::Float: return CreateRef<WrappedFloat>();
+			case WrappedVarType::Void: return nullptr;
+			case WrappedVarType::None: return nullptr;
+			}
+			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
+			return nullptr;
 		}
 
 		inline std::string WrappedVarTypeToCPPString(WrappedVarType type)

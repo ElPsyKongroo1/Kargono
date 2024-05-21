@@ -190,7 +190,7 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		KG_INFO("Deserializing game state");
+		KG_INFO("Deserializing entity class");
 
 		EntityClass->m_Name = data["Name"].as<std::string>();
 
@@ -279,7 +279,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_INFO("Attempt to instantiate duplicate game state asset");
+				KG_INFO("Attempt to instantiate duplicate entity class asset");
 				return handle;
 			}
 		}
