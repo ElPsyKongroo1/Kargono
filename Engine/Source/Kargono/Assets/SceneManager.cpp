@@ -25,23 +25,49 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		//if (entity.HasComponent<ClassInstanceComponent>())
-		//{
-		//	out << YAML::Key << "ClassInstanceComponent";
-		//	ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
-		//	out << YAML::BeginMap; // Component Map
-		//	out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
-		//	out << YAML::BeginSeq;
-		//	KG_ASSERT()
-		//	for (auto& field : comp.Fields)
-		//	{
-		//		out << YAML::BeginMap;
-		//		out << YAML::Key << "";
-		//		out << YAML::EndMap;
-		//	}
-		//	out << YAML::EndSeq;
-		//	out << YAML::EndMap; // Component Map
-		//}
+		if (entity.HasComponent<ClassInstanceComponent>())
+		{
+			out << YAML::Key << "ClassInstanceComponent";
+			ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
+			out << YAML::BeginMap; // Component Map
+			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
+			if (comp.ClassHandle == Assets::EmptyHandle)
+			{
+				KG_ASSERT(false,"Attempt to serialize ClassInstanceComponent without ClassHandle");
+				return;
+			}
+			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+			if (!entityClass)
+			{
+				KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent without valid entityClass");
+				return;
+			}
+			if (entityClass->GetFields().size() != comp.Fields.size())
+			{
+				KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
+				return;
+			}
+
+			out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
+			uint32_t iteration{ 0 };
+			for (auto& fieldValue : comp.Fields)
+			{
+				const ClassField& fieldType = entityClass->GetFields().at(iteration);
+				if (fieldType.Type != fieldValue->Type())
+				{
+					KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent with incorrect types");
+					return;
+				}
+				out << YAML::BeginMap; // Begin Field Map
+				out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
+				out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
+				SerializeWrappedVariableData(fieldValue, out);
+				out << YAML::EndMap; // End Field Map
+				iteration++;
+			}
+			out << YAML::EndSeq; // End Fields
+			out << YAML::EndMap; // Component Map
+		}
 
 		if (entity.HasComponent<TransformComponent>())
 		{
@@ -435,6 +461,30 @@ namespace Kargono::Assets
 					tc.Translation = transformComponent["Translation"].as<Math::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<Math::vec3>();
 					tc.Scale = transformComponent["Scale"].as<Math::vec3>();
+				}
+
+				auto classInstanceComponent = entity["ClassInstanceComponent"];
+				if (classInstanceComponent)
+				{
+					auto& cInstComp = deserializedEntity.AddComponent<ClassInstanceComponent>();
+					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
+					if (!s_EntityClassRegistry.contains(cInstComp.ClassHandle))
+					{
+						KG_ERROR("Could not find entity class for class instance component");
+						return false;
+					}
+					cInstComp.ClassReference = GetEntityClass(cInstComp.ClassHandle);
+
+					auto instanceFields = classInstanceComponent["InstanceFields"];
+					if (instanceFields)
+					{
+						for (auto field : instanceFields)
+						{
+							WrappedVarType type = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
+							Ref<WrappedVariable> newField = Utility::DeserializeWrappedVariableData(type, field);
+							cInstComp.Fields.push_back(newField);
+						}
+					}
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

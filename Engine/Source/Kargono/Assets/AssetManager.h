@@ -865,12 +865,12 @@ namespace Kargono::Assets
 			DeserializeTextureRegistry();
 			DeserializeAudioRegistry();
 			DeserializeFontRegistry();
-			DeserializeSceneRegistry();
 			DeserializeUIObjectRegistry();
 			DeserializeInputModeRegistry();
 			DeserializeScriptRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeEntityClassRegistry();
+			DeserializeSceneRegistry();
 		}
 
 		// Serializes all registries into disk storage
@@ -880,12 +880,12 @@ namespace Kargono::Assets
 			SerializeTextureRegistry();
 			SerializeAudioRegistry();
 			SerializeFontRegistry();
-			SerializeSceneRegistry();
 			SerializeUIObjectRegistry();
 			SerializeInputModeRegistry();
 			SerializeScriptRegistry();
 			SerializeGameStateRegistry();
 			SerializeEntityClassRegistry();
+			SerializeSceneRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
@@ -895,12 +895,12 @@ namespace Kargono::Assets
 			ClearShaderRegistry();
 			ClearAudioRegistry();
 			ClearFontRegistry();
-			ClearSceneRegistry();
 			ClearUIObjectRegistry();
 			ClearInputModeRegistry();
 			ClearScriptRegistry();
 			ClearGameStateRegistry();
 			ClearEntityClassRegistry();
+			ClearSceneRegistry();
 		}
 	};
 	

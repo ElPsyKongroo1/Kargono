@@ -66,11 +66,20 @@ namespace Kargono
 			{
 				return;
 			}
-
+			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(entry.Handle);
+			if (!entityClass)
+			{
+				KG_WARN("Could not retrieve entity class reference from asset manager in scene hierarchy panel");
+				return;
+			}
 			component.ClassHandle = entry.Handle;
-			component.ClassReference = Assets::AssetManager::GetEntityClass(entry.Handle).get();
-			// TODO, fill fields with new types
-			//component.Fields.clear();
+			component.ClassReference = entityClass;
+			component.Fields.clear();
+			for (auto& [name, type] : entityClass->GetFields())
+			{
+				component.Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
+			}
+			s_InstanceFieldsTable.OnRefresh();
 		};
 
 		s_InstanceFieldsTable.Label = "Instance Fields";
@@ -80,25 +89,27 @@ namespace Kargono
 		s_InstanceFieldsTable.Expanded = true;
 		s_InstanceFieldsTable.OnRefresh = [&]()
 		{
+			
+
+			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
+			auto& component = entity.GetComponent<ClassInstanceComponent>();
+
+			uint32_t iteration{ 0 };
 			s_InstanceFieldsTable.ClearTable();
-			s_InstanceFieldsTable.InsertTableEntry(
+			for(auto& wrappedVar : component.Fields)
+			{
+				s_InstanceFieldsTable.InsertTableEntry(
 				{
-					"Booty",
-					"Booty Value",
+					component.ClassReference->GetFields().at(iteration).Name,
+					wrappedVar->GetValueAsString(),
 					Assets::EmptyHandle,
 					nullptr,
 					nullptr
 				});
-			s_InstanceFieldsTable.InsertTableEntry(
-				{
-					"lody",
-					"lody Value",
-					Assets::EmptyHandle,
-					nullptr,
-					nullptr
-				});
+				iteration++;
+			}
 		};
-		s_InstanceFieldsTable.OnRefresh();
+		//s_InstanceFieldsTable.OnRefresh();
 	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -140,7 +151,10 @@ namespace Kargono
 				DrawEntityNode(entity);
 			});
 
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) { *Scene::GetActiveScene()->GetSelectedEntity() = {}; }
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			{
+				SetSelectedEntity({});
+			}
 
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
@@ -163,6 +177,16 @@ namespace Kargono
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
 	{
 		*Scene::GetActiveScene()->GetSelectedEntity() = entity;
+		if (entity)
+		{
+			if (entity.HasComponent<ClassInstanceComponent>())
+			{
+				ClassInstanceComponent& instanceComp = entity.GetComponent<ClassInstanceComponent>();
+				s_SelectClassOption.CurrentOption = { instanceComp.ClassReference->GetName(),instanceComp.ClassHandle };
+				s_InstanceFieldsTable.OnRefresh();
+			}
+		}
+		
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
@@ -174,7 +198,7 @@ namespace Kargono
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
-			*Scene::GetActiveScene()->GetSelectedEntity() = entity;
+			SetSelectedEntity(entity);
 		}
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{

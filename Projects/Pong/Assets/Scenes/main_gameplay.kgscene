@@ -229,6 +229,12 @@ Entities:
   - Entity: 1620162373067812695
     TagComponent:
       Tag: Ball
+    ClassInstanceComponent:
+      ClassHandle: 9855043163489593156
+      InstanceFields:
+        - Name: fdsa
+          Type: UInteger32
+          Value: 0
     TransformComponent:
       Translation: [25.9217854, -0.00246607885, 3.7252903e-09]
       Rotation: [0, 0, 1.57079637]

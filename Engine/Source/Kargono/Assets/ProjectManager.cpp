@@ -10,12 +10,18 @@ namespace Kargono::Assets
 	{
 		auto& config = project->m_Config;
 
-		std::string filepath = (projectPath.parent_path() / "server_variables.env").string();
+		std::filesystem::path filepath = (projectPath.parent_path() / "server_variables.env");
+
+		if (!std::filesystem::exists(filepath))
+		{
+			KG_WARN("Not server_variables.env file found. Default settings applied.");
+			return false;
+		}
 
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath);
+			data = YAML::LoadFile(filepath.string());
 		}
 		catch (YAML::ParserException e)
 		{
