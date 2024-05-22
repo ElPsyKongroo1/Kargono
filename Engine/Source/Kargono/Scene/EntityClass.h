@@ -38,6 +38,23 @@ namespace Kargono
 		{
 			return m_FieldTypes;
 		}
+
+		int32_t GetFieldLocation(const std::string& fieldName) const
+		{
+			int32_t iteration{ 0 };
+			for (auto& field : m_FieldTypes)
+			{
+				if (field.Name == fieldName)
+				{
+					return iteration;
+				}
+				iteration++;
+			}
+
+			KG_WARN("Could not get field location from class {}", fieldName);
+			return -1;
+		}
+
 		WrappedVarType GetField(const std::string& fieldName) const
 		{
 			for (auto& field : m_FieldTypes)

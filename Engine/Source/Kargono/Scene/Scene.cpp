@@ -14,6 +14,7 @@
 namespace Kargono
 {
 	Ref<Scene> Scene::s_ActiveScene {nullptr};
+	Assets::AssetHandle Scene::s_ActiveSceneHandle {Assets::EmptyHandle};
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
@@ -56,7 +57,6 @@ namespace Kargono
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
 	{
 		Ref<Scene> newScene = CreateRef<Scene>();
-
 		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
 
 		auto& srcSceneRegistry = other->m_Registry;

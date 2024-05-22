@@ -152,7 +152,15 @@ namespace Kargono
 		Entity* GetSelectedEntity() { return m_SelectedEntity; }
 
 		static Ref<Scene> GetActiveScene() { return s_ActiveScene; }
-		static void SetActiveScene(Ref<Scene> newScene) { s_ActiveScene = newScene; }
+		static Assets::AssetHandle GetActiveSceneHandle()
+		{
+			return s_ActiveSceneHandle;
+		}
+		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
+		{
+			s_ActiveScene = newScene;
+			s_ActiveSceneHandle = newHandle;
+		}
 
 		static std::unordered_map<std::string, std::vector<UUID>>& GetScriptClassToEntityList();
 
@@ -186,5 +194,6 @@ namespace Kargono
 		// This represents the staticlly defined and managed scene that is currently
 		//		being rendered.
 		static Ref<Scene> s_ActiveScene;
+		static Assets::AssetHandle s_ActiveSceneHandle;
 	};
 }

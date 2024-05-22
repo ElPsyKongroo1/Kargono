@@ -680,7 +680,7 @@ namespace Kargono::Assets
 		// Save a EntityClass
 		//==============================
 		// Save Current EntityClass
-		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass);
+		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass, Ref<Kargono::Scene> editorScene = nullptr);
 
 		//==============================
 		// Delete a EntityClass

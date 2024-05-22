@@ -10,6 +10,9 @@ namespace Kargono
 
 		void OnEditorUIRender();
 
+	private:
+		void InitializeDisplayEntityClassScreen();
+
 	public:
 		void RefreshEntityScripts(Assets::AssetHandle handle);
 
