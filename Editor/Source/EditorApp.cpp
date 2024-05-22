@@ -24,7 +24,7 @@ namespace Kargono
 		m_SceneHierarchyPanel = CreateScope<SceneHierarchyPanel>();
 
 		m_EditorScene = CreateRef<Scene>();
-		Scene::SetActiveScene(m_EditorScene);
+		Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
 
 		if (!OpenProject())
@@ -619,7 +619,7 @@ namespace Kargono
 
 		*Scene::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
-		Scene::SetActiveScene(m_EditorScene);
+		Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::OpenScene()
@@ -648,7 +648,7 @@ namespace Kargono
 		auto [sceneHandle, newScene] = Assets::AssetManager::GetScene(path);
 
 		m_EditorScene = newScene;
-		Scene::SetActiveScene(m_EditorScene);
+		Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
 
 	}
@@ -664,7 +664,7 @@ namespace Kargono
 		if (!newScene) { newScene = CreateRef<Scene>(); }
 
 		m_EditorScene = newScene;
-		Scene::SetActiveScene(m_EditorScene);
+		Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
 	}
 
@@ -713,7 +713,7 @@ namespace Kargono
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
 		m_SceneState = SceneState::Play;
-		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
+		Scene::SetActiveScene(Scene::Copy(m_EditorScene), m_EditorSceneHandle);
 		Scene::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
 		if (scriptHandle != 0)
@@ -737,7 +737,7 @@ namespace Kargono
 		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
-		Scene::SetActiveScene(Scene::Copy(m_EditorScene));
+		Scene::SetActiveScene(Scene::Copy(m_EditorScene), m_EditorSceneHandle);
 		Scene::GetActiveScene()->OnSimulationStart();
 	}
 	void EditorApp::OnStop()
@@ -749,7 +749,7 @@ namespace Kargono
 		else if (m_SceneState == SceneState::Simulate) { Scene::GetActiveScene()->OnSimulationStop(); }
 
 		Scene::GetActiveScene()->DestroyAllEntities();
-		Scene::SetActiveScene(m_EditorScene);
+		Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioEngine::StopAllAudio();
 
 		// Clear UIObjects during runtime.

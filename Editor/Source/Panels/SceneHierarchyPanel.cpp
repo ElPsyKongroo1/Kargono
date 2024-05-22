@@ -5,6 +5,7 @@
 #include "EditorApp.h"
 
 #include "imgui_internal.h"
+#include "SceneHierarchyPanel.h"
 
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
@@ -29,6 +30,10 @@ namespace Kargono
 	static EditorUI::CollapsingHeaderSpec s_ClassInstanceHeader{};
 	static EditorUI::SelectOptionSpec s_SelectClassOption{};
 	static EditorUI::TableSpec s_InstanceFieldsTable{};
+	static std::string s_CurrentClassField {};
+	static int32_t s_CurrentClassFieldLocation {};
+	static EditorUI::GenericPopupSpec s_EditClassFieldPopup{};
+	static EditorUI::EditVariableSpec s_EditFieldValue {};
 
 	static void InitializeClassInstanceComponent()
 	{
@@ -66,20 +71,11 @@ namespace Kargono
 			{
 				return;
 			}
-			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(entry.Handle);
-			if (!entityClass)
+			bool success = component.ChangeClass(entry.Handle);
+			if (success)
 			{
-				KG_WARN("Could not retrieve entity class reference from asset manager in scene hierarchy panel");
-				return;
+				s_InstanceFieldsTable.OnRefresh();
 			}
-			component.ClassHandle = entry.Handle;
-			component.ClassReference = entityClass;
-			component.Fields.clear();
-			for (auto& [name, type] : entityClass->GetFields())
-			{
-				component.Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
-			}
-			s_InstanceFieldsTable.OnRefresh();
 		};
 
 		s_InstanceFieldsTable.Label = "Instance Fields";
@@ -89,8 +85,6 @@ namespace Kargono
 		s_InstanceFieldsTable.Expanded = true;
 		s_InstanceFieldsTable.OnRefresh = [&]()
 		{
-			
-
 			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
 			auto& component = entity.GetComponent<ClassInstanceComponent>();
 
@@ -103,13 +97,52 @@ namespace Kargono
 					component.ClassReference->GetFields().at(iteration).Name,
 					wrappedVar->GetValueAsString(),
 					Assets::EmptyHandle,
-					nullptr,
+					[&](EditorUI::TableEntry& optionEntry)
+					{
+						s_CurrentClassField = optionEntry.Label;
+						Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+						auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+						s_CurrentClassFieldLocation = comp.ClassReference->GetFieldLocation(s_CurrentClassField);
+						if (s_CurrentClassFieldLocation == -1)
+						{
+							KG_WARN("Could not locate field in class definition");
+							return;
+						}
+						s_EditClassFieldPopup.PopupActive = true;
+					},
 					nullptr
 				});
 				iteration++;
 			}
 		};
-		//s_InstanceFieldsTable.OnRefresh();
+
+		s_EditClassFieldPopup.Label = "Edit Field";
+		s_EditClassFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		{
+			Ref<WrappedVariable> field = s_GameStatePanel->m_EditorGameState->GetField(s_CurrentField);
+
+			if (!field)
+			{
+				KG_ERROR("Unable to retreive field from current game state object");
+				return;
+			}
+
+			std::string convertCache { std::to_string(field->GetWrappedValue<uint16_t>()) };
+			s_EditFieldValue.FieldBuffer.SetDataToByte(0);
+			memcpy(s_EditFieldValue.FieldBuffer.Data, convertCache.data(), convertCache.size());
+		};
+		s_EditClassFieldPopup.PopupContents = [&]()
+		{
+			EditorUI::Editor::Text("Hello");
+		};
+		s_EditClassFieldPopup.ConfirmAction = [&]()
+		{
+
+		};
+
+		s_EditFieldValue.Label = "Edit Value";
+		s_EditFieldValue.AllocateBuffer();
+
 	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -187,6 +220,10 @@ namespace Kargono
 			}
 		}
 		
+	}
+	void SceneHierarchyPanel::RefreshWidgetData()
+	{
+		s_InstanceFieldsTable.OnRefresh();
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
@@ -473,6 +510,7 @@ namespace Kargono
 				if (component.ClassHandle != Assets::EmptyHandle)
 				{
 					EditorUI::Editor::Table(s_InstanceFieldsTable);
+					EditorUI::Editor::GenericPopup(s_EditClassFieldPopup);
 				}
 			}
 		}

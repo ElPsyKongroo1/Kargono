@@ -460,12 +460,14 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
+		Buffer FieldBuffer {};
+		WrappedVarType VariableType{ WrappedVarType::Integer32 };
+	public:
 		void AllocateBuffer()
 		{
 			FieldBuffer.Allocate(400);
 			FieldBuffer.SetDataToByte(0);
 		}
-		Buffer FieldBuffer {};
 	private:
 		WidgetID WidgetID;
 	private:

@@ -1,7 +1,9 @@
 Name: Player1
 FieldTypes:
-  - Name: fdsa
+  - Name: ;lio;
     Type: UInteger32
+  - Name: Waka Flacka
+    Type: Integer32
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
 OnCreate: 0

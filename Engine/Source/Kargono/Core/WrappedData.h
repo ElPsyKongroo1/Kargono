@@ -6,7 +6,6 @@
 
 namespace Kargono
 {
-
 	enum class WrappedVarType
 	{
 		None = 0,
@@ -155,7 +154,7 @@ namespace Kargono
 		WrappedString() = default;
 		WrappedString(const std::string& value) : m_Value{ value } {}
 	public:
-		virtual WrappedVarType Type() override { return WrappedVarType::UInteger64; }
+		virtual WrappedVarType Type() override { return WrappedVarType::String; }
 	public:
 		void* GetValue() override
 		{
@@ -486,7 +485,6 @@ namespace Kargono
 				KG_ERROR("None type provided to parameter list utility function");
 				return {};
 			}
-				
 			default:
 				KG_ASSERT(false, "Unknown Type of WrappedFuncType.")
 				return {};

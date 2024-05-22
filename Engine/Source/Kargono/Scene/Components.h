@@ -157,6 +157,23 @@ namespace Kargono
 		Ref<EntityClass> ClassReference{ nullptr };
 		std::vector<Ref<WrappedVariable>> Fields{};
 
+		bool ChangeClass(Assets::AssetHandle classHandle)
+		{
+			Ref<EntityClass> entityClassRef = Assets::AssetManager::GetEntityClass(classHandle);
+			if (!entityClassRef)
+			{
+				KG_WARN("Could not retrieve entity class reference in Components.h");
+				return false;
+			}
+			ClassHandle = classHandle;
+			ClassReference = entityClassRef;
+			Fields.clear();
+			for (auto& [name, type] : entityClassRef->GetFields())
+			{
+				Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
+			}
+			return true;
+		}
 		ClassInstanceComponent() = default;
 		ClassInstanceComponent(const ClassInstanceComponent&) = default;
 	};
