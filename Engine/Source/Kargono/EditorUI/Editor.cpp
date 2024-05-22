@@ -816,7 +816,11 @@ namespace Kargono::EditorUI
 
 		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
-		ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_CharsDecimal | ImGuiInputTextFlags_CallbackEdit;
+		ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_CallbackEdit;
+		if (spec.VariableType != WrappedVarType::String)
+		{
+			inputFlags |= ImGuiInputTextFlags_CharsDecimal;
+		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(200.0f);
 		ImGui::SetNextItemWidth(170.0f);

@@ -3,7 +3,42 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scene/Entity.h"
 #include "API/Serialization/SerializationAPI.h"
+
+namespace Kargono::Utility
+{
+	static void TransferClassInstanceFieldData(Ref<Kargono::Scene> scene, Ref<Kargono::EntityClass> entityClass, Assets::AssetHandle entityHandle,
+		const std::unordered_map<uint32_t, uint32_t>& transferMap)
+	{
+		if (scene)
+		{
+			for (auto entity : scene->GetAllEntitiesWith<ClassInstanceComponent>())
+			{
+				Kargono::Entity currentEntity { entity, scene.get() };
+				ClassInstanceComponent& component = currentEntity.GetComponent<ClassInstanceComponent>();
+				if (component.ClassHandle == entityHandle)
+				{
+					component.ClassReference = entityClass;
+					auto oldVariables = component.Fields;
+					component.Fields.clear();
+					for (auto& [name, type] : entityClass->GetFields())
+					{
+						component.Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
+					}
+
+					// Transfer Data
+					for (auto [oldLoc, newLoc] : transferMap)
+					{
+						component.Fields.at(newLoc)->SetValue(component.Fields.at(oldLoc)->GetValue());
+					}
+				}
+				
+			}
+		}
+	}
+}
 
 namespace Kargono::Assets
 {
@@ -300,15 +335,62 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass)
+	void AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref<Kargono::EntityClass> entityClass, Ref<Kargono::Scene> editorScene)
 	{
-		if (!s_EntityClassRegistry.contains(EntityClassHandle))
+		if (!s_EntityClassRegistry.contains(entityClassHandle))
 		{
 			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
 			return;
 		}
-		Assets::Asset EntityClassAsset = s_EntityClassRegistry[EntityClassHandle];
-		SerializeEntityClass(EntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+		// Store Field Location for Processing ClassInstanceComponent Data
+		std::vector<ClassField> oldFields = GetEntityClass(entityClassHandle)->GetFields();
+		std::vector<ClassField> newFields = entityClass->GetFields();
+
+		Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];
+		SerializeEntityClass(entityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+
+		// Create map that associates old data locations with new data locations for ClassInstanceComponents
+		std::unordered_map<uint32_t, uint32_t> transferFieldDataMap {};
+		uint32_t newFieldsIteration{ 0 };
+		for (auto& [newName, newType] : newFields)
+		{
+			uint32_t oldFieldsIteration{ 0 };
+			for (auto& [oldName, oldType] : oldFields)
+			{
+				if (oldName == newName && oldType == newType)
+				{
+					transferFieldDataMap.insert_or_assign(oldFieldsIteration, newFieldsIteration);
+					break;
+				}
+				oldFieldsIteration++;
+			}
+			newFieldsIteration++;
+		}
+
+		// Update Active Scene
+		Ref<Kargono::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
+		Ref<Kargono::Scene> activeScene = Scene::GetActiveScene();
+
+		Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);
+		// Update Editor Scene if applicable
+		if (editorScene)
+		{
+			Utility::TransferClassInstanceFieldData(editorScene, newEntityClass,entityClassHandle, transferFieldDataMap);
+		}
+
+		for (auto& [handle, asset] : s_SceneRegistry)
+		{
+			const Ref<Kargono::Scene> scene = GetScene(handle);
+			if (!scene)
+			{
+				KG_WARN("Unable to load scene in SaveEntityClass");
+				continue;
+			}
+
+			Utility::TransferClassInstanceFieldData(scene, newEntityClass, entityClassHandle, transferFieldDataMap);
+			SaveScene(handle, scene);
+		}
+		
 	}
 
 	void AssetManager::DeleteEntityClass(AssetHandle handle)

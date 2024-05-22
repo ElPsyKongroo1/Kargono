@@ -142,7 +142,7 @@ namespace Kargono
 		};
 	}
 
-	static void InitializeDisplayEntityClassScreen()
+	void EntityClassEditor::InitializeDisplayEntityClassScreen()
 	{
 		// Header (Entity Class Name and Options)
 		s_DeleteEntityClassWarning.Label = "Delete Entity Class";
@@ -169,10 +169,11 @@ namespace Kargono
 		};
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
-			{
-				Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass);
-				s_MainHeader.EditColorActive = false;
-			});
+		{
+			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorLayer->m_EditorScene);
+			s_EditorLayer->m_SceneHierarchyPanel->RefreshWidgetData();
+			s_MainHeader.EditColorActive = false;
+		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
 			{
 				if (s_MainHeader.EditColorActive)
