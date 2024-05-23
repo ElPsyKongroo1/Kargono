@@ -31,7 +31,7 @@ namespace Kargono::Utility
 					// Transfer Data
 					for (auto [oldLoc, newLoc] : transferMap)
 					{
-						component.Fields.at(newLoc)->SetValue(component.Fields.at(oldLoc)->GetValue());
+						component.Fields.at(newLoc)->SetValue(oldVariables.at(oldLoc)->GetValue());
 					}
 				}
 				

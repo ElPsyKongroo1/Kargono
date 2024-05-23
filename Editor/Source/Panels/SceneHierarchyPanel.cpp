@@ -86,8 +86,13 @@ namespace Kargono
 		s_InstanceFieldsTable.OnRefresh = [&]()
 		{
 			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
-			auto& component = entity.GetComponent<ClassInstanceComponent>();
 
+			if (!entity || !entity.HasComponent<ClassInstanceComponent>())
+			{
+				return;
+			}
+
+			auto& component = entity.GetComponent<ClassInstanceComponent>();
 			uint32_t iteration{ 0 };
 			s_InstanceFieldsTable.ClearTable();
 			for(auto& wrappedVar : component.Fields)
