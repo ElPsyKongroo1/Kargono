@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Kargono/Core/Buffer.h"
+#include "Kargono/Utility/Conversions.h"
+
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -362,8 +365,9 @@ namespace Kargono
 			case WrappedVarType::String: return CreateRef<WrappedString>();
 			case WrappedVarType::Bool: return CreateRef<WrappedBool>();
 			case WrappedVarType::Float: return CreateRef<WrappedFloat>();
-			case WrappedVarType::Void: return nullptr;
-			case WrappedVarType::None: return nullptr;
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+				return nullptr;
 			}
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
 			return nullptr;
@@ -401,6 +405,72 @@ namespace Kargono
 
 			KG_ASSERT(false, "Unknown Type of WrappedVariableType String.");
 			return WrappedVarType::None;
+		}
+
+		inline bool FillBufferWithWrappedVarString(Ref<WrappedVariable> variable, Buffer buffer)
+		{
+			buffer.SetDataToByte(0);
+			const std::string variableAsString { variable->GetValueAsString() };
+			memcpy(buffer.Data, variableAsString.data(), variableAsString.size());
+			return true;
+		}
+
+		inline bool FillWrappedVarWithStringBuffer(Ref<WrappedVariable> variable, Buffer buffer)
+		{
+			bool success{ false };
+			switch (variable->Type())
+			{
+				case WrappedVarType::Integer32:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<int32_t>());
+					break;
+				}
+				case WrappedVarType::UInteger16:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<uint16_t>());
+					break;
+				}
+				case WrappedVarType::UInteger32:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<uint32_t>());
+					break;
+				}
+				case WrappedVarType::UInteger64:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<uint64_t>());
+					break;
+				}
+				case WrappedVarType::String:
+				{
+					variable->SetValue(buffer.As<char>());
+					break;
+				}
+				case WrappedVarType::Bool:
+				{
+						// TODO Work on Bool Later
+					/*success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<bool>());*/
+					KG_TRACE("Attempt to use bool. Have not completed it!");
+					break;
+				}
+				case WrappedVarType::Float:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<float>());
+					break;
+				}
+				case WrappedVarType::Void:
+				case WrappedVarType::None:
+				{
+					KG_WARN("Invalid WrappedVarType provided to FillStringBuffer Function");
+					return false;
+				}
+			}
+			return true;
 		}
 
 		inline std::string WrappedFuncTypeToString(WrappedFuncType type)
