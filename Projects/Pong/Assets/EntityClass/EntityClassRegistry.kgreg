@@ -1,8 +1,8 @@
 Registry: EntityClass
 Assets:
-  - AssetHandle: 9855043163489593156
+  - AssetHandle: 1314729502980238687
     MetaData:
-      CheckSum: 4c348a86761b8ffbbd44cbe810ab320b6e785fa2e69fdf1e2562cb4bb9395590
-      IntermediateLocation: EntityClass/Player1.kgclass
+      CheckSum: f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b
+      IntermediateLocation: EntityClass/asdf.kgclass
       AssetType: EntityClass
-      Name: Player1
+      Name: asdf

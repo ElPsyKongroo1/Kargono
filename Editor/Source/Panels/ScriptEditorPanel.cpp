@@ -233,7 +233,8 @@ namespace Kargono
 		};
 		s_EditScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditScriptName);
+			EditorUI::Editor::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
+			//EditorUI::Editor::TextInputPopup(s_EditScriptName);
 			EditorUI::Editor::SelectOption(s_EditScriptFuncType);
 			EditorUI::Editor::RadioSelector(s_EditScriptType);
 			EditorUI::Editor::SelectOption(s_EditScriptSectionLabel);
