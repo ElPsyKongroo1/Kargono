@@ -119,85 +119,85 @@ void AddUInt16None(const std::string& funcName, std::function<uint16_t()> funcPt
 {
 if (funcName == "GetActiveSessionSlot") { GetActiveSessionSlotPtr = funcPtr; return; }
 }
-void KG_FUNC_3176244785148247992(uint16_t userSlot)
-{
-	std::string selectedWidget = "player_slot_" + std::to_string(userSlot);
-	SetWidgetText("online_lobby", selectedWidget, "Connected!");
-}
-
-void KG_FUNC_8444652895326507655()
+void UpdateSessionUserSlot(uint16_t userSlot)
 {
-	SetWidgetText("online_lobby", "main_text", "Starting Session...");
+	std::string selectedWidget = "player_slot_" + std::to_string(userSlot);
+	SetWidgetText("online_lobby", selectedWidget, "Connected!");
 }
 
-void KG_FUNC_7445822592925037095(uint16_t userSlot)
+void OnCurrentSessionInit()
 {
-	std::string selectedWidget = "player_slot_" + std::to_string(userSlot);
-	std::string newText = "No Player " + std::to_string(userSlot + 1);
-
-	SetWidgetText("online_lobby", selectedWidget, newText);
-
-	SetWidgetText("online_lobby", "main_text", "Waiting for Players...");
+	SetWidgetText("online_lobby", "main_text", "Starting Session...");
 }
 
-void KG_FUNC_18163504705534252383(uint32_t count)
-{
-	std::string onlineCount = std::string("Online: ") + std::to_string(count);
-	SetWidgetText("main_window", "online_count", onlineCount);
-	SetWidgetSelectable("main_window", "online_multiplayer", true);
-	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
-	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
-}
-void KG_FUNC_1819971799574496652()
-{	
-		uint16_t userSlot = GetActiveSessionSlot();
-		SetDisplayWindow("pre_game_warning", true);
-		SetDisplayWindow("base_window", false);
-		SetDisplayWindow("online_lobby", false);
-		LoadInputModeByName("Input/Online_Pre_Start.kginput");
-		PlaySoundFromName("Audio/menu_confirm.wav");
-		if (userSlot == 0)
-		{
-			SetWidgetText("pre_game_warning", "controls_2", "");
-		}
-		else if (userSlot == 1)
-		{
-			SetWidgetText("pre_game_warning", "controls_1", "");
-		}
-		EnableReadyCheck();
-}
-
-void KG_FUNC_14942570159458352892(uint16_t userSlot)
-{
-	uint16_t direction = 0;
-	SetGameStateField("BallDirection", &direction);
-	LoadUserInterfaceFromName("UserInterface/RuntimeUI.kgui");
-	SetDisplayWindow("online_lobby", true);
-	SetDisplayWindow("base_window", false);
-	TransitionSceneFromName("Scenes/main_gameplay.kgscene");
-	LoadInputModeByName("Input/Online_Lobby_Input.kginput");
-	PlaySoundFromName("Audio/menu_confirm.wav");
-	PlayStereoSoundFromName("Audio/mechanist-theme.wav");
-	
-	std::string selectedWidget = std::string("player_slot_") + std::to_string(userSlot);
-	SetWidgetText("online_lobby", selectedWidget, "Connected!");
-}
-void KG_FUNC_14683932765512752045()
-{
-	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
-	TransitionSceneFromName("Scenes/main_menu.kgscene");
-	LoadInputModeByName("Input/MainMenu.kginput");
-	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
-	RequestUserCount();
-}
-
-void KG_FUNC_4342390925410131221()
+void UserLeftSession(uint16_t userSlot)
 {
-	SetWidgetText("main_window", "online_count", "Offline");
-	SetWidgetSelectable("main_window", "online_multiplayer", false);
-	SetWidgetTextColor("main_window", "online_multiplayer", {1.0f, 1.0f, 1.0f, 222.0f / 255.0f});
-	SetWidgetBackgroundColor("main_window", "online_multiplayer", {30.0f / 255.0f, 30.0f / 255.0f, 30.0f / 255.0f, 37.0f / 255.0f});
-	SetSelectedWidget("main_window", "local_multiplayer");
+	std::string selectedWidget = "player_slot_" + std::to_string(userSlot);
+	std::string newText = "No Player " + std::to_string(userSlot + 1);
+
+	SetWidgetText("online_lobby", selectedWidget, newText);
+
+	SetWidgetText("online_lobby", "main_text", "Waiting for Players...");
 }
+
+void UpdateOnlineCount(uint32_t count)
+{
+	std::string onlineCount = std::string("Online: ") + std::to_string(count);
+	SetWidgetText("main_window", "online_count", onlineCount);
+	SetWidgetSelectable("main_window", "online_multiplayer", true);
+	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
+	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+}
+void OnStartSession()
+{	
+		uint16_t userSlot = GetActiveSessionSlot();
+		SetDisplayWindow("pre_game_warning", true);
+		SetDisplayWindow("base_window", false);
+		SetDisplayWindow("online_lobby", false);
+		LoadInputModeByName("Input/Online_Pre_Start.kginput");
+		PlaySoundFromName("Audio/menu_confirm.wav");
+		if (userSlot == 0)
+		{
+			SetWidgetText("pre_game_warning", "controls_2", "");
+		}
+		else if (userSlot == 1)
+		{
+			SetWidgetText("pre_game_warning", "controls_1", "");
+		}
+		EnableReadyCheck();
+}
+
+void ApproveJoinSession(uint16_t userSlot)
+{
+	uint16_t direction = 0;
+	SetGameStateField("BallDirection", &direction);
+	LoadUserInterfaceFromName("UserInterface/RuntimeUI.kgui");
+	SetDisplayWindow("online_lobby", true);
+	SetDisplayWindow("base_window", false);
+	TransitionSceneFromName("Scenes/main_gameplay.kgscene");
+	LoadInputModeByName("Input/Online_Lobby_Input.kginput");
+	PlaySoundFromName("Audio/menu_confirm.wav");
+	PlayStereoSoundFromName("Audio/mechanist-theme.wav");
+	
+	std::string selectedWidget = std::string("player_slot_") + std::to_string(userSlot);
+	SetWidgetText("online_lobby", selectedWidget, "Connected!");
+}
+void OpenMainMenu()
+{
+	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
+	TransitionSceneFromName("Scenes/main_menu.kgscene");
+	LoadInputModeByName("Input/MainMenu.kginput");
+	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
+	RequestUserCount();
+}
+
+void OnConnectionTerminated()
+{
+	SetWidgetText("main_window", "online_count", "Offline");
+	SetWidgetSelectable("main_window", "online_multiplayer", false);
+	SetWidgetTextColor("main_window", "online_multiplayer", {1.0f, 1.0f, 1.0f, 222.0f / 255.0f});
+	SetWidgetBackgroundColor("main_window", "online_multiplayer", {30.0f / 255.0f, 30.0f / 255.0f, 30.0f / 255.0f, 37.0f / 255.0f});
+	SetSelectedWidget("main_window", "local_multiplayer");
+}
 
 }

@@ -148,7 +148,8 @@ namespace Kargono
 		s_DeleteEntityClassWarning.Label = "Delete Entity Class";
 		s_DeleteEntityClassWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle);
+			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorLayer->m_EditorScene);
+			s_EditorLayer->m_SceneHierarchyPanel->RefreshWidgetData();
 			s_EditorEntityClassHandle = 0;
 			s_EditorEntityClass = nullptr;
 		};

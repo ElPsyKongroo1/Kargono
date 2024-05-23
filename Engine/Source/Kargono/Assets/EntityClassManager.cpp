@@ -38,6 +38,25 @@ namespace Kargono::Utility
 			}
 		}
 	}
+
+	static void ClearClassReferenceFromScene(Ref<Kargono::Scene> scene,Ref<Kargono::EntityClass> entityClass, Assets::AssetHandle entityHandle)
+	{
+		if (scene)
+		{
+			for (auto entity : scene->GetAllEntitiesWith<ClassInstanceComponent>())
+			{
+				Kargono::Entity currentEntity { entity, scene.get() };
+				ClassInstanceComponent& component = currentEntity.GetComponent<ClassInstanceComponent>();
+				if (component.ClassHandle == entityHandle)
+				{
+					component.ClassHandle = Assets::EmptyHandle;
+					component.ClassReference = nullptr;
+				 	bool success = component.Fields.empty();
+				}
+
+			}
+		}
+	}
 }
 
 namespace Kargono::Assets
@@ -393,13 +412,39 @@ namespace Kargono::Assets
 		
 	}
 
-	void AssetManager::DeleteEntityClass(AssetHandle handle)
+	void AssetManager::DeleteEntityClass(AssetHandle handle, Ref<Kargono::Scene> editorScene)
 	{
 		if (!s_EntityClassRegistry.contains(handle))
 		{
 			KG_WARN("Failed to delete EntityClass in AssetManager");
 			return;
 		}
+
+		// Remove entity class references from all scenes
+		Ref<Kargono::EntityClass> newEntityClass = GetEntityClass(handle);
+		Ref<Kargono::Scene> activeScene = Scene::GetActiveScene();
+
+		// Update Active Scene if applicable
+		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);
+		// Update Editor Scene if applicable
+		if (editorScene)
+		{
+			Utility::ClearClassReferenceFromScene(editorScene, newEntityClass, handle);
+		}
+		// Update all scenes in scene registry
+		for (auto& [handle, asset] : s_SceneRegistry)
+		{
+			const Ref<Kargono::Scene> scene = GetScene(handle);
+			if (!scene)
+			{
+				KG_WARN("Unable to load scene in SaveEntityClass");
+				continue;
+			}
+
+			Utility::ClearClassReferenceFromScene(scene, newEntityClass, handle);
+			SaveScene(handle, scene);
+		}
+
 
 		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
 			s_EntityClassRegistry.at(handle).Data.IntermediateLocation);

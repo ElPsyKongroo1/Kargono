@@ -685,7 +685,7 @@ namespace Kargono::Assets
 		//==============================
 		// Delete a EntityClass
 		//==============================
-		static void DeleteEntityClass(AssetHandle handle);
+		static void DeleteEntityClass(AssetHandle handle, Ref<Kargono::Scene> editorScene = nullptr);
 
 		//==============================
 		// Load and Retrieve In-Memory EntityClass

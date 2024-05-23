@@ -234,7 +234,14 @@ namespace Kargono
 			if (entity.HasComponent<ClassInstanceComponent>())
 			{
 				ClassInstanceComponent& instanceComp = entity.GetComponent<ClassInstanceComponent>();
-				s_SelectClassOption.CurrentOption = { instanceComp.ClassReference->GetName(),instanceComp.ClassHandle };
+				if (instanceComp.ClassHandle == Assets::EmptyHandle)
+				{
+					s_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
+				}
+				else
+				{
+					s_SelectClassOption.CurrentOption = { instanceComp.ClassReference->GetName(),instanceComp.ClassHandle };
+				}
 				s_InstanceFieldsTable.OnRefresh();
 			}
 		}

@@ -50,13 +50,13 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
-	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, Assets::AssetHandle handle)
+	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name)
 	{
 		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
 		std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(funcType);
 		// Write out return value and function name
 		std::stringstream outputStream {};
-		outputStream << Utility::WrappedVarTypeToCPPString(returnType) << " KG_FUNC_" << handle << "(";
+		outputStream << Utility::WrappedVarTypeToCPPString(returnType) << " " << name<< "(";
 
 		// Write out parameters into function signature
 		char letterIteration{ 'a' };
@@ -73,10 +73,10 @@ namespace Kargono::Utility
 		return outputStream.str();
 	}
 
-	inline std::string GenerateFunctionStub(WrappedFuncType funcType, Assets::AssetHandle handle)
+	inline std::string GenerateFunctionStub(WrappedFuncType funcType, const std::string& name)
 	{
 		std::stringstream outputStream {};
-		outputStream << GenerateFunctionSignature(funcType, handle);
+		outputStream << GenerateFunctionSignature(funcType, name);
 		outputStream << '\n';
 		outputStream << "{" << "\n";
 		outputStream << "}" << "\n";
