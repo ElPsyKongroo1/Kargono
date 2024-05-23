@@ -119,7 +119,9 @@ namespace Kargono
 		s_EditClassFieldPopup.Label = "Edit Field";
 		s_EditClassFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
 		{
-			Ref<WrappedVariable> field = s_GameStatePanel->m_EditorGameState->GetField(s_CurrentField);
+			Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
 
 			if (!field)
 			{
@@ -127,17 +129,29 @@ namespace Kargono
 				return;
 			}
 
-			std::string convertCache { std::to_string(field->GetWrappedValue<uint16_t>()) };
-			s_EditFieldValue.FieldBuffer.SetDataToByte(0);
-			memcpy(s_EditFieldValue.FieldBuffer.Data, convertCache.data(), convertCache.size());
+			bool success = Utility::FillBufferWithWrappedVarString(field, s_EditFieldValue.FieldBuffer);
+			if (!success)
+			{
+				KG_WARN("Unable to complete Popup Action");
+				return;
+			}
 		};
 		s_EditClassFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Hello");
+			EditorUI::Editor::EditVariable(s_EditFieldValue);
 		};
 		s_EditClassFieldPopup.ConfirmAction = [&]()
 		{
-
+			Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
+			bool success = Utility::FillWrappedVarWithStringBuffer(field, s_EditFieldValue.FieldBuffer);
+			if (!success)
+			{
+				KG_WARN("Issue completing s_EditClassFieldPopup Confirm Action");
+				return;
+			}
+			s_InstanceFieldsTable.OnRefresh();
 		};
 
 		s_EditFieldValue.Label = "Edit Value";
