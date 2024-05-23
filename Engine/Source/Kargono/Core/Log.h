@@ -1,6 +1,9 @@
 #pragma once
 
 #pragma warning(push, 0)
+#ifdef KG_DEBUG
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#endif
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
@@ -21,12 +24,13 @@ namespace Kargono
 }
 
 // Core Log Macros
-#define KG_INFO(...)		::Kargono::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define KG_WARN(...)		::Kargono::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define KG_CRITICAL(...)	::Kargono::Log::GetCoreLogger()->critical(__VA_ARGS__)
-#define KG_ERROR(...)		::Kargono::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define KG_INFO(...)		SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+#define KG_WARN(...)		SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+#define KG_CRITICAL(...)	SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+#define KG_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
 
 // Used for Debugging
-#define KG_TRACE(...)		::Kargono::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define KG_TRACE2(...)		::Kargono::Log::GetCoreLogger()->critical(__VA_ARGS__)
-#define KG_TRACE3(...)		::Kargono::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define KG_TRACE(...)		SPDLOG_LOGGER_TRACE(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+#define KG_TRACE2(...)		SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+#define KG_TRACE3(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+
