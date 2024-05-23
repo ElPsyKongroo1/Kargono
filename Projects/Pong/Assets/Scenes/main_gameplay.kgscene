@@ -234,10 +234,13 @@ Entities:
       InstanceFields:
         - Name: ;lio;
           Type: UInteger32
-          Value: 254
+          Value: 235
         - Name: Waka Flacka
           Type: Integer32
-          Value: 0
+          Value: 1
+        - Name: New Field 1
+          Type: UInteger16
+          Value: 23
     TransformComponent:
       Translation: [25.9217854, -0.00246608257, 3.7252903e-09]
       Rotation: [0, 0, 1.57079637]
