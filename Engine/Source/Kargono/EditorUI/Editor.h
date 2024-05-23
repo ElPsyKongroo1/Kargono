@@ -31,12 +31,12 @@ namespace Kargono::EditorUI
 	using WidgetID = uint32_t;
 	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
 	using WidgetFlags = uint8_t;
+	inline uint32_t widgetCounter {1};
 
 	// Maintain unique id for each widget
-	static uint32_t widgetCounter { 1 };
 	static WidgetID IncrementWidgetCounter()
 	{
-		widgetCounter = widgetCounter + 1;
+		widgetCounter++;
 		return widgetCounter * 0x400'000; // 2 to the power of 22
 	}
 

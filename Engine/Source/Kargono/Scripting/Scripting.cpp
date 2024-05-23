@@ -112,61 +112,59 @@ namespace Kargono::Scripting
 			return;
 		}
 
-		std::string funcName {"KG_FUNC_" + std::string(script->m_ID)};
-
 		switch (funcType)
 		{
 		case WrappedFuncType::Void_None:
 		{
 			script->m_Function = CreateRef<WrappedVoidNone>();
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
 		case WrappedFuncType::Void_String:
 		{
 			script->m_Function = CreateRef<WrappedVoidString>();
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
 		case WrappedFuncType::Void_Float:
 		{
 			script->m_Function = CreateRef<WrappedVoidFloat>();
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt16:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		case WrappedFuncType::Void_UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32>();
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt64:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt64>();
-			((WrappedVoidUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedVoidUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
 		case WrappedFuncType::Bool_UInt64:
 		{
 			script->m_Function = CreateRef<WrappedBoolUInt64>();
-			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, funcName.c_str()));
+			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		default:
@@ -404,7 +402,7 @@ namespace Kargono::Scripting
 			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
 
 			outputStream << "\t\tKARGONO_API ";
-			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " KG_FUNC_" << handle << "(";
+			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " " << script->m_ScriptName << "(";
 
 			// Write out parameters into function signature
 			char letterIteration{ 'a' };
