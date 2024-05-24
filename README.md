@@ -31,29 +31,48 @@ The Editor only supports Windows. I do not have plans for supporting Linux or Ma
 
 # Third-Party Dependencies
 
-## ImGui ([Docs](https://github.com/ocornut/imgui))
-Immediate Mode Graphical User Interface library for creating GUIs in C++. Used for EditorUI.
-
-## OpenGL ([Docs](https://www.khronos.org/opengl/))
-Current Back-End Graphics API for rendering 2D and 3D graphics.
-
-## OpenAL Soft ([Docs](https://github.com/kcat/openal-soft))
-Cross-platform audio API for spatialized sound. Used as back-end for AudioEngine.
-
+## Assimp ([Docs](https://assimp-docs.readthedocs.io/en/latest/))
+Open Asset Import Library for loading and processing various 3D model file formats.
+## Asio (Non-Boost Version) ([Docs](https://think-async.com/Asio/))
+Backend that enables TCP/UDP network communication in the engine.
+## Box2D ([Docs](https://box2d.org/documentation/))
+Backend 2D Physics Library.
 ## Dr_wav ([Docs](https://github.com/mackron/dr_libs/tree/master))
 Single-header library for decoding and encoding .wav audio files.
-
-## stb_image ([Docs](https://github.com/nothings/stb/tree/master))
-Single-header library for loading various image file formats.
-
+## entt ([Docs](https://github.com/skypjack/entt))
+Entity Component System used for management of entities inside scenes.
+## FileWatch ([Docs](https://github.com/ThomasMonkman/filewatch))
+FileWatcher used to automatically update files in use in the editor.
 ## GLFW ([Docs](https://www.glfw.org/documentation.html))
 Cross-Platform Library for creating and managing OS windows, OpenGL contexts, and handling input.
 
 ## GLEW ([Docs](https://glew.sourceforge.net/))
-The OpenGL Extension Wrangler Library for handling OpenGL extensions.
+The OpenGL Extension Wrangler Library for handling OpenGL extensions and OpenGL function pointers.
 
 ## GLM ([Docs](https://github.com/g-truc/glm))
 Mathematics library for graphics programming, providing vectors, matrices, and transformations.
+## hash-library ([Docs](https://github.com/stbrumme/hash-library?tab=readme-ov-file))
+Hash Library used for hashing assets for verification in the AssetManager and used in integrity checks in the Networking Code.
+## ImGui ([Docs](https://github.com/ocornut/imgui))
+Immediate Mode Graphical User Interface library for creating GUIs in C++. Used for EditorUI.
+## ImGuizmo ([Docs](https://github.com/CedricGuillemet/ImGuizmo))
+Tool produces a Guizmo that is usable in the Editor for modifying transforms and other applications.
+## Mono ([Docs](https://www.mono-project.com/docs/about-mono/languages/cplusplus/))
+Current system that allows engine to interact with C# Scripts.
+## MSDF-Gen ([Docs](https://github.com/Chlumsky/msdfgen))
+Generate msdf fonts for use in RuntimeUI
+## MSDF Atlas Gen ([Docs](https://github.com/Chlumsky/msdf-atlas-gen))
+Generate Glyph Atlas for MSDF Fonts. Built on top of MSDF-Gen.
 
-## Assimp ([Docs](https://assimp-docs.readthedocs.io/en/latest/))
-Open Asset Import Library for loading and processing various 3D model file formats.
+## OpenGL ([Docs](https://www.khronos.org/opengl/))
+Current Back-End Graphics API for rendering 2D and 3D graphics.
+## OpenAL Soft ([Docs](https://github.com/kcat/openal-soft))
+Cross-platform audio API for spatialized sound. Used as back-end for AudioEngine.
+## Optick ([Docs](https://github.com/bombomby/optick))
+Profiler used in Editor for Engine.
+
+## stb_image ([Docs](https://github.com/nothings/stb/tree/master))
+Single-header library for loading various image file formats.
+
+## Vulkan ([Docs](https://vulkan.lunarg.com/))
+Cross Compiler is used for shader generation.

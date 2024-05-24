@@ -1,11 +1,7 @@
 #pragma once
 
+#include "Kargono.h"
 #include "Kargono/Utility/FileSystem.h"
-
-#include "imgui.h"
-
-#include <filesystem>
-
 
 namespace Kargono
 {

@@ -6,7 +6,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Math/Math.h"
 
-#include "entt.hpp"
+#include "API/EntityComponentSystem/enttAPI.h"
 
 #include <vector>
 #include <unordered_map>

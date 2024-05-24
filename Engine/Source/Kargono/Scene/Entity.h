@@ -4,7 +4,7 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scene/Scene.h"
 
-#include "entt.hpp"
+#include "API/EntityComponentSystem/enttAPI.h"
 
 namespace Kargono
 {

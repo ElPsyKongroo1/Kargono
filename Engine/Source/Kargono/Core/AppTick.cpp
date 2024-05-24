@@ -1,7 +1,6 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/AppTick.h"
-
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Time.h"

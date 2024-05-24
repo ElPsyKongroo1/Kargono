@@ -16,10 +16,6 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scripting/Scripting.h"
 
-#ifdef KG_PLATFORM_WINDOWS
-#include <windows.h>
-#endif
-
 
 namespace Kargono
 {
@@ -121,6 +117,7 @@ namespace Kargono
 
 	void EngineCore::Run()
 	{
+		KG_INFO("Starting Run Function");
 		using namespace std::chrono_literals;
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
@@ -154,6 +151,7 @@ namespace Kargono
 				m_Window->OnUpdate();
 			}
 		}
+		KG_INFO("Ending Run Function");
 	}
 
 	bool EngineCore::OnWindowClose(Events::WindowCloseEvent& e) 

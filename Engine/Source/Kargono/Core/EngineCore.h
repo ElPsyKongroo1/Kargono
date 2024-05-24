@@ -8,6 +8,7 @@
 #include "Kargono/Renderer/InputBuffer.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Events/NetworkingEvent.h"
 
 #include <functional>
 #include <mutex>
@@ -15,7 +16,6 @@
 #include <filesystem>
 #include <chrono>
 
-#include "Kargono/Events/NetworkingEvent.h"
 
 
 int main(int argc, char** argv);

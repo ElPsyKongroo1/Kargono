@@ -3,9 +3,8 @@
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Renderer/Texture.h"
 
-#include <sha256.h>
-#include <crc32.h>
-#include "stb_image_write.h"
+#include "API/Cryptography/hashlibraryAPI.h"
+#include "API/ImageProcessing/stbAPI.h"
 
 namespace Kargono::Utility
 {

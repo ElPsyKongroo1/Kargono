@@ -12,15 +12,10 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Input/InputMode.h"
-
-#include "mono/jit/jit.h"
-#include "mono/metadata/assembly.h"
-#include "mono/metadata/object.h"
-#include "mono/metadata/tabledefs.h"
-#include "mono/metadata/mono-debug.h"
-#include "mono/metadata/threads.h"
-#include "FileWatch.hpp"
 #include "Kargono/Input/InputPolling.h"
+
+#include "API/Scripting/MonoBackendAPI.h"
+#include "API/FileWatch/FileWatchAPI.h"
 
 namespace Kargono::Script
 {

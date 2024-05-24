@@ -1,9 +1,10 @@
 #include "kgpch.h"
 
-#include "Kargono.h"
-
-#include "EditorApp.h"
 #include "Panels/ContentBrowserPanel.h"
+
+#include "Kargono.h"
+#include "EditorApp.h"
+
 
 namespace Kargono::Utility
 {

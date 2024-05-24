@@ -2,7 +2,8 @@
 
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/Texture.h"
-#include "API/OpenGL/OpenGLTexture.h"
+
+#include "API/RenderingAPI/OpenGLTexture.h"
 
 namespace Kargono
 {

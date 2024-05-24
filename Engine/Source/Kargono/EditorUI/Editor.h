@@ -2,17 +2,16 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Assets/Asset.h"
+#include "Kargono/Core/Buffer.h"
+#include "Kargono/Core/WrappedData.h"
 
-#include "imgui.h"
-#include "ImGuizmo.h"
+#include "API/EditorUI/ImGuiAPI.h"
+#include "API/EditorUI/ImGuizmoAPI.h"
 
 #include <functional>
 #include <vector>
 #include <unordered_map>
-
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Core/Buffer.h"
-#include "Kargono/Core/WrappedData.h"
 
 namespace Kargono { class Texture2D; }
 

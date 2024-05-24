@@ -43,6 +43,8 @@
 #include <random>
 #include <type_traits>
 
+#include <stdlib.h>
+
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/UUID.h"
