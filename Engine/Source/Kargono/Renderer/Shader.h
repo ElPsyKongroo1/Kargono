@@ -15,7 +15,6 @@
 #include <functional>
 #include <tuple>
 
-
 namespace Kargono
 {
 
