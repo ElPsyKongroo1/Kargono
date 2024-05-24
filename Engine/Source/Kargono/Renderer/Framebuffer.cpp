@@ -4,7 +4,7 @@
 #include "Kargono/Renderer/RendererAPI.h"
 #include "Kargono/Renderer/Renderer.h"
 
-#include "API/OpenGL/OpenGLFramebuffer.h"
+#include "API/RenderingAPI/OpenGLFramebuffer.h"
 
 namespace Kargono
 {
