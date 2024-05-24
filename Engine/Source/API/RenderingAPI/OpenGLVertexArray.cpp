@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "API/OpenGL/OpenGLVertexArray.h"
+#include "API/RenderingAPI/OpenGLVertexArray.h"
 
 #include "API/Windowing/gladAPI.h"
 
