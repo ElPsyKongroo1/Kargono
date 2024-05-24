@@ -6,3 +6,9 @@ Assets:
       IntermediateLocation: EntityClass/asdf.kgclass
       AssetType: EntityClass
       Name: asdf
+  - AssetHandle: 954827095700296452
+    MetaData:
+      CheckSum: 306fb223e381d036a39bedaba128bf865bd0eb4ebe6f99e9621a09d6d0bf59c7
+      IntermediateLocation: EntityClass/BallClass.kgclass
+      AssetType: EntityClass
+      Name: BallClass
