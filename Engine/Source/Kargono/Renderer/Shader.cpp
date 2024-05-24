@@ -34,7 +34,6 @@ namespace Kargono
 
 	void Shader::FillRenderFunctionList()
 	{
-
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawLine)
 		{
 			m_DrawFunctions.push_back(Renderer::DrawBufferLine);
