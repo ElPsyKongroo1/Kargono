@@ -2,7 +2,6 @@
 
 #include "Kargono.h"
 
-#include <iostream>
 #include <filesystem>
 
 namespace Kargono

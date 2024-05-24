@@ -13,8 +13,6 @@
 #include <string>
 #include <unordered_map>
 
-
-
 namespace Kargono
 {
 	struct IDComponent

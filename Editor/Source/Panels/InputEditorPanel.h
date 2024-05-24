@@ -1,10 +1,6 @@
 #pragma once
 #include "Kargono.h"
 
-
-
-
-
 namespace Kargono
 {
 	class InputEditorPanel

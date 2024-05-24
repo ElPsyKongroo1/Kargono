@@ -2,7 +2,8 @@
 
 #include "Kargono/Renderer/Renderer.h"
 #include "Kargono/Renderer/UniformBuffer.h"
-#include "API/OpenGL/OpenGLUniformBuffer.h"
+
+#include "API/RenderingAPI/OpenGLUniformBuffer.h"
 
 namespace Kargono
 {

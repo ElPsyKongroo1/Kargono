@@ -11,8 +11,7 @@
 #include "Kargono/Renderer/Texture.h"
 #include "Kargono/Projects/Project.h"
 
-#include "msdf-atlas-gen/msdf-atlas-gen.h"
-#include "msdf-atlas-gen/FontGeometry.h"
+#include "API/Text/msdfgenAPI.h"
 
 
 namespace Kargono::Utility

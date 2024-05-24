@@ -2,7 +2,8 @@
 
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
-#include "API/Serialization/SerializationAPI.h"
+
+#include "API/Serialization/yamlcppAPI.h"
 
 namespace Kargono::Assets
 {

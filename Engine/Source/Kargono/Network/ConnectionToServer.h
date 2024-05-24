@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Kargono/Network/NetworkCommon.h"
 #include "Kargono/Network/DataStructures.h"
 #include "Kargono/Network/Message.h"
 #include "Kargono/Network/Connection.h"
+
+#include "API/Network/AsioAPI.h"
 
 #include <memory>
 #include <cstdint>

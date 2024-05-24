@@ -6,8 +6,7 @@
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Core/EngineCore.h"
 
-#include <glfw/glfw3.h>
-#define GLM_ENABLE_EXPERIMENTAL
+#include "API/Windowing/GlfwAPI.h"
 
 
 namespace Kargono {

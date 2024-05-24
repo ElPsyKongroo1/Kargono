@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Kargono/Network/NetworkCommon.h"
 #include "Kargono/Network/DataStructures.h"
 #include "Kargono/Network/Message.h"
 #include "Kargono/Network/ConnectionToServer.h"
 #include "Kargono/Network/UDPClient.h"
+
+#include "API/Network/AsioAPI.h"
 
 #include <cstdint>
 #include <mutex>

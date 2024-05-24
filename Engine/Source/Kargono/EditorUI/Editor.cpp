@@ -6,14 +6,9 @@
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
 
-#define IMGUI_IMPL_API
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
-#include "GLFW/glfw3.h"
-#include "glad/glad.h"
-#include "ImGuizmo.h"
-#include "imgui_internal.h"
+#include "API/EditorUI/ImGuiBackendAPI.h"
+#include "API/Windowing/GlfwAPI.h"
+#include "API/Windowing/gladAPI.h"
 
 namespace Kargono::EditorUI
 {

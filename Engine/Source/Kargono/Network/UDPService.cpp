@@ -1,10 +1,11 @@
 #include "kgpch.h"
+
 #include "Kargono/Network/UDPService.h"
 
-#include "Common.h"
+#include "Kargono/Network/Common.h"
 #include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Network/ConnectionToClient.h"
 
-#include "ConnectionToClient.h"
 
 namespace Kargono::Network
 {

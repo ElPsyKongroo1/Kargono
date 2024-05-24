@@ -5,7 +5,6 @@
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Math/Math.h"
-
 #include "Kargono/Events/KeyEvent.h"
 
 namespace Kargono

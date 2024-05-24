@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Kargono/Network/NetworkCommon.h"
 
 #include "Kargono/Core/Base.h"
+
+#include "API/Network/AsioAPI.h"
 
 #include <cstdint>
 #include <vector>

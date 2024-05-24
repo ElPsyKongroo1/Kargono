@@ -1,7 +1,7 @@
 #include "kgpch.h"
+
 #include "Kargono/Core/Log.h"
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include "API/Logger/SpdlogBackend.h"
 
 namespace Kargono
 {
@@ -22,5 +22,7 @@ namespace Kargono
 		s_CoreLogger->flush_on(spdlog::level::trace);
 
 		spdlog::set_default_logger(s_CoreLogger);
+
+		KG_INFO("Logging System Successfully Started!");
 	}
 }

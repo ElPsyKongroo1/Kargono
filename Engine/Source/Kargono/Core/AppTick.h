@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-
-#include <vector>
-
 #include "Kargono/Events/Event.h"
 
 namespace Kargono

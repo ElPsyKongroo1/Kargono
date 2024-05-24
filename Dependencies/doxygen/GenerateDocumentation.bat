@@ -1,2 +1,0 @@
-call doxywizard.exe
-PAUSE

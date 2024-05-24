@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "imgui_internal.h"
+#include "API/EditorUI/ImGuiBackendAPI.h"
 
 namespace Kargono
 {
