@@ -126,6 +126,7 @@ namespace Kargono
 			}
 
 			bool success = Utility::FillBufferWithWrappedVarString(field, s_EditFieldValue.FieldBuffer);
+			s_EditFieldValue.VariableType = field->Type();
 			if (!success)
 			{
 				KG_WARN("Unable to complete Popup Action");

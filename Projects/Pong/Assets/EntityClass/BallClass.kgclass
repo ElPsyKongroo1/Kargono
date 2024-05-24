@@ -1,9 +1,7 @@
-Name: asdf
+Name: BallClass
 FieldTypes:
-  - Name: New Field 1
-    Type: String
-  - Name: New Field 2
-    Type: Bool
+  - Name: Speed
+    Type: Integer32
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
 OnCreate: 0

@@ -60,7 +60,7 @@ namespace Kargono
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 
-			Utility::FileSystem::WriteFileString(activeDocument.FilePath, std::string(activeDocument.TextBuffer.As<char>()));
+			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer.GetString());
 			//Utility::FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 		};
