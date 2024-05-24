@@ -7,6 +7,8 @@
 #include <functional>
 #include <string>
 
+#include "Kargono/Utility/FileSystem.h"
+
 namespace Kargono
 {
 	enum class WrappedVarType
@@ -43,6 +45,11 @@ namespace Kargono
 		T& GetWrappedValue()
 		{
 			return *reinterpret_cast<T*>(GetValue());
+		}
+		template <typename T>
+		void SetWrappedValue(T value)
+		{
+			SetValue(reinterpret_cast<void*>(&value));
 		}
 
 		virtual WrappedVarType Type() = 0;
@@ -417,6 +424,9 @@ namespace Kargono
 
 		inline bool FillWrappedVarWithStringBuffer(Ref<WrappedVariable> variable, Buffer buffer)
 		{
+			// Func Resources
+			static std::string valueString {};
+
 			bool success{ false };
 			switch (variable->Type())
 			{
@@ -446,15 +456,15 @@ namespace Kargono
 				}
 				case WrappedVarType::String:
 				{
-					variable->SetValue(buffer.As<char>());
+					valueString = buffer.GetString();
+					variable->SetWrappedValue<std::string>(valueString);
+					valueString = {};
 					break;
 				}
 				case WrappedVarType::Bool:
 				{
-						// TODO Work on Bool Later
-					/*success = Conversions::CharBufferToVariable(buffer,
-						variable->GetWrappedValue<bool>());*/
-					KG_TRACE("Attempt to use bool. Have not completed it!");
+					valueString = buffer.GetString();
+					variable->SetWrappedValue<bool>(Utility::Conversions::StringToBool(valueString));
 					break;
 				}
 				case WrappedVarType::Float:

@@ -35,6 +35,20 @@ namespace Kargono::Utility
 			}
 			return true;
 		}
+
+		static bool StringToBool(const std::string& value)
+		{
+			if (value == "True")
+			{
+				return true;
+			}
+			else if (value == "False")
+			{
+				return false;
+			}
+			KG_ASSERT(false, "Conversion from string to bool failed");
+			return false;
+		}
 	};
 }
 

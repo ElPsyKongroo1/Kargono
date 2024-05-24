@@ -808,24 +808,56 @@ namespace Kargono::EditorUI
 		// Local Variables
 		uint32_t widgetCount{ 0 };
 		std::string id = "##" + std::to_string(spec.WidgetID);
+		static ImGuiInputTextFlags inputFlags {};
 
 		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
-		ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_CallbackEdit;
-		if (spec.VariableType != WrappedVarType::String)
+		switch (spec.VariableType)
 		{
-			inputFlags |= ImGuiInputTextFlags_CharsDecimal;
+			case WrappedVarType::None:
+			case WrappedVarType::Void:
+			{
+				KG_WARN("Invalid Type used for Edit Variable");
+				return;
+			}
+			case WrappedVarType::String:
+			{
+				inputFlags = ImGuiInputTextFlags_CallbackEdit;
+				ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(200.0f);
+				ImGui::SetNextItemWidth(170.0f);
+				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
+				{
+					return 0;
+				};
+				ImGui::InputText(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
+					spec.FieldBuffer.As<char>(), spec.FieldBuffer.Size, inputFlags, typeCallback);
+				ImGui::PopStyleColor();
+				break;
+			}
+			case WrappedVarType::Float:
+			case WrappedVarType::Integer32:
+			case WrappedVarType::UInteger16:
+			case WrappedVarType::UInteger32:
+			case WrappedVarType::UInteger64:
+			default:
+			{
+				inputFlags = ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsDecimal;
+				ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
+				ImGui::SameLine();
+				ImGui::SetCursorPosX(200.0f);
+				ImGui::SetNextItemWidth(170.0f);
+				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
+				{
+					return 0;
+				};
+				ImGui::InputText(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
+					spec.FieldBuffer.As<char>(), spec.FieldBuffer.Size, inputFlags, typeCallback);
+				ImGui::PopStyleColor();
+				break;
+			}
 		}
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(200.0f);
-		ImGui::SetNextItemWidth(170.0f);
-		ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
-		{
-			return 0;
-		};
-		ImGui::InputText(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
-			spec.FieldBuffer.As<char>(), spec.FieldBuffer.Size, inputFlags, typeCallback );
-		ImGui::PopStyleColor();
+		
 	}
 
 	void Editor::Checkbox(CheckboxSpec& spec)
