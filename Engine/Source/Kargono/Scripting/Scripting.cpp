@@ -14,7 +14,7 @@
 #include "Kargono/Scene/GameState.h"
 
 #ifdef KG_PLATFORM_WINDOWS
-#include "Windows.h"
+#include "API/Platform/WindowsBackendAPI.h"
 #endif
 
 namespace Kargono::Scripting

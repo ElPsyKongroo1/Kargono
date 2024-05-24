@@ -2,12 +2,11 @@
 
 #include "Kargono/Network/ConnectionToClient.h"
 
-#include "Client.h"
+#include "Kargono/Network/Client.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Network/ClientInterface.h"
 #include "Kargono/Network/ServerInterface.h"
-
 #include "Kargono/Projects/Project.h"
 
 

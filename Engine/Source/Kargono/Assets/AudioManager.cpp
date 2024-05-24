@@ -3,28 +3,10 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "API/Serialization/SerializationAPI.h"
+#include "API/Serialization/yamlcppAPI.h"
 
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#include <dr_wav.h>
-
-namespace Kargono::Utility
-{
-#pragma once
-#define OpenAL_ErrorCheck(message)\
-		{\
-			ALenum error = alGetError();\
-			if( error != AL_NO_ERROR)\
-			{\
-				KG_ERROR("OpenAL Error: {} with call for {}", error, #message);\
-			}\
-		}
-
-#define alec(FUNCTION_CALL)\
-		FUNCTION_CALL;\
-		OpenAL_ErrorCheck(FUNCTION_CALL)
-}
+#include "API/Audio/OpenALAPI.h"
+#include "API/Audio/drwavAPI.h"
 
 namespace Kargono::Assets
 {

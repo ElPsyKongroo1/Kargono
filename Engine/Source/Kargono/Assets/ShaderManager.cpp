@@ -4,14 +4,12 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Renderer/Shader.h"
-#include "API/Serialization/SerializationAPI.h"
-
-#include <shaderc/shaderc.hpp>
-#include <spirv_cross/spirv_cross.hpp>
-#include <spirv_cross/spirv_glsl.hpp>
-#include <glad/glad.h>
-
 #include "Kargono/Renderer/ShaderBuilder.h"
+
+#include "API/Serialization/yamlcppAPI.h"
+#include "API/RenderingAPI/VulkanAPI.h"
+#include "API/Windowing/gladAPI.h"
+
 
 namespace Kargono::Utility
 {

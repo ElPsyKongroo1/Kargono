@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Network/NetworkCommon.h"
+#include "API/Network/AsioAPI.h"
 
 #include <deque>
 #include <mutex>

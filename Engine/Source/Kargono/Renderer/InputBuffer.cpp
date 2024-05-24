@@ -3,7 +3,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Renderer/InputBuffer.h"
 #include "Kargono/Renderer/Renderer.h"
-#include "API/OpenGL/OpenGLBuffer.h"
+
+#include "API/RenderingAPI/OpenGLBuffer.h"
 
 
 namespace Kargono {

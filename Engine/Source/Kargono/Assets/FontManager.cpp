@@ -3,10 +3,9 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "API/Serialization/SerializationAPI.h"
 
-#include "msdf-atlas-gen/msdf-atlas-gen.h"
-#include "msdf-atlas-gen/FontGeometry.h"
+#include "API/Serialization/yamlcppAPI.h"
+#include "API/Text/msdfgenAPI.h"
 
 namespace Kargono::Utility
 {

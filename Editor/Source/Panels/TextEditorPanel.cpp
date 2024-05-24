@@ -1,7 +1,7 @@
 #include "Panels/TextEditorPanel.h"
 
 #include "EditorApp.h"
-#include "imgui_internal.h"
+#include "API/EditorUI/ImGuiBackendAPI.h"
 #include "Kargono.h"
 
 namespace Kargono

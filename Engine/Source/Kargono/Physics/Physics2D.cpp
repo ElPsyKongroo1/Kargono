@@ -6,13 +6,7 @@
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Scene/Entity.h"
 
-#include "box2d/b2_contact.h"
-#include "box2d/Box2d.h"
-#include "box2d/b2_world.h"
-#include "box2d/b2_body.h"
-#include "box2d/b2_fixture.h"
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_circle_shape.h"
+#include "API/Physics/Box2DBackend.h"
 
 namespace Kargono::Physics
 {

@@ -4,16 +4,7 @@
 
 #include "EditorApp.h"
 
-#include "imgui_internal.h"
-#include "SceneHierarchyPanel.h"
-
-
-/* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
- * the following definition to disable a security warning on std::strncpy().
- */
-#ifdef _MSVC_LANG
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#include "API/EditorUI/ImGuiBackendAPI.h"
 
 namespace Kargono
 {

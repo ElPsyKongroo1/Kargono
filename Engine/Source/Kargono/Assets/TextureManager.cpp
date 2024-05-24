@@ -4,9 +4,9 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "API/Serialization/SerializationAPI.h"
 
-#include "stb_image.h"
+#include "API/Serialization/yamlcppAPI.h"
+#include "API/ImageProcessing/stbAPI.h"
 
 namespace Kargono::Assets
 {

@@ -4,7 +4,6 @@
 #include "Kargono/Network/Common.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
-
 #include "Kargono/Core/Base.h"
 
 #include <string>

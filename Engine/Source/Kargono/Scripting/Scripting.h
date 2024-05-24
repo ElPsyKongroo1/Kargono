@@ -14,8 +14,6 @@
 #include <sstream>
 #include <vector>
 
-
-
 namespace Kargono::Assets { class AssetManager; }
 
 namespace Kargono::Scripting

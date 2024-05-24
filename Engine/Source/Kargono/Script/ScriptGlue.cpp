@@ -15,9 +15,7 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Network/Client.h"
 
-#include "mono/jit/jit.h"
-#include "mono/metadata/object.h"
-#include "mono/metadata/reflection.h"
+#include "API/Scripting/MonoBackendAPI.h"
 
 namespace Kargono::Script
 {
