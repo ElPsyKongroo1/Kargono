@@ -35,6 +35,7 @@ namespace Kargono
 		s_CurrentEngineCore = this;
 		m_CurrentApp = app;
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
+		KG_VERIFY(m_Window, "Window Init");
 		m_Window->SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
 		AppTickEngine::SetAppTickCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
 		app->OnAttach();
@@ -53,6 +54,8 @@ namespace Kargono
 		Scripting::ScriptCore::Terminate();
 		Audio::AudioEngine::Terminate();
 		// TODO: Add Renderer Shutdown!
+
+		KG_VERIFY(!m_CurrentApp, "Close App");
 		
 	}
 

@@ -13,11 +13,12 @@
 		Kargono::Log::Init();
 		KG_INFO("Starting Application");
 		Kargono::EngineCore* core = Kargono::InitEngineAndCreateApp({ argc, argv });
-		KG_INFO("Application Started Successfully");
+		KG_VERIFY(core, "Engine Core Initialization");
 		core->Run();
 		Kargono::Timers::AsyncBusyTimer::CloseAllTimers();
-
 		delete core;
+		core = nullptr;
+		KG_VERIFY(!core, "Core Closed");
 	}
 
 	int main(int argc, char** argv)

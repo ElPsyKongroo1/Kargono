@@ -20,8 +20,9 @@ namespace Kargono
 		spec.Width = 1600;
 		spec.Height = 900;
 
-		Application* editorApp = new RuntimeApp();
-		return new Kargono::EngineCore(spec, editorApp);
+		Application* runtimeApp = new RuntimeApp();
+		KG_VERIFY(runtimeApp, "Runtime App Init");
+		return new Kargono::EngineCore(spec, runtimeApp);
 	}
 }
 

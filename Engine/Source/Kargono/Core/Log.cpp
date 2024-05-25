@@ -23,6 +23,6 @@ namespace Kargono
 
 		spdlog::set_default_logger(s_CoreLogger);
 
-		KG_INFO("Logging System Successfully Started!");
+		KG_VERIFY(s_CoreLogger, "Logging System")
 	}
 }

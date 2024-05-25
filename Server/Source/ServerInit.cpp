@@ -20,7 +20,8 @@ namespace Kargono
 		spec.Width = 0;
 		spec.Height = 0;
 
-		Application* editorApp = new ServerApp();
-		return new Kargono::EngineCore(spec, editorApp);
+		Application* serverApp = new ServerApp();
+		KG_VERIFY(serverApp, "Server App Init");
+		return new Kargono::EngineCore(spec, serverApp);
 	}
 }
