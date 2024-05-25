@@ -2,15 +2,17 @@
 
 #include <memory>
 
+#if defined(KG_PLATFORM_WINDOWS)
+#define KG_DEBUGBREAK() __debugbreak()
+#elif defined(KG_PLATFORM_LINUX)
+#include <signal.h>
+#define KG_DEBUGBREAK() raise(SIGTRAP)
+#else
+#error "Platform doesn't support debugbreak yet!"
+#endif
+#define KG_ENABLE_VERIFY
+
 #ifdef KG_DEBUG
-	#if defined(KG_PLATFORM_WINDOWS)
-		#define KG_DEBUGBREAK() __debugbreak()
-	#elif defined(KG_PLATFORM_LINUX)
-		#include <signal.h>
-		#define KG_DEBUGBREAK() raise(SIGTRAP)
-	#else
-		#error "Platform doesn't support debugbreak yet!"
-	#endif
 	#define KG_ENABLE_ASSERTS
 #else
 #define KG_DEBUGBREAK()

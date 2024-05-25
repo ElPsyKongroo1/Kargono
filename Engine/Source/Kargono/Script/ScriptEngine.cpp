@@ -51,7 +51,6 @@ namespace Kargono::Utility
 		std::string className = mono_class_get_name(exceptionClass);
 		std::string assemblyName = mono_class_get_namespace(exceptionClass);
 		KG_ERROR("An exception was thrown in the InvokeMethod Function! \nException Type: {} \nException Message: {}", className, assemblyName);
-		KG_ASSERT(false);
 	}
 
 	static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
@@ -119,7 +118,7 @@ namespace Kargono::Utility
 
 		if (it == Script::s_ScriptFieldTypeMap.end())
 		{
-			KG_ERROR("Unknown type: {}", typeName);
+			KG_CRITICAL("Unknown type: {}", typeName);
 			return Script::ScriptFieldType::None;
 		}
 		return it->second;

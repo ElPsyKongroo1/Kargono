@@ -52,7 +52,7 @@ namespace Kargono::Timers
 			}
 		}
 		s_AllTimers.clear();
-		KG_INFO("All async timers closed successfully!");
+		KG_VERIFY(s_AllTimers.size() == 0, "All async timers closed successfully!")
 	}
 
 	AsyncBusyTimer::AsyncBusyTimer(float waitTime, std::function<void()> function)

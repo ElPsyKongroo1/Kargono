@@ -163,7 +163,7 @@ namespace Kargono::Audio
 		{
 			s_AudioContext->m_AudioSourceQueue.push(CreateRef<AudioSource>());
 		}
-		KG_INFO("Audio Engine Initiated Successfully!");
+		KG_VERIFY(s_AudioContext, "Audio Engine Init");
 	}
 
 	void AudioEngine::Terminate()
@@ -185,7 +185,8 @@ namespace Kargono::Audio
 		s_AudioContext->m_CurrentDeviceName = "";
 		s_AudioContext->m_CurrentDeviceID = nullptr;
 		s_AudioContext->m_ContextID = nullptr;
-		KG_INFO("Audio Engine Shutdown Successfully!");
+		s_AudioContext = nullptr;
+		KG_VERIFY(!s_AudioContext, "Close Audio Engine");
 	}
 }
 

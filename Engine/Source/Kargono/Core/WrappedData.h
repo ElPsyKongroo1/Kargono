@@ -513,7 +513,7 @@ namespace Kargono
 			if (type == "Bool_UInt64") { return WrappedFuncType::Bool_UInt64; }
 			if (type == "None") { return WrappedFuncType::None; }
 
-			KG_ASSERT(false, "Unknown Type of WrappedFuncType String.");
+			KG_ERROR("Unknown Type of WrappedFuncType String.");
 			return WrappedFuncType::None;
 		}
 
@@ -537,7 +537,7 @@ namespace Kargono
 				return WrappedVarType::None;
 			}
 			default:
-				KG_ASSERT(false, "Unknown Type of WrappedType.")
+				KG_ERROR("Unknown Type of WrappedType.");
 				return WrappedVarType::None;
 			}
 		}
