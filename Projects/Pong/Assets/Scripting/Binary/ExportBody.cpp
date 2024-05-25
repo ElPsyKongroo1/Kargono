@@ -125,11 +125,14 @@ void UpdateSessionUserSlot(uint16_t userSlot)
 	SetWidgetText("online_lobby", selectedWidget, "Connected!");
 }
 
-void OnCurrentSessionInit()
+void UpdateOnlineCount(uint32_t count)
 {
-	SetWidgetText("online_lobby", "main_text", "Starting Session...");
-}
-
+	std::string onlineCount = std::string("Online: ") + std::to_string(count);
+	SetWidgetText("main_window", "online_count", onlineCount);
+	SetWidgetSelectable("main_window", "online_multiplayer", true);
+	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
+	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+}
 void UserLeftSession(uint16_t userSlot)
 {
 	std::string selectedWidget = "player_slot_" + std::to_string(userSlot);
@@ -140,13 +143,25 @@ void UserLeftSession(uint16_t userSlot)
 	SetWidgetText("online_lobby", "main_text", "Waiting for Players...");
 }
 
-void UpdateOnlineCount(uint32_t count)
+void OnCurrentSessionInit()
 {
-	std::string onlineCount = std::string("Online: ") + std::to_string(count);
-	SetWidgetText("main_window", "online_count", onlineCount);
-	SetWidgetSelectable("main_window", "online_multiplayer", true);
-	SetWidgetTextColor("main_window", "online_multiplayer", Math::vec4(1.0f));
-	SetWidgetBackgroundColor("main_window", "online_multiplayer", {103.0f / 255.0f, 17.0f / 255.0f, 175.0f / 255.0f, 54.0f / 255.0f});
+	SetWidgetText("online_lobby", "main_text", "Starting Session...");
+}
+
+void ApproveJoinSession(uint16_t userSlot)
+{
+	uint16_t direction = 0;
+	SetGameStateField("BallDirection", &direction);
+	LoadUserInterfaceFromName("UserInterface/RuntimeUI.kgui");
+	SetDisplayWindow("online_lobby", true);
+	SetDisplayWindow("base_window", false);
+	TransitionSceneFromName("Scenes/main_gameplay.kgscene");
+	LoadInputModeByName("Input/Online_Lobby_Input.kginput");
+	PlaySoundFromName("Audio/menu_confirm.wav");
+	PlayStereoSoundFromName("Audio/greenA.wav");
+	
+	std::string selectedWidget = std::string("player_slot_") + std::to_string(userSlot);
+	SetWidgetText("online_lobby", selectedWidget, "Connected!");
 }
 void OnStartSession()
 {	
@@ -167,30 +182,6 @@ void OnStartSession()
 		EnableReadyCheck();
 }
 
-void ApproveJoinSession(uint16_t userSlot)
-{
-	uint16_t direction = 0;
-	SetGameStateField("BallDirection", &direction);
-	LoadUserInterfaceFromName("UserInterface/RuntimeUI.kgui");
-	SetDisplayWindow("online_lobby", true);
-	SetDisplayWindow("base_window", false);
-	TransitionSceneFromName("Scenes/main_gameplay.kgscene");
-	LoadInputModeByName("Input/Online_Lobby_Input.kginput");
-	PlaySoundFromName("Audio/menu_confirm.wav");
-	PlayStereoSoundFromName("Audio/mechanist-theme.wav");
-	
-	std::string selectedWidget = std::string("player_slot_") + std::to_string(userSlot);
-	SetWidgetText("online_lobby", selectedWidget, "Connected!");
-}
-void OpenMainMenu()
-{
-	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
-	TransitionSceneFromName("Scenes/main_menu.kgscene");
-	LoadInputModeByName("Input/MainMenu.kginput");
-	PlayStereoSoundFromName("Audio/Manoria-Cathedral.wav");
-	RequestUserCount();
-}
-
 void OnConnectionTerminated()
 {
 	SetWidgetText("main_window", "online_count", "Offline");
@@ -199,5 +190,14 @@ void OnConnectionTerminated()
 	SetWidgetBackgroundColor("main_window", "online_multiplayer", {30.0f / 255.0f, 30.0f / 255.0f, 30.0f / 255.0f, 37.0f / 255.0f});
 	SetSelectedWidget("main_window", "local_multiplayer");
 }
+
+void OpenMainMenu()
+{
+	LoadUserInterfaceFromName("UserInterface/Main Menu.kgui");
+	TransitionSceneFromName("Scenes/main_menu.kgscene");
+	LoadInputModeByName("Input/MainMenu.kginput");
+	PlayStereoSoundFromName("Audio/blueA.wav");
+	RequestUserCount();
+}
 
 }

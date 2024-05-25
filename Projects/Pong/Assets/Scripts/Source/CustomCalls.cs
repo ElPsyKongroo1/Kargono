@@ -85,7 +85,7 @@ namespace Pong
 			Scene.TransitionScene("Scenes/main_gameplay.kgscene");
 			InputMode.LoadInputMode("Input/Online_Lobby_Input.kginput");
 			Audio.PlayAudio("Audio/menu_confirm.wav");
-			Audio.PlayStereoAudio("Audio/mechanist-theme.wav");
+			Audio.PlayStereoAudio("Audio/greenA.wav");
 
 			string selectedWidget = "player_slot_" + userSlot;
 			UserInterface.SetWidgetText("online_lobby", selectedWidget, "Connected!");
@@ -179,7 +179,7 @@ namespace Pong
 			UserInterface.LoadUserInterface("UserInterface/Main Menu.kgui");
 			Scene.TransitionScene("Scenes/main_menu.kgscene");
 			InputMode.LoadInputMode("Input/MainMenu.kginput");
-			Audio.PlayStereoAudio("Audio/Manoria-Cathedral.wav");
+			Audio.PlayStereoAudio("Audio/blueA.wav");
 			Network.RequestUserCount();
 		}
 
@@ -197,7 +197,7 @@ namespace Pong
 			Scene.TransitionScene("Scenes/main_gameplay.kgscene");
 			InputMode.LoadInputMode("Input/Pre_Start.kginput");
 			Audio.PlayAudio("Audio/menu_confirm.wav");
-			Audio.PlayStereoAudio("Audio/mechanist-theme.wav");
+			Audio.PlayStereoAudio("Audio/greenA.wav");
 		}
 
 		static void OpenOnlineGameplay()

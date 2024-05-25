@@ -60,6 +60,16 @@ Assets:
       TotalPcmFrameCount: 4411632
       TotalSize: 17646528
       InitialFileLocation: Audio\test-song.wav
+  - AssetHandle: 4693761790148616627
+    MetaData:
+      CheckSum: 486b4fafa2f7576055c030104cc6555a6fdb2d1991a0f3845b15e6955f0b1fbd
+      IntermediateLocation: Audio/Intermediates/4693761790148616627.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 3631104
+      TotalSize: 14524416
+      InitialFileLocation: Audio\blueA.wav
   - AssetHandle: 2121478283880279507
     MetaData:
       CheckSum: ddf01cf657fbac7c16227de0cb038243df7b8343d634c46b42cdb2d3c70b9ffc
@@ -70,3 +80,13 @@ Assets:
       TotalPcmFrameCount: 41666
       TotalSize: 166664
       InitialFileLocation: Audio\lose_sound.wav
+  - AssetHandle: 12995125410410391558
+    MetaData:
+      CheckSum: 4c6f057c1d030f5024b5e8b120fedc7af78bd93c2e8202b10f83f264d4037225
+      IntermediateLocation: Audio/Intermediates/12995125410410391558.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 6901632
+      TotalSize: 27606528
+      InitialFileLocation: Audio\greenA.wav
