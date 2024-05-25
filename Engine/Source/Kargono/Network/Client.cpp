@@ -123,7 +123,7 @@ namespace Kargono::Network
 	{
 		if (event.GetDelayMilliseconds() == m_UDPClient->GetKeepAliveDelay())
 		{
-			KG_TRACE("Send Keep Alive From Client");
+			KG_TRACE_INFO("Send Keep Alive From Client");
 			Kargono::Network::Message msg;
 			msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::KeepAlive);
 			SendUDP(msg);
@@ -342,7 +342,7 @@ namespace Kargono::Network
 
 			case CustomMsgTypes::UDPInit:
 			{
-				KG_TRACE("Received UDP Init Packet");
+				KG_TRACE_INFO("Received UDP Init Packet");
 				m_UDPConnectionSuccessful = true;
 				break;
 			}

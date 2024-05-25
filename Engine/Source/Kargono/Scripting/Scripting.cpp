@@ -32,6 +32,7 @@ namespace Kargono::Scripting
 	void ScriptCore::Init()
 	{
 		s_ScriptingData = new ScriptingData();
+		KG_VERIFY(s_ScriptingData, "Scripting System Init");
 	}
 
 	void ScriptCore::Terminate()
@@ -44,6 +45,9 @@ namespace Kargono::Scripting
 		}
 
 		delete s_ScriptingData;
+		s_ScriptingData = nullptr;
+
+		KG_VERIFY(!s_ScriptingData, "Close Scripting System")
 	}
 
 	void ScriptCore::OpenDll()
@@ -72,7 +76,7 @@ namespace Kargono::Scripting
 			return;
 		}
 
-		KG_INFO("Script Dll successfully opened!");
+		KG_VERIFY(s_ScriptingData->DLLInstance, "Open Scriping DLL");
 
 		ScriptModuleBuilder::AddEngineFuncsToDll();
 
@@ -102,6 +106,8 @@ namespace Kargono::Scripting
 
 		delete s_ScriptingData->DLLInstance;
 		s_ScriptingData->DLLInstance = nullptr;
+
+		KG_VERIFY(!s_ScriptingData->DLLInstance, "Close Scripting DLL");
 	}
 
 	void ScriptCore::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)

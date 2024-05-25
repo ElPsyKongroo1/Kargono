@@ -15,6 +15,7 @@ namespace Kargono
 		spec.Height = 900;
 
 		Application* editorApp = new EditorApp();
+		KG_VERIFY(editorApp, "Editor App Init");
 		return new Kargono::EngineCore(spec, editorApp);
 	}
 }

@@ -63,9 +63,9 @@ namespace Kargono::Network
 
 			KG_INFO("Attempting UDP connection to server");
 
-			KG_TRACE("The local endpoint is {} {}", m_connection->GetUDPLocalEndpoint().address().to_string(), 
+			KG_TRACE_INFO("The local endpoint is {} {}", m_connection->GetUDPLocalEndpoint().address().to_string(), 
 				m_connection->GetUDPLocalEndpoint().port());
-			KG_TRACE("The remote send endpoint is {} {}", m_connection->GetUDPRemoteSendEndpoint().address().to_string(),
+			KG_TRACE_INFO("The remote send endpoint is {} {}", m_connection->GetUDPRemoteSendEndpoint().address().to_string(),
 				m_connection->GetUDPRemoteSendEndpoint().port());
 
 			// Create Local UDP Socket
@@ -88,7 +88,7 @@ namespace Kargono::Network
 			{
 				Client::GetActiveClient()->SubmitToFunctionQueue([&]()
 				{
-					KG_TRACE("Submitted a UDP INIT BITCH");
+					KG_TRACE_INFO("Submitted a UDP INIT BITCH");
 					// Do checks for UDP connection
 					Message newMessage{};
 					newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UDPInit);
