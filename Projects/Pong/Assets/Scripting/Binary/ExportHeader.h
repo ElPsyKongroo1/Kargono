@@ -6,7 +6,7 @@
 #endif
 #include <functional>
 #include <string>
-#include "F:\Charles_Files\Personal_Projects\Personal_Games\Engine/Source/Kargono/Math/MathAliases.h"
+#include "Kargono/Math/MathAliases.h"
 namespace Kargono
 {
 extern "C"
@@ -21,12 +21,12 @@ KARGONO_API void AddVoidStringStringString(const std::string& funcName, std::fun
 KARGONO_API void AddVoidStringStringVec4(const std::string& funcName, std::function<void(const std::string&, const std::string&, Math::vec4)> funcPtr);
 KARGONO_API void AddUInt16None(const std::string& funcName, std::function<uint16_t()> funcPtr);
 		KARGONO_API void UpdateSessionUserSlot(uint16_t a);
-		KARGONO_API void OnCurrentSessionInit();
-		KARGONO_API void UserLeftSession(uint16_t a);
 		KARGONO_API void UpdateOnlineCount(uint32_t a);
-		KARGONO_API void OnStartSession();
+		KARGONO_API void UserLeftSession(uint16_t a);
+		KARGONO_API void OnCurrentSessionInit();
 		KARGONO_API void ApproveJoinSession(uint16_t a);
-		KARGONO_API void OpenMainMenu();
+		KARGONO_API void OnStartSession();
 		KARGONO_API void OnConnectionTerminated();
+		KARGONO_API void OpenMainMenu();
 	}
 }

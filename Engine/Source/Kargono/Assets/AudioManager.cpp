@@ -140,6 +140,11 @@ namespace Kargono::Assets
 				return handle;
 			}
 		}
+		if (filePath.extension().string() != ".wav")
+		{
+			KG_ERROR("Invalid file extension. Can only process .wav filetypes.");
+			return {};
+		}
 
 		// Create New Asset/Handle
 		AssetHandle newHandle{};

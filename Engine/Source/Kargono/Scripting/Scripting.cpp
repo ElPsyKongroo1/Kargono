@@ -385,9 +385,7 @@ namespace Kargono::Scripting
 
 		outputStream << "#include <functional>\n";
 		outputStream << "#include <string>\n";
-		std::filesystem::path mathPath = std::filesystem::current_path().parent_path() / "Engine/Source/Kargono/Math/MathAliases.h";
-		outputStream << "#include \"" << mathPath.string() << "\"\n";
-
+		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
 		outputStream << "namespace Kargono\n";
 		outputStream << "{" << "\n";
 		outputStream << "extern \"C\"" << "\n";
@@ -475,6 +473,7 @@ namespace Kargono::Scripting
 		outputStream << "/MDd "; // Specify Runtime Library
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
+		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros/Defines
 
