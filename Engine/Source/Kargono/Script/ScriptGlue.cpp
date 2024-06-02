@@ -557,10 +557,5 @@ namespace Kargono::Script
 		KG_ADD_INTERNAL_CALL(Network_SendAllEntityLocation);
 		KG_ADD_INTERNAL_CALL(Network_SendAllEntityPhysics);
 		KG_ADD_INTERNAL_CALL(Network_SignalAll);
-		
-		
-
-		
-		
     }
 }

@@ -3,6 +3,7 @@
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Scene/Scene.h"
 #include "Kargono/Script/ScriptEngine.h"
+
 #include "Kargono/Script/ScriptGlue.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Core/UUID.h"
@@ -156,7 +157,8 @@ namespace Kargono::Script
 		Ref<ScriptClass> CustomEngineCalls;
 		ScriptClassCustomCallInstance CustomEngineCallInstance;
 
-		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+		std::filesystem::path AssemblyPath{};
+		//Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
 		bool AssemblyReloadPending = false;
 
 #ifdef KG_DEBUG
@@ -181,11 +183,15 @@ namespace Kargono::Script
 			//std::this_thread::sleep_for(500ms);
 			// reload assembly
 			// add reload to main thread queue
-			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+			{
+				bool success = API::FileWatch::EndWatch(s_ScriptData->AssemblyPath);
+				if (!success)
 				{
-					s_ScriptData->AppAssemblyFileWatcher.reset();
-					ScriptEngine::ReloadAssembly();
-				});
+					KG_ERROR("Issue cancelling file watch in script engine");
+				}
+				ScriptEngine::ReloadAssembly();
+			});
 		}
 	}
 
@@ -195,7 +201,6 @@ namespace Kargono::Script
 		s_ScriptData = new ScriptEngineData();
 		InitMono();
 		ScriptGlue::RegisterFunctions();
-
 	}
 	void ScriptEngine::Shutdown()
 	{
@@ -232,8 +237,6 @@ namespace Kargono::Script
 		}
 
 		mono_thread_set_main(mono_thread_current());
-
-
 	}
 	void ScriptEngine::ShutdownMono()
 	{
@@ -289,9 +292,8 @@ namespace Kargono::Script
 		if (s_ScriptData->AppAssembly == nullptr){return false;}
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 		Utility::PrintAssemblyTypes(s_ScriptData->AppAssembly);
-
-		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
-			filepath.string(), OnAppAssemblyFileSystemEvent);
+		s_ScriptData->AssemblyPath = filepath;
+		API::FileWatch::StartWatch(filepath, OnAppAssemblyFileSystemEvent);
 		s_ScriptData->AssemblyReloadPending = false;
 		return true;
 	}
