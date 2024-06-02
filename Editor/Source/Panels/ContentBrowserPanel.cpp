@@ -227,7 +227,6 @@ namespace Kargono
 
 		for (auto& directoryEntry: s_CachedDirectoryEntries)
 		{
-			KG_PROFILE_FUNCTION("Inside Directory")
 			const auto& path = directoryEntry.path();
 			std::string filenameString = path.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
