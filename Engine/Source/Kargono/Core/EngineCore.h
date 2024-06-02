@@ -51,6 +51,7 @@ namespace Kargono
 		void OnEvent(Events::Event& e);
 
 		static EngineCore& GetCurrentEngineCore() { return *s_CurrentEngineCore; }
+		static Window& GetActiveWindow() { return *(s_CurrentEngineCore->m_Window); }
 
 		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
 		{
@@ -104,10 +105,11 @@ namespace Kargono
 
 		std::vector<Ref<Events::Event>> m_EventQueue {};
 		std::mutex m_EventQueueMutex;
+		Application* m_CurrentApp{ nullptr };
 
 	private:
-		Application* m_CurrentApp{ nullptr };
 		static EngineCore* s_CurrentEngineCore;
+	private:
 		friend int ::main(int argc, char** argv);
 	};
 

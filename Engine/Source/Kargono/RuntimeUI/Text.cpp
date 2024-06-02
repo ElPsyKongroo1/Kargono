@@ -77,6 +77,7 @@ namespace Kargono::RuntimeUI
 
 			s_Vertices = CreateRef<std::vector<Math::vec3>>();
 		}
+		KG_VERIFY(true, "Runtime Text Engine Init")
 	}
 
 	Ref<Font> Text::InstantiateEditorFont(const std::filesystem::path& filepath)

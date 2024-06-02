@@ -58,7 +58,7 @@ namespace Kargono
 		
 		m_ViewportPanel->InitializeOverlayData();
 
-		EngineCore::GetCurrentEngineCore().GetWindow().SetVisible(true);
+		EngineCore::GetActiveWindow().SetVisible(true);
 	}
 
 	void EditorApp::OnDetach()

@@ -85,10 +85,10 @@ Windows:
         DirectionPointerRight: -1
         FunctionPointerOnPress: ""
         TextWidget:
-          Text: "@Wienersons Incorporated"
+          Text: ElPsy Incorporated
           TextSize: 0.300000012
           TextColor: [1, 1, 0.827450991, 1]
-          TextAbsoluteDimensions: [11.3208008, 0.880952358]
+          TextAbsoluteDimensions: [7.68896484, 0.857142866]
           TextCentered: true
       - Tag: online_multiplayer
         WindowPosition: [0.0399999991, 0.319999993]
