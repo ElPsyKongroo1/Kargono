@@ -20,7 +20,7 @@ namespace Kargono::Utility
 		if (type == "fragment" || type == "pixel")
 			return GL_FRAGMENT_SHADER;
 
-		KG_ASSERT(false, "Unknown shader type!");
+		KG_ERROR("Unknown shader type!");
 		return 0;
 	}
 
@@ -31,7 +31,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return "vertex";
 		case GL_FRAGMENT_SHADER: return "fragment";
 		}
-		KG_ASSERT(false, "Invalid Shader Type!");
+		KG_ERROR("Invalid Shader Type!");
 		return "";
 	}
 
@@ -42,7 +42,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
 		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 		}
-		KG_ASSERT(false, "Invalid Shader Type!");
+		KG_ERROR("Invalid Shader Type!");
 		return (shaderc_shader_kind)0;
 	}
 
@@ -53,7 +53,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		}
-		KG_ASSERT(false, "Invalid Shader Type!");
+		KG_ERROR("Invalid Shader Type!");
 		return nullptr;
 	}
 
@@ -64,7 +64,7 @@ namespace Kargono::Utility
 		case GL_VERTEX_SHADER:    return ".kgshadervert";
 		case GL_FRAGMENT_SHADER:  return ".kgshaderfrag";
 		}
-		KG_ASSERT(false);
+		KG_ERROR("Invalid Shader Extension Type");
 		return "";
 	}
 
@@ -128,7 +128,7 @@ namespace Kargono::Utility
 				{
 					KG_ERROR(text);
 				}
-				KG_ASSERT(false);
+				KG_ERROR("Unspecified Error");
 			}
 			// Add Newly Compiled Spirv to m_OpenGLSPIRV
 			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());

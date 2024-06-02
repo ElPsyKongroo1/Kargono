@@ -95,7 +95,7 @@ namespace Kargono::Utility
 		case RenderingType::DrawTriangle: return "DrawTriangle";
 		case RenderingType::DrawLine: return "DrawLine";
 		}
-		KG_ASSERT(false, "Unknown Data Type sent to RenderingTypeToString Function");
+		KG_ERROR("Unknown Data Type sent to RenderingTypeToString Function");
 		return "None";
 	}
 
@@ -106,7 +106,7 @@ namespace Kargono::Utility
 		if (string == "DrawTriangle") { return RenderingType::DrawTriangle; }
 		if (string == "DrawLine") { return RenderingType::DrawLine; }
 
-		KG_ASSERT(false, "Unknown Data Type sent to StringToRenderingType Function");
+		KG_ERROR("Unknown Data Type sent to StringToRenderingType Function");
 		return RenderingType::None;
 	}
 
@@ -119,7 +119,7 @@ namespace Kargono::Utility
 		case ShapeTypes::Cube: return "Cube";
 		case ShapeTypes::Pyramid: return "Pyramid";
 		}
-		KG_ASSERT(false, "Unknown Data Type sent to ShapeTypeToString Function");
+		KG_ERROR("Unknown Data Type sent to ShapeTypeToString Function");
 		return "None";
 	}
 
@@ -130,7 +130,7 @@ namespace Kargono::Utility
 		if (string == "Cube") { return ShapeTypes::Cube; }
 		if (string == "Pyramid") { return ShapeTypes::Pyramid; }
 
-		KG_ASSERT(false, "Unknown Data Type sent to StringToShapeType Function");
+		KG_ERROR("Unknown Data Type sent to StringToShapeType Function");
 		return ShapeTypes::None;
 	}
 
@@ -144,7 +144,7 @@ namespace Kargono::Utility
 		case ShapeTypes::None: return Shape::s_None;
 		}
 
-		KG_ASSERT(false, "Unknown Data Type sent to StringToShapeType Function");
+		KG_ERROR("Unknown Data Type sent to StringToShapeType Function");
 		return Shape::s_None;
 	}
 }

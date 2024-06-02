@@ -34,18 +34,18 @@ namespace Kargono::Utility
 			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
 			if (comp.ClassHandle == Assets::EmptyHandle)
 			{
-				KG_ASSERT(false,"Attempt to serialize ClassInstanceComponent without ClassHandle");
+				KG_ERROR("Attempt to serialize ClassInstanceComponent without ClassHandle");
 				return;
 			}
 			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
 			if (!entityClass)
 			{
-				KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent without valid entityClass");
+				KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
 				return;
 			}
 			if (entityClass->GetFields().size() != comp.Fields.size())
 			{
-				KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
+				KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
 				return;
 			}
 
@@ -56,7 +56,7 @@ namespace Kargono::Utility
 				const ClassField& fieldType = entityClass->GetFields().at(iteration);
 				if (fieldType.Type != fieldValue->Type())
 				{
-					KG_ASSERT(false, "Attempt to serialize ClassInstanceComponent with incorrect types");
+					KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
 					return;
 				}
 				out << YAML::BeginMap; // Begin Field Map

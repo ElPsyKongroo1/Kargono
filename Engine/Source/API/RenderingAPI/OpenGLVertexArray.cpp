@@ -22,7 +22,7 @@ namespace API::Utility
 		case Kargono::InputDataType::Int4:		return GL_INT;
 		case Kargono::InputDataType::Bool:		return GL_BOOL;
 		}
-		KG_ASSERT(false, "Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
+		KG_ERROR("Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
 		return -1;
 	}
 }
@@ -109,7 +109,7 @@ namespace API::OpenGL
 				break;
 			}
 			default:
-				KG_ASSERT(false, "Unknown ShaderDataType!");
+				KG_ERROR("Unknown ShaderDataType!");
 			}
 		}
 

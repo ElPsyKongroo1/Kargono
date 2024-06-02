@@ -183,7 +183,7 @@ namespace Kargono::Utility
 		case ColorInputType::FlatColor: return "FlatColor";
 		case ColorInputType::VertexColor: return "VertexColor";
 		}
-		KG_ASSERT(false, "Unknown Data Type sent to ColorInputToString Function");
+		KG_ERROR("Unknown Data Type sent to ColorInputToString Function");
 		return "None";
 	}
 
@@ -193,7 +193,7 @@ namespace Kargono::Utility
 		if (string == "FlatColor") { return ColorInputType::FlatColor; }
 		if (string == "VertexColor") { return ColorInputType::VertexColor; }
 
-		KG_ASSERT(false, "Unknown Data Type sent to StringToColorInputType Function");
+		KG_ERROR("Unknown Data Type sent to StringToColorInputType Function");
 		return ColorInputType::None;
 	}
 
@@ -205,7 +205,7 @@ namespace Kargono::Utility
 		case TextureInputType::ColorTexture: return "ColorTexture";
 		case TextureInputType::TextTexture: return "TextTexture";
 		}
-		KG_ASSERT(false, "Unknown Data Type sent to TextureInputToString Function");
+		KG_ERROR("Unknown Data Type sent to TextureInputToString Function");
 		return "None";
 	}
 
@@ -215,7 +215,7 @@ namespace Kargono::Utility
 		if (string == "ColorTexture") { return TextureInputType::ColorTexture; }
 		if (string == "TextTexture") { return TextureInputType::TextTexture; }
 
-		KG_ASSERT(false, "Unknown Data Type sent to StringToTextureInputType Function");
+		KG_ERROR("Unknown Data Type sent to StringToTextureInputType Function");
 		return TextureInputType::None;
 	}
 }

@@ -66,7 +66,7 @@ namespace API::Utility
 		}
 		}
 
-		KG_ASSERT(false, "Unknown severity level!");
+		KG_ERROR("Unknown severity level!");
 	}
 
 	static GLenum StencilComparisonToGLenum(Kargono::StencilComparisonType comparisonType)
@@ -82,7 +82,7 @@ namespace API::Utility
 		case Kargono::StencilComparisonType::NOTEQUAL: return GL_NOTEQUAL;
 		case Kargono::StencilComparisonType::ALWAYS: return GL_ALWAYS;
 		}
-		KG_ASSERT(false, "Invalid enum provided in StencilComparisonToGLStencil");
+		KG_ERROR("Invalid enum provided in StencilComparisonToGLStencil");
 		return 0;
 	}
 
@@ -99,7 +99,7 @@ namespace API::Utility
 		case Kargono::StencilOptions::DECR_WRAP: return GL_DECR_WRAP;
 		case Kargono::StencilOptions::INVERT: return GL_INVERT;
 		}
-		KG_ASSERT(false, "Invalid enum provided in StencilOptionsToGLEnum");
+		KG_ERROR("Invalid enum provided in StencilOptionsToGLEnum");
 		return 0;
 	}
 }

@@ -10,7 +10,7 @@ namespace Kargono::Network
 	{
 		if (!m_ActiveConnection)
 		{
-			KG_ASSERT(false, "Invalid connection in UDP Disconnect()");
+			KG_ERROR("Invalid connection in UDP Disconnect()");
 			return;
 		}
 

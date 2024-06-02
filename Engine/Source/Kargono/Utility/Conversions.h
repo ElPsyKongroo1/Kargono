@@ -46,7 +46,7 @@ namespace Kargono::Utility
 			{
 				return false;
 			}
-			KG_ASSERT(false, "Conversion from string to bool failed");
+			KG_ERROR("Conversion from string to bool failed");
 			return false;
 		}
 	};

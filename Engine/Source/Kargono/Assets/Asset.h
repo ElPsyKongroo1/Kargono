@@ -222,7 +222,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::EntityClass: return "EntityClass";
 		case Assets::AssetType::None: return "None";
 		}
-		KG_ASSERT(false, "Unknown Type of AssetType.");
+		KG_ERROR("Unknown Type of AssetType.");
 		return "";
 	}
 
@@ -240,7 +240,7 @@ namespace Kargono::Utility
 		if (type == "EntityClass") { return Assets::AssetType::EntityClass; }
 		if (type == "None") { return Assets::AssetType::None; }
 
-		KG_ASSERT(false, "Unknown Type of AssetType String.");
+		KG_ERROR("Unknown Type of AssetType String.");
 		return Assets::AssetType::None;
 	}
 }

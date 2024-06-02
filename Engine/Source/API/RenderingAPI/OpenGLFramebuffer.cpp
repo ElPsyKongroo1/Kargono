@@ -82,7 +82,7 @@ namespace API::Utility
 		case Kargono::FramebufferDataFormat::RED_INTEGER: return	GL_RED_INTEGER;
 		}
 
-		KG_ASSERT(false, "Invalid framebuffertextureformat in KargonoTextureFormatToGL")
+		KG_ERROR("Invalid framebuffertextureformat in KargonoTextureFormatToGL")
 			return 0;
 	}
 }

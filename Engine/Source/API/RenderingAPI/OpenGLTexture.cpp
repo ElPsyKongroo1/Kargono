@@ -16,7 +16,7 @@ namespace API::Utility
 		case Kargono::ImageFormat::RGBA8: return GL_RGBA;
 		default:
 		{
-			KG_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLDataFormat");
+			KG_ERROR("Invalid ImageFormat in KargonoFormatToGLDataFormat");
 			return 0;
 		}
 		}
@@ -30,7 +30,7 @@ namespace API::Utility
 		case Kargono::ImageFormat::RGBA8: return GL_RGBA8;
 		default:
 		{
-			KG_ASSERT(false, "Invalid ImageFormat in KargonoFormatToGLInternalFormat");
+			KG_ERROR("Invalid ImageFormat in KargonoFormatToGLInternalFormat");
 			return 0;
 		}
 				
