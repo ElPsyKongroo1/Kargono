@@ -823,6 +823,43 @@ namespace Kargono::EditorUI
 				KG_WARN("Invalid Type used for Edit Variable");
 				return;
 			}
+
+			case WrappedVarType::Bool:
+			{
+				ImGui::SameLine(200.0f);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
+				TruncateText("True", 12);
+				ImGui::SameLine();
+				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+					{
+						if (spec.FieldBuffer.As<char>() == "True")
+						{
+							spec.FieldBuffer.SetString("False");
+						}
+						else
+						{
+							spec.FieldBuffer.SetString("True");
+						}
+					}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "True");
+
+				ImGui::SameLine(300.0f);
+				TruncateText("False", 12);
+				ImGui::SameLine();
+				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+					{
+						if (spec.FieldBuffer.As<char>() == "False")
+						{
+							spec.FieldBuffer.SetString("True");
+						}
+						else
+						{
+							spec.FieldBuffer.SetString("False");
+						}
+					}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "False");
+				ImGui::PopStyleColor(2);
+				break;
+			}
 			case WrappedVarType::String:
 			{
 				inputFlags = ImGuiInputTextFlags_CallbackEdit;
