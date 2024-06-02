@@ -44,7 +44,7 @@ namespace Kargono
 			break;
 		}
 		default:
-			KG_ASSERT(false, "Invalid Widget Type Presented!");
+			KG_ERROR("Invalid Widget Type Presented!");
 			break;
 		}
 	}
@@ -390,7 +390,7 @@ namespace Kargono
 			}
 			default:
 			{
-				KG_ASSERT(false, "Invalid widgetTypeToAdd value");
+				KG_ERROR("Invalid widgetTypeToAdd value");
 				break;
 			}
 			}

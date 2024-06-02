@@ -54,7 +54,7 @@ namespace API::Windows
 		// Ensure Only One Window Instance is active
 		if (s_GLFWWindowCount > 0)
 		{
-			KG_ASSERT(false, "Attempt to initialize another glfwWindow.");
+			KG_ERROR("Attempt to initialize another glfwWindow.");
 			return;
 		}
 		// Start Initializing GLFW

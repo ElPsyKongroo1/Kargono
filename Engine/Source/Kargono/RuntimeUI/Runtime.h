@@ -291,7 +291,7 @@ namespace Kargono::Utility
 		case RuntimeUI::WidgetTypes::None: return "None";
 		default:
 		{
-			KG_ASSERT(false, "Invalid Widget Type at WidgetTypeToString");
+			KG_ERROR("Invalid Widget Type at WidgetTypeToString");
 			return "None";
 		}
 		}
@@ -306,7 +306,7 @@ namespace Kargono::Utility
 		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
 		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
-		KG_ASSERT(false, "Invalid Widget Type at StringToWidgetType");
+		KG_ERROR("Invalid Widget Type at StringToWidgetType");
 		return RuntimeUI::WidgetTypes::None;
 	}
 }

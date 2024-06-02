@@ -44,7 +44,7 @@ namespace Kargono::Utility
 		case BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
 		case BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
-		KG_ASSERT(false, "Invalid BrowserFileType provided");
+		KG_ERROR("Invalid BrowserFileType provided");
 		return "CONTENT_BROWSER_ITEM";
 	}
 }
@@ -442,7 +442,7 @@ namespace Kargono
 
 			case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
 		}
-		KG_ASSERT(false, "Invalid BrowserFileType provided");
+		KG_ERROR("Invalid BrowserFileType provided");
 		return EditorUI::Editor::s_GenericFileIcon;
 	}
 }

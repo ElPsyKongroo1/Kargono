@@ -146,7 +146,7 @@ namespace Kargono::Assets
 				case InputMode::None:
 				default:
 				{
-					KG_ASSERT(false, "Invalid InputMode provided to InputMode serialization");
+					KG_ERROR("Invalid InputMode provided to InputMode serialization");
 					break;
 				}
 				}
@@ -364,7 +364,7 @@ namespace Kargono::Assets
 					case InputMode::None:
 					default:
 					{
-						KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+						KG_ERROR("Invalid bindingType while deserializing InputMode");
 						break;
 					}
 					}
@@ -405,7 +405,7 @@ namespace Kargono::Assets
 							case InputMode::None:
 							default:
 							{
-								KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+								KG_ERROR("Invalid bindingType while deserializing InputMode");
 								break;
 							}
 							}
@@ -440,7 +440,7 @@ namespace Kargono::Assets
 					case InputMode::None:
 					default:
 					{
-						KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+						KG_ERROR("Invalid bindingType while deserializing InputMode");
 						break;
 					}
 					}
@@ -481,7 +481,7 @@ namespace Kargono::Assets
 							case InputMode::None:
 							default:
 							{
-								KG_ASSERT(false, "Invalid bindingType while deserializing InputMode");
+								KG_ERROR("Invalid bindingType while deserializing InputMode");
 								break;
 							}
 							}

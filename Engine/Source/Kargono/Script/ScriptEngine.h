@@ -484,7 +484,7 @@ namespace Kargono::Utility
 		case Script::ScriptFieldType::Vector4:	return "Vector4";
 		case Script::ScriptFieldType::Entity:	return "Entity";
 		}
-		KG_ASSERT(false, "Unknown field type");
+		KG_ERROR("Unknown field type");
 		return "None";
 	}
 
@@ -508,7 +508,7 @@ namespace Kargono::Utility
 		if (fieldType == "Vector4")	return Script::ScriptFieldType::Vector4;
 		if (fieldType == "Entity")	return Script::ScriptFieldType::Entity;
 
-		KG_ASSERT(false, "Unknown field type");
+		KG_ERROR("Unknown field type");
 		return Script::ScriptFieldType::None;
 	}
 }

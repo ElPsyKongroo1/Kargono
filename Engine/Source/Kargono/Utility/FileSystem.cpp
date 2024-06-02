@@ -146,7 +146,7 @@ namespace Kargono::Utility
 			return true;
 		}
 		}
-		KG_ASSERT(false, "Invalid FileType enum provided to WriteFileImage function");
+		KG_ERROR("Invalid FileType enum provided to WriteFileImage function");
 		return false;
 	}
 

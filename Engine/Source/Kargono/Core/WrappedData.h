@@ -357,7 +357,7 @@ namespace Kargono
 			case WrappedVarType::Float: return "Float";
 			case WrappedVarType::None: return "None";
 			}
-			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
+			KG_ERROR("Unknown Type of WrappedVariableType.");
 			return "";
 		}
 
@@ -376,7 +376,7 @@ namespace Kargono
 			case WrappedVarType::None:
 				return nullptr;
 			}
-			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
+			KG_ERROR("Unknown Type of WrappedVariableType.");
 			return nullptr;
 		}
 
@@ -394,7 +394,7 @@ namespace Kargono
 			case WrappedVarType::Float: return "float";
 			case WrappedVarType::None: return "None";
 			}
-			KG_ASSERT(false, "Unknown Type of WrappedVariableType.");
+			KG_ERROR("Unknown Type of WrappedVariableType.");
 			return "";
 		}
 
@@ -410,7 +410,7 @@ namespace Kargono
 			if (type == "Float") { return WrappedVarType::Float; }
 			if (type == "None") { return WrappedVarType::None; }
 
-			KG_ASSERT(false, "Unknown Type of WrappedVariableType String.");
+			KG_ERROR("Unknown Type of WrappedVariableType String.");
 			return WrappedVarType::None;
 		}
 
@@ -497,7 +497,7 @@ namespace Kargono
 			case WrappedFuncType::Bool_UInt64: return "Bool_UInt64";
 			case WrappedFuncType::None: return "None";
 			}
-			KG_ASSERT(false, "Unknown Type of WrappedType.");
+			KG_ERROR("Unknown Type of WrappedType.");
 			return "";
 		}
 
@@ -566,7 +566,7 @@ namespace Kargono
 				return {};
 			}
 			default:
-				KG_ASSERT(false, "Unknown Type of WrappedFuncType.")
+				KG_ERROR("Unknown Type of WrappedFuncType.")
 				return {};
 			}
 		}

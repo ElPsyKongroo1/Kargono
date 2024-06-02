@@ -286,7 +286,7 @@ namespace Kargono::Utility
 			return;
 		}
 		}
-		KG_ASSERT(false, "Unknown Type of WrappedVariableType when serializing");
+		KG_ERROR("Unknown Type of WrappedVariableType when serializing");
 	}
 
 	inline Ref<WrappedVariable> DeserializeWrappedVariableData(WrappedVarType type, YAML::detail::iterator_value& field)
@@ -328,7 +328,7 @@ namespace Kargono::Utility
 			return nullptr;
 		}
 		}
-		KG_ASSERT(false, "Unknown Type of WrappedVariableType when deserializing");
+		KG_ERROR("Unknown Type of WrappedVariableType when deserializing");
 		return nullptr;
 	}
 
@@ -342,7 +342,7 @@ namespace Kargono::Utility
 		case Rigidbody2DComponent::BodyType::Kinematic:	return "Kinematic";
 		}
 
-		KG_ASSERT(false, "Unknown body type")
+		KG_ERROR("Unknown body type")
 			return {};
 	}
 
@@ -352,7 +352,7 @@ namespace Kargono::Utility
 		if (bodyTypeString == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
 		if (bodyTypeString == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
 
-		KG_ASSERT(false, "Unknown body type")
+		KG_ERROR("Unknown body type")
 			return Rigidbody2DComponent::BodyType::Static;
 	}
 }
