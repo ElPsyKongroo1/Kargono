@@ -42,7 +42,7 @@ namespace Kargono
 			case UniformDataType::Mat4:		return 4; // 4* float4
 			case UniformDataType::Bool:		return 1;
 			}
-			KG_ASSERT(false, "Unknown UniformDataType!");
+			KG_ERROR("Unknown UniformDataType!");
 			return 0;
 		}
 	};
@@ -104,7 +104,7 @@ namespace Kargono::Utility
 		case UniformDataType::Bool:			return 1;
 		case UniformDataType::Sampler2D:	return 4 * 4;
 		}
-		KG_ASSERT(false, "Unknown UniformDataType!");
+		KG_ERROR("Unknown UniformDataType!");
 		return 0;
 	}
 
@@ -120,7 +120,7 @@ namespace Kargono::Utility
 		if (type == "sampler2D") { return UniformDataType::Sampler2D; }
 		if (type == "bool") { return UniformDataType::Bool; }
 
-		KG_ASSERT(false, "Unknown String trying to convert to UniformDataType!");
+		KG_ERROR("Unknown String trying to convert to UniformDataType!");
 		return UniformDataType::None;
 	}
 
@@ -139,7 +139,7 @@ namespace Kargono::Utility
 		case UniformDataType::Sampler2D:	return "sampler2D";
 		}
 
-		KG_ASSERT(false, "Unknown UniformDataType for conversion to string!");
+		KG_ERROR("Unknown UniformDataType for conversion to string!");
 		return "";
 	}
 }

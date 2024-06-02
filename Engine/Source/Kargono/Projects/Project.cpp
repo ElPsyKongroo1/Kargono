@@ -29,7 +29,7 @@ namespace Kargono::Utility
 
 		}
 
-		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to ScreenResolutionToVec2 function");
+		KG_ERROR("Invalid ScreenResolutionOptions enum provided to ScreenResolutionToVec2 function");
 		return Math::vec2(400.0f, 400.0f);
 	}
 
@@ -50,7 +50,7 @@ namespace Kargono::Utility
 		case square1_1: return Math::uvec2(1, 1);
 		}
 
-		KG_ASSERT(false, "Unknown Screen Resolution Used");
+		KG_ERROR("Unknown Screen Resolution Used");
 		return Math::uvec2(1, 1);
 
 	}
@@ -76,7 +76,7 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::MatchDevice: return GetClosestAspectRatio(EngineCore::GetCurrentEngineCore().GetWindow().GetMonitorDimensions());
 		case Projects::ScreenResolutionOptions::None: return Math::uvec2(1, 1);
 		}
-		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
+		KG_ERROR("Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
 		return Math::uvec2(1, 1);
 	}
 }

@@ -21,7 +21,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptType::Class: return "Class";
 		case Scripting::ScriptType::None: return "None";
 		}
-		KG_ASSERT(false, "Unknown enum type of ScriptType.");
+		KG_ERROR("Unknown enum type of ScriptType.");
 		return "";
 	}
 
@@ -31,7 +31,7 @@ namespace Kargono::Utility
 		if (type == "Class") { return Scripting::ScriptType::Class; }
 		if (type == "None") { return Scripting::ScriptType::None; }
 
-		KG_ASSERT(false, "Unknown std::string type of ScriptType.");
+		KG_ERROR("Unknown std::string type of ScriptType.");
 		return Scripting::ScriptType::None;
 	}
 }

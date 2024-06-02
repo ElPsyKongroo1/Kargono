@@ -73,7 +73,7 @@ namespace Kargono::Utility
 		case ImageFormat::None:		{ return 1; }
 		default:
 			{
-				KG_ASSERT(false, "Invalid ImageFormat submitted to ImageFormatToSize");
+				KG_ERROR("Invalid ImageFormat submitted to ImageFormatToSize");
 				return 0;
 			}
 		}

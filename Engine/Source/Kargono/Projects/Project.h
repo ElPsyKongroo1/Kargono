@@ -531,7 +531,7 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::MatchDevice: return "Match Device";
 		case Projects::ScreenResolutionOptions::None: return "None";
 		}
-		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
+		KG_ERROR("Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
 		return "None";
 	}
 
@@ -553,7 +553,7 @@ namespace Kargono::Utility
 		if (optionStr == "Match Device") { return Projects::ScreenResolutionOptions::MatchDevice; }
 		if (optionStr == "None") { return Projects::ScreenResolutionOptions::None; }
 
-		KG_ASSERT(false, "Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
+		KG_ERROR("Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
 		return Projects::ScreenResolutionOptions::None;
 	}
 
