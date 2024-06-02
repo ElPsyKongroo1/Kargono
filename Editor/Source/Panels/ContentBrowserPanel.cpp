@@ -4,10 +4,33 @@
 
 #include "Kargono.h"
 #include "EditorApp.h"
+#include "API/FileWatch/FileWatchAPI.h"
 
 
 namespace Kargono::Utility
 {
+	static Ref<Texture2D> BrowserFileTypeToIcon(BrowserFileType type)
+	{
+		switch (type)
+		{
+		case BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
+		case BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
+		case BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
+		case BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
+		case BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
+
+		case BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
+		case BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
+		case BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
+		case BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
+		case BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
+
+		case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
+		}
+		KG_ERROR("Invalid BrowserFileType provided");
+		return EditorUI::Editor::s_GenericFileIcon;
+	}
+
 	static BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
 	{
 		if (entry.is_directory()) { return BrowserFileType::Directory; }
@@ -52,11 +75,30 @@ namespace Kargono::Utility
 namespace Kargono
 {
 	static EditorApp* s_EditorLayer{ nullptr };
+	static std::vector<std::filesystem::directory_entry> s_CachedDirectoryEntries {};
+
+	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
+	{
+		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		{
+			s_EditorLayer->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
+		});
+	}
+
+	void ContentBrowserPanel::UpdateCurrentDirectory(const std::filesystem::path& newPath)
+	{
+		API::FileWatch::EndWatch(m_CurrentDirectory);
+		m_CurrentDirectory = newPath;
+		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		RefreshCachedDirectoryEntries();
+	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		s_EditorLayer = EditorApp::GetCurrentLayer();
+		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		RefreshCachedDirectoryEntries();
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
@@ -87,7 +129,7 @@ namespace Kargono
 		{
 			if (backActive)
 			{
-				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+				UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
 			}
 		}
 		if (!backActive)
@@ -113,7 +155,7 @@ namespace Kargono
 					recentIterationPath = currentIterationPath;
 					currentIterationPath = currentIterationPath.parent_path();
 				}
-				m_CurrentDirectory = recentIterationPath;
+				UpdateCurrentDirectory(recentIterationPath);
 			}
 		}
 		if (!forwardActive)
@@ -183,14 +225,14 @@ namespace Kargono
 
 		ImGui::Columns(columnCount, 0, false);
 
-		for (auto& directoryEntry: std::filesystem::directory_iterator(m_CurrentDirectory))
+		for (auto& directoryEntry: s_CachedDirectoryEntries)
 		{
-
+			KG_PROFILE_FUNCTION("Inside Directory")
 			const auto& path = directoryEntry.path();
 			std::string filenameString = path.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> icon = BrowserFileTypeToIcon(fileType);
+			Ref<Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 			if (ImGui::BeginDragDropSource())
@@ -231,12 +273,11 @@ namespace Kargono
 			{
 				if (directoryEntry.is_directory())
 				{
-					m_CurrentDirectory /= path.filename();
+					UpdateCurrentDirectory(m_CurrentDirectory / path.filename());
 					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 					{
 						s_LongestRecentPath = m_CurrentDirectory;
 					}
-						
 				}
 			}
 
@@ -424,25 +465,12 @@ namespace Kargono
 		EditorUI::Editor::EndWindow();
 
 	}
-	Ref<Texture2D> ContentBrowserPanel::BrowserFileTypeToIcon(BrowserFileType type)
+	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
 	{
-		switch (type)
+		s_CachedDirectoryEntries.clear();
+		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			case BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
-			case BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
-			case BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
-			case BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
-			case BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
-
-			case BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
-			case BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
-			case BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
-			case BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
-			case BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
-
-			case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
+			s_CachedDirectoryEntries.push_back(directoryEntry);
 		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::Editor::s_GenericFileIcon;
 	}
 }

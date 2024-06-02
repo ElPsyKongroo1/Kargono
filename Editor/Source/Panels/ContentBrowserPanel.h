@@ -20,10 +20,11 @@ namespace Kargono
 		ContentBrowserPanel();
 
 		void OnEditorUIRender();
-	private:
-		Ref<Texture2D> BrowserFileTypeToIcon(BrowserFileType type);
-	private:
 
+	public:
+		void UpdateCurrentDirectory(const std::filesystem::path& newPath);
+		void RefreshCachedDirectoryEntries();
+	private:
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
 		
