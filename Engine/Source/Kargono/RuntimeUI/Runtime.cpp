@@ -52,6 +52,7 @@ namespace Kargono::RuntimeUI
 			s_BackgroundInputSpec.Buffer = localBuffer;
 			s_BackgroundInputSpec.ShapeComponent = shapeComp;
 		}
+		KG_VERIFY(true, "Runtime UI Engine Init");
 	}
 
 	void Runtime::Terminate()
