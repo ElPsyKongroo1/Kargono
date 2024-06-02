@@ -10,7 +10,6 @@
 #include "API/RenderingAPI/VulkanAPI.h"
 #include "API/Windowing/gladAPI.h"
 
-
 namespace Kargono::Utility
 {
 	static GLenum ShaderTypeFromString(const std::string& type)
@@ -122,13 +121,13 @@ namespace Kargono::Utility
 			if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 			{
 
-				KG_ERROR(module.GetErrorMessage());
-				KG_ERROR("Here are the shaders: ");
+				KG_CRITICAL(module.GetErrorMessage());
+				KG_CRITICAL("Here are the shaders: ");
 				for (auto& [enumName, text] : shaderSources)
 				{
-					KG_ERROR(text);
+					KG_CRITICAL(text);
 				}
-				KG_ERROR("Unspecified Error");
+				KG_CRITICAL("Failure ");
 			}
 			// Add Newly Compiled Spirv to m_OpenGLSPIRV
 			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
