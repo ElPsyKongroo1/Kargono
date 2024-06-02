@@ -76,9 +76,10 @@ namespace Kargono::Scripting
 			return;
 		}
 
-		KG_VERIFY(s_ScriptingData->DLLInstance, "Open Scriping DLL");
 
 		ScriptModuleBuilder::AddEngineFuncsToDll();
+
+		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting DLL Opened");
 
 	}
 	void ScriptCore::CloseDll()
@@ -267,105 +268,6 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 	DefineInsertFunction(UInt16None, uint16_t)
 
-	// This macro adds insertion function declarations to the header file
-#define AddEngineFunctionsToHeaderFiles() \
-	AddImportFunctionToHeaderFile(VoidNone, void) \
-	AddImportFunctionToHeaderFile(VoidString, void, const std::string&) \
-	AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) \
-	AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) \
-	AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) \
-	AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) \
-	AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
-	AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) \
-	AddImportFunctionToHeaderFile(UInt16None, uint16_t) \
-
-	// This	macro adds insertion function definitions and func pointers into the CPP file
-#define AddEngineFunctionsToCPPFiles() \
-	AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)\
-	AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)\
-	AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)\
-	AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)\
-	AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)\
-	AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)\
-	AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)\
-	AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)\
-	AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)\
-	AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)\
-	AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)\
-	AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)\
-	AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)\
-	AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)\
-	AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)\
-	AddImportFunctionToCPPFile(VoidNone, void) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(EnableReadyCheck) \
-	AddEngineFunctionToCPPFileEnd(RequestUserCount) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidString, void, const std::string&) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(PlaySoundFromName) \
-	AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName) \
-	AddEngineFunctionToCPPFileEnd(LoadInputModeByName) \
-	AddEngineFunctionToCPPFileEnd(TransitionSceneFromName) \
-	AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetDisplayWindow) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetGameStateField) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetSelectedWidget) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetWidgetSelectable) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetWidgetText) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(SetWidgetTextColor) \
-	AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor) \
-	outputStream << "}\n"; \
-	AddImportFunctionToCPPFile(UInt16None, uint16_t) \
-	outputStream << "{\n"; \
-	AddEngineFunctionToCPPFileEnd(GetActiveSessionSlot) \
-	outputStream << "}\n"; 
-
-	// This macro provide the point where insertion functions are pulled from the dll when opening
-#define AddEngineFunctionsPointersToDll() \
-	ImportInsertFunction(VoidNone)\
-	ImportInsertFunction(VoidString) \
-	ImportInsertFunction(VoidStringBool) \
-	ImportInsertFunction(VoidStringVoidPtr) \
-	ImportInsertFunction(VoidStringString) \
-	ImportInsertFunction(VoidStringStringBool) \
-	ImportInsertFunction(VoidStringStringString) \
-	ImportInsertFunction(VoidStringStringVec4) \
-	ImportInsertFunction(UInt16None)\
-	AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) \
-	AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) \
-	AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) \
-	AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) \
-	AddEngineFunctionPointerToDll(LoadInputModeByName, InputMode::LoadInputModeByName,VoidString) \
-	AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) \
-	AddEngineFunctionPointerToDll(TransitionSceneFromName, Scene::TransitionSceneFromName,VoidString) \
-	AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) \
-	AddEngineFunctionPointerToDll(SetGameStateField, GameState::SetActiveGameStateField, VoidStringVoidPtr) \
-	AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::Runtime::SetWidgetText,VoidStringStringString) \
-	AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::Runtime::SetSelectedWidget,VoidStringString) \
-	AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) \
-	AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) \
-	AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) \
-	AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
-
 	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)
 	{
 		ScriptCore::CloseDll();
@@ -397,7 +299,15 @@ namespace Kargono::Scripting
 		outputStream << "extern \"C\"" << "\n";
 		outputStream << "\t{" << "\n";
 
-		AddEngineFunctionsToHeaderFiles()
+		AddImportFunctionToHeaderFile(VoidNone, void) 
+		AddImportFunctionToHeaderFile(VoidString, void, const std::string&) 
+		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) 
+		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) 
+		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) 
+		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) 
+		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
+		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
+		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 
 		// Add Script Function Declarations
 		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
@@ -439,7 +349,66 @@ namespace Kargono::Scripting
 		outputStream << "namespace Kargono\n";
 		outputStream << "{\n";
 
-		AddEngineFunctionsToCPPFiles()
+		// Insert Callable Function Definitions into CPP file
+		AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)
+		AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
+		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
+		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
+		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
+		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
+		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
+		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
+
+		// Insert FuncPointer Importing for DLL processing
+		AddImportFunctionToCPPFile(VoidNone, void)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(EnableReadyCheck)
+		AddEngineFunctionToCPPFileEnd(RequestUserCount)
+		outputStream << "}\n"; 
+		AddImportFunctionToCPPFile(VoidString, void, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(PlaySoundFromName)
+		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName)
+		AddEngineFunctionToCPPFileEnd(LoadInputModeByName)
+		AddEngineFunctionToCPPFileEnd(TransitionSceneFromName)
+		AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetDisplayWindow)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetGameStateField)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetSelectedWidget)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetWidgetSelectable)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetWidgetText)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
+		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(UInt16None, uint16_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(GetActiveSessionSlot)
+		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
@@ -508,7 +477,30 @@ namespace Kargono::Scripting
 
 	void ScriptModuleBuilder::AddEngineFuncsToDll()
 	{
-		AddEngineFunctionsPointersToDll()
+		ImportInsertFunction(VoidNone)
+		ImportInsertFunction(VoidString) 
+		ImportInsertFunction(VoidStringBool) 
+		ImportInsertFunction(VoidStringVoidPtr) 
+		ImportInsertFunction(VoidStringString) 
+		ImportInsertFunction(VoidStringStringBool) 
+		ImportInsertFunction(VoidStringStringString) 
+		ImportInsertFunction(VoidStringStringVec4) 
+		ImportInsertFunction(UInt16None)
+		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
+		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
+		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) 
+		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadInputModeByName, InputMode::LoadInputModeByName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) 
+		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scene::TransitionSceneFromName,VoidString) 
+		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) 
+		AddEngineFunctionPointerToDll(SetGameStateField, GameState::SetActiveGameStateField, VoidStringVoidPtr) 
+		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::Runtime::SetWidgetText,VoidStringStringString) 
+		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::Runtime::SetSelectedWidget,VoidStringString) 
+		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) 
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 	}
 }
 

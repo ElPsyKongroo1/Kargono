@@ -345,10 +345,7 @@ namespace Kargono
 			s_LineInputSpec.Buffer = localBuffer;
 			s_LineInputSpec.ShapeComponent = lineShapeComponent;
 		}
-
-
 		// Set up Circle Input Specification for Overlay Calls
-
 		{
 			ShaderSpecification shaderSpec{ ColorInputType::FlatColor,  TextureInputType::None, true, true, false, RenderingType::DrawIndex, false };
 			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);

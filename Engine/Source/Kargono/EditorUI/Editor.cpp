@@ -149,8 +149,9 @@ namespace Kargono::EditorUI
 		SetDarkThemeColors();
 
 		// Setup Platform/Renderer backends
-		EngineCore& app = EngineCore::GetCurrentEngineCore();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		EngineCore& core = EngineCore::GetCurrentEngineCore();
+		GLFWwindow* window = static_cast<GLFWwindow*>(core.GetWindow().GetNativeWindow());
+		KG_ASSERT(window, "No window active when initializing EditorUI");
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 
@@ -297,6 +298,8 @@ namespace Kargono::EditorUI
 		InitializeTableResources();
 
 		s_Running = true;
+
+		KG_VERIFY(s_Running && ImGui::GetCurrentContext(), "Editor UI Initiated")
 	}
 
 	void Editor::Terminate()
@@ -308,6 +311,7 @@ namespace Kargono::EditorUI
 			ImGui::DestroyContext();
 			s_Running = false;
 		}
+		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
 
 	void Editor::StartRendering()
