@@ -2,10 +2,12 @@
 
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Utility/Conversions.h"
+#include "Kargono/Math/Math.h"
 
 #include <cstdint>
 #include <functional>
 #include <string>
+#include <sstream>
 
 #include "Kargono/Utility/FileSystem.h"
 
@@ -21,6 +23,7 @@ namespace Kargono
 		UInteger16,
 		UInteger32,
 		UInteger64,
+		Vector3,
 		String
 	};
 
@@ -30,6 +33,7 @@ namespace Kargono
 		WrappedVarType::UInteger16,
 		WrappedVarType::UInteger32,
 		WrappedVarType::UInteger64,
+		WrappedVarType::Vector3,
 		WrappedVarType::String,
 		WrappedVarType::Void,
 		WrappedVarType::Bool,
@@ -156,6 +160,33 @@ namespace Kargono
 			m_Value = *(uint64_t*)value;
 		}
 		uint64_t m_Value{};
+	};
+
+	class WrappedVector3 : public WrappedVariable
+	{
+	public:
+		WrappedVector3() = default;
+		WrappedVector3(Math::vec3 value) : m_Value{ value } {}
+	public:
+		virtual WrappedVarType Type() override { return WrappedVarType::Vector3; }
+	public:
+		void* GetValue() override
+		{
+			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			std::stringstream localStream {};
+			localStream << m_Value.x << " " << m_Value.y << " " << m_Value.z;
+			return localStream.str();
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(Math::vec3*)value;
+		}
+		Math::vec3 m_Value{};
 	};
 
 	class WrappedString : public WrappedVariable
@@ -351,6 +382,7 @@ namespace Kargono
 			case WrappedVarType::UInteger16: return "UInteger16";
 			case WrappedVarType::UInteger32: return "UInteger32";
 			case WrappedVarType::UInteger64: return "UInteger64";
+			case WrappedVarType::Vector3: return "Vector3";
 			case WrappedVarType::String: return "String";
 			case WrappedVarType::Void: return "Void";
 			case WrappedVarType::Bool: return "Bool";
@@ -369,6 +401,7 @@ namespace Kargono
 			case WrappedVarType::UInteger16: return CreateRef<WrappedUInteger16>();
 			case WrappedVarType::UInteger32: return CreateRef<WrappedUInteger32>();
 			case WrappedVarType::UInteger64: return CreateRef<WrappedUInteger64>();
+			case WrappedVarType::Vector3: return CreateRef<WrappedVector3>();
 			case WrappedVarType::String: return CreateRef<WrappedString>();
 			case WrappedVarType::Bool: return CreateRef<WrappedBool>();
 			case WrappedVarType::Float: return CreateRef<WrappedFloat>();
@@ -388,6 +421,7 @@ namespace Kargono
 			case WrappedVarType::UInteger16: return "uint16_t";
 			case WrappedVarType::UInteger32: return "uint32_t";
 			case WrappedVarType::UInteger64: return "uint64_t";
+			case WrappedVarType::Vector3: return "Math::vec3";
 			case WrappedVarType::String: return "std::string";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
@@ -404,6 +438,7 @@ namespace Kargono
 			if (type == "UInteger16") { return WrappedVarType::UInteger16; }
 			if (type == "UInteger32") { return WrappedVarType::UInteger32; }
 			if (type == "UInteger64") { return WrappedVarType::UInteger64; }
+			if (type == "Vector3") { return WrappedVarType::Vector3; }
 			if (type == "String") { return WrappedVarType::String; }
 			if (type == "Void") { return WrappedVarType::Void; }
 			if (type == "Bool") { return WrappedVarType::Bool; }
@@ -426,6 +461,9 @@ namespace Kargono
 		{
 			// Func Resources
 			static std::string valueString {};
+			static float value1{};
+			static float value2{};
+			static float value3{};
 
 			bool success{ false };
 			switch (variable->Type())
@@ -452,6 +490,13 @@ namespace Kargono
 				{
 					success = Conversions::CharBufferToVariable(buffer,
 						variable->GetWrappedValue<uint64_t>());
+					break;
+				}
+				case WrappedVarType::Vector3:
+				{
+					// TODO Figure out what happens to the vector
+					/*success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<uint64_t>());*/
 					break;
 				}
 				case WrappedVarType::String:

@@ -113,6 +113,7 @@ namespace Kargono
 		};
 
 		s_EditClassFieldPopup.Label = "Edit Field";
+		s_EditClassFieldPopup.PopupWidth = 420.0f;
 		s_EditClassFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
 		{
 			Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();

@@ -69,6 +69,16 @@ namespace Kargono
 			return (bool)Data;
 		}
 
+		void SetString(const std::string& string)
+		{
+			if (Size < string.size())
+			{
+				Allocate(string.size());
+			}
+			SetDataToByte(0);
+			memcpy(Data, string.data(), string.size());
+		}
+
 		std::string GetString()
 		{
 			return { this->As<char>() };
