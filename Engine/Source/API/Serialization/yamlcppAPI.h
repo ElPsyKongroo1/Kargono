@@ -264,6 +264,11 @@ namespace Kargono::Utility
 			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<int64_t>();
 			return;
 		}
+		case WrappedVarType::Vector3:
+		{
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<Math::vec3>();
+			return;
+		}
 		case WrappedVarType::String:
 		{
 			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<std::string>();
@@ -308,6 +313,10 @@ namespace Kargono::Utility
 		case WrappedVarType::UInteger64:
 		{
 			return CreateRef<WrappedUInteger64>(field["Value"].as<uint64_t>());
+		}
+		case WrappedVarType::Vector3:
+		{
+			return CreateRef<WrappedVector3>(field["Value"].as<Math::vec3>());
 		}
 		case WrappedVarType::String:
 		{

@@ -1,6 +1,26 @@
 Physics:
   Gravity: [0, 0]
 Entities:
+  - Entity: 5259435093118310564
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [0, 0, 8.06505489]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ShapeComponent:
+      CurrentShape: Cube
+      TextureHandle: 17057334801167380747
+      ShaderHandle: 5871177019587903897
+      ShaderSpecification:
+        ColorInputType: None
+        AddProjectionMatrix: true
+        AddEntityID: true
+        AddCircleShape: false
+        TextureInput: None
+        DrawOutline: false
+        RenderType: DrawIndex
+      Buffer: !!binary "AAAAvwAAAD/uFPJAAAAAAA=="
   - Entity: 5942960898844651145
     TagComponent:
       Tag: Camera
@@ -31,23 +51,3 @@ Entities:
         DrawOutline: false
         RenderType: DrawIndex
       Buffer: !!binary "QEaCwEbKqj9Xf29BAQAAAAAAAAAAAIA/AAAAAAAAgD8="
-  - Entity: 5259435093118310564
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Translation: [0, 0, 8.06505489]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    ShapeComponent:
-      CurrentShape: Cube
-      TextureHandle: 17057334801167380747
-      ShaderHandle: 5871177019587903897
-      ShaderSpecification:
-        ColorInputType: None
-        AddProjectionMatrix: true
-        AddEntityID: true
-        AddCircleShape: false
-        TextureInput: None
-        DrawOutline: false
-        RenderType: DrawIndex
-      Buffer: !!binary "AAAAvwAAAD/uFPJAAAAAAA=="
