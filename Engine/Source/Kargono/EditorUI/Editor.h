@@ -269,8 +269,26 @@ namespace Kargono::EditorUI
 		WidgetFlags Flags{ CollapsingHeader_None };
 		bool Expanded{ false };
 		std::function<void()> OnExpand { nullptr };
+	public:
+		void ClearSelectionList()
+		{
+			SelectionList.clear();
+		}
+		void AddToSelectionList(const std::string& label, std::function<void()> function)
+		{
+			if (!SelectionList.contains(label))
+			{
+				SelectionList.insert_or_assign(label, function);
+				return;
+			}
+		}
+		SelectionList& GetSelectionList()
+		{
+			return SelectionList;
+		}
 	private:
 		WidgetID WidgetID;
+		SelectionList SelectionList{};
 	private:
 		friend void Editor::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};

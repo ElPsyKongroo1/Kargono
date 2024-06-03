@@ -9,13 +9,11 @@
 
 namespace Kargono::Utility
 {
-	static void SerializeEntity(YAML::Emitter& out, Entity entity)
+	static bool SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		KG_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have a component");
-
 		out << YAML::BeginMap; // Entity Map
 		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
-
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -32,41 +30,40 @@ namespace Kargono::Utility
 			ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
 			out << YAML::BeginMap; // Component Map
 			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
-			if (comp.ClassHandle == Assets::EmptyHandle)
+			if (comp.ClassHandle != Assets::EmptyHandle)
 			{
-				KG_ERROR("Attempt to serialize ClassInstanceComponent without ClassHandle");
-				return;
-			}
-			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
-			if (!entityClass)
-			{
-				KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
-				return;
-			}
-			if (entityClass->GetFields().size() != comp.Fields.size())
-			{
-				KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
-				return;
-			}
-
-			out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
-			uint32_t iteration{ 0 };
-			for (auto& fieldValue : comp.Fields)
-			{
-				const ClassField& fieldType = entityClass->GetFields().at(iteration);
-				if (fieldType.Type != fieldValue->Type())
+				Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+				if (!entityClass)
 				{
-					KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
-					return;
+					KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
+					return false;
 				}
-				out << YAML::BeginMap; // Begin Field Map
-				out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
-				out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
-				SerializeWrappedVariableData(fieldValue, out);
-				out << YAML::EndMap; // End Field Map
-				iteration++;
+				if (entityClass->GetFields().size() != comp.Fields.size())
+				{
+					KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
+					return false;
+				}
+
+				out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
+				uint32_t iteration{ 0 };
+				for (auto& fieldValue : comp.Fields)
+				{
+					const ClassField& fieldType = entityClass->GetFields().at(iteration);
+					if (fieldType.Type != fieldValue->Type())
+					{
+						KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
+						return false;
+					}
+					out << YAML::BeginMap; // Begin Field Map
+					out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
+					out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
+					SerializeWrappedVariableData(fieldValue, out);
+					out << YAML::EndMap; // End Field Map
+					iteration++;
+				}
+				out << YAML::EndSeq; // End Fields
 			}
-			out << YAML::EndSeq; // End Fields
+			
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -277,6 +274,7 @@ namespace Kargono::Utility
 
 
 		out << YAML::EndMap; // Entity
+		return true;
 	}
 }
 
@@ -376,6 +374,7 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeScene(Ref<Kargono::Scene> scene, const std::filesystem::path& filepath)
 	{
+		bool submitScene = true;
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		{ // Physics
@@ -386,18 +385,29 @@ namespace Kargono::Assets
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		scene->m_Registry.each([&](auto entityID)
-			{
-				Entity entity = { entityID, scene.get() };
-				if (!entity) { return; }
+		{
+			Entity entity = { entityID, scene.get() };
+			if (!entity) { return; }
 
-				Utility::SerializeEntity(out, entity);
-			});
+			bool success = Utility::SerializeEntity(out, entity);
+			if (!success)
+			{
+				submitScene = false;
+			}
+		});
 		out << YAML::EndSeq;
 		out << YAML::EndMap; // Start of File Map
-
-		std::ofstream fout(filepath);
-		fout << out.c_str();
-		KG_INFO("Successfully Serialized Scene at {}", filepath);
+		if (submitScene)
+		{
+			std::ofstream fout(filepath);
+			fout << out.c_str();
+			KG_INFO("Successfully Serialized Scene at {}", filepath);
+		}
+		else
+		{
+			KG_WARN("Failed to Serialize Scene");
+		}
+		
 	}
 
 	bool AssetManager::CheckSceneExists(const std::string& sceneName)
@@ -469,21 +479,24 @@ namespace Kargono::Assets
 				{
 					auto& cInstComp = deserializedEntity.AddComponent<ClassInstanceComponent>();
 					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
-					if (!s_EntityClassRegistry.contains(cInstComp.ClassHandle))
+					if (cInstComp.ClassHandle != Assets::EmptyHandle)
 					{
-						KG_ERROR("Could not find entity class for class instance component");
-						return false;
-					}
-					cInstComp.ClassReference = GetEntityClass(cInstComp.ClassHandle);
-
-					auto instanceFields = classInstanceComponent["InstanceFields"];
-					if (instanceFields)
-					{
-						for (auto field : instanceFields)
+						if (!s_EntityClassRegistry.contains(cInstComp.ClassHandle))
 						{
-							WrappedVarType type = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
-							Ref<WrappedVariable> newField = Utility::DeserializeWrappedVariableData(type, field);
-							cInstComp.Fields.push_back(newField);
+							KG_ERROR("Could not find entity class for class instance component");
+							return false;
+						}
+						cInstComp.ClassReference = GetEntityClass(cInstComp.ClassHandle);
+
+						auto instanceFields = classInstanceComponent["InstanceFields"];
+						if (instanceFields)
+						{
+							for (auto field : instanceFields)
+							{
+								WrappedVarType type = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
+								Ref<WrappedVariable> newField = Utility::DeserializeWrappedVariableData(type, field);
+								cInstComp.Fields.push_back(newField);
+							}
 						}
 					}
 				}

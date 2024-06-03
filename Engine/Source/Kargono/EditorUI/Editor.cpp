@@ -1168,6 +1168,7 @@ namespace Kargono::EditorUI
 	void Editor::CollapsingHeader(CollapsingHeaderSpec& spec)
 	{
 		uint32_t widgetCount{ 0 };
+		std::string id = "##" + std::to_string(spec.WidgetID);
 		ImGui::PushFont(Editor::s_AntaLarge);
 		ImGui::Text(spec.Label.c_str());
 		ImGui::PopFont();
@@ -1177,6 +1178,27 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		},
 		s_SmallExpandButton, spec.Expanded);
+
+		if (spec.Expanded && !spec.SelectionList.empty())
+		{
+			ImGui::SameLine();
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				{
+					ImGui::OpenPopup(spec.WidgetID - 1);
+				}, s_SmallOptionsButton);
+
+			if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
+			{
+				for (auto& [label, func] : spec.SelectionList)
+				{
+					if (ImGui::Selectable((label + id).c_str()))
+					{
+						func();
+					}
+				}
+				ImGui::EndPopup();
+			}
+		}
 
 		if ((spec.Flags & CollapsingHeader_UnderlineTitle) && spec.Expanded)
 		{

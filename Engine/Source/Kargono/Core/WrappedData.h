@@ -461,9 +461,6 @@ namespace Kargono
 		{
 			// Func Resources
 			static std::string valueString {};
-			static float value1{};
-			static float value2{};
-			static float value3{};
 
 			bool success{ false };
 			switch (variable->Type())
@@ -495,8 +492,8 @@ namespace Kargono
 				case WrappedVarType::Vector3:
 				{
 					// TODO Figure out what happens to the vector
-					/*success = Conversions::CharBufferToVariable(buffer,
-						variable->GetWrappedValue<uint64_t>());*/
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<Math::vec3>());
 					break;
 				}
 				case WrappedVarType::String:
@@ -525,7 +522,7 @@ namespace Kargono
 					return false;
 				}
 			}
-			return true;
+			return success;
 		}
 
 		inline std::string WrappedFuncTypeToString(WrappedFuncType type)
