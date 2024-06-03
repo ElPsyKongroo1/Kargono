@@ -31,6 +31,18 @@ namespace Kargono
 		s_ClassInstanceHeader.Label = "Class Instance";
 		s_ClassInstanceHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		s_ClassInstanceHeader.Expanded = true;
+		s_ClassInstanceHeader.AddToSelectionList("Remove Component", [&]()
+		{
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+			{
+				Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
+				auto& component = entity.GetComponent<ClassInstanceComponent>();
+				if (entity.HasComponent<ClassInstanceComponent>())
+				{
+					entity.RemoveComponent<ClassInstanceComponent>();
+				}
+			});
+		});
 
 		s_SelectClassOption.Label = "Class";
 		s_SelectClassOption.Flags |= EditorUI::SelectOption_Indented;
@@ -151,7 +163,6 @@ namespace Kargono
 			}
 			s_InstanceFieldsTable.OnRefresh();
 		};
-
 		s_EditFieldValue.Label = "Edit Value";
 		s_EditFieldValue.AllocateBuffer();
 

@@ -1,9 +1,11 @@
 Name: asdf
 FieldTypes:
-  - Name: New Field 1
-    Type: String
   - Name: New Field 2
     Type: Bool
+  - Name: Filed
+    Type: String
+  - Name: hahaha
+    Type: Vector3
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
 OnCreate: 0
