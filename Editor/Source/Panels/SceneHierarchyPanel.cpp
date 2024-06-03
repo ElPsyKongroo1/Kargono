@@ -253,7 +253,19 @@ namespace Kargono
 	}
 	void SceneHierarchyPanel::RefreshWidgetData()
 	{
-		s_InstanceFieldsTable.OnRefresh();
+		Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+		if (currentEntity.HasComponent<ClassInstanceComponent>())
+		{
+			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			if (!Assets::AssetManager::GetEntityClass(comp.ClassHandle))
+			{
+				comp.ClassHandle = Assets::EmptyHandle;
+				comp.Fields.clear();
+				comp.ClassReference = nullptr;
+				s_SelectClassOption.CurrentOption = {"None", Assets::EmptyHandle};
+			}
+			s_InstanceFieldsTable.OnRefresh();
+		}
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
