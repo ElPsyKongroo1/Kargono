@@ -1,14 +1,3 @@
 Registry: EntityClass
 Assets:
-  - AssetHandle: 1314729502980238687
-    MetaData:
-      CheckSum: f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b
-      IntermediateLocation: EntityClass/asdf.kgclass
-      AssetType: EntityClass
-      Name: asdf
-  - AssetHandle: 954827095700296452
-    MetaData:
-      CheckSum: 306fb223e381d036a39bedaba128bf865bd0eb4ebe6f99e9621a09d6d0bf59c7
-      IntermediateLocation: EntityClass/BallClass.kgclass
-      AssetType: EntityClass
-      Name: BallClass
+  []

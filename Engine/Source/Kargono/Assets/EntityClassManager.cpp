@@ -475,7 +475,7 @@ namespace Kargono::Assets
 			return InstantiateEntityClass(asset);
 		}
 
-		KG_ERROR("No EntityClass is associated with provided handle!");
+		KG_WARN("No EntityClass is associated with provided handle!");
 		return nullptr;
 	}
 	std::tuple<AssetHandle, Ref<Kargono::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)

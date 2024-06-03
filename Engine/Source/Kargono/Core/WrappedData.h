@@ -501,12 +501,14 @@ namespace Kargono
 					valueString = buffer.GetString();
 					variable->SetWrappedValue<std::string>(valueString);
 					valueString = {};
+					success = true;
 					break;
 				}
 				case WrappedVarType::Bool:
 				{
 					valueString = buffer.GetString();
 					variable->SetWrappedValue<bool>(Utility::Conversions::StringToBool(valueString));
+					success = true;
 					break;
 				}
 				case WrappedVarType::Float:

@@ -22,16 +22,16 @@ namespace Kargono::Utility
 			{
 				if (ec == std::errc::invalid_argument)
 				{
-					KG_ERROR("Invalid Type provided to Buffer -> Variable conversion function");
+					KG_WARN("Invalid Type provided to Buffer -> Variable conversion function");
 					return false;
 				}
 				if (ec == std::errc::result_out_of_range)
 				{
-					KG_ERROR("Improper bounds checking for Buffer -> Variable conversion function");
+					KG_WARN("Improper bounds checking for Buffer -> Variable conversion function");
 					return false;
 				}
 
-				KG_ERROR("Unknown error in Buffer to Variable conversion function");
+				KG_WARN("Unknown error in Buffer to Variable conversion function");
 				return false;
 			}
 			return true;
