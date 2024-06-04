@@ -1,6 +1,8 @@
 #pragma once
 #include "Kargono.h"
 
+#include <string>
+
 namespace Kargono
 {
 	class EntityClassEditor
@@ -9,12 +11,15 @@ namespace Kargono
 		EntityClassEditor();
 
 		void OnEditorUIRender();
-
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
 		void InitializeDisplayEntityClassScreen();
 
 	public:
 		void RefreshEntityScripts(Assets::AssetHandle handle);
+
+	private:
+		std::string m_PanelName{ "Class Editor" };
 
 	};
 }

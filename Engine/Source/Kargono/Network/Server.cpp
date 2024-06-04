@@ -296,7 +296,7 @@ namespace Kargono::Network
 	void Server::OnEvent(Events::Event& e)
 	{
 		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(Server::OnStartSession));
+		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(Server::OnStartSession));
 		
 	}
 

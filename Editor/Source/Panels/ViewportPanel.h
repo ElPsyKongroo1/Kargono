@@ -14,9 +14,10 @@ namespace Kargono
 		void OnUpdate(Timestep ts);
 
 		void OnEditorUIRender();
+		void OnEvent(Events::Event& e);
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
 		void InitializeFrameBuffer();
-
 
 		void ProcessMousePicking();
 		// This function runs the overlay code that displays visualization for physics colliders,
@@ -44,6 +45,7 @@ namespace Kargono
 	public:
 		EditorCamera m_EditorCamera;
 	private:
+		std::string m_PanelName{ "Viewport" };
 		// Viewport Resources
 		Ref<Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;

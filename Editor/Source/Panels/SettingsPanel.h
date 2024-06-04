@@ -1,4 +1,5 @@
 #pragma once
+#include "Kargono/Events/KeyEvent.h"
 
 namespace Kargono
 {
@@ -8,6 +9,8 @@ namespace Kargono
 		SettingsPanel();
 
 		void OnEditorUIRender();
-
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+	private:
+		std::string m_PanelName{ "Settings" };
 	};
 }

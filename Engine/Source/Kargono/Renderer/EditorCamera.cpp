@@ -125,9 +125,9 @@ namespace Kargono {
 	void EditorCamera::OnEvent(Events::Event& e)
 	{
 		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::MouseScrolledEvent>(KG_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
-		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorCamera::OnKeyPressed));
-		dispatcher.Dispatch<Events::KeyReleasedEvent>(KG_BIND_EVENT_FN(EditorCamera::OnKeyReleased));
+		dispatcher.Dispatch<Events::MouseScrolledEvent>(KG_BIND_CLASS_FN(EditorCamera::OnMouseScroll));
+		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorCamera::OnKeyPressed));
+		dispatcher.Dispatch<Events::KeyReleasedEvent>(KG_BIND_CLASS_FN(EditorCamera::OnKeyReleased));
 	}
 
 	bool EditorCamera::OnKeyReleased(Events::KeyReleasedEvent& e)

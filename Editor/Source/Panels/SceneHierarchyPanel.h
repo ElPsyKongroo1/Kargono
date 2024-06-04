@@ -8,11 +8,11 @@ namespace Kargono
 	{
 	public:
 		SceneHierarchyPanel();
-
+	public:
 		void OnEditorUIRender();
-
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+	public:
 		void SetSelectedEntity(Entity entity);
-
 		void RefreshWidgetData();
 	private:
 		void DrawEntityNode(Entity entity);
@@ -20,7 +20,7 @@ namespace Kargono
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
-
-
+	private:
+		std::string m_PanelName{"Scene Hierarchy"};
 	};
 }

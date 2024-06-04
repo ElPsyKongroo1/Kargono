@@ -4,7 +4,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	void InputEditorPanel::InputEditor_Keyboard_OnUpdate()
 	{
@@ -628,13 +628,15 @@ namespace Kargono
 
 	InputEditorPanel::InputEditorPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(InputEditorPanel::OnKeyPressedEditor));
 	}
 
 	void InputEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Input Mode Editor", &(s_EditorLayer->m_ShowInputEditor));
+		EditorUI::Editor::StartWindow(m_PanelName, &(s_EditorApp->m_ShowInputEditor));
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))
 		{
@@ -713,5 +715,9 @@ namespace Kargono
 			ImGui::EndTabBar();
 		}
 		EditorUI::Editor::EndWindow();
+	}
+	bool InputEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

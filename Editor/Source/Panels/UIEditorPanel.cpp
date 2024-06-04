@@ -6,7 +6,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	static void DisplayWidgetSpecificInfo(Ref<RuntimeUI::Widget> widget, int32_t selectedWidget)
 	{
@@ -51,7 +51,9 @@ namespace Kargono
 
 	UIEditorPanel::UIEditorPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));
 	}
 
 	void UIEditorPanel::OnEditorUIRender()
@@ -66,7 +68,7 @@ namespace Kargono
 		int32_t& selectedWindow = RuntimeUI::Runtime::GetSelectedWindow();
 		int32_t& selectedWidget = RuntimeUI::Runtime::GetSelectedWidget();
 
-		EditorUI::Editor::StartWindow("User Interface Editor", &s_EditorLayer->m_ShowUserInterfaceEditor);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
 
 		Assets::AssetHandle currentUIHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(currentUIHandle) ? Assets::AssetManager::GetUIObjectLocation(currentUIHandle).string().c_str() : "None"))
@@ -406,5 +408,9 @@ namespace Kargono
 			RuntimeUI::Runtime::AddWindow(window1);
 			windowToAdd = 0;
 		}
+	}
+	bool UIEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

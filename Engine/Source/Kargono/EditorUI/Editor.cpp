@@ -9,6 +9,7 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Windowing/GlfwAPI.h"
 #include "API/Windowing/gladAPI.h"
+#include "Editor.h"
 
 namespace Kargono::EditorUI
 {
@@ -353,6 +354,27 @@ namespace Kargono::EditorUI
 	uint32_t Editor::GetActiveWidgetID()
 	{
 		return GImGui->ActiveId;
+	}
+
+	std::string Editor::GetFocusedWindowName()
+	{
+		if (GImGui->NavWindow)
+		{
+			return GImGui->NavWindow->Name;
+		}
+		return {};
+	}
+
+	void Editor::HighlightFocusedWindow()
+	{
+		ImGuiWindow* window = GImGui->NavWindow;
+		if (window)
+		{
+			ImVec2 windowPos = window->Pos;
+			ImVec2 windowSize = window->Size;
+			ImGui::GetForegroundDrawList(window)->AddRect(windowPos,
+				ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(193, 249, 255, 132));
+		}
 	}
 
 	void Editor::OnEvent(Events::Event& e)

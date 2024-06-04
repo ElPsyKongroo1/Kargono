@@ -6,7 +6,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	// Script Table (Create)
 	static EditorUI::TableSpec s_AllScriptsTable {};
@@ -35,8 +35,10 @@ namespace Kargono
 
 	ScriptEditorPanel::ScriptEditorPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
-	
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ScriptEditorPanel::OnKeyPressedEditor));
+
 		s_AllScriptsTable.Label = "All Scripts";
 		s_AllScriptsTable.Column1Title = "Group";
 		s_AllScriptsTable.Column2Title = "Name";
@@ -65,7 +67,7 @@ namespace Kargono
 						return;
 					}
 					Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-					s_EditorLayer->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 				};
 				EditorUI::TableEntry newEntry
 				{
@@ -115,7 +117,7 @@ namespace Kargono
 				{
 					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
 					{
-						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
 					}
 				}
@@ -211,7 +213,7 @@ namespace Kargono
 					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
 						|| asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == originalLabel)
 					{
-						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
 					}
 				}
@@ -280,7 +282,7 @@ namespace Kargono
 				{
 					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == sectionLabel)
 					{
-						s_EditorLayer->m_EntityClassEditor->RefreshEntityScripts(handle);
+						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
 					}
 				}
@@ -447,7 +449,7 @@ namespace Kargono
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Scripts", &s_EditorLayer->m_ShowScriptEditor);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
 
 		EditorUI::Editor::Table(s_AllScriptsTable);
 		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
@@ -464,5 +466,9 @@ namespace Kargono
 		EditorUI::Editor::GenericPopup(s_EditGroupLabelPopup);
 
 		EditorUI::Editor::EndWindow();
+	}
+	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

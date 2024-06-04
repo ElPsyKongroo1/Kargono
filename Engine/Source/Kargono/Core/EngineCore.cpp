@@ -36,8 +36,8 @@ namespace Kargono
 		m_CurrentApp = app;
 		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));
 		KG_VERIFY(m_Window, "Window Init");
-		m_Window->SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
-		AppTickEngine::SetAppTickCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
+		m_Window->SetEventCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));
+		AppTickEngine::SetAppTickCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));
 		app->OnAttach();
 	}
 
@@ -62,15 +62,15 @@ namespace Kargono
 	void EngineCore::OnEvent(Events::Event& e) 
 	{
 		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::WindowCloseEvent>(KG_BIND_EVENT_FN(EngineCore::OnWindowClose));
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(EngineCore::OnWindowResize));
-		dispatcher.Dispatch<Events::CleanUpTimersEvent>(KG_BIND_EVENT_FN(EngineCore::OnCleanUpTimers));
-		dispatcher.Dispatch<Events::AddTickGeneratorUsage>(KG_BIND_EVENT_FN(EngineCore::OnAddTickGeneratorUsage));
-		dispatcher.Dispatch<Events::RemoveTickGeneratorUsage>(KG_BIND_EVENT_FN(EngineCore::OnRemoveTickGeneratorUsage));
-		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_EVENT_FN(EngineCore::OnAppTickEvent));
+		dispatcher.Dispatch<Events::WindowCloseEvent>(KG_BIND_CLASS_FN(EngineCore::OnWindowClose));
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_CLASS_FN(EngineCore::OnWindowResize));
+		dispatcher.Dispatch<Events::CleanUpTimersEvent>(KG_BIND_CLASS_FN(EngineCore::OnCleanUpTimers));
+		dispatcher.Dispatch<Events::AddTickGeneratorUsage>(KG_BIND_CLASS_FN(EngineCore::OnAddTickGeneratorUsage));
+		dispatcher.Dispatch<Events::RemoveTickGeneratorUsage>(KG_BIND_CLASS_FN(EngineCore::OnRemoveTickGeneratorUsage));
+		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_CLASS_FN(EngineCore::OnAppTickEvent));
 
-		dispatcher.Dispatch<Events::UpdateEntityLocation>(KG_BIND_EVENT_FN(EngineCore::OnUpdateEntityLocation));
-		dispatcher.Dispatch<Events::UpdateEntityPhysics>(KG_BIND_EVENT_FN(EngineCore::OnUpdateEntityPhysics));
+		dispatcher.Dispatch<Events::UpdateEntityLocation>(KG_BIND_CLASS_FN(EngineCore::OnUpdateEntityLocation));
+		dispatcher.Dispatch<Events::UpdateEntityPhysics>(KG_BIND_CLASS_FN(EngineCore::OnUpdateEntityPhysics));
 
 		if (e.Handled)
 		{

@@ -1,0 +1,18 @@
+Name: Ball
+FieldTypes:
+  - Name: Speed
+    Type: Float
+  - Name: ChangeVelocity
+    Type: Bool
+  - Name: PlayerOneScore
+    Type: UInteger32
+  - Name: PlayerTwoScore
+    Type: UInteger32
+  - Name: InitialPosition
+    Type: Vector3
+OnPhysicsCollisionStart: 0
+OnPhysicsCollisionEnd: 0
+OnCreate: 0
+OnUpdate: 0
+AllScripts:
+  []

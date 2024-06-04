@@ -55,7 +55,7 @@ namespace Kargono
 
 		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
 		{
-			contactListener.SetEventCallback(KG_BIND_EVENT_FN(EngineCore::OnEvent));
+			contactListener.SetEventCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));
 		}
 
 		const AppSpec& GetSpecification() const { return m_Specification; }
