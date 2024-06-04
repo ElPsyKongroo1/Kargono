@@ -7,11 +7,13 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	ViewportPanel::ViewportPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ViewportPanel::OnKeyPressedEditor));
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
@@ -33,20 +35,25 @@ namespace Kargono
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
-
+		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
 		// Update Scene
-		switch (s_EditorLayer->m_SceneState)
+		switch (s_EditorApp->m_SceneState)
 		{
 		case SceneState::Edit:
 		{
-			m_EditorCamera.OnUpdate(ts);
+			if (focusedWindow == m_PanelName)
+			{
+				m_EditorCamera.OnUpdate(ts);
+			}
 			OnUpdateEditor(ts, m_EditorCamera);
 			break;
 		}
 		case SceneState::Simulate:
 		{
-			m_EditorCamera.OnUpdate(ts);
-
+			if (focusedWindow == m_PanelName)
+			{
+				m_EditorCamera.OnUpdate(ts);
+			}
 			OnUpdateSimulation(ts, m_EditorCamera);
 			break;
 		}
@@ -61,10 +68,10 @@ namespace Kargono
 
 		OnOverlayRender();
 
-		if (s_EditorLayer->m_ShowUserInterface)
+		if (s_EditorApp->m_ShowUserInterface)
 		{
 			auto& currentApplication = EngineCore::GetCurrentEngineCore().GetWindow();
-			if (s_EditorLayer->m_SceneState == SceneState::Play)
+			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
 				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 				Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
@@ -102,7 +109,7 @@ namespace Kargono
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
-		EditorUI::Editor::StartWindow("Viewport", &s_EditorLayer->m_ShowViewport, window_flags);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		Math::vec2 localViewportBounds[2];
@@ -143,12 +150,12 @@ namespace Kargono
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_SCENE"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				s_EditorLayer->OpenScene(path);
+				s_EditorApp->OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-		if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate)
+		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 
 		{
 			// Gizmos
@@ -195,6 +202,66 @@ namespace Kargono
 		EditorUI::Editor::EndWindow();
 		ImGui::PopStyleVar();
 	}
+	void ViewportPanel::OnEvent(Events::Event& event)
+	{
+		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+		{
+			m_EditorCamera.OnEvent(event);
+		}
+	}
+	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
+		bool shift = InputPolling::IsKeyPressed(Key::LeftShift) || InputPolling::IsKeyPressed(Key::RightShift);
+		bool alt = InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt);
+
+		switch (event.GetKeyCode())
+		{
+			case Key::Escape:
+			{
+				s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+				return true;
+			}
+			case Key::Tab:
+			{
+				s_EditorApp->m_ViewportPanel->m_EditorCamera.ToggleMovementType();
+				return true;
+			}
+
+			// Gizmos
+			case Key::Q:
+			{
+				if (!ImGuizmo::IsUsing() && !alt)
+				{
+					s_EditorApp->m_ViewportPanel->m_GizmoType = -1;
+					return true;
+				}
+				return false;
+			}
+			case Key::W:
+			{
+				if (!ImGuizmo::IsUsing() && !alt)
+				{
+					s_EditorApp->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					return true;
+				}
+				return false;
+			}
+			case Key::E:
+			{
+				if (!ImGuizmo::IsUsing() && !alt)
+				{
+					s_EditorApp->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+					return true;
+				}
+				return false;
+			}
+			default:
+			{
+				return false;
+			}
+		}
+	}
 	void ViewportPanel::ProcessMousePicking()
 	{
 		auto [mx, my] = ImGui::GetMousePos();
@@ -221,7 +288,7 @@ namespace Kargono
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
 
-		if (!s_EditorLayer->m_IsPaused || s_EditorLayer->m_StepFrames-- > 0)
+		if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
 		{
 			// Update Scripts
 
@@ -245,7 +312,7 @@ namespace Kargono
 
 	void ViewportPanel::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		EditorApp* editorLayer = EditorApp::GetCurrentLayer();
+		EditorApp* editorLayer = EditorApp::GetCurrentApp();
 
 		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
 		{
@@ -370,7 +437,7 @@ namespace Kargono
 
 	void ViewportPanel::OnOverlayRender()
 	{
-		if (s_EditorLayer->m_SceneState == SceneState::Play)
+		if (s_EditorApp->m_SceneState == SceneState::Play)
 		{
 			Entity camera = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
@@ -381,7 +448,7 @@ namespace Kargono
 			Renderer::BeginScene(m_EditorCamera);
 		}
 
-		if (s_EditorLayer->m_ShowPhysicsColliders)
+		if (s_EditorApp->m_ShowPhysicsColliders)
 		{
 			// Circle Colliders
 			{
@@ -447,7 +514,7 @@ namespace Kargono
 			}
 		}
 
-		if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate || (s_EditorLayer->m_SceneState == SceneState::Play && s_EditorLayer->m_IsPaused))
+		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate || (s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
 		{
 			// Draw selected entity outline 
 			if (Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity()) {
@@ -471,7 +538,7 @@ namespace Kargono
 					Renderer::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorLayer->m_ShowCameraFrustrums)
+				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorApp->m_ShowCameraFrustrums)
 				{
 					DrawFrustrum(selectedEntity);
 				}

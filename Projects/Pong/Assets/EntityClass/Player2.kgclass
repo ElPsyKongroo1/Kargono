@@ -1,0 +1,14 @@
+Name: Player2
+FieldTypes:
+  - Name: Speed
+    Type: Float
+  - Name: SpeedUpFactor
+    Type: Float
+  - Name: InitialPosition
+    Type: Vector3
+OnPhysicsCollisionStart: 0
+OnPhysicsCollisionEnd: 0
+OnCreate: 0
+OnUpdate: 0
+AllScripts:
+  []

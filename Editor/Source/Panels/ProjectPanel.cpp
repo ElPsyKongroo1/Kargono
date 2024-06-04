@@ -5,7 +5,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	static EditorUI::SelectOptionSpec s_SelectStartSceneSpec {};
 	static EditorUI::CheckboxSpec s_DefaultFullscreenSpec {};
@@ -475,13 +475,15 @@ namespace Kargono
 
 	ProjectPanel::ProjectPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 		InitializeStaticResources();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Project", &s_EditorLayer->m_ShowProject);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
 		// Project Name
 		EditorUI::Editor::LabeledText("Project Name", Projects::Project::GetProjectName());
 		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
@@ -676,5 +678,9 @@ namespace Kargono
 
 
 		EditorUI::Editor::EndWindow();
+	}
+	bool ProjectPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

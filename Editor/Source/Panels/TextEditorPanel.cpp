@@ -15,7 +15,7 @@ namespace Kargono
 		bool SetActive{ false };
 	};
 
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	static uint32_t s_ActiveDocument = 0;
 	static std::vector<Document> s_AllDocuments {};
@@ -30,7 +30,9 @@ namespace Kargono
 	
 	TextEditorPanel::TextEditorPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
 		s_OnCreateFile = [&]()
 		{
@@ -114,7 +116,7 @@ namespace Kargono
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		EditorUI::Editor::StartWindow("Text Editor", &s_EditorLayer->m_ShowTextEditor, flags);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowTextEditor, flags);
 
 		if (s_AllDocuments.size() == 0)
 		{
@@ -235,13 +237,17 @@ namespace Kargono
 
 		EditorUI::Editor::EndWindow();
 	}
+	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
+	}
 	void TextEditorPanel::OpenFile(const std::filesystem::path& filepath)
 	{
 		if (!filepath.empty())
 		{
-			if (!s_EditorLayer->m_ShowTextEditor)
+			if (!s_EditorApp->m_ShowTextEditor)
 			{
-				s_EditorLayer->m_ShowTextEditor = true;
+				s_EditorApp->m_ShowTextEditor = true;
 			}
 
 			for (auto& document : s_AllDocuments)

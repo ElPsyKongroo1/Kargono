@@ -1,3 +1,20 @@
 Registry: EntityClass
 Assets:
-  []
+  - AssetHandle: 17325370763714437193
+    MetaData:
+      CheckSum: 4c348a86761b8ffbbd44cbe810ab320b6e785fa2e69fdf1e2562cb4bb9395590
+      IntermediateLocation: EntityClass/Player1.kgclass
+      AssetType: EntityClass
+      Name: Player1
+  - AssetHandle: 15563366892427587638
+    MetaData:
+      CheckSum: 5a0f6f04a48e880b9ad6cad29b17c7361e6f9a89d9255bf037365850495c1962
+      IntermediateLocation: EntityClass/Player2.kgclass
+      AssetType: EntityClass
+      Name: Player2
+  - AssetHandle: 3507788204292547978
+    MetaData:
+      CheckSum: ae5859eceacb8896e342285cc697d159a0107f1347a2fb94382029f2226d5444
+      IntermediateLocation: EntityClass/Ball.kgclass
+      AssetType: EntityClass
+      Name: Ball

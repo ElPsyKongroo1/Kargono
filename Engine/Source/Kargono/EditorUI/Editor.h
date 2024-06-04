@@ -107,6 +107,8 @@ namespace Kargono::EditorUI
 	public:
 		// Getter/Setter Functions
 		static uint32_t GetActiveWidgetID();
+		static std::string GetFocusedWindowName();
+		static void HighlightFocusedWindow();
 
 		static void BlockEvents(bool block)
 		{

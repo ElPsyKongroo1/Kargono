@@ -7,12 +7,12 @@
 namespace Kargono
 {
 
-	EditorApp* EditorApp::s_EditorLayer = nullptr;
+	EditorApp* EditorApp::s_EditorApp = nullptr;
 
 	EditorApp::EditorApp()
 		: Application("EditorLayer")
 	{
-		s_EditorLayer = this;
+		s_EditorApp = this;
 	}
 
 	void EditorApp::OnAttach()
@@ -266,6 +266,8 @@ namespace Kargono
 
 		EditorUI::Editor::EndWindow();
 
+		EditorUI::Editor::HighlightFocusedWindow();
+
 		EditorUI::Editor::EndRendering();
 	}
 
@@ -277,32 +279,39 @@ namespace Kargono
 		{
 			return;
 		}
+		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+		if (focusedWindow == m_ViewportPanel->m_PanelName)
+		{
+			m_ViewportPanel->OnEvent(event);
+		}
 
 		Events::EventDispatcher dispatcher(event);
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
-			m_ViewportPanel->m_EditorCamera.OnEvent(event);
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorApp::OnKeyPressedEditor));
-			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorApp::OnMouseButtonPressed));
+			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedEditor));
+			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
 		}
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(EditorApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_EVENT_FN(EditorApp::OnPhysicsCollisionEnd));
+		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollisionEnd));
 
-		if (m_SceneState == SceneState::Play && m_IsPaused) { dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_EVENT_FN(EditorApp::OnMouseButtonPressed)); }
+		if (m_SceneState == SceneState::Play && m_IsPaused)
+		{
+			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
+		}
 
 		if (m_SceneState == SceneState::Play)
 		{
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(EditorApp::OnKeyPressedRuntime));
-			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(EditorApp::OnApplicationClose));
-			dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_EVENT_FN(EditorApp::OnUpdateUserCount));
-			dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_EVENT_FN(EditorApp::OnApproveJoinSession));
-			dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_EVENT_FN(EditorApp::OnUserLeftSession));
-			dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_EVENT_FN(EditorApp::OnCurrentSessionInit));
-			dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(EditorApp::OnConnectionTerminated));
-			dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_EVENT_FN(EditorApp::OnUpdateSessionUserSlot));
-			dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(EditorApp::OnStartSession));
-			dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_EVENT_FN(EditorApp::OnSessionReadyCheckConfirm));
-			dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_EVENT_FN(EditorApp::OnReceiveSignal));
+			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedRuntime));
+			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(EditorApp::OnApplicationClose));
+			dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(EditorApp::OnUpdateUserCount));
+			dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(EditorApp::OnApproveJoinSession));
+			dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(EditorApp::OnUserLeftSession));
+			dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(EditorApp::OnCurrentSessionInit));
+			dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(EditorApp::OnConnectionTerminated));
+			dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(EditorApp::OnUpdateSessionUserSlot));
+			dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(EditorApp::OnStartSession));
+			dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(EditorApp::OnSessionReadyCheckConfirm));
+			dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(EditorApp::OnReceiveSignal));
 		}
 	}
 
@@ -324,92 +333,76 @@ namespace Kargono
 	{
 		if (event.IsRepeat()) { return false; }
 
+		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+		if (m_PanelToKeyboardInput.contains(focusedWindow))
+		{
+			if (m_PanelToKeyboardInput.at(focusedWindow)(event))
+			{
+				return true;
+			}
+		}
+
 		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
 		bool shift = InputPolling::IsKeyPressed(Key::LeftShift) || InputPolling::IsKeyPressed(Key::RightShift);
 		bool alt = InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
-		case Key::Escape:
-		{
-			m_SceneHierarchyPanel->SetSelectedEntity({});
-			break;
-		}
-		case Key::Tab:
-		{
-			m_ViewportPanel->m_EditorCamera.ToggleMovementType();
-			break;
-		}
 
-		case Key::N:
-		{
-			if (control) { NewScene(); }
-			break;
-		}
-		case Key::O:
-		{
-			if (control) { OpenProject(); }
-			break;
-		}
-		case Key::S:
-		{
-			if (control)
+			case Key::N:
 			{
-				SaveScene();
-				SaveProject();
-			}
-			break;
-		}
-
-		// Scene Commands
-
-		case Key::D:
-		{
-			if (control) { OnDuplicateEntity(); }
-			break;
-		}
-
-		// Gizmos
-		case Key::Q:
-			{
-			if (!ImGuizmo::IsUsing() && !alt) { m_ViewportPanel->m_GizmoType = -1; }
+				if (control) { NewScene(); }
 				break;
 			}
-		case Key::W:
-		{
-			if (!ImGuizmo::IsUsing() && !alt) { m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE; }
-			break;
-		}
-		case Key::E:
-		{
-			if (!ImGuizmo::IsUsing() && !alt) { m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::ROTATE; }
-			break;
-		}
-		case Key::R:
-		{
-			if (control)
+			case Key::O:
 			{
-				if (m_SceneState != SceneState::Edit) { OnStop(); }
-				Script::ScriptEngine::ReloadAssembly();
+				if (control) { OpenProject(); }
+				break;
 			}
-
-			if (!ImGuizmo::IsUsing()) { m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::SCALE; }
-			break;
-		}
-		case Key::Delete:
+			case Key::S:
 			{
-			if (EditorUI::Editor::GetActiveWidgetID() == 0)
-			{
-				Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-				if (selectedEntity)
+				if (control)
 				{
-					m_EditorScene->DestroyEntity(selectedEntity);
-					m_SceneHierarchyPanel->SetSelectedEntity({});
+					SaveScene();
+					SaveProject();
 				}
-			}
 				break;
-
 			}
+
+			// Scene Commands
+
+			case Key::D:
+			{
+				if (control) { OnDuplicateEntity(); }
+				break;
+			}
+
+			// Gizmos
+			case Key::R:
+			{
+				if (control)
+				{
+					if (m_SceneState != SceneState::Edit) { OnStop(); }
+					Script::ScriptEngine::ReloadAssembly();
+				}
+
+				if (!ImGuizmo::IsUsing()) { m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::SCALE; }
+				break;
+			}
+			case Key::Delete:
+				{
+				if (EditorUI::Editor::GetActiveWidgetID() == 0)
+				{
+					Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+					if (selectedEntity)
+					{
+						m_EditorScene->DestroyEntity(selectedEntity);
+						m_SceneHierarchyPanel->SetSelectedEntity({});
+					}
+				}
+					break;
+
+				}
 			default:
 			{
 				break;

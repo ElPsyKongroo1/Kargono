@@ -91,20 +91,20 @@ namespace Kargono
 	void RuntimeApp::OnEvent(Events::Event& event)
 	{
 		Events::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnKeyPressed));
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_EVENT_FN(RuntimeApp::OnPhysicsCollisionEnd));
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnWindowResize));
-		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_EVENT_FN(RuntimeApp::OnApplicationClose));
-		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_EVENT_FN(RuntimeApp::OnUpdateUserCount));
-		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_EVENT_FN(RuntimeApp::OnApproveJoinSession));
-		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_EVENT_FN(RuntimeApp::OnUserLeftSession));
-		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_EVENT_FN(RuntimeApp::OnCurrentSessionInit));
-		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(RuntimeApp::OnConnectionTerminated));
-		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_EVENT_FN(RuntimeApp::OnUpdateSessionUserSlot));
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(RuntimeApp::OnStartSession));
-		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_EVENT_FN(RuntimeApp::OnSessionReadyCheckConfirm));
-		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_EVENT_FN(RuntimeApp::OnReceiveSignal));
+		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnKeyPressed));
+		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollision));
+		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollisionEnd));
+		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnWindowResize));
+		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnApplicationClose));
+		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateUserCount));
+		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(RuntimeApp::OnApproveJoinSession));
+		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(RuntimeApp::OnUserLeftSession));
+		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(RuntimeApp::OnCurrentSessionInit));
+		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(RuntimeApp::OnConnectionTerminated));
+		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateSessionUserSlot));
+		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(RuntimeApp::OnStartSession));
+		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(RuntimeApp::OnSessionReadyCheckConfirm));
+		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(RuntimeApp::OnReceiveSignal));
 	}
 
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)

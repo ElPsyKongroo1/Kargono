@@ -5,16 +5,18 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	StatisticsPanel::StatisticsPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(StatisticsPanel::OnKeyPressedEditor));
 	}
 	void StatisticsPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Statistics", &s_EditorLayer->m_ShowStats);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
@@ -46,5 +48,9 @@ namespace Kargono
 		}
 
 		EditorUI::Editor::EndWindow();
+	}
+	bool StatisticsPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }
