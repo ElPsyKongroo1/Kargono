@@ -368,6 +368,11 @@ namespace Kargono
 				}
 				break;
 			}
+			case Key::F11:
+			{
+				EngineCore::GetActiveWindow().ToggleMaximized();
+				break;
+			}
 
 			// Scene Commands
 
@@ -390,19 +395,19 @@ namespace Kargono
 				break;
 			}
 			case Key::Delete:
+			{
+			if (EditorUI::Editor::GetActiveWidgetID() == 0)
+			{
+				Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+				if (selectedEntity)
 				{
-				if (EditorUI::Editor::GetActiveWidgetID() == 0)
-				{
-					Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-					if (selectedEntity)
-					{
-						m_EditorScene->DestroyEntity(selectedEntity);
-						m_SceneHierarchyPanel->SetSelectedEntity({});
-					}
+					m_EditorScene->DestroyEntity(selectedEntity);
+					m_SceneHierarchyPanel->SetSelectedEntity({});
 				}
-					break;
+			}
+				break;
 
-				}
+			}
 			default:
 			{
 				break;

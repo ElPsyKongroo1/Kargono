@@ -278,6 +278,17 @@ namespace API::Windows
 		m_Data.EventCallback(event);
 
 	}
+	void WindowsWindow::ToggleMaximized()
+	{
+		if (glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED))
+		{
+			glfwRestoreWindow(m_Window);
+		}
+		else
+		{
+			glfwMaximizeWindow(m_Window);
+		}
+	}
 	void WindowsWindow::SetMouseCursorVisible(bool choice)
 	{
 		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
