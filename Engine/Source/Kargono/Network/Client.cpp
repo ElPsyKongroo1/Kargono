@@ -22,17 +22,17 @@ namespace Kargono::Network
 	{
 		Events::EventDispatcher dispatcher(e);
 
-		dispatcher.Dispatch<Events::RequestJoinSession>(KG_BIND_EVENT_FN(Client::OnRequestJoinSession));
-		dispatcher.Dispatch<Events::RequestUserCount>(KG_BIND_EVENT_FN(Client::OnRequestUserCount));
-		dispatcher.Dispatch<Events::LeaveCurrentSession>(KG_BIND_EVENT_FN(Client::OnLeaveCurrentSession));
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_EVENT_FN(Client::OnStartSession));
-		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_EVENT_FN(Client::OnConnectionTerminated));
-		dispatcher.Dispatch<Events::EnableReadyCheck>(KG_BIND_EVENT_FN(Client::OnEnableReadyCheck));
-		dispatcher.Dispatch<Events::SessionReadyCheck>(KG_BIND_EVENT_FN(Client::OnSessionReadyCheck));
-		dispatcher.Dispatch<Events::SendAllEntityLocation>(KG_BIND_EVENT_FN(Client::OnSendAllEntityLocation));
-		dispatcher.Dispatch<Events::SendAllEntityPhysics>(KG_BIND_EVENT_FN(Client::OnSendAllEntityPhysics));
-		dispatcher.Dispatch<Events::SignalAll>(KG_BIND_EVENT_FN(Client::OnSignalAll));
-		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_EVENT_FN(Client::OnAppTickEvent));
+		dispatcher.Dispatch<Events::RequestJoinSession>(KG_BIND_CLASS_FN(Client::OnRequestJoinSession));
+		dispatcher.Dispatch<Events::RequestUserCount>(KG_BIND_CLASS_FN(Client::OnRequestUserCount));
+		dispatcher.Dispatch<Events::LeaveCurrentSession>(KG_BIND_CLASS_FN(Client::OnLeaveCurrentSession));
+		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(Client::OnStartSession));
+		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(Client::OnConnectionTerminated));
+		dispatcher.Dispatch<Events::EnableReadyCheck>(KG_BIND_CLASS_FN(Client::OnEnableReadyCheck));
+		dispatcher.Dispatch<Events::SessionReadyCheck>(KG_BIND_CLASS_FN(Client::OnSessionReadyCheck));
+		dispatcher.Dispatch<Events::SendAllEntityLocation>(KG_BIND_CLASS_FN(Client::OnSendAllEntityLocation));
+		dispatcher.Dispatch<Events::SendAllEntityPhysics>(KG_BIND_CLASS_FN(Client::OnSendAllEntityPhysics));
+		dispatcher.Dispatch<Events::SignalAll>(KG_BIND_CLASS_FN(Client::OnSignalAll));
+		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_CLASS_FN(Client::OnAppTickEvent));
 
 	}
 

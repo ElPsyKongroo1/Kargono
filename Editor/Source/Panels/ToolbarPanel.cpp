@@ -6,11 +6,13 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer{ nullptr };
+	static EditorApp* s_EditorApp{ nullptr };
 
 	ToolbarPanel::ToolbarPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ToolbarPanel::OnKeyPressedEditor));
 	}
 	void ToolbarPanel::OnEditorUIRender()
 	{
@@ -24,7 +26,7 @@ namespace Kargono
 		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
-		EditorUI::Editor::StartWindow("##toolbar", &s_EditorLayer->m_ShowToolbar);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowToolbar);
 
 		bool toolbarEnabled = (bool)Scene::GetActiveScene();
 
@@ -35,31 +37,31 @@ namespace Kargono
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 
-		bool hasPlayButton = s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Play;
-		bool hasSimulateButton = s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate;
-		bool hasPauseButton = s_EditorLayer->m_SceneState != SceneState::Edit;
+		bool hasPlayButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play;
+		bool hasSimulateButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate;
+		bool hasPauseButton = s_EditorApp->m_SceneState != SceneState::Edit;
 
 		if (hasPlayButton)
 		{
-			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate) ? EditorUI::Editor::s_IconPlay : EditorUI::Editor::s_IconStop;
+			Ref<Texture2D> icon = (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate) ? EditorUI::Editor::s_IconPlay : EditorUI::Editor::s_IconStop;
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
-				if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Simulate) { s_EditorLayer->OnPlay(); }
-				else if (s_EditorLayer->m_SceneState == SceneState::Play) { s_EditorLayer->OnStop(); }
+				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate) { s_EditorApp->OnPlay(); }
+				else if (s_EditorApp->m_SceneState == SceneState::Play) { s_EditorApp->OnStop(); }
 			}
 		}
 		if (hasSimulateButton)
 		{
 			if (hasPlayButton) { ImGui::SameLine(); }
 
-			Ref<Texture2D> icon = (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Play) ? EditorUI::Editor::s_IconSimulate : EditorUI::Editor::s_IconStop;
+			Ref<Texture2D> icon = (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play) ? EditorUI::Editor::s_IconSimulate : EditorUI::Editor::s_IconStop;
 			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
-				if (s_EditorLayer->m_SceneState == SceneState::Edit || s_EditorLayer->m_SceneState == SceneState::Play) { s_EditorLayer->OnSimulate(); }
-				else if (s_EditorLayer->m_SceneState == SceneState::Simulate) { s_EditorLayer->OnStop(); }
+				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play) { s_EditorApp->OnSimulate(); }
+				else if (s_EditorApp->m_SceneState == SceneState::Simulate) { s_EditorApp->OnStop(); }
 			}
 
 		}
@@ -72,10 +74,10 @@ namespace Kargono
 				if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 					&& toolbarEnabled)
 				{
-					s_EditorLayer->m_IsPaused = !s_EditorLayer->m_IsPaused;
+					s_EditorApp->m_IsPaused = !s_EditorApp->m_IsPaused;
 				}
 			}
-			if (s_EditorLayer->m_IsPaused)
+			if (s_EditorApp->m_IsPaused)
 			{
 				ImGui::SameLine();
 				{
@@ -83,7 +85,7 @@ namespace Kargono
 					if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 						&& toolbarEnabled)
 					{
-						s_EditorLayer->Step(1);
+						s_EditorApp->Step(1);
 					}
 				}
 			}
@@ -92,5 +94,9 @@ namespace Kargono
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		EditorUI::Editor::EndWindow();
+	}
+	bool ToolbarPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

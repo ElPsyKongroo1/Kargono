@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Kargono/Events/KeyEvent.h"
+
 #include <filesystem>
+#include <string>
 
 namespace Kargono
 {
@@ -20,11 +23,12 @@ namespace Kargono
 		ContentBrowserPanel();
 
 		void OnEditorUIRender();
-
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
 		void UpdateCurrentDirectory(const std::filesystem::path& newPath);
 		void RefreshCachedDirectoryEntries();
 	private:
+		std::string m_PanelName{ "Content Browser" };
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
 		

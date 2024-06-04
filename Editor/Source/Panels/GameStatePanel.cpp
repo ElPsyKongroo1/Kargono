@@ -5,7 +5,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 	static GameStatePanel* s_GameStatePanel { nullptr };
 
 	static std::string s_CurrentField {};
@@ -330,7 +330,9 @@ namespace Kargono
 
 	GameStatePanel::GameStatePanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(GameStatePanel::OnKeyPressedEditor));
 		s_GameStatePanel = this;
 
 		InitializeOpeningScreen();
@@ -341,7 +343,7 @@ namespace Kargono
 	void GameStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Game State Editor", &s_EditorLayer->m_ShowGameStateEditor);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowGameStateEditor);
 
 		if (!m_EditorGameState)
 		{
@@ -360,5 +362,9 @@ namespace Kargono
 		}
 
 		EditorUI::Editor::EndWindow();
+	}
+	bool GameStatePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 }

@@ -8,7 +8,7 @@
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 
 	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
@@ -170,7 +170,9 @@ namespace Kargono
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName, 
+			KG_BIND_CLASS_FN(SceneHierarchyPanel::OnKeyPressedEditor));
 
 		// Set Primary Camera Checkbox
 		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
@@ -197,7 +199,7 @@ namespace Kargono
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Scene Hierarchy", &s_EditorLayer->m_ShowSceneHierarchy);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
 		if (Scene::GetActiveScene())
 		{
@@ -230,6 +232,10 @@ namespace Kargono
 
 		EditorUI::Editor::EndWindow();
 	}
+	bool SceneHierarchyPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
+	}
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
 	{
 		*Scene::GetActiveScene()->GetSelectedEntity() = entity;
@@ -254,6 +260,10 @@ namespace Kargono
 	void SceneHierarchyPanel::RefreshWidgetData()
 	{
 		Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+		if (!currentEntity)
+		{
+			return;
+		}
 		if (currentEntity.HasComponent<ClassInstanceComponent>())
 		{
 			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
@@ -281,7 +291,7 @@ namespace Kargono
 		}
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			auto& editorCamera = EditorApp::GetCurrentLayer()->m_ViewportPanel->m_EditorCamera;
+			auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
 			auto& transformComponent = entity.GetComponent<TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);

@@ -2,10 +2,11 @@
 
 #include "Kargono.h"
 #include "EditorApp.h"
+#include "EntityClassEditor.h"
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer { nullptr };
+	static EditorApp* s_EditorApp { nullptr };
 	static Ref<EntityClass> s_EditorEntityClass { nullptr };
 	static Assets::AssetHandle s_EditorEntityClassHandle { Assets::EmptyHandle };
 
@@ -148,8 +149,8 @@ namespace Kargono
 		s_DeleteEntityClassWarning.Label = "Delete Entity Class";
 		s_DeleteEntityClassWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorLayer->m_EditorScene);
-			s_EditorLayer->m_SceneHierarchyPanel->RefreshWidgetData();
+			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorApp->m_EditorScene);
+			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
 			s_EditorEntityClassHandle = 0;
 			s_EditorEntityClass = nullptr;
 		};
@@ -171,8 +172,8 @@ namespace Kargono
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorLayer->m_EditorScene);
-			s_EditorLayer->m_SceneHierarchyPanel->RefreshWidgetData();
+			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
+			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
 			s_MainHeader.EditColorActive = false;
 		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
@@ -520,7 +521,7 @@ namespace Kargono
 							return;
 						}
 						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-						s_EditorLayer->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 					};
 
 					EditorUI::TableEntry newEntry
@@ -541,7 +542,7 @@ namespace Kargono
 
 	EntityClassEditor::EntityClassEditor()
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
 
 		InitializeOpeningScreen();
 
@@ -551,7 +552,7 @@ namespace Kargono
 	void EntityClassEditor::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Class Editor", &s_EditorLayer->m_ShowClassEditor);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
 
 		if (!s_EditorEntityClass)
 		{
@@ -592,6 +593,10 @@ namespace Kargono
 			EditorUI::Editor::GenericPopup(s_EditFieldPopup);
 		}
 		EditorUI::Editor::EndWindow();
+	}
+	bool EntityClassEditor::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 	void EntityClassEditor::RefreshEntityScripts(Assets::AssetHandle handle)
 	{

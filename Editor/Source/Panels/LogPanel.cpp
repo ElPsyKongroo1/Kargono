@@ -103,12 +103,14 @@ void Kargono::ImGuiLog::Draw(const char* title, bool* p_open)
 // ImGuiLog 
 //----------------------------------------------//
 
-static Kargono::EditorApp* s_EditorLayer { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
 Kargono::LogPanel::LogPanel()
 	: m_Log({})
 {
-	s_EditorLayer = EditorApp::GetCurrentLayer();
+	s_EditorApp = EditorApp::GetCurrentApp();
+	s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		KG_BIND_CLASS_FN(LogPanel::OnKeyPressedEditor));
 	LoadBuffer();
 }
 
@@ -119,7 +121,7 @@ void Kargono::LogPanel::OnEditorUIRender()
 	// For the demo: add a debug button _BEFORE_ the normal log window contents
 	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
 	// Most of the contents of the window will be added by the log.Draw() call.
-	EditorUI::Editor::StartWindow("Log", &s_EditorLayer->m_ShowLog);
+	EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowLog);
 	if (ImGui::Button("Reload"))
 	{
 		LoadBuffer();
@@ -144,6 +146,11 @@ void Kargono::LogPanel::OnEditorUIRender()
 
 	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
 	m_Log.Draw("Log");
+}
+
+bool Kargono::LogPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+{
+	return false;
 }
 
 void Kargono::LogPanel::LoadBuffer()

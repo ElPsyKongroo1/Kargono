@@ -74,14 +74,14 @@ namespace Kargono::Utility
 
 namespace Kargono
 {
-	static EditorApp* s_EditorLayer{ nullptr };
+	static EditorApp* s_EditorApp{ nullptr };
 	static std::vector<std::filesystem::directory_entry> s_CachedDirectoryEntries {};
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
 		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 		{
-			s_EditorLayer->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
+			s_EditorApp->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
 		});
 	}
 
@@ -96,7 +96,10 @@ namespace Kargono
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		s_EditorLayer = EditorApp::GetCurrentLayer();
+		s_EditorApp = EditorApp::GetCurrentApp();
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ContentBrowserPanel::OnKeyPressedEditor));
+
 		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
 		RefreshCachedDirectoryEntries();
 	}
@@ -104,7 +107,7 @@ namespace Kargono
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow("Content Browser", &s_EditorLayer->m_ShowContentBrowser);
+		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
 		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
@@ -296,7 +299,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open File In Text Editor"))
 					{
-						s_EditorLayer->m_TextEditorPanel->OpenFile(path);
+						s_EditorApp->m_TextEditorPanel->OpenFile(path);
 					}
 				}
 
@@ -312,7 +315,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open Scene"))
 					{
-						EditorApp::GetCurrentLayer()->OpenScene(path);
+						EditorApp::GetCurrentApp()->OpenScene(path);
 					}
 				}
 
@@ -463,6 +466,10 @@ namespace Kargono
 
 		EditorUI::Editor::EndWindow();
 
+	}
+	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		return false;
 	}
 	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
 	{

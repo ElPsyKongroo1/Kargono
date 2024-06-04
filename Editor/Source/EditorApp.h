@@ -18,6 +18,9 @@
 
 #include <filesystem>
 #include <thread>
+#include <unordered_map>
+#include <string>
+#include <functional>
 
 namespace Kargono
 {
@@ -120,7 +123,7 @@ namespace Kargono
 		//=========================
 		// Getters/Setters
 		//=========================
-		static EditorApp* GetCurrentLayer() { return s_EditorLayer; }
+		static EditorApp* GetCurrentApp() { return s_EditorApp; }
 	private:
 		//=========================
 		// Scene/Project Management
@@ -158,7 +161,7 @@ namespace Kargono
 		//=========================
 		// Private Fields
 		//=========================
-		static EditorApp* s_EditorLayer;
+		static EditorApp* s_EditorApp;
 		// Booleans to display UI Windows
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowContentBrowser = true;
@@ -195,6 +198,9 @@ namespace Kargono
 		// Stepping Fields
 		bool m_IsPaused = false;
 		int m_StepFrames = 0;
+
+		// Input Maps
+		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
 	public:
 		// Panels
 		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;

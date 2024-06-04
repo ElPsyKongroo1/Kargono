@@ -3,6 +3,8 @@
 #include "Kargono.h"
 #include "Kargono/Utility/FileSystem.h"
 
+#include <string>
+
 namespace Kargono
 {
 
@@ -32,10 +34,12 @@ namespace Kargono
 		LogPanel();
 
 		void OnEditorUIRender();
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		void LoadBuffer();
 	private:
 		ImGuiLog m_Log;
 		std::filesystem::path m_LogPathRelative = "log/Kargono.log";
 		Buffer m_Buffer;
+		std::string m_PanelName{ "Log" };
 	};
 }
