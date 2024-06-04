@@ -98,6 +98,7 @@ namespace API::Windows
 		virtual Kargono::Math::vec2 GetMonitorDimensions() override;
 		// This function resizes the GLFW window to the specified dimensions.
 		virtual void ResizeWindow(Kargono::Math::vec2 newWindowSize) override;
+		virtual void ToggleMaximized() override;
 		// This function enables or disables the mouse cursor over the GLFW window
 		virtual void SetMouseCursorVisible(bool choice) override;
 		virtual void SetVisible(bool visible) override;

@@ -55,6 +55,7 @@ namespace Kargono
 		virtual void CenterWindow() = 0;
 		virtual Math::vec2 GetMonitorDimensions() = 0;
 		virtual void ResizeWindow(Math::vec2 newWindowSize) = 0;
+		virtual void ToggleMaximized() = 0;
 		virtual void SetVisible(bool visible) = 0;
 
 		virtual void SetMouseCursorVisible(bool choice) = 0;
