@@ -59,6 +59,14 @@ namespace Kargono
 		}
 		case SceneState::Play:
 		{
+			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
+			{
+				// Update Scripts
+
+				Script::ScriptEngine::OnUpdate(ts);
+
+				Scene::GetActiveScene()->OnUpdatePhysics(ts);
+			}
 			OnUpdateRuntime(ts);
 			break;
 		}
@@ -287,15 +295,6 @@ namespace Kargono
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
-
-		if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
-		{
-			// Update Scripts
-
-			Script::ScriptEngine::OnUpdate(ts);
-
-			Scene::GetActiveScene()->OnUpdatePhysics(ts);
-		}
 
 		// Render 2D
 		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
