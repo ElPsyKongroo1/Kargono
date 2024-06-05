@@ -205,6 +205,14 @@ namespace Kargono {
 		{
 			m_FocalPoint += GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
+		if (InputPolling::IsKeyPressed(Key::Q))
+		{
+			m_FocalPoint += Math::vec3(0.0f, -1.0f, 0.0f) * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
+		if (InputPolling::IsKeyPressed(Key::E))
+		{
+			m_FocalPoint += Math::vec3(0.0f, 1.0f, 0.0f) * static_cast<float>(ts) * m_KeyboardSpeed;
+		}
 	}
 
 	void EditorCamera::MousePan(const Math::vec2& delta)
