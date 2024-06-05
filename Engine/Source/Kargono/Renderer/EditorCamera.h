@@ -36,6 +36,8 @@ namespace Kargono
 		// On Event typically updates the m_ViewProjection Matrix based on input rules *it defines
 		// This function currently manages mouse button clicks
 		void OnEvent(Events::Event& e);
+
+		bool OnKeyReleased(Events::KeyReleasedEvent& e);
 	private:
 		// Movement Type Specific Update Functions
 		void OnUpdateModelView(Timestep ts);
@@ -124,7 +126,6 @@ namespace Kargono
 
 		bool OnMouseScroll(Events::MouseScrolledEvent& e);
 		bool OnKeyPressed(Events::KeyPressedEvent& e);
-		bool OnKeyReleased(Events::KeyReleasedEvent& e);
 
 		void KeyboardMovement(Timestep ts);
 		void MouseMovement();

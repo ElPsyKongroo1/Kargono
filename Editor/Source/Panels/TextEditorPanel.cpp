@@ -65,6 +65,7 @@ namespace Kargono
 			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer.GetString());
 			//Utility::FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
+			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());
 		};
 		s_OnDeleteFile = [&]()
 		{
@@ -179,24 +180,43 @@ namespace Kargono
 					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PureWhite);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.0f);
 
-					ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
+					static ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 					{
-						if ((float)data->BufTextLen / (float)data->BufSize > 0.75f)
+						switch (data->EventFlag)
 						{
-							Document& activeDocument	= *(Document*)data->UserData;
-							Buffer newBuffer{};
-							newBuffer.Allocate(activeDocument.TextBuffer.Size * 2);
-							newBuffer.SetDataToByte(0);
-							memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
-							activeDocument.TextBuffer.Release();
-							activeDocument.TextBuffer = newBuffer;
+							case ImGuiInputTextFlags_CallbackEdit:
+							{
+								if ((float)data->BufTextLen / (float)data->BufSize > 0.75f)
+								{
+									Document& activeDocument = *(Document*)data->UserData;
+									Buffer newBuffer{};
+									newBuffer.Allocate(activeDocument.TextBuffer.Size * 2);
+									newBuffer.SetDataToByte(0);
+									memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
+									activeDocument.TextBuffer.Release();
+									activeDocument.TextBuffer = newBuffer;
+								}
+								return 0;
+							}
+							case ImGuiInputTextFlags_CallbackAlways:
+							{
+								Document& activeDocument = *(Document*)data->UserData;
+								if (activeDocument.Edited && InputPolling::IsKeyPressed(Key::S) &&
+									(InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl)))
+								{
+									s_OnSaveFile();
+								}
+							}
+							default:
+							{
+								return 0;
+							}
 						}
-						return 0;
 					};
 
 					if (ImGui::InputTextMultiline("##textLabel", document.TextBuffer.As<char>(),
 						document.TextBuffer.Size, ImGui::GetContentRegionAvail(),
-						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackEdit,
+						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CallbackAlways,
 						typeCallback, (void*)&document))
 					{
 						document.Edited = true;
@@ -239,7 +259,24 @@ namespace Kargono
 	}
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		return false;
+		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
+
+		switch (event.GetKeyCode())
+		{
+			case Key::S:
+			{
+				if (control)
+				{
+					s_OnSaveFile();
+					return true;
+				}
+				return false;
+			}
+			default:
+			{
+				return false;
+			}
+		}
 	}
 	void TextEditorPanel::OpenFile(const std::filesystem::path& filepath)
 	{
@@ -248,6 +285,11 @@ namespace Kargono
 			if (!s_EditorApp->m_ShowTextEditor)
 			{
 				s_EditorApp->m_ShowTextEditor = true;
+			}
+
+			if (EditorUI::Editor::GetFocusedWindowName() != m_PanelName)
+			{
+				EditorUI::Editor::SetFocusedWindow(m_PanelName);
 			}
 
 			for (auto& document : s_AllDocuments)
