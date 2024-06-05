@@ -290,6 +290,10 @@ namespace Kargono
 		{
 			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedEditor));
 			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
+			if (event.GetEventType() == Events::EventType::KeyReleased)
+			{
+				m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)& event);
+			}
 		}
 		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollision));
 		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollisionEnd));
@@ -324,8 +328,9 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
-
+		
 		Script::ScriptEngine::OnKeyPressed(event);
+		
 		return false;
 	}
 
@@ -727,6 +732,7 @@ namespace Kargono
 
 		AppTickEngine::LoadProjectGenerators();
 		EngineCore::GetCurrentEngineCore().SetAppStartTime();
+		EditorUI::Editor::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
 	void EditorApp::OnSimulate()

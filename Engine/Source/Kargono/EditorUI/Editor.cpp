@@ -365,6 +365,11 @@ namespace Kargono::EditorUI
 		return {};
 	}
 
+	void Editor::SetFocusedWindow(const std::string& windowName)
+	{
+		ImGui::SetWindowFocus(windowName.c_str());
+	}
+
 	void Editor::HighlightFocusedWindow()
 	{
 		ImGuiWindow* window = GImGui->NavWindow;
