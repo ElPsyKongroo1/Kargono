@@ -161,6 +161,13 @@ namespace Kargono::Scripting
 			((WrappedVoidUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
+
+		case WrappedFuncType::Void_UInt64Float:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt64Float>();
+			((WrappedVoidUInt64Float*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			break;
+		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
@@ -172,6 +179,18 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedBoolUInt64>();
 			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			break;
+		}
+		case WrappedFuncType::Bool_UInt64UInt64:
+		{
+			script->m_Function = CreateRef<WrappedBoolUInt64UInt64>();
+			((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			break;
+		}
+		case WrappedFuncType::Bool_UInt64UInt16UInt64:
+		{
+			script->m_Function = CreateRef<WrappedBoolUInt64UInt16UInt64>();
+			((WrappedBoolUInt64UInt16UInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint16uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		default:
