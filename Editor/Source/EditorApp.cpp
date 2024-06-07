@@ -289,7 +289,7 @@ namespace Kargono
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
 			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedEditor));
-			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
+			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
 			if (event.GetEventType() == Events::EventType::KeyReleased)
 			{
 				m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)& event);
@@ -300,9 +300,9 @@ namespace Kargono
 
 		if (m_SceneState == SceneState::Play && m_IsPaused)
 		{
-			dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
+			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
 		}
-
+		
 		if (m_SceneState == SceneState::Play)
 		{
 			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedRuntime));
