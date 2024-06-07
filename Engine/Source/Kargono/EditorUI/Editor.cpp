@@ -384,13 +384,9 @@ namespace Kargono::EditorUI
 	void Editor::OnEvent(Events::Event& e)
 	{
 		KG_PROFILE_FUNCTION();
-
-		if (s_BlockEvents)
-		{
-			ImGuiIO& io = ImGui::GetIO();
-			e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
-			e.Handled |= e.IsInCategory(Events::Keyboard) & io.WantCaptureKeyboard;
-		}
+		ImGuiIO& io = ImGui::GetIO();
+		e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
+		e.Handled |= e.IsInCategory(Events::Keyboard) & io.WantCaptureKeyboard;
 	}
 
 	uint32_t WidgetIterator(uint32_t& count)
@@ -468,6 +464,7 @@ namespace Kargono::EditorUI
 	static void CreateImage(Ref<Texture2D> image, float size)
 	{
 		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
+
 		ImGui::Image((ImTextureID)(uint64_t)image->GetRendererID(), ImVec2(size, size),
 			ImVec2{ 0, 1 }, ImVec2(1, 0), Editor::s_PureWhite,
 			Editor::s_PureEmpty);
@@ -505,6 +502,11 @@ namespace Kargono::EditorUI
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spec.YPosition);
 		ImGui::PushStyleColor(ImGuiCol_Button, Editor::s_PureEmpty);
+		if (spec.Disabled)
+		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::s_PureEmpty);
+		}
 		Ref<Texture2D> iconChoice = active ? spec.ActiveIcon : spec.InactiveIcon;
 		if (ImGui::ImageButtonEx(widgetID,
 			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
@@ -514,7 +516,7 @@ namespace Kargono::EditorUI
 		{
 			onPress();
 		}
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor(spec.Disabled ? 3 : 1);
 
 		if (ImGui::IsItemHovered())
 		{
