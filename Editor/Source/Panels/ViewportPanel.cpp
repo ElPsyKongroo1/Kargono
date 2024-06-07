@@ -147,6 +147,14 @@ namespace Kargono
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()) }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
+		if ((s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate) ||
+			(s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
+		{
+			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
+			{
+				s_EditorApp->OnMouseButtonPressed({ Mouse::ButtonLeft });
+			}
+		}
 
 		Math::uvec2 viewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		if (oldViewportSize != viewportSize)
@@ -164,7 +172,6 @@ namespace Kargono
 		}
 
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
-
 		{
 			// Gizmos
 			Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
@@ -206,6 +213,46 @@ namespace Kargono
 				}
 			}
 		}
+
+		static bool toolbarEnabled{ true };
+		static ImVec4 colors{ 0.2f, 0.2f, 0.2f, 0.63f };
+		/*ImGui::SetCursorPos(ImVec2(0, ImGui::GetWindowSize().y / 2));
+		ImGui::DragFloat4("hdfksahfkjdhsf", (float*)&colors, 0.01f);
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+		}*/
+
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 windowPos = ImGui::GetWindowPos();
+		ImVec2 windowSize = ImGui::GetWindowSize();
+
+		if (toolbarEnabled)
+		{
+			draw_list->AddRectFilled(windowPos,
+				ImVec2(windowPos.x + windowSize.x, windowPos.y + 30.0f),
+				ImColor(ImVec4(colors)), 0.0f, ImDrawFlags_None);
+		}
+
+		Ref<Texture2D> toggleTopBarImage = toolbarEnabled ?
+			EditorUI::Editor::s_IconCheckbox_Check_Enabled : EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
+
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::Editor::s_PureEmpty);
+		ImGui::SetCursorPos(ImVec2(windowSize.x - 30, 6));
+		if (ImGui::ImageButton("Toggle Top Bar",
+			(ImTextureID)(uint64_t)toggleTopBarImage->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::Editor::s_PureEmpty,
+			EditorUI::Editor::s_PureWhite))
+		{
+			Utility::Operations::ToggleBoolean(toolbarEnabled);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+		}
+		ImGui::PopStyleColor();
+
 
 		EditorUI::Editor::EndWindow();
 		ImGui::PopStyleVar();

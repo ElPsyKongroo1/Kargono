@@ -47,8 +47,14 @@ namespace Kargono
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
-				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate) { s_EditorApp->OnPlay(); }
-				else if (s_EditorApp->m_SceneState == SceneState::Play) { s_EditorApp->OnStop(); }
+				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+				{
+					s_EditorApp->OnPlay();
+				}
+				else if (s_EditorApp->m_SceneState == SceneState::Play)
+				{
+					s_EditorApp->OnStop();
+				}
 			}
 		}
 		if (hasSimulateButton)
@@ -60,8 +66,14 @@ namespace Kargono
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor)
 				&& toolbarEnabled)
 			{
-				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play) { s_EditorApp->OnSimulate(); }
-				else if (s_EditorApp->m_SceneState == SceneState::Simulate) { s_EditorApp->OnStop(); }
+				if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play)
+				{
+					s_EditorApp->OnSimulate();
+				}
+				else if (s_EditorApp->m_SceneState == SceneState::Simulate)
+				{
+					s_EditorApp->OnStop();
+				}
 			}
 
 		}

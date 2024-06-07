@@ -66,6 +66,7 @@ namespace Kargono::EditorUI
 		std::string ActiveTooltip {};
 		std::string InactiveTooltip{};
 		PositionType XPositionType{ PositionType::Inline };
+		bool Disabled{ false };
 	};
 
 	class Editor
