@@ -8,7 +8,6 @@
 #include "Panels/ProjectPanel.h"
 #include "Panels/SettingsPanel.h"
 #include "Panels/StatisticsPanel.h"
-#include "Panels/ToolbarPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
 #include "Panels/EntityClassEditor.h"
@@ -210,7 +209,6 @@ namespace Kargono
 		Scope<StatisticsPanel>  m_StatisticsPanel;
 		Scope<ProjectPanel>  m_ProjectPanel;
 		Scope<SettingsPanel>  m_SettingsPanel;
-		Scope<ToolbarPanel>  m_ToolbarPanel;
 		Scope<UIEditorPanel>  m_UIEditorPanel;
 		Scope<ViewportPanel>  m_ViewportPanel;
 		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
@@ -219,7 +217,6 @@ namespace Kargono
 		Scope<GameStatePanel>  m_GameStatePanel;
 	private:
 		friend SettingsPanel;
-		friend ToolbarPanel;
 		friend ViewportPanel;
 		friend SceneHierarchyPanel;
 		friend ContentBrowserPanel;

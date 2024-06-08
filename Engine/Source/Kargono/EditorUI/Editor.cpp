@@ -31,6 +31,11 @@ namespace Kargono::EditorUI
 	Ref<Texture2D> Editor::s_IconStep{};
 	Ref<Texture2D> Editor::s_IconSimulate{};
 	Ref<Texture2D> Editor::s_IconAddItem{};
+	Ref<Texture2D> Editor::s_IconPlayActive{};
+	Ref<Texture2D> Editor::s_IconStopActive{};
+	Ref<Texture2D> Editor::s_IconPauseActive{};
+	Ref<Texture2D> Editor::s_IconStepActive{};
+	Ref<Texture2D> Editor::s_IconSimulateActive{};
 	Ref<Texture2D> Editor::s_IconSettings{};
 	Ref<Texture2D> Editor::s_IconDelete{};
 	Ref<Texture2D> Editor::s_IconDeleteActive{};
@@ -163,6 +168,11 @@ namespace Kargono::EditorUI
 		s_IconStop = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon.png").string());
 		s_IconStep = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/step_icon.png").string());
 		s_IconAddItem = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/add_item.png").string());
+		s_IconPlayActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/play_icon_active.png").string());
+		s_IconStopActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon_active.png").string());
+		s_IconPauseActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/pause_icon_active.png").string());
+		s_IconStepActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/step_icon_active.png").string());
+		s_IconSimulateActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/simulate_icon_active.png").string());
 		s_IconSettings = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/settings_icon.png").string());
 		s_IconDelete = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/delete_icon.png").string());
 		s_IconDeleteActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/delete_active_icon.png").string());

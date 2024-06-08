@@ -7,7 +7,7 @@ namespace Kargono::Utility
 	public:
 		static void ToggleBoolean(bool& boolToToggle)
 		{
-			boolToToggle ? boolToToggle = false : boolToToggle = true;
+			boolToToggle = !boolToToggle;
 		}
 	};
 }
