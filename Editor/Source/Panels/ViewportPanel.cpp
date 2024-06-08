@@ -118,6 +118,7 @@ namespace Kargono
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
 		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
+		ImGui::PopStyleVar();
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		Math::vec2 localViewportBounds[2];
@@ -214,32 +215,181 @@ namespace Kargono
 		}
 
 		static bool toolbarEnabled{ true };
-		static ImVec4 colors{ 0.2f, 0.2f, 0.2f, 0.63f };
-		/*ImGui::SetCursorPos(ImVec2(0, ImGui::GetWindowSize().y / 2));
-		ImGui::DragFloat4("hdfksahfkjdhsf", (float*)&colors, 0.01f);
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::SetNextFrameWantCaptureMouse(false);
-		}*/
+		constexpr float iconSize{ 36.0f };
+		constexpr ImVec4 topBarBackgroundColor{0.0f, 0.0f, 0.0f, 0.93f};
 
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::Editor::s_PureEmpty);
+		// {0.2f, 0.2f, 0.2f, 0.63f} // OLD BACKGROUND COLOR
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 windowPos = ImGui::GetWindowPos();
 		ImVec2 windowSize = ImGui::GetWindowSize();
+		Ref<Texture2D> icon {nullptr};
 
 		if (toolbarEnabled)
 		{
-			draw_list->AddRectFilled(windowPos,
-				ImVec2(windowPos.x + windowSize.x, windowPos.y + 30.0f),
-				ImColor(ImVec4(colors)), 0.0f, ImDrawFlags_None);
+			// Draw Play/Simulate/Step Background
+			draw_list->AddRectFilled(ImVec2(windowPos.x + (windowSize.x / 2) - 90.0f, windowPos.y),
+				ImVec2(windowPos.x + (windowSize.x / 2) + 90.0f, windowPos.y + 43.0f),
+				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Toggle Top Bar Background
+			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 30.0f, windowPos.y),
+				ImVec2(windowPos.x + (windowSize.x), windowPos.y + 30.0f),
+				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+
+			bool hasPlayButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate;
+			bool hasSimulateButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play;
+			bool hasPauseButton = s_EditorApp->m_SceneState != SceneState::Edit;
+			bool hasStepButton = hasPauseButton && s_EditorApp->m_IsPaused;
+
+			// Play/Stop Button
+			if (!hasSimulateButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+			}
+			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) - 77.0f, 4));
+			icon = hasPlayButton ? EditorUI::Editor::s_IconPlayActive : EditorUI::Editor::s_IconStopActive;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::Editor::s_IconPlay)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+				&& toolbarEnabled)
+			{
+				if (hasSimulateButton)
+				{
+					if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+					{
+						s_EditorApp->OnPlay();
+					}
+					else if (s_EditorApp->m_SceneState == SceneState::Play)
+					{
+						s_EditorApp->OnStop();
+					}
+				}
+				
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasSimulateButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, hasPlayButton ?
+						"Run Application" : "Stop Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasSimulateButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+
+			// Simulate/Stop Simulate
+			if (!hasPlayButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+			}
+			icon = hasSimulateButton ? EditorUI::Editor::s_IconSimulateActive : EditorUI::Editor::s_IconStopActive;
+			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) - 37.0f, 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::Editor::s_IconSimulate)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+				&& toolbarEnabled)
+			{
+				if (hasPlayButton)
+				{
+					if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play)
+					{
+						s_EditorApp->OnSimulate();
+					}
+					else if (s_EditorApp->m_SceneState == SceneState::Simulate)
+					{
+						s_EditorApp->OnStop();
+					}
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasPlayButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, hasSimulateButton ?
+						"Simulate Physics" : "Stop Physics Simulation");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasPlayButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+
+			// Pause Icon
+			if (!hasPauseButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+			}
+			icon = hasPauseButton ? EditorUI::Editor::s_IconPauseActive: EditorUI::Editor::s_IconPause;
+			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) + 3.0f, 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+				&& toolbarEnabled)
+			{
+				if (hasPauseButton)
+				{
+					s_EditorApp->m_IsPaused = !s_EditorApp->m_IsPaused;
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasPauseButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasPauseButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+			// Step Icon
+			if (!hasStepButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+			}
+			icon = hasStepButton ? EditorUI::Editor::s_IconStepActive : EditorUI::Editor::s_IconStep;
+			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) + 43.0f, 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+				&& toolbarEnabled)
+			{
+				if (hasStepButton)
+				{
+					s_EditorApp->Step(1);
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasStepButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Step Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasStepButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
 		}
+				
 
-		Ref<Texture2D> toggleTopBarImage = toolbarEnabled ?
-			EditorUI::Editor::s_IconCheckbox_Check_Enabled : EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
-
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::Editor::s_PureEmpty);
-		ImGui::SetCursorPos(ImVec2(windowSize.x - 30, 6));
+		// Toggle Top Bar Button
+		icon = toolbarEnabled ? EditorUI::Editor::s_IconCheckbox_Check_Enabled :
+		EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
+		ImGui::SetCursorPos(ImVec2(windowSize.x - 25, 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
-			(ImTextureID)(uint64_t)toggleTopBarImage->GetRendererID(),
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 			EditorUI::Editor::s_PureEmpty,
 			EditorUI::Editor::s_PureWhite))
@@ -254,7 +404,6 @@ namespace Kargono
 
 
 		EditorUI::Editor::EndWindow();
-		ImGui::PopStyleVar();
 	}
 	void ViewportPanel::OnEvent(Events::Event& event)
 	{
