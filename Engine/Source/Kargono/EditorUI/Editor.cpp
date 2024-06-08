@@ -2,14 +2,15 @@
 
 #include "Kargono/EditorUI/Editor.h"
 #include "Kargono/Core/EngineCore.h"
-#include "Kargono/Input/InputMode.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
+#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputMode.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Windowing/GlfwAPI.h"
 #include "API/Windowing/gladAPI.h"
-#include "Editor.h"
+
 
 namespace Kargono::EditorUI
 {
@@ -327,7 +328,11 @@ namespace Kargono::EditorUI
 		ImGuiIO& io = ImGui::GetIO();
 		EngineCore& app = EngineCore::GetCurrentEngineCore();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
-
+		if (s_DisableLeftClick)
+		{
+			ImGui::GetIO().MouseClicked[0] = false;
+			s_DisableLeftClick = false;
+		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -381,11 +386,19 @@ namespace Kargono::EditorUI
 		}
 	}
 
+	void Editor::SetDisableLeftClick(bool option)
+	{
+		s_DisableLeftClick = option;
+	}
+
 	void Editor::OnEvent(Events::Event& e)
 	{
 		KG_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
-		e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
+		if (!s_BlockMouseEvents)
+		{
+			e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
+		}
 		e.Handled |= e.IsInCategory(Events::Keyboard) & io.WantCaptureKeyboard;
 	}
 
