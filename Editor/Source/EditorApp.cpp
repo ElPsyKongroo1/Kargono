@@ -38,7 +38,6 @@ namespace Kargono
 		m_StatisticsPanel = CreateScope<StatisticsPanel>();
 		m_ProjectPanel = CreateScope<ProjectPanel>();
 		m_SettingsPanel = CreateScope<SettingsPanel>();
-		m_ToolbarPanel = CreateScope<ToolbarPanel>();
 		m_UIEditorPanel = CreateScope<UIEditorPanel>();
 		m_ViewportPanel = CreateScope<ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<ScriptEditorPanel>();
@@ -147,28 +146,6 @@ namespace Kargono
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
 
-		// Submit the DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuiStyle& style = ImGui::GetStyle();
-		float minWinSizeX = style.WindowMinSize.x;
-		style.WindowMinSize.x = 420.0f;
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
-
-		style.WindowMinSize.x = minWinSizeX;
-
-		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
-		{
-			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-			if (m_ShowToolbar) { m_ToolbarPanel->OnEditorUIRender(); }
-			EditorUI::Editor::EndWindow();
-			EditorUI::Editor::EndRendering();
-			return;
-		}
-
 		// Set up Menu Toolbar
 		if (ImGui::BeginMenuBar())
 		{
@@ -247,6 +224,27 @@ namespace Kargono
 			ImGui::EndMenuBar();
 		}
 
+		// Submit the DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 420.0f;
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+
+		style.WindowMinSize.x = minWinSizeX;
+
+		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
+		{
+			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
+			EditorUI::Editor::EndWindow();
+			EditorUI::Editor::EndRendering();
+			return;
+		}
+
 		// Display other panels
 		if (m_ShowSceneHierarchy) { m_SceneHierarchyPanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
@@ -256,7 +254,6 @@ namespace Kargono
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowInputEditor) { m_InputEditorPanel->OnEditorUIRender(); }
-		if (m_ShowToolbar) { m_ToolbarPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
