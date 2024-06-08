@@ -263,6 +263,7 @@ namespace Kargono
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
+		
 
 		EditorUI::Editor::EndWindow();
 

@@ -111,10 +111,11 @@ namespace Kargono::EditorUI
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
 		static void HighlightFocusedWindow();
+		static void SetDisableLeftClick(bool option);
 
-		static void BlockEvents(bool block)
+		static void BlockMouseEvents(bool block)
 		{
-			s_BlockEvents = block;
+			s_BlockMouseEvents = block;
 		}
 	public:
 		// Additional Resources
@@ -160,8 +161,9 @@ namespace Kargono::EditorUI
 		inline static InlineButtonSpec s_LargeSearchButton;
 	private:
 		// Internal Data
-		inline static bool s_BlockEvents = true;
+		inline static bool s_BlockMouseEvents = true;
 		inline static bool s_Running = false;
+		inline static bool s_DisableLeftClick = false;
 	};
 
 	struct GenericPopupSpec

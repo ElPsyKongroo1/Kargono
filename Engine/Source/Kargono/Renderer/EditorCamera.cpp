@@ -5,6 +5,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Core/EngineCore.h"
+#include "Kargono/EditorUI/Editor.h"
 
 #include "API/Windowing/GlfwAPI.h"
 
@@ -60,6 +61,11 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
+		if (InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt))
+		{
+			EditorUI::Editor::SetDisableLeftClick(true);
+		}
+
 		switch (m_MovementType)
 		{
 		case EditorCamera::MovementType::ModelView:
@@ -134,7 +140,7 @@ namespace Kargono {
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineCore::GetCurrentEngineCore().GetWindow().SetMouseCursorVisible(true);
+			EngineCore::GetActiveWindow().SetMouseCursorVisible(true);
 			m_MousePaused = true;
 		}
 		return false;
@@ -144,7 +150,7 @@ namespace Kargono {
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineCore::GetCurrentEngineCore().GetWindow().SetMouseCursorVisible(false);
+			EngineCore::GetActiveWindow().SetMouseCursorVisible(false);
 			m_MousePaused = true;
 		}
 		return false;
