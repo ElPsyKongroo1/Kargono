@@ -6,7 +6,6 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
-#include "Panels/SettingsPanel.h"
 #include "Panels/StatisticsPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
@@ -166,9 +165,7 @@ namespace Kargono
 		bool m_ShowContentBrowser = true;
 		bool m_ShowLog = false;
 		bool m_ShowStats = false;
-		bool m_ShowSettings = true;
 		bool m_ShowViewport = true;
-		bool m_ShowToolbar = true;
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowUserInterfaceEditor = false;
@@ -180,7 +177,7 @@ namespace Kargono
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
-		bool m_ShowCameraFrustrums = true;
+		bool m_ShowCameraFrustums = true;
 		bool m_RuntimeFullscreen = false;
 		bool m_ShowUserInterface = true;
 		// Editor Scenes
@@ -208,7 +205,6 @@ namespace Kargono
 		Scope<InputEditorPanel>  m_InputEditorPanel;
 		Scope<StatisticsPanel>  m_StatisticsPanel;
 		Scope<ProjectPanel>  m_ProjectPanel;
-		Scope<SettingsPanel>  m_SettingsPanel;
 		Scope<UIEditorPanel>  m_UIEditorPanel;
 		Scope<ViewportPanel>  m_ViewportPanel;
 		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
@@ -216,7 +212,6 @@ namespace Kargono
 		Scope<TextEditorPanel>  m_TextEditorPanel;
 		Scope<GameStatePanel>  m_GameStatePanel;
 	private:
-		friend SettingsPanel;
 		friend ViewportPanel;
 		friend SceneHierarchyPanel;
 		friend ContentBrowserPanel;

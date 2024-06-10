@@ -232,6 +232,16 @@ namespace Kargono
 				ImVec2(windowPos.x + (windowSize.x / 2) + 90.0f, windowPos.y + 43.0f),
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
+			// Draw Camera Options Background
+			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 80.0f, windowPos.y),
+				ImVec2(windowPos.x + (windowSize.x) - 48.0f, windowPos.y + 30.0f),
+				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Display Options Background
+			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 182.0f, windowPos.y),
+				ImVec2(windowPos.x + (windowSize.x) - 112.0f, windowPos.y + 30.0f),
+				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
 			// Draw Toggle Top Bar Background
 			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 30.0f, windowPos.y),
 				ImVec2(windowPos.x + (windowSize.x), windowPos.y + 30.0f),
@@ -381,38 +391,94 @@ namespace Kargono
 			{
 				ImGui::PopStyleColor(2);
 			}
-		}
 
-		// Camera Options Button
-		icon = EditorUI::Editor::s_IconCameraActive;
-		ImGui::SetCursorPos(ImVec2(windowSize.x - 100, 4));
-		if (ImGui::ImageButton("Camera Options",
-			(ImTextureID)(uint64_t)icon->GetRendererID(),
-			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::Editor::s_PureEmpty,
-			EditorUI::Editor::s_PureWhite))
-		{
-			// TODO Open Options
-		}
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::SetNextFrameWantCaptureMouse(false);
-		}
+			// Camera Options Button
+			icon = EditorUI::Editor::s_IconCameraActive;
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 175, 7));
+			if (ImGui::ImageButton("Camera Options",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(16, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::Editor::s_PureEmpty,
+				EditorUI::Editor::s_PureWhite))
+			{
+				ImGui::OpenPopup("Toggle Viewport Camera Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Camera Movement Types");
+				ImGui::EndTooltip();
+			}
 
-		// Viewport Display Options Button
-		icon = EditorUI::Editor::s_IconDisplayActive;
-		ImGui::SetCursorPos(ImVec2(windowSize.x - 75, 4));
-		if (ImGui::ImageButton("Display Toggle",
-			(ImTextureID)(uint64_t)icon->GetRendererID(),
-			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::Editor::s_PureEmpty,
-			EditorUI::Editor::s_PureWhite))
-		{
-			// TODO Open Options
-		}
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::SetNextFrameWantCaptureMouse(false);
+			if (ImGui::BeginPopup("Toggle Viewport Camera Options"))
+			{
+				if (ImGui::MenuItem("Model Viewer", 0,
+					m_EditorCamera.GetMovementType() == EditorCamera::MovementType::ModelView))
+				{
+					m_EditorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+				}
+				if (ImGui::MenuItem("FreeFly", 0,
+					m_EditorCamera.GetMovementType() == EditorCamera::MovementType::FreeFly))
+				{
+					m_EditorCamera.SetMovementType(EditorCamera::MovementType::FreeFly);
+				}
+				ImGui::EndPopup();
+			}
+
+			// Camera Speed
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 148, 4));
+			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
+				s_EditorApp->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
+				"%.0f", ImGuiSliderFlags_NoInput);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Camera Speed");
+				ImGui::EndTooltip();
+			}
+
+			// Viewport Display Options Button
+			icon = EditorUI::Editor::s_IconDisplayActive;
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 75, 4));
+			if (ImGui::ImageButton("Display Toggle",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::Editor::s_PureEmpty,
+				EditorUI::Editor::s_PureWhite))
+			{
+				ImGui::OpenPopup("Toggle Display Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Display Options");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("Toggle Display Options"))
+			{
+				if (ImGui::MenuItem("Display Physics Colliders", 0, s_EditorApp->m_ShowPhysicsColliders))
+				{
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowPhysicsColliders);
+				}
+				if (ImGui::MenuItem("Display Camera Frustums", 0, s_EditorApp->m_ShowCameraFrustums))
+				{
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowCameraFrustums);
+				}
+				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowUserInterface))
+				{
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowUserInterface);
+				}
+				if (ImGui::MenuItem("Fullscreen While Running", 0, s_EditorApp->m_RuntimeFullscreen))
+				{
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_RuntimeFullscreen);
+				}
+				ImGui::EndPopup();
+			}
 		}
 
 		// Toggle Top Bar Button
@@ -430,6 +496,9 @@ namespace Kargono
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
+			ImGui::BeginTooltip();
+			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::EndTooltip();
 		}
 
 		ImGui::PopStyleColor();
@@ -763,7 +832,7 @@ namespace Kargono
 					Renderer::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorApp->m_ShowCameraFrustrums)
+				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
 				{
 					DrawFrustrum(selectedEntity);
 				}

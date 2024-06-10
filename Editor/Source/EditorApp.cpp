@@ -37,7 +37,6 @@ namespace Kargono
 		m_LogPanel = CreateScope<LogPanel>();
 		m_StatisticsPanel = CreateScope<StatisticsPanel>();
 		m_ProjectPanel = CreateScope<ProjectPanel>();
-		m_SettingsPanel = CreateScope<SettingsPanel>();
 		m_UIEditorPanel = CreateScope<UIEditorPanel>();
 		m_ViewportPanel = CreateScope<ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<ScriptEditorPanel>();
@@ -195,7 +194,6 @@ namespace Kargono
 				ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser);
 				ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchy);
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
-				ImGui::MenuItem("Toolbar", NULL, &m_ShowToolbar);
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputEditor);
@@ -204,8 +202,7 @@ namespace Kargono
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 				ImGui::Separator();
-				ImGui::MenuItem("Settings", NULL, &m_ShowSettings);
-				ImGui::MenuItem("Project", NULL, &m_ShowProject);
+				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
 				ImGui::EndMenu();
 			}
 
@@ -250,7 +247,6 @@ namespace Kargono
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
-		if (m_ShowSettings) { m_SettingsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowInputEditor) { m_InputEditorPanel->OnEditorUIRender(); }
@@ -259,7 +255,7 @@ namespace Kargono
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
-		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(); }
+		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		
 
 		EditorUI::Editor::EndWindow();
