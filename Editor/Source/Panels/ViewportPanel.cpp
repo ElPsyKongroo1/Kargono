@@ -382,7 +382,38 @@ namespace Kargono
 				ImGui::PopStyleColor(2);
 			}
 		}
-				
+
+		// Camera Options Button
+		icon = EditorUI::Editor::s_IconCameraActive;
+		ImGui::SetCursorPos(ImVec2(windowSize.x - 100, 4));
+		if (ImGui::ImageButton("Camera Options",
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::Editor::s_PureEmpty,
+			EditorUI::Editor::s_PureWhite))
+		{
+			// TODO Open Options
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+		}
+
+		// Viewport Display Options Button
+		icon = EditorUI::Editor::s_IconDisplayActive;
+		ImGui::SetCursorPos(ImVec2(windowSize.x - 75, 4));
+		if (ImGui::ImageButton("Display Toggle",
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::Editor::s_PureEmpty,
+			EditorUI::Editor::s_PureWhite))
+		{
+			// TODO Open Options
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+		}
 
 		// Toggle Top Bar Button
 		icon = toolbarEnabled ? EditorUI::Editor::s_IconCheckbox_Check_Enabled :
@@ -400,8 +431,8 @@ namespace Kargono
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 		}
-		ImGui::PopStyleColor();
 
+		ImGui::PopStyleColor();
 
 		EditorUI::Editor::EndWindow();
 	}
