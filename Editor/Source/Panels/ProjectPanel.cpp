@@ -676,6 +676,15 @@ namespace Kargono
 
 		ImGui::NewLine();
 
+		ImGui::Text("Physics Settings:");
+		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
+		{
+			if (Scene::GetActiveScene()->GetPhysicsWorld())
+			{
+				Scene::GetActiveScene()->GetPhysicsSpecification().Gravity = s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity;
+				Scene::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
+			}
+		}
 
 		EditorUI::Editor::EndWindow();
 	}
