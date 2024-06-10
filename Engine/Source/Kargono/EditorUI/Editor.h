@@ -131,7 +131,8 @@ namespace Kargono::EditorUI
 		static ImFont* s_AnonymousRegular;
 
 		static Ref<Texture2D> s_IconPlay, s_IconPause, s_IconStop,
-			s_IconStep, s_IconSimulate, s_IconAddItem,
+			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
+			s_IconCamera, s_IconCameraActive,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
 			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconEdit_Active, s_IconCancel,
 			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,

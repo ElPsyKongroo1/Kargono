@@ -31,6 +31,10 @@ namespace Kargono::EditorUI
 	Ref<Texture2D> Editor::s_IconStep{};
 	Ref<Texture2D> Editor::s_IconSimulate{};
 	Ref<Texture2D> Editor::s_IconAddItem{};
+	Ref<Texture2D> Editor::s_IconDisplay{};
+	Ref<Texture2D> Editor::s_IconDisplayActive{};
+	Ref<Texture2D> Editor::s_IconCamera{};
+	Ref<Texture2D> Editor::s_IconCameraActive{};
 	Ref<Texture2D> Editor::s_IconPlayActive{};
 	Ref<Texture2D> Editor::s_IconStopActive{};
 	Ref<Texture2D> Editor::s_IconPauseActive{};
@@ -168,6 +172,10 @@ namespace Kargono::EditorUI
 		s_IconStop = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon.png").string());
 		s_IconStep = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/step_icon.png").string());
 		s_IconAddItem = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/add_item.png").string());
+		s_IconDisplay = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/display_icon.png").string());
+		s_IconDisplayActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/display_icon_active.png").string());
+		s_IconCamera = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/camera_icon.png").string());
+		s_IconCameraActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/camera_icon_active.png").string());
 		s_IconPlayActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/play_icon_active.png").string());
 		s_IconStopActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon_active.png").string());
 		s_IconPauseActive = Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/pause_icon_active.png").string());
