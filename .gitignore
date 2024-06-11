@@ -37,6 +37,8 @@ bin-int/**
 **/Assets/Scripts/Binaries/**
 **/Assets/Scripts/Intermediates/**
 **/Assets/Scripting/Binary/**
+
+# Temporary
 /Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.csproj.AssemblyReference.cache
 /Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.csproj.CoreCompileInputs.cache
 /Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.dll
