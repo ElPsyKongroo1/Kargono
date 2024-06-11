@@ -2,6 +2,7 @@
 
 #include "Kargono/Scripting/Scripting.h"
 
+#include "Kargono/Core/EngineCore.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Scene/Scene.h"
@@ -53,6 +54,26 @@ namespace Kargono::Scripting
 	void ScriptCore::OpenDll()
 	{
 		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+		
+		// Rebuild shared library if no library exists
+		static bool attemptedToRebuild = false;
+		if (!std::filesystem::exists(dllLocation))
+		{
+			if (attemptedToRebuild)
+			{
+				KG_ERROR("Multiple attempts to open dll with no file present! Might be an issue generating shared library.");
+				return;
+			}
+			KG_WARN("Attempt to open scripting dll, however, none exists. Attempting to create new Shared Lib.");
+			attemptedToRebuild = true;
+			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
+			{
+				ScriptModuleBuilder::CreateDll();
+			});
+			return;
+		}
+		attemptedToRebuild = false;
+
 		if (!s_ScriptingData)
 		{
 			KG_CRITICAL("Attempt to open a new scripting dll, however, ScriptEngine is not initialized");
@@ -276,7 +297,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Scripting
 {
-	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the dll)
+	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the scripting dll)
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
