@@ -1,8 +1,0 @@
-Project:
-  Name: Facerun
-  StartScene: Scenes/empty_scene.kgscene
-  StartSceneHandle: 10325815472985218675
-  AssetDirectory: Assets
-  ScriptModulePath: Scripts/Binaries/Facerun.dll
-  DefaultFullscreen: false
-  TargetResolution: 1920x1080
