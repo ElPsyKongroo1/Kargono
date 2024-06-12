@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('WindowsInput_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,81 +84,63 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_80ecc2b01c9be934f5a090694d9e8ec9.html">Platform</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">WindowsInput.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="WindowsInput_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="InputPolling_8h.html">Kargono/Input/InputPolling.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Input/InputPolling.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EngineCore.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GlfwAPI_8h.html">API/Windowing/GlfwAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;API/Platform/GlfwAPI.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">   12</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">InputPolling::IsKeyPressed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a> key)</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keywordtype">bool</span> InputPolling::IsKeyPressed(<span class="keyword">const</span> KeyCode key)</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">GetNativeWindow</a>());</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow());</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">auto</span> state = glfwGetKey(window, <span class="keyword">static_cast&lt;</span>int32_t<span class="keyword">&gt;</span>(key));</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordflow">return</span> state == GLFW_PRESS;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    }</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html#aa0afcedd5b10c0ec78269a689a051214">   19</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1InputPolling.html#aa0afcedd5b10c0ec78269a689a051214">InputPolling::IsMouseButtonPressed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">MouseCode</a> button)</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">bool</span> InputPolling::IsMouseButtonPressed(<span class="keyword">const</span> MouseCode button)</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">GetNativeWindow</a>());</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow());</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">auto</span> state = glfwGetMouseButton(window, <span class="keyword">static_cast&lt;</span>int32_t<span class="keyword">&gt;</span>(button));</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordflow">return</span> state == GLFW_PRESS;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    }</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">   25</a></span>&#160;    <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">InputPolling::GetMousePosition</a>()</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    Math::vec2 InputPolling::GetMousePosition()</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">GetNativeWindow</a>());</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">auto</span>* window = <span class="keyword">static_cast&lt;</span>GLFWwindow*<span class="keyword">&gt;</span>(EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow());</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">double</span> xpos;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">double</span> ypos;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        glfwGetCursorPos(window, &amp;xpos, &amp;ypos);</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keywordflow">return</span> { (float)xpos, (<span class="keywordtype">float</span>)ypos };</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    }</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html#a0b72db83a413ecb0236fd2e1f9789e85">   34</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1InputPolling.html#a0b72db83a413ecb0236fd2e1f9789e85">InputPolling::GetMouseX</a>()</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">float</span> InputPolling::GetMouseX()</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">GetMousePosition</a>().x;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">return</span> GetMousePosition().x;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    }</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html#ad9ab861a7f6cfb3b8cc16e483ee6819f">   39</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1InputPolling.html#ad9ab861a7f6cfb3b8cc16e483ee6819f">InputPolling::GetMouseY</a>()</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">float</span> InputPolling::GetMouseY()</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">GetMousePosition</a>().y;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">return</span> GetMousePosition().y;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;}</div>
-<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
-<div class="ttc" id="aGlfwAPI_8h_html"><div class="ttname"><a href="GlfwAPI_8h.html">GlfwAPI.h</a></div></div>
-<div class="ttc" id="aInputPolling_8h_html"><div class="ttname"><a href="InputPolling_8h.html">InputPolling.h</a></div></div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a69c53a708f9548488ff4386f28d6293c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">Kargono::EngineCore::GetWindow</a></div><div class="ttdeci">Window &amp; GetWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00063">EngineCore.h:63</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a86dc061a48c9b27250aa3a7c9a5b0c8c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">Kargono::EngineCore::GetCurrentEngineCore</a></div><div class="ttdeci">static EngineCore &amp; GetCurrentEngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00053">EngineCore.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_a0b72db83a413ecb0236fd2e1f9789e85"><div class="ttname"><a href="classKargono_1_1InputPolling.html#a0b72db83a413ecb0236fd2e1f9789e85">Kargono::InputPolling::GetMouseX</a></div><div class="ttdeci">static float GetMouseX()</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00034">WindowsInput.cpp:34</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_a4f721fb09b78fb86bda7cf12f1dc3d15"><div class="ttname"><a href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">Kargono::InputPolling::IsKeyPressed</a></div><div class="ttdeci">static bool IsKeyPressed(KeyCode key)</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00012">WindowsInput.cpp:12</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_a5ef1e2922b6a01df6de793c32eea1426"><div class="ttname"><a href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">Kargono::InputPolling::GetMousePosition</a></div><div class="ttdeci">static Math::vec2 GetMousePosition()</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00025">WindowsInput.cpp:25</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_aa0afcedd5b10c0ec78269a689a051214"><div class="ttname"><a href="classKargono_1_1InputPolling.html#aa0afcedd5b10c0ec78269a689a051214">Kargono::InputPolling::IsMouseButtonPressed</a></div><div class="ttdeci">static bool IsMouseButtonPressed(MouseCode button)</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00019">WindowsInput.cpp:19</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_ad9ab861a7f6cfb3b8cc16e483ee6819f"><div class="ttname"><a href="classKargono_1_1InputPolling.html#ad9ab861a7f6cfb3b8cc16e483ee6819f">Kargono::InputPolling::GetMouseY</a></div><div class="ttdeci">static float GetMouseY()</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00039">WindowsInput.cpp:39</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a5f1c439aaf7de9427af4c86a2cf882fb"><div class="ttname"><a href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">Kargono::Window::GetNativeWindow</a></div><div class="ttdeci">virtual void * GetNativeWindow() const =0</div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a38c4cd764f4138362cbb432cf30c9f48"><div class="ttname"><a href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">Kargono::MouseCode</a></div><div class="ttdeci">uint16_t MouseCode</div><div class="ttdef"><b>Definition:</b> <a href="MouseCodes_8h_source.html#l00004">MouseCodes.h:4</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a5d9d8bc09d8eadf807acc6aec40f3a3b"><div class="ttname"><a href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">Kargono::KeyCode</a></div><div class="ttdeci">uint16_t KeyCode</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00006">KeyCodes.h:6</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_80ecc2b01c9be934f5a090694d9e8ec9.html">Platform</a></li><li class="navelem"><b>WindowsInput.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

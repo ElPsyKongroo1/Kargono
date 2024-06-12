@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Framebuffer_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,119 +84,89 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Framebuffer.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Framebuffer_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Base.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="namespaceKargono.html#ac608427829046efb023eb07c09962348">    7</a></span>&#160;    <span class="keyword">enum class</span> <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348">FramebufferDataFormat</a></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="keyword">enum class</span> FramebufferDataFormat</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    {</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a6adf97f83acf6453d4a6a4b1070f3754">None</a> = 0,</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        None = 0,</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="comment">// Color</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348ab4b279046a02077466fa26cabb00c642">RGBA8</a>,</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a2849effb989cbdcfb4b9eb143fd826aa">RED_INTEGER</a>,</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        RGBA8,</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        RED_INTEGER,</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">// Depth/stencil</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a7ca3e26e4e5c35e4408bd49c1e32e9a3">DEPTH24STENCIL8</a>,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        DEPTH24STENCIL8,</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// Defaults</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a675056ad1441b6375b2c5abd48c27ef1">Depth</a> = <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a7ca3e26e4e5c35e4408bd49c1e32e9a3">DEPTH24STENCIL8</a></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        Depth = DEPTH24STENCIL8</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    };</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferDataSpecification.html">   22</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1FramebufferDataSpecification.html">FramebufferDataSpecification</a></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    {</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferDataSpecification.html#a5801adf0d44229dcc6de2675b9c6e749">   24</a></span>&#160;        <a class="code" href="structKargono_1_1FramebufferDataSpecification.html#a5801adf0d44229dcc6de2675b9c6e749">FramebufferDataSpecification</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferDataSpecification.html#a402deee11472a049145210f976ac0a75">   25</a></span>&#160;        <a class="code" href="structKargono_1_1FramebufferDataSpecification.html#a402deee11472a049145210f976ac0a75">FramebufferDataSpecification</a>(<a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348">FramebufferDataFormat</a> format)</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            : <a class="code" href="structKargono_1_1FramebufferDataSpecification.html#a3fa173d1877ea546c8916cfb016c1f89">DataFormat</a>(format) {}</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferDataSpecification.html#a3fa173d1877ea546c8916cfb016c1f89">   27</a></span>&#160;        <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348">FramebufferDataFormat</a> <a class="code" href="structKargono_1_1FramebufferDataSpecification.html#a3fa173d1877ea546c8916cfb016c1f89">DataFormat</a> = <a class="code" href="namespaceKargono.html#ac608427829046efb023eb07c09962348a6adf97f83acf6453d4a6a4b1070f3754">FramebufferDataFormat::None</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="structKargono_1_1FramebufferDataSpecification.html">FramebufferDataSpecification</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <a class="code" href="structKargono_1_1FramebufferDataSpecification.html">FramebufferDataSpecification</a>(FramebufferDataFormat format)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            : DataFormat(format) {}</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        FramebufferDataFormat DataFormat = FramebufferDataFormat::None;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">//TODO: filtering/wrap</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    };</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferAttachmentSpecification.html">   31</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferAttachmentSpecification.html#a5e2c477c234f6e18edf81075838ef75e">   33</a></span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html#a5e2c477c234f6e18edf81075838ef75e">FramebufferAttachmentSpecification</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferAttachmentSpecification.html#a63634900323a420ae897d31c7f26ab1a">   34</a></span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html#a63634900323a420ae897d31c7f26ab1a">FramebufferAttachmentSpecification</a>(std::initializer_list&lt;FramebufferDataSpecification&gt; attachments)</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            : <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html#a68ca897a58d1c78f7bd98d345c45726b">Attachments</a>(attachments) {}</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a>(std::initializer_list&lt;FramebufferDataSpecification&gt; attachments)</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            : Attachments(attachments) {}</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferAttachmentSpecification.html#a68ca897a58d1c78f7bd98d345c45726b">   37</a></span>&#160;        std::vector&lt;FramebufferDataSpecification&gt; <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html#a68ca897a58d1c78f7bd98d345c45726b">Attachments</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        std::vector&lt;FramebufferDataSpecification&gt; Attachments;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    };</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferSpecification.html">   40</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferSpecification.html#ad904a6d93f82c582a693b25a920da562">   42</a></span>&#160;        uint32_t <a class="code" href="structKargono_1_1FramebufferSpecification.html#a7c967f4acf5f4a87da9c34c1ed07470a">Width</a> = 0, <a class="code" href="structKargono_1_1FramebufferSpecification.html#ad904a6d93f82c582a693b25a920da562">Height</a> = 0;</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferSpecification.html#aa3a1f6825f540f993dfdc7bccbd9b33b">   43</a></span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a> <a class="code" href="structKargono_1_1FramebufferSpecification.html#aa3a1f6825f540f993dfdc7bccbd9b33b">Attachments</a>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferSpecification.html#a8da114aa697afe071ce00793f6f554c6">   44</a></span>&#160;        uint32_t <a class="code" href="structKargono_1_1FramebufferSpecification.html#a8da114aa697afe071ce00793f6f554c6">Samples</a> = 1;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        uint32_t Width = 0, Height = 0;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a> Attachments;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        uint32_t Samples = 1;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structKargono_1_1FramebufferSpecification.html#a60de506164a27e49851b8d994da0dbdf">   46</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html#a60de506164a27e49851b8d994da0dbdf">SwapChainTarget</a> = <span class="keyword">false</span>; <span class="comment">// Are we rendering to the screen? false is no. true is yes!</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordtype">bool</span> SwapChainTarget = <span class="keyword">false</span>; <span class="comment">// Are we rendering to the screen? false is no. true is yes!</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    };</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html">   49</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Framebuffer.html">Framebuffer</a></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a3cc50da13af4f02d465164bd29d49bdb">   52</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1Framebuffer.html#a3cc50da13af4f02d465164bd29d49bdb">~Framebuffer</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a66a6f6056f02905713f45016e13e3a21">   53</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Framebuffer.html#a66a6f6056f02905713f45016e13e3a21">Bind</a>() = 0;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a9b2fe64faa076f0dacbfb44301a033d7">   54</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Framebuffer.html#a9b2fe64faa076f0dacbfb44301a033d7">Unbind</a>() = 0;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classKargono_1_1Framebuffer.html">Framebuffer</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Bind() = 0;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Unbind() = 0;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a0307b10be1ab5ea8b4ab0688085b3ac3">   56</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Framebuffer.html#a0307b10be1ab5ea8b4ab0688085b3ac3">Resize</a>(uint32_t width, uint32_t height) = 0;</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a13a0419471c7074568416d2c30cd3150">   57</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">int</span> <a class="code" href="classKargono_1_1Framebuffer.html#a13a0419471c7074568416d2c30cd3150">ReadPixel</a>(uint32_t attachmentIndex, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y) = 0;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Resize(uint32_t width, uint32_t height) = 0;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">int</span> ReadPixel(uint32_t attachmentIndex, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> y) = 0;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a36bccba887a088d15b791ae5cb0e1001">   59</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Framebuffer.html#a36bccba887a088d15b791ae5cb0e1001">ClearAttachment</a>(uint32_t attachmentIndex, <span class="keywordtype">int</span> value) = 0;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> ClearAttachment(uint32_t attachmentIndex, <span class="keywordtype">int</span> value) = 0;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#ad28be64f485ebe4f79bbb967714b51ce">   61</a></span>&#160;        <span class="keyword">virtual</span> uint32_t <a class="code" href="classKargono_1_1Framebuffer.html#ad28be64f485ebe4f79bbb967714b51ce">GetColorAttachmentRendererID</a>(uint32_t index = 0) <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classKargono_1_1Framebuffer.html#a3ffe1b9c41528af78be80a72e225ba03">   62</a></span>&#160;        <span class="keyword">virtual</span> <span class="keyword">const</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a>&amp; <a class="code" href="classKargono_1_1Framebuffer.html#a3ffe1b9c41528af78be80a72e225ba03">GetSpecification</a>() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">virtual</span> uint32_t GetColorAttachmentRendererID(uint32_t index = 0) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">virtual</span> <span class="keyword">const</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a>&amp; GetSpecification() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Framebuffer&gt;</a> <a class="code" href="classKargono_1_1Framebuffer.html#a7a4b6e107f7b0f5c4cdec4612b0af21b">Create</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a>&amp; spec);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keyword">static</span> Ref&lt;Framebuffer&gt; Create(<span class="keyword">const</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a>&amp; spec);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    };</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
-<div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Framebuffer_html"><div class="ttname"><a href="classKargono_1_1Framebuffer.html">Kargono::Framebuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00049">Framebuffer.h:50</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a0307b10be1ab5ea8b4ab0688085b3ac3"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a0307b10be1ab5ea8b4ab0688085b3ac3">Kargono::Framebuffer::Resize</a></div><div class="ttdeci">virtual void Resize(uint32_t width, uint32_t height)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a13a0419471c7074568416d2c30cd3150"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a13a0419471c7074568416d2c30cd3150">Kargono::Framebuffer::ReadPixel</a></div><div class="ttdeci">virtual int ReadPixel(uint32_t attachmentIndex, int x, int y)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a36bccba887a088d15b791ae5cb0e1001"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a36bccba887a088d15b791ae5cb0e1001">Kargono::Framebuffer::ClearAttachment</a></div><div class="ttdeci">virtual void ClearAttachment(uint32_t attachmentIndex, int value)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a3cc50da13af4f02d465164bd29d49bdb"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a3cc50da13af4f02d465164bd29d49bdb">Kargono::Framebuffer::~Framebuffer</a></div><div class="ttdeci">virtual ~Framebuffer()=default</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a3ffe1b9c41528af78be80a72e225ba03"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a3ffe1b9c41528af78be80a72e225ba03">Kargono::Framebuffer::GetSpecification</a></div><div class="ttdeci">virtual const FramebufferSpecification &amp; GetSpecification() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a66a6f6056f02905713f45016e13e3a21"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a66a6f6056f02905713f45016e13e3a21">Kargono::Framebuffer::Bind</a></div><div class="ttdeci">virtual void Bind()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a7a4b6e107f7b0f5c4cdec4612b0af21b"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a7a4b6e107f7b0f5c4cdec4612b0af21b">Kargono::Framebuffer::Create</a></div><div class="ttdeci">static Ref&lt; Framebuffer &gt; Create(const FramebufferSpecification &amp;spec)</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8cpp_source.html#l00011">Framebuffer.cpp:11</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_a9b2fe64faa076f0dacbfb44301a033d7"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#a9b2fe64faa076f0dacbfb44301a033d7">Kargono::Framebuffer::Unbind</a></div><div class="ttdeci">virtual void Unbind()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Framebuffer_html_ad28be64f485ebe4f79bbb967714b51ce"><div class="ttname"><a href="classKargono_1_1Framebuffer.html#ad28be64f485ebe4f79bbb967714b51ce">Kargono::Framebuffer::GetColorAttachmentRendererID</a></div><div class="ttdeci">virtual uint32_t GetColorAttachmentRendererID(uint32_t index=0) const =0</div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348">Kargono::FramebufferDataFormat</a></div><div class="ttdeci">FramebufferDataFormat</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00007">Framebuffer.h:8</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348a2849effb989cbdcfb4b9eb143fd826aa"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348a2849effb989cbdcfb4b9eb143fd826aa">Kargono::FramebufferDataFormat::RED_INTEGER</a></div><div class="ttdeci">@ RED_INTEGER</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348a675056ad1441b6375b2c5abd48c27ef1"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348a675056ad1441b6375b2c5abd48c27ef1">Kargono::FramebufferDataFormat::Depth</a></div><div class="ttdeci">@ Depth</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348a6adf97f83acf6453d4a6a4b1070f3754"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348a6adf97f83acf6453d4a6a4b1070f3754">Kargono::FramebufferDataFormat::None</a></div><div class="ttdeci">@ None</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348a7ca3e26e4e5c35e4408bd49c1e32e9a3"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348a7ca3e26e4e5c35e4408bd49c1e32e9a3">Kargono::FramebufferDataFormat::DEPTH24STENCIL8</a></div><div class="ttdeci">@ DEPTH24STENCIL8</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac608427829046efb023eb07c09962348ab4b279046a02077466fa26cabb00c642"><div class="ttname"><a href="namespaceKargono.html#ac608427829046efb023eb07c09962348ab4b279046a02077466fa26cabb00c642">Kargono::FramebufferDataFormat::RGBA8</a></div><div class="ttdeci">@ RGBA8</div></div>
 <div class="ttc" id="astructKargono_1_1FramebufferAttachmentSpecification_html"><div class="ttname"><a href="structKargono_1_1FramebufferAttachmentSpecification.html">Kargono::FramebufferAttachmentSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00031">Framebuffer.h:32</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferAttachmentSpecification_html_a5e2c477c234f6e18edf81075838ef75e"><div class="ttname"><a href="structKargono_1_1FramebufferAttachmentSpecification.html#a5e2c477c234f6e18edf81075838ef75e">Kargono::FramebufferAttachmentSpecification::FramebufferAttachmentSpecification</a></div><div class="ttdeci">FramebufferAttachmentSpecification()=default</div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferAttachmentSpecification_html_a63634900323a420ae897d31c7f26ab1a"><div class="ttname"><a href="structKargono_1_1FramebufferAttachmentSpecification.html#a63634900323a420ae897d31c7f26ab1a">Kargono::FramebufferAttachmentSpecification::FramebufferAttachmentSpecification</a></div><div class="ttdeci">FramebufferAttachmentSpecification(std::initializer_list&lt; FramebufferDataSpecification &gt; attachments)</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00034">Framebuffer.h:34</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferAttachmentSpecification_html_a68ca897a58d1c78f7bd98d345c45726b"><div class="ttname"><a href="structKargono_1_1FramebufferAttachmentSpecification.html#a68ca897a58d1c78f7bd98d345c45726b">Kargono::FramebufferAttachmentSpecification::Attachments</a></div><div class="ttdeci">std::vector&lt; FramebufferDataSpecification &gt; Attachments</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00037">Framebuffer.h:37</a></div></div>
 <div class="ttc" id="astructKargono_1_1FramebufferDataSpecification_html"><div class="ttname"><a href="structKargono_1_1FramebufferDataSpecification.html">Kargono::FramebufferDataSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00022">Framebuffer.h:23</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferDataSpecification_html_a3fa173d1877ea546c8916cfb016c1f89"><div class="ttname"><a href="structKargono_1_1FramebufferDataSpecification.html#a3fa173d1877ea546c8916cfb016c1f89">Kargono::FramebufferDataSpecification::DataFormat</a></div><div class="ttdeci">FramebufferDataFormat DataFormat</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00027">Framebuffer.h:27</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferDataSpecification_html_a402deee11472a049145210f976ac0a75"><div class="ttname"><a href="structKargono_1_1FramebufferDataSpecification.html#a402deee11472a049145210f976ac0a75">Kargono::FramebufferDataSpecification::FramebufferDataSpecification</a></div><div class="ttdeci">FramebufferDataSpecification(FramebufferDataFormat format)</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00025">Framebuffer.h:25</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferDataSpecification_html_a5801adf0d44229dcc6de2675b9c6e749"><div class="ttname"><a href="structKargono_1_1FramebufferDataSpecification.html#a5801adf0d44229dcc6de2675b9c6e749">Kargono::FramebufferDataSpecification::FramebufferDataSpecification</a></div><div class="ttdeci">FramebufferDataSpecification()=default</div></div>
 <div class="ttc" id="astructKargono_1_1FramebufferSpecification_html"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html">Kargono::FramebufferSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00040">Framebuffer.h:41</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html_a60de506164a27e49851b8d994da0dbdf"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html#a60de506164a27e49851b8d994da0dbdf">Kargono::FramebufferSpecification::SwapChainTarget</a></div><div class="ttdeci">bool SwapChainTarget</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00046">Framebuffer.h:46</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html_a7c967f4acf5f4a87da9c34c1ed07470a"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html#a7c967f4acf5f4a87da9c34c1ed07470a">Kargono::FramebufferSpecification::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00042">Framebuffer.h:42</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html_a8da114aa697afe071ce00793f6f554c6"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html#a8da114aa697afe071ce00793f6f554c6">Kargono::FramebufferSpecification::Samples</a></div><div class="ttdeci">uint32_t Samples</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00044">Framebuffer.h:44</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html_aa3a1f6825f540f993dfdc7bccbd9b33b"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html#aa3a1f6825f540f993dfdc7bccbd9b33b">Kargono::FramebufferSpecification::Attachments</a></div><div class="ttdeci">FramebufferAttachmentSpecification Attachments</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00043">Framebuffer.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html_ad904a6d93f82c582a693b25a920da562"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html#ad904a6d93f82c582a693b25a920da562">Kargono::FramebufferSpecification::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00042">Framebuffer.h:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Framebuffer.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

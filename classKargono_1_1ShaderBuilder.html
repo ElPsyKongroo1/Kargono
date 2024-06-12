@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1ShaderBuilder.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1ShaderBuilder.html">ShaderBuilder</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
@@ -74,54 +92,24 @@ $(function() {
 <div class="title">Kargono::ShaderBuilder Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ShaderBuilder_8h_source.html">ShaderBuilder.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a6744667e8fc5909e29cb3b2c14f79082"><td class="memItemLeft" align="right" valign="top">static std::tuple&lt; <a class="el" href="namespaceKargono.html#a6e02b565a545df909b47cee3037d93d9">ShaderSource</a>, <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>, <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ShaderBuilder.html#a6744667e8fc5909e29cb3b2c14f79082">BuildShader</a> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shaderSpec)</td></tr>
+<tr class="memitem:a6744667e8fc5909e29cb3b2c14f79082"><td class="memItemLeft" align="right" valign="top"><a id="a6744667e8fc5909e29cb3b2c14f79082"></a>
+static std::tuple&lt; ShaderSource, <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>, <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BuildShader</b> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shaderSpec)</td></tr>
 <tr class="separator:a6744667e8fc5909e29cb3b2c14f79082"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="ShaderBuilder_8h_source.html#l00006">6</a> of file <a class="el" href="ShaderBuilder_8h_source.html">ShaderBuilder.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6744667e8fc5909e29cb3b2c14f79082"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6744667e8fc5909e29cb3b2c14f79082">&#9670;&nbsp;</a></span>BuildShader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::tuple&lt; <a class="el" href="namespaceKargono.html#a6e02b565a545df909b47cee3037d93d9">ShaderSource</a>, <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>, <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &gt; Kargono::ShaderBuilder::BuildShader </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td>
-          <td class="paramname"><em>shaderSpec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ShaderBuilder_8cpp_source.html#l00541">541</a> of file <a class="el" href="ShaderBuilder_8cpp_source.html">ShaderBuilder.cpp</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="ShaderBuilder_8h_source.html">ShaderBuilder.h</a></li>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="ShaderBuilder_8cpp_source.html">ShaderBuilder.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1ShaderBuilder.html">ShaderBuilder</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

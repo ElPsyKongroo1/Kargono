@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('RenderCommand_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,122 +84,99 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">RenderCommand.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="RenderCommand_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RendererAPI_8h.html">Kargono/Renderer/RendererAPI.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/RendererAPI.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html">    8</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1RenderCommand.html">RenderCommand</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#aff3d532ab020082b5f50d16cf2b0536b">   12</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#aff3d532ab020082b5f50d16cf2b0536b">Init</a>()</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Init()</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            s_RendererAPI-&gt;Init();</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        }</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a7a49c42584f687fc8d1ad98863f20ff9">   17</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a7a49c42584f687fc8d1ad98863f20ff9">SetViewport</a>(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            s_RendererAPI-&gt;SetViewport(x, y, width, height);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        }</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#ac7aa44495189ff0f77f074e28f9da03e">   22</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#ac7aa44495189ff0f77f074e28f9da03e">ClearDepthBuffer</a>()</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> ClearDepthBuffer()</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            s_RendererAPI-&gt;ClearDepthBuffer();</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        }</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a61f16ce3846683094f238497c1d4ba82">   27</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a61f16ce3846683094f238497c1d4ba82">SetDepthTesting</a>(<span class="keywordtype">bool</span> value)</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetDepthTesting(<span class="keywordtype">bool</span> value)</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            s_RendererAPI-&gt;SetDepthTesting(value);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a73516d0e08c4e48dc6a59216190b368b">   32</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a73516d0e08c4e48dc6a59216190b368b">SetStencilMask</a>(uint32_t value)</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetStencilMask(uint32_t value)</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            s_RendererAPI-&gt;SetStencilMask(value);</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#ad80e3c4a4cfe03cb8de16f3857fc12b2">   37</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#ad80e3c4a4cfe03cb8de16f3857fc12b2">StencilTestFunc</a>(<a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21">StencilComparisonType</a> comparisonType, int32_t reference, uint32_t mask)</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> StencilTestFunc(StencilComparisonType comparisonType, int32_t reference, uint32_t mask)</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            s_RendererAPI-&gt;StencilTestFunc(comparisonType, reference, mask);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a2e140952d287fc020551ea731641f4a0">   42</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a2e140952d287fc020551ea731641f4a0">StencilTestOptions</a>(<a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">StencilOptions</a> sfail, <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">StencilOptions</a> dfail, <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">StencilOptions</a> sdpass)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> StencilTestOptions(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass)</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        {</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            s_RendererAPI-&gt;StencilTestOptions(sfail, dfail, sdpass);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a810c6856d2652aed413cf577827fc2b3">   47</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a810c6856d2652aed413cf577827fc2b3">SetClearColor</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a>&amp; color)</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetClearColor(<span class="keyword">const</span> Math::vec4&amp; color)</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        {</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            s_RendererAPI-&gt;SetClearColor(color);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        };</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a63c40123059f169d5bfd0da7a43470ca">   51</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a63c40123059f169d5bfd0da7a43470ca">Clear</a>() { s_RendererAPI-&gt;Clear(); }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Clear() { s_RendererAPI-&gt;Clear(); }</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#aa4eb7c968eb0ce95105054edc8d0ab47">   53</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#aa4eb7c968eb0ce95105054edc8d0ab47">DrawIndexed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;VertexArray&gt;</a>&amp; vertexArray, uint32_t indexCount = 0)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> DrawIndexed(<span class="keyword">const</span> Ref&lt;VertexArray&gt;&amp; vertexArray, uint32_t indexCount = 0)</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        {</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            s_RendererAPI-&gt;DrawIndexed(vertexArray, indexCount);</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a25fb526205b96f51ba2d0d04b3840a68">   58</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a25fb526205b96f51ba2d0d04b3840a68">DrawIndexed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;VertexArray&gt;</a>&amp; vertexArray, uint32_t* indexPointer, uint32_t indexCount)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> DrawIndexed(<span class="keyword">const</span> Ref&lt;VertexArray&gt;&amp; vertexArray, uint32_t* indexPointer, uint32_t indexCount)</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            s_RendererAPI-&gt;DrawIndexed(vertexArray, indexPointer, indexCount);</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        }</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a423316c237890b90bc91b0c8ab7e91f9">   63</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a423316c237890b90bc91b0c8ab7e91f9">DrawLines</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;VertexArray&gt;</a>&amp; vertexArray, uint32_t vertexCount)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> DrawLines(<span class="keyword">const</span> Ref&lt;VertexArray&gt;&amp; vertexArray, uint32_t vertexCount)</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        {</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            s_RendererAPI-&gt;DrawLines(vertexArray, vertexCount);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a8a7bf0691535c39e4ee454a98e5a24dc">   67</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a8a7bf0691535c39e4ee454a98e5a24dc">DrawTriangles</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;VertexArray&gt;</a>&amp; vertexArray, uint32_t vertexCount)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> DrawTriangles(<span class="keyword">const</span> Ref&lt;VertexArray&gt;&amp; vertexArray, uint32_t vertexCount)</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        {</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            s_RendererAPI-&gt;DrawTriangles(vertexArray, vertexCount);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classKargono_1_1RenderCommand.html#a42b3fcc9b7419b5b8366a6ff07585841">   71</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RenderCommand.html#a42b3fcc9b7419b5b8366a6ff07585841">SetLineWidth</a>(<span class="keywordtype">float</span> width)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetLineWidth(<span class="keywordtype">float</span> width)</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        {</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            s_RendererAPI-&gt;SetLineWidth(width);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;RendererAPI&gt;</a> s_RendererAPI;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">static</span> Scope&lt;RendererAPI&gt; s_RendererAPI;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    };</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
-<div class="ttc" id="aRendererAPI_8h_html"><div class="ttname"><a href="RendererAPI_8h.html">RendererAPI.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1RenderCommand_html"><div class="ttname"><a href="classKargono_1_1RenderCommand.html">Kargono::RenderCommand</a></div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00008">RenderCommand.h:9</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a25fb526205b96f51ba2d0d04b3840a68"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a25fb526205b96f51ba2d0d04b3840a68">Kargono::RenderCommand::DrawIndexed</a></div><div class="ttdeci">static void DrawIndexed(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t *indexPointer, uint32_t indexCount)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00058">RenderCommand.h:58</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a2e140952d287fc020551ea731641f4a0"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a2e140952d287fc020551ea731641f4a0">Kargono::RenderCommand::StencilTestOptions</a></div><div class="ttdeci">static void StencilTestOptions(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00042">RenderCommand.h:42</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a423316c237890b90bc91b0c8ab7e91f9"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a423316c237890b90bc91b0c8ab7e91f9">Kargono::RenderCommand::DrawLines</a></div><div class="ttdeci">static void DrawLines(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00063">RenderCommand.h:63</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a42b3fcc9b7419b5b8366a6ff07585841"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a42b3fcc9b7419b5b8366a6ff07585841">Kargono::RenderCommand::SetLineWidth</a></div><div class="ttdeci">static void SetLineWidth(float width)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00071">RenderCommand.h:71</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a61f16ce3846683094f238497c1d4ba82"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a61f16ce3846683094f238497c1d4ba82">Kargono::RenderCommand::SetDepthTesting</a></div><div class="ttdeci">static void SetDepthTesting(bool value)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00027">RenderCommand.h:27</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a63c40123059f169d5bfd0da7a43470ca"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a63c40123059f169d5bfd0da7a43470ca">Kargono::RenderCommand::Clear</a></div><div class="ttdeci">static void Clear()</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00051">RenderCommand.h:51</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a73516d0e08c4e48dc6a59216190b368b"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a73516d0e08c4e48dc6a59216190b368b">Kargono::RenderCommand::SetStencilMask</a></div><div class="ttdeci">static void SetStencilMask(uint32_t value)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00032">RenderCommand.h:32</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a7a49c42584f687fc8d1ad98863f20ff9"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a7a49c42584f687fc8d1ad98863f20ff9">Kargono::RenderCommand::SetViewport</a></div><div class="ttdeci">static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00017">RenderCommand.h:17</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a810c6856d2652aed413cf577827fc2b3"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a810c6856d2652aed413cf577827fc2b3">Kargono::RenderCommand::SetClearColor</a></div><div class="ttdeci">static void SetClearColor(const Math::vec4 &amp;color)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00047">RenderCommand.h:47</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a8a7bf0691535c39e4ee454a98e5a24dc"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a8a7bf0691535c39e4ee454a98e5a24dc">Kargono::RenderCommand::DrawTriangles</a></div><div class="ttdeci">static void DrawTriangles(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00067">RenderCommand.h:67</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_aa4eb7c968eb0ce95105054edc8d0ab47"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#aa4eb7c968eb0ce95105054edc8d0ab47">Kargono::RenderCommand::DrawIndexed</a></div><div class="ttdeci">static void DrawIndexed(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t indexCount=0)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00053">RenderCommand.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_ac7aa44495189ff0f77f074e28f9da03e"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#ac7aa44495189ff0f77f074e28f9da03e">Kargono::RenderCommand::ClearDepthBuffer</a></div><div class="ttdeci">static void ClearDepthBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00022">RenderCommand.h:22</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_ad80e3c4a4cfe03cb8de16f3857fc12b2"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#ad80e3c4a4cfe03cb8de16f3857fc12b2">Kargono::RenderCommand::StencilTestFunc</a></div><div class="ttdeci">static void StencilTestFunc(StencilComparisonType comparisonType, int32_t reference, uint32_t mask)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00037">RenderCommand.h:37</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_aff3d532ab020082b5f50d16cf2b0536b"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#aff3d532ab020082b5f50d16cf2b0536b">Kargono::RenderCommand::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00012">RenderCommand.h:12</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a54a9e352ac755822901745e5bad04edb"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a></div><div class="ttdeci">glm::vec4 vec4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00016">MathAliases.h:16</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a75cefe73507cbf8c678d5e216480039c"><div class="ttname"><a href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Kargono::Scope</a></div><div class="ttdeci">std::unique_ptr&lt; T &gt; Scope</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00032">Base.h:32</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21">Kargono::StencilComparisonType</a></div><div class="ttdeci">StencilComparisonType</div><div class="ttdef"><b>Definition:</b> <a href="RendererAPI_8h_source.html#l00013">RendererAPI.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a></div><div class="ttdeci">StencilOptions</div><div class="ttdef"><b>Definition:</b> <a href="RendererAPI_8h_source.html#l00019">RendererAPI.h:20</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>RenderCommand.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

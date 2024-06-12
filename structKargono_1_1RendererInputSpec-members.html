@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1RendererInputSpec.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::RendererInputSpec Member List</div>  </div>
@@ -74,19 +92,22 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">CurrentDrawBuffer</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#aa91849c2aa5f3ae3d56e905bb2ea3fc9">Entity</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#af3b95cf5eaeab302001cb55f4ee3b869">EntityRegistry</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#ac6993e2290200ac6aa81e4ac99f598b3">ObjectOutlineMatrix</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a836e6342dfc358a31dbfff6f9c210542">Texture</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html#a2c4f5dc02662c1927c3d3ff7aa0274e3">TransformMatrix</a></td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Buffer</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>CurrentDrawBuffer</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Entity</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>EntityRegistry</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ObjectOutlineMatrix</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Shader</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ShapeComponent</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Texture</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>TransformMatrix</b> (defined in <a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

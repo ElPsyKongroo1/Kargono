@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Scripting_1_1ScriptModuleBuilder.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Scripting.html">Scripting</a></li><li class="navelem"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">ScriptModuleBuilder</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
@@ -74,169 +92,36 @@ $(function() {
 <div class="title">Kargono::Scripting::ScriptModuleBuilder Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ScriptModuleBuilder_8h_source.html">ScriptModuleBuilder.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:afac9a5f64ee6c9ceb92ec47df071be2d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#afac9a5f64ee6c9ceb92ec47df071be2d">CreateDll</a> (bool addDebugSymbols=true)</td></tr>
+<tr class="memitem:afac9a5f64ee6c9ceb92ec47df071be2d"><td class="memItemLeft" align="right" valign="top"><a id="afac9a5f64ee6c9ceb92ec47df071be2d"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateDll</b> (bool addDebugSymbols=true)</td></tr>
 <tr class="separator:afac9a5f64ee6c9ceb92ec47df071be2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a541a3ad457c19d9bb30cbdabc080516a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a541a3ad457c19d9bb30cbdabc080516a">CreateDllHeader</a> ()</td></tr>
+<tr class="memitem:a541a3ad457c19d9bb30cbdabc080516a"><td class="memItemLeft" align="right" valign="top"><a id="a541a3ad457c19d9bb30cbdabc080516a"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateDllHeader</b> ()</td></tr>
 <tr class="separator:a541a3ad457c19d9bb30cbdabc080516a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd78e5080cff16651361eac5d81083aa"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#acd78e5080cff16651361eac5d81083aa">CreateDllCPPFiles</a> ()</td></tr>
+<tr class="memitem:acd78e5080cff16651361eac5d81083aa"><td class="memItemLeft" align="right" valign="top"><a id="acd78e5080cff16651361eac5d81083aa"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateDllCPPFiles</b> ()</td></tr>
 <tr class="separator:acd78e5080cff16651361eac5d81083aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf1307239a394369564bc6b2871827b1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#adf1307239a394369564bc6b2871827b1">CompileDll</a> (bool addDebugSymbols)</td></tr>
+<tr class="memitem:adf1307239a394369564bc6b2871827b1"><td class="memItemLeft" align="right" valign="top"><a id="adf1307239a394369564bc6b2871827b1"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CompileDll</b> (bool addDebugSymbols)</td></tr>
 <tr class="separator:adf1307239a394369564bc6b2871827b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a577f4aaf112aa33996ab89c2ff018539"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a577f4aaf112aa33996ab89c2ff018539">AddEngineFuncsToDll</a> ()</td></tr>
+<tr class="memitem:a577f4aaf112aa33996ab89c2ff018539"><td class="memItemLeft" align="right" valign="top"><a id="a577f4aaf112aa33996ab89c2ff018539"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>AddEngineFuncsToDll</b> ()</td></tr>
 <tr class="separator:a577f4aaf112aa33996ab89c2ff018539"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="ScriptModuleBuilder_8h_source.html#l00005">5</a> of file <a class="el" href="ScriptModuleBuilder_8h_source.html">ScriptModuleBuilder.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a577f4aaf112aa33996ab89c2ff018539"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a577f4aaf112aa33996ab89c2ff018539">&#9670;&nbsp;</a></span>AddEngineFuncsToDll()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a> Kargono::Scripting::ScriptModuleBuilder::AddEngineFuncsToDll </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00518">518</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
-
-</div>
-</div>
-<a id="adf1307239a394369564bc6b2871827b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf1307239a394369564bc6b2871827b1">&#9670;&nbsp;</a></span>CompileDll()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a> Kargono::Scripting::ScriptModuleBuilder::CompileDll </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>addDebugSymbols</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00466">466</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afac9a5f64ee6c9ceb92ec47df071be2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afac9a5f64ee6c9ceb92ec47df071be2d">&#9670;&nbsp;</a></span>CreateDll()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a> Kargono::Scripting::ScriptModuleBuilder::CreateDll </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>addDebugSymbols</em> = <code>true</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acd78e5080cff16651361eac5d81083aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd78e5080cff16651361eac5d81083aa">&#9670;&nbsp;</a></span>CreateDllCPPFiles()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a> Kargono::Scripting::ScriptModuleBuilder::CreateDllCPPFiles </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00384">384</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a541a3ad457c19d9bb30cbdabc080516a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a541a3ad457c19d9bb30cbdabc080516a">&#9670;&nbsp;</a></span>CreateDllHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a> Kargono::Scripting::ScriptModuleBuilder::CreateDllHeader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00323">323</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Scripting/<a class="el" href="ScriptModuleBuilder_8h_source.html">ScriptModuleBuilder.h</a></li>
-<li>Engine/Source/Kargono/Scripting/<a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Scripting</b></li><li class="navelem"><a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">ScriptModuleBuilder</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1VertexBuffer.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -75,282 +93,45 @@ $(function() {
 <div class="title">Kargono::VertexBuffer Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="InputBuffer_8h_source.html">InputBuffer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:add447a262c0e416585c466653b8a043a"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#add447a262c0e416585c466653b8a043a">~VertexBuffer</a> ()=default</td></tr>
-<tr class="separator:add447a262c0e416585c466653b8a043a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdcc83406f4d853942ddf67bae8c0899"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#afdcc83406f4d853942ddf67bae8c0899">Bind</a> () const =0</td></tr>
+<tr class="memitem:afdcc83406f4d853942ddf67bae8c0899"><td class="memItemLeft" align="right" valign="top"><a id="afdcc83406f4d853942ddf67bae8c0899"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Bind</b> () const =0</td></tr>
 <tr class="separator:afdcc83406f4d853942ddf67bae8c0899"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2178faad187c81d19ada34d8f76c9348"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#a2178faad187c81d19ada34d8f76c9348">Unbind</a> () const =0</td></tr>
+<tr class="memitem:a2178faad187c81d19ada34d8f76c9348"><td class="memItemLeft" align="right" valign="top"><a id="a2178faad187c81d19ada34d8f76c9348"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Unbind</b> () const =0</td></tr>
 <tr class="separator:a2178faad187c81d19ada34d8f76c9348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a903bb30c3de96f9c269425fcc8379a94"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#a903bb30c3de96f9c269425fcc8379a94">SetData</a> (const void *data, uint32_t size)=0</td></tr>
+<tr class="memitem:a903bb30c3de96f9c269425fcc8379a94"><td class="memItemLeft" align="right" valign="top"><a id="a903bb30c3de96f9c269425fcc8379a94"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetData</b> (const void *data, uint32_t size)=0</td></tr>
 <tr class="separator:a903bb30c3de96f9c269425fcc8379a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74b02f251baa366c458932784198fad3"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#a74b02f251baa366c458932784198fad3">GetLayout</a> () const =0</td></tr>
+<tr class="memitem:a74b02f251baa366c458932784198fad3"><td class="memItemLeft" align="right" valign="top"><a id="a74b02f251baa366c458932784198fad3"></a>
+virtual const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetLayout</b> () const =0</td></tr>
 <tr class="separator:a74b02f251baa366c458932784198fad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61c21a21b1716dbb32a7241bd9e7cd00"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#a61c21a21b1716dbb32a7241bd9e7cd00">SetLayout</a> (const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;layout)=0</td></tr>
+<tr class="memitem:a61c21a21b1716dbb32a7241bd9e7cd00"><td class="memItemLeft" align="right" valign="top"><a id="a61c21a21b1716dbb32a7241bd9e7cd00"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetLayout</b> (const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;layout)=0</td></tr>
 <tr class="separator:a61c21a21b1716dbb32a7241bd9e7cd00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ab823dadefc33cee5164349c41099e996"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#ab823dadefc33cee5164349c41099e996">Create</a> (uint32_t size)</td></tr>
+<tr class="memitem:ab823dadefc33cee5164349c41099e996"><td class="memItemLeft" align="right" valign="top"><a id="ab823dadefc33cee5164349c41099e996"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Create</b> (uint32_t size)</td></tr>
 <tr class="separator:ab823dadefc33cee5164349c41099e996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac00e2d1356793e76d1cf0ce1c4f885f0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1VertexBuffer.html#ac00e2d1356793e76d1cf0ce1c4f885f0">Create</a> (float *vertices, uint32_t size)</td></tr>
+<tr class="memitem:ac00e2d1356793e76d1cf0ce1c4f885f0"><td class="memItemLeft" align="right" valign="top"><a id="ac00e2d1356793e76d1cf0ce1c4f885f0"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Create</b> (float *vertices, uint32_t size)</td></tr>
 <tr class="separator:ac00e2d1356793e76d1cf0ce1c4f885f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="InputBuffer_8h_source.html#l00182">182</a> of file <a class="el" href="InputBuffer_8h_source.html">InputBuffer.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="add447a262c0e416585c466653b8a043a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add447a262c0e416585c466653b8a043a">&#9670;&nbsp;</a></span>~VertexBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Kargono::VertexBuffer::~VertexBuffer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="afdcc83406f4d853942ddf67bae8c0899"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdcc83406f4d853942ddf67bae8c0899">&#9670;&nbsp;</a></span>Bind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::VertexBuffer::Bind </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLVertexBuffer.html#a2b2dea4b92a709e3f4976c316d644526">API::OpenGL::OpenGLVertexBuffer</a>.</p>
-
-</div>
-</div>
-<a id="ac00e2d1356793e76d1cf0ce1c4f885f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac00e2d1356793e76d1cf0ce1c4f885f0">&#9670;&nbsp;</a></span>Create() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt; Kargono::VertexBuffer::Create </td>
-          <td>(</td>
-          <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>vertices</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="InputBuffer_8cpp_source.html#l00015">15</a> of file <a class="el" href="InputBuffer_8cpp_source.html">InputBuffer.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab823dadefc33cee5164349c41099e996"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab823dadefc33cee5164349c41099e996">&#9670;&nbsp;</a></span>Create() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a> &gt; Kargono::VertexBuffer::Create </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>size</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="InputBuffer_8cpp_source.html#l00011">11</a> of file <a class="el" href="InputBuffer_8cpp_source.html">InputBuffer.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a74b02f251baa366c458932784198fad3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74b02f251baa366c458932784198fad3">&#9670;&nbsp;</a></span>GetLayout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>&amp; Kargono::VertexBuffer::GetLayout </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLVertexBuffer.html#ac85e049a8fdf85394ff80f6aa4e684d3">API::OpenGL::OpenGLVertexBuffer</a>.</p>
-
-</div>
-</div>
-<a id="a903bb30c3de96f9c269425fcc8379a94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a903bb30c3de96f9c269425fcc8379a94">&#9670;&nbsp;</a></span>SetData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::VertexBuffer::SetData </td>
-          <td>(</td>
-          <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLVertexBuffer.html#abf41d93978555be08011bc30fab4400a">API::OpenGL::OpenGLVertexBuffer</a>.</p>
-
-</div>
-</div>
-<a id="a61c21a21b1716dbb32a7241bd9e7cd00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61c21a21b1716dbb32a7241bd9e7cd00">&#9670;&nbsp;</a></span>SetLayout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::VertexBuffer::SetLayout </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td>
-          <td class="paramname"><em>layout</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLVertexBuffer.html#adb3dc8e1e060a62b5d2f42238925572f">API::OpenGL::OpenGLVertexBuffer</a>.</p>
-
-</div>
-</div>
-<a id="a2178faad187c81d19ada34d8f76c9348"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2178faad187c81d19ada34d8f76c9348">&#9670;&nbsp;</a></span>Unbind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::VertexBuffer::Unbind </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLVertexBuffer.html#a95654ef4683e86c9251122d4e9762040">API::OpenGL::OpenGLVertexBuffer</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="InputBuffer_8h_source.html">InputBuffer.h</a></li>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="InputBuffer_8cpp_source.html">InputBuffer.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1VertexBuffer.html">VertexBuffer</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

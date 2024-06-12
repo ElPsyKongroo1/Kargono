@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('EntityClassManager_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,29 +84,24 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_5b53c7d7a083fcf50a31804c891b6cc8.html">Assets</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">EntityClassManager.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="EntityClassManager_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="AssetManager_8h.html">Kargono/Assets/AssetManager.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Project_8h.html">Kargono/Projects/Project.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scene/Scene.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Entity_8h.html">Kargono/Scene/Entity.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Assets/AssetManager.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Projects/Project.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Utility/FileSystem.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Scene.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Entity.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="yamlcppAPI_8h.html">API/Serialization/yamlcppAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;API/Serialization/yamlcppAPI.h&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>Kargono::Utility</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> TransferClassInstanceFieldData(Ref&lt;Kargono::Scene&gt; scene, Ref&lt;Kargono::EntityClass&gt; entityClass, <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> entityHandle,</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> TransferClassInstanceFieldData(Ref&lt;Kargono::Scene&gt; scene, Ref&lt;Kargono::EntityClass&gt; entityClass, Assets::AssetHandle entityHandle,</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">const</span> std::unordered_map&lt;uint32_t, uint32_t&gt;&amp; transferMap)</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordflow">if</span> (scene)</div>
@@ -91,7 +109,7 @@ $(function() {
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> entity : scene-&gt;GetAllEntitiesWith&lt;ClassInstanceComponent&gt;())</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                <a class="code" href="classKargono_1_1Entity.html">Kargono::Entity</a> currentEntity { entity, scene.get() };</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                ClassInstanceComponent&amp; component = currentEntity.<a class="code" href="classKargono_1_1Entity.html#ae93be291088732692b579425d3c3d0d8">GetComponent</a>&lt;ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                ClassInstanceComponent&amp; component = currentEntity.GetComponent&lt;ClassInstanceComponent&gt;();</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                <span class="keywordflow">if</span> (component.ClassHandle == entityHandle)</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                    component.ClassReference = entityClass;</div>
@@ -99,7 +117,7 @@ $(function() {
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                    component.Fields.clear();</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [name, type] : entityClass-&gt;GetFields())</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                    {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                        component.Fields.push_back(<a class="code" href="namespaceKargono_1_1Utility.html#a07e0a38134882b7ad466fbd557646383">Utility::WrappedVarTypeToWrappedVariable</a>(type));</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                        component.Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                    }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                    <span class="comment">// Transfer Data</span></div>
@@ -113,14 +131,14 @@ $(function() {
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> ClearClassReferenceFromScene(Ref&lt;Kargono::Scene&gt; scene,Ref&lt;Kargono::EntityClass&gt; entityClass, <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> entityHandle)</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> ClearClassReferenceFromScene(Ref&lt;Kargono::Scene&gt; scene,Ref&lt;Kargono::EntityClass&gt; entityClass, Assets::AssetHandle entityHandle)</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">if</span> (scene)</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> entity : scene-&gt;GetAllEntitiesWith&lt;ClassInstanceComponent&gt;())</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            {</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                <a class="code" href="classKargono_1_1Entity.html">Kargono::Entity</a> currentEntity { entity, scene.get() };</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                ClassInstanceComponent&amp; component = currentEntity.<a class="code" href="classKargono_1_1Entity.html#ae93be291088732692b579425d3c3d0d8">GetComponent</a>&lt;ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                ClassInstanceComponent&amp; component = currentEntity.GetComponent&lt;ClassInstanceComponent&gt;();</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                <span class="keywordflow">if</span> (component.ClassHandle == entityHandle)</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                {</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                    component.ClassHandle = Assets::EmptyHandle;</div>
@@ -133,20 +151,20 @@ $(function() {
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Assets.html">Kargono::Assets</a></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">namespace </span>Kargono::Assets</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;{</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    std::unordered_map&lt;AssetHandle, Assets::Asset&gt; AssetManager::s_EntityClassRegistry {};</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a0a8d040781eac39049495b2820bde2e3">   67</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a0a8d040781eac39049495b2820bde2e3">AssetManager::DeserializeEntityClassRegistry</a>()</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> AssetManager::DeserializeEntityClassRegistry()</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="comment">// Clear current registry and open registry in current project </span></div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        s_EntityClassRegistry.clear();</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>(), <span class="stringliteral">&quot;There is no currently loaded project to serialize from!&quot;</span>);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; EntityClassRegistryLocation = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() / <span class="stringliteral">&quot;EntityClass/EntityClassRegistry.kgreg&quot;</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        KG_ASSERT(Projects::Project::GetActive(), <span class="stringliteral">&quot;There is no currently loaded project to serialize from!&quot;</span>);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / <span class="stringliteral">&quot;EntityClass/EntityClassRegistry.kgreg&quot;</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">if</span> (!std::filesystem::exists(EntityClassRegistryLocation))</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;No .kgregistry file exists in project path!&quot;</span>);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;No .kgregistry file exists in project path!&quot;</span>);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        YAML::Node data;</div>
@@ -156,7 +174,7 @@ $(function() {
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">catch</span> (YAML::ParserException e)</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Failed to load .kgstate file &#39;{0}&#39;\n     {1}&quot;</span>, EntityClassRegistryLocation.string(), e.what());</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Failed to load .kgstate file &#39;{0}&#39;\n     {1}&quot;</span>, EntityClassRegistryLocation.string(), e.what());</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
@@ -164,7 +182,7 @@ $(function() {
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">if</span> (!data[<span class="stringliteral">&quot;Registry&quot;</span>]) { <span class="keywordflow">return</span>; }</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        std::string registryName = data[<span class="stringliteral">&quot;Registry&quot;</span>].as&lt;std::string&gt;();</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Deserializing EntityClass Registry&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Deserializing EntityClass Registry&quot;</span>);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="comment">// Opening all assets </span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keyword">auto</span> assets = data[<span class="stringliteral">&quot;Assets&quot;</span>];</div>
@@ -172,22 +190,22 @@ $(function() {
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        {</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> asset : assets)</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                <a class="code" href="structKargono_1_1Assets_1_1Asset.html">Assets::Asset</a> newAsset{};</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                newAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a018332c583e258de8667219fbf62c0b2">Handle</a> = asset[<span class="stringliteral">&quot;AssetHandle&quot;</span>].as&lt;uint64_t&gt;();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                Assets::Asset newAsset{};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                newAsset.Handle = asset[<span class="stringliteral">&quot;AssetHandle&quot;</span>].as&lt;uint64_t&gt;();</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                <span class="comment">// Retrieving metadata for asset </span></div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                <span class="keyword">auto</span> metadata = asset[<span class="stringliteral">&quot;MetaData&quot;</span>];</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                newAsset.Data.CheckSum = metadata[<span class="stringliteral">&quot;CheckSum&quot;</span>].as&lt;std::string&gt;();</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                newAsset.Data.IntermediateLocation = metadata[<span class="stringliteral">&quot;IntermediateLocation&quot;</span>].as&lt;std::string&gt;();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                newAsset.Data.Type = <a class="code" href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">Utility::StringToAssetType</a>(metadata[<span class="stringliteral">&quot;AssetType&quot;</span>].as&lt;std::string&gt;());</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                newAsset.Data.Type = Utility::StringToAssetType(metadata[<span class="stringliteral">&quot;AssetType&quot;</span>].as&lt;std::string&gt;());</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                <span class="comment">// Retrieving EntityClass specific metadata </span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                <span class="keywordflow">if</span> (newAsset.Data.Type == <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">Assets::EntityClass</a>)</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                <span class="keywordflow">if</span> (newAsset.Data.Type == Assets::EntityClass)</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Assets::EntityClassMetaData&gt;</a> <a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html">EntityClassMetaData</a> = CreateRef&lt;Assets::EntityClassMetaData&gt;();</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    <a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html">EntityClassMetaData</a>-&gt;<a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html#a4f580f61897d11c4ada893a4c04e8e8c">Name</a> = metadata[<span class="stringliteral">&quot;Name&quot;</span>].as&lt;std::string&gt;();</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                    Ref&lt;Assets::EntityClassMetaData&gt; EntityClassMetaData = CreateRef&lt;Assets::EntityClassMetaData&gt;();</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    EntityClassMetaData-&gt;Name = metadata[<span class="stringliteral">&quot;Name&quot;</span>].as&lt;std::string&gt;();</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                    newAsset.Data.SpecificFileData = <a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html">EntityClassMetaData</a>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                    newAsset.Data.SpecificFileData = EntityClassMetaData;</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                }</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                <span class="comment">// Add asset to in memory registry </span></div>
@@ -196,10 +214,10 @@ $(function() {
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a6c028ff7b350ef7c89ab382efae705a0">  126</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a6c028ff7b350ef7c89ab382efae705a0">AssetManager::SerializeEntityClassRegistry</a>()</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">void</span> AssetManager::SerializeEntityClassRegistry()</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>(), <span class="stringliteral">&quot;There is no currently loaded project to serialize to!&quot;</span>);</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; EntityClassRegistryLocation = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() / <span class="stringliteral">&quot;EntityClass/EntityClassRegistry.kgreg&quot;</span>;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        KG_ASSERT(Projects::Project::GetActive(), <span class="stringliteral">&quot;There is no currently loaded project to serialize to!&quot;</span>);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / <span class="stringliteral">&quot;EntityClass/EntityClassRegistry.kgreg&quot;</span>;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        YAML::Emitter out;</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        out &lt;&lt; YAML::BeginMap;</div>
@@ -215,12 +233,12 @@ $(function() {
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            out &lt;&lt; YAML::BeginMap; <span class="comment">// MetaData Map</span></div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;CheckSum&quot;</span> &lt;&lt; YAML::Value &lt;&lt; asset.Data.CheckSum;</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;IntermediateLocation&quot;</span> &lt;&lt; YAML::Value &lt;&lt; asset.Data.IntermediateLocation.string();</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;AssetType&quot;</span> &lt;&lt; YAML::Value &lt;&lt; <a class="code" href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">Utility::AssetTypeToString</a>(asset.Data.Type);</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">if</span> (asset.Data.Type == <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">Assets::AssetType::EntityClass</a>)</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;AssetType&quot;</span> &lt;&lt; YAML::Value &lt;&lt; Utility::AssetTypeToString(asset.Data.Type);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">if</span> (asset.Data.Type == Assets::AssetType::EntityClass)</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                <a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html">Assets::EntityClassMetaData</a>* metadata = <span class="keyword">static_cast&lt;</span><a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html">Assets::EntityClassMetaData</a>*<span class="keyword">&gt;</span>(asset.Data.SpecificFileData.get());</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                Assets::EntityClassMetaData* metadata = <span class="keyword">static_cast&lt;</span>Assets::EntityClassMetaData*<span class="keyword">&gt;</span>(asset.Data.SpecificFileData.get());</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Name&quot;</span> &lt;&lt; YAML::Value &lt;&lt; metadata-&gt;<a class="code" href="structKargono_1_1Assets_1_1EntityClassMetaData.html#a4f580f61897d11c4ada893a4c04e8e8c">Name</a>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Name&quot;</span> &lt;&lt; YAML::Value &lt;&lt; metadata-&gt;Name;</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            }</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            out &lt;&lt; YAML::EndMap; <span class="comment">// MetaData Map</span></div>
@@ -229,27 +247,27 @@ $(function() {
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        out &lt;&lt; YAML::EndSeq;</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        out &lt;&lt; YAML::EndMap;</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#af383512c911ce4b86791fd2248904c76">Utility::FileSystem::CreateNewDirectory</a>(EntityClassRegistryLocation.parent_path());</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        Utility::FileSystem::CreateNewDirectory(EntityClassRegistryLocation.parent_path());</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        std::ofstream fout(EntityClassRegistryLocation);</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        fout &lt;&lt; out.c_str();</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">void</span> AssetManager::SerializeEntityClass(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> <a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>, <span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">void</span> AssetManager::SerializeEntityClass(Ref&lt;Kargono::EntityClass&gt; EntityClass, <span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    {</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        YAML::Emitter out;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        out &lt;&lt; YAML::BeginMap; <span class="comment">// Start of File Map</span></div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Name&quot;</span> &lt;&lt; YAML::Value &lt;&lt; <a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;<a class="code" href="classKargono_1_1EntityClass.html#af61efbce3ef87ed23f809142e382978c">GetName</a>(); <span class="comment">// Output State Name</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Name&quot;</span> &lt;&lt; YAML::Value &lt;&lt; EntityClass-&gt;GetName(); <span class="comment">// Output State Name</span></div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;FieldTypes&quot;</span> &lt;&lt; YAML::Value;</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        out &lt;&lt; YAML::BeginSeq; <span class="comment">// Start Fields</span></div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [name, field] : <a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_FieldTypes)</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [name, field] : EntityClass-&gt;m_FieldTypes)</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        {</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            out &lt;&lt; YAML::BeginMap; <span class="comment">// Start Field</span></div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Name&quot;</span> &lt;&lt; YAML::Value &lt;&lt; name; <span class="comment">// Name/Map Key</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Type&quot;</span> &lt;&lt; YAML::Value &lt;&lt; <a class="code" href="namespaceKargono_1_1Utility.html#a478763e36a2933e4f8c32a1ffa075058">Utility::WrappedVarTypeToString</a>(field); <span class="comment">// Field Type</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;Type&quot;</span> &lt;&lt; YAML::Value &lt;&lt; Utility::WrappedVarTypeToString(field); <span class="comment">// Field Type</span></div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            out &lt;&lt; YAML::EndMap; <span class="comment">// End Field</span></div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        }</div>
@@ -257,18 +275,18 @@ $(function() {
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        out &lt;&lt; YAML::EndSeq; <span class="comment">// End Fields</span></div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;OnPhysicsCollisionStart&quot;</span> &lt;&lt; YAML::Value &lt;&lt;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_Scripts.<a class="code" href="structKargono_1_1EntityScripts.html#a9884e6ee2f47f2eadc49e56dd5226bc8">OnPhysicsCollisionStartHandle</a>);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(EntityClass-&gt;m_Scripts.OnPhysicsCollisionStartHandle);</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;OnPhysicsCollisionEnd&quot;</span> &lt;&lt; YAML::Value &lt;&lt;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_Scripts.<a class="code" href="structKargono_1_1EntityScripts.html#a90483b0e6dd505813603a1bdf478c6b5">OnPhysicsCollisionEndHandle</a>);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(EntityClass-&gt;m_Scripts.OnPhysicsCollisionEndHandle);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;OnCreate&quot;</span> &lt;&lt; YAML::Value &lt;&lt;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_Scripts.<a class="code" href="structKargono_1_1EntityScripts.html#affd5641ea9a8d6cdb1f9f810100b4f8a">OnCreateHandle</a>);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(EntityClass-&gt;m_Scripts.OnCreateHandle);</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;OnUpdate&quot;</span> &lt;&lt; YAML::Value &lt;&lt;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(<a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_Scripts.<a class="code" href="structKargono_1_1EntityScripts.html#a6edf9da72751bf21e949e8a5405386ec">OnUpdateHandle</a>);</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(EntityClass-&gt;m_Scripts.OnUpdateHandle);</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        out &lt;&lt; YAML::Key &lt;&lt; <span class="stringliteral">&quot;AllScripts&quot;</span> &lt;&lt; YAML::Value;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        out &lt;&lt; YAML::BeginSeq; <span class="comment">// Start AllScripts</span></div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; script : <a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>-&gt;m_Scripts.<a class="code" href="structKargono_1_1EntityScripts.html#aa8f22c1aa1aafac469101eea0dac62ba">AllClassScripts</a>)</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; script : EntityClass-&gt;m_Scripts.AllClassScripts)</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        {</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            out &lt;&lt; YAML::Value &lt;&lt; static_cast&lt;uint64_t&gt;(script); <span class="comment">// Script ID</span></div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        }</div>
@@ -279,17 +297,17 @@ $(function() {
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        std::ofstream fout(filepath);</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        fout &lt;&lt; out.c_str();</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Successfully Serialized EntityClass at {}&quot;</span>, filepath);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Successfully Serialized EntityClass at {}&quot;</span>, filepath);</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    }</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a47b8bf7ed19de80eedd42101fc15ffb3">  212</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a47b8bf7ed19de80eedd42101fc15ffb3">AssetManager::CheckEntityClassExists</a>(<span class="keyword">const</span> std::string&amp; EntityClassName)</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">bool</span> AssetManager::CheckEntityClassExists(<span class="keyword">const</span> std::string&amp; EntityClassName)</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    {</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="comment">// Create Checksum</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">const</span> std::string currentCheckSum = <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#ab84c350e008700fc7bb2451bd51a02e1">Utility::FileSystem::ChecksumFromString</a>(EntityClassName);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">const</span> std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">if</span> (currentCheckSum.empty())</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        {</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Failed to generate checksum from file!&quot;</span>);</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Failed to generate checksum from file!&quot;</span>);</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <span class="keywordflow">return</span> {};</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
@@ -297,7 +315,7 @@ $(function() {
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        {</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">if</span> (asset.Data.CheckSum == currentCheckSum)</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            {</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Attempt to instantiate duplicate font asset&quot;</span>);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                KG_INFO(<span class="stringliteral">&quot;Attempt to instantiate duplicate font asset&quot;</span>);</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            }</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        }</div>
@@ -305,7 +323,7 @@ $(function() {
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    }</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordtype">bool</span> AssetManager::DeserializeEntityClass(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> <a class="code" href="classKargono_1_1EntityClass.html">EntityClass</a>, <span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordtype">bool</span> AssetManager::DeserializeEntityClass(Ref&lt;Kargono::EntityClass&gt; EntityClass, <span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    {</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        YAML::Node data;</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        <span class="keywordflow">try</span></div>
@@ -314,27 +332,27 @@ $(function() {
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        }</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keywordflow">catch</span> (YAML::ParserException e)</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Failed to load .kgui file &#39;{0}&#39;\n     {1}&quot;</span>, filepath, e.what());</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Failed to load .kgui file &#39;{0}&#39;\n     {1}&quot;</span>, filepath, e.what());</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        }</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Deserializing entity class&quot;</span>);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Deserializing entity class&quot;</span>);</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">EntityClass</a>-&gt;m_Name = data[<span class="stringliteral">&quot;Name&quot;</span>].as&lt;std::string&gt;();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        EntityClass-&gt;m_Name = data[<span class="stringliteral">&quot;Name&quot;</span>].as&lt;std::string&gt;();</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="comment">// Get Fields</span></div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        {</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keyword">auto</span> fields = data[<span class="stringliteral">&quot;FieldTypes&quot;</span>];</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            <span class="keywordflow">if</span> (fields)</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="keyword">auto</span>&amp; newFieldsMap = <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">EntityClass</a>-&gt;m_FieldTypes;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="keyword">auto</span>&amp; newFieldsMap = EntityClass-&gt;m_FieldTypes;</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> field : fields)</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                {</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                    std::string fieldName = field[<span class="stringliteral">&quot;Name&quot;</span>].as&lt;std::string&gt;();</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                    <a class="code" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> fieldType = <a class="code" href="namespaceKargono_1_1Utility.html#a675b928361d1af95197265a90657a16b">Utility::StringToWrappedVarType</a>(field[<span class="stringliteral">&quot;Type&quot;</span>].as&lt;std::string&gt;());</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    <span class="keywordflow">if</span> (!<a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">EntityClass</a>-&gt;AddField(fieldName, fieldType))</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                    WrappedVarType fieldType = Utility::StringToWrappedVarType(field[<span class="stringliteral">&quot;Type&quot;</span>].as&lt;std::string&gt;());</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    <span class="keywordflow">if</span> (!EntityClass-&gt;AddField(fieldName, fieldType))</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                        <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Unable to add field inside deserialize entity class function&quot;</span>);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                        KG_WARN(<span class="stringliteral">&quot;Unable to add field inside deserialize entity class function&quot;</span>);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                    }</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                }</div>
@@ -343,34 +361,34 @@ $(function() {
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="comment">// Get Function Slots</span></div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            EntityScripts&amp; scripts = <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">EntityClass</a>-&gt;m_Scripts;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            EntityScripts&amp; scripts = EntityClass-&gt;m_Scripts;</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            scripts.OnPhysicsCollisionStartHandle =</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a><span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnPhysicsCollisionStart&quot;</span>].as&lt;uint64_t&gt;());</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                <span class="keyword">static_cast&lt;</span>Assets::AssetHandle<span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnPhysicsCollisionStart&quot;</span>].as&lt;uint64_t&gt;());</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="keywordflow">if</span> (scripts.OnPhysicsCollisionStartHandle != Assets::EmptyHandle)</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            {</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                scripts.OnPhysicsCollisionStart =</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                    <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scripts.OnPhysicsCollisionStartHandle).get();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                    Assets::AssetManager::GetScript(scripts.OnPhysicsCollisionStartHandle).get();</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            }</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            scripts.OnPhysicsCollisionEndHandle =</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a><span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnPhysicsCollisionEnd&quot;</span>].as&lt;uint64_t&gt;());</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                <span class="keyword">static_cast&lt;</span>Assets::AssetHandle<span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnPhysicsCollisionEnd&quot;</span>].as&lt;uint64_t&gt;());</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            <span class="keywordflow">if</span> (scripts.OnPhysicsCollisionEndHandle != Assets::EmptyHandle)</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            {</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                scripts.OnPhysicsCollisionEnd =</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                    <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scripts.OnPhysicsCollisionEndHandle).get();</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                    Assets::AssetManager::GetScript(scripts.OnPhysicsCollisionEndHandle).get();</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            }</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            scripts.OnCreateHandle =</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a><span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnCreate&quot;</span>].as&lt;uint64_t&gt;());</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                <span class="keyword">static_cast&lt;</span>Assets::AssetHandle<span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnCreate&quot;</span>].as&lt;uint64_t&gt;());</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keywordflow">if</span> (scripts.OnCreateHandle != Assets::EmptyHandle)</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            {</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                scripts.OnCreate =</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                    <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scripts.OnCreateHandle).get();</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                    Assets::AssetManager::GetScript(scripts.OnCreateHandle).get();</div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            }</div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            scripts.OnUpdateHandle =</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a><span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnUpdate&quot;</span>].as&lt;uint64_t&gt;());</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                <span class="keyword">static_cast&lt;</span>Assets::AssetHandle<span class="keyword">&gt;</span>(data[<span class="stringliteral">&quot;OnUpdate&quot;</span>].as&lt;uint64_t&gt;());</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="keywordflow">if</span> (scripts.OnUpdateHandle != Assets::EmptyHandle)</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            {</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                scripts.OnUpdate =</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                    <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scripts.OnUpdateHandle).get();</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                    Assets::AssetManager::GetScript(scripts.OnUpdateHandle).get();</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            }</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        }</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
@@ -379,10 +397,10 @@ $(function() {
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;            <span class="keyword">auto</span> allScripts = data[<span class="stringliteral">&quot;AllScripts&quot;</span>];</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            <span class="keywordflow">if</span> (allScripts)</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            {</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                std::set&lt;Assets::AssetHandle&gt;&amp; classScripts = <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">EntityClass</a>-&gt;m_Scripts.AllClassScripts;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                std::set&lt;Assets::AssetHandle&gt;&amp; classScripts = EntityClass-&gt;m_Scripts.AllClassScripts;</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> script : allScripts)</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                {</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                    classScripts.insert(<span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a><span class="keyword">&gt;</span>(script.as&lt;uint64_t&gt;()));</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                    classScripts.insert(<span class="keyword">static_cast&lt;</span>Assets::AssetHandle<span class="keyword">&gt;</span>(script.as&lt;uint64_t&gt;()));</div>
 <div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                }</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            }</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        }</div>
@@ -391,14 +409,14 @@ $(function() {
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a8fe64118ef6e87af4b4e6cee91d18602">  321</a></span>&#160;    <a class="code" href="classKargono_1_1UUID.html">AssetHandle</a> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a8fe64118ef6e87af4b4e6cee91d18602">AssetManager::CreateNewEntityClass</a>(<span class="keyword">const</span> std::string&amp; EntityClassName)</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    AssetHandle AssetManager::CreateNewEntityClass(<span class="keyword">const</span> std::string&amp; EntityClassName)</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    {</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="comment">// Create Checksum</span></div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keyword">const</span> std::string currentCheckSum = <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#ab84c350e008700fc7bb2451bd51a02e1">Utility::FileSystem::ChecksumFromString</a>(EntityClassName);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keyword">const</span> std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keywordflow">if</span> (currentCheckSum.empty())</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Failed to generate checksum from file!&quot;</span>);</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Failed to generate checksum from file!&quot;</span>);</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            <span class="keywordflow">return</span> {};</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        }</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160; </div>
@@ -407,15 +425,15 @@ $(function() {
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        {</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;            <span class="keywordflow">if</span> (asset.Data.CheckSum == currentCheckSum)</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Attempt to instantiate duplicate entity class asset&quot;</span>);</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                KG_INFO(<span class="stringliteral">&quot;Attempt to instantiate duplicate entity class asset&quot;</span>);</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                <span class="keywordflow">return</span> handle;</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;            }</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        }</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="comment">// Create New Asset/Handle</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">AssetHandle</a> newHandle{};</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <a class="code" href="structKargono_1_1Assets_1_1Asset.html">Assets::Asset</a> newAsset{};</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        newAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a018332c583e258de8667219fbf62c0b2">Handle</a> = newHandle;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        AssetHandle newHandle{};</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        Assets::Asset newAsset{};</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        newAsset.Handle = newHandle;</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="comment">// Create File</span></div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        CreateEntityClassFile(EntityClassName, newAsset);</div>
@@ -423,24 +441,24 @@ $(function() {
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="comment">// Register New Asset and return handle.</span></div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        s_EntityClassRegistry.insert({ newHandle, newAsset }); <span class="comment">// Update Registry Map in-memory</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a6c028ff7b350ef7c89ab382efae705a0">SerializeEntityClassRegistry</a>(); <span class="comment">// Update Registry File on Disk</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        SerializeEntityClassRegistry(); <span class="comment">// Update Registry File on Disk</span></div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <span class="keywordflow">return</span> newHandle;</div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    }</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
-<div class="line"><a name="l00358"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a7f89d06ffbfa66cf822011358c463cea">  358</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a7f89d06ffbfa66cf822011358c463cea">AssetManager::SaveEntityClass</a>(<a class="code" href="classKargono_1_1UUID.html">AssetHandle</a> entityClassHandle, <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> entityClass, <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> editorScene)</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordtype">void</span> AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref&lt;Kargono::EntityClass&gt; entityClass, Ref&lt;Kargono::Scene&gt; editorScene)</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    {</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        <span class="keywordflow">if</span> (!s_EntityClassRegistry.contains(entityClassHandle))</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        {</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Attempt to save EntityClass that does not exist in registry&quot;</span>);</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Attempt to save EntityClass that does not exist in registry&quot;</span>);</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        }</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="comment">// Store Field Location for Processing ClassInstanceComponent Data</span></div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        std::vector&lt;ClassField&gt; oldFields = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">GetEntityClass</a>(entityClassHandle)-&gt;GetFields();</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        std::vector&lt;ClassField&gt; oldFields = GetEntityClass(entityClassHandle)-&gt;GetFields();</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        std::vector&lt;ClassField&gt; newFields = entityClass-&gt;GetFields();</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        <a class="code" href="structKargono_1_1Assets_1_1Asset.html">Assets::Asset</a> EntityClassAsset = s_EntityClassRegistry[entityClassHandle];</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        SerializeEntityClass(entityClass, (<a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() / EntityClassAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Data</a>.<a class="code" href="structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3">IntermediateLocation</a>).string());</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        SerializeEntityClass(entityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160; </div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        <span class="comment">// Create map that associates old data locations with new data locations for ClassInstanceComponents</span></div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        std::unordered_map&lt;uint32_t, uint32_t&gt; transferFieldDataMap {};</div>
@@ -461,8 +479,8 @@ $(function() {
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        }</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        <span class="comment">// Update Active Scene</span></div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> newEntityClass = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">GetEntityClass</a>(entityClassHandle);</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> activeScene = <a class="code" href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">Scene::GetActiveScene</a>();</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        Ref&lt;Kargono::EntityClass&gt; newEntityClass = GetEntityClass(entityClassHandle);</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        Ref&lt;Kargono::Scene&gt; activeScene = Scene::GetActiveScene();</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        <span class="comment">// Update Editor Scene if applicable</span></div>
@@ -473,30 +491,30 @@ $(function() {
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [handle, asset] : s_SceneRegistry)</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        {</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> scene = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#ad4e58af482582f84ccd8c3918231d35c">GetScene</a>(handle);</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            <span class="keyword">const</span> Ref&lt;Kargono::Scene&gt; scene = GetScene(handle);</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;            <span class="keywordflow">if</span> (!scene)</div>
 <div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            {</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Unable to load scene in SaveEntityClass&quot;</span>);</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                KG_WARN(<span class="stringliteral">&quot;Unable to load scene in SaveEntityClass&quot;</span>);</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;                <span class="keywordflow">continue</span>;</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            }</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160; </div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            Utility::TransferClassInstanceFieldData(scene, newEntityClass, entityClassHandle, transferFieldDataMap);</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a869b8159631bce00aecde6b82e846c60">SaveScene</a>(handle, scene);</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            SaveScene(handle, scene);</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        }</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        </div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    }</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
-<div class="line"><a name="l00416"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a41b4b463c18c8b5473fec55165d471a5">  416</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a41b4b463c18c8b5473fec55165d471a5">AssetManager::DeleteEntityClass</a>(<a class="code" href="classKargono_1_1UUID.html">AssetHandle</a> handle, <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> editorScene)</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keywordtype">void</span> AssetManager::DeleteEntityClass(AssetHandle handle, Ref&lt;Kargono::Scene&gt; editorScene)</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    {</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        <span class="keywordflow">if</span> (!s_EntityClassRegistry.contains(handle))</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        {</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Failed to delete EntityClass in AssetManager&quot;</span>);</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            KG_WARN(<span class="stringliteral">&quot;Failed to delete EntityClass in AssetManager&quot;</span>);</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        }</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        <span class="comment">// Remove entity class references from all scenes</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> newEntityClass = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">GetEntityClass</a>(handle);</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> activeScene = <a class="code" href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">Scene::GetActiveScene</a>();</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        Ref&lt;Kargono::EntityClass&gt; newEntityClass = GetEntityClass(handle);</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        Ref&lt;Kargono::Scene&gt; activeScene = Scene::GetActiveScene();</div>
 <div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
 <div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        <span class="comment">// Update Active Scene if applicable</span></div>
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;        Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);</div>
@@ -508,39 +526,39 @@ $(function() {
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;        <span class="comment">// Update all scenes in scene registry</span></div>
 <div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [handle, asset] : s_SceneRegistry)</div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        {</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::Scene&gt;</a> scene = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#ad4e58af482582f84ccd8c3918231d35c">GetScene</a>(handle);</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;            <span class="keyword">const</span> Ref&lt;Kargono::Scene&gt; scene = GetScene(handle);</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;            <span class="keywordflow">if</span> (!scene)</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;            {</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Unable to load scene in SaveEntityClass&quot;</span>);</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                KG_WARN(<span class="stringliteral">&quot;Unable to load scene in SaveEntityClass&quot;</span>);</div>
 <div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;                <span class="keywordflow">continue</span>;</div>
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;            }</div>
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;            Utility::ClearClassReferenceFromScene(scene, newEntityClass, handle);</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;            <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a869b8159631bce00aecde6b82e846c60">SaveScene</a>(handle, scene);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;            SaveScene(handle, scene);</div>
 <div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        }</div>
 <div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160; </div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">Utility::FileSystem::DeleteSelectedFile</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() /</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;            s_EntityClassRegistry.at(handle).Data.IntermediateLocation);</div>
 <div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160; </div>
 <div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;        s_EntityClassRegistry.erase(handle);</div>
 <div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;        <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a6c028ff7b350ef7c89ab382efae705a0">SerializeEntityClassRegistry</a>();</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;        SerializeEntityClassRegistry();</div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    }</div>
 <div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160; </div>
-<div class="line"><a name="l00458"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#acf9bd79435aad9721156a6ea6c2c4570">  458</a></span>&#160;    std::filesystem::path <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#acf9bd79435aad9721156a6ea6c2c4570">AssetManager::GetEntityClassLocation</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">AssetHandle</a>&amp; handle)</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    std::filesystem::path AssetManager::GetEntityClassLocation(<span class="keyword">const</span> AssetHandle&amp; handle)</div>
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    {</div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;        <span class="keywordflow">if</span> (!s_EntityClassRegistry.contains(handle))</div>
 <div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;        {</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Attempt to save EntityClass that does not exist in registry&quot;</span>);</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Attempt to save EntityClass that does not exist in registry&quot;</span>);</div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;            <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;        }</div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <span class="keywordflow">return</span> s_EntityClassRegistry[handle].Data.IntermediateLocation;</div>
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    }</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160; </div>
-<div class="line"><a name="l00468"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">  468</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">AssetManager::GetEntityClass</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">AssetHandle</a>&amp; handle)</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    Ref&lt;Kargono::EntityClass&gt; AssetManager::GetEntityClass(<span class="keyword">const</span> AssetHandle&amp; handle)</div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    {</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>(), <span class="stringliteral">&quot;There is no active project when retreiving EntityClass!&quot;</span>);</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;        KG_ASSERT(Projects::Project::GetActive(), <span class="stringliteral">&quot;There is no active project when retreiving EntityClass!&quot;</span>);</div>
 <div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160; </div>
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;        <span class="keywordflow">if</span> (s_EntityClassRegistry.contains(handle))</div>
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;        {</div>
@@ -548,18 +566,18 @@ $(function() {
 <div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;            <span class="keywordflow">return</span> InstantiateEntityClass(asset);</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;        }</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;No EntityClass is associated with provided handle!&quot;</span>);</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        KG_WARN(<span class="stringliteral">&quot;No EntityClass is associated with provided handle!&quot;</span>);</div>
 <div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    }</div>
-<div class="line"><a name="l00481"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#a0fdc9991800fee0cbaea61c8b7238773">  481</a></span>&#160;    std::tuple&lt;AssetHandle, Ref&lt;Kargono::EntityClass&gt;&gt; <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">AssetManager::GetEntityClass</a>(<span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    std::tuple&lt;AssetHandle, Ref&lt;Kargono::EntityClass&gt;&gt; AssetManager::GetEntityClass(<span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
 <div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    {</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>(), <span class="stringliteral">&quot;Attempt to use Project Field without active project!&quot;</span>);</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;        KG_ASSERT(Projects::Project::GetActive(), <span class="stringliteral">&quot;Attempt to use Project Field without active project!&quot;</span>);</div>
 <div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160; </div>
 <div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;        std::filesystem::path EntityClassPath = filepath;</div>
 <div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
 <div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;        <span class="keywordflow">if</span> (filepath.is_absolute())</div>
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;        {</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;            EntityClassPath = <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#a8ab9cbf3d3e39fd4176454335a0dab28">Utility::FileSystem::GetRelativePath</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>(), filepath);</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;            EntityClassPath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);</div>
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;        }</div>
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160; </div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [assetHandle, asset] : s_EntityClassRegistry)</div>
@@ -570,106 +588,52 @@ $(function() {
 <div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;            }</div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;        }</div>
 <div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;        <span class="comment">// Return empty EntityClass if EntityClass does not exist</span></div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;No EntityClass Associated with provided handle. Returned new empty EntityClass&quot;</span>);</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">AssetHandle</a> newHandle = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a8fe64118ef6e87af4b4e6cee91d18602">CreateNewEntityClass</a>(filepath.stem().string());</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;        <span class="keywordflow">return</span> std::make_tuple(newHandle, <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">GetEntityClass</a>(newHandle));</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        KG_WARN(<span class="stringliteral">&quot;No EntityClass Associated with provided handle. Returned new empty EntityClass&quot;</span>);</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;        AssetHandle newHandle = CreateNewEntityClass(filepath.stem().string());</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;        <span class="keywordflow">return</span> std::make_tuple(newHandle, GetEntityClass(newHandle));</div>
 <div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    }</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160; </div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> AssetManager::InstantiateEntityClass(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Assets_1_1Asset.html">Assets::Asset</a>&amp; EntityClassAsset)</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    Ref&lt;Kargono::EntityClass&gt; AssetManager::InstantiateEntityClass(<span class="keyword">const</span> Assets::Asset&amp; EntityClassAsset)</div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    {</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> newEntityClass = CreateRef&lt;Kargono::EntityClass&gt;();</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;        DeserializeEntityClass(newEntityClass, (<a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() / EntityClassAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Data</a>.<a class="code" href="structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3">IntermediateLocation</a>).string());</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;        Ref&lt;Kargono::EntityClass&gt; newEntityClass = CreateRef&lt;Kargono::EntityClass&gt;();</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;        DeserializeEntityClass(newEntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());</div>
 <div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;        <span class="keywordflow">return</span> newEntityClass;</div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    }</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160; </div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160; </div>
-<div class="line"><a name="l00513"></a><span class="lineno"><a class="line" href="classKargono_1_1Assets_1_1AssetManager.html#ae75a6104d5f4b7a232290b9543bc419f">  513</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#ae75a6104d5f4b7a232290b9543bc419f">AssetManager::ClearEntityClassRegistry</a>()</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keywordtype">void</span> AssetManager::ClearEntityClassRegistry()</div>
 <div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    {</div>
 <div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        s_EntityClassRegistry.clear();</div>
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    }</div>
 <div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160; </div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    <span class="keywordtype">void</span> AssetManager::CreateEntityClassFile(<span class="keyword">const</span> std::string&amp; EntityClassName, <a class="code" href="structKargono_1_1Assets_1_1Asset.html">Assets::Asset</a>&amp; newAsset)</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    <span class="keywordtype">void</span> AssetManager::CreateEntityClassFile(<span class="keyword">const</span> std::string&amp; EntityClassName, Assets::Asset&amp; newAsset)</div>
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;    {</div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;        <span class="comment">// Create Temporary EntityClass</span></div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Kargono::EntityClass&gt;</a> temporaryEntityClass = CreateRef&lt;Kargono::EntityClass&gt;();</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;        Ref&lt;Kargono::EntityClass&gt; temporaryEntityClass = CreateRef&lt;Kargono::EntityClass&gt;();</div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;        temporaryEntityClass-&gt;SetName(EntityClassName);</div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160; </div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;        <span class="comment">// Save Binary Intermediate into File</span></div>
 <div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;        std::string EntityClassPath = <span class="stringliteral">&quot;EntityClass/&quot;</span> + EntityClassName + <span class="stringliteral">&quot;.kgclass&quot;</span>;</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;        std::filesystem::path intermediateFullPath = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>() / EntityClassPath;</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;        std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / EntityClassPath;</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        SerializeEntityClass(temporaryEntityClass, intermediateFullPath.string());</div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160; </div>
 <div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        <span class="comment">// Load data into In-Memory Metadata object</span></div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        newAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Data</a>.<a class="code" href="structKargono_1_1Assets_1_1Metadata.html#a334a7844dbe00bc03c95c30410c24129">Type</a> = <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">Assets::AssetType::EntityClass</a>;</div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        newAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Data</a>.<a class="code" href="structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3">IntermediateLocation</a> = EntityClassPath;</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Assets::EntityClassMetaData&gt;</a> metadata = CreateRef&lt;Assets::EntityClassMetaData&gt;();</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        newAsset.Data.Type = Assets::AssetType::EntityClass;</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        newAsset.Data.IntermediateLocation = EntityClassPath;</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        Ref&lt;Assets::EntityClassMetaData&gt; metadata = CreateRef&lt;Assets::EntityClassMetaData&gt;();</div>
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;        metadata-&gt;Name = EntityClassName;</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;        newAsset.<a class="code" href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Data</a>.<a class="code" href="structKargono_1_1Assets_1_1Metadata.html#a1b18ca610edafa1d4a6821aeacb3e4d5">SpecificFileData</a> = metadata;</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;        newAsset.Data.SpecificFileData = metadata;</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    }</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;}</div>
-<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00020">Assert.h:20</a></div></div>
-<div class="ttc" id="aAssetManager_8h_html"><div class="ttname"><a href="AssetManager_8h.html">AssetManager.h</a></div></div>
-<div class="ttc" id="aEntity_8h_html"><div class="ttname"><a href="Entity_8h.html">Entity.h</a></div></div>
-<div class="ttc" id="aFileSystem_8h_html"><div class="ttname"><a href="FileSystem_8h.html">FileSystem.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
-<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00033">Log.h:33</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
-<div class="ttc" id="aProject_8h_html"><div class="ttname"><a href="Project_8h.html">Project.h</a></div></div>
-<div class="ttc" id="aScene_8h_html"><div class="ttname"><a href="Scene_8h.html">Scene.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a089700a774271f7c0e6f960447b38dbe"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Kargono::Assets::AssetManager::GetScript</a></div><div class="ttdeci">static Ref&lt; Scripting::Script &gt; GetScript(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="ScriptManager_8cpp_source.html#l00514">ScriptManager.cpp:514</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a0a8d040781eac39049495b2820bde2e3"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a0a8d040781eac39049495b2820bde2e3">Kargono::Assets::AssetManager::DeserializeEntityClassRegistry</a></div><div class="ttdeci">static void DeserializeEntityClassRegistry()</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00067">EntityClassManager.cpp:67</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a10f455bdff70a3847892882d7f85e82e"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a10f455bdff70a3847892882d7f85e82e">Kargono::Assets::AssetManager::GetEntityClass</a></div><div class="ttdeci">static Ref&lt; Kargono::EntityClass &gt; GetEntityClass(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00468">EntityClassManager.cpp:468</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a41b4b463c18c8b5473fec55165d471a5"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a41b4b463c18c8b5473fec55165d471a5">Kargono::Assets::AssetManager::DeleteEntityClass</a></div><div class="ttdeci">static void DeleteEntityClass(AssetHandle handle, Ref&lt; Kargono::Scene &gt; editorScene=nullptr)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00416">EntityClassManager.cpp:416</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a47b8bf7ed19de80eedd42101fc15ffb3"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a47b8bf7ed19de80eedd42101fc15ffb3">Kargono::Assets::AssetManager::CheckEntityClassExists</a></div><div class="ttdeci">static bool CheckEntityClassExists(const std::string &amp;EntityClassName)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00212">EntityClassManager.cpp:212</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a6c028ff7b350ef7c89ab382efae705a0"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a6c028ff7b350ef7c89ab382efae705a0">Kargono::Assets::AssetManager::SerializeEntityClassRegistry</a></div><div class="ttdeci">static void SerializeEntityClassRegistry()</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00126">EntityClassManager.cpp:126</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a7f89d06ffbfa66cf822011358c463cea"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a7f89d06ffbfa66cf822011358c463cea">Kargono::Assets::AssetManager::SaveEntityClass</a></div><div class="ttdeci">static void SaveEntityClass(AssetHandle EntityClassHandle, Ref&lt; Kargono::EntityClass &gt; EntityClass, Ref&lt; Kargono::Scene &gt; editorScene=nullptr)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00358">EntityClassManager.cpp:358</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a869b8159631bce00aecde6b82e846c60"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a869b8159631bce00aecde6b82e846c60">Kargono::Assets::AssetManager::SaveScene</a></div><div class="ttdeci">static void SaveScene(AssetHandle sceneHandle, Ref&lt; Kargono::Scene &gt; scene)</div><div class="ttdef"><b>Definition:</b> <a href="SceneManager_8cpp_source.html#l00742">SceneManager.cpp:742</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a8fe64118ef6e87af4b4e6cee91d18602"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a8fe64118ef6e87af4b4e6cee91d18602">Kargono::Assets::AssetManager::CreateNewEntityClass</a></div><div class="ttdeci">static AssetHandle CreateNewEntityClass(const std::string &amp;EntityClassName)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00321">EntityClassManager.cpp:321</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_acf9bd79435aad9721156a6ea6c2c4570"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#acf9bd79435aad9721156a6ea6c2c4570">Kargono::Assets::AssetManager::GetEntityClassLocation</a></div><div class="ttdeci">static std::filesystem::path GetEntityClassLocation(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00458">EntityClassManager.cpp:458</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_ad4e58af482582f84ccd8c3918231d35c"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#ad4e58af482582f84ccd8c3918231d35c">Kargono::Assets::AssetManager::GetScene</a></div><div class="ttdeci">static Ref&lt; Kargono::Scene &gt; GetScene(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="SceneManager_8cpp_source.html#l00753">SceneManager.cpp:753</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_ae75a6104d5f4b7a232290b9543bc419f"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#ae75a6104d5f4b7a232290b9543bc419f">Kargono::Assets::AssetManager::ClearEntityClassRegistry</a></div><div class="ttdeci">static void ClearEntityClassRegistry()</div><div class="ttdef"><b>Definition:</b> <a href="EntityClassManager_8cpp_source.html#l00513">EntityClassManager.cpp:513</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EntityClass_html"><div class="ttname"><a href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00034">EntityClass.h:35</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EntityClass_html_af61efbce3ef87ed23f809142e382978c"><div class="ttname"><a href="classKargono_1_1EntityClass.html#af61efbce3ef87ed23f809142e382978c">Kargono::EntityClass::GetName</a></div><div class="ttdeci">std::string &amp; GetName()</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00134">EntityClass.h:134</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Entity_html"><div class="ttname"><a href="classKargono_1_1Entity.html">Kargono::Entity</a></div><div class="ttdef"><b>Definition:</b> <a href="Entity_8h_source.html#l00011">Entity.h:12</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Entity_html_ae93be291088732692b579425d3c3d0d8"><div class="ttname"><a href="classKargono_1_1Entity.html#ae93be291088732692b579425d3c3d0d8">Kargono::Entity::GetComponent</a></div><div class="ttdeci">T &amp; GetComponent()</div><div class="ttdef"><b>Definition:</b> <a href="Entity_8h_source.html#l00036">Entity.h:36</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a6adbbdcaf7173f0755c03015e7d67e77"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Kargono::Projects::Project::GetActive</a></div><div class="ttdeci">static Ref&lt; Project &gt; GetActive()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00487">Project.h:487</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_ac3ba25c075233fad789296ed82e37617"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Kargono::Projects::Project::GetAssetDirectory</a></div><div class="ttdeci">static std::filesystem::path GetAssetDirectory()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00137">Project.h:137</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a52f7ab896909ddd245cdfe7771a6375a"><div class="ttname"><a href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">Kargono::Scene::GetActiveScene</a></div><div class="ttdeci">static Ref&lt; Scene &gt; GetActiveScene()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00154">Scene.h:154</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_a5cd9431a2c5cacd19e6a6bc6cccc8e6c"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">Kargono::Utility::FileSystem::DeleteSelectedFile</a></div><div class="ttdeci">static bool DeleteSelectedFile(const std::filesystem::path &amp;filepath)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00044">FileSystem.cpp:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_a8ab9cbf3d3e39fd4176454335a0dab28"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#a8ab9cbf3d3e39fd4176454335a0dab28">Kargono::Utility::FileSystem::GetRelativePath</a></div><div class="ttdeci">static std::filesystem::path GetRelativePath(const std::filesystem::path &amp;base, const std::filesystem::path &amp;full)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00187">FileSystem.cpp:187</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_ab84c350e008700fc7bb2451bd51a02e1"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#ab84c350e008700fc7bb2451bd51a02e1">Kargono::Utility::FileSystem::ChecksumFromString</a></div><div class="ttdeci">static std::string ChecksumFromString(const std::string &amp;inputString)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00225">FileSystem.cpp:225</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_af383512c911ce4b86791fd2248904c76"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#af383512c911ce4b86791fd2248904c76">Kargono::Utility::FileSystem::CreateNewDirectory</a></div><div class="ttdeci">static void CreateNewDirectory(const std::filesystem::path &amp;filepath)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00251">FileSystem.cpp:251</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html"><div class="ttname"><a href="namespaceKargono_1_1Assets.html">Kargono::Assets</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00014">Asset.h:15</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html_a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eafe04115ca4e7c20cd3953ac8fec49fe3">Kargono::Assets::EntityClass</a></div><div class="ttdeci">@ EntityClass</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00037">Asset.h:36</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html_af3b6830c6804fbd8dbea92b8ef79d3a5"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a></div><div class="ttdeci">Kargono::UUID AssetHandle</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00018">Asset.h:18</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html_a07e0a38134882b7ad466fbd557646383"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a07e0a38134882b7ad466fbd557646383">Kargono::Utility::WrappedVarTypeToWrappedVariable</a></div><div class="ttdeci">Ref&lt; WrappedVariable &gt; WrappedVarTypeToWrappedVariable(WrappedVarType type)</div><div class="ttdef"><b>Definition:</b> <a href="WrappedData_8h_source.html#l00429">WrappedData.h:429</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html_a478763e36a2933e4f8c32a1ffa075058"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a478763e36a2933e4f8c32a1ffa075058">Kargono::Utility::WrappedVarTypeToString</a></div><div class="ttdeci">std::string WrappedVarTypeToString(WrappedVarType type)</div><div class="ttdef"><b>Definition:</b> <a href="WrappedData_8h_source.html#l00410">WrappedData.h:410</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html_a4b8ac365850f8567c1fdcee6161a9f15"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">Kargono::Utility::AssetTypeToString</a></div><div class="ttdeci">std::string AssetTypeToString(Assets::AssetType type)</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00209">Asset.h:209</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html_a675b928361d1af95197265a90657a16b"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a675b928361d1af95197265a90657a16b">Kargono::Utility::StringToWrappedVarType</a></div><div class="ttdeci">WrappedVarType StringToWrappedVarType(std::string type)</div><div class="ttdef"><b>Definition:</b> <a href="WrappedData_8h_source.html#l00468">WrappedData.h:468</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Utility_html_a8229273526e8700e37576ea6b280c97f"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">Kargono::Utility::StringToAssetType</a></div><div class="ttdeci">Assets::AssetType StringToAssetType(std::string type)</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00229">Asset.h:229</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a0d27d03a784d5bc2820c9e72b957d04d"><div class="ttname"><a href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">Kargono::WrappedVarType</a></div><div class="ttdeci">WrappedVarType</div><div class="ttdef"><b>Definition:</b> <a href="WrappedData_8h_source.html#l00016">WrappedData.h:17</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Asset_html"><div class="ttname"><a href="structKargono_1_1Assets_1_1Asset.html">Kargono::Assets::Asset</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00196">Asset.h:197</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Asset_html_a018332c583e258de8667219fbf62c0b2"><div class="ttname"><a href="structKargono_1_1Assets_1_1Asset.html#a018332c583e258de8667219fbf62c0b2">Kargono::Assets::Asset::Handle</a></div><div class="ttdeci">AssetHandle Handle</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00198">Asset.h:198</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Asset_html_a8ef0ed2f49365e89dbe256a1d9b3ae89"><div class="ttname"><a href="structKargono_1_1Assets_1_1Asset.html#a8ef0ed2f49365e89dbe256a1d9b3ae89">Kargono::Assets::Asset::Data</a></div><div class="ttdeci">Metadata Data</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00199">Asset.h:199</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1EntityClassMetaData_html"><div class="ttname"><a href="structKargono_1_1Assets_1_1EntityClassMetaData.html">Kargono::Assets::EntityClassMetaData</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00176">Asset.h:177</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1EntityClassMetaData_html_a4f580f61897d11c4ada893a4c04e8e8c"><div class="ttname"><a href="structKargono_1_1Assets_1_1EntityClassMetaData.html#a4f580f61897d11c4ada893a4c04e8e8c">Kargono::Assets::EntityClassMetaData::Name</a></div><div class="ttdeci">std::string Name</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00178">Asset.h:178</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Metadata_html_a1b18ca610edafa1d4a6821aeacb3e4d5"><div class="ttname"><a href="structKargono_1_1Assets_1_1Metadata.html#a1b18ca610edafa1d4a6821aeacb3e4d5">Kargono::Assets::Metadata::SpecificFileData</a></div><div class="ttdeci">Ref&lt; void &gt; SpecificFileData</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00061">Asset.h:61</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Metadata_html_a334a7844dbe00bc03c95c30410c24129"><div class="ttname"><a href="structKargono_1_1Assets_1_1Metadata.html#a334a7844dbe00bc03c95c30410c24129">Kargono::Assets::Metadata::Type</a></div><div class="ttdeci">Assets::AssetType Type</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00060">Asset.h:60</a></div></div>
-<div class="ttc" id="astructKargono_1_1Assets_1_1Metadata_html_aeb66c36b2b199e69df6ae94f94d30ca3"><div class="ttname"><a href="structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3">Kargono::Assets::Metadata::IntermediateLocation</a></div><div class="ttdeci">std::filesystem::path IntermediateLocation</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00058">Asset.h:58</a></div></div>
-<div class="ttc" id="astructKargono_1_1EntityScripts_html_a6edf9da72751bf21e949e8a5405386ec"><div class="ttname"><a href="structKargono_1_1EntityScripts.html#a6edf9da72751bf21e949e8a5405386ec">Kargono::EntityScripts::OnUpdateHandle</a></div><div class="ttdeci">Assets::AssetHandle OnUpdateHandle</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00024">EntityClass.h:24</a></div></div>
-<div class="ttc" id="astructKargono_1_1EntityScripts_html_a90483b0e6dd505813603a1bdf478c6b5"><div class="ttname"><a href="structKargono_1_1EntityScripts.html#a90483b0e6dd505813603a1bdf478c6b5">Kargono::EntityScripts::OnPhysicsCollisionEndHandle</a></div><div class="ttdeci">Assets::AssetHandle OnPhysicsCollisionEndHandle</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00020">EntityClass.h:20</a></div></div>
-<div class="ttc" id="astructKargono_1_1EntityScripts_html_a9884e6ee2f47f2eadc49e56dd5226bc8"><div class="ttname"><a href="structKargono_1_1EntityScripts.html#a9884e6ee2f47f2eadc49e56dd5226bc8">Kargono::EntityScripts::OnPhysicsCollisionStartHandle</a></div><div class="ttdeci">Assets::AssetHandle OnPhysicsCollisionStartHandle</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00018">EntityClass.h:18</a></div></div>
-<div class="ttc" id="astructKargono_1_1EntityScripts_html_aa8f22c1aa1aafac469101eea0dac62ba"><div class="ttname"><a href="structKargono_1_1EntityScripts.html#aa8f22c1aa1aafac469101eea0dac62ba">Kargono::EntityScripts::AllClassScripts</a></div><div class="ttdeci">std::set&lt; Assets::AssetHandle &gt; AllClassScripts</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00025">EntityClass.h:25</a></div></div>
-<div class="ttc" id="astructKargono_1_1EntityScripts_html_affd5641ea9a8d6cdb1f9f810100b4f8a"><div class="ttname"><a href="structKargono_1_1EntityScripts.html#affd5641ea9a8d6cdb1f9f810100b4f8a">Kargono::EntityScripts::OnCreateHandle</a></div><div class="ttdeci">Assets::AssetHandle OnCreateHandle</div><div class="ttdef"><b>Definition:</b> <a href="EntityClass_8h_source.html#l00022">EntityClass.h:22</a></div></div>
-<div class="ttc" id="ayamlcppAPI_8h_html"><div class="ttname"><a href="yamlcppAPI_8h.html">yamlcppAPI.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_5b53c7d7a083fcf50a31804c891b6cc8.html">Assets</a></li><li class="navelem"><b>EntityClassManager.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

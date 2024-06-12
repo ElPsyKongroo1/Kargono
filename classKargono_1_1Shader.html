@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Shader.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1Shader.html">Shader</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -76,1203 +94,131 @@ $(function() {
 <div class="title">Kargono::Shader Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Shader_8h_source.html">Shader.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7b8215d778d53fd4aadc1931e5f6721e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a7b8215d778d53fd4aadc1931e5f6721e">Shader</a> ()=default</td></tr>
-<tr class="separator:a7b8215d778d53fd4aadc1931e5f6721e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5399a28288cacb5b1d945833f468ede"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#ac5399a28288cacb5b1d945833f468ede">Shader</a> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shader)</td></tr>
+<tr class="memitem:ac5399a28288cacb5b1d945833f468ede"><td class="memItemLeft" align="right" valign="top"><a id="ac5399a28288cacb5b1d945833f468ede"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Shader</b> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shader)</td></tr>
 <tr class="separator:ac5399a28288cacb5b1d945833f468ede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7c789d1f0b5b007645e3264f2860f29"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#ad7c789d1f0b5b007645e3264f2860f29">~Shader</a> ()=default</td></tr>
-<tr class="separator:ad7c789d1f0b5b007645e3264f2860f29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e326ea30f0e144993b66819234343fb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a6e326ea30f0e144993b66819234343fb">Bind</a> () const =0</td></tr>
+<tr class="memitem:a6e326ea30f0e144993b66819234343fb"><td class="memItemLeft" align="right" valign="top"><a id="a6e326ea30f0e144993b66819234343fb"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Bind</b> () const =0</td></tr>
 <tr class="separator:a6e326ea30f0e144993b66819234343fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abda52710ace0a561ac316f87afa41ceb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#abda52710ace0a561ac316f87afa41ceb">Unbind</a> () const =0</td></tr>
+<tr class="memitem:abda52710ace0a561ac316f87afa41ceb"><td class="memItemLeft" align="right" valign="top"><a id="abda52710ace0a561ac316f87afa41ceb"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Unbind</b> () const =0</td></tr>
 <tr class="separator:abda52710ace0a561ac316f87afa41ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abeec9791022b016508cecb5666dd43f5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#abeec9791022b016508cecb5666dd43f5">SetMat3Uniform</a> (const std::string &amp;name, const <a class="el" href="namespaceKargono_1_1Math.html#a8d1eccde1494a2bd5f13a2b03fd37178">Math::mat3</a> &amp;value)=0</td></tr>
+<tr class="memitem:abeec9791022b016508cecb5666dd43f5"><td class="memItemLeft" align="right" valign="top"><a id="abeec9791022b016508cecb5666dd43f5"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMat3Uniform</b> (const std::string &amp;name, const Math::mat3 &amp;value)=0</td></tr>
 <tr class="separator:abeec9791022b016508cecb5666dd43f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b7610ccb90653c87dd6e24e5d6538e2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a1b7610ccb90653c87dd6e24e5d6538e2">SetMat4Uniform</a> (const std::string &amp;name, const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;value)=0</td></tr>
+<tr class="memitem:a1b7610ccb90653c87dd6e24e5d6538e2"><td class="memItemLeft" align="right" valign="top"><a id="a1b7610ccb90653c87dd6e24e5d6538e2"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMat4Uniform</b> (const std::string &amp;name, const Math::mat4 &amp;value)=0</td></tr>
 <tr class="separator:a1b7610ccb90653c87dd6e24e5d6538e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19940fe2edaf9acdf791adf7069e9c62"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a19940fe2edaf9acdf791adf7069e9c62">SetFloatUniform</a> (const std::string &amp;name, float value)=0</td></tr>
+<tr class="memitem:a19940fe2edaf9acdf791adf7069e9c62"><td class="memItemLeft" align="right" valign="top"><a id="a19940fe2edaf9acdf791adf7069e9c62"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFloatUniform</b> (const std::string &amp;name, float value)=0</td></tr>
 <tr class="separator:a19940fe2edaf9acdf791adf7069e9c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d0d350d746fe35267c2a8c3284f3b0f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a9d0d350d746fe35267c2a8c3284f3b0f">SetFloat2Uniform</a> (const std::string &amp;name, const <a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> &amp;value)=0</td></tr>
+<tr class="memitem:a9d0d350d746fe35267c2a8c3284f3b0f"><td class="memItemLeft" align="right" valign="top"><a id="a9d0d350d746fe35267c2a8c3284f3b0f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFloat2Uniform</b> (const std::string &amp;name, const Math::vec2 &amp;value)=0</td></tr>
 <tr class="separator:a9d0d350d746fe35267c2a8c3284f3b0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a579759582f5a61101f9e710e411ecfff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a579759582f5a61101f9e710e411ecfff">SetFloat3Uniform</a> (const std::string &amp;name, const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;value)=0</td></tr>
+<tr class="memitem:a579759582f5a61101f9e710e411ecfff"><td class="memItemLeft" align="right" valign="top"><a id="a579759582f5a61101f9e710e411ecfff"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFloat3Uniform</b> (const std::string &amp;name, const Math::vec3 &amp;value)=0</td></tr>
 <tr class="separator:a579759582f5a61101f9e710e411ecfff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87ab157fac0426c9ed03288946c43333"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a87ab157fac0426c9ed03288946c43333">SetFloat4Uniform</a> (const std::string &amp;name, const <a class="el" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a> &amp;value)=0</td></tr>
+<tr class="memitem:a87ab157fac0426c9ed03288946c43333"><td class="memItemLeft" align="right" valign="top"><a id="a87ab157fac0426c9ed03288946c43333"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFloat4Uniform</b> (const std::string &amp;name, const Math::vec4 &amp;value)=0</td></tr>
 <tr class="separator:a87ab157fac0426c9ed03288946c43333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeab9552836f4635336ed34dfae968ba5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#aeab9552836f4635336ed34dfae968ba5">SetIntUniform</a> (const std::string &amp;name, int value)=0</td></tr>
+<tr class="memitem:aeab9552836f4635336ed34dfae968ba5"><td class="memItemLeft" align="right" valign="top"><a id="aeab9552836f4635336ed34dfae968ba5"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetIntUniform</b> (const std::string &amp;name, int value)=0</td></tr>
 <tr class="separator:aeab9552836f4635336ed34dfae968ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b64080b03e6c8265d769532ae008c18"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a0b64080b03e6c8265d769532ae008c18">SetIntArrayUniform</a> (const std::string &amp;name, int *values, uint32_t count)=0</td></tr>
+<tr class="memitem:a0b64080b03e6c8265d769532ae008c18"><td class="memItemLeft" align="right" valign="top"><a id="a0b64080b03e6c8265d769532ae008c18"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetIntArrayUniform</b> (const std::string &amp;name, int *values, uint32_t count)=0</td></tr>
 <tr class="separator:a0b64080b03e6c8265d769532ae008c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a1a4fa78f8df7d82058d439612841ec"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a3a1a4fa78f8df7d82058d439612841ec">GetSpecification</a> () const</td></tr>
+<tr class="memitem:a3a1a4fa78f8df7d82058d439612841ec"><td class="memItemLeft" align="right" valign="top"><a id="a3a1a4fa78f8df7d82058d439612841ec"></a>
+const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSpecification</b> () const</td></tr>
 <tr class="separator:a3a1a4fa78f8df7d82058d439612841ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a398519988ce63c8130d6c9b9d13bd0d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a398519988ce63c8130d6c9b9d13bd0d0">GetInputLayout</a> ()</td></tr>
+<tr class="memitem:a398519988ce63c8130d6c9b9d13bd0d0"><td class="memItemLeft" align="right" valign="top"><a id="a398519988ce63c8130d6c9b9d13bd0d0"></a>
+<a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetInputLayout</b> ()</td></tr>
 <tr class="separator:a398519988ce63c8130d6c9b9d13bd0d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35324e09ccf24775ae3179f9f73f2183"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a35324e09ccf24775ae3179f9f73f2183">GetUniformList</a> () const</td></tr>
+<tr class="memitem:a35324e09ccf24775ae3179f9f73f2183"><td class="memItemLeft" align="right" valign="top"><a id="a35324e09ccf24775ae3179f9f73f2183"></a>
+const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetUniformList</b> () const</td></tr>
 <tr class="separator:a35324e09ccf24775ae3179f9f73f2183"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3b9080e21c312353e5de66a6235a662"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#ae3b9080e21c312353e5de66a6235a662">GetFillDataObject</a> () const</td></tr>
+<tr class="memitem:ae3b9080e21c312353e5de66a6235a662"><td class="memItemLeft" align="right" valign="top"><a id="ae3b9080e21c312353e5de66a6235a662"></a>
+const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetFillDataObject</b> () const</td></tr>
 <tr class="separator:ae3b9080e21c312353e5de66a6235a662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32f13343b5ee72486794e81ada872c1f"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec, uint32_t iteration)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a32f13343b5ee72486794e81ada872c1f">GetFillDataVertex</a> () const</td></tr>
+<tr class="memitem:a32f13343b5ee72486794e81ada872c1f"><td class="memItemLeft" align="right" valign="top"><a id="a32f13343b5ee72486794e81ada872c1f"></a>
+const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec, uint32_t iteration)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetFillDataVertex</b> () const</td></tr>
 <tr class="separator:a32f13343b5ee72486794e81ada872c1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d5b3bbf971cf93523361789223c5c02"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a5d5b3bbf971cf93523361789223c5c02">GetFillDataObjectScene</a> () const</td></tr>
+<tr class="memitem:a5d5b3bbf971cf93523361789223c5c02"><td class="memItemLeft" align="right" valign="top"><a id="a5d5b3bbf971cf93523361789223c5c02"></a>
+const std::vector&lt; std::function&lt; void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;spec)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetFillDataObjectScene</b> () const</td></tr>
 <tr class="separator:a5d5b3bbf971cf93523361789223c5c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a29f11703587cfbbdabc1fa94d4ff32"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a2a29f11703587cfbbdabc1fa94d4ff32">GetDrawFunctions</a> () const</td></tr>
+<tr class="memitem:a2a29f11703587cfbbdabc1fa94d4ff32"><td class="memItemLeft" align="right" valign="top"><a id="a2a29f11703587cfbbdabc1fa94d4ff32"></a>
+const std::vector&lt; std::function&lt; void(Ref&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetDrawFunctions</b> () const</td></tr>
 <tr class="separator:a2a29f11703587cfbbdabc1fa94d4ff32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52d767eda98a78efadfaf5c75e3c2992"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a52d767eda98a78efadfaf5c75e3c2992">GetSubmitUniforms</a> () const</td></tr>
+<tr class="memitem:a52d767eda98a78efadfaf5c75e3c2992"><td class="memItemLeft" align="right" valign="top"><a id="a52d767eda98a78efadfaf5c75e3c2992"></a>
+const std::vector&lt; std::function&lt; void(Ref&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSubmitUniforms</b> () const</td></tr>
 <tr class="separator:a52d767eda98a78efadfaf5c75e3c2992"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7089ec4002b1162cf47e083b33b6621"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#aa7089ec4002b1162cf47e083b33b6621">GetPreDrawBuffer</a> () const</td></tr>
+<tr class="memitem:aa7089ec4002b1162cf47e083b33b6621"><td class="memItemLeft" align="right" valign="top"><a id="aa7089ec4002b1162cf47e083b33b6621"></a>
+const std::vector&lt; std::function&lt; void(Ref&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPreDrawBuffer</b> () const</td></tr>
 <tr class="separator:aa7089ec4002b1162cf47e083b33b6621"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a9d5d0685da6e5f24345c3e1b219123"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::function&lt; void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a8a9d5d0685da6e5f24345c3e1b219123">GetPostDrawBuffer</a> () const</td></tr>
+<tr class="memitem:a8a9d5d0685da6e5f24345c3e1b219123"><td class="memItemLeft" align="right" valign="top"><a id="a8a9d5d0685da6e5f24345c3e1b219123"></a>
+const std::vector&lt; std::function&lt; void(Ref&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; buffer)&gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPostDrawBuffer</b> () const</td></tr>
 <tr class="separator:a8a9d5d0685da6e5f24345c3e1b219123"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29418c25e9681b6409d798d45b670d87"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a29418c25e9681b6409d798d45b670d87">GetCurrentDrawCallBuffer</a> ()</td></tr>
+<tr class="memitem:a29418c25e9681b6409d798d45b670d87"><td class="memItemLeft" align="right" valign="top"><a id="a29418c25e9681b6409d798d45b670d87"></a>
+Ref&lt; <a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetCurrentDrawCallBuffer</b> ()</td></tr>
 <tr class="separator:a29418c25e9681b6409d798d45b670d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff06773779119b0fa985acab0007b45c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#aff06773779119b0fa985acab0007b45c">SetCurrentDrawCallBufferNull</a> ()</td></tr>
+<tr class="memitem:aff06773779119b0fa985acab0007b45c"><td class="memItemLeft" align="right" valign="top"><a id="aff06773779119b0fa985acab0007b45c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetCurrentDrawCallBufferNull</b> ()</td></tr>
 <tr class="separator:aff06773779119b0fa985acab0007b45c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af10733486aab130ce02677ea079c1761"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#af10733486aab130ce02677ea079c1761">SetSpecification</a> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shaderSpec)</td></tr>
+<tr class="memitem:af10733486aab130ce02677ea079c1761"><td class="memItemLeft" align="right" valign="top"><a id="af10733486aab130ce02677ea079c1761"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSpecification</b> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;shaderSpec)</td></tr>
 <tr class="separator:af10733486aab130ce02677ea079c1761"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a769c92b60fd1792f98ba89dd688a6c3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a769c92b60fd1792f98ba89dd688a6c3c">SetInputLayout</a> (const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;shaderInputLayout)</td></tr>
+<tr class="memitem:a769c92b60fd1792f98ba89dd688a6c3c"><td class="memItemLeft" align="right" valign="top"><a id="a769c92b60fd1792f98ba89dd688a6c3c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetInputLayout</b> (const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;shaderInputLayout)</td></tr>
 <tr class="separator:a769c92b60fd1792f98ba89dd688a6c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a732eb21d35682c3a12f4e61c2a589543"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a732eb21d35682c3a12f4e61c2a589543">SetUniformList</a> (const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &amp;shaderUniformList)</td></tr>
+<tr class="memitem:a732eb21d35682c3a12f4e61c2a589543"><td class="memItemLeft" align="right" valign="top"><a id="a732eb21d35682c3a12f4e61c2a589543"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUniformList</b> (const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &amp;shaderUniformList)</td></tr>
 <tr class="separator:a732eb21d35682c3a12f4e61c2a589543"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05346b87dc400fe00a5cd8e4539a5a8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a05346b87dc400fe00a5cd8e4539a5a8f">SetVertexArray</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a> &gt; newVertexArray)</td></tr>
+<tr class="memitem:a05346b87dc400fe00a5cd8e4539a5a8f"><td class="memItemLeft" align="right" valign="top"><a id="a05346b87dc400fe00a5cd8e4539a5a8f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVertexArray</b> (Ref&lt; <a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a> &gt; newVertexArray)</td></tr>
 <tr class="separator:a05346b87dc400fe00a5cd8e4539a5a8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a431a9620f771c272112d1bfade56d0d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a431a9620f771c272112d1bfade56d0d8">GetVertexArray</a> ()</td></tr>
+<tr class="memitem:a431a9620f771c272112d1bfade56d0d8"><td class="memItemLeft" align="right" valign="top"><a id="a431a9620f771c272112d1bfade56d0d8"></a>
+Ref&lt; <a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetVertexArray</b> ()</td></tr>
 <tr class="separator:a431a9620f771c272112d1bfade56d0d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af2cd9d8b5c8a06509123c47e15f9b2f7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#af2cd9d8b5c8a06509123c47e15f9b2f7">Create</a> (const std::string &amp;name, const std::unordered_map&lt; <a class="el" href="namespaceKargono.html#af27050750cda824e48fa6cd932f4ab72">GLenum</a>, std::vector&lt; uint32_t &gt;&gt; &amp;shaderBinaries)</td></tr>
+<tr class="memitem:af2cd9d8b5c8a06509123c47e15f9b2f7"><td class="memItemLeft" align="right" valign="top"><a id="af2cd9d8b5c8a06509123c47e15f9b2f7"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Create</b> (const std::string &amp;name, const std::unordered_map&lt; GLenum, std::vector&lt; uint32_t &gt;&gt; &amp;shaderBinaries)</td></tr>
 <tr class="separator:af2cd9d8b5c8a06509123c47e15f9b2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86454a0358e271ac72e35ada1e31d267"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a86454a0358e271ac72e35ada1e31d267"><td class="memTemplItemLeft" align="right" valign="top">static T *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a86454a0358e271ac72e35ada1e31d267">GetInputLocation</a> (const std::string &amp;inputName, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> inputBuffer, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt; shader)</td></tr>
+<tr class="memitem:a86454a0358e271ac72e35ada1e31d267"><td class="memTemplParams" colspan="2"><a id="a86454a0358e271ac72e35ada1e31d267"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a86454a0358e271ac72e35ada1e31d267"><td class="memTemplItemLeft" align="right" valign="top">static T *&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetInputLocation</b> (const std::string &amp;inputName, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> inputBuffer, Ref&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt; shader)</td></tr>
 <tr class="separator:a86454a0358e271ac72e35ada1e31d267"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90abc2902d67faef2cf0a9dd3c8be5e9"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a90abc2902d67faef2cf0a9dd3c8be5e9"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#a90abc2902d67faef2cf0a9dd3c8be5e9">SetDataAtInputLocation</a> (const T &amp;value, const std::string &amp;inputName, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> inputBuffer, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt; shader)</td></tr>
+<tr class="memitem:a90abc2902d67faef2cf0a9dd3c8be5e9"><td class="memTemplParams" colspan="2"><a id="a90abc2902d67faef2cf0a9dd3c8be5e9"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a90abc2902d67faef2cf0a9dd3c8be5e9"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SetDataAtInputLocation</b> (const T &amp;value, const std::string &amp;inputName, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> inputBuffer, Ref&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt; shader)</td></tr>
 <tr class="separator:a90abc2902d67faef2cf0a9dd3c8be5e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:af5cceb3cae24a5a31a3e3c7e4ec48731"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#af5cceb3cae24a5a31a3e3c7e4ec48731">m_ShaderSpecification</a> {}</td></tr>
+<tr class="memitem:af5cceb3cae24a5a31a3e3c7e4ec48731"><td class="memItemLeft" align="right" valign="top"><a id="af5cceb3cae24a5a31a3e3c7e4ec48731"></a>
+<a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_ShaderSpecification</b> {}</td></tr>
 <tr class="separator:af5cceb3cae24a5a31a3e3c7e4ec48731"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec48769e52fd9175698eaea26c6a676d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#aec48769e52fd9175698eaea26c6a676d">m_InputBufferLayout</a> {}</td></tr>
+<tr class="memitem:aec48769e52fd9175698eaea26c6a676d"><td class="memItemLeft" align="right" valign="top"><a id="aec48769e52fd9175698eaea26c6a676d"></a>
+<a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_InputBufferLayout</b> {}</td></tr>
 <tr class="separator:aec48769e52fd9175698eaea26c6a676d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa177e77bc56b47496f1486e7942b6563"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Shader.html#aa177e77bc56b47496f1486e7942b6563">m_UniformBufferList</a> {}</td></tr>
+<tr class="memitem:aa177e77bc56b47496f1486e7942b6563"><td class="memItemLeft" align="right" valign="top"><a id="aa177e77bc56b47496f1486e7942b6563"></a>
+<a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_UniformBufferList</b> {}</td></tr>
 <tr class="separator:aa177e77bc56b47496f1486e7942b6563"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00096">96</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a7b8215d778d53fd4aadc1931e5f6721e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b8215d778d53fd4aadc1931e5f6721e">&#9670;&nbsp;</a></span>Shader() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Shader::Shader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac5399a28288cacb5b1d945833f468ede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5399a28288cacb5b1d945833f468ede">&#9670;&nbsp;</a></span>Shader() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Shader::Shader </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td>
-          <td class="paramname"><em>shader</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00100">100</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="ad7c789d1f0b5b007645e3264f2860f29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7c789d1f0b5b007645e3264f2860f29">&#9670;&nbsp;</a></span>~Shader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Kargono::Shader::~Shader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6e326ea30f0e144993b66819234343fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e326ea30f0e144993b66819234343fb">&#9670;&nbsp;</a></span>Bind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::Bind </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#aa60674b80a7abd44607c9a98d7d62aa7">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="af2cd9d8b5c8a06509123c47e15f9b2f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2cd9d8b5c8a06509123c47e15f9b2f7">&#9670;&nbsp;</a></span>Create()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt; Kargono::Shader::Create </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::unordered_map&lt; <a class="el" href="namespaceKargono.html#af27050750cda824e48fa6cd932f4ab72">GLenum</a>, std::vector&lt; uint32_t &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>shaderBinaries</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8cpp_source.html#l00012">12</a> of file <a class="el" href="Shader_8cpp_source.html">Shader.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a29418c25e9681b6409d798d45b670d87"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29418c25e9681b6409d798d45b670d87">&#9670;&nbsp;</a></span>GetCurrentDrawCallBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a>&gt;&amp; Kargono::Shader::GetCurrentDrawCallBuffer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00144">144</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a2a29f11703587cfbbdabc1fa94d4ff32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a29f11703587cfbbdabc1fa94d4ff32">&#9670;&nbsp;</a></span>GetDrawFunctions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a>&gt; buffer)&gt; &gt;&amp; Kargono::Shader::GetDrawFunctions </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00138">138</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="ae3b9080e21c312353e5de66a6235a662"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3b9080e21c312353e5de66a6235a662">&#9670;&nbsp;</a></span>GetFillDataObject()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; spec)&gt; &gt;&amp; Kargono::Shader::GetFillDataObject </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00135">135</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a5d5b3bbf971cf93523361789223c5c02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d5b3bbf971cf93523361789223c5c02">&#9670;&nbsp;</a></span>GetFillDataObjectScene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; spec)&gt; &gt;&amp; Kargono::Shader::GetFillDataObjectScene </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00137">137</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a32f13343b5ee72486794e81ada872c1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32f13343b5ee72486794e81ada872c1f">&#9670;&nbsp;</a></span>GetFillDataVertex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; spec, uint32_t iteration)&gt; &gt;&amp; Kargono::Shader::GetFillDataVertex </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00136">136</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a398519988ce63c8130d6c9b9d13bd0d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a398519988ce63c8130d6c9b9d13bd0d0">&#9670;&nbsp;</a></span>GetInputLayout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a>&amp; Kargono::Shader::GetInputLayout </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00133">133</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a86454a0358e271ac72e35ada1e31d267"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86454a0358e271ac72e35ada1e31d267">&#9670;&nbsp;</a></span>GetInputLocation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static T* Kargono::Shader::GetInputLocation </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td>
-          <td class="paramname"><em>inputBuffer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt;&#160;</td>
-          <td class="paramname"><em>shader</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00119">119</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a8a9d5d0685da6e5f24345c3e1b219123"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a9d5d0685da6e5f24345c3e1b219123">&#9670;&nbsp;</a></span>GetPostDrawBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a>&gt; buffer)&gt; &gt;&amp; Kargono::Shader::GetPostDrawBuffer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00142">142</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="aa7089ec4002b1162cf47e083b33b6621"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7089ec4002b1162cf47e083b33b6621">&#9670;&nbsp;</a></span>GetPreDrawBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a>&gt; buffer)&gt; &gt;&amp; Kargono::Shader::GetPreDrawBuffer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00141">141</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a3a1a4fa78f8df7d82058d439612841ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a1a4fa78f8df7d82058d439612841ec">&#9670;&nbsp;</a></span>GetSpecification()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a>&amp; Kargono::Shader::GetSpecification </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00132">132</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a52d767eda98a78efadfaf5c75e3c2992"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52d767eda98a78efadfaf5c75e3c2992">&#9670;&nbsp;</a></span>GetSubmitUniforms()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;std::function&lt;void(<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="structKargono_1_1DrawCallBuffer.html">DrawCallBuffer</a>&gt; buffer)&gt; &gt;&amp; Kargono::Shader::GetSubmitUniforms </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00139">139</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a35324e09ccf24775ae3179f9f73f2183"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35324e09ccf24775ae3179f9f73f2183">&#9670;&nbsp;</a></span>GetUniformList()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a>&amp; Kargono::Shader::GetUniformList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00134">134</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a431a9620f771c272112d1bfade56d0d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a431a9620f771c272112d1bfade56d0d8">&#9670;&nbsp;</a></span>GetVertexArray()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a>&gt; Kargono::Shader::GetVertexArray </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00152">152</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="aff06773779119b0fa985acab0007b45c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff06773779119b0fa985acab0007b45c">&#9670;&nbsp;</a></span>SetCurrentDrawCallBufferNull()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Shader::SetCurrentDrawCallBufferNull </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00145">145</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a90abc2902d67faef2cf0a9dd3c8be5e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90abc2902d67faef2cf0a9dd3c8be5e9">&#9670;&nbsp;</a></span>SetDataAtInputLocation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Kargono::Shader::SetDataAtInputLocation </td>
-          <td>(</td>
-          <td class="paramtype">const T &amp;&#160;</td>
-          <td class="paramname"><em>value</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td>
-          <td class="paramname"><em>inputBuffer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Shader.html">Shader</a> &gt;&#160;</td>
-          <td class="paramname"><em>shader</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00125">125</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a9d0d350d746fe35267c2a8c3284f3b0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d0d350d746fe35267c2a8c3284f3b0f">&#9670;&nbsp;</a></span>SetFloat2Uniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetFloat2Uniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a713177c66139b07fdb32aaffe701ede8">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="a579759582f5a61101f9e710e411ecfff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a579759582f5a61101f9e710e411ecfff">&#9670;&nbsp;</a></span>SetFloat3Uniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetFloat3Uniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a1dfa490acf77d19842e9eaffc16d5588">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="a87ab157fac0426c9ed03288946c43333"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87ab157fac0426c9ed03288946c43333">&#9670;&nbsp;</a></span>SetFloat4Uniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetFloat4Uniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a98c79d81e57148fa7bee6bc4d1bbee91">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="a19940fe2edaf9acdf791adf7069e9c62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19940fe2edaf9acdf791adf7069e9c62">&#9670;&nbsp;</a></span>SetFloatUniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetFloatUniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a78a1bd23bf2c59e28605af332d7261a1">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="a769c92b60fd1792f98ba89dd688a6c3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a769c92b60fd1792f98ba89dd688a6c3c">&#9670;&nbsp;</a></span>SetInputLayout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Shader::SetInputLayout </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> &amp;&#160;</td>
-          <td class="paramname"><em>shaderInputLayout</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8cpp_source.html#l00023">23</a> of file <a class="el" href="Shader_8cpp_source.html">Shader.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a0b64080b03e6c8265d769532ae008c18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b64080b03e6c8265d769532ae008c18">&#9670;&nbsp;</a></span>SetIntArrayUniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetIntArrayUniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>values</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a77c88d0ae46c76c4a620d89671085959">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="aeab9552836f4635336ed34dfae968ba5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeab9552836f4635336ed34dfae968ba5">&#9670;&nbsp;</a></span>SetIntUniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetIntUniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#a23f8b05d3ad9c617ddc23cb6407e6f19">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="abeec9791022b016508cecb5666dd43f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abeec9791022b016508cecb5666dd43f5">&#9670;&nbsp;</a></span>SetMat3Uniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetMat3Uniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a8d1eccde1494a2bd5f13a2b03fd37178">Math::mat3</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#affdaf04468af23cfe24732d53f4f07de">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="a1b7610ccb90653c87dd6e24e5d6538e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b7610ccb90653c87dd6e24e5d6538e2">&#9670;&nbsp;</a></span>SetMat4Uniform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::SetMat4Uniform </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#aeac689eeecda1a52781914dd3543e001">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<a id="af10733486aab130ce02677ea079c1761"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af10733486aab130ce02677ea079c1761">&#9670;&nbsp;</a></span>SetSpecification()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Shader::SetSpecification </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td>
-          <td class="paramname"><em>shaderSpec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8cpp_source.html#l00017">17</a> of file <a class="el" href="Shader_8cpp_source.html">Shader.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a732eb21d35682c3a12f4e61c2a589543"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a732eb21d35682c3a12f4e61c2a589543">&#9670;&nbsp;</a></span>SetUniformList()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Shader::SetUniformList </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> &amp;&#160;</td>
-          <td class="paramname"><em>shaderUniformList</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00149">149</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a05346b87dc400fe00a5cd8e4539a5a8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05346b87dc400fe00a5cd8e4539a5a8f">&#9670;&nbsp;</a></span>SetVertexArray()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Shader::SetVertexArray </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1VertexArray.html">VertexArray</a> &gt;&#160;</td>
-          <td class="paramname"><em>newVertexArray</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00151">151</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="abda52710ace0a561ac316f87afa41ceb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abda52710ace0a561ac316f87afa41ceb">&#9670;&nbsp;</a></span>Unbind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Shader::Unbind </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLShader.html#aa316cd7907d811f8352ea82cc22ff230">API::OpenGL::OpenGLShader</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="aec48769e52fd9175698eaea26c6a676d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec48769e52fd9175698eaea26c6a676d">&#9670;&nbsp;</a></span>m_InputBufferLayout</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> Kargono::Shader::m_InputBufferLayout {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00156">156</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="af5cceb3cae24a5a31a3e3c7e4ec48731"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5cceb3cae24a5a31a3e3c7e4ec48731">&#9670;&nbsp;</a></span>m_ShaderSpecification</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> Kargono::Shader::m_ShaderSpecification {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00155">155</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="aa177e77bc56b47496f1486e7942b6563"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa177e77bc56b47496f1486e7942b6563">&#9670;&nbsp;</a></span>m_UniformBufferList</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> Kargono::Shader::m_UniformBufferList {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00157">157</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="Shader_8h_source.html">Shader.h</a></li>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="Shader_8cpp_source.html">Shader.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1Shader.html">Shader</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

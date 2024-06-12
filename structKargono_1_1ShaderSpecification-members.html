@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1ShaderSpecification.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::ShaderSpecification Member List</div>  </div>
@@ -74,21 +92,24 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a6b5380e555a306e220e3d5f360aade6b">AddCircleShape</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a5fe3d99011c4d7ac112a598176f7af20">AddEntityID</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a041040f5516566722cb7f331dabccda3">AddProjectionMatrix</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">ColorInput</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#ac7d7a3fcf661c4237d5da34211c7af5f">DrawOutline</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a754c67b1f19f55127fe1d33db58f9380">operator&lt;=&gt;</a>(const ShaderSpecification &amp;) const =default</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#ab4e6cf8ad840505b648984f9444ec674">RenderType</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a77bc60e8a30761e0cab04ddccc1830c9">ShaderSpecification</a>(const ShaderSpecification &amp;)=default</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a395e04590443c06895ff124914174f32">ShaderSpecification</a>()=default</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a7609b090c76b7224e588c74de2488394">ShaderSpecification</a>(ColorInputType colorInput, TextureInputType textureInput, bool addCircle, bool addProjection, bool addEntityID, RenderingType renderType, bool drawOutline)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421">TextureInput</a></td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddCircleShape</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>AddEntityID</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddProjectionMatrix</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ColorInput</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DrawOutline</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>operator&lt;=&gt;</b>(const ShaderSpecification &amp;) const =default (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>RenderType</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ShaderSpecification</b>(const ShaderSpecification &amp;)=default (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ShaderSpecification</b>()=default (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ShaderSpecification</b>(ColorInputType colorInput, TextureInputType textureInput, bool addCircle, bool addProjection, bool addEntityID, RenderingType renderType, bool drawOutline) (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>TextureInput</b> (defined in <a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a>)</td><td class="entry"><a class="el" href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

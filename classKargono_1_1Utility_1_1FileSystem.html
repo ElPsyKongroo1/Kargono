@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Utility_1_1FileSystem.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Utility.html">Utility</a></li><li class="navelem"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html">FileSystem</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
@@ -75,720 +93,83 @@ $(function() {
 <div class="title">Kargono::Utility::FileSystem Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="FileSystem_8h_source.html">FileSystem.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a4bc739180546789b0799ce9f19f954f6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6">FileTypes</a> { <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6a6adf97f83acf6453d4a6a4b1070f3754">None</a> = 0
-, <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6abff139fa05ac583f685a523ab3d110a0">png</a>
-, <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6a96a75bdbf222c58cabde08ebe2172c9f">bmp</a>
+<tr class="memitem:a4bc739180546789b0799ce9f19f954f6"><td class="memItemLeft" align="right" valign="top"><a id="a4bc739180546789b0799ce9f19f954f6"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>FileTypes</b> { <b>None</b> = 0
+, <b>png</b>
+, <b>bmp</b>
  }</td></tr>
 <tr class="separator:a4bc739180546789b0799ce9f19f954f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a31f7ffd703c2065d5cd5e093b4f6bc36"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a31f7ffd703c2065d5cd5e093b4f6bc36">RenameFile</a> (const std::filesystem::path &amp;oldPath, std::string newName)</td></tr>
+<tr class="memitem:a31f7ffd703c2065d5cd5e093b4f6bc36"><td class="memItemLeft" align="right" valign="top"><a id="a31f7ffd703c2065d5cd5e093b4f6bc36"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>RenameFile</b> (const std::filesystem::path &amp;oldPath, std::string newName)</td></tr>
 <tr class="separator:a31f7ffd703c2065d5cd5e093b4f6bc36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8014e20691bab947b82da0ec43d1dee7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a8014e20691bab947b82da0ec43d1dee7">ReadFileBinary</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:a8014e20691bab947b82da0ec43d1dee7"><td class="memItemLeft" align="right" valign="top"><a id="a8014e20691bab947b82da0ec43d1dee7"></a>
+static <a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ReadFileBinary</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:a8014e20691bab947b82da0ec43d1dee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cd9431a2c5cacd19e6a6bc6cccc8e6c"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">DeleteSelectedFile</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:a5cd9431a2c5cacd19e6a6bc6cccc8e6c"><td class="memItemLeft" align="right" valign="top"><a id="a5cd9431a2c5cacd19e6a6bc6cccc8e6c"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteSelectedFile</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:a5cd9431a2c5cacd19e6a6bc6cccc8e6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a313f5bf854cc60ecfd27c337fe995648"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a313f5bf854cc60ecfd27c337fe995648">DeleteSelectedDirectory</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:a313f5bf854cc60ecfd27c337fe995648"><td class="memItemLeft" align="right" valign="top"><a id="a313f5bf854cc60ecfd27c337fe995648"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteSelectedDirectory</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:a313f5bf854cc60ecfd27c337fe995648"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfcd5c90b18f4befed483197f68d62a9"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#abfcd5c90b18f4befed483197f68d62a9">DoesPathContainSubPath</a> (const std::filesystem::path &amp;base, const std::filesystem::path &amp;full)</td></tr>
+<tr class="memitem:abfcd5c90b18f4befed483197f68d62a9"><td class="memItemLeft" align="right" valign="top"><a id="abfcd5c90b18f4befed483197f68d62a9"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>DoesPathContainSubPath</b> (const std::filesystem::path &amp;base, const std::filesystem::path &amp;full)</td></tr>
 <tr class="separator:abfcd5c90b18f4befed483197f68d62a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ab9cbf3d3e39fd4176454335a0dab28"><td class="memItemLeft" align="right" valign="top">static std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a8ab9cbf3d3e39fd4176454335a0dab28">GetRelativePath</a> (const std::filesystem::path &amp;base, const std::filesystem::path &amp;full)</td></tr>
+<tr class="memitem:a8ab9cbf3d3e39fd4176454335a0dab28"><td class="memItemLeft" align="right" valign="top"><a id="a8ab9cbf3d3e39fd4176454335a0dab28"></a>
+static std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>GetRelativePath</b> (const std::filesystem::path &amp;base, const std::filesystem::path &amp;full)</td></tr>
 <tr class="separator:a8ab9cbf3d3e39fd4176454335a0dab28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe7f8ce1acb8a7c2964b49e6357a0e75"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#abe7f8ce1acb8a7c2964b49e6357a0e75">WriteFileBinary</a> (const std::filesystem::path &amp;filepath, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</td></tr>
+<tr class="memitem:abe7f8ce1acb8a7c2964b49e6357a0e75"><td class="memItemLeft" align="right" valign="top"><a id="abe7f8ce1acb8a7c2964b49e6357a0e75"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>WriteFileBinary</b> (const std::filesystem::path &amp;filepath, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</td></tr>
 <tr class="separator:abe7f8ce1acb8a7c2964b49e6357a0e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a293fbbe3c0de4209b5f54874a706b23e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a293fbbe3c0de4209b5f54874a706b23e">WriteFileBinary</a> (const std::filesystem::path &amp;filepath, std::vector&lt; <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> &gt; &amp;buffers)</td></tr>
+<tr class="memitem:a293fbbe3c0de4209b5f54874a706b23e"><td class="memItemLeft" align="right" valign="top"><a id="a293fbbe3c0de4209b5f54874a706b23e"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>WriteFileBinary</b> (const std::filesystem::path &amp;filepath, std::vector&lt; <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> &gt; &amp;buffers)</td></tr>
 <tr class="separator:a293fbbe3c0de4209b5f54874a706b23e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5d5eacf07afbe538362ee4c886d036f"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#ab5d5eacf07afbe538362ee4c886d036f">WriteFileBinary</a> (const std::filesystem::path &amp;filepath, <a class="el" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a> buffer)</td></tr>
+<tr class="memitem:ab5d5eacf07afbe538362ee4c886d036f"><td class="memItemLeft" align="right" valign="top"><a id="ab5d5eacf07afbe538362ee4c886d036f"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>WriteFileBinary</b> (const std::filesystem::path &amp;filepath, <a class="el" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a> buffer)</td></tr>
 <tr class="separator:ab5d5eacf07afbe538362ee4c886d036f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab22a8b319a79589fae9789f30a2b6963"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#ab22a8b319a79589fae9789f30a2b6963">WriteFileString</a> (const std::filesystem::path &amp;filepath, const std::string &amp;string)</td></tr>
+<tr class="memitem:ab22a8b319a79589fae9789f30a2b6963"><td class="memItemLeft" align="right" valign="top"><a id="ab22a8b319a79589fae9789f30a2b6963"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>WriteFileString</b> (const std::filesystem::path &amp;filepath, const std::string &amp;string)</td></tr>
 <tr class="separator:ab22a8b319a79589fae9789f30a2b6963"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86889ff8b4e345e0e8c43e4a92618cea"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a86889ff8b4e345e0e8c43e4a92618cea">MoveFileToDirectory</a> (const std::filesystem::path &amp;filepath, const std::filesystem::path &amp;newDirectory)</td></tr>
+<tr class="memitem:a86889ff8b4e345e0e8c43e4a92618cea"><td class="memItemLeft" align="right" valign="top"><a id="a86889ff8b4e345e0e8c43e4a92618cea"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>MoveFileToDirectory</b> (const std::filesystem::path &amp;filepath, const std::filesystem::path &amp;newDirectory)</td></tr>
 <tr class="separator:a86889ff8b4e345e0e8c43e4a92618cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58445e710a9f668e128ef7045a5ee593"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a58445e710a9f668e128ef7045a5ee593">WriteFileImage</a> (const std::filesystem::path &amp;filepath, uint8_t *buffer, uint32_t width, uint32_t height, <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6">FileSystem::FileTypes</a> fileType)</td></tr>
+<tr class="memitem:a58445e710a9f668e128ef7045a5ee593"><td class="memItemLeft" align="right" valign="top"><a id="a58445e710a9f668e128ef7045a5ee593"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>WriteFileImage</b> (const std::filesystem::path &amp;filepath, uint8_t *buffer, uint32_t width, uint32_t height, FileSystem::FileTypes fileType)</td></tr>
 <tr class="separator:a58445e710a9f668e128ef7045a5ee593"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a037fcf45a3673dbb27a9ec1d4c4d2515"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a037fcf45a3673dbb27a9ec1d4c4d2515">ReadFileString</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:a037fcf45a3673dbb27a9ec1d4c4d2515"><td class="memItemLeft" align="right" valign="top"><a id="a037fcf45a3673dbb27a9ec1d4c4d2515"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ReadFileString</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:a037fcf45a3673dbb27a9ec1d4c4d2515"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0905b4d317a6d99849bb15811eb6b3f"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#ad0905b4d317a6d99849bb15811eb6b3f">ChecksumFromFile</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:ad0905b4d317a6d99849bb15811eb6b3f"><td class="memItemLeft" align="right" valign="top"><a id="ad0905b4d317a6d99849bb15811eb6b3f"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ChecksumFromFile</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:ad0905b4d317a6d99849bb15811eb6b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab84c350e008700fc7bb2451bd51a02e1"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#ab84c350e008700fc7bb2451bd51a02e1">ChecksumFromString</a> (const std::string &amp;inputString)</td></tr>
+<tr class="memitem:ab84c350e008700fc7bb2451bd51a02e1"><td class="memItemLeft" align="right" valign="top"><a id="ab84c350e008700fc7bb2451bd51a02e1"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ChecksumFromString</b> (const std::string &amp;inputString)</td></tr>
 <tr class="separator:ab84c350e008700fc7bb2451bd51a02e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acda65241bce226b9a0ec105864db2c6a"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#acda65241bce226b9a0ec105864db2c6a">ChecksumFromBuffer</a> (<a class="el" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</td></tr>
+<tr class="memitem:acda65241bce226b9a0ec105864db2c6a"><td class="memItemLeft" align="right" valign="top"><a id="acda65241bce226b9a0ec105864db2c6a"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ChecksumFromBuffer</b> (<a class="el" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</td></tr>
 <tr class="separator:acda65241bce226b9a0ec105864db2c6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c9cc6f43263aa236a3bbc53bdb6f732"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a6c9cc6f43263aa236a3bbc53bdb6f732">ChecksumCRCFromBuffer</a> (void *bufferPointer, uint64_t bufferSize)</td></tr>
+<tr class="memitem:a6c9cc6f43263aa236a3bbc53bdb6f732"><td class="memItemLeft" align="right" valign="top"><a id="a6c9cc6f43263aa236a3bbc53bdb6f732"></a>
+static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ChecksumCRCFromBuffer</b> (void *bufferPointer, uint64_t bufferSize)</td></tr>
 <tr class="separator:a6c9cc6f43263aa236a3bbc53bdb6f732"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af383512c911ce4b86791fd2248904c76"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#af383512c911ce4b86791fd2248904c76">CreateNewDirectory</a> (const std::filesystem::path &amp;filepath)</td></tr>
+<tr class="memitem:af383512c911ce4b86791fd2248904c76"><td class="memItemLeft" align="right" valign="top"><a id="af383512c911ce4b86791fd2248904c76"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateNewDirectory</b> (const std::filesystem::path &amp;filepath)</td></tr>
 <tr class="separator:af383512c911ce4b86791fd2248904c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="FileSystem_8h_source.html#l00015">15</a> of file <a class="el" href="FileSystem_8h_source.html">FileSystem.h</a>.</p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a4bc739180546789b0799ce9f19f954f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bc739180546789b0799ce9f19f954f6">&#9670;&nbsp;</a></span>FileTypes</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6">Kargono::Utility::FileSystem::FileTypes</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4bc739180546789b0799ce9f19f954f6a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a4bc739180546789b0799ce9f19f954f6abff139fa05ac583f685a523ab3d110a0"></a>png&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a4bc739180546789b0799ce9f19f954f6a96a75bdbf222c58cabde08ebe2172c9f"></a>bmp&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8h_source.html#l00036">36</a> of file <a class="el" href="FileSystem_8h_source.html">FileSystem.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6c9cc6f43263aa236a3bbc53bdb6f732"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c9cc6f43263aa236a3bbc53bdb6f732">&#9670;&nbsp;</a></span>ChecksumCRCFromBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::Utility::FileSystem::ChecksumCRCFromBuffer </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>bufferPointer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>bufferSize</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00245">245</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="acda65241bce226b9a0ec105864db2c6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acda65241bce226b9a0ec105864db2c6a">&#9670;&nbsp;</a></span>ChecksumFromBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Utility::FileSystem::ChecksumFromBuffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td>
-          <td class="paramname"><em>buffer</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00235">235</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad0905b4d317a6d99849bb15811eb6b3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0905b4d317a6d99849bb15811eb6b3f">&#9670;&nbsp;</a></span>ChecksumFromFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Utility::FileSystem::ChecksumFromFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00197">197</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab84c350e008700fc7bb2451bd51a02e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab84c350e008700fc7bb2451bd51a02e1">&#9670;&nbsp;</a></span>ChecksumFromString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Utility::FileSystem::ChecksumFromString </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputString</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00225">225</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af383512c911ce4b86791fd2248904c76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af383512c911ce4b86791fd2248904c76">&#9670;&nbsp;</a></span>CreateNewDirectory()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Utility::FileSystem::CreateNewDirectory </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00251">251</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a313f5bf854cc60ecfd27c337fe995648"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a313f5bf854cc60ecfd27c337fe995648">&#9670;&nbsp;</a></span>DeleteSelectedDirectory()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Utility::FileSystem::DeleteSelectedDirectory </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00049">49</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a5cd9431a2c5cacd19e6a6bc6cccc8e6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">&#9670;&nbsp;</a></span>DeleteSelectedFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::DeleteSelectedFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00044">44</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="abfcd5c90b18f4befed483197f68d62a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfcd5c90b18f4befed483197f68d62a9">&#9670;&nbsp;</a></span>DoesPathContainSubPath()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::DoesPathContainSubPath </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>base</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>full</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00182">182</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8ab9cbf3d3e39fd4176454335a0dab28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ab9cbf3d3e39fd4176454335a0dab28">&#9670;&nbsp;</a></span>GetRelativePath()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::filesystem::path Kargono::Utility::FileSystem::GetRelativePath </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>base</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>full</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00187">187</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a86889ff8b4e345e0e8c43e4a92618cea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86889ff8b4e345e0e8c43e4a92618cea">&#9670;&nbsp;</a></span>MoveFileToDirectory()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Utility::FileSystem::MoveFileToDirectory </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>newDirectory</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00112">112</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8014e20691bab947b82da0ec43d1dee7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8014e20691bab947b82da0ec43d1dee7">&#9670;&nbsp;</a></span>ReadFileBinary()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a> Kargono::Utility::FileSystem::ReadFileBinary </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00017">17</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a037fcf45a3673dbb27a9ec1d4c4d2515"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a037fcf45a3673dbb27a9ec1d4c4d2515">&#9670;&nbsp;</a></span>ReadFileString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Utility::FileSystem::ReadFileString </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00154">154</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a31f7ffd703c2065d5cd5e093b4f6bc36"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31f7ffd703c2065d5cd5e093b4f6bc36">&#9670;&nbsp;</a></span>RenameFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Utility::FileSystem::RenameFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>oldPath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>newName</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00011">11</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="abe7f8ce1acb8a7c2964b49e6357a0e75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe7f8ce1acb8a7c2964b49e6357a0e75">&#9670;&nbsp;</a></span>WriteFileBinary() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::WriteFileBinary </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td>
-          <td class="paramname"><em>buffer</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00054">54</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab5d5eacf07afbe538362ee4c886d036f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5d5eacf07afbe538362ee4c886d036f">&#9670;&nbsp;</a></span>WriteFileBinary() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::WriteFileBinary </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a>&#160;</td>
-          <td class="paramname"><em>buffer</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00084">84</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a293fbbe3c0de4209b5f54874a706b23e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a293fbbe3c0de4209b5f54874a706b23e">&#9670;&nbsp;</a></span>WriteFileBinary() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::WriteFileBinary </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>buffers</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00068">68</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a58445e710a9f668e128ef7045a5ee593"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58445e710a9f668e128ef7045a5ee593">&#9670;&nbsp;</a></span>WriteFileImage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::WriteFileImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>buffer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>width</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>height</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a4bc739180546789b0799ce9f19f954f6">FileSystem::FileTypes</a>&#160;</td>
-          <td class="paramname"><em>fileType</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00127">127</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab22a8b319a79589fae9789f30a2b6963"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab22a8b319a79589fae9789f30a2b6963">&#9670;&nbsp;</a></span>WriteFileString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FileSystem::WriteFileString </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>string</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FileSystem_8cpp_source.html#l00098">98</a> of file <a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Utility/<a class="el" href="FileSystem_8h_source.html">FileSystem.h</a></li>
-<li>Engine/Source/Kargono/Utility/<a class="el" href="FileSystem_8cpp_source.html">FileSystem.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Utility</b></li><li class="navelem"><a class="el" href="classKargono_1_1Utility_1_1FileSystem.html">FileSystem</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

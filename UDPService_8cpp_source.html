@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('UDPService_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,72 +84,67 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_372db1584a37a464aca6076ce7a6b981.html">Network</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">UDPService.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="UDPService_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UDPService_8h.html">Kargono/Network/UDPService.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/UDPService.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Common_8h.html">Kargono/Network/Common.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ConnectionToClient_8h.html">Kargono/Network/ConnectionToClient.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/Common.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Utility/FileSystem.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/ConnectionToClient.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Network.html">Kargono::Network</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span>Kargono::Network</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    constexpr uint64_t <a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>{ <span class="keyword">sizeof</span>(uint8_t) * 1024 * 1 }; <span class="comment">// 1KB</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">   13</a></span>&#160;    std::vector&lt;uint8_t&gt; <a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a> {};</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">   14</a></span>&#160;    std::vector&lt;uint8_t&gt; <a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a> {};</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    constexpr uint64_t k_MaxBufferSize{ <span class="keyword">sizeof</span>(uint8_t) * 1024 * 1 }; <span class="comment">// 1KB</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    std::vector&lt;uint8_t&gt; s_SocketReceiveBuffer {};</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    std::vector&lt;uint8_t&gt; s_SocketSendBuffer {};</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#aeeb3e961fcc3fd779c5c122c0d886997">   16</a></span>&#160;    <a class="code" href="classKargono_1_1Network_1_1UDPService.html#aeeb3e961fcc3fd779c5c122c0d886997">UDPService::UDPService</a>(asio::io_context&amp; asioContext, asio::ip::udp::socket socket, </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue&lt;owned_message&gt;</a>&amp; qIn, std::condition_variable&amp; newCV, std::mutex&amp; newMutex)</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        : m_AsioContext(asioContext), m_Socket(<a class="code" href="namespacestd.html">std</a>::move(socket)), m_qMessagesIn(qIn),</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    UDPService::UDPService(asio::io_context&amp; asioContext, asio::ip::udp::socket socket, </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        tsqueue&lt;owned_message&gt;&amp; qIn, std::condition_variable&amp; newCV, std::mutex&amp; newMutex)</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        : m_AsioContext(asioContext), m_Socket(std::move(socket)), m_qMessagesIn(qIn),</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.resize(<a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.resize(<a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        s_SocketReceiveBuffer.resize(k_MaxBufferSize);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        s_SocketSendBuffer.resize(k_MaxBufferSize);</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    }</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#a10fa53776a02c3af2d2b2da63d768a2e">   25</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a10fa53776a02c3af2d2b2da63d768a2e">UDPService::WakeUpNetworkThread</a>()</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> UDPService::WakeUpNetworkThread()</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        std::unique_lock&lt;std::mutex&gt; lock(<a class="code" href="classKargono_1_1Network_1_1UDPService.html#a64c096135c7490f2e33e94a1bc9d1e3c">m_BlockThreadMx</a>);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a409468c5f58b987c78e1868542312d01">m_BlockThreadCV</a>.notify_one();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        std::unique_lock&lt;std::mutex&gt; lock(m_BlockThreadMx);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        m_BlockThreadCV.notify_one();</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#a4ae437e5c652f7681aae97221c6cad66">   31</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a4ae437e5c652f7681aae97221c6cad66">UDPService::Send</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Network_1_1LabeledMessage.html">LabeledMessage</a>&amp; msg)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">void</span> UDPService::Send(<span class="keyword">const</span> LabeledMessage&amp; msg)</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        asio::post(<a class="code" href="classKargono_1_1Network_1_1UDPService.html#adcc2779029d40f041477ab5e8ffcfa3a">m_AsioContext</a>, [<span class="keyword">this</span>, msg]()</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        asio::post(m_AsioContext, [<span class="keyword">this</span>, msg]()</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordtype">bool</span> bWritingMessage = !<a class="code" href="classKargono_1_1Network_1_1UDPService.html#a7875dddcec92278ec8260224ab8f74b0">m_qMessagesOut</a>.empty();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a7875dddcec92278ec8260224ab8f74b0">m_qMessagesOut</a>.push_back(msg);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordtype">bool</span> bWritingMessage = !m_qMessagesOut.empty();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            m_qMessagesOut.push_back(msg);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">if</span> (!bWritingMessage)</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a8448b4b562a2639e6607933584873876">WriteMessage</a>();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                WriteMessage();</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        });</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#ab37b099c1691beb325a689527aaf29ad">   44</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1UDPService.html#ab37b099c1691beb325a689527aaf29ad">UDPService::Start</a>()</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> UDPService::Start()</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">ReadMessage</a>();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        ReadMessage();</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#a62da4e5ead73bdbe32ce2b3bf45ac33a">   49</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a62da4e5ead73bdbe32ce2b3bf45ac33a">UDPService::Stop</a>()</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> UDPService::Stop()</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">   54</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">UDPService::ReadMessage</a>()</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> UDPService::ReadMessage()</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a5b331e3f413af0940c17ad6c6f34845b">m_Socket</a>.async_receive_from(asio::buffer(<a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.data(), <a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>), <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a8f4bf401a8f0b44bb31adeb4916be782">m_CurrentEndpoint</a>,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        m_Socket.async_receive_from(asio::buffer(s_SocketReceiveBuffer.data(), k_MaxBufferSize), m_CurrentEndpoint,</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            [<span class="keyword">this</span>](std::error_code ec, std::size_t length)</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            {</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                if (ec)</div>
@@ -138,95 +156,95 @@ $(function() {
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                <span class="comment">// Make sure CRC and Header can be read. Packet might have been broken apart.</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                if (length &lt; (<span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>)))</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                if (length &lt; (<span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(MessageHeader)))</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">ReadMessage</a>();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                    ReadMessage();</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="comment">// Load in Message header from buffer</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                memcpy_s(&amp;<a class="code" href="classKargono_1_1Network_1_1UDPService.html#a387aa5550cb40f749accfa6bd2c9f8a4">m_MsgTemporaryIn</a>.<a class="code" href="structKargono_1_1Network_1_1Message.html#a08e38402f17c7242defcba186aa3063b">Header</a>,</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                    <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>),</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                    <a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                    <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>));</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                memcpy_s(&amp;m_MsgTemporaryIn.Header,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                    <span class="keyword">sizeof</span>(MessageHeader),</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                    s_SocketReceiveBuffer.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                    <span class="keyword">sizeof</span>(MessageHeader));</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                <span class="comment">// Get Payload Size</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                uint64_t payloadSize = <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a387aa5550cb40f749accfa6bd2c9f8a4">m_MsgTemporaryIn</a>.<a class="code" href="structKargono_1_1Network_1_1Message.html#a08e38402f17c7242defcba186aa3063b">Header</a>.<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html#a023181935d6abc071c21d23368177676">PayloadSize</a>;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                uint64_t payloadSize = m_MsgTemporaryIn.Header.PayloadSize;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                <span class="comment">// Calculate Cyclic Redundency Check and compare with received value</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                uint32_t receivedCRC{};</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                memcpy_s(&amp;receivedCRC, <span class="keyword">sizeof</span>(uint32_t), <a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.data(), <span class="keyword">sizeof</span>(uint32_t));</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                memcpy_s(&amp;receivedCRC, <span class="keyword">sizeof</span>(uint32_t), s_SocketReceiveBuffer.data(), <span class="keyword">sizeof</span>(uint32_t));</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                uint32_t currentCRC = <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#a6c9cc6f43263aa236a3bbc53bdb6f732">Utility::FileSystem::ChecksumCRCFromBuffer</a>(<a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>) + payloadSize);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                uint32_t currentCRC = Utility::FileSystem::ChecksumCRCFromBuffer(s_SocketReceiveBuffer.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    <span class="keyword">sizeof</span>(MessageHeader) + payloadSize);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                <span class="comment">// If cyclic redundency check fails, move on! It happens...</span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                <span class="keywordflow">if</span> (currentCRC != receivedCRC)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">ReadMessage</a>();</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                    ReadMessage();</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                }</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <span class="comment">// If CRC and Header are valid and payload is too big, remove connection.</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keywordflow">if</span> (payloadSize &gt; <a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keywordflow">if</span> (payloadSize &gt; k_MaxBufferSize)</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                    <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Payload size of received UDP message is larger than buffer!&quot;</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1UDPService.html#ae436c373a1c6ce11a21e4e90e148446f">Disconnect</a>(<a class="code" href="classKargono_1_1Network_1_1UDPService.html#a8f4bf401a8f0b44bb31adeb4916be782">m_CurrentEndpoint</a>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                    KG_ERROR(<span class="stringliteral">&quot;Payload size of received UDP message is larger than buffer!&quot;</span>);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                    Disconnect(m_CurrentEndpoint);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                }</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                <span class="comment">// Load in Payload into outgoing message!</span></div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                <span class="keywordflow">if</span> (payloadSize &gt; 0)</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1UDPService.html#a387aa5550cb40f749accfa6bd2c9f8a4">m_MsgTemporaryIn</a>.<a class="code" href="structKargono_1_1Network_1_1Message.html#a82ee56f12ea4e1fba4b8311751be7081">Body</a>.resize(payloadSize);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                    memcpy_s(<a class="code" href="classKargono_1_1Network_1_1UDPService.html#a387aa5550cb40f749accfa6bd2c9f8a4">m_MsgTemporaryIn</a>.<a class="code" href="structKargono_1_1Network_1_1Message.html#a82ee56f12ea4e1fba4b8311751be7081">Body</a>.data(),</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                    m_MsgTemporaryIn.Body.resize(payloadSize);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                    memcpy_s(m_MsgTemporaryIn.Body.data(),</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                        payloadSize,</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                        <a class="code" href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">s_SocketReceiveBuffer</a>.data() + <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>) + <span class="keyword">sizeof</span>(uint32_t),</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                        s_SocketReceiveBuffer.data() + <span class="keyword">sizeof</span>(MessageHeader) + <span class="keyword">sizeof</span>(uint32_t),</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                        payloadSize);</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                <a class="code" href="classKargono_1_1Network_1_1UDPService.html#ac31d03cb45e80c4a3ba1ff2d91773232">AddToIncomingMessageQueue</a>();</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                AddToIncomingMessageQueue();</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                </div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            });</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1UDPService.html#a8448b4b562a2639e6607933584873876">  121</a></span>&#160;    <span class="keywordtype">void</span> UDPService::WriteMessage()</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> UDPService::WriteMessage()</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        uint64_t payloadSize = m_qMessagesOut.front().msg.Header.PayloadSize;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (m_qMessagesOut.front().msg.Size() &gt; <a class="code" href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">k_MaxBufferSize</a>)</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (m_qMessagesOut.front().msg.Size() &gt; k_MaxBufferSize)</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Attempt to write UDP message that is large that max buffer size!&quot;</span>);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Attempt to write UDP message that is large that max buffer size!&quot;</span>);</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            Disconnect(m_CurrentEndpoint);</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="comment">// Load Header after CRC location</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        memcpy_s(<a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>),</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        memcpy_s(s_SocketSendBuffer.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keyword">sizeof</span>(MessageHeader),</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            &amp;m_qMessagesOut.front().msg.Header,</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>));</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keyword">sizeof</span>(MessageHeader));</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="comment">// Load Buffer after Header</span></div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">if</span> (payloadSize &gt; 0)</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        {</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            memcpy_s(<a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.data() + <span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>),</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            memcpy_s(s_SocketSendBuffer.data() + <span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(MessageHeader),</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                payloadSize,</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                m_qMessagesOut.front().msg.Body.data(),</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                payloadSize);</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        }</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        uint32_t hash = <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#a6c9cc6f43263aa236a3bbc53bdb6f732">Utility::FileSystem::ChecksumCRCFromBuffer</a>(<a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>) + payloadSize);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        uint32_t hash = Utility::FileSystem::ChecksumCRCFromBuffer(s_SocketSendBuffer.data() + <span class="keyword">sizeof</span>(uint32_t),</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <span class="keyword">sizeof</span>(MessageHeader) + payloadSize);</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="comment">// Fill CRC location</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        memcpy_s(<a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.data(), <span class="keyword">sizeof</span>(uint32_t), &amp;hash, <span class="keyword">sizeof</span>(uint32_t));</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        memcpy_s(s_SocketSendBuffer.data(), <span class="keyword">sizeof</span>(uint32_t), &amp;hash, <span class="keyword">sizeof</span>(uint32_t));</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="comment">/*KG_TRACE(&quot;The local endpoint address/port are {} {} and remote is {} {}&quot;, m_Socket.local_endpoint().address().to_string(), m_Socket.local_endpoint().port(),</span></div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">            m_qMessagesOut.front().endpoint.address().to_string(), m_qMessagesOut.front().endpoint.port());*/</span></div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        m_Socket.async_send_to(asio::buffer(<a class="code" href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">s_SocketSendBuffer</a>.data(), <span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Network_1_1MessageHeader.html">MessageHeader</a>) + payloadSize), m_qMessagesOut.front().endpoint, [<span class="keyword">this</span>](std::error_code ec, std::size_t length)</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), <span class="keyword">sizeof</span>(uint32_t) + <span class="keyword">sizeof</span>(MessageHeader) + payloadSize), m_qMessagesOut.front().endpoint, [<span class="keyword">this</span>](std::error_code ec, std::size_t length)</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        {</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            if (!ec)</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            {</div>
@@ -245,44 +263,14 @@ $(function() {
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        });</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;}</div>
-<div class="ttc" id="aCommon_8h_html"><div class="ttname"><a href="Common_8h.html">Common.h</a></div></div>
-<div class="ttc" id="aConnectionToClient_8h_html"><div class="ttname"><a href="ConnectionToClient_8h.html">ConnectionToClient.h</a></div></div>
-<div class="ttc" id="aFileSystem_8h_html"><div class="ttname"><a href="FileSystem_8h.html">FileSystem.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
-<div class="ttc" id="aUDPService_8h_html"><div class="ttname"><a href="UDPService_8h.html">UDPService.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a10fa53776a02c3af2d2b2da63d768a2e"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a10fa53776a02c3af2d2b2da63d768a2e">Kargono::Network::UDPService::WakeUpNetworkThread</a></div><div class="ttdeci">void WakeUpNetworkThread()</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00025">UDPService.cpp:25</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a387aa5550cb40f749accfa6bd2c9f8a4"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a387aa5550cb40f749accfa6bd2c9f8a4">Kargono::Network::UDPService::m_MsgTemporaryIn</a></div><div class="ttdeci">Message m_MsgTemporaryIn</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00043">UDPService.h:43</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a409468c5f58b987c78e1868542312d01"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a409468c5f58b987c78e1868542312d01">Kargono::Network::UDPService::m_BlockThreadCV</a></div><div class="ttdeci">std::condition_variable &amp; m_BlockThreadCV</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00053">UDPService.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a4ae437e5c652f7681aae97221c6cad66"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a4ae437e5c652f7681aae97221c6cad66">Kargono::Network::UDPService::Send</a></div><div class="ttdeci">void Send(const LabeledMessage &amp;msg)</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00031">UDPService.cpp:31</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a54a1963eab2b0283a615cf405a4ce0d0"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a54a1963eab2b0283a615cf405a4ce0d0">Kargono::Network::UDPService::ReadMessage</a></div><div class="ttdeci">void ReadMessage()</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00054">UDPService.cpp:54</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a5b331e3f413af0940c17ad6c6f34845b"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a5b331e3f413af0940c17ad6c6f34845b">Kargono::Network::UDPService::m_Socket</a></div><div class="ttdeci">asio::ip::udp::socket m_Socket</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00036">UDPService.h:36</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a62da4e5ead73bdbe32ce2b3bf45ac33a"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a62da4e5ead73bdbe32ce2b3bf45ac33a">Kargono::Network::UDPService::Stop</a></div><div class="ttdeci">void Stop()</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00049">UDPService.cpp:49</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a64c096135c7490f2e33e94a1bc9d1e3c"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a64c096135c7490f2e33e94a1bc9d1e3c">Kargono::Network::UDPService::m_BlockThreadMx</a></div><div class="ttdeci">std::mutex &amp; m_BlockThreadMx</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00054">UDPService.h:54</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a7875dddcec92278ec8260224ab8f74b0"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a7875dddcec92278ec8260224ab8f74b0">Kargono::Network::UDPService::m_qMessagesOut</a></div><div class="ttdeci">tsqueue&lt; LabeledMessage &gt; m_qMessagesOut</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00049">UDPService.h:49</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a8448b4b562a2639e6607933584873876"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a8448b4b562a2639e6607933584873876">Kargono::Network::UDPService::WriteMessage</a></div><div class="ttdeci">void WriteMessage()</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00121">UDPService.cpp:121</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_a8f4bf401a8f0b44bb31adeb4916be782"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#a8f4bf401a8f0b44bb31adeb4916be782">Kargono::Network::UDPService::m_CurrentEndpoint</a></div><div class="ttdeci">asio::ip::udp::endpoint m_CurrentEndpoint</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00042">UDPService.h:42</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_ab37b099c1691beb325a689527aaf29ad"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#ab37b099c1691beb325a689527aaf29ad">Kargono::Network::UDPService::Start</a></div><div class="ttdeci">void Start()</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00044">UDPService.cpp:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_ac31d03cb45e80c4a3ba1ff2d91773232"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#ac31d03cb45e80c4a3ba1ff2d91773232">Kargono::Network::UDPService::AddToIncomingMessageQueue</a></div><div class="ttdeci">virtual void AddToIncomingMessageQueue()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_adcc2779029d40f041477ab5e8ffcfa3a"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#adcc2779029d40f041477ab5e8ffcfa3a">Kargono::Network::UDPService::m_AsioContext</a></div><div class="ttdeci">asio::io_context &amp; m_AsioContext</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8h_source.html#l00040">UDPService.h:40</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_ae436c373a1c6ce11a21e4e90e148446f"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#ae436c373a1c6ce11a21e4e90e148446f">Kargono::Network::UDPService::Disconnect</a></div><div class="ttdeci">virtual void Disconnect(asio::ip::udp::endpoint key)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1UDPService_html_aeeb3e961fcc3fd779c5c122c0d886997"><div class="ttname"><a href="classKargono_1_1Network_1_1UDPService.html#aeeb3e961fcc3fd779c5c122c0d886997">Kargono::Network::UDPService::UDPService</a></div><div class="ttdeci">UDPService(asio::io_context &amp;asioContext, asio::ip::udp::socket socket, tsqueue&lt; owned_message &gt; &amp;qIn, std::condition_variable &amp;newCV, std::mutex &amp;newMutex)</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00016">UDPService.cpp:16</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1tsqueue_html"><div class="ttname"><a href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue</a></div><div class="ttdef"><b>Definition:</b> <a href="DataStructures_8h_source.html#l00011">DataStructures.h:12</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_a6c9cc6f43263aa236a3bbc53bdb6f732"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#a6c9cc6f43263aa236a3bbc53bdb6f732">Kargono::Utility::FileSystem::ChecksumCRCFromBuffer</a></div><div class="ttdeci">static uint32_t ChecksumCRCFromBuffer(void *bufferPointer, uint64_t bufferSize)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00245">FileSystem.cpp:245</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Network_html"><div class="ttname"><a href="namespaceKargono_1_1Network.html">Kargono::Network</a></div><div class="ttdef"><b>Definition:</b> <a href="Client_8cpp_source.html#l00008">Client.cpp:9</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Network_html_a4b7570c4f10ef20e3c009c0945f16971"><div class="ttname"><a href="namespaceKargono_1_1Network.html#a4b7570c4f10ef20e3c009c0945f16971">Kargono::Network::s_SocketReceiveBuffer</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; s_SocketReceiveBuffer</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00013">UDPService.cpp:13</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Network_html_a5f1b5fa146c82f463b293c49c8340c69"><div class="ttname"><a href="namespaceKargono_1_1Network.html#a5f1b5fa146c82f463b293c49c8340c69">Kargono::Network::s_SocketSendBuffer</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; s_SocketSendBuffer</div><div class="ttdef"><b>Definition:</b> <a href="UDPService_8cpp_source.html#l00014">UDPService.cpp:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Network_html_ae023c1d1c470aed55766b32787f1ca37"><div class="ttname"><a href="namespaceKargono_1_1Network.html#ae023c1d1c470aed55766b32787f1ca37">Kargono::Network::k_MaxBufferSize</a></div><div class="ttdeci">constexpr uint64_t k_MaxBufferSize</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8cpp_source.html#l00012">Connection.cpp:12</a></div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00021">UUID.h:22</a></div></div>
-<div class="ttc" id="astructKargono_1_1Network_1_1LabeledMessage_html"><div class="ttname"><a href="structKargono_1_1Network_1_1LabeledMessage.html">Kargono::Network::LabeledMessage</a></div><div class="ttdef"><b>Definition:</b> <a href="Message_8h_source.html#l00084">Message.h:85</a></div></div>
-<div class="ttc" id="astructKargono_1_1Network_1_1MessageHeader_html"><div class="ttname"><a href="structKargono_1_1Network_1_1MessageHeader.html">Kargono::Network::MessageHeader</a></div><div class="ttdef"><b>Definition:</b> <a href="Message_8h_source.html#l00021">Message.h:22</a></div></div>
-<div class="ttc" id="astructKargono_1_1Network_1_1MessageHeader_html_a023181935d6abc071c21d23368177676"><div class="ttname"><a href="structKargono_1_1Network_1_1MessageHeader.html#a023181935d6abc071c21d23368177676">Kargono::Network::MessageHeader::PayloadSize</a></div><div class="ttdeci">uint64_t PayloadSize</div><div class="ttdef"><b>Definition:</b> <a href="Message_8h_source.html#l00024">Message.h:24</a></div></div>
-<div class="ttc" id="astructKargono_1_1Network_1_1Message_html_a08e38402f17c7242defcba186aa3063b"><div class="ttname"><a href="structKargono_1_1Network_1_1Message.html#a08e38402f17c7242defcba186aa3063b">Kargono::Network::Message::Header</a></div><div class="ttdeci">MessageHeader Header</div><div class="ttdef"><b>Definition:</b> <a href="Message_8h_source.html#l00032">Message.h:32</a></div></div>
-<div class="ttc" id="astructKargono_1_1Network_1_1Message_html_a82ee56f12ea4e1fba4b8311751be7081"><div class="ttname"><a href="structKargono_1_1Network_1_1Message.html#a82ee56f12ea4e1fba4b8311751be7081">Kargono::Network::Message::Body</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; Body</div><div class="ttdef"><b>Definition:</b> <a href="Message_8h_source.html#l00033">Message.h:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_372db1584a37a464aca6076ce7a6b981.html">Network</a></li><li class="navelem"><b>UDPService.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

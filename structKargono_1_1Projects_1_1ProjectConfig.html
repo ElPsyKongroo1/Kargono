@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1Projects_1_1ProjectConfig.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Projects.html">Projects</a></li><li class="navelem"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html">ProjectConfig</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -74,527 +92,105 @@ $(function() {
 <div class="title">Kargono::Projects::ProjectConfig Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Project_8h_source.html">Project.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ad02803c0bd867da52988ff57b61a296b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ad02803c0bd867da52988ff57b61a296b">Name</a> = &quot;Untitled&quot;</td></tr>
+<tr class="memitem:ad02803c0bd867da52988ff57b61a296b"><td class="memItemLeft" align="right" valign="top"><a id="ad02803c0bd867da52988ff57b61a296b"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Name</b> = &quot;Untitled&quot;</td></tr>
 <tr class="separator:ad02803c0bd867da52988ff57b61a296b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f6238925ac5be2a78a95826012dca21"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a4f6238925ac5be2a78a95826012dca21">StartScenePath</a></td></tr>
+<tr class="memitem:a4f6238925ac5be2a78a95826012dca21"><td class="memItemLeft" align="right" valign="top"><a id="a4f6238925ac5be2a78a95826012dca21"></a>
+std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>StartScenePath</b></td></tr>
 <tr class="separator:a4f6238925ac5be2a78a95826012dca21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0540ac702672cfcbb6711b221bcd7875"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a0540ac702672cfcbb6711b221bcd7875">StartSceneHandle</a> {0}</td></tr>
+<tr class="memitem:a0540ac702672cfcbb6711b221bcd7875"><td class="memItemLeft" align="right" valign="top"><a id="a0540ac702672cfcbb6711b221bcd7875"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>StartSceneHandle</b> {0}</td></tr>
 <tr class="separator:a0540ac702672cfcbb6711b221bcd7875"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a06f31f57a2882afb5e2e42fd04bb1"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ad0a06f31f57a2882afb5e2e42fd04bb1">AssetDirectory</a></td></tr>
+<tr class="memitem:ad0a06f31f57a2882afb5e2e42fd04bb1"><td class="memItemLeft" align="right" valign="top"><a id="ad0a06f31f57a2882afb5e2e42fd04bb1"></a>
+std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>AssetDirectory</b></td></tr>
 <tr class="separator:ad0a06f31f57a2882afb5e2e42fd04bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53148e33be45b4d05633d4a195e0742e"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a53148e33be45b4d05633d4a195e0742e">ScriptModulePath</a></td></tr>
+<tr class="memitem:a53148e33be45b4d05633d4a195e0742e"><td class="memItemLeft" align="right" valign="top"><a id="a53148e33be45b4d05633d4a195e0742e"></a>
+std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>ScriptModulePath</b></td></tr>
 <tr class="separator:a53148e33be45b4d05633d4a195e0742e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a719e30d097a9e775280b3f34a0ea7fd1"><td class="memItemLeft" align="right" valign="top">std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a719e30d097a9e775280b3f34a0ea7fd1">ScriptDLLPath</a></td></tr>
+<tr class="memitem:a719e30d097a9e775280b3f34a0ea7fd1"><td class="memItemLeft" align="right" valign="top"><a id="a719e30d097a9e775280b3f34a0ea7fd1"></a>
+std::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><b>ScriptDLLPath</b></td></tr>
 <tr class="separator:a719e30d097a9e775280b3f34a0ea7fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2737b6e26fef13674cd9e020fe8a0ed9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a2737b6e26fef13674cd9e020fe8a0ed9">DefaultFullscreen</a> = false</td></tr>
+<tr class="memitem:a2737b6e26fef13674cd9e020fe8a0ed9"><td class="memItemLeft" align="right" valign="top"><a id="a2737b6e26fef13674cd9e020fe8a0ed9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DefaultFullscreen</b> = false</td></tr>
 <tr class="separator:a2737b6e26fef13674cd9e020fe8a0ed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a535658a3ca5be2237d8862b4c406a71a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">ScreenResolutionOptions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a535658a3ca5be2237d8862b4c406a71a">TargetResolution</a> { <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a7c2133ab7b1c84cc802c72d02732e148">ScreenResolutionOptions::MatchDevice</a> }</td></tr>
+<tr class="memitem:a535658a3ca5be2237d8862b4c406a71a"><td class="memItemLeft" align="right" valign="top"><a id="a535658a3ca5be2237d8862b4c406a71a"></a>
+ScreenResolutionOptions&#160;</td><td class="memItemRight" valign="bottom"><b>TargetResolution</b> { ScreenResolutionOptions::MatchDevice }</td></tr>
 <tr class="separator:a535658a3ca5be2237d8862b4c406a71a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae02649b3a4832ea4a3d48935adad60fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ae02649b3a4832ea4a3d48935adad60fa">OnRuntimeStart</a> {0}</td></tr>
+<tr class="memitem:ae02649b3a4832ea4a3d48935adad60fa"><td class="memItemLeft" align="right" valign="top"><a id="ae02649b3a4832ea4a3d48935adad60fa"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnRuntimeStart</b> {0}</td></tr>
 <tr class="separator:ae02649b3a4832ea4a3d48935adad60fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affaa8760f6d976e8a99a2bd363026ee1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#affaa8760f6d976e8a99a2bd363026ee1">StartGameState</a> {0}</td></tr>
+<tr class="memitem:affaa8760f6d976e8a99a2bd363026ee1"><td class="memItemLeft" align="right" valign="top"><a id="affaa8760f6d976e8a99a2bd363026ee1"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>StartGameState</b> {0}</td></tr>
 <tr class="separator:affaa8760f6d976e8a99a2bd363026ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41508f26dc20a6c47c9643ac87c3c1b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a41508f26dc20a6c47c9643ac87c3c1b1">OnUpdateUserCount</a> {0}</td></tr>
+<tr class="memitem:a41508f26dc20a6c47c9643ac87c3c1b1"><td class="memItemLeft" align="right" valign="top"><a id="a41508f26dc20a6c47c9643ac87c3c1b1"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdateUserCount</b> {0}</td></tr>
 <tr class="separator:a41508f26dc20a6c47c9643ac87c3c1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3c883f75d88309efbf8f37d2a9dbd71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#aa3c883f75d88309efbf8f37d2a9dbd71">OnApproveJoinSession</a> {0}</td></tr>
+<tr class="memitem:aa3c883f75d88309efbf8f37d2a9dbd71"><td class="memItemLeft" align="right" valign="top"><a id="aa3c883f75d88309efbf8f37d2a9dbd71"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnApproveJoinSession</b> {0}</td></tr>
 <tr class="separator:aa3c883f75d88309efbf8f37d2a9dbd71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac51be3934fb358c06f48ba67c75daf63"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ac51be3934fb358c06f48ba67c75daf63">OnUserLeftSession</a> {0}</td></tr>
+<tr class="memitem:ac51be3934fb358c06f48ba67c75daf63"><td class="memItemLeft" align="right" valign="top"><a id="ac51be3934fb358c06f48ba67c75daf63"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnUserLeftSession</b> {0}</td></tr>
 <tr class="separator:ac51be3934fb358c06f48ba67c75daf63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d0899d30f9594d393e0b7163e1ecb52"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a8d0899d30f9594d393e0b7163e1ecb52">OnCurrentSessionInit</a> {0}</td></tr>
+<tr class="memitem:a8d0899d30f9594d393e0b7163e1ecb52"><td class="memItemLeft" align="right" valign="top"><a id="a8d0899d30f9594d393e0b7163e1ecb52"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnCurrentSessionInit</b> {0}</td></tr>
 <tr class="separator:a8d0899d30f9594d393e0b7163e1ecb52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd144ca877d8758d0af217ead44877e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#acd144ca877d8758d0af217ead44877e4">OnConnectionTerminated</a> {0}</td></tr>
+<tr class="memitem:acd144ca877d8758d0af217ead44877e4"><td class="memItemLeft" align="right" valign="top"><a id="acd144ca877d8758d0af217ead44877e4"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnConnectionTerminated</b> {0}</td></tr>
 <tr class="separator:acd144ca877d8758d0af217ead44877e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d700f34f706d4e2ed1d11ee4658c8a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a3d700f34f706d4e2ed1d11ee4658c8a9">OnUpdateSessionUserSlot</a> {0}</td></tr>
+<tr class="memitem:a3d700f34f706d4e2ed1d11ee4658c8a9"><td class="memItemLeft" align="right" valign="top"><a id="a3d700f34f706d4e2ed1d11ee4658c8a9"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdateSessionUserSlot</b> {0}</td></tr>
 <tr class="separator:a3d700f34f706d4e2ed1d11ee4658c8a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cc821b269da786b56f83dfa979f7a3c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a3cc821b269da786b56f83dfa979f7a3c">OnStartSession</a> {0}</td></tr>
+<tr class="memitem:a3cc821b269da786b56f83dfa979f7a3c"><td class="memItemLeft" align="right" valign="top"><a id="a3cc821b269da786b56f83dfa979f7a3c"></a>
+<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>OnStartSession</b> {0}</td></tr>
 <tr class="separator:a3cc821b269da786b56f83dfa979f7a3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe948ce785d681faec6c81be4cbae2b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#abbe948ce785d681faec6c81be4cbae2b">OnSessionReadyCheckConfirmFunction</a> {&quot;None&quot;}</td></tr>
+<tr class="memitem:abbe948ce785d681faec6c81be4cbae2b"><td class="memItemLeft" align="right" valign="top"><a id="abbe948ce785d681faec6c81be4cbae2b"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>OnSessionReadyCheckConfirmFunction</b> {&quot;None&quot;}</td></tr>
 <tr class="separator:abbe948ce785d681faec6c81be4cbae2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b9f2bc78641c331d9dc7f4586925040"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a0b9f2bc78641c331d9dc7f4586925040">OnReceiveSignalFunction</a> {&quot;None&quot;}</td></tr>
+<tr class="memitem:a0b9f2bc78641c331d9dc7f4586925040"><td class="memItemLeft" align="right" valign="top"><a id="a0b9f2bc78641c331d9dc7f4586925040"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>OnReceiveSignalFunction</b> {&quot;None&quot;}</td></tr>
 <tr class="separator:a0b9f2bc78641c331d9dc7f4586925040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15d9319624497976708b1dcb6ad417e0"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a15d9319624497976708b1dcb6ad417e0">AppTickGenerators</a> {}</td></tr>
+<tr class="memitem:a15d9319624497976708b1dcb6ad417e0"><td class="memItemLeft" align="right" valign="top"><a id="a15d9319624497976708b1dcb6ad417e0"></a>
+std::unordered_set&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>AppTickGenerators</b> {}</td></tr>
 <tr class="separator:a15d9319624497976708b1dcb6ad417e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f9984b64e3428fe9d5bd4b1cb9318b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a4f9984b64e3428fe9d5bd4b1cb9318b8">AppIsNetworked</a> = false</td></tr>
+<tr class="memitem:a4f9984b64e3428fe9d5bd4b1cb9318b8"><td class="memItemLeft" align="right" valign="top"><a id="a4f9984b64e3428fe9d5bd4b1cb9318b8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AppIsNetworked</b> = false</td></tr>
 <tr class="separator:a4f9984b64e3428fe9d5bd4b1cb9318b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af60238d693fa1ed0553f543770322f41"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#af60238d693fa1ed0553f543770322f41">ServerIP</a> {}</td></tr>
+<tr class="memitem:af60238d693fa1ed0553f543770322f41"><td class="memItemLeft" align="right" valign="top"><a id="af60238d693fa1ed0553f543770322f41"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ServerIP</b> {}</td></tr>
 <tr class="separator:af60238d693fa1ed0553f543770322f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1923564f7c5d1b7c5aadc874513ed7ad"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a1923564f7c5d1b7c5aadc874513ed7ad">ServerPort</a> {}</td></tr>
+<tr class="memitem:a1923564f7c5d1b7c5aadc874513ed7ad"><td class="memItemLeft" align="right" valign="top"><a id="a1923564f7c5d1b7c5aadc874513ed7ad"></a>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>ServerPort</b> {}</td></tr>
 <tr class="separator:a1923564f7c5d1b7c5aadc874513ed7ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6098628b9747cb0e51aa95cfdc0472ab"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a6098628b9747cb0e51aa95cfdc0472ab">ServerLocation</a> {&quot;LocalMachine&quot;}</td></tr>
+<tr class="memitem:a6098628b9747cb0e51aa95cfdc0472ab"><td class="memItemLeft" align="right" valign="top"><a id="a6098628b9747cb0e51aa95cfdc0472ab"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ServerLocation</b> {&quot;LocalMachine&quot;}</td></tr>
 <tr class="separator:a6098628b9747cb0e51aa95cfdc0472ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f814876b44be3d4c7de20a02f3fa75f"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a9f814876b44be3d4c7de20a02f3fa75f">SecretOne</a> {}</td></tr>
+<tr class="memitem:a9f814876b44be3d4c7de20a02f3fa75f"><td class="memItemLeft" align="right" valign="top"><a id="a9f814876b44be3d4c7de20a02f3fa75f"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>SecretOne</b> {}</td></tr>
 <tr class="separator:a9f814876b44be3d4c7de20a02f3fa75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28b776044747a91b1a1e4e69c0690cf1"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#a28b776044747a91b1a1e4e69c0690cf1">SecretTwo</a> {}</td></tr>
+<tr class="memitem:a28b776044747a91b1a1e4e69c0690cf1"><td class="memItemLeft" align="right" valign="top"><a id="a28b776044747a91b1a1e4e69c0690cf1"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>SecretTwo</b> {}</td></tr>
 <tr class="separator:a28b776044747a91b1a1e4e69c0690cf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5889f21334c29604bf45d0eee075a11"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ad5889f21334c29604bf45d0eee075a11">SecretThree</a> {}</td></tr>
+<tr class="memitem:ad5889f21334c29604bf45d0eee075a11"><td class="memItemLeft" align="right" valign="top"><a id="ad5889f21334c29604bf45d0eee075a11"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>SecretThree</b> {}</td></tr>
 <tr class="separator:ad5889f21334c29604bf45d0eee075a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0e771a4c92ff6d164869c72d5bd370e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html#ab0e771a4c92ff6d164869c72d5bd370e">SecretFour</a> {}</td></tr>
+<tr class="memitem:ab0e771a4c92ff6d164869c72d5bd370e"><td class="memItemLeft" align="right" valign="top"><a id="ab0e771a4c92ff6d164869c72d5bd370e"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>SecretFour</b> {}</td></tr>
 <tr class="separator:ab0e771a4c92ff6d164869c72d5bd370e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00041">41</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a4f9984b64e3428fe9d5bd4b1cb9318b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f9984b64e3428fe9d5bd4b1cb9318b8">&#9670;&nbsp;</a></span>AppIsNetworked</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Projects::ProjectConfig::AppIsNetworked = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00094">94</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a15d9319624497976708b1dcb6ad417e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15d9319624497976708b1dcb6ad417e0">&#9670;&nbsp;</a></span>AppTickGenerators</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_set&lt;uint64_t&gt; Kargono::Projects::ProjectConfig::AppTickGenerators {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00092">92</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ad0a06f31f57a2882afb5e2e42fd04bb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0a06f31f57a2882afb5e2e42fd04bb1">&#9670;&nbsp;</a></span>AssetDirectory</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::filesystem::path Kargono::Projects::ProjectConfig::AssetDirectory</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00055">55</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a2737b6e26fef13674cd9e020fe8a0ed9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2737b6e26fef13674cd9e020fe8a0ed9">&#9670;&nbsp;</a></span>DefaultFullscreen</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Projects::ProjectConfig::DefaultFullscreen = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00064">64</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ad02803c0bd867da52988ff57b61a296b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad02803c0bd867da52988ff57b61a296b">&#9670;&nbsp;</a></span>Name</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Projects::ProjectConfig::Name = &quot;Untitled&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00045">45</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="aa3c883f75d88309efbf8f37d2a9dbd71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3c883f75d88309efbf8f37d2a9dbd71">&#9670;&nbsp;</a></span>OnApproveJoinSession</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnApproveJoinSession {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00076">76</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="acd144ca877d8758d0af217ead44877e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd144ca877d8758d0af217ead44877e4">&#9670;&nbsp;</a></span>OnConnectionTerminated</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnConnectionTerminated {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00082">82</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a8d0899d30f9594d393e0b7163e1ecb52"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d0899d30f9594d393e0b7163e1ecb52">&#9670;&nbsp;</a></span>OnCurrentSessionInit</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnCurrentSessionInit {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00080">80</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a0b9f2bc78641c331d9dc7f4586925040"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b9f2bc78641c331d9dc7f4586925040">&#9670;&nbsp;</a></span>OnReceiveSignalFunction</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Projects::ProjectConfig::OnReceiveSignalFunction {&quot;None&quot;}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00090">90</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ae02649b3a4832ea4a3d48935adad60fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae02649b3a4832ea4a3d48935adad60fa">&#9670;&nbsp;</a></span>OnRuntimeStart</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnRuntimeStart {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00070">70</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="abbe948ce785d681faec6c81be4cbae2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbe948ce785d681faec6c81be4cbae2b">&#9670;&nbsp;</a></span>OnSessionReadyCheckConfirmFunction</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Projects::ProjectConfig::OnSessionReadyCheckConfirmFunction {&quot;None&quot;}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00088">88</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a3cc821b269da786b56f83dfa979f7a3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cc821b269da786b56f83dfa979f7a3c">&#9670;&nbsp;</a></span>OnStartSession</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnStartSession {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00086">86</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a3d700f34f706d4e2ed1d11ee4658c8a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d700f34f706d4e2ed1d11ee4658c8a9">&#9670;&nbsp;</a></span>OnUpdateSessionUserSlot</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnUpdateSessionUserSlot {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00084">84</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a41508f26dc20a6c47c9643ac87c3c1b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41508f26dc20a6c47c9643ac87c3c1b1">&#9670;&nbsp;</a></span>OnUpdateUserCount</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnUpdateUserCount {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00074">74</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ac51be3934fb358c06f48ba67c75daf63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac51be3934fb358c06f48ba67c75daf63">&#9670;&nbsp;</a></span>OnUserLeftSession</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::OnUserLeftSession {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00078">78</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a719e30d097a9e775280b3f34a0ea7fd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a719e30d097a9e775280b3f34a0ea7fd1">&#9670;&nbsp;</a></span>ScriptDLLPath</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::filesystem::path Kargono::Projects::ProjectConfig::ScriptDLLPath</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00061">61</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a53148e33be45b4d05633d4a195e0742e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53148e33be45b4d05633d4a195e0742e">&#9670;&nbsp;</a></span>ScriptModulePath</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::filesystem::path Kargono::Projects::ProjectConfig::ScriptModulePath</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00058">58</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ab0e771a4c92ff6d164869c72d5bd370e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0e771a4c92ff6d164869c72d5bd370e">&#9670;&nbsp;</a></span>SecretFour</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Projects::ProjectConfig::SecretFour {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00105">105</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a9f814876b44be3d4c7de20a02f3fa75f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f814876b44be3d4c7de20a02f3fa75f">&#9670;&nbsp;</a></span>SecretOne</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Projects::ProjectConfig::SecretOne {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00102">102</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="ad5889f21334c29604bf45d0eee075a11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5889f21334c29604bf45d0eee075a11">&#9670;&nbsp;</a></span>SecretThree</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Projects::ProjectConfig::SecretThree {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00104">104</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a28b776044747a91b1a1e4e69c0690cf1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28b776044747a91b1a1e4e69c0690cf1">&#9670;&nbsp;</a></span>SecretTwo</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Projects::ProjectConfig::SecretTwo {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00103">103</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="af60238d693fa1ed0553f543770322f41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af60238d693fa1ed0553f543770322f41">&#9670;&nbsp;</a></span>ServerIP</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Projects::ProjectConfig::ServerIP {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00098">98</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a6098628b9747cb0e51aa95cfdc0472ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6098628b9747cb0e51aa95cfdc0472ab">&#9670;&nbsp;</a></span>ServerLocation</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Projects::ProjectConfig::ServerLocation {&quot;LocalMachine&quot;}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00101">101</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a1923564f7c5d1b7c5aadc874513ed7ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1923564f7c5d1b7c5aadc874513ed7ad">&#9670;&nbsp;</a></span>ServerPort</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t Kargono::Projects::ProjectConfig::ServerPort {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00099">99</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="affaa8760f6d976e8a99a2bd363026ee1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affaa8760f6d976e8a99a2bd363026ee1">&#9670;&nbsp;</a></span>StartGameState</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::StartGameState {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00072">72</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a0540ac702672cfcbb6711b221bcd7875"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0540ac702672cfcbb6711b221bcd7875">&#9670;&nbsp;</a></span>StartSceneHandle</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Projects::ProjectConfig::StartSceneHandle {0}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00052">52</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a4f6238925ac5be2a78a95826012dca21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f6238925ac5be2a78a95826012dca21">&#9670;&nbsp;</a></span>StartScenePath</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::filesystem::path Kargono::Projects::ProjectConfig::StartScenePath</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00049">49</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<a id="a535658a3ca5be2237d8862b4c406a71a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a535658a3ca5be2237d8862b4c406a71a">&#9670;&nbsp;</a></span>TargetResolution</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">ScreenResolutionOptions</a> Kargono::Projects::ProjectConfig::TargetResolution { <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a7c2133ab7b1c84cc802c72d02732e148">ScreenResolutionOptions::MatchDevice</a> }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Project_8h_source.html#l00067">67</a> of file <a class="el" href="Project_8h_source.html">Project.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Projects/<a class="el" href="Project_8h_source.html">Project.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Projects</b></li><li class="navelem"><a class="el" href="structKargono_1_1Projects_1_1ProjectConfig.html">ProjectConfig</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

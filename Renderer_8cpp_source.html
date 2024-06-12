@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Renderer_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,122 +84,117 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Renderer.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Renderer_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Renderer_8h.html">Kargono/Renderer/Renderer.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RenderCommand_8h.html">Kargono/Renderer/RenderCommand.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Shader_8h.html">Kargono/Renderer/Shader.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="VertexArray_8h.html">Kargono/Renderer/VertexArray.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UniformBuffer_8h.html">Kargono/Renderer/UniformBuffer.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Project_8h.html">Kargono/Projects/Project.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scene/Scene.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Renderer.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/RenderCommand.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Shader.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/VertexArray.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/UniformBuffer.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Kargono/Projects/Project.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Scene.h&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html">   14</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1RendererData.html">RendererData</a></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">struct </span>RendererData</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a035480e856a684da2c47ad25dc737b73">   16</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t <a class="code" href="structKargono_1_1RendererData.html#a035480e856a684da2c47ad25dc737b73">MaxQuads</a> = 20000;</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a8d61c78843abd7c0171ce9e4d8aea21a">   17</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t <a class="code" href="structKargono_1_1RendererData.html#a8d61c78843abd7c0171ce9e4d8aea21a">MaxVertices</a> = <a class="code" href="structKargono_1_1RendererData.html#a035480e856a684da2c47ad25dc737b73">MaxQuads</a> * 4;</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a9ce12316959df4ff26fb212f16b8d7fe">   18</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t <a class="code" href="structKargono_1_1RendererData.html#a9ce12316959df4ff26fb212f16b8d7fe">MaxIndices</a> = <a class="code" href="structKargono_1_1RendererData.html#a035480e856a684da2c47ad25dc737b73">MaxQuads</a> * 6;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t MaxQuads = 20000;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t MaxVertices = MaxQuads * 4;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t MaxIndices = MaxQuads * 6;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">   20</a></span>&#160;        <span class="keywordtype">float</span> <a class="code" href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">LineWidth</a> = 2.0f;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordtype">float</span> LineWidth = 2.0f;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">   22</a></span>&#160;        <a class="code" href="structKargono_1_1Renderer_1_1Statistics.html">Renderer::Statistics</a> <a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        Renderer::Statistics Stats;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData_1_1CameraData.html">   24</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">CameraData</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">struct </span>CameraData</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        {</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">   26</a></span>&#160;            <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> <a class="code" href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">ViewProjection</a>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            Math::mat4 ViewProjection;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        };</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">   28</a></span>&#160;        <a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">CameraData</a> <a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">   29</a></span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;UniformBuffer&gt;</a> <a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        CameraData CameraBuffer;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        Ref&lt;UniformBuffer&gt; CameraUniformBuffer;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// New Renderer</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// Maximum Vertex Buffer Size in Bytes</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">   33</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t <a class="code" href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">MaxTextureSlots</a> = 32;</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#a09210041364f4c1039c5a69041d35b17">   34</a></span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t <a class="code" href="structKargono_1_1RendererData.html#a09210041364f4c1039c5a69041d35b17">MaxIndicesBuffer</a> = 1000;</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">   35</a></span>&#160;        std::vector&lt;Ref&lt;DrawCallBuffer&gt;&gt; <a class="code" href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">DrawCalls</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t MaxTextureSlots = 32;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> uint32_t MaxIndicesBuffer = 1000;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        std::vector&lt;Ref&lt;DrawCallBuffer&gt;&gt; DrawCalls;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    };</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">static</span> <a class="code" href="structKargono_1_1RendererData.html">RendererData</a> s_Data;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">static</span> RendererData s_Data;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a1b32e43a7af9c92f00917dfd13cea85b">   42</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a1b32e43a7af9c92f00917dfd13cea85b">Renderer::OnWindowResize</a>(uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> Renderer::OnWindowResize(uint32_t width, uint32_t height)</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classKargono_1_1RenderCommand.html#a7a49c42584f687fc8d1ad98863f20ff9">RenderCommand::SetViewport</a>(0, 0, width, height);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        RenderCommand::SetViewport(0, 0, width, height);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a8dcdac434189ffd6ebecad56ddc2b60e">   47</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a8dcdac434189ffd6ebecad56ddc2b60e">Renderer::Init</a>()</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> Renderer::Init()</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>(), <span class="stringliteral">&quot;No valid project is active while trying to initialize shaders!&quot;</span>);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a> = <a class="code" href="classKargono_1_1UniformBuffer.html#ae94e507fae020fbcaa36d90f38f59ff9">UniformBuffer::Create</a>(<span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">RendererData::CameraData</a>), 0);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        KG_VERIFY(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a>, <span class="stringliteral">&quot;Renderer Init&quot;</span>)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        KG_ASSERT(Projects::Project::GetActive(), <span class="stringliteral">&quot;No valid project is active while trying to initialize shaders!&quot;</span>);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        s_Data.CameraUniformBuffer = UniformBuffer::Create(<span class="keyword">sizeof</span>(RendererData::CameraData), 0);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        KG_VERIFY(s_Data.CameraUniformBuffer, <span class="stringliteral">&quot;Renderer Init&quot;</span>)</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a0149871ee5c58b5d695c8dae9ff001cc">   53</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a0149871ee5c58b5d695c8dae9ff001cc">Renderer::Shutdown</a>()</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> Renderer::Shutdown()</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    {</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a8bcd3130bce5356fe0fc7f44376c2df2">   56</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a8bcd3130bce5356fe0fc7f44376c2df2">Renderer::BeginScene</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1Camera.html">Camera</a>&amp; camera, <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&amp; transform)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> Renderer::BeginScene(<span class="keyword">const</span> Camera&amp; camera, <span class="keyword">const</span> Math::mat4&amp; transform)</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>.<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">ViewProjection</a> = camera.<a class="code" href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">GetProjection</a>() * transform;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a>-&gt;SetData(&amp;s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>, <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">RendererData::CameraData</a>));</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * transform;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        s_Data.CameraUniformBuffer-&gt;SetData(&amp;s_Data.CameraBuffer, <span class="keyword">sizeof</span>(RendererData::CameraData));</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a912cc110c1d7715f9498fec08f5fc1d6">   61</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a8bcd3130bce5356fe0fc7f44376c2df2">Renderer::BeginScene</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1EditorCamera.html">EditorCamera</a>&amp; camera)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> Renderer::BeginScene(<span class="keyword">const</span> EditorCamera&amp; camera)</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>.<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">ViewProjection</a> = camera.<a class="code" href="classKargono_1_1EditorCamera.html#a11fc4f7a27b4dd7c288ef85c0a8e1653">GetViewProjection</a>();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a>-&gt;SetData(&amp;s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>, <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">RendererData::CameraData</a>));</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        s_Data.CameraUniformBuffer-&gt;SetData(&amp;s_Data.CameraBuffer, <span class="keyword">sizeof</span>(RendererData::CameraData));</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#af93bfbb210b7f14bf00fd488eb73ae11">   67</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a8bcd3130bce5356fe0fc7f44376c2df2">Renderer::BeginScene</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> projection)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> Renderer::BeginScene(<span class="keyword">const</span> Math::mat4 projection)</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>.<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">ViewProjection</a> = projection;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">CameraUniformBuffer</a>-&gt;SetData(&amp;s_Data.<a class="code" href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">CameraBuffer</a>, <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1RendererData_1_1CameraData.html">RendererData::CameraData</a>));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        s_Data.CameraBuffer.ViewProjection = projection;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        s_Data.CameraUniformBuffer-&gt;SetData(&amp;s_Data.CameraBuffer, <span class="keyword">sizeof</span>(RendererData::CameraData));</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#ac8410d064f7afe739dd8cf84ae7fa954">   73</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#ac8410d064f7afe739dd8cf84ae7fa954">Renderer::EndScene</a>()</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> Renderer::EndScene()</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    {</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        FlushBuffers();</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    }</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#aa81053cfaf786e82079c6f57df545eba">   78</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1Renderer.html#aa81053cfaf786e82079c6f57df545eba">Renderer::GetLineWidth</a>()</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">float</span> Renderer::GetLineWidth()</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">return</span> s_Data.<a class="code" href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">LineWidth</a>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">return</span> s_Data.LineWidth;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a6efcc04286cd4e492692752a34556e9c">   82</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a6efcc04286cd4e492692752a34556e9c">Renderer::SetLineWidth</a>(<span class="keywordtype">float</span> width)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> Renderer::SetLineWidth(<span class="keywordtype">float</span> width)</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">LineWidth</a> = width;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        s_Data.LineWidth = width;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a6419107f7263329c1720ea8b11fe5909">   87</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a6419107f7263329c1720ea8b11fe5909">Renderer::ResetStats</a>()</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> Renderer::ResetStats()</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        memset(&amp;s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>, 0, <span class="keyword">sizeof</span>(<a class="code" href="structKargono_1_1Renderer_1_1Statistics.html">Statistics</a>));</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        memset(&amp;s_Data.Stats, 0, <span class="keyword">sizeof</span>(Statistics));</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#aaf9f3cbfabc1b6f3888ad965d6988abf">   91</a></span>&#160;    <a class="code" href="structKargono_1_1Renderer_1_1Statistics.html">Renderer::Statistics</a> <a class="code" href="classKargono_1_1Renderer.html#aaf9f3cbfabc1b6f3888ad965d6988abf">Renderer::GetStats</a>()</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    Renderer::Statistics Renderer::GetStats()</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">return</span> s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">return</span> s_Data.Stats;</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> Renderer::FillTextureIndex(<a class="code" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; inputSpec)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> Renderer::FillTextureIndex(RendererInputSpec&amp; inputSpec)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    {</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">//if (s_Data.QuadIndexCount &gt;= RendererData::MaxIndices) { NextBatch(); }</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a51c3bba319d7021aa79b690cb606accf">Texture</a>, <span class="stringliteral">&quot;Texture shader added, however, no texture is available in ShapeComponent.&quot;</span>);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">auto</span>&amp; Textures = inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">CurrentDrawBuffer</a>-&gt;Textures;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        KG_ASSERT(inputSpec.ShapeComponent-&gt;Texture, <span class="stringliteral">&quot;Texture shader added, however, no texture is available in ShapeComponent.&quot;</span>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">auto</span>&amp; Textures = inputSpec.CurrentDrawBuffer-&gt;Textures;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordtype">float</span> textureIndex = -1.0f;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        uint32_t iteration = 0;</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; texture : Textures)</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordflow">if</span> (texture == inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a51c3bba319d7021aa79b690cb606accf">Texture</a>)</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordflow">if</span> (texture == inputSpec.ShapeComponent-&gt;Texture)</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            {</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                textureIndex = (float)iteration;</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                <span class="keywordflow">break</span>;</div>
@@ -185,41 +203,41 @@ $(function() {
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        }</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span>int32_t<span class="keyword">&gt;</span>(textureIndex) == -1)</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">if</span> (Textures.size() &gt;= <a class="code" href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">RendererData::MaxTextureSlots</a>)</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">if</span> (Textures.size() &gt;= RendererData::MaxTextureSlots)</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            {</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                textureIndex = 0.0f;</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                <span class="comment">// TODO: NextBatch, Create a new DrawCallBuffer for the current shader and update Textures Ref</span></div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            Textures.push_back(inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a51c3bba319d7021aa79b690cb606accf">Texture</a>);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            Textures.push_back(inputSpec.ShapeComponent-&gt;Texture);</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            textureIndex = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(Textures.size() - 1);</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        }</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        Shader::SetDataAtInputLocation&lt;float&gt;(textureIndex, <span class="stringliteral">&quot;a_TexIndex&quot;</span>, inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>, inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        Shader::SetDataAtInputLocation&lt;float&gt;(textureIndex, <span class="stringliteral">&quot;a_TexIndex&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    }</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">void</span> Renderer::FillTextureCoordinate(RendererInputSpec&amp; inputSpec, uint32_t iteration)</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&amp; coordinates  = inputSpec.ShapeComponent-&gt;TextureCoordinates-&gt;at(iteration);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keyword">const</span> Math::vec2&amp; coordinates  = inputSpec.ShapeComponent-&gt;TextureCoordinates-&gt;at(iteration);</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        Shader::SetDataAtInputLocation&lt;Math::vec2&gt;(coordinates, <span class="stringliteral">&quot;a_TexCoord&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordtype">void</span> Renderer::FillLocalPosition(RendererInputSpec&amp; inputSpec, uint32_t iteration)</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration) * 2.0f;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keyword">const</span> Math::vec3&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration) * 2.0f;</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        Shader::SetDataAtInputLocation&lt;Math::vec3&gt;(localPosition, <span class="stringliteral">&quot;a_LocalPosition&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordtype">void</span> Renderer::FillWorldPosition(RendererInputSpec&amp; inputSpec, uint32_t iteration)</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    {</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> worldPosition = inputSpec.TransformMatrix * <a class="code" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a>(localPosition, 1.0f);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keyword">const</span> Math::vec3&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        Math::vec3 worldPosition = inputSpec.TransformMatrix * Math::vec4(localPosition, 1.0f);</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        Shader::SetDataAtInputLocation&lt;Math::vec3&gt;(worldPosition, <span class="stringliteral">&quot;a_Position&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">void</span> Renderer::FillWorldPositionNoTransform(RendererInputSpec&amp; inputSpec, uint32_t iteration)</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keyword">const</span> Math::vec3&amp; localPosition = inputSpec.ShapeComponent-&gt;Vertices-&gt;at(iteration);</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        Shader::SetDataAtInputLocation&lt;Math::vec3&gt;(localPosition, <span class="stringliteral">&quot;a_Position&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    }</div>
@@ -227,7 +245,7 @@ $(function() {
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">void</span> Renderer::FillVertexColor(RendererInputSpec&amp; inputSpec, uint32_t iteration)</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    {</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keyword">auto</span>&amp; colorVector = inputSpec.ShapeComponent-&gt;VertexColors;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(iteration &lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(colorVector-&gt;size()), <span class="stringliteral">&quot;Invalid iteration inside FillVertexColor function&quot;</span>);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        KG_ASSERT(iteration &lt; <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(colorVector-&gt;size()), <span class="stringliteral">&quot;Invalid iteration inside FillVertexColor function&quot;</span>);</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        Shader::SetDataAtInputLocation&lt;Math::vec4&gt;(colorVector-&gt;at(iteration), <span class="stringliteral">&quot;a_Color&quot;</span>, inputSpec.Buffer, inputSpec.Shader);</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    }</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
@@ -242,90 +260,90 @@ $(function() {
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        }</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    }</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno"><a class="line" href="classKargono_1_1Renderer.html#a53e24b919d92a2e9cc278244633ba82e">  172</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Renderer.html#a53e24b919d92a2e9cc278244633ba82e">Renderer::SubmitDataToRenderer</a>(<a class="code" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; inputSpec)</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">void</span> Renderer::SubmitDataToRenderer(RendererInputSpec&amp; inputSpec)</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    {</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordflow">if</span> (!inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a673583b33a3beb92db84b9dfc4e391cb">Vertices</a> || inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetSpecification().RenderType == <a class="code" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa6adf97f83acf6453d4a6a4b1070f3754">RenderingType::None</a>) { <span class="keywordflow">return</span>; }</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordflow">if</span> (!inputSpec.ShapeComponent-&gt;Vertices || inputSpec.Shader-&gt;GetSpecification().RenderType == RenderingType::None) { <span class="keywordflow">return</span>; }</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        <span class="comment">// Manage current DrawCallBuffer</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keyword">auto</span>&amp; drawCallBuffer = inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetCurrentDrawCallBuffer();</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keyword">auto</span>&amp; drawCallBuffer = inputSpec.Shader-&gt;GetCurrentDrawCallBuffer();</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="keywordflow">if</span> (!drawCallBuffer)</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        {</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            drawCallBuffer = CreateRef&lt;DrawCallBuffer&gt;();</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            drawCallBuffer-&gt;VertexBuffer.Allocate(s_MaxVertexBufferSize);</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            drawCallBuffer-&gt;VertexBufferIterator = drawCallBuffer-&gt;VertexBuffer.Data;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="keywordflow">if</span> (inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetSpecification().RenderType == <a class="code" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>)</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="keywordflow">if</span> (inputSpec.Shader-&gt;GetSpecification().RenderType == RenderingType::DrawIndex)</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            {</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                drawCallBuffer-&gt;IndexBuffer.reserve(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a09210041364f4c1039c5a69041d35b17">MaxIndicesBuffer</a>);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                drawCallBuffer-&gt;IndexBuffer.reserve(s_Data.MaxIndicesBuffer);</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            }</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            drawCallBuffer-&gt;Textures.reserve(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">MaxTextureSlots</a>);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            drawCallBuffer-&gt;Shader = inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>.get();</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            s_Data.<a class="code" href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">DrawCalls</a>.emplace_back(drawCallBuffer);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            drawCallBuffer-&gt;Textures.reserve(s_Data.MaxTextureSlots);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            drawCallBuffer-&gt;Shader = inputSpec.Shader.get();</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            s_Data.DrawCalls.emplace_back(drawCallBuffer);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        std::size_t currentBufferSize = drawCallBuffer-&gt;VertexBufferIterator - drawCallBuffer-&gt;VertexBuffer.Data;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        std::size_t sizeOfNewDrawCallBuffer = inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> * inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a673583b33a3beb92db84b9dfc4e391cb">Vertices</a>-&gt;size() + currentBufferSize;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        std::size_t sizeOfNewDrawCallBuffer = inputSpec.Buffer.Size * inputSpec.ShapeComponent-&gt;Vertices-&gt;size() + currentBufferSize;</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">if</span> (sizeOfNewDrawCallBuffer &gt;= s_MaxVertexBufferSize)</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        {</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;            drawCallBuffer = CreateRef&lt;DrawCallBuffer&gt;();</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            drawCallBuffer-&gt;VertexBuffer.Allocate(s_MaxVertexBufferSize);</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            drawCallBuffer-&gt;VertexBufferIterator = drawCallBuffer-&gt;VertexBuffer.Data;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keywordflow">if</span> (inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetSpecification().RenderType == <a class="code" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>)</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keywordflow">if</span> (inputSpec.Shader-&gt;GetSpecification().RenderType == RenderingType::DrawIndex)</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            {</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                drawCallBuffer-&gt;IndexBuffer.reserve(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a09210041364f4c1039c5a69041d35b17">MaxIndicesBuffer</a>);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                drawCallBuffer-&gt;IndexBuffer.reserve(s_Data.MaxIndicesBuffer);</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            }</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            drawCallBuffer-&gt;Textures.reserve(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">MaxTextureSlots</a>);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            drawCallBuffer-&gt;Shader = inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>.get();</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            s_Data.<a class="code" href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">DrawCalls</a>.emplace_back(drawCallBuffer);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            drawCallBuffer-&gt;Textures.reserve(s_Data.MaxTextureSlots);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            drawCallBuffer-&gt;Shader = inputSpec.Shader.get();</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            s_Data.DrawCalls.emplace_back(drawCallBuffer);</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        }</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">CurrentDrawBuffer</a> = drawCallBuffer;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        inputSpec.CurrentDrawBuffer = drawCallBuffer;</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; PerObjectFunction : inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetFillDataObject())</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; PerObjectFunction : inputSpec.Shader-&gt;GetFillDataObject())</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        {</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            PerObjectFunction(inputSpec);</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        }</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keywordflow">for</span> (uint32_t iteration {0}; iteration &lt; inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">ShapeComponent</a>-&gt;<a class="code" href="structKargono_1_1ShapeComponent.html#a673583b33a3beb92db84b9dfc4e391cb">Vertices</a>-&gt;size(); iteration++)</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keywordflow">for</span> (uint32_t iteration {0}; iteration &lt; inputSpec.ShapeComponent-&gt;Vertices-&gt;size(); iteration++)</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; PerVertexFunction : inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Shader</a>-&gt;GetFillDataVertex())</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; PerVertexFunction : inputSpec.Shader-&gt;GetFillDataVertex())</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            {</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                PerVertexFunction(inputSpec, iteration);</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            memcpy_s(inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">CurrentDrawBuffer</a>-&gt;VertexBufferIterator, inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>, inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>.<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>, inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">CurrentDrawBuffer</a>-&gt;VertexBufferIterator += inputSpec.<a class="code" href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Buffer</a>.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>.<a class="code" href="structKargono_1_1Renderer_1_1Statistics.html#a721e78b467d3ba024344b08e7645978a">VertexCount</a>++;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            memcpy_s(inputSpec.CurrentDrawBuffer-&gt;VertexBufferIterator, inputSpec.Buffer.Size, inputSpec.Buffer.Data, inputSpec.Buffer.Size);</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            inputSpec.CurrentDrawBuffer-&gt;VertexBufferIterator += inputSpec.Buffer.Size;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            s_Data.Stats.VertexCount++;</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        }</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        </div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    }</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordtype">void</span> Renderer::FillTextureUniform(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;DrawCallBuffer&gt;</a> buffer)</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordtype">void</span> Renderer::FillTextureUniform(Ref&lt;DrawCallBuffer&gt; buffer)</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    {</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="keywordflow">for</span> (uint32_t i = 0; i &lt; buffer-&gt;Textures.size(); i++) { buffer-&gt;Textures[i]-&gt;Bind(i); }</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    }</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordtype">void</span> Renderer::DrawBufferIndices(Ref&lt;DrawCallBuffer&gt; buffer)</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    {</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <a class="code" href="classKargono_1_1RenderCommand.html#aa4eb7c968eb0ce95105054edc8d0ab47">RenderCommand::DrawIndexed</a>(buffer-&gt;Shader-&gt;GetVertexArray(), buffer-&gt;IndexBuffer.data(), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(buffer-&gt;IndexBuffer.size()));</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>.<a class="code" href="structKargono_1_1Renderer_1_1Statistics.html#a318adaac65c81382c1bd7c6b967803be">DrawCalls</a>++;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        RenderCommand::DrawIndexed(buffer-&gt;Shader-&gt;GetVertexArray(), buffer-&gt;IndexBuffer.data(), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(buffer-&gt;IndexBuffer.size()));</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        s_Data.Stats.DrawCalls++;</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    }</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">void</span> Renderer::DrawBufferLine(Ref&lt;DrawCallBuffer&gt; buffer)</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    {</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <a class="code" href="classKargono_1_1RenderCommand.html#a42b3fcc9b7419b5b8366a6ff07585841">RenderCommand::SetLineWidth</a>(s_Data.<a class="code" href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">LineWidth</a>);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <a class="code" href="classKargono_1_1RenderCommand.html#a423316c237890b90bc91b0c8ab7e91f9">RenderCommand::DrawLines</a>(buffer-&gt;Shader-&gt;GetVertexArray(), <span class="keyword">static_cast&lt;</span>std::uint32_t<span class="keyword">&gt;</span>(buffer-&gt;VertexBufferIterator - buffer-&gt;VertexBuffer.Data) / buffer-&gt;Shader-&gt;GetInputLayout().GetStride());</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>.<a class="code" href="structKargono_1_1Renderer_1_1Statistics.html#a318adaac65c81382c1bd7c6b967803be">DrawCalls</a>++;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        RenderCommand::SetLineWidth(s_Data.LineWidth);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        RenderCommand::DrawLines(buffer-&gt;Shader-&gt;GetVertexArray(), <span class="keyword">static_cast&lt;</span>std::uint32_t<span class="keyword">&gt;</span>(buffer-&gt;VertexBufferIterator - buffer-&gt;VertexBuffer.Data) / buffer-&gt;Shader-&gt;GetInputLayout().GetStride());</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        s_Data.Stats.DrawCalls++;</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    }</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="keywordtype">void</span> Renderer::DrawBufferTriangles(Ref&lt;DrawCallBuffer&gt; buffer)</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <a class="code" href="classKargono_1_1RenderCommand.html#a8a7bf0691535c39e4ee454a98e5a24dc">RenderCommand::DrawTriangles</a>(buffer-&gt;Shader-&gt;GetVertexArray(), <span class="keyword">static_cast&lt;</span>std::uint32_t<span class="keyword">&gt;</span>(buffer-&gt;VertexBufferIterator - buffer-&gt;VertexBuffer.Data) / buffer-&gt;Shader-&gt;GetInputLayout().GetStride());</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        s_Data.<a class="code" href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Stats</a>.<a class="code" href="structKargono_1_1Renderer_1_1Statistics.html#a318adaac65c81382c1bd7c6b967803be">DrawCalls</a>++;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        RenderCommand::DrawTriangles(buffer-&gt;Shader-&gt;GetVertexArray(), <span class="keyword">static_cast&lt;</span>std::uint32_t<span class="keyword">&gt;</span>(buffer-&gt;VertexBufferIterator - buffer-&gt;VertexBuffer.Data) / buffer-&gt;Shader-&gt;GetInputLayout().GetStride());</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        s_Data.Stats.DrawCalls++;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">void</span> Renderer::FlushBuffers()</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    {</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keyword">auto</span>&amp; allBuffers = s_Data.<a class="code" href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">DrawCalls</a>;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keyword">auto</span>&amp; allBuffers = s_Data.DrawCalls;</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="comment">// Submit all Buffers to DrawCalls!</span></div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> buffer : allBuffers)</div>
@@ -379,73 +397,14 @@ $(function() {
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    </div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;}</div>
-<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00020">Assert.h:20</a></div></div>
-<div class="ttc" id="aProject_8h_html"><div class="ttname"><a href="Project_8h.html">Project.h</a></div></div>
-<div class="ttc" id="aRenderCommand_8h_html"><div class="ttname"><a href="RenderCommand_8h.html">RenderCommand.h</a></div></div>
-<div class="ttc" id="aRenderer_8h_html"><div class="ttname"><a href="Renderer_8h.html">Renderer.h</a></div></div>
-<div class="ttc" id="aScene_8h_html"><div class="ttname"><a href="Scene_8h.html">Scene.h</a></div></div>
-<div class="ttc" id="aShader_8h_html"><div class="ttname"><a href="Shader_8h.html">Shader.h</a></div></div>
-<div class="ttc" id="aUniformBuffer_8h_html"><div class="ttname"><a href="UniformBuffer_8h.html">UniformBuffer.h</a></div></div>
-<div class="ttc" id="aVertexArray_8h_html"><div class="ttname"><a href="VertexArray_8h.html">VertexArray.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html"><div class="ttname"><a href="classKargono_1_1Camera.html">Kargono::Camera</a></div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00007">Camera.h:8</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_ad67bbaa2ab76f4241f355f1e67583276"><div class="ttname"><a href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">Kargono::Camera::GetProjection</a></div><div class="ttdeci">const Math::mat4 &amp; GetProjection() const</div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00016">Camera.h:16</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorCamera_html"><div class="ttname"><a href="classKargono_1_1EditorCamera.html">Kargono::EditorCamera</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorCamera_8h_source.html#l00012">EditorCamera.h:13</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorCamera_html_a11fc4f7a27b4dd7c288ef85c0a8e1653"><div class="ttname"><a href="classKargono_1_1EditorCamera.html#a11fc4f7a27b4dd7c288ef85c0a8e1653">Kargono::EditorCamera::GetViewProjection</a></div><div class="ttdeci">Math::mat4 GetViewProjection() const</div><div class="ttdef"><b>Definition:</b> <a href="EditorCamera_8h_source.html#l00065">EditorCamera.h:65</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a6adbbdcaf7173f0755c03015e7d67e77"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Kargono::Projects::Project::GetActive</a></div><div class="ttdeci">static Ref&lt; Project &gt; GetActive()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00487">Project.h:487</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a423316c237890b90bc91b0c8ab7e91f9"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a423316c237890b90bc91b0c8ab7e91f9">Kargono::RenderCommand::DrawLines</a></div><div class="ttdeci">static void DrawLines(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00063">RenderCommand.h:63</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a42b3fcc9b7419b5b8366a6ff07585841"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a42b3fcc9b7419b5b8366a6ff07585841">Kargono::RenderCommand::SetLineWidth</a></div><div class="ttdeci">static void SetLineWidth(float width)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00071">RenderCommand.h:71</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a7a49c42584f687fc8d1ad98863f20ff9"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a7a49c42584f687fc8d1ad98863f20ff9">Kargono::RenderCommand::SetViewport</a></div><div class="ttdeci">static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00017">RenderCommand.h:17</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_a8a7bf0691535c39e4ee454a98e5a24dc"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#a8a7bf0691535c39e4ee454a98e5a24dc">Kargono::RenderCommand::DrawTriangles</a></div><div class="ttdeci">static void DrawTriangles(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00067">RenderCommand.h:67</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RenderCommand_html_aa4eb7c968eb0ce95105054edc8d0ab47"><div class="ttname"><a href="classKargono_1_1RenderCommand.html#aa4eb7c968eb0ce95105054edc8d0ab47">Kargono::RenderCommand::DrawIndexed</a></div><div class="ttdeci">static void DrawIndexed(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t indexCount=0)</div><div class="ttdef"><b>Definition:</b> <a href="RenderCommand_8h_source.html#l00053">RenderCommand.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a0149871ee5c58b5d695c8dae9ff001cc"><div class="ttname"><a href="classKargono_1_1Renderer.html#a0149871ee5c58b5d695c8dae9ff001cc">Kargono::Renderer::Shutdown</a></div><div class="ttdeci">static void Shutdown()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00053">Renderer.cpp:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a1b32e43a7af9c92f00917dfd13cea85b"><div class="ttname"><a href="classKargono_1_1Renderer.html#a1b32e43a7af9c92f00917dfd13cea85b">Kargono::Renderer::OnWindowResize</a></div><div class="ttdeci">static void OnWindowResize(uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00042">Renderer.cpp:42</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a53e24b919d92a2e9cc278244633ba82e"><div class="ttname"><a href="classKargono_1_1Renderer.html#a53e24b919d92a2e9cc278244633ba82e">Kargono::Renderer::SubmitDataToRenderer</a></div><div class="ttdeci">static void SubmitDataToRenderer(RendererInputSpec &amp;inputSpec)</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00172">Renderer.cpp:172</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a6419107f7263329c1720ea8b11fe5909"><div class="ttname"><a href="classKargono_1_1Renderer.html#a6419107f7263329c1720ea8b11fe5909">Kargono::Renderer::ResetStats</a></div><div class="ttdeci">static void ResetStats()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00087">Renderer.cpp:87</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a6efcc04286cd4e492692752a34556e9c"><div class="ttname"><a href="classKargono_1_1Renderer.html#a6efcc04286cd4e492692752a34556e9c">Kargono::Renderer::SetLineWidth</a></div><div class="ttdeci">static void SetLineWidth(float width)</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00082">Renderer.cpp:82</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a8bcd3130bce5356fe0fc7f44376c2df2"><div class="ttname"><a href="classKargono_1_1Renderer.html#a8bcd3130bce5356fe0fc7f44376c2df2">Kargono::Renderer::BeginScene</a></div><div class="ttdeci">static void BeginScene(const Camera &amp;camera, const Math::mat4 &amp;transform)</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00056">Renderer.cpp:56</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a8dcdac434189ffd6ebecad56ddc2b60e"><div class="ttname"><a href="classKargono_1_1Renderer.html#a8dcdac434189ffd6ebecad56ddc2b60e">Kargono::Renderer::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00047">Renderer.cpp:47</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_aa81053cfaf786e82079c6f57df545eba"><div class="ttname"><a href="classKargono_1_1Renderer.html#aa81053cfaf786e82079c6f57df545eba">Kargono::Renderer::GetLineWidth</a></div><div class="ttdeci">static float GetLineWidth()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00078">Renderer.cpp:78</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_aaf9f3cbfabc1b6f3888ad965d6988abf"><div class="ttname"><a href="classKargono_1_1Renderer.html#aaf9f3cbfabc1b6f3888ad965d6988abf">Kargono::Renderer::GetStats</a></div><div class="ttdeci">static Statistics GetStats()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00091">Renderer.cpp:91</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_ac8410d064f7afe739dd8cf84ae7fa954"><div class="ttname"><a href="classKargono_1_1Renderer.html#ac8410d064f7afe739dd8cf84ae7fa954">Kargono::Renderer::EndScene</a></div><div class="ttdeci">static void EndScene()</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00073">Renderer.cpp:73</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UniformBuffer_html_ae94e507fae020fbcaa36d90f38f59ff9"><div class="ttname"><a href="classKargono_1_1UniformBuffer.html#ae94e507fae020fbcaa36d90f38f59ff9">Kargono::UniformBuffer::Create</a></div><div class="ttdeci">static Ref&lt; UniformBuffer &gt; Create(uint32_t size, uint32_t binding)</div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8cpp_source.html#l00011">UniformBuffer.cpp:11</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a54a9e352ac755822901745e5bad04edb"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a></div><div class="ttdeci">glm::vec4 vec4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00016">MathAliases.h:16</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a73e119d2bf751b0cc19c088bd07a90f1"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Kargono::Math::mat4</a></div><div class="ttdeci">glm::mat4 mat4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00028">MathAliases.h:28</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00015">MathAliases.h:15</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_abfb412570a3ce997f36ecea045547b3fa062de145aef8f70d67e192bdede6d6ea"><div class="ttname"><a href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa062de145aef8f70d67e192bdede6d6ea">Kargono::RenderingType::DrawIndex</a></div><div class="ttdeci">@ DrawIndex</div></div>
-<div class="ttc" id="anamespaceKargono_html_abfb412570a3ce997f36ecea045547b3fa6adf97f83acf6453d4a6a4b1070f3754"><div class="ttname"><a href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa6adf97f83acf6453d4a6a4b1070f3754">Kargono::RenderingType::None</a></div><div class="ttdeci">@ None</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a44e92bdd7ab68abd70b24fa3596415ff"><div class="ttname"><a href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Kargono::Buffer::Size</a></div><div class="ttdeci">uint64_t Size</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00012">Buffer.h:12</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_aa35229f34b4585c0743628f48a1c6031"><div class="ttname"><a href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Kargono::Buffer::Data</a></div><div class="ttdeci">uint8_t * Data</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00011">Buffer.h:11</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_1_1CameraData_html"><div class="ttname"><a href="structKargono_1_1RendererData_1_1CameraData.html">Kargono::RendererData::CameraData</a></div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00024">Renderer.cpp:25</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_1_1CameraData_html_ad3fbda2c060bc89717421de44c7784d4"><div class="ttname"><a href="structKargono_1_1RendererData_1_1CameraData.html#ad3fbda2c060bc89717421de44c7784d4">Kargono::RendererData::CameraData::ViewProjection</a></div><div class="ttdeci">Math::mat4 ViewProjection</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00026">Renderer.cpp:26</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html"><div class="ttname"><a href="structKargono_1_1RendererData.html">Kargono::RendererData</a></div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00014">Renderer.cpp:15</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a035480e856a684da2c47ad25dc737b73"><div class="ttname"><a href="structKargono_1_1RendererData.html#a035480e856a684da2c47ad25dc737b73">Kargono::RendererData::MaxQuads</a></div><div class="ttdeci">static const uint32_t MaxQuads</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00016">Renderer.cpp:16</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a09210041364f4c1039c5a69041d35b17"><div class="ttname"><a href="structKargono_1_1RendererData.html#a09210041364f4c1039c5a69041d35b17">Kargono::RendererData::MaxIndicesBuffer</a></div><div class="ttdeci">static const uint32_t MaxIndicesBuffer</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00034">Renderer.cpp:34</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a32347fbbd105cb0e4bd1375604f7e848"><div class="ttname"><a href="structKargono_1_1RendererData.html#a32347fbbd105cb0e4bd1375604f7e848">Kargono::RendererData::MaxTextureSlots</a></div><div class="ttdeci">static const uint32_t MaxTextureSlots</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00033">Renderer.cpp:33</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a84a91d35c12ee1fbc24fccc71ac38faa"><div class="ttname"><a href="structKargono_1_1RendererData.html#a84a91d35c12ee1fbc24fccc71ac38faa">Kargono::RendererData::LineWidth</a></div><div class="ttdeci">float LineWidth</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00020">Renderer.cpp:20</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a8d61c78843abd7c0171ce9e4d8aea21a"><div class="ttname"><a href="structKargono_1_1RendererData.html#a8d61c78843abd7c0171ce9e4d8aea21a">Kargono::RendererData::MaxVertices</a></div><div class="ttdeci">static const uint32_t MaxVertices</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00017">Renderer.cpp:17</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a9ce12316959df4ff26fb212f16b8d7fe"><div class="ttname"><a href="structKargono_1_1RendererData.html#a9ce12316959df4ff26fb212f16b8d7fe">Kargono::RendererData::MaxIndices</a></div><div class="ttdeci">static const uint32_t MaxIndices</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00018">Renderer.cpp:18</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_a9e6fcde9263609670f5002ce3576dd93"><div class="ttname"><a href="structKargono_1_1RendererData.html#a9e6fcde9263609670f5002ce3576dd93">Kargono::RendererData::CameraUniformBuffer</a></div><div class="ttdeci">Ref&lt; UniformBuffer &gt; CameraUniformBuffer</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00029">Renderer.cpp:29</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_aacd01579249b461f4ff31f2781672c4a"><div class="ttname"><a href="structKargono_1_1RendererData.html#aacd01579249b461f4ff31f2781672c4a">Kargono::RendererData::CameraBuffer</a></div><div class="ttdeci">CameraData CameraBuffer</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00028">Renderer.cpp:28</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_ac11c29a17fce832ba8f622741a276e3a"><div class="ttname"><a href="structKargono_1_1RendererData.html#ac11c29a17fce832ba8f622741a276e3a">Kargono::RendererData::Stats</a></div><div class="ttdeci">Renderer::Statistics Stats</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00022">Renderer.cpp:22</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererData_html_adddf48010ca229b1fa546601e5ca5bf2"><div class="ttname"><a href="structKargono_1_1RendererData.html#adddf48010ca229b1fa546601e5ca5bf2">Kargono::RendererData::DrawCalls</a></div><div class="ttdeci">std::vector&lt; Ref&lt; DrawCallBuffer &gt; &gt; DrawCalls</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00035">Renderer.cpp:35</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererInputSpec_html"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00038">Shader.h:39</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererInputSpec_html_a1f12af582866ef099c953e3c690e81e6"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html#a1f12af582866ef099c953e3c690e81e6">Kargono::RendererInputSpec::Shader</a></div><div class="ttdeci">Ref&lt; Shader &gt; Shader</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00040">Shader.h:40</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererInputSpec_html_a2807f17b4ba0cfc6e8407114cf12fe43"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html#a2807f17b4ba0cfc6e8407114cf12fe43">Kargono::RendererInputSpec::ShapeComponent</a></div><div class="ttdeci">ShapeComponent * ShapeComponent</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00042">Shader.h:42</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererInputSpec_html_a3a8d10c1b101b8b26c71bc617bb5489e"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html#a3a8d10c1b101b8b26c71bc617bb5489e">Kargono::RendererInputSpec::CurrentDrawBuffer</a></div><div class="ttdeci">Ref&lt; DrawCallBuffer &gt; CurrentDrawBuffer</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00043">Shader.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1RendererInputSpec_html_a96fd4a05bdfbade7b2f7e89d82e08fe6"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html#a96fd4a05bdfbade7b2f7e89d82e08fe6">Kargono::RendererInputSpec::Buffer</a></div><div class="ttdeci">Buffer Buffer</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00044">Shader.h:44</a></div></div>
-<div class="ttc" id="astructKargono_1_1Renderer_1_1Statistics_html"><div class="ttname"><a href="structKargono_1_1Renderer_1_1Statistics.html">Kargono::Renderer::Statistics</a></div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8h_source.html#l00099">Renderer.h:100</a></div></div>
-<div class="ttc" id="astructKargono_1_1Renderer_1_1Statistics_html_a318adaac65c81382c1bd7c6b967803be"><div class="ttname"><a href="structKargono_1_1Renderer_1_1Statistics.html#a318adaac65c81382c1bd7c6b967803be">Kargono::Renderer::Statistics::DrawCalls</a></div><div class="ttdeci">uint32_t DrawCalls</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8h_source.html#l00101">Renderer.h:101</a></div></div>
-<div class="ttc" id="astructKargono_1_1Renderer_1_1Statistics_html_a721e78b467d3ba024344b08e7645978a"><div class="ttname"><a href="structKargono_1_1Renderer_1_1Statistics.html#a721e78b467d3ba024344b08e7645978a">Kargono::Renderer::Statistics::VertexCount</a></div><div class="ttdeci">uint32_t VertexCount</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8h_source.html#l00102">Renderer.h:102</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShapeComponent_html_a51c3bba319d7021aa79b690cb606accf"><div class="ttname"><a href="structKargono_1_1ShapeComponent.html#a51c3bba319d7021aa79b690cb606accf">Kargono::ShapeComponent::Texture</a></div><div class="ttdeci">Ref&lt; Texture2D &gt; Texture</div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00207">Components.h:207</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShapeComponent_html_a673583b33a3beb92db84b9dfc4e391cb"><div class="ttname"><a href="structKargono_1_1ShapeComponent.html#a673583b33a3beb92db84b9dfc4e391cb">Kargono::ShapeComponent::Vertices</a></div><div class="ttdeci">Ref&lt; std::vector&lt; Math::vec3 &gt; &gt; Vertices</div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00200">Components.h:200</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Renderer.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

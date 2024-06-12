@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Scene.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1Scene.html">Scene</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -76,1038 +94,136 @@ $(function() {
 <div class="title">Kargono::Scene Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Scene_8h_source.html">Scene.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0257dd4c61febff72ff28b4e586a423f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a0257dd4c61febff72ff28b4e586a423f">Scene</a> ()</td></tr>
-<tr class="separator:a0257dd4c61febff72ff28b4e586a423f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a2c71b1e8c0ed170e257b4bee35a894"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a2a2c71b1e8c0ed170e257b4bee35a894">~Scene</a> ()</td></tr>
-<tr class="separator:a2a2c71b1e8c0ed170e257b4bee35a894"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac070e3c94237e1dc0641ba0526cfaf16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ac070e3c94237e1dc0641ba0526cfaf16">OnRuntimeStart</a> ()</td></tr>
+<tr class="memitem:ac070e3c94237e1dc0641ba0526cfaf16"><td class="memItemLeft" align="right" valign="top"><a id="ac070e3c94237e1dc0641ba0526cfaf16"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnRuntimeStart</b> ()</td></tr>
 <tr class="separator:ac070e3c94237e1dc0641ba0526cfaf16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab82ce03a6c9c8a39a07a61371fa903ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ab82ce03a6c9c8a39a07a61371fa903ee">OnRuntimeStop</a> ()</td></tr>
+<tr class="memitem:ab82ce03a6c9c8a39a07a61371fa903ee"><td class="memItemLeft" align="right" valign="top"><a id="ab82ce03a6c9c8a39a07a61371fa903ee"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnRuntimeStop</b> ()</td></tr>
 <tr class="separator:ab82ce03a6c9c8a39a07a61371fa903ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75bc9b30fd1d03989353f99f7cf63fc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a75bc9b30fd1d03989353f99f7cf63fc9">OnSimulationStart</a> ()</td></tr>
+<tr class="memitem:a75bc9b30fd1d03989353f99f7cf63fc9"><td class="memItemLeft" align="right" valign="top"><a id="a75bc9b30fd1d03989353f99f7cf63fc9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnSimulationStart</b> ()</td></tr>
 <tr class="separator:a75bc9b30fd1d03989353f99f7cf63fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15eb99fcd127d2bf04cbe4dc623f80d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a15eb99fcd127d2bf04cbe4dc623f80d2">OnSimulationStop</a> ()</td></tr>
+<tr class="memitem:a15eb99fcd127d2bf04cbe4dc623f80d2"><td class="memItemLeft" align="right" valign="top"><a id="a15eb99fcd127d2bf04cbe4dc623f80d2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnSimulationStop</b> ()</td></tr>
 <tr class="separator:a15eb99fcd127d2bf04cbe4dc623f80d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01fa9529b64a5fc711dd9e6508df8dbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a01fa9529b64a5fc711dd9e6508df8dbc">RenderScene</a> (<a class="el" href="classKargono_1_1Camera.html">Camera</a> &amp;camera, const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;transform)</td></tr>
+<tr class="memitem:a01fa9529b64a5fc711dd9e6508df8dbc"><td class="memItemLeft" align="right" valign="top"><a id="a01fa9529b64a5fc711dd9e6508df8dbc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>RenderScene</b> (<a class="el" href="classKargono_1_1Camera.html">Camera</a> &amp;camera, const Math::mat4 &amp;transform)</td></tr>
 <tr class="separator:a01fa9529b64a5fc711dd9e6508df8dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaabad52401796808ea792518e1789c92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#aaabad52401796808ea792518e1789c92">OnUpdatePhysics</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
+<tr class="memitem:aaabad52401796808ea792518e1789c92"><td class="memItemLeft" align="right" valign="top"><a id="aaabad52401796808ea792518e1789c92"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdatePhysics</b> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
 <tr class="separator:aaabad52401796808ea792518e1789c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c8f2a38a1459dd7b7ef4b39d0697801"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a2c8f2a38a1459dd7b7ef4b39d0697801">IsRunning</a> () const</td></tr>
+<tr class="memitem:a2c8f2a38a1459dd7b7ef4b39d0697801"><td class="memItemLeft" align="right" valign="top"><a id="a2c8f2a38a1459dd7b7ef4b39d0697801"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsRunning</b> () const</td></tr>
 <tr class="separator:a2c8f2a38a1459dd7b7ef4b39d0697801"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c8d5e174029d305eec29c62286fb7f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a3c8d5e174029d305eec29c62286fb7f9">CreateEntityWithUUID</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid, const std::string &amp;name=std::string())</td></tr>
+<tr class="memitem:a3c8d5e174029d305eec29c62286fb7f9"><td class="memItemLeft" align="right" valign="top"><a id="a3c8d5e174029d305eec29c62286fb7f9"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CreateEntityWithUUID</b> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid, const std::string &amp;name=std::string())</td></tr>
 <tr class="separator:a3c8d5e174029d305eec29c62286fb7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c8eb7afecf36268d2cd1e46551303a0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a6c8eb7afecf36268d2cd1e46551303a0">CreateEntity</a> (const std::string &amp;name=std::string())</td></tr>
+<tr class="memitem:a6c8eb7afecf36268d2cd1e46551303a0"><td class="memItemLeft" align="right" valign="top"><a id="a6c8eb7afecf36268d2cd1e46551303a0"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CreateEntity</b> (const std::string &amp;name=std::string())</td></tr>
 <tr class="separator:a6c8eb7afecf36268d2cd1e46551303a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6469a2728b142135a491a5f59023ce29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a6469a2728b142135a491a5f59023ce29">DuplicateEntity</a> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
+<tr class="memitem:a6469a2728b142135a491a5f59023ce29"><td class="memItemLeft" align="right" valign="top"><a id="a6469a2728b142135a491a5f59023ce29"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>DuplicateEntity</b> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
 <tr class="separator:a6469a2728b142135a491a5f59023ce29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2e17a2653075ad8c5e0d4db035039de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ac2e17a2653075ad8c5e0d4db035039de">DestroyEntity</a> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
+<tr class="memitem:ac2e17a2653075ad8c5e0d4db035039de"><td class="memItemLeft" align="right" valign="top"><a id="ac2e17a2653075ad8c5e0d4db035039de"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>DestroyEntity</b> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
 <tr class="separator:ac2e17a2653075ad8c5e0d4db035039de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4658788a6fa370b808ec0ae17f541720"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a4658788a6fa370b808ec0ae17f541720">DestroyAllEntities</a> ()</td></tr>
+<tr class="memitem:a4658788a6fa370b808ec0ae17f541720"><td class="memItemLeft" align="right" valign="top"><a id="a4658788a6fa370b808ec0ae17f541720"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>DestroyAllEntities</b> ()</td></tr>
 <tr class="separator:a4658788a6fa370b808ec0ae17f541720"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7389e5d4571218702808619ff0700bd6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a7389e5d4571218702808619ff0700bd6">FindEntityByName</a> (std::string_view name)</td></tr>
+<tr class="memitem:a7389e5d4571218702808619ff0700bd6"><td class="memItemLeft" align="right" valign="top"><a id="a7389e5d4571218702808619ff0700bd6"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>FindEntityByName</b> (std::string_view name)</td></tr>
 <tr class="separator:a7389e5d4571218702808619ff0700bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38f81e599c728da9554d649d5ad3cd6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#aa38f81e599c728da9554d649d5ad3cd6">GetEntityByUUID</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid)</td></tr>
+<tr class="memitem:aa38f81e599c728da9554d649d5ad3cd6"><td class="memItemLeft" align="right" valign="top"><a id="aa38f81e599c728da9554d649d5ad3cd6"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetEntityByUUID</b> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid)</td></tr>
 <tr class="separator:aa38f81e599c728da9554d649d5ad3cd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03f063167bf6eb75dcc4eb0d1ce7b4b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a03f063167bf6eb75dcc4eb0d1ce7b4b8">GetPrimaryCameraEntity</a> ()</td></tr>
+<tr class="memitem:a03f063167bf6eb75dcc4eb0d1ce7b4b8"><td class="memItemLeft" align="right" valign="top"><a id="a03f063167bf6eb75dcc4eb0d1ce7b4b8"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetPrimaryCameraEntity</b> ()</td></tr>
 <tr class="separator:a03f063167bf6eb75dcc4eb0d1ce7b4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2e712993918707790679fd6cfef5848"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#af2e712993918707790679fd6cfef5848">CheckEntityExists</a> (entt::entity entity)</td></tr>
+<tr class="memitem:af2e712993918707790679fd6cfef5848"><td class="memItemLeft" align="right" valign="top"><a id="af2e712993918707790679fd6cfef5848"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>CheckEntityExists</b> (entt::entity entity)</td></tr>
 <tr class="separator:af2e712993918707790679fd6cfef5848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a040a4bb9b8bbccf63ac7099b2a3d07dd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a040a4bb9b8bbccf63ac7099b2a3d07dd">IsEntityValid</a> (entt::entity entity)</td></tr>
+<tr class="memitem:a040a4bb9b8bbccf63ac7099b2a3d07dd"><td class="memItemLeft" align="right" valign="top"><a id="a040a4bb9b8bbccf63ac7099b2a3d07dd"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsEntityValid</b> (entt::entity entity)</td></tr>
 <tr class="separator:a040a4bb9b8bbccf63ac7099b2a3d07dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae24688512905596f619cd0b3fad573f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ae24688512905596f619cd0b3fad573f7">OnViewportResize</a> (uint32_t width, uint32_t height)</td></tr>
+<tr class="memitem:ae24688512905596f619cd0b3fad573f7"><td class="memItemLeft" align="right" valign="top"><a id="ae24688512905596f619cd0b3fad573f7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnViewportResize</b> (uint32_t width, uint32_t height)</td></tr>
 <tr class="separator:ae24688512905596f619cd0b3fad573f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42176109eab53058ca3db5d90c17d0c3"><td class="memTemplParams" colspan="2">template&lt;typename... Components&gt; </td></tr>
-<tr class="memitem:a42176109eab53058ca3db5d90c17d0c3"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a42176109eab53058ca3db5d90c17d0c3">GetAllEntitiesWith</a> ()</td></tr>
+<tr class="memitem:a42176109eab53058ca3db5d90c17d0c3"><td class="memTemplParams" colspan="2"><a id="a42176109eab53058ca3db5d90c17d0c3"></a>
+template&lt;typename... Components&gt; </td></tr>
+<tr class="memitem:a42176109eab53058ca3db5d90c17d0c3"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetAllEntitiesWith</b> ()</td></tr>
 <tr class="separator:a42176109eab53058ca3db5d90c17d0c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3e7765fc0348d16b3259478b5cdb4c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#aa3e7765fc0348d16b3259478b5cdb4c6">GetPhysicsSpecification</a> ()</td></tr>
+<tr class="memitem:aa3e7765fc0348d16b3259478b5cdb4c6"><td class="memItemLeft" align="right" valign="top"><a id="aa3e7765fc0348d16b3259478b5cdb4c6"></a>
+<a class="el" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPhysicsSpecification</b> ()</td></tr>
 <tr class="separator:aa3e7765fc0348d16b3259478b5cdb4c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dc81fa355f75e5b5488a057a110906f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Physics_1_1Physics2DWorld.html">Physics::Physics2DWorld</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a5dc81fa355f75e5b5488a057a110906f">GetPhysicsWorld</a> ()</td></tr>
+<tr class="memitem:a5dc81fa355f75e5b5488a057a110906f"><td class="memItemLeft" align="right" valign="top"><a id="a5dc81fa355f75e5b5488a057a110906f"></a>
+<a class="el" href="classKargono_1_1Physics_1_1Physics2DWorld.html">Physics::Physics2DWorld</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetPhysicsWorld</b> ()</td></tr>
 <tr class="separator:a5dc81fa355f75e5b5488a057a110906f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fd633b108e7d03bf5b11a0d3b7ebf3b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a4fd633b108e7d03bf5b11a0d3b7ebf3b">GetHoveredEntity</a> ()</td></tr>
+<tr class="memitem:a4fd633b108e7d03bf5b11a0d3b7ebf3b"><td class="memItemLeft" align="right" valign="top"><a id="a4fd633b108e7d03bf5b11a0d3b7ebf3b"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetHoveredEntity</b> ()</td></tr>
 <tr class="separator:a4fd633b108e7d03bf5b11a0d3b7ebf3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35884aefdbb231dbfe613b7e8475283c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Entity.html">Entity</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a35884aefdbb231dbfe613b7e8475283c">GetSelectedEntity</a> ()</td></tr>
+<tr class="memitem:a35884aefdbb231dbfe613b7e8475283c"><td class="memItemLeft" align="right" valign="top"><a id="a35884aefdbb231dbfe613b7e8475283c"></a>
+<a class="el" href="classKargono_1_1Entity.html">Entity</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetSelectedEntity</b> ()</td></tr>
 <tr class="separator:a35884aefdbb231dbfe613b7e8475283c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:afe829f10aa20c0b699338d93472ed480"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#afe829f10aa20c0b699338d93472ed480">FillEntityID</a> (<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;inputSpec)</td></tr>
+<tr class="memitem:afe829f10aa20c0b699338d93472ed480"><td class="memItemLeft" align="right" valign="top"><a id="afe829f10aa20c0b699338d93472ed480"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>FillEntityID</b> (<a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;inputSpec)</td></tr>
 <tr class="separator:afe829f10aa20c0b699338d93472ed480"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5860501fe2ac2effc95fb30401ef2a60"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a5860501fe2ac2effc95fb30401ef2a60">Copy</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; other)</td></tr>
+<tr class="memitem:a5860501fe2ac2effc95fb30401ef2a60"><td class="memItemLeft" align="right" valign="top"><a id="a5860501fe2ac2effc95fb30401ef2a60"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Copy</b> (Ref&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; other)</td></tr>
 <tr class="separator:a5860501fe2ac2effc95fb30401ef2a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69cf59e3cdcd8d9f5d3bb9de642cc8e8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a69cf59e3cdcd8d9f5d3bb9de642cc8e8">TransitionScene</a> (<a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> newSceneHandle)</td></tr>
+<tr class="memitem:a69cf59e3cdcd8d9f5d3bb9de642cc8e8"><td class="memItemLeft" align="right" valign="top"><a id="a69cf59e3cdcd8d9f5d3bb9de642cc8e8"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>TransitionScene</b> (<a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newSceneHandle)</td></tr>
 <tr class="separator:a69cf59e3cdcd8d9f5d3bb9de642cc8e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19cab000a7c898458e43aba630169590"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a19cab000a7c898458e43aba630169590">TransitionScene</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; newScene)</td></tr>
+<tr class="memitem:a19cab000a7c898458e43aba630169590"><td class="memItemLeft" align="right" valign="top"><a id="a19cab000a7c898458e43aba630169590"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>TransitionScene</b> (Ref&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; newScene)</td></tr>
 <tr class="separator:a19cab000a7c898458e43aba630169590"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8ce11413a2341302d591ce93f5ecb10"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ac8ce11413a2341302d591ce93f5ecb10">TransitionSceneFromName</a> (const std::string &amp;sceneName)</td></tr>
+<tr class="memitem:ac8ce11413a2341302d591ce93f5ecb10"><td class="memItemLeft" align="right" valign="top"><a id="ac8ce11413a2341302d591ce93f5ecb10"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>TransitionSceneFromName</b> (const std::string &amp;sceneName)</td></tr>
 <tr class="separator:ac8ce11413a2341302d591ce93f5ecb10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52f7ab896909ddd245cdfe7771a6375a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">GetActiveScene</a> ()</td></tr>
+<tr class="memitem:a52f7ab896909ddd245cdfe7771a6375a"><td class="memItemLeft" align="right" valign="top"><a id="a52f7ab896909ddd245cdfe7771a6375a"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetActiveScene</b> ()</td></tr>
 <tr class="separator:a52f7ab896909ddd245cdfe7771a6375a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaff9f80493c4b3695e849515d6b5daa6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#aaff9f80493c4b3695e849515d6b5daa6">GetActiveSceneHandle</a> ()</td></tr>
+<tr class="memitem:aaff9f80493c4b3695e849515d6b5daa6"><td class="memItemLeft" align="right" valign="top"><a id="aaff9f80493c4b3695e849515d6b5daa6"></a>
+static <a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetActiveSceneHandle</b> ()</td></tr>
 <tr class="separator:aaff9f80493c4b3695e849515d6b5daa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65fcbfc2832645dc34183f2dbb21b153"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a65fcbfc2832645dc34183f2dbb21b153">SetActiveScene</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; newScene, <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> newHandle)</td></tr>
+<tr class="memitem:a65fcbfc2832645dc34183f2dbb21b153"><td class="memItemLeft" align="right" valign="top"><a id="a65fcbfc2832645dc34183f2dbb21b153"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetActiveScene</b> (Ref&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; newScene, <a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newHandle)</td></tr>
 <tr class="separator:a65fcbfc2832645dc34183f2dbb21b153"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae17cef9c146224271e80c66b8e199f3b"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; std::string, std::vector&lt; <a class="el" href="classKargono_1_1UUID.html">UUID</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#ae17cef9c146224271e80c66b8e199f3b">GetScriptClassToEntityList</a> ()</td></tr>
+<tr class="memitem:ae17cef9c146224271e80c66b8e199f3b"><td class="memItemLeft" align="right" valign="top"><a id="ae17cef9c146224271e80c66b8e199f3b"></a>
+static std::unordered_map&lt; std::string, std::vector&lt; <a class="el" href="classKargono_1_1UUID.html">UUID</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetScriptClassToEntityList</b> ()</td></tr>
 <tr class="separator:ae17cef9c146224271e80c66b8e199f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a614439ccac0344926adc4c0165d64060"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a614439ccac0344926adc4c0165d64060">Entity</a></td></tr>
+<tr class="memitem:a614439ccac0344926adc4c0165d64060"><td class="memItemLeft" align="right" valign="top"><a id="a614439ccac0344926adc4c0165d64060"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Entity</b></td></tr>
 <tr class="separator:a614439ccac0344926adc4c0165d64060"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5fa7cde0ffbc72d80ef032c1ea3e9c85"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a5fa7cde0ffbc72d80ef032c1ea3e9c85">SceneSerializer</a></td></tr>
+<tr class="memitem:a5fa7cde0ffbc72d80ef032c1ea3e9c85"><td class="memItemLeft" align="right" valign="top"><a id="a5fa7cde0ffbc72d80ef032c1ea3e9c85"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>SceneSerializer</b></td></tr>
 <tr class="separator:a5fa7cde0ffbc72d80ef032c1ea3e9c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a776c3b89de428075a81a63c2e78d8eaf"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a776c3b89de428075a81a63c2e78d8eaf">SceneHierarchyPanel</a></td></tr>
+<tr class="memitem:a776c3b89de428075a81a63c2e78d8eaf"><td class="memItemLeft" align="right" valign="top"><a id="a776c3b89de428075a81a63c2e78d8eaf"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>SceneHierarchyPanel</b></td></tr>
 <tr class="separator:a776c3b89de428075a81a63c2e78d8eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scene.html#a93a4681dfdc6917d50d61ef8c5254626">Assets::AssetManager</a></td></tr>
+<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top"><a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Assets::AssetManager</b></td></tr>
 <tr class="separator:a93a4681dfdc6917d50d61ef8c5254626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00036">36</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0257dd4c61febff72ff28b4e586a423f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0257dd4c61febff72ff28b4e586a423f">&#9670;&nbsp;</a></span>Scene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Scene::Scene </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00083">83</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a2a2c71b1e8c0ed170e257b4bee35a894"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a2c71b1e8c0ed170e257b4bee35a894">&#9670;&nbsp;</a></span>~Scene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Scene::~Scene </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00093">93</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="af2e712993918707790679fd6cfef5848"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2e712993918707790679fd6cfef5848">&#9670;&nbsp;</a></span>CheckEntityExists()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Scene::CheckEntityExists </td>
-          <td>(</td>
-          <td class="paramtype">entt::entity&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00218">218</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a5860501fe2ac2effc95fb30401ef2a60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5860501fe2ac2effc95fb30401ef2a60">&#9670;&nbsp;</a></span>Copy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt; Kargono::Scene::Copy </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00057">57</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6c8eb7afecf36268d2cd1e46551303a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c8eb7afecf36268d2cd1e46551303a0">&#9670;&nbsp;</a></span>CreateEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::CreateEntity </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em> = <code>std::string()</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00100">100</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a3c8d5e174029d305eec29c62286fb7f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c8d5e174029d305eec29c62286fb7f9">&#9670;&nbsp;</a></span>CreateEntityWithUUID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::CreateEntityWithUUID </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1UUID.html">UUID</a>&#160;</td>
-          <td class="paramname"><em>uuid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em> = <code>std::string()</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00105">105</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4658788a6fa370b808ec0ae17f541720"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4658788a6fa370b808ec0ae17f541720">&#9670;&nbsp;</a></span>DestroyAllEntities()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::DestroyAllEntities </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00126">126</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac2e17a2653075ad8c5e0d4db035039de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2e17a2653075ad8c5e0d4db035039de">&#9670;&nbsp;</a></span>DestroyEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::DestroyEntity </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00117">117</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6469a2728b142135a491a5f59023ce29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6469a2728b142135a491a5f59023ce29">&#9670;&nbsp;</a></span>DuplicateEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::DuplicateEntity </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00191">191</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afe829f10aa20c0b699338d93472ed480"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe829f10aa20c0b699338d93472ed480">&#9670;&nbsp;</a></span>FillEntityID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::FillEntityID </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>inputSpec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00319">319</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7389e5d4571218702808619ff0700bd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7389e5d4571218702808619ff0700bd6">&#9670;&nbsp;</a></span>FindEntityByName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::FindEntityByName </td>
-          <td>(</td>
-          <td class="paramtype">std::string_view&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00200">200</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a52f7ab896909ddd245cdfe7771a6375a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52f7ab896909ddd245cdfe7771a6375a">&#9670;&nbsp;</a></span>GetActiveScene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1Scene.html">Scene</a>&gt; Kargono::Scene::GetActiveScene </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00154">154</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="aaff9f80493c4b3695e849515d6b5daa6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaff9f80493c4b3695e849515d6b5daa6">&#9670;&nbsp;</a></span>GetActiveSceneHandle()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Scene::GetActiveSceneHandle </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00155">155</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a42176109eab53058ca3db5d90c17d0c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42176109eab53058ca3db5d90c17d0c3">&#9670;&nbsp;</a></span>GetAllEntitiesWith()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Components&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto Kargono::Scene::GetAllEntitiesWith </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00140">140</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="aa38f81e599c728da9554d649d5ad3cd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa38f81e599c728da9554d649d5ad3cd6">&#9670;&nbsp;</a></span>GetEntityByUUID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::GetEntityByUUID </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1UUID.html">UUID</a>&#160;</td>
-          <td class="paramname"><em>uuid</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00211">211</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4fd633b108e7d03bf5b11a0d3b7ebf3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fd633b108e7d03bf5b11a0d3b7ebf3b">&#9670;&nbsp;</a></span>GetHoveredEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a>* Kargono::Scene::GetHoveredEntity </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00151">151</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="aa3e7765fc0348d16b3259478b5cdb4c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3e7765fc0348d16b3259478b5cdb4c6">&#9670;&nbsp;</a></span>GetPhysicsSpecification()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a>&amp; Kargono::Scene::GetPhysicsSpecification </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00148">148</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a5dc81fa355f75e5b5488a057a110906f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5dc81fa355f75e5b5488a057a110906f">&#9670;&nbsp;</a></span>GetPhysicsWorld()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Physics_1_1Physics2DWorld.html">Physics::Physics2DWorld</a>* Kargono::Scene::GetPhysicsWorld </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00149">149</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a03f063167bf6eb75dcc4eb0d1ce7b4b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03f063167bf6eb75dcc4eb0d1ce7b4b8">&#9670;&nbsp;</a></span>GetPrimaryCameraEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a> Kargono::Scene::GetPrimaryCameraEntity </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00274">274</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae17cef9c146224271e80c66b8e199f3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae17cef9c146224271e80c66b8e199f3b">&#9670;&nbsp;</a></span>GetScriptClassToEntityList()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; std::string, std::vector&lt; <a class="el" href="classKargono_1_1UUID.html">UUID</a> &gt; &gt; &amp; Kargono::Scene::GetScriptClassToEntityList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00236">236</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a35884aefdbb231dbfe613b7e8475283c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35884aefdbb231dbfe613b7e8475283c">&#9670;&nbsp;</a></span>GetSelectedEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Entity.html">Entity</a>* Kargono::Scene::GetSelectedEntity </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00152">152</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a040a4bb9b8bbccf63ac7099b2a3d07dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a040a4bb9b8bbccf63ac7099b2a3d07dd">&#9670;&nbsp;</a></span>IsEntityValid()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Scene::IsEntityValid </td>
-          <td>(</td>
-          <td class="paramtype">entt::entity&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00130">130</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a2c8f2a38a1459dd7b7ef4b39d0697801"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c8f2a38a1459dd7b7ef4b39d0697801">&#9670;&nbsp;</a></span>IsRunning()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Scene::IsRunning </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00070">70</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="ac070e3c94237e1dc0641ba0526cfaf16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac070e3c94237e1dc0641ba0526cfaf16">&#9670;&nbsp;</a></span>OnRuntimeStart()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnRuntimeStart </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00139">139</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab82ce03a6c9c8a39a07a61371fa903ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab82ce03a6c9c8a39a07a61371fa903ee">&#9670;&nbsp;</a></span>OnRuntimeStop()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnRuntimeStop </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00167">167</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a75bc9b30fd1d03989353f99f7cf63fc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75bc9b30fd1d03989353f99f7cf63fc9">&#9670;&nbsp;</a></span>OnSimulationStart()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnSimulationStart </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00178">178</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a15eb99fcd127d2bf04cbe4dc623f80d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15eb99fcd127d2bf04cbe4dc623f80d2">&#9670;&nbsp;</a></span>OnSimulationStop()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnSimulationStop </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00184">184</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aaabad52401796808ea792518e1789c92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaabad52401796808ea792518e1789c92">&#9670;&nbsp;</a></span>OnUpdatePhysics()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnUpdatePhysics </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Timestep.html">Timestep</a>&#160;</td>
-          <td class="paramname"><em>ts</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00315">315</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae24688512905596f619cd0b3fad573f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae24688512905596f619cd0b3fad573f7">&#9670;&nbsp;</a></span>OnViewportResize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::OnViewportResize </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>width</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>height</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00223">223</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a01fa9529b64a5fc711dd9e6508df8dbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01fa9529b64a5fc711dd9e6508df8dbc">&#9670;&nbsp;</a></span>RenderScene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::RenderScene </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Camera.html">Camera</a> &amp;&#160;</td>
-          <td class="paramname"><em>camera</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;&#160;</td>
-          <td class="paramname"><em>transform</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00284">284</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a65fcbfc2832645dc34183f2dbb21b153"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65fcbfc2832645dc34183f2dbb21b153">&#9670;&nbsp;</a></span>SetActiveScene()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Kargono::Scene::SetActiveScene </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td>
-          <td class="paramname"><em>newScene</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td>
-          <td class="paramname"><em>newHandle</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00159">159</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a69cf59e3cdcd8d9f5d3bb9de642cc8e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69cf59e3cdcd8d9f5d3bb9de642cc8e8">&#9670;&nbsp;</a></span>TransitionScene() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::TransitionScene </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td>
-          <td class="paramname"><em>newSceneHandle</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00240">240</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a19cab000a7c898458e43aba630169590"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19cab000a7c898458e43aba630169590">&#9670;&nbsp;</a></span>TransitionScene() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::TransitionScene </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scene.html">Scene</a> &gt;&#160;</td>
-          <td class="paramname"><em>newScene</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00246">246</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac8ce11413a2341302d591ce93f5ecb10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8ce11413a2341302d591ce93f5ecb10">&#9670;&nbsp;</a></span>TransitionSceneFromName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Scene::TransitionSceneFromName </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>sceneName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00264">264</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93a4681dfdc6917d50d61ef8c5254626">&#9670;&nbsp;</a></span>Assets::AssetManager</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00193">193</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a614439ccac0344926adc4c0165d64060"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a614439ccac0344926adc4c0165d64060">&#9670;&nbsp;</a></span>Entity</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Entity.html">Entity</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00190">190</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a776c3b89de428075a81a63c2e78d8eaf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a776c3b89de428075a81a63c2e78d8eaf">&#9670;&nbsp;</a></span>SceneHierarchyPanel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00192">192</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<a id="a5fa7cde0ffbc72d80ef032c1ea3e9c85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fa7cde0ffbc72d80ef032c1ea3e9c85">&#9670;&nbsp;</a></span>SceneSerializer</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class SceneSerializer</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00191">191</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="Scene_8h_source.html">Scene.h</a></li>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="Scene_8cpp_source.html">Scene.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1Scene.html">Scene</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

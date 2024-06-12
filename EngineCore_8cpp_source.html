@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('EngineCore_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,139 +84,134 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">EngineCore.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="EngineCore_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="AppTick_8h.html">Kargono/Core/AppTick.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Time_8h.html">Kargono/Utility/Time.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ScriptEngine_8h.html">Kargono/Script/ScriptEngine.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Physics2D_8h.html">Kargono/Physics/Physics2D.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RenderCommand_8h.html">Kargono/Renderer/RenderCommand.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Renderer_8h.html">Kargono/Renderer/Renderer.h</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Profiler_8h.html">Kargono/Core/Profiler.h</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Timers_8h.html">Kargono/Core/Timers.h</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="NetworkingEvent_8h.html">Kargono/Events/NetworkingEvent.h</a>&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Entity_8h.html">Kargono/Scene/Entity.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scene/Scene.h</a>&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Physics2D_8h.html">Kargono/Physics/Physics2D.h</a>&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Client_8h.html">Kargono/Network/Client.h</a>&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Scripting_8h.html">Kargono/Scripting/Scripting.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EngineCore.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/AppTick.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Utility/Time.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Script/ScriptEngine.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Physics/Physics2D.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/RenderCommand.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Renderer.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Profiler.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Timers.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/NetworkingEvent.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Entity.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Scene.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;Kargono/Physics/Physics2D.h&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/Client.h&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scripting/Scripting.h&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">//#define BIND_EVENT_FN(x) std::bind(&amp;Application::x, this, std::placeholders::_1)</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">   24</a></span>&#160;    std::chrono::nanoseconds <a class="code" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">k_ConstantFrameTime</a> { 1&#39;000 * 1&#39;000 * 1&#39;000 / 60 };</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="namespaceKargono.html#a0728a8d6ae20ae50e7a716181d752634">   25</a></span>&#160;    <a class="code" href="classKargono_1_1Timestep.html">Timestep</a> <a class="code" href="namespaceKargono.html#a0728a8d6ae20ae50e7a716181d752634">k_ConstantFrameTimeStep</a> { 1.0f / 60.0f };</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    std::chrono::nanoseconds k_ConstantFrameTime { 1&#39;000 * 1&#39;000 * 1&#39;000 / 60 };</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    EngineCore* EngineCore::s_CurrentEngineCore = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">   29</a></span>&#160;    <a class="code" href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">EngineCore::EngineCore</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a>&amp; specification, <a class="code" href="classKargono_1_1Application.html">Application</a>* app)</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    EngineCore::EngineCore(<span class="keyword">const</span> AppSpec&amp; specification, Application* app)</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        : m_Specification(specification)</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Ensure Application is a Singleton</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(!s_CurrentEngineCore, <span class="stringliteral">&quot;Application already exists!&quot;</span>)</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        s_CurrentEngineCore = <span class="keyword">this</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        KG_ASSERT(!s_CurrentEngineCore, <span class="stringliteral">&quot;Application already exists!&quot;</span>)</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        s_CurrentEngineCore = this;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        m_CurrentApp = app;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        m_Window = <a class="code" href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Window::Create</a>(<a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>(m_Specification.<a class="code" href="structKargono_1_1AppSpec.html#a37946e39db432c69d913eccf8fe56e6d">Name</a>, m_Specification.<a class="code" href="structKargono_1_1AppSpec.html#ac1442c7ad989c8a482c3040a7b9c7c4d">Width</a>, m_Specification.<a class="code" href="structKargono_1_1AppSpec.html#add6c20c28374b3a6b54fa5a259ae1f7a">Height</a>));</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        KG_VERIFY(m_Window, <span class="stringliteral">&quot;Window Init&quot;</span>);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        m_Window-&gt;SetEventCallback(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(<a class="code" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">EngineCore::OnEvent</a>));</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <a class="code" href="classKargono_1_1AppTickEngine.html#ae69e5c6702ac0f175346722f4f20d4d8">AppTickEngine::SetAppTickCallback</a>(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(<a class="code" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">EngineCore::OnEvent</a>));</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        app-&gt;<a class="code" href="classKargono_1_1Application.html#a142393f2f347a83830409381464a8240">OnAttach</a>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.Width, m_Specification.Height));</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        KG_VERIFY(m_Window, &quot;Window Init&quot;);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        m_Window-&gt;SetEventCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        AppTickEngine::SetAppTickCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        app-&gt;OnAttach();</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a24557060ffb7df1588259891069bbee6">   44</a></span>&#160;    <a class="code" href="classKargono_1_1EngineCore.html#a24557060ffb7df1588259891069bbee6">EngineCore::~EngineCore</a>()</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    EngineCore::~EngineCore()</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">if</span> (m_CurrentApp)</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            m_CurrentApp-&gt;<a class="code" href="classKargono_1_1Application.html#a607e28e87c49456c819e3e3fe8384886">OnDetach</a>();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            m_CurrentApp-&gt;OnDetach();</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keyword">delete</span> m_CurrentApp;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            m_CurrentApp = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        }</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="classKargono_1_1Script_1_1ScriptEngine.html#ae927230584c688e6f5179c63036e34e6">Script::ScriptEngine::Shutdown</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="classKargono_1_1Scripting_1_1ScriptCore.html#a38741d7c9c37c9af3f383af9b5303c70">Scripting::ScriptCore::Terminate</a>();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a5db8136b8de7492253f242afc6c9aa33">Audio::AudioEngine::Terminate</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        Script::ScriptEngine::Shutdown();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        Scripting::ScriptCore::Terminate();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        Audio::AudioEngine::Terminate();</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="comment">// TODO: Add Renderer Shutdown!</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        KG_VERIFY(!m_CurrentApp, <span class="stringliteral">&quot;Close App&quot;</span>);</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        </div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">   62</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">EngineCore::OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; e) </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> EngineCore::OnEvent(Events::Event&amp; e) </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html">Events::EventDispatcher</a> dispatcher(e);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1WindowCloseEvent.html">Events::WindowCloseEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnWindowClose));</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Events::WindowResizeEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnWindowResize));</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1CleanUpTimersEvent.html">Events::CleanUpTimersEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnCleanUpTimers));</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1AddTickGeneratorUsage.html">Events::AddTickGeneratorUsage</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnAddTickGeneratorUsage));</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html">Events::RemoveTickGeneratorUsage</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnRemoveTickGeneratorUsage));</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1AppTickEvent.html">Events::AppTickEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnAppTickEvent));</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        Events::EventDispatcher dispatcher(e);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        dispatcher.Dispatch&lt;Events::WindowCloseEvent&gt;(KG_BIND_CLASS_FN(EngineCore::OnWindowClose));</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        dispatcher.Dispatch&lt;Events::WindowResizeEvent&gt;(KG_BIND_CLASS_FN(EngineCore::OnWindowResize));</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        dispatcher.Dispatch&lt;Events::CleanUpTimersEvent&gt;(KG_BIND_CLASS_FN(EngineCore::OnCleanUpTimers));</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        dispatcher.Dispatch&lt;Events::AddTickGeneratorUsage&gt;(KG_BIND_CLASS_FN(EngineCore::OnAddTickGeneratorUsage));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        dispatcher.Dispatch&lt;Events::RemoveTickGeneratorUsage&gt;(KG_BIND_CLASS_FN(EngineCore::OnRemoveTickGeneratorUsage));</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        dispatcher.Dispatch&lt;Events::AppTickEvent&gt;(KG_BIND_CLASS_FN(EngineCore::OnAppTickEvent));</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1UpdateEntityLocation.html">Events::UpdateEntityLocation</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnUpdateEntityLocation));</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1UpdateEntityPhysics.html">Events::UpdateEntityPhysics</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(EngineCore::OnUpdateEntityPhysics));</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        dispatcher.Dispatch&lt;Events::UpdateEntityLocation&gt;(KG_BIND_CLASS_FN(EngineCore::OnUpdateEntityLocation));</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        dispatcher.Dispatch&lt;Events::UpdateEntityPhysics&gt;(KG_BIND_CLASS_FN(EngineCore::OnUpdateEntityPhysics));</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> (e.<a class="code" href="classKargono_1_1Events_1_1Event.html#aee60a88ef30ec1ac0988e13061be55d8">Handled</a>)</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> (e.Handled)</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        {</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">if</span> (m_CurrentApp)</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            m_CurrentApp-&gt;<a class="code" href="classKargono_1_1Application.html#a0b5ab23577072c6052590c97a9d7b3fb">OnEvent</a>(e);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            m_CurrentApp-&gt;OnEvent(e);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        }</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    </div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">   87</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">EngineCore::Close</a>()</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> EngineCore::Close()</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        m_Running = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#ad9f6d3b9dfe388def6bfd5d45fe65fff">   92</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#ad9f6d3b9dfe388def6bfd5d45fe65fff">EngineCore::SetAppStartTime</a>()</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">void</span> EngineCore::SetAppStartTime()</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        m_AppStartTime = <a class="code" href="classKargono_1_1Utility_1_1Time.html#adbcc93283d2ac987cc54bf222284656b">Utility::Time::GetTime</a>();</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        m_AppStartTime = Utility::Time::GetTime();</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a3fc7cd03801591c838c4169679fc6fbf">   97</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a3fc7cd03801591c838c4169679fc6fbf">EngineCore::SubmitToMainThread</a>(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>()&gt;&amp; <span class="keyword">function</span>)</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">void</span> EngineCore::SubmitToMainThread(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>()&gt;&amp; <span class="keyword">function</span>)</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        std::scoped_lock&lt;std::mutex&gt; lock(m_MainThreadQueueMutex);</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        m_MainThreadQueue.emplace_back(<span class="keyword">function</span>);</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a1fd9618d52a09fefe64a22f64e94cd80">  104</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a1fd9618d52a09fefe64a22f64e94cd80">EngineCore::SubmitToEventQueue</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Events::Event&gt;</a> e)</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> EngineCore::SubmitToEventQueue(Ref&lt;Events::Event&gt; e)</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    {</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        std::scoped_lock&lt;std::mutex&gt; lock(m_EventQueueMutex);</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        m_EventQueue.emplace_back(e);</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#af885d0c08e92a1204c8b078927b2f8b3">  111</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#af885d0c08e92a1204c8b078927b2f8b3">EngineCore::OnSkipUpdate</a>(<a class="code" href="classKargono_1_1Events_1_1SkipUpdateEvent.html">Events::SkipUpdateEvent</a> event)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">void</span> EngineCore::OnSkipUpdate(Events::SkipUpdateEvent event)</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        m_Accumulator -= <span class="keyword">event</span>.GetSkipCount() * <a class="code" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">k_ConstantFrameTime</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        m_Accumulator -= <span class="keyword">event</span>.GetSkipCount() * k_ConstantFrameTime;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a5dc9b5e2a71fe122180565377996a720">  116</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a5dc9b5e2a71fe122180565377996a720">EngineCore::OnAddExtraUpdate</a>(<a class="code" href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html">Events::AddExtraUpdateEvent</a> event)</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordtype">void</span> EngineCore::OnAddExtraUpdate(Events::AddExtraUpdateEvent event)</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        m_Accumulator += <span class="keyword">event</span>.GetExtraUpdateCount() * <a class="code" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">k_ConstantFrameTime</a>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        m_Accumulator += <span class="keyword">event</span>.GetExtraUpdateCount() * k_ConstantFrameTime;</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">  121</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">EngineCore::Run</a>()</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> EngineCore::Run()</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Starting Run Function&quot;</span>);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Starting Run Function&quot;</span>);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        std::chrono::time_point&lt;std::chrono::high_resolution_clock&gt; currentTime = std::chrono::high_resolution_clock::now();</div>
@@ -206,31 +224,31 @@ $(function() {
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            timestep = currentTime - lastCycleTime;</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            lastCycleTime = currentTime;</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            m_Accumulator += timestep;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keywordflow">if</span> (m_Accumulator &lt; <a class="code" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">k_ConstantFrameTime</a>)</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keywordflow">if</span> (m_Accumulator &lt; k_ConstantFrameTime)</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            {</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                <span class="keywordflow">continue</span>;</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            }</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            m_Accumulator -= <a class="code" href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">k_ConstantFrameTime</a>;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            m_Accumulator -= k_ConstantFrameTime;</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                <a class="code" href="Profiler_8h.html#acbc693929503dcf9b561c1d2f97c7d58">KG_PROFILE_FRAME</a>(<span class="stringliteral">&quot;Main Thread&quot;</span>);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                KG_PROFILE_FRAME(<span class="stringliteral">&quot;Main Thread&quot;</span>);</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                m_UpdateCount++;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                <a class="code" href="classKargono_1_1AppTickEngine.html#a0d7172a5c5cccdd79bdc0f61b4faa27c">AppTickEngine::UpdateGenerators</a>(<a class="code" href="namespaceKargono.html#a0728a8d6ae20ae50e7a716181d752634">k_ConstantFrameTimeStep</a>);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                AppTickEngine::UpdateGenerators(k_ConstantFrameTimeStep);</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                ExecuteMainThreadQueue();</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                <span class="keywordflow">if</span> (!m_Minimized)</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                    m_CurrentApp-&gt;OnUpdate(<a class="code" href="namespaceKargono.html#a0728a8d6ae20ae50e7a716181d752634">k_ConstantFrameTimeStep</a>);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                    m_CurrentApp-&gt;OnUpdate(k_ConstantFrameTimeStep);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                ProcessEventQueue();</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                m_Window-&gt;OnUpdate();</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            }</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Ending Run Function&quot;</span>);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Ending Run Function&quot;</span>);</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnWindowClose(<a class="code" href="classKargono_1_1Events_1_1WindowCloseEvent.html">Events::WindowCloseEvent</a>&amp; e) </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnWindowClose(Events::WindowCloseEvent&amp; e) </div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    {</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        m_Running = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
@@ -245,32 +263,32 @@ $(function() {
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        }</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        m_Minimized = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <a class="code" href="classKargono_1_1Renderer.html#a1b32e43a7af9c92f00917dfd13cea85b">Renderer::OnWindowResize</a>(e.GetWidth(), e.GetHeight());</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnCleanUpTimers(Events::CleanUpTimersEvent&amp; e)</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">Timers::AsyncBusyTimer::CleanUpClosedTimers</a>();</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        Timers::AsyncBusyTimer::CleanUpClosedTimers();</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    }</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage&amp; e)</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <a class="code" href="classKargono_1_1AppTickEngine.html#ae5351920e2a97651f2b7736fb11b343b">AppTickEngine::AddGeneratorUsage</a>(e.GetDelayMilliseconds());</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        AppTickEngine::AddGeneratorUsage(e.GetDelayMilliseconds());</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage&amp; e)</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    {</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <a class="code" href="classKargono_1_1AppTickEngine.html#a2a3b2f024db75bb000bc0fa10d1e9ebb">AppTickEngine::RemoveGeneratorUsage</a>(e.GetDelayMilliseconds());</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        AppTickEngine::RemoveGeneratorUsage(e.GetDelayMilliseconds());</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnAppTickEvent(Events::AppTickEvent&amp; e)</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="keyword">auto</span> client = <a class="code" href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Network::Client::GetActiveClient</a>();</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="keyword">auto</span> client = Network::Client::GetActiveClient();</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="keywordflow">if</span> (client)</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        {</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            client-&gt;SubmitToEventQueue(CreateRef&lt;Events::AppTickEvent&gt;(e));</div>
@@ -280,11 +298,11 @@ $(function() {
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnUpdateEntityLocation(Events::UpdateEntityLocation&amp; e)</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eaab68cb4351a86742f28dce3cf222e748">Scene</a>* scene = <a class="code" href="classKargono_1_1Script_1_1ScriptEngine.html#a3666075421f9995306affc92adaa9333">Script::ScriptEngine::GetSceneContext</a>();</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        Scene* scene = Script::ScriptEngine::GetSceneContext();</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        <span class="keywordflow">if</span> (!scene) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <a class="code" href="namespaceKargono_1_1Script.html#acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f">Entity</a> entity = scene-&gt;GetEntityByUUID(e.GetEntityID());</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        Entity entity = scene-&gt;GetEntityByUUID(e.GetEntityID());</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="keywordflow">if</span> (!entity) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> translation = e.GetTranslation();</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        Math::vec3 translation = e.GetTranslation();</div>
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        entity.GetComponent&lt;TransformComponent&gt;().Translation = translation;</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">if</span> (entity.HasComponent&lt;Rigidbody2DComponent&gt;())</div>
@@ -298,12 +316,12 @@ $(function() {
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordtype">bool</span> EngineCore::OnUpdateEntityPhysics(Events::UpdateEntityPhysics&amp; e)</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    {</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eaab68cb4351a86742f28dce3cf222e748">Scene</a>* scene = <a class="code" href="classKargono_1_1Script_1_1ScriptEngine.html#a3666075421f9995306affc92adaa9333">Script::ScriptEngine::GetSceneContext</a>();</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        Scene* scene = Script::ScriptEngine::GetSceneContext();</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordflow">if</span> (!scene) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <a class="code" href="namespaceKargono_1_1Script.html#acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f">Entity</a> entity = scene-&gt;GetEntityByUUID(e.GetEntityID());</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        Entity entity = scene-&gt;GetEntityByUUID(e.GetEntityID());</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="keywordflow">if</span> (!entity) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> translation = e.GetTranslation();</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> linearVelocity = e.GetLinearVelocity();</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        Math::vec3 translation = e.GetTranslation();</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        Math::vec2 linearVelocity = e.GetLinearVelocity();</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        entity.GetComponent&lt;TransformComponent&gt;().Translation = translation;</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keywordflow">if</span> (entity.HasComponent&lt;Rigidbody2DComponent&gt;())</div>
@@ -321,7 +339,7 @@ $(function() {
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">void</span> EngineCore::ExecuteMainThreadQueue()</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    {</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <a class="code" href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a>();</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        KG_PROFILE_FUNCTION();</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        std::scoped_lock&lt;std::mutex&gt; lock(m_MainThreadQueueMutex);</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; func : m_MainThreadQueue) { func(); }</div>
@@ -330,7 +348,7 @@ $(function() {
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordtype">void</span> EngineCore::ProcessEventQueue()</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <a class="code" href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a>();</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        KG_PROFILE_FUNCTION();</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        std::scoped_lock&lt;std::mutex&gt; lock(m_EventQueueMutex);</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
@@ -342,85 +360,14 @@ $(function() {
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    }</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
-<div class="ttc" id="aAppTick_8h_html"><div class="ttname"><a href="AppTick_8h.html">AppTick.h</a></div></div>
-<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00020">Assert.h:20</a></div></div>
-<div class="ttc" id="aBase_8h_html_a19940f31bcb952846e1bee19e8b79e28"><div class="ttname"><a href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a></div><div class="ttdeci">#define KG_BIND_CLASS_FN(fn)</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00026">Base.h:26</a></div></div>
-<div class="ttc" id="aClient_8h_html"><div class="ttname"><a href="Client_8h.html">Client.h</a></div></div>
-<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
-<div class="ttc" id="aEntity_8h_html"><div class="ttname"><a href="Entity_8h.html">Entity.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
-<div class="ttc" id="aNetworkingEvent_8h_html"><div class="ttname"><a href="NetworkingEvent_8h.html">NetworkingEvent.h</a></div></div>
-<div class="ttc" id="aPhysics2D_8h_html"><div class="ttname"><a href="Physics2D_8h.html">Physics2D.h</a></div></div>
-<div class="ttc" id="aProfiler_8h_html"><div class="ttname"><a href="Profiler_8h.html">Profiler.h</a></div></div>
-<div class="ttc" id="aProfiler_8h_html_a26107eeb05909516ba146aa619a01763"><div class="ttname"><a href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a></div><div class="ttdeci">#define KG_PROFILE_FUNCTION(...)</div><div class="ttdef"><b>Definition:</b> <a href="Profiler_8h_source.html#l00018">Profiler.h:18</a></div></div>
-<div class="ttc" id="aProfiler_8h_html_acbc693929503dcf9b561c1d2f97c7d58"><div class="ttname"><a href="Profiler_8h.html#acbc693929503dcf9b561c1d2f97c7d58">KG_PROFILE_FRAME</a></div><div class="ttdeci">#define KG_PROFILE_FRAME(...)</div><div class="ttdef"><b>Definition:</b> <a href="Profiler_8h_source.html#l00016">Profiler.h:16</a></div></div>
-<div class="ttc" id="aRenderCommand_8h_html"><div class="ttname"><a href="RenderCommand_8h.html">RenderCommand.h</a></div></div>
-<div class="ttc" id="aRenderer_8h_html"><div class="ttname"><a href="Renderer_8h.html">Renderer.h</a></div></div>
-<div class="ttc" id="aScene_8h_html"><div class="ttname"><a href="Scene_8h.html">Scene.h</a></div></div>
-<div class="ttc" id="aScriptEngine_8h_html"><div class="ttname"><a href="ScriptEngine_8h.html">ScriptEngine.h</a></div></div>
-<div class="ttc" id="aScripting_8h_html"><div class="ttname"><a href="Scripting_8h.html">Scripting.h</a></div></div>
-<div class="ttc" id="aTime_8h_html"><div class="ttname"><a href="Time_8h.html">Time.h</a></div></div>
-<div class="ttc" id="aTimers_8h_html"><div class="ttname"><a href="Timers_8h.html">Timers.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1AppTickEngine_html_a0d7172a5c5cccdd79bdc0f61b4faa27c"><div class="ttname"><a href="classKargono_1_1AppTickEngine.html#a0d7172a5c5cccdd79bdc0f61b4faa27c">Kargono::AppTickEngine::UpdateGenerators</a></div><div class="ttdeci">static void UpdateGenerators(Timestep ts)</div><div class="ttdef"><b>Definition:</b> <a href="AppTick_8cpp_source.html#l00028">AppTick.cpp:28</a></div></div>
-<div class="ttc" id="aclassKargono_1_1AppTickEngine_html_a2a3b2f024db75bb000bc0fa10d1e9ebb"><div class="ttname"><a href="classKargono_1_1AppTickEngine.html#a2a3b2f024db75bb000bc0fa10d1e9ebb">Kargono::AppTickEngine::RemoveGeneratorUsage</a></div><div class="ttdeci">static void RemoveGeneratorUsage(uint64_t delayMilliseconds)</div><div class="ttdef"><b>Definition:</b> <a href="AppTick_8cpp_source.html#l00079">AppTick.cpp:79</a></div></div>
-<div class="ttc" id="aclassKargono_1_1AppTickEngine_html_ae5351920e2a97651f2b7736fb11b343b"><div class="ttname"><a href="classKargono_1_1AppTickEngine.html#ae5351920e2a97651f2b7736fb11b343b">Kargono::AppTickEngine::AddGeneratorUsage</a></div><div class="ttdeci">static void AddGeneratorUsage(uint64_t delayMilliseconds)</div><div class="ttdef"><b>Definition:</b> <a href="AppTick_8cpp_source.html#l00057">AppTick.cpp:57</a></div></div>
-<div class="ttc" id="aclassKargono_1_1AppTickEngine_html_ae69e5c6702ac0f175346722f4f20d4d8"><div class="ttname"><a href="classKargono_1_1AppTickEngine.html#ae69e5c6702ac0f175346722f4f20d4d8">Kargono::AppTickEngine::SetAppTickCallback</a></div><div class="ttdeci">static void SetAppTickCallback(const Events::EventCallbackFn &amp;callback)</div><div class="ttdef"><b>Definition:</b> <a href="AppTick_8cpp_source.html#l00023">AppTick.cpp:23</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00008">Application.h:9</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Application_html_a0b5ab23577072c6052590c97a9d7b3fb"><div class="ttname"><a href="classKargono_1_1Application.html#a0b5ab23577072c6052590c97a9d7b3fb">Kargono::Application::OnEvent</a></div><div class="ttdeci">virtual void OnEvent(Events::Event &amp;event)</div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00018">Application.h:18</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Application_html_a142393f2f347a83830409381464a8240"><div class="ttname"><a href="classKargono_1_1Application.html#a142393f2f347a83830409381464a8240">Kargono::Application::OnAttach</a></div><div class="ttdeci">virtual void OnAttach()</div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00014">Application.h:14</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Application_html_a607e28e87c49456c819e3e3fe8384886"><div class="ttname"><a href="classKargono_1_1Application.html#a607e28e87c49456c819e3e3fe8384886">Kargono::Application::OnDetach</a></div><div class="ttdeci">virtual void OnDetach()</div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00015">Application.h:15</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a5db8136b8de7492253f242afc6c9aa33"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a5db8136b8de7492253f242afc6c9aa33">Kargono::Audio::AudioEngine::Terminate</a></div><div class="ttdeci">static void Terminate()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00169">AudioEngine.cpp:169</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a1fd9618d52a09fefe64a22f64e94cd80"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a1fd9618d52a09fefe64a22f64e94cd80">Kargono::EngineCore::SubmitToEventQueue</a></div><div class="ttdeci">void SubmitToEventQueue(Ref&lt; Events::Event &gt; e)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00104">EngineCore.cpp:104</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a24557060ffb7df1588259891069bbee6"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a24557060ffb7df1588259891069bbee6">Kargono::EngineCore::~EngineCore</a></div><div class="ttdeci">~EngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00044">EngineCore.cpp:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a2da04a923eed1b009ae3ffd8a542c679"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">Kargono::EngineCore::EngineCore</a></div><div class="ttdeci">EngineCore(const AppSpec &amp;specification, Application *app)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00029">EngineCore.cpp:29</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a3fc7cd03801591c838c4169679fc6fbf"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a3fc7cd03801591c838c4169679fc6fbf">Kargono::EngineCore::SubmitToMainThread</a></div><div class="ttdeci">void SubmitToMainThread(const std::function&lt; void()&gt; &amp;function)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00097">EngineCore.cpp:97</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a5dc9b5e2a71fe122180565377996a720"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a5dc9b5e2a71fe122180565377996a720">Kargono::EngineCore::OnAddExtraUpdate</a></div><div class="ttdeci">void OnAddExtraUpdate(Events::AddExtraUpdateEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00116">EngineCore.cpp:116</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a75751283416f7b15610f2d207c13b604"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Kargono::EngineCore::Close</a></div><div class="ttdeci">void Close()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00087">EngineCore.cpp:87</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a956daf03e57f14c4d69e7018937b170a"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">Kargono::EngineCore::Run</a></div><div class="ttdeci">void Run()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00121">EngineCore.cpp:121</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a9b7d0d9e011ee07e4d26763840389966"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">Kargono::EngineCore::OnEvent</a></div><div class="ttdeci">void OnEvent(Events::Event &amp;e)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00062">EngineCore.cpp:62</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_ad9f6d3b9dfe388def6bfd5d45fe65fff"><div class="ttname"><a href="classKargono_1_1EngineCore.html#ad9f6d3b9dfe388def6bfd5d45fe65fff">Kargono::EngineCore::SetAppStartTime</a></div><div class="ttdeci">void SetAppStartTime()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00092">EngineCore.cpp:92</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_af885d0c08e92a1204c8b078927b2f8b3"><div class="ttname"><a href="classKargono_1_1EngineCore.html#af885d0c08e92a1204c8b078927b2f8b3">Kargono::EngineCore::OnSkipUpdate</a></div><div class="ttdeci">void OnSkipUpdate(Events::SkipUpdateEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00111">EngineCore.cpp:111</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1AddExtraUpdateEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html">Kargono::Events::AddExtraUpdateEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00294">ApplicationEvent.h:295</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1AddTickGeneratorUsage_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AddTickGeneratorUsage.html">Kargono::Events::AddTickGeneratorUsage</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00216">ApplicationEvent.h:217</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1AppTickEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AppTickEvent.html">Kargono::Events::AppTickEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00190">ApplicationEvent.h:191</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1CleanUpTimersEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1CleanUpTimersEvent.html">Kargono::Events::CleanUpTimersEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00104">ApplicationEvent.h:105</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1EventDispatcher_html"><div class="ttname"><a href="classKargono_1_1Events_1_1EventDispatcher.html">Kargono::Events::EventDispatcher</a></div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00123">Event.h:124</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1EventDispatcher_html_a6877bed5aaa0bfaf5b7d1b29fa8c3b29"><div class="ttname"><a href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Kargono::Events::EventDispatcher::Dispatch</a></div><div class="ttdeci">bool Dispatch(EventFn&lt; T &gt; func)</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00151">Event.h:151</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1Event_html"><div class="ttname"><a href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00079">Event.h:80</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1Event_html_aee60a88ef30ec1ac0988e13061be55d8"><div class="ttname"><a href="classKargono_1_1Events_1_1Event.html#aee60a88ef30ec1ac0988e13061be55d8">Kargono::Events::Event::Handled</a></div><div class="ttdeci">bool Handled</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00111">Event.h:111</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1RemoveTickGeneratorUsage_html"><div class="ttname"><a href="classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html">Kargono::Events::RemoveTickGeneratorUsage</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00242">ApplicationEvent.h:243</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1SkipUpdateEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1SkipUpdateEvent.html">Kargono::Events::SkipUpdateEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00268">ApplicationEvent.h:269</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1UpdateEntityLocation_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UpdateEntityLocation.html">Kargono::Events::UpdateEntityLocation</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00473">NetworkingEvent.h:474</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1UpdateEntityPhysics_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UpdateEntityPhysics.html">Kargono::Events::UpdateEntityPhysics</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00549">NetworkingEvent.h:550</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1WindowCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowCloseEvent.html">Kargono::Events::WindowCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00056">ApplicationEvent.h:57</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1WindowResizeEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00017">ApplicationEvent.h:18</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_a6ba4b622ebfe80a56d2c086b18925489"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Kargono::Network::Client::GetActiveClient</a></div><div class="ttdeci">static Ref&lt; Network::Client &gt; GetActiveClient()</div><div class="ttdef"><b>Definition:</b> <a href="Client_8h_source.html#l00068">Client.h:68</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Renderer_html_a1b32e43a7af9c92f00917dfd13cea85b"><div class="ttname"><a href="classKargono_1_1Renderer.html#a1b32e43a7af9c92f00917dfd13cea85b">Kargono::Renderer::OnWindowResize</a></div><div class="ttdeci">static void OnWindowResize(uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="Renderer_8cpp_source.html#l00042">Renderer.cpp:42</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Script_1_1ScriptEngine_html_a3666075421f9995306affc92adaa9333"><div class="ttname"><a href="classKargono_1_1Script_1_1ScriptEngine.html#a3666075421f9995306affc92adaa9333">Kargono::Script::ScriptEngine::GetSceneContext</a></div><div class="ttdeci">static Scene * GetSceneContext()</div><div class="ttdef"><b>Definition:</b> <a href="ScriptEngine_8cpp_source.html#l00657">ScriptEngine.cpp:657</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Script_1_1ScriptEngine_html_ae927230584c688e6f5179c63036e34e6"><div class="ttname"><a href="classKargono_1_1Script_1_1ScriptEngine.html#ae927230584c688e6f5179c63036e34e6">Kargono::Script::ScriptEngine::Shutdown</a></div><div class="ttdeci">static void Shutdown()</div><div class="ttdef"><b>Definition:</b> <a href="ScriptEngine_8cpp_source.html#l00205">ScriptEngine.cpp:205</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptCore_html_a38741d7c9c37c9af3f383af9b5303c70"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptCore.html#a38741d7c9c37c9af3f383af9b5303c70">Kargono::Scripting::ScriptCore::Terminate</a></div><div class="ttdeci">static void Terminate()</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00039">Scripting.cpp:39</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_aa0f57aa90e703e65c52f96334630079f"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">Kargono::Timers::AsyncBusyTimer::CleanUpClosedTimers</a></div><div class="ttdeci">static void CleanUpClosedTimers()</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00024">Timers.cpp:24</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00005">Timestep.h:6</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_adbcc93283d2ac987cc54bf222284656b"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#adbcc93283d2ac987cc54bf222284656b">Kargono::Utility::Time::GetTime</a></div><div class="ttdeci">static float GetTime()</div><div class="ttdef"><b>Definition:</b> <a href="WindowsPlatformUtils_8cpp_source.html#l00015">WindowsPlatformUtils.cpp:15</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a76ff6f8d0e0575bd24954a03c8c23015"><div class="ttname"><a href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Kargono::Window::Create</a></div><div class="ttdeci">static Scope&lt; Window &gt; Create(const WindowProps &amp;props=WindowProps())</div><div class="ttdef"><b>Definition:</b> <a href="Window_8cpp_source.html#l00011">Window.cpp:11</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html_a87d009e5376073cedbbc0c6a82318d5eaab68cb4351a86742f28dce3cf222e748"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eaab68cb4351a86742f28dce3cf222e748">Kargono::Assets::Scene</a></div><div class="ttdeci">@ Scene</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00031">Asset.h:31</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00015">MathAliases.h:15</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Script_html_acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f"><div class="ttname"><a href="namespaceKargono_1_1Script.html#acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f">Kargono::Script::ScriptFieldType::Entity</a></div><div class="ttdeci">@ Entity</div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a0728a8d6ae20ae50e7a716181d752634"><div class="ttname"><a href="namespaceKargono.html#a0728a8d6ae20ae50e7a716181d752634">Kargono::k_ConstantFrameTimeStep</a></div><div class="ttdeci">Timestep k_ConstantFrameTimeStep</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00025">EngineCore.cpp:25</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_aa86135ab8f49200f53e043165c5d7a09"><div class="ttname"><a href="namespaceKargono.html#aa86135ab8f49200f53e043165c5d7a09">Kargono::k_ConstantFrameTime</a></div><div class="ttdeci">std::chrono::nanoseconds k_ConstantFrameTime</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00024">EngineCore.cpp:24</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html"><div class="ttname"><a href="structKargono_1_1AppSpec.html">Kargono::AppSpec</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00038">EngineCore.h:39</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_a37946e39db432c69d913eccf8fe56e6d"><div class="ttname"><a href="structKargono_1_1AppSpec.html#a37946e39db432c69d913eccf8fe56e6d">Kargono::AppSpec::Name</a></div><div class="ttdeci">std::string Name</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00040">EngineCore.h:40</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_ac1442c7ad989c8a482c3040a7b9c7c4d"><div class="ttname"><a href="structKargono_1_1AppSpec.html#ac1442c7ad989c8a482c3040a7b9c7c4d">Kargono::AppSpec::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00043">EngineCore.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_add6c20c28374b3a6b54fa5a259ae1f7a"><div class="ttname"><a href="structKargono_1_1AppSpec.html#add6c20c28374b3a6b54fa5a259ae1f7a">Kargono::AppSpec::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00043">EngineCore.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html"><div class="ttname"><a href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00012">Window.h:13</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>EngineCore.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

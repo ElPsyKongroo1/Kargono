@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('TextEditorPanel_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,62 +84,57 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">TextEditorPanel.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="TextEditorPanel_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TextEditorPanel_8h.html">Panels/TextEditorPanel.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;Panels/TextEditorPanel.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorApp_8h.html">EditorApp.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ImGuiBackendAPI_8h.html">API/EditorUI/ImGuiBackendAPI.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;EditorApp.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;API/EditorUI/ImGuiBackendAPI.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html">    9</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1Document.html">Document</a></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">struct </span>Document</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">   11</a></span>&#160;        <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> <a class="code" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">TextBuffer</a>{};</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">   12</a></span>&#160;        std::filesystem::path <a class="code" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">FilePath</a> { <span class="stringliteral">&quot;&quot;</span> };</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">   13</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">Edited</a>{ <span class="keyword">false</span> };</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html#a150664265f5aee783251c7c094540e61">   14</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="structKargono_1_1Document.html#a150664265f5aee783251c7c094540e61">Opened</a>{ <span class="keyword">false</span> };</div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="structKargono_1_1Document.html#a76e653eecd66c3f9e8b3c369790f5eb5">   15</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="structKargono_1_1Document.html#a76e653eecd66c3f9e8b3c369790f5eb5">SetActive</a>{ <span class="keyword">false</span> };</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        Buffer TextBuffer{};</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        std::filesystem::path FilePath { <span class="stringliteral">&quot;&quot;</span> };</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordtype">bool</span> Edited{ <span class="keyword">false</span> };</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordtype">bool</span> Opened{ <span class="keyword">false</span> };</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordtype">bool</span> SetActive{ <span class="keyword">false</span> };</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    };</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">static</span> EditorApp* s_EditorApp { <span class="keyword">nullptr</span> };</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">static</span> uint32_t s_ActiveDocument = 0;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">static</span> std::vector&lt;Document&gt; s_AllDocuments {};</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">static</span> std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt; s_OnOpenFile { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">static</span> std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt; s_OnCreateFile { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">static</span> std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt; s_OnSaveFile { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">static</span> std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt; s_OnDeleteFile { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">static</span> std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt; s_OnCloseFile { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">static</span> std::function&lt;void()&gt; s_OnOpenFile { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">static</span> std::function&lt;void()&gt; s_OnCreateFile { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">static</span> std::function&lt;void()&gt; s_OnSaveFile { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">static</span> std::function&lt;void()&gt; s_OnDeleteFile { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">static</span> std::function&lt;void()&gt; s_OnCloseFile { <span class="keyword">nullptr</span> };</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">static</span> EditorUI::GenericPopupSpec s_DeleteWarningSpec {};</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">static</span> EditorUI::GenericPopupSpec s_DiscardChangesWarningSpec {};</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classKargono_1_1TextEditorPanel.html#af30a55633a9b4f4275932ca3b8083528">   31</a></span>&#160;    <a class="code" href="classKargono_1_1TextEditorPanel.html#af30a55633a9b4f4275932ca3b8083528">TextEditorPanel::TextEditorPanel</a>()</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    TextEditorPanel::TextEditorPanel()</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        s_EditorApp = <a class="code" href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">EditorApp::GetCurrentApp</a>();</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        s_EditorApp = EditorApp::GetCurrentApp();</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        s_EditorApp-&gt;m_PanelToKeyboardInput.insert_or_assign(m_PanelName,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(<a class="code" href="classKargono_1_1TextEditorPanel.html#a18695cd202595fe5a1b4f7afe7ce754d">TextEditorPanel::OnKeyPressedEditor</a>));</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        s_OnCreateFile = [&amp;]()</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keyword">const</span> std::filesystem::path initialDirectory = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keyword">const</span> std::filesystem::path filepath = <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#ae81d59da619fd225c2bdf6fa4902212f">Utility::FileDialogs::SaveFile</a>(<span class="stringliteral">&quot;All Files\0*.*\0&quot;</span>, initialDirectory.string().c_str());</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keyword">const</span> std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keyword">const</span> std::filesystem::path filepath = Utility::FileDialogs::SaveFile(<span class="stringliteral">&quot;All Files\0*.*\0&quot;</span>, initialDirectory.string().c_str());</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keywordflow">if</span> (!filepath.empty())</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                <a class="code" href="structKargono_1_1Document.html">Document</a> newDocument{};</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                newDocument.<a class="code" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">TextBuffer</a>.<a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(4096);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                Document newDocument{};</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                newDocument.TextBuffer.Allocate(4096);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                newDocument.TextBuffer.SetDataToByte(0);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#ab22a8b319a79589fae9789f30a2b6963">Utility::FileSystem::WriteFileString</a>(filepath, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                Utility::FileSystem::WriteFileString(filepath, <span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                newDocument.FilePath = filepath;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                newDocument.Edited = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                newDocument.Opened = <span class="keyword">true</span>;</div>
@@ -127,25 +145,25 @@ $(function() {
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        };</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        s_OnOpenFile = [&amp;]()</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keyword">const</span> std::filesystem::path initialDirectory = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Projects::Project::GetAssetDirectory</a>();</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keyword">const</span> std::filesystem::path filepath = <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#a81ed95dbf2c7fac5b5836316162c02be">Utility::FileDialogs::OpenFile</a>(<span class="stringliteral">&quot;All Files\0*.*\0&quot;</span>, initialDirectory.string().c_str());</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <a class="code" href="classKargono_1_1TextEditorPanel.html#a78d1bf02a41e3cc911f5f643840f52a1">OpenFile</a>(filepath);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keyword">const</span> std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keyword">const</span> std::filesystem::path filepath = Utility::FileDialogs::OpenFile(<span class="stringliteral">&quot;All Files\0*.*\0&quot;</span>, initialDirectory.string().c_str());</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            OpenFile(filepath);</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        };</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        s_OnSaveFile = [&amp;]()</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            Document&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#ab22a8b319a79589fae9789f30a2b6963">Utility::FileSystem::WriteFileString</a>(activeDocument.<a class="code" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">FilePath</a>, activeDocument.<a class="code" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">TextBuffer</a>.<a class="code" href="structKargono_1_1Buffer.html#af76653bda59dfc93bb29e83bcac6c456">GetString</a>());</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer.GetString());</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="comment">//Utility::FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            activeDocument.<a class="code" href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">Edited</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Saving file in Text Editor: {}&quot;</span>, activeDocument.<a class="code" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">FilePath</a>.filename());</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            activeDocument.Edited = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            KG_INFO(<span class="stringliteral">&quot;Saving file in Text Editor: {}&quot;</span>, activeDocument.FilePath.filename());</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        };</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        s_OnDeleteFile = [&amp;]()</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Utility_1_1FileSystem.html#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">Utility::FileSystem::DeleteSelectedFile</a>(activeDocument.<a class="code" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">FilePath</a>))</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            Document&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">if</span> (Utility::FileSystem::DeleteSelectedFile(activeDocument.FilePath))</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                activeDocument.<a class="code" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">TextBuffer</a>.<a class="code" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Release</a>();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                activeDocument.TextBuffer.Release();</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                s_AllDocuments.erase(s_AllDocuments.begin() + s_ActiveDocument);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                s_ActiveDocument = 0;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                <span class="keywordflow">if</span> (s_AllDocuments.size() &gt; 0)</div>
@@ -156,8 +174,8 @@ $(function() {
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        };</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        s_OnCloseFile = [&amp;]()</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            activeDocument.<a class="code" href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">TextBuffer</a>.<a class="code" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Release</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            Document&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            activeDocument.TextBuffer.Release();</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            s_AllDocuments.erase(s_AllDocuments.begin() + s_ActiveDocument);</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            s_ActiveDocument = 0;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">if</span> (s_AllDocuments.size() &gt; 0)</div>
@@ -166,35 +184,35 @@ $(function() {
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        };</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        s_DeleteWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a3e098cec011fdfde80841f489408b934">Label</a> = <span class="stringliteral">&quot;Delete File&quot;</span>;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        s_DeleteWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a40189f2bd47fd44d6bd35541e9e95e55">ConfirmAction</a> = s_OnDeleteFile;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        s_DeleteWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a835f112035a9025c80a44bc9b30b6791">PopupContents</a> = [&amp;]()</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        s_DeleteWarningSpec.Label = <span class="stringliteral">&quot;Delete File&quot;</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        s_DeleteWarningSpec.PopupContents = [&amp;]()</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        {</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            ImGui::Text(<span class="stringliteral">&quot;Are you sure you want to delete this file?&quot;</span>);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        };</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        s_DiscardChangesWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a3e098cec011fdfde80841f489408b934">Label</a> = <span class="stringliteral">&quot;Close File&quot;</span>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        s_DiscardChangesWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a40189f2bd47fd44d6bd35541e9e95e55">ConfirmAction</a> = s_OnCloseFile;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        s_DiscardChangesWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a835f112035a9025c80a44bc9b30b6791">PopupContents</a> = [&amp;]()</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        s_DiscardChangesWarningSpec.Label = <span class="stringliteral">&quot;Close File&quot;</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        s_DiscardChangesWarningSpec.ConfirmAction = s_OnCloseFile;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        s_DiscardChangesWarningSpec.PopupContents = [&amp;]()</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        {</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            ImGui::Text(<span class="stringliteral">&quot;Are you sure you want to close this file without saving?&quot;</span>);</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        };</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classKargono_1_1TextEditorPanel.html#a2f41b5699f7917e3d35083088195985c">  112</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1TextEditorPanel.html#a2f41b5699f7917e3d35083088195985c">TextEditorPanel::OnEditorUIRender</a>()</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">void</span> TextEditorPanel::OnEditorUIRender()</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <a class="code" href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a>();</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        KG_PROFILE_FUNCTION();</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        ImGuiWindowFlags flags = 0;</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">if</span> (s_AllDocuments.size() != 0)</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        {</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            flags |= ImGuiWindowFlags_MenuBar;</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a9add8c31d41ff84388c2080c77ed5d48">EditorUI::Editor::StartWindow</a>(m_PanelName, &amp;s_EditorApp-&gt;m_ShowTextEditor, flags);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        EditorUI::Editor::StartWindow(m_PanelName, &amp;s_EditorApp-&gt;m_ShowTextEditor, flags);</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordflow">if</span> (s_AllDocuments.size() == 0)</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a9e41907edccb9394e918049126b8dc60">EditorUI::Editor::NewItemScreen</a>(<span class="stringliteral">&quot;Open Existing File&quot;</span>, s_OnOpenFile, <span class="stringliteral">&quot;Create New File&quot;</span>, s_OnCreateFile);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            EditorUI::Editor::NewItemScreen(<span class="stringliteral">&quot;Open Existing File&quot;</span>, s_OnOpenFile, <span class="stringliteral">&quot;Create New File&quot;</span>, s_OnCreateFile);</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        {</div>
@@ -219,14 +237,14 @@ $(function() {
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                    }</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Delete File&quot;</span>))</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                    {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                        s_DeleteWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a5153cf1e8c332dfef2bb9b477a809b76">PopupActive</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                        s_DeleteWarningSpec.PopupActive = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                    }</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                    ImGui::EndMenu();</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                ImGui::EndMenuBar();</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            }</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a4e5dd53b2326ec790d2491b4783ab8e9">EditorUI::Editor::GenericPopup</a>(s_DeleteWarningSpec);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a4e5dd53b2326ec790d2491b4783ab8e9">EditorUI::Editor::GenericPopup</a>(s_DiscardChangesWarningSpec);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            EditorUI::Editor::GenericPopup(s_DeleteWarningSpec);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            EditorUI::Editor::GenericPopup(s_DiscardChangesWarningSpec);</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            ImGui::BeginTabBar(<span class="stringliteral">&quot;##TextTabBar&quot;</span>, ImGuiTabBarFlags_AutoSelectNewTabs);</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            uint32_t iteration{ 0 };</div>
@@ -235,7 +253,7 @@ $(function() {
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                <span class="keywordtype">bool</span> setColorBlue = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                <span class="keywordflow">if</span> (document.Edited)</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    ImGui::PushStyleColor(ImGuiCol_Text, <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a90fd003a9418d1d99c1cddbd805334d2">EditorUI::Editor::s_PearlBlue</a>);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PearlBlue);</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                    setColorBlue = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                }</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
@@ -250,7 +268,7 @@ $(function() {
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                    &amp;document.Opened, tabItemFlags))</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                {</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                    s_ActiveDocument = iteration;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                    ImGui::PushStyleColor(ImGuiCol_Text, <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a00d9030774568ca73d78360f2a32f91f">EditorUI::Editor::s_PureWhite</a>);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                    ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PureWhite);</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.0f);</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                    <span class="keyword">static</span> ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)</div>
@@ -261,9 +279,9 @@ $(function() {
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                            {</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                                <span class="keywordflow">if</span> ((<span class="keywordtype">float</span>)data-&gt;BufTextLen / (float)data-&gt;BufSize &gt; 0.75f)</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                                {</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                                    <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = *(<a class="code" href="structKargono_1_1Document.html">Document</a>*)data-&gt;UserData;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                                    <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> newBuffer{};</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                                    newBuffer.<a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(activeDocument.TextBuffer.Size * 2);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                                    Document&amp; activeDocument = *(Document*)data-&gt;UserData;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                                    Buffer newBuffer{};</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                                    newBuffer.Allocate(activeDocument.TextBuffer.Size * 2);</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                                    newBuffer.SetDataToByte(0);</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                                    memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                                    activeDocument.TextBuffer.Release();</div>
@@ -273,9 +291,9 @@ $(function() {
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                            }</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                            <span class="keywordflow">case</span> ImGuiInputTextFlags_CallbackAlways:</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                            {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                                <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = *(<a class="code" href="structKargono_1_1Document.html">Document</a>*)data-&gt;UserData;</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                                if (activeDocument.<a class="code" href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">Edited</a> &amp;&amp; <a class="code" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">InputPolling::IsKeyPressed</a>(<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a6c8e9466e9eefd3056e031de1f7f302f">Key::S</a>) &amp;&amp;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                                    (<a class="code" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">InputPolling::IsKeyPressed</a>(<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a79c835fce1f55ab1772fd35b3944329a">Key::LeftControl</a>) || <a class="code" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">InputPolling::IsKeyPressed</a>(<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6ad497154d4be4fbe324d1c98c6dc7c454">Key::RightControl</a>)))</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                                Document&amp; activeDocument = *(Document*)data-&gt;UserData;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                                if (activeDocument.Edited &amp;&amp; InputPolling::IsKeyPressed(Key::S) &amp;&amp;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                                    (InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl)))</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                                {</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                                    s_OnSaveFile();</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                                }</div>
@@ -309,15 +327,15 @@ $(function() {
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">if</span> (s_AllDocuments.size() != 0)</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            {</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                <a class="code" href="structKargono_1_1Document.html">Document</a>&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                Document&amp; activeDocument = s_AllDocuments.at(s_ActiveDocument);</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                <span class="keywordflow">if</span> (!activeDocument.<a class="code" href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">FilePath</a>.empty() &amp;&amp; !activeDocument.<a class="code" href="structKargono_1_1Document.html#a150664265f5aee783251c7c094540e61">Opened</a>)</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                <span class="keywordflow">if</span> (!activeDocument.FilePath.empty() &amp;&amp; !activeDocument.Opened)</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                {</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                    <span class="keywordflow">if</span> (activeDocument.<a class="code" href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">Edited</a>)</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                    <span class="keywordflow">if</span> (activeDocument.Edited)</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                    {</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                        activeDocument.<a class="code" href="structKargono_1_1Document.html#a150664265f5aee783251c7c094540e61">Opened</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                        s_DiscardChangesWarningSpec.<a class="code" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a5153cf1e8c332dfef2bb9b477a809b76">PopupActive</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                        activeDocument.Opened = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                        s_DiscardChangesWarningSpec.PopupActive = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                    }</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                    <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                    {</div>
@@ -328,15 +346,15 @@ $(function() {
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            </div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        }</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <a class="code" href="classKargono_1_1EditorUI_1_1Editor.html#a86852e6cd14d4a40e063d0dde1066779">EditorUI::Editor::EndWindow</a>();</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        EditorUI::Editor::EndWindow();</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    }</div>
-<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="classKargono_1_1TextEditorPanel.html#a18695cd202595fe5a1b4f7afe7ce754d">  260</a></span>&#160;    <span class="keywordtype">bool</span> TextEditorPanel::OnKeyPressedEditor(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">bool</span> TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keywordtype">bool</span> control = InputPolling::IsKeyPressed(<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a79c835fce1f55ab1772fd35b3944329a">Key::LeftControl</a>) || InputPolling::IsKeyPressed(<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6ad497154d4be4fbe324d1c98c6dc7c454">Key::RightControl</a>);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keywordtype">bool</span> control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">switch</span> (event.<a class="code" href="classKargono_1_1Events_1_1KeyEvent.html#affd08b5c5767f915ecd18a8675a0b2cd">GetKeyCode</a>())</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">switch</span> (event.GetKeyCode())</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a6c8e9466e9eefd3056e031de1f7f302f">Key::S</a>:</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">case</span> Key::S:</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            {</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                <span class="keywordflow">if</span> (control)</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                {</div>
@@ -351,7 +369,7 @@ $(function() {
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            }</div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        }</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    }</div>
-<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="classKargono_1_1TextEditorPanel.html#a78d1bf02a41e3cc911f5f643840f52a1">  281</a></span>&#160;    <span class="keywordtype">void</span> TextEditorPanel::OpenFile(<span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordtype">void</span> TextEditorPanel::OpenFile(<span class="keyword">const</span> std::filesystem::path&amp; filepath)</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    {</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordflow">if</span> (!filepath.empty())</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        {</div>
@@ -369,13 +387,13 @@ $(function() {
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            {</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                <span class="keywordflow">if</span> (std::filesystem::equivalent(document.FilePath, filepath))</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                {</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                    <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Attempt to open document that is already open&quot;</span>);</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                    KG_WARN(<span class="stringliteral">&quot;Attempt to open document that is already open&quot;</span>);</div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                    document.SetActive = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                }</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            }</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <a class="code" href="structKargono_1_1Document.html">Document</a> newDocument{};</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            Document newDocument{};</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;            std::string fileString = Utility::FileSystem::ReadFileString(filepath);</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            newDocument.TextBuffer.Allocate(<span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(fileString.size() * 1.5f));</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            newDocument.TextBuffer.SetDataToByte(0);</div>
@@ -389,56 +407,14 @@ $(function() {
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        }</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    }</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;}</div>
-<div class="ttc" id="aBase_8h_html_a19940f31bcb952846e1bee19e8b79e28"><div class="ttname"><a href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a></div><div class="ttdeci">#define KG_BIND_CLASS_FN(fn)</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00026">Base.h:26</a></div></div>
-<div class="ttc" id="aEditorApp_8h_html"><div class="ttname"><a href="EditorApp_8h.html">EditorApp.h</a></div></div>
-<div class="ttc" id="aImGuiBackendAPI_8h_html"><div class="ttname"><a href="ImGuiBackendAPI_8h.html">ImGuiBackendAPI.h</a></div></div>
-<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00033">Log.h:33</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
-<div class="ttc" id="aProfiler_8h_html_a26107eeb05909516ba146aa619a01763"><div class="ttname"><a href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a></div><div class="ttdeci">#define KG_PROFILE_FUNCTION(...)</div><div class="ttdef"><b>Definition:</b> <a href="Profiler_8h_source.html#l00018">Profiler.h:18</a></div></div>
-<div class="ttc" id="aTextEditorPanel_8h_html"><div class="ttname"><a href="TextEditorPanel_8h.html">TextEditorPanel.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_af96e06aedeb0aa374b03bb2b93070709"><div class="ttname"><a href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">Kargono::EditorApp::GetCurrentApp</a></div><div class="ttdeci">static EditorApp * GetCurrentApp()</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00124">EditorApp.h:124</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a00d9030774568ca73d78360f2a32f91f"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a00d9030774568ca73d78360f2a32f91f">Kargono::EditorUI::Editor::s_PureWhite</a></div><div class="ttdeci">static ImVec4 s_PureWhite</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00148">Editor.h:148</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a4e5dd53b2326ec790d2491b4783ab8e9"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a4e5dd53b2326ec790d2491b4783ab8e9">Kargono::EditorUI::Editor::GenericPopup</a></div><div class="ttdeci">static void GenericPopup(GenericPopupSpec &amp;spec)</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8cpp_source.html#l00609">Editor.cpp:609</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a86852e6cd14d4a40e063d0dde1066779"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a86852e6cd14d4a40e063d0dde1066779">Kargono::EditorUI::Editor::EndWindow</a></div><div class="ttdeci">static void EndWindow()</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8cpp_source.html#l00371">Editor.cpp:371</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a90fd003a9418d1d99c1cddbd805334d2"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a90fd003a9418d1d99c1cddbd805334d2">Kargono::EditorUI::Editor::s_PearlBlue</a></div><div class="ttdeci">static ImVec4 s_PearlBlue</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00151">Editor.h:151</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a9add8c31d41ff84388c2080c77ed5d48"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a9add8c31d41ff84388c2080c77ed5d48">Kargono::EditorUI::Editor::StartWindow</a></div><div class="ttdeci">static void StartWindow(const std::string &amp;label, bool *closeWindow=nullptr, int32_t flags=0)</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8cpp_source.html#l00366">Editor.cpp:366</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorUI_1_1Editor_html_a9e41907edccb9394e918049126b8dc60"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1Editor.html#a9e41907edccb9394e918049126b8dc60">Kargono::EditorUI::Editor::NewItemScreen</a></div><div class="ttdeci">static void NewItemScreen(const std::string &amp;label1, std::function&lt; void()&gt; func1, const std::string &amp;label2, std::function&lt; void()&gt; func2)</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8cpp_source.html#l00674">Editor.cpp:674</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1KeyEvent_html_affd08b5c5767f915ecd18a8675a0b2cd"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyEvent.html#affd08b5c5767f915ecd18a8675a0b2cd">Kargono::Events::KeyEvent::GetKeyCode</a></div><div class="ttdeci">KeyCode GetKeyCode() const</div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00028">KeyEvent.h:28</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html_a4f721fb09b78fb86bda7cf12f1dc3d15"><div class="ttname"><a href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">Kargono::InputPolling::IsKeyPressed</a></div><div class="ttdeci">static bool IsKeyPressed(KeyCode key)</div><div class="ttdef"><b>Definition:</b> <a href="WindowsInput_8cpp_source.html#l00012">WindowsInput.cpp:12</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_ac3ba25c075233fad789296ed82e37617"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#ac3ba25c075233fad789296ed82e37617">Kargono::Projects::Project::GetAssetDirectory</a></div><div class="ttdeci">static std::filesystem::path GetAssetDirectory()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00137">Project.h:137</a></div></div>
-<div class="ttc" id="aclassKargono_1_1TextEditorPanel_html_a18695cd202595fe5a1b4f7afe7ce754d"><div class="ttname"><a href="classKargono_1_1TextEditorPanel.html#a18695cd202595fe5a1b4f7afe7ce754d">Kargono::TextEditorPanel::OnKeyPressedEditor</a></div><div class="ttdeci">bool OnKeyPressedEditor(Events::KeyPressedEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00260">TextEditorPanel.cpp:260</a></div></div>
-<div class="ttc" id="aclassKargono_1_1TextEditorPanel_html_a2f41b5699f7917e3d35083088195985c"><div class="ttname"><a href="classKargono_1_1TextEditorPanel.html#a2f41b5699f7917e3d35083088195985c">Kargono::TextEditorPanel::OnEditorUIRender</a></div><div class="ttdeci">void OnEditorUIRender()</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00112">TextEditorPanel.cpp:112</a></div></div>
-<div class="ttc" id="aclassKargono_1_1TextEditorPanel_html_a78d1bf02a41e3cc911f5f643840f52a1"><div class="ttname"><a href="classKargono_1_1TextEditorPanel.html#a78d1bf02a41e3cc911f5f643840f52a1">Kargono::TextEditorPanel::OpenFile</a></div><div class="ttdeci">void OpenFile(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00281">TextEditorPanel.cpp:281</a></div></div>
-<div class="ttc" id="aclassKargono_1_1TextEditorPanel_html_af30a55633a9b4f4275932ca3b8083528"><div class="ttname"><a href="classKargono_1_1TextEditorPanel.html#af30a55633a9b4f4275932ca3b8083528">Kargono::TextEditorPanel::TextEditorPanel</a></div><div class="ttdeci">TextEditorPanel()</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00031">TextEditorPanel.cpp:31</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a81ed95dbf2c7fac5b5836316162c02be"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a81ed95dbf2c7fac5b5836316162c02be">Kargono::Utility::FileDialogs::OpenFile</a></div><div class="ttdeci">static std::filesystem::path OpenFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div><div class="ttdef"><b>Definition:</b> <a href="WindowsPlatformUtils_8cpp_source.html#l00157">WindowsPlatformUtils.cpp:157</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_ae81d59da619fd225c2bdf6fa4902212f"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#ae81d59da619fd225c2bdf6fa4902212f">Kargono::Utility::FileDialogs::SaveFile</a></div><div class="ttdeci">static std::filesystem::path SaveFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div><div class="ttdef"><b>Definition:</b> <a href="WindowsPlatformUtils_8cpp_source.html#l00195">WindowsPlatformUtils.cpp:195</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_a5cd9431a2c5cacd19e6a6bc6cccc8e6c"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#a5cd9431a2c5cacd19e6a6bc6cccc8e6c">Kargono::Utility::FileSystem::DeleteSelectedFile</a></div><div class="ttdeci">static bool DeleteSelectedFile(const std::filesystem::path &amp;filepath)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00044">FileSystem.cpp:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1FileSystem_html_ab22a8b319a79589fae9789f30a2b6963"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileSystem.html#ab22a8b319a79589fae9789f30a2b6963">Kargono::Utility::FileSystem::WriteFileString</a></div><div class="ttdeci">static bool WriteFileString(const std::filesystem::path &amp;filepath, const std::string &amp;string)</div><div class="ttdef"><b>Definition:</b> <a href="FileSystem_8cpp_source.html#l00098">FileSystem.cpp:98</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6a6c8e9466e9eefd3056e031de1f7f302f"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a6c8e9466e9eefd3056e031de1f7f302f">Kargono::Key::S</a></div><div class="ttdeci">@ S</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00049">KeyCodes.h:49</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6a79c835fce1f55ab1772fd35b3944329a"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a79c835fce1f55ab1772fd35b3944329a">Kargono::Key::LeftControl</a></div><div class="ttdeci">@ LeftControl</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00125">KeyCodes.h:125</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6ad497154d4be4fbe324d1c98c6dc7c454"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6ad497154d4be4fbe324d1c98c6dc7c454">Kargono::Key::RightControl</a></div><div class="ttdeci">@ RightControl</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00129">KeyCodes.h:129</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a534547dd4cb4fbdca9642fc759c1a6fd"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">Kargono::Scripting::void</a></div><div class="ttdeci">void</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00302">Scripting.cpp:302</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html"><div class="ttname"><a href="structKargono_1_1Buffer.html">Kargono::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00009">Buffer.h:10</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a403949c7cdb8c0b9d3232edfede45537"><div class="ttname"><a href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Kargono::Buffer::Allocate</a></div><div class="ttdeci">void Allocate(uint64_t size)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00036">Buffer.h:36</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_af0f8569aea2e8b8f0b692e20d6011635"><div class="ttname"><a href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Kargono::Buffer::Release</a></div><div class="ttdeci">void Release()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00043">Buffer.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_af76653bda59dfc93bb29e83bcac6c456"><div class="ttname"><a href="structKargono_1_1Buffer.html#af76653bda59dfc93bb29e83bcac6c456">Kargono::Buffer::GetString</a></div><div class="ttdeci">std::string GetString()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00082">Buffer.h:82</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html"><div class="ttname"><a href="structKargono_1_1Document.html">Kargono::Document</a></div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00009">TextEditorPanel.cpp:10</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html_a0919bffcb369532a725ce1babaf38ab3"><div class="ttname"><a href="structKargono_1_1Document.html#a0919bffcb369532a725ce1babaf38ab3">Kargono::Document::Edited</a></div><div class="ttdeci">bool Edited</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00013">TextEditorPanel.cpp:13</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html_a150664265f5aee783251c7c094540e61"><div class="ttname"><a href="structKargono_1_1Document.html#a150664265f5aee783251c7c094540e61">Kargono::Document::Opened</a></div><div class="ttdeci">bool Opened</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00014">TextEditorPanel.cpp:14</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html_a3834c74f73fe370961810f56cc23396c"><div class="ttname"><a href="structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c">Kargono::Document::TextBuffer</a></div><div class="ttdeci">Buffer TextBuffer</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00011">TextEditorPanel.cpp:11</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html_a76e653eecd66c3f9e8b3c369790f5eb5"><div class="ttname"><a href="structKargono_1_1Document.html#a76e653eecd66c3f9e8b3c369790f5eb5">Kargono::Document::SetActive</a></div><div class="ttdeci">bool SetActive</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00015">TextEditorPanel.cpp:15</a></div></div>
-<div class="ttc" id="astructKargono_1_1Document_html_af3b58f62d7a5000b91e7c0d543be95bd"><div class="ttname"><a href="structKargono_1_1Document.html#af3b58f62d7a5000b91e7c0d543be95bd">Kargono::Document::FilePath</a></div><div class="ttdeci">std::filesystem::path FilePath</div><div class="ttdef"><b>Definition:</b> <a href="TextEditorPanel_8cpp_source.html#l00012">TextEditorPanel.cpp:12</a></div></div>
-<div class="ttc" id="astructKargono_1_1EditorUI_1_1GenericPopupSpec_html_a3e098cec011fdfde80841f489408b934"><div class="ttname"><a href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a3e098cec011fdfde80841f489408b934">Kargono::EditorUI::GenericPopupSpec::Label</a></div><div class="ttdeci">std::string Label</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00179">Editor.h:179</a></div></div>
-<div class="ttc" id="astructKargono_1_1EditorUI_1_1GenericPopupSpec_html_a40189f2bd47fd44d6bd35541e9e95e55"><div class="ttname"><a href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a40189f2bd47fd44d6bd35541e9e95e55">Kargono::EditorUI::GenericPopupSpec::ConfirmAction</a></div><div class="ttdeci">std::function&lt; void()&gt; ConfirmAction</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00182">Editor.h:182</a></div></div>
-<div class="ttc" id="astructKargono_1_1EditorUI_1_1GenericPopupSpec_html_a5153cf1e8c332dfef2bb9b477a809b76"><div class="ttname"><a href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a5153cf1e8c332dfef2bb9b477a809b76">Kargono::EditorUI::GenericPopupSpec::PopupActive</a></div><div class="ttdeci">bool PopupActive</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00185">Editor.h:185</a></div></div>
-<div class="ttc" id="astructKargono_1_1EditorUI_1_1GenericPopupSpec_html_a835f112035a9025c80a44bc9b30b6791"><div class="ttname"><a href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a835f112035a9025c80a44bc9b30b6791">Kargono::EditorUI::GenericPopupSpec::PopupContents</a></div><div class="ttdeci">std::function&lt; void()&gt; PopupContents</div><div class="ttdef"><b>Definition:</b> <a href="Editor_8h_source.html#l00181">Editor.h:181</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><b>TextEditorPanel.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

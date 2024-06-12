@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1ServerApp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1ServerApp.html">ServerApp</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -74,227 +92,56 @@ $(function() {
 <div class="title">Kargono::ServerApp Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ServerApp_8h_source.html">ServerApp.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad97be0a0d11f959f588556ff5ede458a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ad97be0a0d11f959f588556ff5ede458a">ServerApp</a> ()</td></tr>
-<tr class="separator:ad97be0a0d11f959f588556ff5ede458a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99c189c676fc3e44ef3566d3e535bd45"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a99c189c676fc3e44ef3566d3e535bd45">~ServerApp</a> ()=default</td></tr>
-<tr class="separator:a99c189c676fc3e44ef3566d3e535bd45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a057c564ae024efa5eb8165c739445a0d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a057c564ae024efa5eb8165c739445a0d">OnAttach</a> () override</td></tr>
+<tr class="memitem:a057c564ae024efa5eb8165c739445a0d"><td class="memItemLeft" align="right" valign="top"><a id="a057c564ae024efa5eb8165c739445a0d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnAttach</b> () override</td></tr>
 <tr class="separator:a057c564ae024efa5eb8165c739445a0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2afb21fed7520cd2eafc0f68045a126"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ae2afb21fed7520cd2eafc0f68045a126">OpenProject</a> ()</td></tr>
+<tr class="memitem:ae2afb21fed7520cd2eafc0f68045a126"><td class="memItemLeft" align="right" valign="top"><a id="ae2afb21fed7520cd2eafc0f68045a126"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>OpenProject</b> ()</td></tr>
 <tr class="separator:ae2afb21fed7520cd2eafc0f68045a126"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9968ea35cfc56073a98936764f5f1dc6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a9968ea35cfc56073a98936764f5f1dc6">OpenProject</a> (const std::filesystem::path &amp;path)</td></tr>
+<tr class="memitem:a9968ea35cfc56073a98936764f5f1dc6"><td class="memItemLeft" align="right" valign="top"><a id="a9968ea35cfc56073a98936764f5f1dc6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OpenProject</b> (const std::filesystem::path &amp;path)</td></tr>
 <tr class="separator:a9968ea35cfc56073a98936764f5f1dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7342174a71f01410682c15333424788b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a7342174a71f01410682c15333424788b">OnDetach</a> () override</td></tr>
+<tr class="memitem:a7342174a71f01410682c15333424788b"><td class="memItemLeft" align="right" valign="top"><a id="a7342174a71f01410682c15333424788b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDetach</b> () override</td></tr>
 <tr class="separator:a7342174a71f01410682c15333424788b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7a4cda058892749cb4a32cf1155418f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ac7a4cda058892749cb4a32cf1155418f">OnUpdate</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts) override</td></tr>
+<tr class="memitem:ac7a4cda058892749cb4a32cf1155418f"><td class="memItemLeft" align="right" valign="top"><a id="ac7a4cda058892749cb4a32cf1155418f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdate</b> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts) override</td></tr>
 <tr class="separator:ac7a4cda058892749cb4a32cf1155418f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classKargono_1_1Application"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classKargono_1_1Application')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td></tr>
-<tr class="memitem:a3cbce74213816ddcd8ad7fd4f2bd0cca inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a3cbce74213816ddcd8ad7fd4f2bd0cca">Application</a> (const std::string &amp;name=&quot;Layer&quot;)</td></tr>
+<tr class="memitem:a3cbce74213816ddcd8ad7fd4f2bd0cca inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top"><a id="a3cbce74213816ddcd8ad7fd4f2bd0cca"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Application</b> (const std::string &amp;name=&quot;Layer&quot;)</td></tr>
 <tr class="separator:a3cbce74213816ddcd8ad7fd4f2bd0cca inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a946795bdbcf6236c525dfeced8c6d36b inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a946795bdbcf6236c525dfeced8c6d36b">~Application</a> ()=default</td></tr>
-<tr class="separator:a946795bdbcf6236c525dfeced8c6d36b inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82d02bad2358731e6d1a62f3ebe607d8 inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a82d02bad2358731e6d1a62f3ebe607d8">OnEditorUIRender</a> ()</td></tr>
+<tr class="memitem:a82d02bad2358731e6d1a62f3ebe607d8 inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top"><a id="a82d02bad2358731e6d1a62f3ebe607d8"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEditorUIRender</b> ()</td></tr>
 <tr class="separator:a82d02bad2358731e6d1a62f3ebe607d8 inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b5ab23577072c6052590c97a9d7b3fb inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a0b5ab23577072c6052590c97a9d7b3fb">OnEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;event)</td></tr>
+<tr class="memitem:a0b5ab23577072c6052590c97a9d7b3fb inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top"><a id="a0b5ab23577072c6052590c97a9d7b3fb"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEvent</b> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;event)</td></tr>
 <tr class="separator:a0b5ab23577072c6052590c97a9d7b3fb inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cf88f0cd4cb94b041fc7810fab5dcf6 inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a6cf88f0cd4cb94b041fc7810fab5dcf6">GetName</a> () const</td></tr>
+<tr class="memitem:a6cf88f0cd4cb94b041fc7810fab5dcf6 inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top"><a id="a6cf88f0cd4cb94b041fc7810fab5dcf6"></a>
+const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> () const</td></tr>
 <tr class="separator:a6cf88f0cd4cb94b041fc7810fab5dcf6 inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classKargono_1_1Application"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classKargono_1_1Application')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td></tr>
-<tr class="memitem:af68312a5906a5205c24243b07a353a17 inherit pro_attribs_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#af68312a5906a5205c24243b07a353a17">m_DebugName</a></td></tr>
+<tr class="memitem:af68312a5906a5205c24243b07a353a17 inherit pro_attribs_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top"><a id="af68312a5906a5205c24243b07a353a17"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>m_DebugName</b></td></tr>
 <tr class="separator:af68312a5906a5205c24243b07a353a17 inherit pro_attribs_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="ServerApp_8h_source.html#l00014">14</a> of file <a class="el" href="ServerApp_8h_source.html">ServerApp.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad97be0a0d11f959f588556ff5ede458a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad97be0a0d11f959f588556ff5ede458a">&#9670;&nbsp;</a></span>ServerApp()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::ServerApp::ServerApp </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00015">15</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a99c189c676fc3e44ef3566d3e535bd45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99c189c676fc3e44ef3566d3e535bd45">&#9670;&nbsp;</a></span>~ServerApp()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Kargono::ServerApp::~ServerApp </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a057c564ae024efa5eb8165c739445a0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a057c564ae024efa5eb8165c739445a0d">&#9670;&nbsp;</a></span>OnAttach()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::ServerApp::OnAttach </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a142393f2f347a83830409381464a8240">Kargono::Application</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00020">20</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7342174a71f01410682c15333424788b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7342174a71f01410682c15333424788b">&#9670;&nbsp;</a></span>OnDetach()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::ServerApp::OnDetach </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a607e28e87c49456c819e3e3fe8384886">Kargono::Application</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00054">54</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac7a4cda058892749cb4a32cf1155418f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7a4cda058892749cb4a32cf1155418f">&#9670;&nbsp;</a></span>OnUpdate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::ServerApp::OnUpdate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Timestep.html">Timestep</a>&#160;</td>
-          <td class="paramname"><em>ts</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#ac17daf7d35686bc8461f823c421aa636">Kargono::Application</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00058">58</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae2afb21fed7520cd2eafc0f68045a126"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2afb21fed7520cd2eafc0f68045a126">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ServerApp::OpenProject </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00034">34</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9968ea35cfc56073a98936764f5f1dc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9968ea35cfc56073a98936764f5f1dc6">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::ServerApp::OpenProject </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>path</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00048">48</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Server/Source/<a class="el" href="ServerApp_8h_source.html">ServerApp.h</a></li>
-<li>Server/Source/<a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1ServerApp.html">ServerApp</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

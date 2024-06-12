@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('EngineCore_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,27 +84,22 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">EngineCore.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="EngineCore_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Application_8h.html">Kargono/Core/Application.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Window_8h.html">Kargono/Core/Window.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Event_8h.html">Kargono/Events/Event.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ApplicationEvent_8h.html">Kargono/Events/ApplicationEvent.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="InputBuffer_8h.html">Kargono/Renderer/InputBuffer.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Physics2D_8h.html">Kargono/Physics/Physics2D.h</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="AudioEngine_8h.html">Kargono/Audio/AudioEngine.h</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="NetworkingEvent_8h.html">Kargono/Events/NetworkingEvent.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Base.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Application.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Window.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/Event.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/ApplicationEvent.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/InputBuffer.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Kargono/Physics/Physics2D.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;Kargono/Audio/AudioEngine.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/NetworkingEvent.h&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
@@ -91,67 +109,67 @@ $(function() {
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">   21</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structKargono_1_1CommandLineArgs.html">   26</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1CommandLineArgs.html">CommandLineArgs</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structKargono_1_1CommandLineArgs.html#a6c4d5e6da07e45a269d8c3eaa89f2050">   28</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="structKargono_1_1CommandLineArgs.html#a6c4d5e6da07e45a269d8c3eaa89f2050">Count</a> = 0;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structKargono_1_1CommandLineArgs.html#a591ba94a9d097e4f1a02267c6927114b">   29</a></span>&#160;        <span class="keywordtype">char</span>** <a class="code" href="structKargono_1_1CommandLineArgs.html#a591ba94a9d097e4f1a02267c6927114b">Args</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">int</span> Count = 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">char</span>** Args = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structKargono_1_1CommandLineArgs.html#ac65c7aa9c78171dfc19bd1a53ef2a8d9">   31</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="structKargono_1_1CommandLineArgs.html#ac65c7aa9c78171dfc19bd1a53ef2a8d9">operator[]</a>(<span class="keywordtype">int</span> index)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span>* operator[](<span class="keywordtype">int</span> index)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(index &lt; <a class="code" href="structKargono_1_1CommandLineArgs.html#a6c4d5e6da07e45a269d8c3eaa89f2050">Count</a>, <span class="stringliteral">&quot;Invalid attempt to access command line arguments&quot;</span>);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="structKargono_1_1CommandLineArgs.html#a591ba94a9d097e4f1a02267c6927114b">Args</a>[index];</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            KG_ASSERT(index &lt; Count, <span class="stringliteral">&quot;Invalid attempt to access command line arguments&quot;</span>);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            <span class="keywordflow">return</span> Args[index];</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    };</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="structKargono_1_1AppSpec.html">   38</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    {</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structKargono_1_1AppSpec.html#a37946e39db432c69d913eccf8fe56e6d">   40</a></span>&#160;        std::string <a class="code" href="structKargono_1_1AppSpec.html#a37946e39db432c69d913eccf8fe56e6d">Name</a> = <span class="stringliteral">&quot;Kargono Application&quot;</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structKargono_1_1AppSpec.html#a4b3861154854d8bf4e0dc0214b6a5701">   41</a></span>&#160;        std::filesystem::path <a class="code" href="structKargono_1_1AppSpec.html#a4b3861154854d8bf4e0dc0214b6a5701">WorkingDirectory</a>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structKargono_1_1AppSpec.html#a6ce9c0a5761367c077a1bd2969233067">   42</a></span>&#160;        <a class="code" href="structKargono_1_1CommandLineArgs.html">CommandLineArgs</a> <a class="code" href="structKargono_1_1AppSpec.html#a6ce9c0a5761367c077a1bd2969233067">CommandLineArgs</a>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structKargono_1_1AppSpec.html#add6c20c28374b3a6b54fa5a259ae1f7a">   43</a></span>&#160;        uint32_t <a class="code" href="structKargono_1_1AppSpec.html#ac1442c7ad989c8a482c3040a7b9c7c4d">Width</a>, <a class="code" href="structKargono_1_1AppSpec.html#add6c20c28374b3a6b54fa5a259ae1f7a">Height</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        std::string Name = <span class="stringliteral">&quot;Kargono Application&quot;</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        std::filesystem::path WorkingDirectory;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="structKargono_1_1CommandLineArgs.html">CommandLineArgs</a> <a class="code" href="structKargono_1_1CommandLineArgs.html">CommandLineArgs</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        uint32_t Width, Height;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    };</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
 <div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html">   46</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    {</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">EngineCore</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a>&amp; specification, <a class="code" href="classKargono_1_1Application.html">Application</a>* app);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html#a24557060ffb7df1588259891069bbee6">~EngineCore</a>();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; e);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a>&amp; specification, <a class="code" href="classKargono_1_1Application.html">Application</a>* app);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        ~<a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">void</span> OnEvent(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; e);</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">   53</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>&amp; <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">GetCurrentEngineCore</a>() { <span class="keywordflow">return</span> *s_CurrentEngineCore; }</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">   54</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1Window.html">Window</a>&amp; <a class="code" href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">GetActiveWindow</a>() { <span class="keywordflow">return</span> *(s_CurrentEngineCore-&gt;m_Window); }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>&amp; GetCurrentEngineCore() { <span class="keywordflow">return</span> *s_CurrentEngineCore; }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1Window.html">Window</a>&amp; GetActiveWindow() { <span class="keywordflow">return</span> *(s_CurrentEngineCore-&gt;m_Window); }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a1eaed81cce8811a05937b690624e1e93">   56</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a1eaed81cce8811a05937b690624e1e93">RegisterCollisionEventListener</a> (<a class="code" href="classKargono_1_1Physics_1_1ContactListener.html">Physics::ContactListener</a>&amp; contactListener)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordtype">void</span> RegisterCollisionEventListener (<a class="code" href="classKargono_1_1Physics_1_1ContactListener.html">Physics::ContactListener</a>&amp; contactListener)</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            contactListener.<a class="code" href="classKargono_1_1Physics_1_1ContactListener.html#a78527d0eeb9bb16851e649e7b7ba46c2">SetEventCallback</a>(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(<a class="code" href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">EngineCore::OnEvent</a>));</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            contactListener.SetEventCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        }</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a7b671bd9650322fd00415b11cc4d1662">   61</a></span>&#160;        <span class="keyword">const</span> <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a>&amp; <a class="code" href="classKargono_1_1EngineCore.html#a7b671bd9650322fd00415b11cc4d1662">GetSpecification</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_Specification; }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">const</span> <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a>&amp; GetSpecification()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_Specification; }</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">   63</a></span>&#160;        <a class="code" href="classKargono_1_1Window.html">Window</a>&amp; <a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>() { <span class="keywordflow">return</span> *m_Window; }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classKargono_1_1Window.html">Window</a>&amp; GetWindow() { <span class="keywordflow">return</span> *m_Window; }</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a44b85daf01bccfdeaac06b120e480f39">   65</a></span>&#160;        <span class="keyword">const</span> std::filesystem::path&amp; <a class="code" href="classKargono_1_1EngineCore.html#a44b85daf01bccfdeaac06b120e480f39">GetWorkingDirectory</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_Specification.<a class="code" href="structKargono_1_1AppSpec.html#a4b3861154854d8bf4e0dc0214b6a5701">WorkingDirectory</a>; }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keyword">const</span> std::filesystem::path&amp; GetWorkingDirectory()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_Specification.WorkingDirectory; }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Close</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">void</span> Close();</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#a17b9977dcae13f09963541db667f5e42">   70</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classKargono_1_1EngineCore.html#a17b9977dcae13f09963541db667f5e42">GetAppStartTime</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_AppStartTime; }</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classKargono_1_1EngineCore.html#ad6732c51726d77b43fc99e4a34aa12fc">   71</a></span>&#160;        uint64_t <a class="code" href="classKargono_1_1EngineCore.html#ad6732c51726d77b43fc99e4a34aa12fc">GetUpdateCount</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_UpdateCount; }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#ad9f6d3b9dfe388def6bfd5d45fe65fff">SetAppStartTime</a>();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordtype">double</span> GetAppStartTime()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_AppStartTime; }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        uint64_t GetUpdateCount()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_UpdateCount; }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">void</span> SetAppStartTime();</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a3fc7cd03801591c838c4169679fc6fbf">SubmitToMainThread</a>(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>()&gt;&amp; <span class="keyword">function</span>);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordtype">void</span> SubmitToMainThread(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>()&gt;&amp; <span class="keyword">function</span>);</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a1fd9618d52a09fefe64a22f64e94cd80">SubmitToEventQueue</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Events::Event&gt;</a> e);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordtype">void</span> SubmitToEventQueue(Ref&lt;Events::Event&gt; e);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#af885d0c08e92a1204c8b078927b2f8b3">OnSkipUpdate</a>(<a class="code" href="classKargono_1_1Events_1_1SkipUpdateEvent.html">Events::SkipUpdateEvent</a> event);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a5dc9b5e2a71fe122180565377996a720">OnAddExtraUpdate</a>(<a class="code" href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html">Events::AddExtraUpdateEvent</a> event);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">void</span> OnSkipUpdate(<a class="code" href="classKargono_1_1Events_1_1SkipUpdateEvent.html">Events::SkipUpdateEvent</a> event);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">void</span> OnAddExtraUpdate(<a class="code" href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html">Events::AddExtraUpdateEvent</a> event);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">Run</a>();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">void</span> Run();</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordtype">bool</span> OnWindowClose(<a class="code" href="classKargono_1_1Events_1_1WindowCloseEvent.html">Events::WindowCloseEvent</a>&amp; e);</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">bool</span> OnWindowResize(<a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Events::WindowResizeEvent</a>&amp; e);</div>
@@ -165,7 +183,7 @@ $(function() {
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">void</span> ProcessEventQueue();</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <a class="code" href="structKargono_1_1AppSpec.html">AppSpec</a> m_Specification;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;Window&gt;</a> m_Window;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        Scope&lt;Window&gt; m_Window;</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html">Audio::AudioEngine</a>* m_AudioContext = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordtype">bool</span> m_Running = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordtype">bool</span> m_Minimized = <span class="keyword">false</span>;</div>
@@ -173,56 +191,26 @@ $(function() {
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        std::chrono::nanoseconds m_Accumulator{0};</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        std::atomic&lt;uint64_t&gt; m_UpdateCount = 0;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        std::vector&lt;std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; m_MainThreadQueue;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        std::vector&lt;std::function&lt;void()&gt;&gt; m_MainThreadQueue;</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        std::mutex m_MainThreadQueueMutex;</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        std::vector&lt;Ref&lt;Events::Event&gt;&gt; m_EventQueue {};</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        std::mutex m_EventQueueMutex;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <a class="code" href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Application</a>* m_CurrentApp{ <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <a class="code" href="classKargono_1_1Application.html">Application</a>* m_CurrentApp{ <span class="keyword">nullptr</span> };</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">EngineCore</a>* s_CurrentEngineCore;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>* s_CurrentEngineCore;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keyword">friend</span> <a class="code" href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">int ::main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keyword">friend</span> int ::main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv);</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    };</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="comment">// To be defined in client</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    EngineCore* <a class="code" href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">InitEngineAndCreateApp</a>(CommandLineArgs args);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <a class="code" href="classKargono_1_1EngineCore.html">EngineCore</a>* InitEngineAndCreateApp(<a class="code" href="structKargono_1_1CommandLineArgs.html">CommandLineArgs</a> args);</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="ttc" id="aApplicationEvent_8h_html"><div class="ttname"><a href="ApplicationEvent_8h.html">ApplicationEvent.h</a></div></div>
-<div class="ttc" id="aApplication_8h_html"><div class="ttname"><a href="Application_8h.html">Application.h</a></div></div>
-<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00020">Assert.h:20</a></div></div>
-<div class="ttc" id="aAudioEngine_8h_html"><div class="ttname"><a href="AudioEngine_8h.html">AudioEngine.h</a></div></div>
-<div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
-<div class="ttc" id="aBase_8h_html_a19940f31bcb952846e1bee19e8b79e28"><div class="ttname"><a href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a></div><div class="ttdeci">#define KG_BIND_CLASS_FN(fn)</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00026">Base.h:26</a></div></div>
-<div class="ttc" id="aEngineCore_8h_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div></div>
-<div class="ttc" id="aEvent_8h_html"><div class="ttname"><a href="Event_8h.html">Event.h</a></div></div>
-<div class="ttc" id="aInputBuffer_8h_html"><div class="ttname"><a href="InputBuffer_8h.html">InputBuffer.h</a></div></div>
-<div class="ttc" id="aNetworkingEvent_8h_html"><div class="ttname"><a href="NetworkingEvent_8h.html">NetworkingEvent.h</a></div></div>
-<div class="ttc" id="aPhysics2D_8h_html"><div class="ttname"><a href="Physics2D_8h.html">Physics2D.h</a></div></div>
-<div class="ttc" id="aWindow_8h_html"><div class="ttname"><a href="Window_8h.html">Window.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00008">Application.h:9</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html">Kargono::Audio::AudioEngine</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00150">AudioEngine.h:151</a></div></div>
 <div class="ttc" id="aclassKargono_1_1EngineCore_html"><div class="ttname"><a href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00046">EngineCore.h:47</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a090a5bf3d1518005a1bb70caf9668347"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">Kargono::EngineCore::GetActiveWindow</a></div><div class="ttdeci">static Window &amp; GetActiveWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00054">EngineCore.h:54</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a17b9977dcae13f09963541db667f5e42"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a17b9977dcae13f09963541db667f5e42">Kargono::EngineCore::GetAppStartTime</a></div><div class="ttdeci">double GetAppStartTime() const</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00070">EngineCore.h:70</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a1eaed81cce8811a05937b690624e1e93"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a1eaed81cce8811a05937b690624e1e93">Kargono::EngineCore::RegisterCollisionEventListener</a></div><div class="ttdeci">void RegisterCollisionEventListener(Physics::ContactListener &amp;contactListener)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00056">EngineCore.h:56</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a1fd9618d52a09fefe64a22f64e94cd80"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a1fd9618d52a09fefe64a22f64e94cd80">Kargono::EngineCore::SubmitToEventQueue</a></div><div class="ttdeci">void SubmitToEventQueue(Ref&lt; Events::Event &gt; e)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00104">EngineCore.cpp:104</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a24557060ffb7df1588259891069bbee6"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a24557060ffb7df1588259891069bbee6">Kargono::EngineCore::~EngineCore</a></div><div class="ttdeci">~EngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00044">EngineCore.cpp:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a2da04a923eed1b009ae3ffd8a542c679"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a2da04a923eed1b009ae3ffd8a542c679">Kargono::EngineCore::EngineCore</a></div><div class="ttdeci">EngineCore(const AppSpec &amp;specification, Application *app)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00029">EngineCore.cpp:29</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a3fc7cd03801591c838c4169679fc6fbf"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a3fc7cd03801591c838c4169679fc6fbf">Kargono::EngineCore::SubmitToMainThread</a></div><div class="ttdeci">void SubmitToMainThread(const std::function&lt; void()&gt; &amp;function)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00097">EngineCore.cpp:97</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a44b85daf01bccfdeaac06b120e480f39"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a44b85daf01bccfdeaac06b120e480f39">Kargono::EngineCore::GetWorkingDirectory</a></div><div class="ttdeci">const std::filesystem::path &amp; GetWorkingDirectory() const</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00065">EngineCore.h:65</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a5dc9b5e2a71fe122180565377996a720"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a5dc9b5e2a71fe122180565377996a720">Kargono::EngineCore::OnAddExtraUpdate</a></div><div class="ttdeci">void OnAddExtraUpdate(Events::AddExtraUpdateEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00116">EngineCore.cpp:116</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a69c53a708f9548488ff4386f28d6293c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">Kargono::EngineCore::GetWindow</a></div><div class="ttdeci">Window &amp; GetWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00063">EngineCore.h:63</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a75751283416f7b15610f2d207c13b604"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Kargono::EngineCore::Close</a></div><div class="ttdeci">void Close()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00087">EngineCore.cpp:87</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a7b671bd9650322fd00415b11cc4d1662"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a7b671bd9650322fd00415b11cc4d1662">Kargono::EngineCore::GetSpecification</a></div><div class="ttdeci">const AppSpec &amp; GetSpecification() const</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00061">EngineCore.h:61</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a86dc061a48c9b27250aa3a7c9a5b0c8c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">Kargono::EngineCore::GetCurrentEngineCore</a></div><div class="ttdeci">static EngineCore &amp; GetCurrentEngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00053">EngineCore.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a956daf03e57f14c4d69e7018937b170a"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">Kargono::EngineCore::Run</a></div><div class="ttdeci">void Run()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00121">EngineCore.cpp:121</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a9b7d0d9e011ee07e4d26763840389966"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a9b7d0d9e011ee07e4d26763840389966">Kargono::EngineCore::OnEvent</a></div><div class="ttdeci">void OnEvent(Events::Event &amp;e)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00062">EngineCore.cpp:62</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_ad6732c51726d77b43fc99e4a34aa12fc"><div class="ttname"><a href="classKargono_1_1EngineCore.html#ad6732c51726d77b43fc99e4a34aa12fc">Kargono::EngineCore::GetUpdateCount</a></div><div class="ttdeci">uint64_t GetUpdateCount() const</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00071">EngineCore.h:71</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_ad9f6d3b9dfe388def6bfd5d45fe65fff"><div class="ttname"><a href="classKargono_1_1EngineCore.html#ad9f6d3b9dfe388def6bfd5d45fe65fff">Kargono::EngineCore::SetAppStartTime</a></div><div class="ttdeci">void SetAppStartTime()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00092">EngineCore.cpp:92</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_af885d0c08e92a1204c8b078927b2f8b3"><div class="ttname"><a href="classKargono_1_1EngineCore.html#af885d0c08e92a1204c8b078927b2f8b3">Kargono::EngineCore::OnSkipUpdate</a></div><div class="ttdeci">void OnSkipUpdate(Events::SkipUpdateEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00111">EngineCore.cpp:111</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1AddExtraUpdateEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html">Kargono::Events::AddExtraUpdateEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00294">ApplicationEvent.h:295</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1AddTickGeneratorUsage_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AddTickGeneratorUsage.html">Kargono::Events::AddTickGeneratorUsage</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00216">ApplicationEvent.h:217</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1AppTickEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1AppTickEvent.html">Kargono::Events::AppTickEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00190">ApplicationEvent.h:191</a></div></div>
@@ -235,28 +223,17 @@ $(function() {
 <div class="ttc" id="aclassKargono_1_1Events_1_1WindowCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowCloseEvent.html">Kargono::Events::WindowCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00056">ApplicationEvent.h:57</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1WindowResizeEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00017">ApplicationEvent.h:18</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Physics_1_1ContactListener_html"><div class="ttname"><a href="classKargono_1_1Physics_1_1ContactListener.html">Kargono::Physics::ContactListener</a></div><div class="ttdef"><b>Definition:</b> <a href="Physics2D_8h_source.html#l00032">Physics2D.h:33</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Physics_1_1ContactListener_html_a78527d0eeb9bb16851e649e7b7ba46c2"><div class="ttname"><a href="classKargono_1_1Physics_1_1ContactListener.html#a78527d0eeb9bb16851e649e7b7ba46c2">Kargono::Physics::ContactListener::SetEventCallback</a></div><div class="ttdeci">void SetEventCallback(const Events::EventCallbackFn &amp;callback)</div><div class="ttdef"><b>Definition:</b> <a href="Physics2D_8h_source.html#l00045">Physics2D.h:45</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Window_html"><div class="ttname"><a href="classKargono_1_1Window.html">Kargono::Window</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00028">Window.h:29</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Events_html_ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Kargono::Events::Application</a></div><div class="ttdeci">@ Application</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00060">Event.h:60</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a534547dd4cb4fbdca9642fc759c1a6fd"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">Kargono::Scripting::void</a></div><div class="ttdeci">void</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00302">Scripting.cpp:302</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a45923d73887d88bd86f612361e918d0b"><div class="ttname"><a href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">EngineCore * InitEngineAndCreateApp(CommandLineArgs args)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeInit_8cpp_source.html#l00014">RuntimeInit.cpp:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a75cefe73507cbf8c678d5e216480039c"><div class="ttname"><a href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Kargono::Scope</a></div><div class="ttdeci">std::unique_ptr&lt; T &gt; Scope</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00032">Base.h:32</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
 <div class="ttc" id="astructKargono_1_1AppSpec_html"><div class="ttname"><a href="structKargono_1_1AppSpec.html">Kargono::AppSpec</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00038">EngineCore.h:39</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_a37946e39db432c69d913eccf8fe56e6d"><div class="ttname"><a href="structKargono_1_1AppSpec.html#a37946e39db432c69d913eccf8fe56e6d">Kargono::AppSpec::Name</a></div><div class="ttdeci">std::string Name</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00040">EngineCore.h:40</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_a4b3861154854d8bf4e0dc0214b6a5701"><div class="ttname"><a href="structKargono_1_1AppSpec.html#a4b3861154854d8bf4e0dc0214b6a5701">Kargono::AppSpec::WorkingDirectory</a></div><div class="ttdeci">std::filesystem::path WorkingDirectory</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00041">EngineCore.h:41</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_a6ce9c0a5761367c077a1bd2969233067"><div class="ttname"><a href="structKargono_1_1AppSpec.html#a6ce9c0a5761367c077a1bd2969233067">Kargono::AppSpec::CommandLineArgs</a></div><div class="ttdeci">CommandLineArgs CommandLineArgs</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00042">EngineCore.h:42</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_ac1442c7ad989c8a482c3040a7b9c7c4d"><div class="ttname"><a href="structKargono_1_1AppSpec.html#ac1442c7ad989c8a482c3040a7b9c7c4d">Kargono::AppSpec::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00043">EngineCore.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1AppSpec_html_add6c20c28374b3a6b54fa5a259ae1f7a"><div class="ttname"><a href="structKargono_1_1AppSpec.html#add6c20c28374b3a6b54fa5a259ae1f7a">Kargono::AppSpec::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00043">EngineCore.h:43</a></div></div>
 <div class="ttc" id="astructKargono_1_1CommandLineArgs_html"><div class="ttname"><a href="structKargono_1_1CommandLineArgs.html">Kargono::CommandLineArgs</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00026">EngineCore.h:27</a></div></div>
-<div class="ttc" id="astructKargono_1_1CommandLineArgs_html_a591ba94a9d097e4f1a02267c6927114b"><div class="ttname"><a href="structKargono_1_1CommandLineArgs.html#a591ba94a9d097e4f1a02267c6927114b">Kargono::CommandLineArgs::Args</a></div><div class="ttdeci">char ** Args</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00029">EngineCore.h:29</a></div></div>
-<div class="ttc" id="astructKargono_1_1CommandLineArgs_html_a6c4d5e6da07e45a269d8c3eaa89f2050"><div class="ttname"><a href="structKargono_1_1CommandLineArgs.html#a6c4d5e6da07e45a269d8c3eaa89f2050">Kargono::CommandLineArgs::Count</a></div><div class="ttdeci">int Count</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00028">EngineCore.h:28</a></div></div>
-<div class="ttc" id="astructKargono_1_1CommandLineArgs_html_ac65c7aa9c78171dfc19bd1a53ef2a8d9"><div class="ttname"><a href="structKargono_1_1CommandLineArgs.html#ac65c7aa9c78171dfc19bd1a53ef2a8d9">Kargono::CommandLineArgs::operator[]</a></div><div class="ttdeci">const char * operator[](int index) const</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00031">EngineCore.h:31</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>EngineCore.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

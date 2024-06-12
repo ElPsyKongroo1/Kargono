@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('ScriptGlue_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,19 +84,14 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_00158f4aab9c75f34e20f3f782e13051.html">Script</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ScriptGlue.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="ScriptGlue_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Script.html">Kargono::Script</a></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span>Kargono::Script</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;{</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">// Script Glue Class</span></div>
@@ -90,20 +108,21 @@ $(function() {
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//      unordered map inside C++ file ScriptGlue.cpp.</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">//      This map allows components to be queried for each</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//      entity at runtime.</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Script_1_1ScriptGlue.html#a6af79d40142c3ab9b0246a51be30286e">RegisterComponents</a>();</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> RegisterComponents();</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">// This function initializes all of the functions from C# to C++</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">//      with the Mono runtime.</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Script_1_1ScriptGlue.html#a7792fefb4a8b6418b9e497b0c8454af4">RegisterFunctions</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> RegisterFunctions();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    };</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;}</div>
 <div class="ttc" id="aclassKargono_1_1Script_1_1ScriptGlue_html"><div class="ttname"><a href="classKargono_1_1Script_1_1ScriptGlue.html">Kargono::Script::ScriptGlue</a></div><div class="ttdef"><b>Definition:</b> <a href="ScriptGlue_8h_source.html#l00013">ScriptGlue.h:14</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Script_1_1ScriptGlue_html_a6af79d40142c3ab9b0246a51be30286e"><div class="ttname"><a href="classKargono_1_1Script_1_1ScriptGlue.html#a6af79d40142c3ab9b0246a51be30286e">Kargono::Script::ScriptGlue::RegisterComponents</a></div><div class="ttdeci">static void RegisterComponents()</div><div class="ttdef"><b>Definition:</b> <a href="ScriptGlue_8cpp_source.html#l00500">ScriptGlue.cpp:500</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Script_1_1ScriptGlue_html_a7792fefb4a8b6418b9e497b0c8454af4"><div class="ttname"><a href="classKargono_1_1Script_1_1ScriptGlue.html#a7792fefb4a8b6418b9e497b0c8454af4">Kargono::Script::ScriptGlue::RegisterFunctions</a></div><div class="ttdeci">static void RegisterFunctions()</div><div class="ttdef"><b>Definition:</b> <a href="ScriptGlue_8cpp_source.html#l00506">ScriptGlue.cpp:506</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Script_html"><div class="ttname"><a href="namespaceKargono_1_1Script.html">Kargono::Script</a></div><div class="ttdef"><b>Definition:</b> <a href="ScriptEngine_8cpp_source.html#l00021">ScriptEngine.cpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_00158f4aab9c75f34e20f3f782e13051.html">Script</a></li><li class="navelem"><b>ScriptGlue.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

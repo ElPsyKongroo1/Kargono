@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1InputPolling.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1InputPolling.html">InputPolling</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::InputPolling Member List</div>  </div>
@@ -74,15 +92,18 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html#a5ef1e2922b6a01df6de793c32eea1426">GetMousePosition</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html#a0b72db83a413ecb0236fd2e1f9789e85">GetMouseX</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html#ad9ab861a7f6cfb3b8cc16e483ee6819f">GetMouseY</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html#a4f721fb09b78fb86bda7cf12f1dc3d15">IsKeyPressed</a>(KeyCode key)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html#aa0afcedd5b10c0ec78269a689a051214">IsMouseButtonPressed</a>(MouseCode button)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetMousePosition</b>() (defined in <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetMouseX</b>() (defined in <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetMouseY</b>() (defined in <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>IsKeyPressed</b>(KeyCode key) (defined in <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>IsMouseButtonPressed</b>(MouseCode button) (defined in <a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

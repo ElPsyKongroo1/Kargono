@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1EntityClass.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1EntityClass.html">EntityClass</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::EntityClass Member List</div>  </div>
@@ -74,20 +92,23 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a85f2d24ac7949bd8aa8833d7c520649d">AddField</a>(const std::string &amp;fieldName, WrappedVarType fieldType)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a93a4681dfdc6917d50d61ef8c5254626">Assets::AssetManager</a> class</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a4e769956dd1894134b2bcc6780595336">ContainsField</a>(const std::string &amp;fieldName) const</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#add620894f51269561cbb5134ac7cf64f">DeleteField</a>(const std::string &amp;fieldName)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#aa368caed3410d2dddf9c683f88508e4f">GetField</a>(const std::string &amp;fieldName) const</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a54229b8fad687736a968fce30ac15c00">GetFieldLocation</a>(const std::string &amp;fieldName) const</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a3569896808ac41d2cada00ed0feb31c8">GetFields</a>()</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#af61efbce3ef87ed23f809142e382978c">GetName</a>()</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#a942e72a9d228aecab983635b2683afc6">GetScripts</a>()</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html#aa64b697edb3e1030dc47f8ed50d27cde">SetName</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddField</b>(const std::string &amp;fieldName, WrappedVarType fieldType) (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Assets::AssetManager</b> (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ContainsField</b>(const std::string &amp;fieldName) const (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DeleteField</b>(const std::string &amp;fieldName) (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetField</b>(const std::string &amp;fieldName) const (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetFieldLocation</b>(const std::string &amp;fieldName) const (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetFields</b>() (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetName</b>() (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetScripts</b>() (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetName</b>(const std::string &amp;name) (defined in <a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EntityClass.html">Kargono::EntityClass</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

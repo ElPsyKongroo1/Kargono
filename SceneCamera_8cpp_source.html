@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('SceneCamera_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,31 +84,26 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e70a2e04f9954ad5324341a8dcda6587.html">Scene</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">SceneCamera.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="SceneCamera_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SceneCamera_8h.html">Kargono/Scene/SceneCamera.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/SceneCamera.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EngineCore.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classKargono_1_1SceneCamera.html#adc817c652599eb43297523bdf139130a">    9</a></span>&#160;    <a class="code" href="classKargono_1_1SceneCamera.html#adc817c652599eb43297523bdf139130a">SceneCamera::SceneCamera</a>()</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    SceneCamera::SceneCamera()</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        RecalculateProjection();</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    }</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classKargono_1_1SceneCamera.html#a9736ed35fef27fd7facf2b0b04bc9ccb">   13</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1SceneCamera.html#a9736ed35fef27fd7facf2b0b04bc9ccb">SceneCamera::SetOrthographic</a>(<span class="keywordtype">float</span> size, <span class="keywordtype">float</span> nearClip, <span class="keywordtype">float</span> farClip)</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">void</span> SceneCamera::SetOrthographic(<span class="keywordtype">float</span> size, <span class="keywordtype">float</span> nearClip, <span class="keywordtype">float</span> farClip)</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        m_ProjectionType = <a class="code" href="classKargono_1_1SceneCamera.html#a49a79ae9cebb2d0f1a71d7e4811a8691a03424250432f2aa71de95579d2c0eaeb">ProjectionType::Orthographic</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        m_ProjectionType = ProjectionType::Orthographic;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        m_OrthographicSize = size;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        m_OrthographicNear = nearClip;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        m_OrthographicFar = farClip;</div>
@@ -93,27 +111,27 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        RecalculateProjection();</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    }</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classKargono_1_1SceneCamera.html#adc7b251dad31e4b4199d62afa2b5de1c">   23</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1SceneCamera.html#adc7b251dad31e4b4199d62afa2b5de1c">SceneCamera::SetPerspective</a>(<span class="keywordtype">float</span> verticalFOV, <span class="keywordtype">float</span> nearClip, <span class="keywordtype">float</span> farClip)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">void</span> SceneCamera::SetPerspective(<span class="keywordtype">float</span> verticalFOV, <span class="keywordtype">float</span> nearClip, <span class="keywordtype">float</span> farClip)</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        m_ProjectionType = <a class="code" href="classKargono_1_1SceneCamera.html#a49a79ae9cebb2d0f1a71d7e4811a8691aa80420eef88d11f77532f1b9cb467fa3">ProjectionType::Perspective</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        m_ProjectionType = ProjectionType::Perspective;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        m_PerspectiveFOV = verticalFOV;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        m_PerspectiveNear = nearClip;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        m_PerspectiveFar = farClip;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        RecalculateProjection();</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    }</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classKargono_1_1SceneCamera.html#ad56e0784a66664bb3aaeae99d2415236">   32</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1SceneCamera.html#ad56e0784a66664bb3aaeae99d2415236">SceneCamera::OnViewportResize</a>()</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">void</span> SceneCamera::OnViewportResize()</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        RecalculateProjection();</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> SceneCamera::RecalculateProjection()</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">auto</span>&amp; application = <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">auto</span>&amp; application = EngineCore::GetCurrentEngineCore().GetWindow();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">float</span> aspectRatio = <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(application.GetViewportWidth()) / <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(application.GetViewportHeight());</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">if</span> (m_ProjectionType == <a class="code" href="classKargono_1_1SceneCamera.html#a49a79ae9cebb2d0f1a71d7e4811a8691aa80420eef88d11f77532f1b9cb467fa3">ProjectionType::Perspective</a>)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">if</span> (m_ProjectionType == ProjectionType::Perspective)</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <a class="code" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a> = glm::perspective(m_PerspectiveFOV, aspectRatio, m_PerspectiveNear, m_PerspectiveFar);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            m_Projection = glm::perspective(m_PerspectiveFOV, aspectRatio, m_PerspectiveNear, m_PerspectiveFar);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
@@ -124,28 +142,19 @@ $(function() {
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordtype">float</span> orthoTop = m_OrthographicSize * 0.5f;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <a class="code" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a> = glm::ortho(orthoLeft, orthoRight,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            m_Projection = glm::ortho(orthoLeft, orthoRight,</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
-<div class="ttc" id="aSceneCamera_8h_html"><div class="ttname"><a href="SceneCamera_8h.html">SceneCamera.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_acf0d94b0d6ef1bbdf783b3ee8311aac3"><div class="ttname"><a href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">Kargono::Camera::m_Projection</a></div><div class="ttdeci">Math::mat4 m_Projection</div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00020">Camera.h:20</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a69c53a708f9548488ff4386f28d6293c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">Kargono::EngineCore::GetWindow</a></div><div class="ttdeci">Window &amp; GetWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00063">EngineCore.h:63</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a86dc061a48c9b27250aa3a7c9a5b0c8c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">Kargono::EngineCore::GetCurrentEngineCore</a></div><div class="ttdeci">static EngineCore &amp; GetCurrentEngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00053">EngineCore.h:53</a></div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_a49a79ae9cebb2d0f1a71d7e4811a8691a03424250432f2aa71de95579d2c0eaeb"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#a49a79ae9cebb2d0f1a71d7e4811a8691a03424250432f2aa71de95579d2c0eaeb">Kargono::SceneCamera::ProjectionType::Orthographic</a></div><div class="ttdeci">@ Orthographic</div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_a49a79ae9cebb2d0f1a71d7e4811a8691aa80420eef88d11f77532f1b9cb467fa3"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#a49a79ae9cebb2d0f1a71d7e4811a8691aa80420eef88d11f77532f1b9cb467fa3">Kargono::SceneCamera::ProjectionType::Perspective</a></div><div class="ttdeci">@ Perspective</div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_a9736ed35fef27fd7facf2b0b04bc9ccb"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#a9736ed35fef27fd7facf2b0b04bc9ccb">Kargono::SceneCamera::SetOrthographic</a></div><div class="ttdeci">void SetOrthographic(float size, float nearClip, float farClip)</div><div class="ttdef"><b>Definition:</b> <a href="SceneCamera_8cpp_source.html#l00013">SceneCamera.cpp:13</a></div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_ad56e0784a66664bb3aaeae99d2415236"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#ad56e0784a66664bb3aaeae99d2415236">Kargono::SceneCamera::OnViewportResize</a></div><div class="ttdeci">void OnViewportResize()</div><div class="ttdef"><b>Definition:</b> <a href="SceneCamera_8cpp_source.html#l00032">SceneCamera.cpp:32</a></div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_adc7b251dad31e4b4199d62afa2b5de1c"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#adc7b251dad31e4b4199d62afa2b5de1c">Kargono::SceneCamera::SetPerspective</a></div><div class="ttdeci">void SetPerspective(float verticalFOV, float nearClip, float farClip)</div><div class="ttdef"><b>Definition:</b> <a href="SceneCamera_8cpp_source.html#l00023">SceneCamera.cpp:23</a></div></div>
-<div class="ttc" id="aclassKargono_1_1SceneCamera_html_adc817c652599eb43297523bdf139130a"><div class="ttname"><a href="classKargono_1_1SceneCamera.html#adc817c652599eb43297523bdf139130a">Kargono::SceneCamera::SceneCamera</a></div><div class="ttdeci">SceneCamera()</div><div class="ttdef"><b>Definition:</b> <a href="SceneCamera_8cpp_source.html#l00009">SceneCamera.cpp:9</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e70a2e04f9954ad5324341a8dcda6587.html">Scene</a></li><li class="navelem"><b>SceneCamera.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

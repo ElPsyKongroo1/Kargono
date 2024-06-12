@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1TransformComponent.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1TransformComponent.html">TransformComponent</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -75,254 +93,48 @@ $(function() {
 <div class="title">Kargono::TransformComponent Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Components_8h_source.html">Components.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1da4cebf55a73a676cbd702c0f632313"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a1da4cebf55a73a676cbd702c0f632313">TransformComponent</a> ()=default</td></tr>
-<tr class="separator:a1da4cebf55a73a676cbd702c0f632313"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acee823c48514e769f13eb22339e1dcbd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#acee823c48514e769f13eb22339e1dcbd">TransformComponent</a> (const <a class="el" href="structKargono_1_1TransformComponent.html">TransformComponent</a> &amp;)=default</td></tr>
+<tr class="memitem:acee823c48514e769f13eb22339e1dcbd"><td class="memItemLeft" align="right" valign="top"><a id="acee823c48514e769f13eb22339e1dcbd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TransformComponent</b> (const <a class="el" href="structKargono_1_1TransformComponent.html">TransformComponent</a> &amp;)=default</td></tr>
 <tr class="separator:acee823c48514e769f13eb22339e1dcbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a243c8e999575d75b6d6801da1b132966"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a243c8e999575d75b6d6801da1b132966">TransformComponent</a> (const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;translation)</td></tr>
+<tr class="memitem:a243c8e999575d75b6d6801da1b132966"><td class="memItemLeft" align="right" valign="top"><a id="a243c8e999575d75b6d6801da1b132966"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TransformComponent</b> (const Math::vec3 &amp;translation)</td></tr>
 <tr class="separator:a243c8e999575d75b6d6801da1b132966"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0bf3a25deeee21d59ed146dd186f567"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#aa0bf3a25deeee21d59ed146dd186f567">GetTransform</a> () const</td></tr>
+<tr class="memitem:aa0bf3a25deeee21d59ed146dd186f567"><td class="memItemLeft" align="right" valign="top"><a id="aa0bf3a25deeee21d59ed146dd186f567"></a>
+Math::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>GetTransform</b> () const</td></tr>
 <tr class="separator:aa0bf3a25deeee21d59ed146dd186f567"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a58d399ecced4e6abc734cf944f2d83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a2a58d399ecced4e6abc734cf944f2d83">GetTranslation</a> () const</td></tr>
+<tr class="memitem:a2a58d399ecced4e6abc734cf944f2d83"><td class="memItemLeft" align="right" valign="top"><a id="a2a58d399ecced4e6abc734cf944f2d83"></a>
+Math::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>GetTranslation</b> () const</td></tr>
 <tr class="separator:a2a58d399ecced4e6abc734cf944f2d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c1ae36ac18026e2c5186be09b67f4a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a4c1ae36ac18026e2c5186be09b67f4a5">GetRotation</a> () const</td></tr>
+<tr class="memitem:a4c1ae36ac18026e2c5186be09b67f4a5"><td class="memItemLeft" align="right" valign="top"><a id="a4c1ae36ac18026e2c5186be09b67f4a5"></a>
+Math::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>GetRotation</b> () const</td></tr>
 <tr class="separator:a4c1ae36ac18026e2c5186be09b67f4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab10d04e6ef7141f16d119fe84ec967ca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#ab10d04e6ef7141f16d119fe84ec967ca">Translation</a> = { 0.0f, 0.0f, 0.0f }</td></tr>
+<tr class="memitem:ab10d04e6ef7141f16d119fe84ec967ca"><td class="memItemLeft" align="right" valign="top"><a id="ab10d04e6ef7141f16d119fe84ec967ca"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>Translation</b> = { 0.0f, 0.0f, 0.0f }</td></tr>
 <tr class="separator:ab10d04e6ef7141f16d119fe84ec967ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a042a7cce2b087eb9452993a7c3ab295c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a042a7cce2b087eb9452993a7c3ab295c">Rotation</a> = { 0.0f, 0.0f, 0.0f }</td></tr>
+<tr class="memitem:a042a7cce2b087eb9452993a7c3ab295c"><td class="memItemLeft" align="right" valign="top"><a id="a042a7cce2b087eb9452993a7c3ab295c"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>Rotation</b> = { 0.0f, 0.0f, 0.0f }</td></tr>
 <tr class="separator:a042a7cce2b087eb9452993a7c3ab295c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53d17fab1b0097dca9f84a2d6bd2608a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1TransformComponent.html#a53d17fab1b0097dca9f84a2d6bd2608a">Scale</a> = { 1.0f, 1.0f, 1.0f }</td></tr>
+<tr class="memitem:a53d17fab1b0097dca9f84a2d6bd2608a"><td class="memItemLeft" align="right" valign="top"><a id="a53d17fab1b0097dca9f84a2d6bd2608a"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>Scale</b> = { 1.0f, 1.0f, 1.0f }</td></tr>
 <tr class="separator:a53d17fab1b0097dca9f84a2d6bd2608a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00038">38</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1da4cebf55a73a676cbd702c0f632313"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1da4cebf55a73a676cbd702c0f632313">&#9670;&nbsp;</a></span>TransformComponent() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::TransformComponent::TransformComponent </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acee823c48514e769f13eb22339e1dcbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acee823c48514e769f13eb22339e1dcbd">&#9670;&nbsp;</a></span>TransformComponent() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::TransformComponent::TransformComponent </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1TransformComponent.html">TransformComponent</a> &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a243c8e999575d75b6d6801da1b132966"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a243c8e999575d75b6d6801da1b132966">&#9670;&nbsp;</a></span>TransformComponent() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::TransformComponent::TransformComponent </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;&#160;</td>
-          <td class="paramname"><em>translation</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00046">46</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4c1ae36ac18026e2c5186be09b67f4a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1ae36ac18026e2c5186be09b67f4a5">&#9670;&nbsp;</a></span>GetRotation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> Kargono::TransformComponent::GetRotation </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00063">63</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<a id="aa0bf3a25deeee21d59ed146dd186f567"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0bf3a25deeee21d59ed146dd186f567">&#9670;&nbsp;</a></span>GetTransform()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> Kargono::TransformComponent::GetTransform </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00049">49</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<a id="a2a58d399ecced4e6abc734cf944f2d83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a58d399ecced4e6abc734cf944f2d83">&#9670;&nbsp;</a></span>GetTranslation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> Kargono::TransformComponent::GetTranslation </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00058">58</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a042a7cce2b087eb9452993a7c3ab295c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a042a7cce2b087eb9452993a7c3ab295c">&#9670;&nbsp;</a></span>Rotation</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::TransformComponent::Rotation = { 0.0f, 0.0f, 0.0f }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00041">41</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<a id="a53d17fab1b0097dca9f84a2d6bd2608a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53d17fab1b0097dca9f84a2d6bd2608a">&#9670;&nbsp;</a></span>Scale</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::TransformComponent::Scale = { 1.0f, 1.0f, 1.0f }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00042">42</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<a id="ab10d04e6ef7141f16d119fe84ec967ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab10d04e6ef7141f16d119fe84ec967ca">&#9670;&nbsp;</a></span>Translation</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::TransformComponent::Translation = { 0.0f, 0.0f, 0.0f }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Components_8h_source.html#l00040">40</a> of file <a class="el" href="Components_8h_source.html">Components.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="Components_8h_source.html">Components.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="structKargono_1_1TransformComponent.html">TransformComponent</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

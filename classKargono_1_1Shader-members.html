@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Shader.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1Shader.html">Shader</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::Shader Member List</div>  </div>
@@ -74,46 +92,49 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a6e326ea30f0e144993b66819234343fb">Bind</a>() const =0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#af2cd9d8b5c8a06509123c47e15f9b2f7">Create</a>(const std::string &amp;name, const std::unordered_map&lt; GLenum, std::vector&lt; uint32_t &gt;&gt; &amp;shaderBinaries)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a29418c25e9681b6409d798d45b670d87">GetCurrentDrawCallBuffer</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a2a29f11703587cfbbdabc1fa94d4ff32">GetDrawFunctions</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#ae3b9080e21c312353e5de66a6235a662">GetFillDataObject</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a5d5b3bbf971cf93523361789223c5c02">GetFillDataObjectScene</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a32f13343b5ee72486794e81ada872c1f">GetFillDataVertex</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a398519988ce63c8130d6c9b9d13bd0d0">GetInputLayout</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a86454a0358e271ac72e35ada1e31d267">GetInputLocation</a>(const std::string &amp;inputName, Buffer inputBuffer, Ref&lt; Shader &gt; shader)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a8a9d5d0685da6e5f24345c3e1b219123">GetPostDrawBuffer</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#aa7089ec4002b1162cf47e083b33b6621">GetPreDrawBuffer</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a3a1a4fa78f8df7d82058d439612841ec">GetSpecification</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a52d767eda98a78efadfaf5c75e3c2992">GetSubmitUniforms</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a35324e09ccf24775ae3179f9f73f2183">GetUniformList</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a431a9620f771c272112d1bfade56d0d8">GetVertexArray</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#aec48769e52fd9175698eaea26c6a676d">m_InputBufferLayout</a></td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#af5cceb3cae24a5a31a3e3c7e4ec48731">m_ShaderSpecification</a></td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#aa177e77bc56b47496f1486e7942b6563">m_UniformBufferList</a></td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#aff06773779119b0fa985acab0007b45c">SetCurrentDrawCallBufferNull</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a90abc2902d67faef2cf0a9dd3c8be5e9">SetDataAtInputLocation</a>(const T &amp;value, const std::string &amp;inputName, Buffer inputBuffer, Ref&lt; Shader &gt; shader)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a9d0d350d746fe35267c2a8c3284f3b0f">SetFloat2Uniform</a>(const std::string &amp;name, const Math::vec2 &amp;value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a579759582f5a61101f9e710e411ecfff">SetFloat3Uniform</a>(const std::string &amp;name, const Math::vec3 &amp;value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a87ab157fac0426c9ed03288946c43333">SetFloat4Uniform</a>(const std::string &amp;name, const Math::vec4 &amp;value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a19940fe2edaf9acdf791adf7069e9c62">SetFloatUniform</a>(const std::string &amp;name, float value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a769c92b60fd1792f98ba89dd688a6c3c">SetInputLayout</a>(const InputBufferLayout &amp;shaderInputLayout)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a0b64080b03e6c8265d769532ae008c18">SetIntArrayUniform</a>(const std::string &amp;name, int *values, uint32_t count)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#aeab9552836f4635336ed34dfae968ba5">SetIntUniform</a>(const std::string &amp;name, int value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#abeec9791022b016508cecb5666dd43f5">SetMat3Uniform</a>(const std::string &amp;name, const Math::mat3 &amp;value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a1b7610ccb90653c87dd6e24e5d6538e2">SetMat4Uniform</a>(const std::string &amp;name, const Math::mat4 &amp;value)=0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#af10733486aab130ce02677ea079c1761">SetSpecification</a>(const ShaderSpecification &amp;shaderSpec)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a732eb21d35682c3a12f4e61c2a589543">SetUniformList</a>(const UniformBufferList &amp;shaderUniformList)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a05346b87dc400fe00a5cd8e4539a5a8f">SetVertexArray</a>(Ref&lt; VertexArray &gt; newVertexArray)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#a7b8215d778d53fd4aadc1931e5f6721e">Shader</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#ac5399a28288cacb5b1d945833f468ede">Shader</a>(const ShaderSpecification &amp;shader)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Shader.html#abda52710ace0a561ac316f87afa41ceb">Unbind</a>() const =0</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Shader.html#ad7c789d1f0b5b007645e3264f2860f29">~Shader</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Bind</b>() const =0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Create</b>(const std::string &amp;name, const std::unordered_map&lt; GLenum, std::vector&lt; uint32_t &gt;&gt; &amp;shaderBinaries) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetCurrentDrawCallBuffer</b>() (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetDrawFunctions</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetFillDataObject</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetFillDataObjectScene</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetFillDataVertex</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetInputLayout</b>() (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetInputLocation</b>(const std::string &amp;inputName, Buffer inputBuffer, Ref&lt; Shader &gt; shader) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetPostDrawBuffer</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetPreDrawBuffer</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetSpecification</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetSubmitUniforms</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetUniformList</b>() const (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetVertexArray</b>() (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_InputBufferLayout</b> (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_ShaderSpecification</b> (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_UniformBufferList</b> (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetCurrentDrawCallBufferNull</b>() (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetDataAtInputLocation</b>(const T &amp;value, const std::string &amp;inputName, Buffer inputBuffer, Ref&lt; Shader &gt; shader) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetFloat2Uniform</b>(const std::string &amp;name, const Math::vec2 &amp;value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetFloat3Uniform</b>(const std::string &amp;name, const Math::vec3 &amp;value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetFloat4Uniform</b>(const std::string &amp;name, const Math::vec4 &amp;value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetFloatUniform</b>(const std::string &amp;name, float value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetInputLayout</b>(const InputBufferLayout &amp;shaderInputLayout) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetIntArrayUniform</b>(const std::string &amp;name, int *values, uint32_t count)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetIntUniform</b>(const std::string &amp;name, int value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetMat3Uniform</b>(const std::string &amp;name, const Math::mat3 &amp;value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetMat4Uniform</b>(const std::string &amp;name, const Math::mat4 &amp;value)=0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetSpecification</b>(const ShaderSpecification &amp;shaderSpec) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetUniformList</b>(const UniformBufferList &amp;shaderUniformList) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetVertexArray</b>(Ref&lt; VertexArray &gt; newVertexArray) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Shader</b>()=default (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Shader</b>(const ShaderSpecification &amp;shader) (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Unbind</b>() const =0 (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~Shader</b>()=default (defined in <a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Shader.html">Kargono::Shader</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

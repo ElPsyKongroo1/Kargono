@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('ContentBrowserPanel_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,45 +84,40 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ContentBrowserPanel.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="ContentBrowserPanel_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="KeyEvent_8h.html">Kargono/Events/KeyEvent.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/KeyEvent.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">class </span>Texture2D;</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073">   12</a></span>&#160;    <span class="keyword">enum class</span> <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073">BrowserFileType</a></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">enum class</span> BrowserFileType</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a6adf97f83acf6453d4a6a4b1070f3754">None</a> = 0, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ae73cda510e8bb947f7e61089e5581494">Directory</a> = 1, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073abe53a0541a6d36f6ecb879fa2c584b08">Image</a> = 2, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ab22f0418e8ac915eb66f829d262d14a2">Audio</a> = 3,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a6ce976e8f061b2b5cfe4d0c50c3405dd">Binary</a> = 4, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a4e1ab36884b253ce24768da1c4080a14">Registry</a> = 5, <a class="code" href="classKargono_1_1Scene.html">Scene</a> = 6, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ab65217de37f8a832d7094e89e1bc4fd4">ScriptProject</a> = 7,</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a194f5394ae2e9c74dc3c441b92862d1d">Font</a> = 8, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ada57625b9f374c1b06313cdd6279de7a">UserInterface</a> = 9, <a class="code" href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a324118a6721dd6b8a9b9f4e327df2bf5">Input</a> = 10</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        None = 0, Directory = 1, Image = 2, Audio = 3,</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        Binary = 4, Registry = 5, Scene = 6, ScriptProject = 7,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        Font = 8, UserInterface = 9, Input = 10</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    };</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1ContentBrowserPanel.html">   20</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1ContentBrowserPanel.html">ContentBrowserPanel</a></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    {</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="classKargono_1_1ContentBrowserPanel.html#ad2a01c67eb95f1a331fca7225f963f95">ContentBrowserPanel</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="classKargono_1_1ContentBrowserPanel.html">ContentBrowserPanel</a>();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ContentBrowserPanel.html#acfcec5aa356eec779ac5f131c320d38a">OnEditorUIRender</a>();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1ContentBrowserPanel.html#a4a16d1c69a0fbb1b5760889234deedf6">OnKeyPressedEditor</a>(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordtype">void</span> OnEditorUIRender();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keywordtype">bool</span> OnKeyPressedEditor(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ContentBrowserPanel.html#af0cd1c4a2ceba02b42f8b16114d9626b">UpdateCurrentDirectory</a>(<span class="keyword">const</span> std::filesystem::path&amp; newPath);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ContentBrowserPanel.html#a460db662f7ec6c2d0fb8bc215341139c">RefreshCachedDirectoryEntries</a>();</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">void</span> UpdateCurrentDirectory(<span class="keyword">const</span> std::filesystem::path&amp; newPath);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">void</span> RefreshCachedDirectoryEntries();</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        std::string m_PanelName{ <span class="stringliteral">&quot;Content Browser&quot;</span> };</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        std::filesystem::path m_BaseDirectory;</div>
@@ -107,31 +125,16 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    };</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div>
-<div class="ttc" id="aKeyEvent_8h_html"><div class="ttname"><a href="KeyEvent_8h.html">KeyEvent.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html">Kargono::ContentBrowserPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8h_source.html#l00020">ContentBrowserPanel.h:21</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html_a460db662f7ec6c2d0fb8bc215341139c"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html#a460db662f7ec6c2d0fb8bc215341139c">Kargono::ContentBrowserPanel::RefreshCachedDirectoryEntries</a></div><div class="ttdeci">void RefreshCachedDirectoryEntries()</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00474">ContentBrowserPanel.cpp:474</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html_a4a16d1c69a0fbb1b5760889234deedf6"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html#a4a16d1c69a0fbb1b5760889234deedf6">Kargono::ContentBrowserPanel::OnKeyPressedEditor</a></div><div class="ttdeci">bool OnKeyPressedEditor(Events::KeyPressedEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00470">ContentBrowserPanel.cpp:470</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html_acfcec5aa356eec779ac5f131c320d38a"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html#acfcec5aa356eec779ac5f131c320d38a">Kargono::ContentBrowserPanel::OnEditorUIRender</a></div><div class="ttdeci">void OnEditorUIRender()</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00107">ContentBrowserPanel.cpp:107</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html_ad2a01c67eb95f1a331fca7225f963f95"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html#ad2a01c67eb95f1a331fca7225f963f95">Kargono::ContentBrowserPanel::ContentBrowserPanel</a></div><div class="ttdeci">ContentBrowserPanel()</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00096">ContentBrowserPanel.cpp:96</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html_af0cd1c4a2ceba02b42f8b16114d9626b"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html#af0cd1c4a2ceba02b42f8b16114d9626b">Kargono::ContentBrowserPanel::UpdateCurrentDirectory</a></div><div class="ttdeci">void UpdateCurrentDirectory(const std::filesystem::path &amp;newPath)</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00088">ContentBrowserPanel.cpp:88</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html"><div class="ttname"><a href="classKargono_1_1Scene.html">Kargono::Scene</a></div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00036">Scene.h:37</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073">Kargono::BrowserFileType</a></div><div class="ttdeci">BrowserFileType</div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8h_source.html#l00012">ContentBrowserPanel.h:13</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073a194f5394ae2e9c74dc3c441b92862d1d"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a194f5394ae2e9c74dc3c441b92862d1d">Kargono::BrowserFileType::Font</a></div><div class="ttdeci">@ Font</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073a324118a6721dd6b8a9b9f4e327df2bf5"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a324118a6721dd6b8a9b9f4e327df2bf5">Kargono::BrowserFileType::Input</a></div><div class="ttdeci">@ Input</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073a4e1ab36884b253ce24768da1c4080a14"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a4e1ab36884b253ce24768da1c4080a14">Kargono::BrowserFileType::Registry</a></div><div class="ttdeci">@ Registry</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073a6adf97f83acf6453d4a6a4b1070f3754"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a6adf97f83acf6453d4a6a4b1070f3754">Kargono::BrowserFileType::None</a></div><div class="ttdeci">@ None</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073a6ce976e8f061b2b5cfe4d0c50c3405dd"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073a6ce976e8f061b2b5cfe4d0c50c3405dd">Kargono::BrowserFileType::Binary</a></div><div class="ttdeci">@ Binary</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073ab22f0418e8ac915eb66f829d262d14a2"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ab22f0418e8ac915eb66f829d262d14a2">Kargono::BrowserFileType::Audio</a></div><div class="ttdeci">@ Audio</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073ab65217de37f8a832d7094e89e1bc4fd4"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ab65217de37f8a832d7094e89e1bc4fd4">Kargono::BrowserFileType::ScriptProject</a></div><div class="ttdeci">@ ScriptProject</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073abe53a0541a6d36f6ecb879fa2c584b08"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073abe53a0541a6d36f6ecb879fa2c584b08">Kargono::BrowserFileType::Image</a></div><div class="ttdeci">@ Image</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073ada57625b9f374c1b06313cdd6279de7a"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ada57625b9f374c1b06313cdd6279de7a">Kargono::BrowserFileType::UserInterface</a></div><div class="ttdeci">@ UserInterface</div></div>
-<div class="ttc" id="anamespaceKargono_html_acdb82931715b7aa80b5a6d42623e8073ae73cda510e8bb947f7e61089e5581494"><div class="ttname"><a href="namespaceKargono.html#acdb82931715b7aa80b5a6d42623e8073ae73cda510e8bb947f7e61089e5581494">Kargono::BrowserFileType::Directory</a></div><div class="ttdeci">@ Directory</div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><b>ContentBrowserPanel.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

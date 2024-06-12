@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Window_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,127 +84,89 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Window.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Window_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Event_8h.html">Kargono/Events/Event.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Base.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/Event.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a> </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span>Kargono </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html">   12</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a> </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">   14</a></span>&#160;        std::string <a class="code" href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Title</a>;</div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">   15</a></span>&#160;        uint32_t <a class="code" href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Width</a>;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">   16</a></span>&#160;        uint32_t <a class="code" href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Height</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        std::string Title;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        uint32_t Width;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        uint32_t Height;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html#a2a2fa1b718ccc69d3b5383f71ab1484c">   18</a></span>&#160;        <a class="code" href="structKargono_1_1WindowProps.html#a2a2fa1b718ccc69d3b5383f71ab1484c">WindowProps</a>()</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            : <a class="code" href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Title</a>{ <span class="stringliteral">&quot;No Title&quot;</span> }, <a class="code" href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Width</a>{ 0 }, <a class="code" href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Height</a>{0} {}</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>()</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            : Title{ <span class="stringliteral">&quot;No Title&quot;</span> }, Width{ 0 }, Height{0} {}</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="structKargono_1_1WindowProps.html#ad3e3a27865b3a7e4ff40af7877a069b2">   21</a></span>&#160;        <a class="code" href="structKargono_1_1WindowProps.html#ad3e3a27865b3a7e4ff40af7877a069b2">WindowProps</a>(<span class="keyword">const</span> std::string&amp; title,</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>(<span class="keyword">const</span> std::string&amp; title,</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            uint32_t width,</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            uint32_t height)</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            : <a class="code" href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Title</a>(title), <a class="code" href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Width</a>(width), <a class="code" href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Height</a>(height)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            : Title(title), Width(width), Height(height)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        {}</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    };</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html">   28</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Window.html">Window</a></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    {</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#abeca1e0852f9ea5a372186f83464dc41">   31</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1Window.html#abeca1e0852f9ea5a372186f83464dc41">~Window</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classKargono_1_1Window.html">Window</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a62520eb89b08f4da5874efeba32f2f81">   33</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a62520eb89b08f4da5874efeba32f2f81">OnUpdate</a>() = 0;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnUpdate() = 0;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">   35</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">Init</a>(<span class="keyword">const</span> std::filesystem::path&amp; <a class="code" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a> = <span class="stringliteral">&quot;Resources/icons/app_logo.png&quot;</span>) = 0;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Init(<span class="keyword">const</span> std::filesystem::path&amp; logoPath = <span class="stringliteral">&quot;Resources/icons/app_logo.png&quot;</span>) = 0;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a8f4f4fa261ed6fccfef13dff583ea268">   37</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a8f4f4fa261ed6fccfef13dff583ea268">Init</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a>&amp; props, <span class="keyword">const</span> std::filesystem::path&amp; <a class="code" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a> = <span class="stringliteral">&quot;Resources/icons/app_logo.png&quot;</span>) = 0;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Init(<span class="keyword">const</span> <a class="code" href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a>&amp; props, <span class="keyword">const</span> std::filesystem::path&amp; logoPath = <span class="stringliteral">&quot;Resources/icons/app_logo.png&quot;</span>) = 0;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a1bdd411044fc48cdb8689073e2c3bb87">   39</a></span>&#160;        <span class="keyword">virtual</span> uint32_t <a class="code" href="classKargono_1_1Window.html#a1bdd411044fc48cdb8689073e2c3bb87">GetWidth</a>() <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a310cdfdf7e83db26781f23777119e879">   40</a></span>&#160;        <span class="keyword">virtual</span> uint32_t <a class="code" href="classKargono_1_1Window.html#a310cdfdf7e83db26781f23777119e879">GetHeight</a>() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">virtual</span> uint32_t GetWidth() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">virtual</span> uint32_t GetHeight() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#aa0972686e628fcdd23e0d083f9c4d9f7">   42</a></span>&#160;        <span class="keyword">virtual</span> uint32_t <a class="code" href="classKargono_1_1Window.html#aa0972686e628fcdd23e0d083f9c4d9f7">GetViewportWidth</a>() <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a2281fb8d178d7f62c2b87ec2195f6736">   43</a></span>&#160;        <span class="keyword">virtual</span> uint32_t <a class="code" href="classKargono_1_1Window.html#a2281fb8d178d7f62c2b87ec2195f6736">GetViewportHeight</a>() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">virtual</span> uint32_t GetViewportWidth() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">virtual</span> uint32_t GetViewportHeight() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">   45</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">SetViewportWidth</a>(uint32_t width) = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">   46</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">SetViewportHeight</a>(uint32_t height) = 0;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetViewportWidth(uint32_t width) = 0;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetViewportHeight(uint32_t height) = 0;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#aab565451020a6d3c90f144dff22bba2e">   48</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#aab565451020a6d3c90f144dff22bba2e">SetEventCallback</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a>&amp; callback) = 0;</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">   49</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a>&amp; <a class="code" href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">GetEventCallback</a>() = 0;</div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#adbb13b0e0db5a9dd68b918657fa9d8a5">   50</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#adbb13b0e0db5a9dd68b918657fa9d8a5">SetVSync</a>(<span class="keywordtype">bool</span> enabled) = 0;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#af1e612778c7af1f430811d8a485e9c63">   51</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Window.html#af1e612778c7af1f430811d8a485e9c63">IsVSync</a>() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetEventCallback(<span class="keyword">const</span> Events::EventCallbackFn&amp; callback) = 0;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keyword">virtual</span> Events::EventCallbackFn&amp; GetEventCallback() = 0;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetVSync(<span class="keywordtype">bool</span> enabled) = 0;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> IsVSync() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a7f96a7375dff1946af52d0a21bbd1125">   53</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a7f96a7375dff1946af52d0a21bbd1125">SetFullscreen</a>(<span class="keywordtype">bool</span> enabled) = 0;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a07d746c3502ffdaa961ad534cf32ba31">   54</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a07d746c3502ffdaa961ad534cf32ba31">SetResizable</a>(<span class="keywordtype">bool</span> resizable) = 0;</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a8d3a78da66c429633b4466a4caa87054">   55</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a8d3a78da66c429633b4466a4caa87054">CenterWindow</a>() = 0;</div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a52e0c42bbb3dba50fe4ecc27f50762b6">   56</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="classKargono_1_1Window.html#a52e0c42bbb3dba50fe4ecc27f50762b6">GetMonitorDimensions</a>() = 0;</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a6e156c207a4a09cb516735ebde9417d0">   57</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a6e156c207a4a09cb516735ebde9417d0">ResizeWindow</a>(<a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> newWindowSize) = 0;</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a296122a13295d95dcbe308f965dd7e5f">   58</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a296122a13295d95dcbe308f965dd7e5f">ToggleMaximized</a>() = 0;</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a03d98c2800e85a5cf86cd2fbb8bbb02f">   59</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#a03d98c2800e85a5cf86cd2fbb8bbb02f">SetVisible</a>(<span class="keywordtype">bool</span> visible) = 0;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetFullscreen(<span class="keywordtype">bool</span> enabled) = 0;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetResizable(<span class="keywordtype">bool</span> resizable) = 0;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> CenterWindow() = 0;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">virtual</span> Math::vec2 GetMonitorDimensions() = 0;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> ResizeWindow(Math::vec2 newWindowSize) = 0;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> ToggleMaximized() = 0;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetVisible(<span class="keywordtype">bool</span> visible) = 0;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#ab4da1d5f1935d65e428f7a742c439a1c">   61</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Window.html#ab4da1d5f1935d65e428f7a742c439a1c">SetMouseCursorVisible</a>(<span class="keywordtype">bool</span> choice) = 0;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetMouseCursorVisible(<span class="keywordtype">bool</span> choice) = 0;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">   63</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span>* <a class="code" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">GetNativeWindow</a>() <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span>* GetNativeWindow() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;Window&gt;</a> <a class="code" href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Create</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>&amp; props = <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>());</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keyword">static</span> Scope&lt;Window&gt; Create(<span class="keyword">const</span> <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>&amp; props = <a class="code" href="structKargono_1_1WindowProps.html">WindowProps</a>());</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    };</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
-<div class="ttc" id="aEvent_8h_html"><div class="ttname"><a href="Event_8h.html">Event.h</a></div></div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Window_html"><div class="ttname"><a href="classKargono_1_1Window.html">Kargono::Window</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00028">Window.h:29</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a0169291a0c0e688d5c233709ea95ccce"><div class="ttname"><a href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">Kargono::Window::GetEventCallback</a></div><div class="ttdeci">virtual Events::EventCallbackFn &amp; GetEventCallback()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a03d98c2800e85a5cf86cd2fbb8bbb02f"><div class="ttname"><a href="classKargono_1_1Window.html#a03d98c2800e85a5cf86cd2fbb8bbb02f">Kargono::Window::SetVisible</a></div><div class="ttdeci">virtual void SetVisible(bool visible)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a07d746c3502ffdaa961ad534cf32ba31"><div class="ttname"><a href="classKargono_1_1Window.html#a07d746c3502ffdaa961ad534cf32ba31">Kargono::Window::SetResizable</a></div><div class="ttdeci">virtual void SetResizable(bool resizable)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a14db445b8e2ee2ef9bc6a456f083f531"><div class="ttname"><a href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">Kargono::Window::Init</a></div><div class="ttdeci">virtual void Init(const std::filesystem::path &amp;logoPath=&quot;Resources/icons/app_logo.png&quot;)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a1bdd411044fc48cdb8689073e2c3bb87"><div class="ttname"><a href="classKargono_1_1Window.html#a1bdd411044fc48cdb8689073e2c3bb87">Kargono::Window::GetWidth</a></div><div class="ttdeci">virtual uint32_t GetWidth() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a2281fb8d178d7f62c2b87ec2195f6736"><div class="ttname"><a href="classKargono_1_1Window.html#a2281fb8d178d7f62c2b87ec2195f6736">Kargono::Window::GetViewportHeight</a></div><div class="ttdeci">virtual uint32_t GetViewportHeight() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a296122a13295d95dcbe308f965dd7e5f"><div class="ttname"><a href="classKargono_1_1Window.html#a296122a13295d95dcbe308f965dd7e5f">Kargono::Window::ToggleMaximized</a></div><div class="ttdeci">virtual void ToggleMaximized()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a310cdfdf7e83db26781f23777119e879"><div class="ttname"><a href="classKargono_1_1Window.html#a310cdfdf7e83db26781f23777119e879">Kargono::Window::GetHeight</a></div><div class="ttdeci">virtual uint32_t GetHeight() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a52e0c42bbb3dba50fe4ecc27f50762b6"><div class="ttname"><a href="classKargono_1_1Window.html#a52e0c42bbb3dba50fe4ecc27f50762b6">Kargono::Window::GetMonitorDimensions</a></div><div class="ttdeci">virtual Math::vec2 GetMonitorDimensions()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a5f1c439aaf7de9427af4c86a2cf882fb"><div class="ttname"><a href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">Kargono::Window::GetNativeWindow</a></div><div class="ttdeci">virtual void * GetNativeWindow() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a62520eb89b08f4da5874efeba32f2f81"><div class="ttname"><a href="classKargono_1_1Window.html#a62520eb89b08f4da5874efeba32f2f81">Kargono::Window::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a6e156c207a4a09cb516735ebde9417d0"><div class="ttname"><a href="classKargono_1_1Window.html#a6e156c207a4a09cb516735ebde9417d0">Kargono::Window::ResizeWindow</a></div><div class="ttdeci">virtual void ResizeWindow(Math::vec2 newWindowSize)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a76ff6f8d0e0575bd24954a03c8c23015"><div class="ttname"><a href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Kargono::Window::Create</a></div><div class="ttdeci">static Scope&lt; Window &gt; Create(const WindowProps &amp;props=WindowProps())</div><div class="ttdef"><b>Definition:</b> <a href="Window_8cpp_source.html#l00011">Window.cpp:11</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a7e5b6107c3e359ae7bad7153f20a3961"><div class="ttname"><a href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">Kargono::Window::SetViewportHeight</a></div><div class="ttdeci">virtual void SetViewportHeight(uint32_t height)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a7f96a7375dff1946af52d0a21bbd1125"><div class="ttname"><a href="classKargono_1_1Window.html#a7f96a7375dff1946af52d0a21bbd1125">Kargono::Window::SetFullscreen</a></div><div class="ttdeci">virtual void SetFullscreen(bool enabled)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a8d3a78da66c429633b4466a4caa87054"><div class="ttname"><a href="classKargono_1_1Window.html#a8d3a78da66c429633b4466a4caa87054">Kargono::Window::CenterWindow</a></div><div class="ttdeci">virtual void CenterWindow()=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_a8f4f4fa261ed6fccfef13dff583ea268"><div class="ttname"><a href="classKargono_1_1Window.html#a8f4f4fa261ed6fccfef13dff583ea268">Kargono::Window::Init</a></div><div class="ttdeci">virtual void Init(const Kargono::WindowProps &amp;props, const std::filesystem::path &amp;logoPath=&quot;Resources/icons/app_logo.png&quot;)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_aa0972686e628fcdd23e0d083f9c4d9f7"><div class="ttname"><a href="classKargono_1_1Window.html#aa0972686e628fcdd23e0d083f9c4d9f7">Kargono::Window::GetViewportWidth</a></div><div class="ttdeci">virtual uint32_t GetViewportWidth() const =0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_aab565451020a6d3c90f144dff22bba2e"><div class="ttname"><a href="classKargono_1_1Window.html#aab565451020a6d3c90f144dff22bba2e">Kargono::Window::SetEventCallback</a></div><div class="ttdeci">virtual void SetEventCallback(const Events::EventCallbackFn &amp;callback)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_ab4da1d5f1935d65e428f7a742c439a1c"><div class="ttname"><a href="classKargono_1_1Window.html#ab4da1d5f1935d65e428f7a742c439a1c">Kargono::Window::SetMouseCursorVisible</a></div><div class="ttdeci">virtual void SetMouseCursorVisible(bool choice)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_abeca1e0852f9ea5a372186f83464dc41"><div class="ttname"><a href="classKargono_1_1Window.html#abeca1e0852f9ea5a372186f83464dc41">Kargono::Window::~Window</a></div><div class="ttdeci">virtual ~Window()=default</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_acc5536f3ee6b3eb7187c7614a66cea27"><div class="ttname"><a href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">Kargono::Window::SetViewportWidth</a></div><div class="ttdeci">virtual void SetViewportWidth(uint32_t width)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_adbb13b0e0db5a9dd68b918657fa9d8a5"><div class="ttname"><a href="classKargono_1_1Window.html#adbb13b0e0db5a9dd68b918657fa9d8a5">Kargono::Window::SetVSync</a></div><div class="ttdeci">virtual void SetVSync(bool enabled)=0</div></div>
-<div class="ttc" id="aclassKargono_1_1Window_html_af1e612778c7af1f430811d8a485e9c63"><div class="ttname"><a href="classKargono_1_1Window.html#af1e612778c7af1f430811d8a485e9c63">Kargono::Window::IsVSync</a></div><div class="ttdeci">virtual bool IsVSync() const =0</div></div>
-<div class="ttc" id="anamespaceKargono_1_1Events_html_abec2579a8a2c2e2eef75ad7293a5f9b4"><div class="ttname"><a href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Kargono::Events::EventCallbackFn</a></div><div class="ttdeci">std::function&lt; void(Events::Event &amp;)&gt; EventCallbackFn</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00176">Event.h:176</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a75cefe73507cbf8c678d5e216480039c"><div class="ttname"><a href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Kargono::Scope</a></div><div class="ttdeci">std::unique_ptr&lt; T &gt; Scope</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00032">Base.h:32</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ae102309f7ce66cbeaddc85cc7d254b35"><div class="ttname"><a href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">Kargono::logoPath</a></div><div class="ttdeci">const std::filesystem::path logoPath</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00013">RuntimeApp.cpp:13</a></div></div>
 <div class="ttc" id="astructKargono_1_1WindowProps_html"><div class="ttname"><a href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00012">Window.h:13</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_a15041108829f07d670cb1baa10010f95"><div class="ttname"><a href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Kargono::WindowProps::Title</a></div><div class="ttdeci">std::string Title</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00014">Window.h:14</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_a2a2fa1b718ccc69d3b5383f71ab1484c"><div class="ttname"><a href="structKargono_1_1WindowProps.html#a2a2fa1b718ccc69d3b5383f71ab1484c">Kargono::WindowProps::WindowProps</a></div><div class="ttdeci">WindowProps()</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00018">Window.h:18</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_ad3e3a27865b3a7e4ff40af7877a069b2"><div class="ttname"><a href="structKargono_1_1WindowProps.html#ad3e3a27865b3a7e4ff40af7877a069b2">Kargono::WindowProps::WindowProps</a></div><div class="ttdeci">WindowProps(const std::string &amp;title, uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00021">Window.h:21</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_adc3f4fe742af52e6096fc713ae178a65"><div class="ttname"><a href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Kargono::WindowProps::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00015">Window.h:15</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_af6062f6807ebe63e379c8f2cca956b22"><div class="ttname"><a href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Kargono::WindowProps::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00016">Window.h:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>Window.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

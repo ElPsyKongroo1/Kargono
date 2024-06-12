@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Texture.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1Texture.html">Texture</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -74,236 +92,39 @@ $(function() {
 <div class="title">Kargono::Texture Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Texture_8h_source.html">Texture.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9b5920e9b25c68dbd08b47b1960f53d1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#a9b5920e9b25c68dbd08b47b1960f53d1">~Texture</a> ()=default</td></tr>
-<tr class="separator:a9b5920e9b25c68dbd08b47b1960f53d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71ae5115d0b733d3978d81d12e948a3d"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#a71ae5115d0b733d3978d81d12e948a3d">GetWidth</a> () const =0</td></tr>
+<tr class="memitem:a71ae5115d0b733d3978d81d12e948a3d"><td class="memItemLeft" align="right" valign="top"><a id="a71ae5115d0b733d3978d81d12e948a3d"></a>
+virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetWidth</b> () const =0</td></tr>
 <tr class="separator:a71ae5115d0b733d3978d81d12e948a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab24397143cb0e21b9b7f5898c0a470f"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#aab24397143cb0e21b9b7f5898c0a470f">GetHeight</a> () const =0</td></tr>
+<tr class="memitem:aab24397143cb0e21b9b7f5898c0a470f"><td class="memItemLeft" align="right" valign="top"><a id="aab24397143cb0e21b9b7f5898c0a470f"></a>
+virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetHeight</b> () const =0</td></tr>
 <tr class="separator:aab24397143cb0e21b9b7f5898c0a470f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba75929df815a1f0e3cc6f2d61d29c98"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#aba75929df815a1f0e3cc6f2d61d29c98">GetRendererID</a> () const =0</td></tr>
+<tr class="memitem:aba75929df815a1f0e3cc6f2d61d29c98"><td class="memItemLeft" align="right" valign="top"><a id="aba75929df815a1f0e3cc6f2d61d29c98"></a>
+virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetRendererID</b> () const =0</td></tr>
 <tr class="separator:aba75929df815a1f0e3cc6f2d61d29c98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05ee54d0906cc628dd3df2e992b96bfb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#a05ee54d0906cc628dd3df2e992b96bfb">SetData</a> (void *data, uint32_t size)=0</td></tr>
+<tr class="memitem:a05ee54d0906cc628dd3df2e992b96bfb"><td class="memItemLeft" align="right" valign="top"><a id="a05ee54d0906cc628dd3df2e992b96bfb"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetData</b> (void *data, uint32_t size)=0</td></tr>
 <tr class="separator:a05ee54d0906cc628dd3df2e992b96bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a261060ab6376a3e11a922c990d3eda66"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#a261060ab6376a3e11a922c990d3eda66">Bind</a> (uint32_t slot=0) const =0</td></tr>
+<tr class="memitem:a261060ab6376a3e11a922c990d3eda66"><td class="memItemLeft" align="right" valign="top"><a id="a261060ab6376a3e11a922c990d3eda66"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Bind</b> (uint32_t slot=0) const =0</td></tr>
 <tr class="separator:a261060ab6376a3e11a922c990d3eda66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a656942241b0ea0722d0a58f47929281f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Texture.html#a656942241b0ea0722d0a58f47929281f">operator==</a> (const <a class="el" href="classKargono_1_1Texture.html">Texture</a> &amp;other) const =0</td></tr>
+<tr class="memitem:a656942241b0ea0722d0a58f47929281f"><td class="memItemLeft" align="right" valign="top"><a id="a656942241b0ea0722d0a58f47929281f"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classKargono_1_1Texture.html">Texture</a> &amp;other) const =0</td></tr>
 <tr class="separator:a656942241b0ea0722d0a58f47929281f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Texture_8h_source.html#l00032">32</a> of file <a class="el" href="Texture_8h_source.html">Texture.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9b5920e9b25c68dbd08b47b1960f53d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b5920e9b25c68dbd08b47b1960f53d1">&#9670;&nbsp;</a></span>~Texture()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Kargono::Texture::~Texture </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a261060ab6376a3e11a922c990d3eda66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a261060ab6376a3e11a922c990d3eda66">&#9670;&nbsp;</a></span>Bind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Texture::Bind </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>slot</em> = <code>0</code></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLTexture2D.html#a9e4bdd399866de4e5d4e17eb3285e40e">API::OpenGL::OpenGLTexture2D</a>.</p>
-
-</div>
-</div>
-<a id="aab24397143cb0e21b9b7f5898c0a470f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab24397143cb0e21b9b7f5898c0a470f">&#9670;&nbsp;</a></span>GetHeight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual uint32_t Kargono::Texture::GetHeight </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLTexture2D.html#a910f547481f1693b06f536e350f86e4c">API::OpenGL::OpenGLTexture2D</a>.</p>
-
-</div>
-</div>
-<a id="aba75929df815a1f0e3cc6f2d61d29c98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba75929df815a1f0e3cc6f2d61d29c98">&#9670;&nbsp;</a></span>GetRendererID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual uint32_t Kargono::Texture::GetRendererID </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLTexture2D.html#a5b7c06319b5266932e069ca6030a15c1">API::OpenGL::OpenGLTexture2D</a>.</p>
-
-</div>
-</div>
-<a id="a71ae5115d0b733d3978d81d12e948a3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71ae5115d0b733d3978d81d12e948a3d">&#9670;&nbsp;</a></span>GetWidth()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual uint32_t Kargono::Texture::GetWidth </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLTexture2D.html#aab152978f03b3394efbcc6ec97e078ab">API::OpenGL::OpenGLTexture2D</a>.</p>
-
-</div>
-</div>
-<a id="a656942241b0ea0722d0a58f47929281f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a656942241b0ea0722d0a58f47929281f">&#9670;&nbsp;</a></span>operator==()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual bool Kargono::Texture::operator== </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classKargono_1_1Texture.html">Texture</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a05ee54d0906cc628dd3df2e992b96bfb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05ee54d0906cc628dd3df2e992b96bfb">&#9670;&nbsp;</a></span>SetData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Texture::SetData </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classAPI_1_1OpenGL_1_1OpenGLTexture2D.html#a6e5e6936417bc3084d5b2548b7fcc875">API::OpenGL::OpenGLTexture2D</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="Texture_8h_source.html">Texture.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1Texture.html">Texture</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

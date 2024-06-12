@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('AudioEngine_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,27 +84,22 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_ca2358dcc89e054916077204c5d3fda3.html">Audio</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">AudioEngine.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="AudioEngine_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Base.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;queue&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">struct </span>ALCdevice;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">struct </span>ALCcontext;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Assets.html">Kargono::Assets</a> { <span class="keyword">class </span>AssetManager; }</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>Kargono::Assets { <span class="keyword">class </span>AssetManager; }</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// Audio Namespace</span></div>
@@ -96,7 +114,7 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//      but is mostly managed by the AssetManager. There is an</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//      AudioComponent in the Scene namespace that manages AudioBuffers</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//      in the editor.</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Audio.html">Kargono::Audio</a></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>Kargono::Audio</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">class </span>AudioEngine;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">class </span>AudioBuffer;</div>
@@ -110,12 +128,12 @@ $(function() {
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html">   37</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html">AudioSourceSpecification</a></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a2606aa230255ea88e9e63cd9b7fe513b">   40</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a2606aa230255ea88e9e63cd9b7fe513b">Position</a>{};</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a0b59a49908d144e04089cf0cf2a962b6">   41</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a0b59a49908d144e04089cf0cf2a962b6">Velocity</a>{};</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a24cbd00c7611a62bcd8b602ee51e3768">   42</a></span>&#160;        <span class="keywordtype">float</span> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a24cbd00c7611a62bcd8b602ee51e3768">Pitch</a>{1.0f};</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a6dd36e4b678e85652cf0373f08f37f9d">   43</a></span>&#160;        <span class="keywordtype">float</span> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a6dd36e4b678e85652cf0373f08f37f9d">Gain</a>{1.0f};</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#ad97c26a90eccff72d13d9b925e4adc9e">   44</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#ad97c26a90eccff72d13d9b925e4adc9e">IsLooping</a>{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a5727ca611a72d02b1198ef96dc18b848">   45</a></span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;AudioBuffer&gt;</a> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a5727ca611a72d02b1198ef96dc18b848">CurrentBuffer</a>{<span class="keyword">nullptr</span>};</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        Math::vec3 Position{};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        Math::vec3 Velocity{};</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">float</span> Pitch{1.0f};</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">float</span> Gain{1.0f};</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordtype">bool</span> IsLooping{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        Ref&lt;AudioBuffer&gt; CurrentBuffer{<span class="keyword">nullptr</span>};</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    };</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">//==============================</span></div>
@@ -127,10 +145,10 @@ $(function() {
 <div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html">   54</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html">AudioListenerSpecification</a></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    {</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a54b454e3126033948066cff6cb050790">   57</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a54b454e3126033948066cff6cb050790">Position</a>{};</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#ae37f4f8afc3968e5bd648b53af4152da">   58</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#ae37f4f8afc3968e5bd648b53af4152da">Velocity</a>{};</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a30da4c0286e9795f6a46f326ed8b7d8d">   59</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a30da4c0286e9795f6a46f326ed8b7d8d">Forward</a>{1.0f, 0.0f, 0.0f};</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#aa4aeacf95b4e1e33cd707c78f4ae91f9">   60</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#aa4aeacf95b4e1e33cd707c78f4ae91f9">Up</a>{};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        Math::vec3 Position{};</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        Math::vec3 Velocity{};</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        Math::vec3 Forward{1.0f, 0.0f, 0.0f};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        Math::vec3 Up{};</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    };</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">//============================================================</span></div>
@@ -150,7 +168,7 @@ $(function() {
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">// There is currently no API for creating an audio listener in OpenAL.</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="comment">//      This will be implimented later... TODO</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classKargono_1_1Audio_1_1AudioListener.html#aef2e0aac8174e53f5c5a87842369f0d7">   80</a></span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioListener.html#aef2e0aac8174e53f5c5a87842369f0d7">AudioListener</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioListener.html">AudioListener</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// m_Listener holds an actual reference to the AudioListener inside OpenAL.</span></div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        uint32_t m_ListenerID{ 0 };</div>
@@ -171,10 +189,10 @@ $(function() {
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="comment">// This constructor simply created a buffer inside OpenAL and stores a reference</span></div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="comment">//      to that buffer in m_BufferID.</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioBuffer.html#a16c08e67b09c4e1dabe0c93a7ec5d735">AudioBuffer</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioBuffer.html">AudioBuffer</a>();</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">// This destructor simply destroys the buffer inside of the OpenAL that is</span></div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="comment">//      referenced by m_BufferID.</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioBuffer.html#aee7fe9368bac4e2eb19c007926e7cc1a">~AudioBuffer</a>();</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        ~<a class="code" href="classKargono_1_1Audio_1_1AudioBuffer.html">AudioBuffer</a>();</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="comment">// This ID stores a reference to the OpenAL buffer that this class represents.</span></div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        uint32_t m_BufferID {0};</div>
@@ -198,16 +216,16 @@ $(function() {
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="comment">// This constructor simply creates an audio source inside of OpenAL</span></div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="comment">//      and stores a reference to that source inside m_SourceID.</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioSource.html#acefcdbc5b0ebc16022b9f7e178e2539c">AudioSource</a>();</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioSource.html">AudioSource</a>();</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="comment">// This destructor stops any audio currently playing from this source</span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="comment">//      (which can cause some bugs) and destroys the current audio source</span></div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="comment">//      referenced by m_SourceID.</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioSource.html#a1e8da38069682c9dc45658e792cac4b7">~AudioSource</a>();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        ~<a class="code" href="classKargono_1_1Audio_1_1AudioSource.html">AudioSource</a>();</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="comment">// Getters/Setters</span></div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classKargono_1_1Audio_1_1AudioSource.html#ad565e9850ab9826b0f66450e2e2a7c77">  137</a></span>&#160;        uint32_t&amp; <a class="code" href="classKargono_1_1Audio_1_1AudioSource.html#ad565e9850ab9826b0f66450e2e2a7c77">GetSourceID</a>() { <span class="keywordflow">return</span> m_SourceID; }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        uint32_t&amp; GetSourceID() { <span class="keywordflow">return</span> m_SourceID; }</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="comment">// This ID stores a reference to the OpenAL source that this class represents.</span></div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        uint32_t m_SourceID = 0;</div>
@@ -233,7 +251,7 @@ $(function() {
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        <span class="comment">//      2. Create OpenAL context surrounding Audio Device</span></div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        <span class="comment">//      3. Initialize the default listener.</span></div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="comment">//      4. Initialize the audio source queue along with the stereo source.</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a43d37ff817d5ab69b11154e0f7eee327">Init</a>();</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Init();</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="comment">// This function closes the OpenAL context. NOTE: Please close all open buffers</span></div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="comment">//      before calling this function. Most if not all buffers should be managed</span></div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="comment">//      by the asset system. This function takes the following actions:</span></div>
@@ -242,37 +260,37 @@ $(function() {
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="comment">//      sources.</span></div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="comment">//      3. The buffers inside the AssetManager are cleared.</span></div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="comment">//      4. Finally the audio context and current device are cleared/destroyed.</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a5db8136b8de7492253f242afc6c9aa33">Terminate</a>();</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Terminate();</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="comment">// External Functionality</span></div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="comment">// This function is currently unimplemented! This function should play requested</span></div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="comment">//      stereo audio and take in a buffer.</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a151bc3d9b2fac968635f6e7c6d8d3894">PlayStereoSound</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;AudioBuffer&gt;</a> audioBuffer);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#ad71708dbc574256c11b24c86196d76f8">PlayStereoSoundFromName</a>(<span class="keyword">const</span> std::string&amp; audioName);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> PlayStereoSound(Ref&lt;AudioBuffer&gt; audioBuffer);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> PlayStereoSoundFromName(<span class="keyword">const</span> std::string&amp; audioName);</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="comment">// This function is the main API for playing sound effects. The sourceSpec and</span></div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <span class="comment">//      listenerSpec allow for customization of concepts such as source/listener</span></div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="comment">//      distance, source volume, source pitch, relative velocities (doppler effect),</span></div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="comment">//      etc... This function takes these values into account and plays a sound.</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#ae4d39f980558939768a5b57cdac4abbb">PlaySound</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html">AudioSourceSpecification</a>&amp; sourceSpec, <span class="keyword">const</span> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html">AudioListenerSpecification</a>&amp; listenerSpec = {});</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> PlaySound(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html">AudioSourceSpecification</a>&amp; sourceSpec, <span class="keyword">const</span> <a class="code" href="structKargono_1_1Audio_1_1AudioListenerSpecification.html">AudioListenerSpecification</a>&amp; listenerSpec = {});</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="comment">// This function provides an easy API for playing sound where the source/listener</span></div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <span class="comment">//      are at an identical location and uses default values for other parameters.</span></div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="comment">//      The API simply needs to know what audio should be played! This function</span></div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="comment">//      calls the other PlaySound function with default values btw.</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#ae4d39f980558939768a5b57cdac4abbb">PlaySound</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;AudioBuffer&gt;</a> audioBuffer);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a9a5ec678d535ffc94a0880eb1b04eb48">PlaySoundFromName</a>(<span class="keyword">const</span> std::string&amp; audioName);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> PlaySound(Ref&lt;AudioBuffer&gt; audioBuffer);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> PlaySoundFromName(<span class="keyword">const</span> std::string&amp; audioName);</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="comment">// This function provides a method to stop all audio from playing. This function</span></div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <span class="comment">//      function simply iterates through the audio source queue and stops any</span></div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="comment">//      audio currently playing.</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#ac584313ed7c967ffbd17c86ae530073a">StopAllAudio</a>();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> StopAllAudio();</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <span class="comment">//==============================</span></div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="comment">// This is just the default constructor. The audio engine is a singleton</span></div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="comment">//      that is static for the program.</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="classKargono_1_1Audio_1_1AudioEngine.html#a794d6cac67b0b86848edeaedc1f850aa">  202</a></span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a794d6cac67b0b86848edeaedc1f850aa">AudioEngine</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html">AudioEngine</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="comment">// This name currently only exists for debugging purposes. It could be used</span></div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="comment">//      for switching audio devices in future iterations.</span></div>
@@ -285,7 +303,7 @@ $(function() {
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        ALCcontext* m_ContextID = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="comment">// This default listener is the regular listener for the newly created context.</span></div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="comment">//      This is the listener all audio uses currently.</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;AudioListener&gt;</a> m_DefaultListener = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        Scope&lt;AudioListener&gt; m_DefaultListener = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="comment">// This queue holds all of the available audio source other than the stereo source.</span></div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="comment">//      Audio is played by selected the source at the top of the queue, stopping any</span></div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <span class="comment">//      previous audio, playing the new audio, and pushing the source to the back</span></div>
@@ -293,56 +311,29 @@ $(function() {
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        std::queue&lt;Ref&lt;AudioSource&gt;&gt; m_AudioSourceQueue{};</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="comment">// This is the default stereo source that plays continuous music. It is not interrupted</span></div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="comment">//      by the other sources.</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;AudioSource&gt;</a> m_StereoMusicSource = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        Scope&lt;AudioSource&gt; m_StereoMusicSource = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="comment">// This is the actual AudioEngine which is staticly created in the AudioEngine.cpp file</span></div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="comment">//      and is active through the lifetime of the application. Init() and Terminate()</span></div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        <span class="comment">//      dictate if OpenAL is active.</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html#a794d6cac67b0b86848edeaedc1f850aa">AudioEngine</a>* s_AudioContext;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1Audio_1_1AudioEngine.html">AudioEngine</a>* s_AudioContext;</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    };</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;}</div>
-<div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html">Kargono::Assets::AssetManager</a></div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00042">AssetManager.h:43</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Audio_1_1AudioBuffer_html"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioBuffer.html">Kargono::Audio::AudioBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00093">AudioEngine.h:94</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioBuffer_html_a16c08e67b09c4e1dabe0c93a7ec5d735"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioBuffer.html#a16c08e67b09c4e1dabe0c93a7ec5d735">Kargono::Audio::AudioBuffer::AudioBuffer</a></div><div class="ttdeci">AudioBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00042">AudioEngine.cpp:42</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioBuffer_html_aee7fe9368bac4e2eb19c007926e7cc1a"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioBuffer.html#aee7fe9368bac4e2eb19c007926e7cc1a">Kargono::Audio::AudioBuffer::~AudioBuffer</a></div><div class="ttdeci">~AudioBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00047">AudioEngine.cpp:47</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html">Kargono::Audio::AudioEngine</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00150">AudioEngine.h:151</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a151bc3d9b2fac968635f6e7c6d8d3894"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a151bc3d9b2fac968635f6e7c6d8d3894">Kargono::Audio::AudioEngine::PlayStereoSound</a></div><div class="ttdeci">static void PlayStereoSound(Ref&lt; AudioBuffer &gt; audioBuffer)</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00052">AudioEngine.cpp:52</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a43d37ff817d5ab69b11154e0f7eee327"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a43d37ff817d5ab69b11154e0f7eee327">Kargono::Audio::AudioEngine::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00135">AudioEngine.cpp:135</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a5db8136b8de7492253f242afc6c9aa33"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a5db8136b8de7492253f242afc6c9aa33">Kargono::Audio::AudioEngine::Terminate</a></div><div class="ttdeci">static void Terminate()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00169">AudioEngine.cpp:169</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a794d6cac67b0b86848edeaedc1f850aa"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a794d6cac67b0b86848edeaedc1f850aa">Kargono::Audio::AudioEngine::AudioEngine</a></div><div class="ttdeci">AudioEngine()=default</div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_a9a5ec678d535ffc94a0880eb1b04eb48"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#a9a5ec678d535ffc94a0880eb1b04eb48">Kargono::Audio::AudioEngine::PlaySoundFromName</a></div><div class="ttdeci">static void PlaySoundFromName(const std::string &amp;audioName)</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00115">AudioEngine.cpp:115</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_ac584313ed7c967ffbd17c86ae530073a"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#ac584313ed7c967ffbd17c86ae530073a">Kargono::Audio::AudioEngine::StopAllAudio</a></div><div class="ttdeci">static void StopAllAudio()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00123">AudioEngine.cpp:123</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_ad71708dbc574256c11b24c86196d76f8"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#ad71708dbc574256c11b24c86196d76f8">Kargono::Audio::AudioEngine::PlayStereoSoundFromName</a></div><div class="ttdeci">static void PlayStereoSoundFromName(const std::string &amp;audioName)</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00071">AudioEngine.cpp:71</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioEngine_html_ae4d39f980558939768a5b57cdac4abbb"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioEngine.html#ae4d39f980558939768a5b57cdac4abbb">Kargono::Audio::AudioEngine::PlaySound</a></div><div class="ttdeci">static void PlaySound(const AudioSourceSpecification &amp;sourceSpec, const AudioListenerSpecification &amp;listenerSpec={})</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00079">AudioEngine.cpp:79</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Audio_1_1AudioListener_html"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioListener.html">Kargono::Audio::AudioListener</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00072">AudioEngine.h:73</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioListener_html_aef2e0aac8174e53f5c5a87842369f0d7"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioListener.html#aef2e0aac8174e53f5c5a87842369f0d7">Kargono::Audio::AudioListener::AudioListener</a></div><div class="ttdeci">AudioListener()=default</div></div>
 <div class="ttc" id="aclassKargono_1_1Audio_1_1AudioSource_html"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioSource.html">Kargono::Audio::AudioSource</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00120">AudioEngine.h:121</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioSource_html_a1e8da38069682c9dc45658e792cac4b7"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioSource.html#a1e8da38069682c9dc45658e792cac4b7">Kargono::Audio::AudioSource::~AudioSource</a></div><div class="ttdeci">~AudioSource()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00027">AudioEngine.cpp:27</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioSource_html_acefcdbc5b0ebc16022b9f7e178e2539c"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioSource.html#acefcdbc5b0ebc16022b9f7e178e2539c">Kargono::Audio::AudioSource::AudioSource</a></div><div class="ttdeci">AudioSource()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00022">AudioEngine.cpp:22</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioSource_html_ad565e9850ab9826b0f66450e2e2a7c77"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioSource.html#ad565e9850ab9826b0f66450e2e2a7c77">Kargono::Audio::AudioSource::GetSourceID</a></div><div class="ttdeci">uint32_t &amp; GetSourceID()</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00137">AudioEngine.h:137</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html"><div class="ttname"><a href="namespaceKargono_1_1Assets.html">Kargono::Assets</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00014">Asset.h:15</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Audio_html"><div class="ttname"><a href="namespaceKargono_1_1Audio.html">Kargono::Audio</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8cpp_source.html#l00009">AudioEngine.cpp:10</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00015">MathAliases.h:15</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a75cefe73507cbf8c678d5e216480039c"><div class="ttname"><a href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Kargono::Scope</a></div><div class="ttdeci">std::unique_ptr&lt; T &gt; Scope</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00032">Base.h:32</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
 <div class="ttc" id="astructKargono_1_1Audio_1_1AudioListenerSpecification_html"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioListenerSpecification.html">Kargono::Audio::AudioListenerSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00054">AudioEngine.h:55</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioListenerSpecification_html_a30da4c0286e9795f6a46f326ed8b7d8d"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a30da4c0286e9795f6a46f326ed8b7d8d">Kargono::Audio::AudioListenerSpecification::Forward</a></div><div class="ttdeci">Math::vec3 Forward</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00059">AudioEngine.h:59</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioListenerSpecification_html_a54b454e3126033948066cff6cb050790"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#a54b454e3126033948066cff6cb050790">Kargono::Audio::AudioListenerSpecification::Position</a></div><div class="ttdeci">Math::vec3 Position</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00057">AudioEngine.h:57</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioListenerSpecification_html_aa4aeacf95b4e1e33cd707c78f4ae91f9"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#aa4aeacf95b4e1e33cd707c78f4ae91f9">Kargono::Audio::AudioListenerSpecification::Up</a></div><div class="ttdeci">Math::vec3 Up</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00060">AudioEngine.h:60</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioListenerSpecification_html_ae37f4f8afc3968e5bd648b53af4152da"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioListenerSpecification.html#ae37f4f8afc3968e5bd648b53af4152da">Kargono::Audio::AudioListenerSpecification::Velocity</a></div><div class="ttdeci">Math::vec3 Velocity</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00058">AudioEngine.h:58</a></div></div>
 <div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html">Kargono::Audio::AudioSourceSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00037">AudioEngine.h:38</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_a0b59a49908d144e04089cf0cf2a962b6"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a0b59a49908d144e04089cf0cf2a962b6">Kargono::Audio::AudioSourceSpecification::Velocity</a></div><div class="ttdeci">Math::vec3 Velocity</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00041">AudioEngine.h:41</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_a24cbd00c7611a62bcd8b602ee51e3768"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a24cbd00c7611a62bcd8b602ee51e3768">Kargono::Audio::AudioSourceSpecification::Pitch</a></div><div class="ttdeci">float Pitch</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00042">AudioEngine.h:42</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_a2606aa230255ea88e9e63cd9b7fe513b"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a2606aa230255ea88e9e63cd9b7fe513b">Kargono::Audio::AudioSourceSpecification::Position</a></div><div class="ttdeci">Math::vec3 Position</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00040">AudioEngine.h:40</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_a5727ca611a72d02b1198ef96dc18b848"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a5727ca611a72d02b1198ef96dc18b848">Kargono::Audio::AudioSourceSpecification::CurrentBuffer</a></div><div class="ttdeci">Ref&lt; AudioBuffer &gt; CurrentBuffer</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00045">AudioEngine.h:45</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_a6dd36e4b678e85652cf0373f08f37f9d"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a6dd36e4b678e85652cf0373f08f37f9d">Kargono::Audio::AudioSourceSpecification::Gain</a></div><div class="ttdeci">float Gain</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00043">AudioEngine.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1Audio_1_1AudioSourceSpecification_html_ad97c26a90eccff72d13d9b925e4adc9e"><div class="ttname"><a href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#ad97c26a90eccff72d13d9b925e4adc9e">Kargono::Audio::AudioSourceSpecification::IsLooping</a></div><div class="ttdeci">bool IsLooping</div><div class="ttdef"><b>Definition:</b> <a href="AudioEngine_8h_source.html#l00044">AudioEngine.h:44</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_ca2358dcc89e054916077204c5d3fda3.html">Audio</a></li><li class="navelem"><b>AudioEngine.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

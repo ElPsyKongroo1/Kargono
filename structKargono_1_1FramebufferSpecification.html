@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1FramebufferSpecification.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -74,113 +92,36 @@ $(function() {
 <div class="title">Kargono::FramebufferSpecification Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a7c967f4acf5f4a87da9c34c1ed07470a"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1FramebufferSpecification.html#a7c967f4acf5f4a87da9c34c1ed07470a">Width</a> = 0</td></tr>
+<tr class="memitem:a7c967f4acf5f4a87da9c34c1ed07470a"><td class="memItemLeft" align="right" valign="top"><a id="a7c967f4acf5f4a87da9c34c1ed07470a"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>Width</b> = 0</td></tr>
 <tr class="separator:a7c967f4acf5f4a87da9c34c1ed07470a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad904a6d93f82c582a693b25a920da562"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1FramebufferSpecification.html#ad904a6d93f82c582a693b25a920da562">Height</a> = 0</td></tr>
+<tr class="memitem:ad904a6d93f82c582a693b25a920da562"><td class="memItemLeft" align="right" valign="top"><a id="ad904a6d93f82c582a693b25a920da562"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>Height</b> = 0</td></tr>
 <tr class="separator:ad904a6d93f82c582a693b25a920da562"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3a1f6825f540f993dfdc7bccbd9b33b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1FramebufferSpecification.html#aa3a1f6825f540f993dfdc7bccbd9b33b">Attachments</a></td></tr>
+<tr class="memitem:aa3a1f6825f540f993dfdc7bccbd9b33b"><td class="memItemLeft" align="right" valign="top"><a id="aa3a1f6825f540f993dfdc7bccbd9b33b"></a>
+<a class="el" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a>&#160;</td><td class="memItemRight" valign="bottom"><b>Attachments</b></td></tr>
 <tr class="separator:aa3a1f6825f540f993dfdc7bccbd9b33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8da114aa697afe071ce00793f6f554c6"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1FramebufferSpecification.html#a8da114aa697afe071ce00793f6f554c6">Samples</a> = 1</td></tr>
+<tr class="memitem:a8da114aa697afe071ce00793f6f554c6"><td class="memItemLeft" align="right" valign="top"><a id="a8da114aa697afe071ce00793f6f554c6"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>Samples</b> = 1</td></tr>
 <tr class="separator:a8da114aa697afe071ce00793f6f554c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60de506164a27e49851b8d994da0dbdf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1FramebufferSpecification.html#a60de506164a27e49851b8d994da0dbdf">SwapChainTarget</a> = false</td></tr>
+<tr class="memitem:a60de506164a27e49851b8d994da0dbdf"><td class="memItemLeft" align="right" valign="top"><a id="a60de506164a27e49851b8d994da0dbdf"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SwapChainTarget</b> = false</td></tr>
 <tr class="separator:a60de506164a27e49851b8d994da0dbdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00040">40</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="aa3a1f6825f540f993dfdc7bccbd9b33b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3a1f6825f540f993dfdc7bccbd9b33b">&#9670;&nbsp;</a></span>Attachments</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1FramebufferAttachmentSpecification.html">FramebufferAttachmentSpecification</a> Kargono::FramebufferSpecification::Attachments</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00043">43</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-
-</div>
-</div>
-<a id="ad904a6d93f82c582a693b25a920da562"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad904a6d93f82c582a693b25a920da562">&#9670;&nbsp;</a></span>Height</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::FramebufferSpecification::Height = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00042">42</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-
-</div>
-</div>
-<a id="a8da114aa697afe071ce00793f6f554c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8da114aa697afe071ce00793f6f554c6">&#9670;&nbsp;</a></span>Samples</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::FramebufferSpecification::Samples = 1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00044">44</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-
-</div>
-</div>
-<a id="a60de506164a27e49851b8d994da0dbdf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60de506164a27e49851b8d994da0dbdf">&#9670;&nbsp;</a></span>SwapChainTarget</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::FramebufferSpecification::SwapChainTarget = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00046">46</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-
-</div>
-</div>
-<a id="a7c967f4acf5f4a87da9c34c1ed07470a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c967f4acf5f4a87da9c34c1ed07470a">&#9670;&nbsp;</a></span>Width</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::FramebufferSpecification::Width = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Framebuffer_8h_source.html#l00042">42</a> of file <a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="Framebuffer_8h_source.html">Framebuffer.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="structKargono_1_1FramebufferSpecification.html">FramebufferSpecification</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

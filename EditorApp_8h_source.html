@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('EditorApp_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,31 +84,26 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">EditorApp.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="EditorApp_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SceneHierarchyPanel_8h.html">Panels/SceneHierarchyPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="InputEditorPanel_8h.html">Panels/InputEditorPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ContentBrowserPanel_8h.html">Panels/ContentBrowserPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="LogPanel_8h.html">Panels/LogPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ProjectPanel_8h.html">Panels/ProjectPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="StatisticsPanel_8h.html">Panels/StatisticsPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UIEditorPanel_8h.html">Panels/UIEditorPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ViewportPanel_8h.html">Panels/ViewportPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EntityClassEditor_8h.html">Panels/EntityClassEditor.h</a>&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ScriptEditorPanel_8h.html">Panels/ScriptEditorPanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GameStatePanel_8h.html">Panels/GameStatePanel.h</a>&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TextEditorPanel_8h.html">Panels/TextEditorPanel.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Panels/SceneHierarchyPanel.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Panels/InputEditorPanel.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Panels/ContentBrowserPanel.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Panels/LogPanel.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Panels/ProjectPanel.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Panels/StatisticsPanel.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;Panels/UIEditorPanel.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;Panels/ViewportPanel.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;Panels/EntityClassEditor.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;Panels/ScriptEditorPanel.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;Panels/GameStatePanel.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;Panels/TextEditorPanel.h&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
@@ -93,12 +111,12 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// Current Editor State Enum and Field</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3">   26</a></span>&#160;    <span class="keyword">enum class</span> <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3">SceneState</a></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">enum class</span> SceneState</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a7dce122004969d56ae2e0245cb754d35">Edit</a> = 0, <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3ade3c731be5633838089a07179d301d7b">Play</a> = 1, <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a61eb21e9980dcc0537fc220659ea1ebe">Simulate</a> = 2</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        Edit = 0, Play = 1, Simulate = 2</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    };</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="comment">//============================================================</span></div>
@@ -116,8 +134,8 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">//=========================</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">// The constructor simply calls the parent constructor and initializes</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">//      the ImGui layer for window use.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="classKargono_1_1EditorApp.html#a8625c4e71b63d948a39fd53ac4efbcb9">EditorApp</a>();</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a1b65910faa38ec727b622b219a4497e4">   47</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1EditorApp.html#a1b65910faa38ec727b622b219a4497e4">~EditorApp</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="classKargono_1_1EditorApp.html">EditorApp</a>();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classKargono_1_1EditorApp.html">EditorApp</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="comment">//=========================</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">//=========================</span></div>
@@ -127,11 +145,11 @@ $(function() {
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">//      default scene resources, initializes editor boolean values,</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="comment">//      requests the user select a project to open, and opens the selected</span></div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="comment">//      project. There are other things this function does, take a look at it.</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EditorApp.html#ad438e0629ca059d901422ffff1c75391">OnAttach</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnAttach() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="comment">// This function simply closes and cleans up the audio system.</span></div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EditorApp.html#a7a3bb708dd6b8c4c7b87383175caa6a6">OnDetach</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnDetach() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="comment">// This is a fairly large function and is at the heart of this application.</span></div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="comment">//      This function runs every frame. Here is the current functionality:</span></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="comment">//      1. Request viewport resize on Scene to ensure in-runtime cameras are</span></div>
@@ -143,7 +161,7 @@ $(function() {
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="comment">//      mouse in Edit mode.</span></div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">//      4. Draw overlay code such as physics colliders, entity selection visualization,</span></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="comment">//      text/ui, etc...</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EditorApp.html#a1c9eecbf3b95480f96fb981c5d5d5a44">OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnUpdate(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// Increments step</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordtype">void</span> Step(<span class="keywordtype">int</span> frames = 1);</div>
@@ -159,7 +177,7 @@ $(function() {
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">//      3. The following code manages the top-left menu bar adn its options.</span></div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">//      4. The final section conditionally displays UI_Panels based on set boolean values(these are</span></div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">//      set in the toolbar above).</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EditorApp.html#aea0ffac6d6e33794758ccbd764760ec0">OnEditorUIRender</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnEditorUIRender() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">// Supporting functions for InputEditor. These functions display different sections of the InputEditor</span></div>
@@ -169,7 +187,7 @@ $(function() {
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="comment">// This function catches thrown application events and dispatches them to other functions</span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="comment">//      (OnKeyPressed(), OnMouseButtonPressed(), and OnPhysicsCollision()).</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">//      Those functions proceed to run logic that responds to the thrown event.</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1EditorApp.html#a257b679fe460eaa86b87185fbbc96279">OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; event) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnEvent(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; event) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="comment">// These private functions are called by the above OnEvent(e) function to handle application events.</span></div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">// These next functions provide different code to respond to user input.</span></div>
@@ -194,7 +212,7 @@ $(function() {
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="comment">//=========================</span></div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="comment">// Getters/Setters</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">  124</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EditorApp.html">EditorApp</a>* <a class="code" href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">GetCurrentApp</a>() { <span class="keywordflow">return</span> s_EditorApp; }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1EditorApp.html">EditorApp</a>* GetCurrentApp() { <span class="keywordflow">return</span> s_EditorApp; }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="comment">//=========================</span></div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="comment">// Scene/Project Management</span></div>
@@ -216,7 +234,7 @@ $(function() {
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordtype">void</span> OpenScene(<a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newScene);</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <span class="keywordtype">void</span> SaveScene();</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="comment">// This function is called by SaveSceneAs() to actually serialize the scene.</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordtype">void</span> SerializeScene(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> scene);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordtype">void</span> SerializeScene(Ref&lt;Scene&gt; scene);</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="comment">//=========================</span></div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="comment">// Scene State Transitions</span></div>
@@ -254,36 +272,36 @@ $(function() {
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="keywordtype">bool</span> m_RuntimeFullscreen = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <span class="keywordtype">bool</span> m_ShowUserInterface = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="comment">// Editor Scenes</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> m_EditorScene;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        Ref&lt;Scene&gt; m_EditorScene;</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> m_EditorSceneHandle;</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3">SceneState</a> m_SceneState = <a class="code" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a7dce122004969d56ae2e0245cb754d35">SceneState::Edit</a>;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        SceneState m_SceneState = SceneState::Edit;</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="comment">// Cached Scene Data</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;RuntimeUI::UIObject&gt;</a> m_EditorUIObject = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        Ref&lt;RuntimeUI::UIObject&gt; m_EditorUIObject = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> m_EditorUIObjectHandle{0};</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        Ref&lt;InputMode&gt; m_EditorInputMode = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> m_EditorInputModeHandle{0};</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> m_EditorInputModeHandle{0};</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="comment">// Stepping Fields</span></div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordtype">bool</span> m_IsPaused = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keywordtype">int</span> m_StepFrames = 0;</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="comment">// Input Maps</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        std::unordered_map&lt;std::string, std::function&lt;bool(Events::KeyPressedEvent)&gt;&gt; m_PanelToKeyboardInput {};</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        std::unordered_map&lt;std::string, std::function&lt;bool(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a>)&gt;&gt; m_PanelToKeyboardInput {};</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="comment">// Panels</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#acb83d55ab8aa70d301b08003273710a5">  202</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;SceneHierarchyPanel&gt;</a> <a class="code" href="classKargono_1_1EditorApp.html#acb83d55ab8aa70d301b08003273710a5">m_SceneHierarchyPanel</a>;</div>
-<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a2b94aa272a85b7162989c7ef8bd65521">  203</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;ContentBrowserPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a2b94aa272a85b7162989c7ef8bd65521">m_ContentBrowserPanel</a>;</div>
-<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a200eb51ba2ec3f01daeb4cb6e9d8b837">  204</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;LogPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a200eb51ba2ec3f01daeb4cb6e9d8b837">m_LogPanel</a>;</div>
-<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a671e1279f7c354bc6e8cb5c5d180613c">  205</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;InputEditorPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a671e1279f7c354bc6e8cb5c5d180613c">m_InputEditorPanel</a>;</div>
-<div class="line"><a name="l00206"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#abfe70da8aaae2570120f961fdfda9ad3">  206</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;StatisticsPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#abfe70da8aaae2570120f961fdfda9ad3">m_StatisticsPanel</a>;</div>
-<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a6850142a0fb8c4f2ac718bae0cb2a282">  207</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;ProjectPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a6850142a0fb8c4f2ac718bae0cb2a282">m_ProjectPanel</a>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#af5dd4c892f1f25faf4fe22ecb3eb6d98">  208</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;UIEditorPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#af5dd4c892f1f25faf4fe22ecb3eb6d98">m_UIEditorPanel</a>;</div>
-<div class="line"><a name="l00209"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a330b31c4621439618878cd016a88f686">  209</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;ViewportPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a330b31c4621439618878cd016a88f686">m_ViewportPanel</a>;</div>
-<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a19adb8a090e9877bd52d9eed98721e57">  210</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;ScriptEditorPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a19adb8a090e9877bd52d9eed98721e57">m_ScriptEditorPanel</a>;</div>
-<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a1105f3f9bd95046498f13f3c57ae8849">  211</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;EntityClassEditor&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a1105f3f9bd95046498f13f3c57ae8849">m_EntityClassEditor</a>;</div>
-<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#aa56a59b685d485f2cbfa313ec3dd6fc6">  212</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;TextEditorPanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#aa56a59b685d485f2cbfa313ec3dd6fc6">m_TextEditorPanel</a>;</div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="classKargono_1_1EditorApp.html#a93364f4887249628cb7bc5109bee3597">  213</a></span>&#160;        <a class="code" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope&lt;GameStatePanel&gt;</a>  <a class="code" href="classKargono_1_1EditorApp.html#a93364f4887249628cb7bc5109bee3597">m_GameStatePanel</a>;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        Scope&lt;SceneHierarchyPanel&gt; m_SceneHierarchyPanel;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        Scope&lt;ContentBrowserPanel&gt;  m_ContentBrowserPanel;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        Scope&lt;LogPanel&gt;  m_LogPanel;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        Scope&lt;InputEditorPanel&gt;  m_InputEditorPanel;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        Scope&lt;StatisticsPanel&gt;  m_StatisticsPanel;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        Scope&lt;ProjectPanel&gt;  m_ProjectPanel;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        Scope&lt;UIEditorPanel&gt;  m_UIEditorPanel;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        Scope&lt;ViewportPanel&gt;  m_ViewportPanel;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        Scope&lt;ScriptEditorPanel&gt;  m_ScriptEditorPanel;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        Scope&lt;EntityClassEditor&gt;  m_EntityClassEditor;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        Scope&lt;TextEditorPanel&gt;  m_TextEditorPanel;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        Scope&lt;GameStatePanel&gt;  m_GameStatePanel;</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keyword">friend</span> <a class="code" href="classKargono_1_1ViewportPanel.html">ViewportPanel</a>;</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keyword">friend</span> <a class="code" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a>;</div>
@@ -301,42 +319,9 @@ $(function() {
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    };</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;}</div>
-<div class="ttc" id="aContentBrowserPanel_8h_html"><div class="ttname"><a href="ContentBrowserPanel_8h.html">ContentBrowserPanel.h</a></div></div>
-<div class="ttc" id="aEntityClassEditor_8h_html"><div class="ttname"><a href="EntityClassEditor_8h.html">EntityClassEditor.h</a></div></div>
-<div class="ttc" id="aGameStatePanel_8h_html"><div class="ttname"><a href="GameStatePanel_8h.html">GameStatePanel.h</a></div></div>
-<div class="ttc" id="aInputEditorPanel_8h_html"><div class="ttname"><a href="InputEditorPanel_8h.html">InputEditorPanel.h</a></div></div>
-<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
-<div class="ttc" id="aLogPanel_8h_html"><div class="ttname"><a href="LogPanel_8h.html">LogPanel.h</a></div></div>
-<div class="ttc" id="aProjectPanel_8h_html"><div class="ttname"><a href="ProjectPanel_8h.html">ProjectPanel.h</a></div></div>
-<div class="ttc" id="aSceneHierarchyPanel_8h_html"><div class="ttname"><a href="SceneHierarchyPanel_8h.html">SceneHierarchyPanel.h</a></div></div>
-<div class="ttc" id="aScriptEditorPanel_8h_html"><div class="ttname"><a href="ScriptEditorPanel_8h.html">ScriptEditorPanel.h</a></div></div>
-<div class="ttc" id="aStatisticsPanel_8h_html"><div class="ttname"><a href="StatisticsPanel_8h.html">StatisticsPanel.h</a></div></div>
-<div class="ttc" id="aTextEditorPanel_8h_html"><div class="ttname"><a href="TextEditorPanel_8h.html">TextEditorPanel.h</a></div></div>
-<div class="ttc" id="aUIEditorPanel_8h_html"><div class="ttname"><a href="UIEditorPanel_8h.html">UIEditorPanel.h</a></div></div>
-<div class="ttc" id="aViewportPanel_8h_html"><div class="ttname"><a href="ViewportPanel_8h.html">ViewportPanel.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00008">Application.h:9</a></div></div>
 <div class="ttc" id="aclassKargono_1_1ContentBrowserPanel_html"><div class="ttname"><a href="classKargono_1_1ContentBrowserPanel.html">Kargono::ContentBrowserPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8h_source.html#l00020">ContentBrowserPanel.h:21</a></div></div>
 <div class="ttc" id="aclassKargono_1_1EditorApp_html"><div class="ttname"><a href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00038">EditorApp.h:39</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a1105f3f9bd95046498f13f3c57ae8849"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a1105f3f9bd95046498f13f3c57ae8849">Kargono::EditorApp::m_EntityClassEditor</a></div><div class="ttdeci">Scope&lt; EntityClassEditor &gt; m_EntityClassEditor</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00211">EditorApp.h:211</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a19adb8a090e9877bd52d9eed98721e57"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a19adb8a090e9877bd52d9eed98721e57">Kargono::EditorApp::m_ScriptEditorPanel</a></div><div class="ttdeci">Scope&lt; ScriptEditorPanel &gt; m_ScriptEditorPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00210">EditorApp.h:210</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a1b65910faa38ec727b622b219a4497e4"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a1b65910faa38ec727b622b219a4497e4">Kargono::EditorApp::~EditorApp</a></div><div class="ttdeci">virtual ~EditorApp() override=default</div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a1c9eecbf3b95480f96fb981c5d5d5a44"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a1c9eecbf3b95480f96fb981c5d5d5a44">Kargono::EditorApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00085">EditorApp.cpp:85</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a200eb51ba2ec3f01daeb4cb6e9d8b837"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a200eb51ba2ec3f01daeb4cb6e9d8b837">Kargono::EditorApp::m_LogPanel</a></div><div class="ttdeci">Scope&lt; LogPanel &gt; m_LogPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00204">EditorApp.h:204</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a257b679fe460eaa86b87185fbbc96279"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a257b679fe460eaa86b87185fbbc96279">Kargono::EditorApp::OnEvent</a></div><div class="ttdeci">virtual void OnEvent(Events::Event &amp;event) override</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00269">EditorApp.cpp:269</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a2b94aa272a85b7162989c7ef8bd65521"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a2b94aa272a85b7162989c7ef8bd65521">Kargono::EditorApp::m_ContentBrowserPanel</a></div><div class="ttdeci">Scope&lt; ContentBrowserPanel &gt; m_ContentBrowserPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00203">EditorApp.h:203</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a330b31c4621439618878cd016a88f686"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a330b31c4621439618878cd016a88f686">Kargono::EditorApp::m_ViewportPanel</a></div><div class="ttdeci">Scope&lt; ViewportPanel &gt; m_ViewportPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00209">EditorApp.h:209</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a671e1279f7c354bc6e8cb5c5d180613c"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a671e1279f7c354bc6e8cb5c5d180613c">Kargono::EditorApp::m_InputEditorPanel</a></div><div class="ttdeci">Scope&lt; InputEditorPanel &gt; m_InputEditorPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00205">EditorApp.h:205</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a6850142a0fb8c4f2ac718bae0cb2a282"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a6850142a0fb8c4f2ac718bae0cb2a282">Kargono::EditorApp::m_ProjectPanel</a></div><div class="ttdeci">Scope&lt; ProjectPanel &gt; m_ProjectPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00207">EditorApp.h:207</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a7a3bb708dd6b8c4c7b87383175caa6a6"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a7a3bb708dd6b8c4c7b87383175caa6a6">Kargono::EditorApp::OnDetach</a></div><div class="ttdeci">virtual void OnDetach() override</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00062">EditorApp.cpp:62</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a8625c4e71b63d948a39fd53ac4efbcb9"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a8625c4e71b63d948a39fd53ac4efbcb9">Kargono::EditorApp::EditorApp</a></div><div class="ttdeci">EditorApp()</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00012">EditorApp.cpp:12</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_a93364f4887249628cb7bc5109bee3597"><div class="ttname"><a href="classKargono_1_1EditorApp.html#a93364f4887249628cb7bc5109bee3597">Kargono::EditorApp::m_GameStatePanel</a></div><div class="ttdeci">Scope&lt; GameStatePanel &gt; m_GameStatePanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00213">EditorApp.h:213</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_aa56a59b685d485f2cbfa313ec3dd6fc6"><div class="ttname"><a href="classKargono_1_1EditorApp.html#aa56a59b685d485f2cbfa313ec3dd6fc6">Kargono::EditorApp::m_TextEditorPanel</a></div><div class="ttdeci">Scope&lt; TextEditorPanel &gt; m_TextEditorPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00212">EditorApp.h:212</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_abfe70da8aaae2570120f961fdfda9ad3"><div class="ttname"><a href="classKargono_1_1EditorApp.html#abfe70da8aaae2570120f961fdfda9ad3">Kargono::EditorApp::m_StatisticsPanel</a></div><div class="ttdeci">Scope&lt; StatisticsPanel &gt; m_StatisticsPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00206">EditorApp.h:206</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_acb83d55ab8aa70d301b08003273710a5"><div class="ttname"><a href="classKargono_1_1EditorApp.html#acb83d55ab8aa70d301b08003273710a5">Kargono::EditorApp::m_SceneHierarchyPanel</a></div><div class="ttdeci">Scope&lt; SceneHierarchyPanel &gt; m_SceneHierarchyPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00202">EditorApp.h:202</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_ad438e0629ca059d901422ffff1c75391"><div class="ttname"><a href="classKargono_1_1EditorApp.html#ad438e0629ca059d901422ffff1c75391">Kargono::EditorApp::OnAttach</a></div><div class="ttdeci">virtual void OnAttach() override</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00018">EditorApp.cpp:18</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_aea0ffac6d6e33794758ccbd764760ec0"><div class="ttname"><a href="classKargono_1_1EditorApp.html#aea0ffac6d6e33794758ccbd764760ec0">Kargono::EditorApp::OnEditorUIRender</a></div><div class="ttdeci">virtual void OnEditorUIRender() override</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8cpp_source.html#l00099">EditorApp.cpp:99</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_af5dd4c892f1f25faf4fe22ecb3eb6d98"><div class="ttname"><a href="classKargono_1_1EditorApp.html#af5dd4c892f1f25faf4fe22ecb3eb6d98">Kargono::EditorApp::m_UIEditorPanel</a></div><div class="ttdeci">Scope&lt; UIEditorPanel &gt; m_UIEditorPanel</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00208">EditorApp.h:208</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EditorApp_html_af96e06aedeb0aa374b03bb2b93070709"><div class="ttname"><a href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">Kargono::EditorApp::GetCurrentApp</a></div><div class="ttdeci">static EditorApp * GetCurrentApp()</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00124">EditorApp.h:124</a></div></div>
 <div class="ttc" id="aclassKargono_1_1EntityClassEditor_html"><div class="ttname"><a href="classKargono_1_1EntityClassEditor.html">Kargono::EntityClassEditor</a></div><div class="ttdef"><b>Definition:</b> <a href="EntityClassEditor_8h_source.html#l00008">EntityClassEditor.h:9</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1ApplicationCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Kargono::Events::ApplicationCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00081">ApplicationEvent.h:82</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1ApproveJoinSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApproveJoinSession.html">Kargono::Events::ApproveJoinSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00366">NetworkingEvent.h:367</a></div></div>
@@ -365,18 +350,14 @@ $(function() {
 <div class="ttc" id="aclassKargono_1_1UIEditorPanel_html"><div class="ttname"><a href="classKargono_1_1UIEditorPanel.html">Kargono::UIEditorPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="UIEditorPanel_8h_source.html#l00008">UIEditorPanel.h:9</a></div></div>
 <div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
 <div class="ttc" id="aclassKargono_1_1ViewportPanel_html"><div class="ttname"><a href="classKargono_1_1ViewportPanel.html">Kargono::ViewportPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="ViewportPanel_8h_source.html#l00009">ViewportPanel.h:10</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html_af3b6830c6804fbd8dbea92b8ef79d3a5"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a></div><div class="ttdeci">Kargono::UUID AssetHandle</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00018">Asset.h:18</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a294edcb4991a08ea71c44c2a8753ebf3"><div class="ttname"><a href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3">Kargono::SceneState</a></div><div class="ttdeci">SceneState</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00026">EditorApp.h:27</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a294edcb4991a08ea71c44c2a8753ebf3a61eb21e9980dcc0537fc220659ea1ebe"><div class="ttname"><a href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a61eb21e9980dcc0537fc220659ea1ebe">Kargono::SceneState::Simulate</a></div><div class="ttdeci">@ Simulate</div></div>
-<div class="ttc" id="anamespaceKargono_html_a294edcb4991a08ea71c44c2a8753ebf3a7dce122004969d56ae2e0245cb754d35"><div class="ttname"><a href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a7dce122004969d56ae2e0245cb754d35">Kargono::SceneState::Edit</a></div><div class="ttdeci">@ Edit</div></div>
-<div class="ttc" id="anamespaceKargono_html_a294edcb4991a08ea71c44c2a8753ebf3ade3c731be5633838089a07179d301d7b"><div class="ttname"><a href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3ade3c731be5633838089a07179d301d7b">Kargono::SceneState::Play</a></div><div class="ttdeci">@ Play</div></div>
-<div class="ttc" id="anamespaceKargono_html_a75cefe73507cbf8c678d5e216480039c"><div class="ttname"><a href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Kargono::Scope</a></div><div class="ttdeci">std::unique_ptr&lt; T &gt; Scope</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00032">Base.h:32</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><b>EditorApp.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

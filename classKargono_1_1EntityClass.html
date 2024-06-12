@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1EntityClass.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1EntityClass.html">EntityClass</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -75,330 +93,54 @@ $(function() {
 <div class="title">Kargono::EntityClass Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3569896808ac41d2cada00ed0feb31c8"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="structKargono_1_1ClassField.html">ClassField</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a3569896808ac41d2cada00ed0feb31c8">GetFields</a> ()</td></tr>
+<tr class="memitem:a3569896808ac41d2cada00ed0feb31c8"><td class="memItemLeft" align="right" valign="top"><a id="a3569896808ac41d2cada00ed0feb31c8"></a>
+const std::vector&lt; <a class="el" href="structKargono_1_1ClassField.html">ClassField</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetFields</b> ()</td></tr>
 <tr class="separator:a3569896808ac41d2cada00ed0feb31c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54229b8fad687736a968fce30ac15c00"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a54229b8fad687736a968fce30ac15c00">GetFieldLocation</a> (const std::string &amp;fieldName) const</td></tr>
+<tr class="memitem:a54229b8fad687736a968fce30ac15c00"><td class="memItemLeft" align="right" valign="top"><a id="a54229b8fad687736a968fce30ac15c00"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetFieldLocation</b> (const std::string &amp;fieldName) const</td></tr>
 <tr class="separator:a54229b8fad687736a968fce30ac15c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa368caed3410d2dddf9c683f88508e4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#aa368caed3410d2dddf9c683f88508e4f">GetField</a> (const std::string &amp;fieldName) const</td></tr>
+<tr class="memitem:aa368caed3410d2dddf9c683f88508e4f"><td class="memItemLeft" align="right" valign="top"><a id="aa368caed3410d2dddf9c683f88508e4f"></a>
+WrappedVarType&#160;</td><td class="memItemRight" valign="bottom"><b>GetField</b> (const std::string &amp;fieldName) const</td></tr>
 <tr class="separator:aa368caed3410d2dddf9c683f88508e4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e769956dd1894134b2bcc6780595336"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a4e769956dd1894134b2bcc6780595336">ContainsField</a> (const std::string &amp;fieldName) const</td></tr>
+<tr class="memitem:a4e769956dd1894134b2bcc6780595336"><td class="memItemLeft" align="right" valign="top"><a id="a4e769956dd1894134b2bcc6780595336"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>ContainsField</b> (const std::string &amp;fieldName) const</td></tr>
 <tr class="separator:a4e769956dd1894134b2bcc6780595336"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85f2d24ac7949bd8aa8833d7c520649d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a85f2d24ac7949bd8aa8833d7c520649d">AddField</a> (const std::string &amp;fieldName, <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> fieldType)</td></tr>
+<tr class="memitem:a85f2d24ac7949bd8aa8833d7c520649d"><td class="memItemLeft" align="right" valign="top"><a id="a85f2d24ac7949bd8aa8833d7c520649d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddField</b> (const std::string &amp;fieldName, WrappedVarType fieldType)</td></tr>
 <tr class="separator:a85f2d24ac7949bd8aa8833d7c520649d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add620894f51269561cbb5134ac7cf64f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#add620894f51269561cbb5134ac7cf64f">DeleteField</a> (const std::string &amp;fieldName)</td></tr>
+<tr class="memitem:add620894f51269561cbb5134ac7cf64f"><td class="memItemLeft" align="right" valign="top"><a id="add620894f51269561cbb5134ac7cf64f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteField</b> (const std::string &amp;fieldName)</td></tr>
 <tr class="separator:add620894f51269561cbb5134ac7cf64f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a942e72a9d228aecab983635b2683afc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1EntityScripts.html">EntityScripts</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a942e72a9d228aecab983635b2683afc6">GetScripts</a> ()</td></tr>
+<tr class="memitem:a942e72a9d228aecab983635b2683afc6"><td class="memItemLeft" align="right" valign="top"><a id="a942e72a9d228aecab983635b2683afc6"></a>
+<a class="el" href="structKargono_1_1EntityScripts.html">EntityScripts</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetScripts</b> ()</td></tr>
 <tr class="separator:a942e72a9d228aecab983635b2683afc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa64b697edb3e1030dc47f8ed50d27cde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#aa64b697edb3e1030dc47f8ed50d27cde">SetName</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:aa64b697edb3e1030dc47f8ed50d27cde"><td class="memItemLeft" align="right" valign="top"><a id="aa64b697edb3e1030dc47f8ed50d27cde"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetName</b> (const std::string &amp;name)</td></tr>
 <tr class="separator:aa64b697edb3e1030dc47f8ed50d27cde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af61efbce3ef87ed23f809142e382978c"><td class="memItemLeft" align="right" valign="top">std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#af61efbce3ef87ed23f809142e382978c">GetName</a> ()</td></tr>
+<tr class="memitem:af61efbce3ef87ed23f809142e382978c"><td class="memItemLeft" align="right" valign="top"><a id="af61efbce3ef87ed23f809142e382978c"></a>
+std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> ()</td></tr>
 <tr class="separator:af61efbce3ef87ed23f809142e382978c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EntityClass.html#a93a4681dfdc6917d50d61ef8c5254626">Assets::AssetManager</a></td></tr>
+<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top"><a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Assets::AssetManager</b></td></tr>
 <tr class="separator:a93a4681dfdc6917d50d61ef8c5254626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00034">34</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a85f2d24ac7949bd8aa8833d7c520649d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85f2d24ac7949bd8aa8833d7c520649d">&#9670;&nbsp;</a></span>AddField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::EntityClass::AddField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td>
-          <td class="paramname"><em>fieldType</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00084">84</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="a4e769956dd1894134b2bcc6780595336"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e769956dd1894134b2bcc6780595336">&#9670;&nbsp;</a></span>ContainsField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::EntityClass::ContainsField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00072">72</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="add620894f51269561cbb5134ac7cf64f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add620894f51269561cbb5134ac7cf64f">&#9670;&nbsp;</a></span>DeleteField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::EntityClass::DeleteField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00099">99</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="aa368caed3410d2dddf9c683f88508e4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa368caed3410d2dddf9c683f88508e4f">&#9670;&nbsp;</a></span>GetField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> Kargono::EntityClass::GetField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00058">58</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="a54229b8fad687736a968fce30ac15c00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54229b8fad687736a968fce30ac15c00">&#9670;&nbsp;</a></span>GetFieldLocation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int32_t Kargono::EntityClass::GetFieldLocation </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00042">42</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="a3569896808ac41d2cada00ed0feb31c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3569896808ac41d2cada00ed0feb31c8">&#9670;&nbsp;</a></span>GetFields()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt;<a class="el" href="structKargono_1_1ClassField.html">ClassField</a>&gt;&amp; Kargono::EntityClass::GetFields </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00037">37</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="af61efbce3ef87ed23f809142e382978c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af61efbce3ef87ed23f809142e382978c">&#9670;&nbsp;</a></span>GetName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string&amp; Kargono::EntityClass::GetName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00134">134</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="a942e72a9d228aecab983635b2683afc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a942e72a9d228aecab983635b2683afc6">&#9670;&nbsp;</a></span>GetScripts()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EntityScripts.html">EntityScripts</a>&amp; Kargono::EntityClass::GetScripts </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00125">125</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<a id="aa64b697edb3e1030dc47f8ed50d27cde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa64b697edb3e1030dc47f8ed50d27cde">&#9670;&nbsp;</a></span>SetName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EntityClass::SetName </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00129">129</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93a4681dfdc6917d50d61ef8c5254626">&#9670;&nbsp;</a></span>Assets::AssetManager</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EntityClass_8h_source.html#l00143">143</a> of file <a class="el" href="EntityClass_8h_source.html">EntityClass.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="EntityClass_8h_source.html">EntityClass.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1EntityClass.html">EntityClass</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1EditorUI_1_1InlineButtonSpec.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1EditorUI.html">EditorUI</a></li><li class="navelem"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::EditorUI::InlineButtonSpec Member List</div>  </div>
@@ -74,19 +92,22 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a343be83969afdecab1dac92e70b317f1">ActiveIcon</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a6fd4c3dbe198f8232c6ffc6e2e971540">ActiveTooltip</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9a38a9428af030236e5f2aa294a552e8">Disabled</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#adf3134301ea4ae67e89a06219264b20d">IconSize</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#ace61c1941ce536cc6e3eee8b18746e87">InactiveIcon</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a017cca311f5d8e903d665306453a05d1">InactiveTooltip</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a57463e3ee02d564538350238a02398b6">XPosition</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9921d98ec74da16445fae2bf6eaf21ea">XPositionType</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html#ac20f1b3587d7b350a0abe874182e3691">YPosition</a></td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ActiveIcon</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ActiveTooltip</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Disabled</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>IconSize</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>InactiveIcon</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>InactiveTooltip</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>XPosition</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>XPositionType</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>YPosition</b> (defined in <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">Kargono::EditorUI::InlineButtonSpec</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

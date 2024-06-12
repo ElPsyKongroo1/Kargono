@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1EntityScripts.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1EntityScripts.html">EntityScripts</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::EntityScripts Member List</div>  </div>
@@ -74,19 +92,22 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#aa8f22c1aa1aafac469101eea0dac62ba">AllClassScripts</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#ac2a7de55283ab89f8fe8f738372cd032">OnCreate</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#affd5641ea9a8d6cdb1f9f810100b4f8a">OnCreateHandle</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#a65950ba657007d296165521db276f796">OnPhysicsCollisionEnd</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#a90483b0e6dd505813603a1bdf478c6b5">OnPhysicsCollisionEndHandle</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#aa051f8c5b5161ca91497375d8cf72c5c">OnPhysicsCollisionStart</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#a9884e6ee2f47f2eadc49e56dd5226bc8">OnPhysicsCollisionStartHandle</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#a50b61a371b22ea9825f084a6c3dcb99f">OnUpdate</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html#a6edf9da72751bf21e949e8a5405386ec">OnUpdateHandle</a></td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AllClassScripts</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnCreate</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnCreateHandle</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnPhysicsCollisionEnd</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnPhysicsCollisionEndHandle</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnPhysicsCollisionStart</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnPhysicsCollisionStartHandle</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnUpdate</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnUpdateHandle</b> (defined in <a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a>)</td><td class="entry"><a class="el" href="structKargono_1_1EntityScripts.html">Kargono::EntityScripts</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

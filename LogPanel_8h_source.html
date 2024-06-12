@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('LogPanel_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,24 +84,19 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">LogPanel.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="LogPanel_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Utility/FileSystem.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">// Usage:</span></div>
@@ -87,28 +105,28 @@ $(function() {
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">//  my_log.Draw(&quot;title&quot;);</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="structKargono_1_1ImGuiLog.html">   15</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1ImGuiLog.html">ImGuiLog</a></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="structKargono_1_1ImGuiLog.html#a12f5c3e0423347cf05c572bb31038c12">ImGuiLog</a>();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="structKargono_1_1ImGuiLog.html">ImGuiLog</a>();</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1ImGuiLog.html#a5b74196644b4daf7da4a75a0c72fc08c">Clear</a>();</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordtype">void</span> Clear();</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1ImGuiLog.html#a9272287fa5a56857ef7cde78a19a887b">AddLog</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* line);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keywordtype">void</span> AddLog(<span class="keyword">const</span> <span class="keywordtype">char</span>* line);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1ImGuiLog.html#a5571f135d57707601c9701d8407a807c">Draw</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* title, <span class="keywordtype">bool</span>* p_open = NULL);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordtype">void</span> Draw(<span class="keyword">const</span> <span class="keywordtype">char</span>* title, <span class="keywordtype">bool</span>* p_open = NULL);</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structKargono_1_1ImGuiLog.html#a4884b45657c35a88388bdb4d40e8ec92">   25</a></span>&#160;        ImGuiTextBuffer     <a class="code" href="structKargono_1_1ImGuiLog.html#a4884b45657c35a88388bdb4d40e8ec92">Buf</a>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structKargono_1_1ImGuiLog.html#a9f8a9da23586f930d7de9442110d290e">   26</a></span>&#160;        ImGuiTextFilter     <a class="code" href="structKargono_1_1ImGuiLog.html#a9f8a9da23586f930d7de9442110d290e">Filter</a>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structKargono_1_1ImGuiLog.html#aa85fe3942bdbecd206fa78f18a12924a">   27</a></span>&#160;        ImVector&lt;int&gt;       <a class="code" href="structKargono_1_1ImGuiLog.html#aa85fe3942bdbecd206fa78f18a12924a">LineOffsets</a>; <span class="comment">// Index to lines offset. We maintain this with AddLog() calls.</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structKargono_1_1ImGuiLog.html#afe9e68ae37b8ab2335353c8f60d2d556">   28</a></span>&#160;        <span class="keywordtype">bool</span>                <a class="code" href="structKargono_1_1ImGuiLog.html#afe9e68ae37b8ab2335353c8f60d2d556">AutoScroll</a>;  <span class="comment">// Keep scrolling if already at the bottom.</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        ImGuiTextBuffer     Buf;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        ImGuiTextFilter     Filter;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        ImVector&lt;int&gt;       LineOffsets; <span class="comment">// Index to lines offset. We maintain this with AddLog() calls.</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">bool</span>                AutoScroll;  <span class="comment">// Keep scrolling if already at the bottom.</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    };</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classKargono_1_1LogPanel.html">   31</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1LogPanel.html">LogPanel</a></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="classKargono_1_1LogPanel.html#a532ba728282b5c09a30d5083f2719c76">LogPanel</a>();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="classKargono_1_1LogPanel.html">LogPanel</a>();</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LogPanel.html#a885784a014a87caa78ed7ff109b3bb65">OnEditorUIRender</a>();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1LogPanel.html#a80803778103fccdc3a5c02a5b506c14c">OnKeyPressedEditor</a>(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LogPanel.html#aafa5b0efab1fa60f793d556e355f3fc0">LoadBuffer</a>();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordtype">void</span> OnEditorUIRender();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordtype">bool</span> OnKeyPressedEditor(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> LoadBuffer();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <a class="code" href="structKargono_1_1ImGuiLog.html">ImGuiLog</a> m_Log;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        std::filesystem::path m_LogPathRelative = <span class="stringliteral">&quot;log/Kargono.log&quot;</span>;</div>
@@ -116,29 +134,18 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        std::string m_PanelName{ <span class="stringliteral">&quot;Log&quot;</span> };</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    };</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
-<div class="ttc" id="aFileSystem_8h_html"><div class="ttname"><a href="FileSystem_8h.html">FileSystem.h</a></div></div>
-<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
 <div class="ttc" id="aclassKargono_1_1LogPanel_html"><div class="ttname"><a href="classKargono_1_1LogPanel.html">Kargono::LogPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00031">LogPanel.h:32</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LogPanel_html_a532ba728282b5c09a30d5083f2719c76"><div class="ttname"><a href="classKargono_1_1LogPanel.html#a532ba728282b5c09a30d5083f2719c76">Kargono::LogPanel::LogPanel</a></div><div class="ttdeci">LogPanel()</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00108">LogPanel.cpp:108</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LogPanel_html_a80803778103fccdc3a5c02a5b506c14c"><div class="ttname"><a href="classKargono_1_1LogPanel.html#a80803778103fccdc3a5c02a5b506c14c">Kargono::LogPanel::OnKeyPressedEditor</a></div><div class="ttdeci">bool OnKeyPressedEditor(Events::KeyPressedEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00151">LogPanel.cpp:151</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LogPanel_html_a885784a014a87caa78ed7ff109b3bb65"><div class="ttname"><a href="classKargono_1_1LogPanel.html#a885784a014a87caa78ed7ff109b3bb65">Kargono::LogPanel::OnEditorUIRender</a></div><div class="ttdeci">void OnEditorUIRender()</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00118">LogPanel.cpp:118</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LogPanel_html_aafa5b0efab1fa60f793d556e355f3fc0"><div class="ttname"><a href="classKargono_1_1LogPanel.html#aafa5b0efab1fa60f793d556e355f3fc0">Kargono::LogPanel::LoadBuffer</a></div><div class="ttdeci">void LoadBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00156">LogPanel.cpp:156</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 <div class="ttc" id="astructKargono_1_1Buffer_html"><div class="ttname"><a href="structKargono_1_1Buffer.html">Kargono::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00009">Buffer.h:10</a></div></div>
 <div class="ttc" id="astructKargono_1_1ImGuiLog_html"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html">Kargono::ImGuiLog</a></div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00015">LogPanel.h:16</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a12f5c3e0423347cf05c572bb31038c12"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a12f5c3e0423347cf05c572bb31038c12">Kargono::ImGuiLog::ImGuiLog</a></div><div class="ttdeci">ImGuiLog()</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00013">LogPanel.cpp:13</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a4884b45657c35a88388bdb4d40e8ec92"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a4884b45657c35a88388bdb4d40e8ec92">Kargono::ImGuiLog::Buf</a></div><div class="ttdeci">ImGuiTextBuffer Buf</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00025">LogPanel.h:25</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a5571f135d57707601c9701d8407a807c"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a5571f135d57707601c9701d8407a807c">Kargono::ImGuiLog::Draw</a></div><div class="ttdeci">void Draw(const char *title, bool *p_open=NULL)</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00035">LogPanel.cpp:35</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a5b74196644b4daf7da4a75a0c72fc08c"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a5b74196644b4daf7da4a75a0c72fc08c">Kargono::ImGuiLog::Clear</a></div><div class="ttdeci">void Clear()</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00019">LogPanel.cpp:19</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a9272287fa5a56857ef7cde78a19a887b"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a9272287fa5a56857ef7cde78a19a887b">Kargono::ImGuiLog::AddLog</a></div><div class="ttdeci">void AddLog(const char *line)</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8cpp_source.html#l00026">LogPanel.cpp:26</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_a9f8a9da23586f930d7de9442110d290e"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#a9f8a9da23586f930d7de9442110d290e">Kargono::ImGuiLog::Filter</a></div><div class="ttdeci">ImGuiTextFilter Filter</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00026">LogPanel.h:26</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_aa85fe3942bdbecd206fa78f18a12924a"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#aa85fe3942bdbecd206fa78f18a12924a">Kargono::ImGuiLog::LineOffsets</a></div><div class="ttdeci">ImVector&lt; int &gt; LineOffsets</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00027">LogPanel.h:27</a></div></div>
-<div class="ttc" id="astructKargono_1_1ImGuiLog_html_afe9e68ae37b8ab2335353c8f60d2d556"><div class="ttname"><a href="structKargono_1_1ImGuiLog.html#afe9e68ae37b8ab2335353c8f60d2d556">Kargono::ImGuiLog::AutoScroll</a></div><div class="ttdeci">bool AutoScroll</div><div class="ttdef"><b>Definition:</b> <a href="LogPanel_8h_source.html#l00028">LogPanel.h:28</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><b>LogPanel.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

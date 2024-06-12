@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('OpenGLRendererAPI_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,25 +84,20 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">OpenGLRendererAPI.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="OpenGLRendererAPI_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RendererAPI_8h.html">Kargono/Renderer/RendererAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/RendererAPI.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OpenGLRendererAPI_8h.html">API/RenderingAPI/OpenGLRendererAPI.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="gladAPI_8h.html">API/Windowing/gladAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;API/RenderingAPI/OpenGLRendererAPI.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;API/Platform/gladAPI.h&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceAPI_1_1Utility.html">API::Utility</a></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>API::Utility</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> OpenGLMessageCallback(<span class="keywordtype">unsigned</span> source, <span class="keywordtype">unsigned</span> type, <span class="keywordtype">unsigned</span> <span class="keywordtype">id</span>,</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="keywordtype">unsigned</span> severity, <span class="keywordtype">int</span> length, <span class="keyword">const</span> <span class="keywordtype">char</span>* message, <span class="keyword">const</span> <span class="keywordtype">void</span>* userParam)</div>
@@ -116,71 +134,71 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">case</span> GL_DEBUG_SEVERITY_HIGH:</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        {</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            severityString = <span class="stringliteral">&quot;High&quot;</span>;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">case</span> GL_DEBUG_SEVERITY_MEDIUM:</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            severityString = <span class="stringliteral">&quot;Medium&quot;</span>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <a class="code" href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">KG_CRITICAL</a>(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            KG_CRITICAL(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordflow">case</span> GL_DEBUG_SEVERITY_LOW:</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        {</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            severityString = <span class="stringliteral">&quot;Low&quot;</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            KG_WARN(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordflow">case</span> GL_DEBUG_SEVERITY_NOTIFICATION:</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        {</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            severityString = <span class="stringliteral">&quot;Notification&quot;</span>;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            KG_INFO(<span class="stringliteral">&quot;[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}&quot;</span>, severityString, sourceString, typeString, message);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Unknown severity level!&quot;</span>);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        KG_ERROR(<span class="stringliteral">&quot;Unknown severity level!&quot;</span>);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#af27050750cda824e48fa6cd932f4ab72">GLenum</a> StencilComparisonToGLenum(<a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21">Kargono::StencilComparisonType</a> comparisonType)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> GLenum StencilComparisonToGLenum(Kargono::StencilComparisonType comparisonType)</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    {</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">switch</span> (comparisonType)</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a443475558f0168dff92ecde26b98ae5a">Kargono::StencilComparisonType::NEVER</a>: <span class="keywordflow">return</span> GL_NEVER;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a1798e8c3621ca53d9e3a80d257306000">Kargono::StencilComparisonType::LESS</a>: <span class="keywordflow">return</span> GL_LESS;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a8a72211a539c4f44dcaa446209076da6">Kargono::StencilComparisonType::LEQUAL</a>: <span class="keywordflow">return</span> GL_LEQUAL;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21ae7e72355289e404b762d4cf88824d23b">Kargono::StencilComparisonType::GREATER</a>: <span class="keywordflow">return</span> GL_GREATER;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a9e63a520a6e8fefd37a5fa966d96f3bc">Kargono::StencilComparisonType::GEQUAL</a>: <span class="keywordflow">return</span> GL_GEQUAL;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a969f331a87d8c958473c32b4d0e61a44">Kargono::StencilComparisonType::EQUAL</a>: <span class="keywordflow">return</span> GL_EQUAL;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a94fbd04a26dff1689ee02634be6aaf1f">Kargono::StencilComparisonType::NOTEQUAL</a>: <span class="keywordflow">return</span> GL_NOTEQUAL;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21af3fc827ade4b968e50406496907ef962">Kargono::StencilComparisonType::ALWAYS</a>: <span class="keywordflow">return</span> GL_ALWAYS;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::NEVER: <span class="keywordflow">return</span> GL_NEVER;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::LESS: <span class="keywordflow">return</span> GL_LESS;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::LEQUAL: <span class="keywordflow">return</span> GL_LEQUAL;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::GREATER: <span class="keywordflow">return</span> GL_GREATER;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::GEQUAL: <span class="keywordflow">return</span> GL_GEQUAL;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::EQUAL: <span class="keywordflow">return</span> GL_EQUAL;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::NOTEQUAL: <span class="keywordflow">return</span> GL_NOTEQUAL;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilComparisonType::ALWAYS: <span class="keywordflow">return</span> GL_ALWAYS;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Invalid enum provided in StencilComparisonToGLStencil&quot;</span>);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        KG_ERROR(<span class="stringliteral">&quot;Invalid enum provided in StencilComparisonToGLStencil&quot;</span>);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#af27050750cda824e48fa6cd932f4ab72">GLenum</a> StencilOptionsToGLEnum(<a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a> option)</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">static</span> GLenum StencilOptionsToGLEnum(Kargono::StencilOptions option)</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    {</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">switch</span> (option)</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a60cba2874369bd3790e14ea5f8a7bc58">Kargono::StencilOptions::KEEP</a>: <span class="keywordflow">return</span> GL_KEEP;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a529e9e0beb5f85d1f132917c1a09860c">Kargono::StencilOptions::ZERO</a>: <span class="keywordflow">return</span> GL_ZERO;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a560a2dd6f6744646473b3b19e1fe96d7">Kargono::StencilOptions::REPLACE</a>: <span class="keywordflow">return</span> GL_REPLACE;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83afc67535e5273d466beba3c06c0dbd988">Kargono::StencilOptions::INCR</a>: <span class="keywordflow">return</span> GL_INCR;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a056f9acd45832946a8f02289a8516e7f">Kargono::StencilOptions::INCR_WRAP</a>: <span class="keywordflow">return</span> GL_INCR_WRAP;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83ac121b991572aba8a5789d08d7e9cf76e">Kargono::StencilOptions::DECR</a>: <span class="keywordflow">return</span> GL_DECR;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a6501b4eff3345af27614635221cc6c59">Kargono::StencilOptions::DECR_WRAP</a>: <span class="keywordflow">return</span> GL_DECR_WRAP;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83aa2727ae72447eea06d4cc0ef67187280">Kargono::StencilOptions::INVERT</a>: <span class="keywordflow">return</span> GL_INVERT;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::KEEP: <span class="keywordflow">return</span> GL_KEEP;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::ZERO: <span class="keywordflow">return</span> GL_ZERO;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::REPLACE: <span class="keywordflow">return</span> GL_REPLACE;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::INCR: <span class="keywordflow">return</span> GL_INCR;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::INCR_WRAP: <span class="keywordflow">return</span> GL_INCR_WRAP;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::DECR: <span class="keywordflow">return</span> GL_DECR;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::DECR_WRAP: <span class="keywordflow">return</span> GL_DECR_WRAP;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">case</span> Kargono::StencilOptions::INVERT: <span class="keywordflow">return</span> GL_INVERT;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Invalid enum provided in StencilOptionsToGLEnum&quot;</span>);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        KG_ERROR(<span class="stringliteral">&quot;Invalid enum provided in StencilOptionsToGLEnum&quot;</span>);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceAPI_1_1OpenGL.html">API::OpenGL</a></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">namespace </span>API::RenderingAPI</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;{</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ac114af14e0adabec564a7ff66b800533">  110</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ac114af14e0adabec564a7ff66b800533">OpenGLRendererAPI::Init</a>()</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::Init()</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    {</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="comment">// Only Enable OpenGL logging if debug is enabled</span></div>
@@ -202,119 +220,79 @@ $(function() {
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        glEnable(GL_LINE_SMOOTH);</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    }</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a9e6ca79c3c69c03c76576829f918f666">  132</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a9e6ca79c3c69c03c76576829f918f666">OpenGLRendererAPI::SetViewport</a>(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    {</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        glViewport(x, y, width, height);</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    }</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a38014062b0ff653b81444ed8cd3b0793">  137</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a38014062b0ff653b81444ed8cd3b0793">OpenGLRendererAPI::ClearDepthBuffer</a>()</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::ClearDepthBuffer()</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    {</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        glClear(GL_DEPTH_BUFFER_BIT);</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    }</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
-<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ab73b0ceeaad1adde1a5b047ee6a51735">  142</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ab73b0ceeaad1adde1a5b047ee6a51735">OpenGLRendererAPI::SetClearColor</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a>&amp; color)</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::SetClearColor(<span class="keyword">const</span> Kargono::Math::vec4&amp; color)</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    {</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        glClearColor(color.r, color.g, color.b, color.a);</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    }</div>
-<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a321f600ac47c4b636522b0d5e16b25e7">  146</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a321f600ac47c4b636522b0d5e16b25e7">OpenGLRendererAPI::SetDepthTesting</a>(<span class="keywordtype">bool</span> value)</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::SetDepthTesting(<span class="keywordtype">bool</span> value)</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    {</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        value ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    }</div>
-<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a91404ee97a4d9246d2236b245c2e1d89">  150</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a91404ee97a4d9246d2236b245c2e1d89">OpenGLRendererAPI::SetStencilMask</a>(uint32_t value)</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::SetStencilMask(uint32_t value)</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    {</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        glStencilMask(value);</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    }</div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a21d8362db586f8068d7d7022bacf6e95">  154</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a21d8362db586f8068d7d7022bacf6e95">OpenGLRendererAPI::StencilTestFunc</a>(<a class="code" href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21">Kargono::StencilComparisonType</a> comparisonType, int32_t reference, uint32_t mask)</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::StencilTestFunc(Kargono::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    {</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        glStencilFunc(Utility::StencilComparisonToGLenum(comparisonType), reference, mask);</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    }</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a653d475ece60af17c9bf25e758e777de">  159</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a653d475ece60af17c9bf25e758e777de">OpenGLRendererAPI::StencilTestOptions</a>(<a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a> sfail, <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a> dfail, <a class="code" href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a> sdpass)</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::StencilTestOptions(Kargono::StencilOptions sfail, Kargono::StencilOptions dfail, Kargono::StencilOptions sdpass)</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    {</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        glStencilOp(Utility::StencilOptionsToGLEnum(sfail), Utility::StencilOptionsToGLEnum(dfail), Utility::StencilOptionsToGLEnum(sdpass));</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    }</div>
-<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a6c0e9cd4021216229b63160827ff7003">  163</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a6c0e9cd4021216229b63160827ff7003">OpenGLRendererAPI::Clear</a>()</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::Clear()</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    {</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
-<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ae7bc53d599667fe3b5b0d345e854100b">  167</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ae7bc53d599667fe3b5b0d345e854100b">OpenGLRendererAPI::DrawIndexed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref&lt;Kargono::VertexArray&gt;</a>&amp; vertexArray, uint32_t indexCount)</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::DrawIndexed(<span class="keyword">const</span> Kargono::Ref&lt;Kargono::VertexArray&gt;&amp; vertexArray, uint32_t indexCount)</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    {</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        vertexArray-&gt;Bind();</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        uint32_t count = indexCount ? indexCount : vertexArray-&gt;GetIndexBuffer()-&gt;GetCount();</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    }</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#acf85a85e587555707c2001d806cc54ba">  174</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ae7bc53d599667fe3b5b0d345e854100b">OpenGLRendererAPI::DrawIndexed</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref&lt;Kargono::VertexArray&gt;</a>&amp; vertexArray,uint32_t* indexPointer, uint32_t indexCount)</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::DrawIndexed(<span class="keyword">const</span> Kargono::Ref&lt;Kargono::VertexArray&gt;&amp; vertexArray,uint32_t* indexPointer, uint32_t indexCount)</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    {</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        vertexArray-&gt;Bind();</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indexPointer);</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a7b0acc1de1a011b05bb54ae52e3c6247">  180</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a7b0acc1de1a011b05bb54ae52e3c6247">OpenGLRendererAPI::DrawLines</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref&lt;Kargono::VertexArray&gt;</a>&amp; vertexArray, uint32_t vertexCount)</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::DrawLines(<span class="keyword">const</span> Kargono::Ref&lt;Kargono::VertexArray&gt;&amp; vertexArray, uint32_t vertexCount)</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    {</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        vertexArray-&gt;Bind();</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        glDrawArrays(GL_LINES, 0, vertexCount);</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    }</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
-<div class="line"><a name="l00186"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#af644524a690dd2ce8e93cbb1c99c6ce5">  186</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#af644524a690dd2ce8e93cbb1c99c6ce5">OpenGLRendererAPI::DrawTriangles</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref&lt;Kargono::VertexArray&gt;</a>&amp; vertexArray, uint32_t vertexCount)</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::DrawTriangles(<span class="keyword">const</span> Kargono::Ref&lt;Kargono::VertexArray&gt;&amp; vertexArray, uint32_t vertexCount)</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    {</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        vertexArray-&gt;Bind();</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        glDrawArrays(GL_TRIANGLES, 0, vertexCount);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a8f9b80d2bdab0f78a3738f0ef2ae2b9a">  192</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a8f9b80d2bdab0f78a3738f0ef2ae2b9a">OpenGLRendererAPI::SetLineWidth</a>(<span class="keywordtype">float</span> width)</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordtype">void</span> OpenGLRendererAPI::SetLineWidth(<span class="keywordtype">float</span> width)</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    {</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        glLineWidth(width);</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;}</div>
-<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
-<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00033">Log.h:33</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
-<div class="ttc" id="aLog_8h_html_aa966f911c6b441ead2497227a9cee59f"><div class="ttname"><a href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">KG_CRITICAL</a></div><div class="ttdeci">#define KG_CRITICAL(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00034">Log.h:34</a></div></div>
-<div class="ttc" id="aOpenGLRendererAPI_8h_html"><div class="ttname"><a href="OpenGLRendererAPI_8h.html">OpenGLRendererAPI.h</a></div></div>
-<div class="ttc" id="aRendererAPI_8h_html"><div class="ttname"><a href="RendererAPI_8h.html">RendererAPI.h</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a21d8362db586f8068d7d7022bacf6e95"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a21d8362db586f8068d7d7022bacf6e95">API::OpenGL::OpenGLRendererAPI::StencilTestFunc</a></div><div class="ttdeci">virtual void StencilTestFunc(Kargono::StencilComparisonType comparisonType, int32_t reference, uint32_t mask) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00154">OpenGLRendererAPI.cpp:154</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a321f600ac47c4b636522b0d5e16b25e7"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a321f600ac47c4b636522b0d5e16b25e7">API::OpenGL::OpenGLRendererAPI::SetDepthTesting</a></div><div class="ttdeci">virtual void SetDepthTesting(bool value) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00146">OpenGLRendererAPI.cpp:146</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a38014062b0ff653b81444ed8cd3b0793"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a38014062b0ff653b81444ed8cd3b0793">API::OpenGL::OpenGLRendererAPI::ClearDepthBuffer</a></div><div class="ttdeci">virtual void ClearDepthBuffer() override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00137">OpenGLRendererAPI.cpp:137</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a653d475ece60af17c9bf25e758e777de"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a653d475ece60af17c9bf25e758e777de">API::OpenGL::OpenGLRendererAPI::StencilTestOptions</a></div><div class="ttdeci">virtual void StencilTestOptions(Kargono::StencilOptions sfail, Kargono::StencilOptions dfail, Kargono::StencilOptions sdpass) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00159">OpenGLRendererAPI.cpp:159</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a6c0e9cd4021216229b63160827ff7003"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a6c0e9cd4021216229b63160827ff7003">API::OpenGL::OpenGLRendererAPI::Clear</a></div><div class="ttdeci">virtual void Clear() override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00163">OpenGLRendererAPI.cpp:163</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a7b0acc1de1a011b05bb54ae52e3c6247"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a7b0acc1de1a011b05bb54ae52e3c6247">API::OpenGL::OpenGLRendererAPI::DrawLines</a></div><div class="ttdeci">virtual void DrawLines(const Kargono::Ref&lt; Kargono::VertexArray &gt; &amp;vertexArray, uint32_t vertexCount) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00180">OpenGLRendererAPI.cpp:180</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a8f9b80d2bdab0f78a3738f0ef2ae2b9a"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a8f9b80d2bdab0f78a3738f0ef2ae2b9a">API::OpenGL::OpenGLRendererAPI::SetLineWidth</a></div><div class="ttdeci">virtual void SetLineWidth(float width) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00192">OpenGLRendererAPI.cpp:192</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a91404ee97a4d9246d2236b245c2e1d89"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a91404ee97a4d9246d2236b245c2e1d89">API::OpenGL::OpenGLRendererAPI::SetStencilMask</a></div><div class="ttdeci">virtual void SetStencilMask(uint32_t value) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00150">OpenGLRendererAPI.cpp:150</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_a9e6ca79c3c69c03c76576829f918f666"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#a9e6ca79c3c69c03c76576829f918f666">API::OpenGL::OpenGLRendererAPI::SetViewport</a></div><div class="ttdeci">virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00132">OpenGLRendererAPI.cpp:132</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_ab73b0ceeaad1adde1a5b047ee6a51735"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ab73b0ceeaad1adde1a5b047ee6a51735">API::OpenGL::OpenGLRendererAPI::SetClearColor</a></div><div class="ttdeci">virtual void SetClearColor(const Kargono::Math::vec4 &amp;color) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00142">OpenGLRendererAPI.cpp:142</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_ac114af14e0adabec564a7ff66b800533"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ac114af14e0adabec564a7ff66b800533">API::OpenGL::OpenGLRendererAPI::Init</a></div><div class="ttdeci">virtual void Init() override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00110">OpenGLRendererAPI.cpp:110</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_ae7bc53d599667fe3b5b0d345e854100b"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#ae7bc53d599667fe3b5b0d345e854100b">API::OpenGL::OpenGLRendererAPI::DrawIndexed</a></div><div class="ttdeci">virtual void DrawIndexed(const Kargono::Ref&lt; Kargono::VertexArray &gt; &amp;vertexArray, uint32_t indexCount=0) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00167">OpenGLRendererAPI.cpp:167</a></div></div>
-<div class="ttc" id="aclassAPI_1_1OpenGL_1_1OpenGLRendererAPI_html_af644524a690dd2ce8e93cbb1c99c6ce5"><div class="ttname"><a href="classAPI_1_1OpenGL_1_1OpenGLRendererAPI.html#af644524a690dd2ce8e93cbb1c99c6ce5">API::OpenGL::OpenGLRendererAPI::DrawTriangles</a></div><div class="ttdeci">virtual void DrawTriangles(const Kargono::Ref&lt; Kargono::VertexArray &gt; &amp;vertexArray, uint32_t vertexCount) override</div><div class="ttdef"><b>Definition:</b> <a href="OpenGLRendererAPI_8cpp_source.html#l00186">OpenGLRendererAPI.cpp:186</a></div></div>
-<div class="ttc" id="agladAPI_8h_html"><div class="ttname"><a href="gladAPI_8h.html">gladAPI.h</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceAPI_1_1OpenGL_html"><div class="ttname"><a href="namespaceAPI_1_1OpenGL.html">API::OpenGL</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenGLBuffer_8cpp_source.html#l00007">OpenGLBuffer.cpp:8</a></div></div>
-<div class="ttc" id="anamespaceAPI_1_1Utility_html"><div class="ttname"><a href="namespaceAPI_1_1Utility.html">API::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="WindowsWindow_8cpp_source.html#l00013">WindowsWindow.cpp:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a54a9e352ac755822901745e5bad04edb"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a></div><div class="ttdeci">glm::vec4 vec4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00016">MathAliases.h:16</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21">Kargono::StencilComparisonType</a></div><div class="ttdeci">StencilComparisonType</div><div class="ttdef"><b>Definition:</b> <a href="RendererAPI_8h_source.html#l00013">RendererAPI.h:14</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a1798e8c3621ca53d9e3a80d257306000"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a1798e8c3621ca53d9e3a80d257306000">Kargono::StencilComparisonType::LESS</a></div><div class="ttdeci">@ LESS</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a443475558f0168dff92ecde26b98ae5a"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a443475558f0168dff92ecde26b98ae5a">Kargono::StencilComparisonType::NEVER</a></div><div class="ttdeci">@ NEVER</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a8a72211a539c4f44dcaa446209076da6"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a8a72211a539c4f44dcaa446209076da6">Kargono::StencilComparisonType::LEQUAL</a></div><div class="ttdeci">@ LEQUAL</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a94fbd04a26dff1689ee02634be6aaf1f"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a94fbd04a26dff1689ee02634be6aaf1f">Kargono::StencilComparisonType::NOTEQUAL</a></div><div class="ttdeci">@ NOTEQUAL</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a969f331a87d8c958473c32b4d0e61a44"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a969f331a87d8c958473c32b4d0e61a44">Kargono::StencilComparisonType::EQUAL</a></div><div class="ttdeci">@ EQUAL</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21a9e63a520a6e8fefd37a5fa966d96f3bc"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21a9e63a520a6e8fefd37a5fa966d96f3bc">Kargono::StencilComparisonType::GEQUAL</a></div><div class="ttdeci">@ GEQUAL</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21ae7e72355289e404b762d4cf88824d23b"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21ae7e72355289e404b762d4cf88824d23b">Kargono::StencilComparisonType::GREATER</a></div><div class="ttdeci">@ GREATER</div></div>
-<div class="ttc" id="anamespaceKargono_html_aabdb7a4baf719f2d539c794c49a12a21af3fc827ade4b968e50406496907ef962"><div class="ttname"><a href="namespaceKargono.html#aabdb7a4baf719f2d539c794c49a12a21af3fc827ade4b968e50406496907ef962">Kargono::StencilComparisonType::ALWAYS</a></div><div class="ttdeci">@ ALWAYS</div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83">Kargono::StencilOptions</a></div><div class="ttdeci">StencilOptions</div><div class="ttdef"><b>Definition:</b> <a href="RendererAPI_8h_source.html#l00019">RendererAPI.h:20</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83a056f9acd45832946a8f02289a8516e7f"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a056f9acd45832946a8f02289a8516e7f">Kargono::StencilOptions::INCR_WRAP</a></div><div class="ttdeci">@ INCR_WRAP</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83a529e9e0beb5f85d1f132917c1a09860c"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a529e9e0beb5f85d1f132917c1a09860c">Kargono::StencilOptions::ZERO</a></div><div class="ttdeci">@ ZERO</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83a560a2dd6f6744646473b3b19e1fe96d7"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a560a2dd6f6744646473b3b19e1fe96d7">Kargono::StencilOptions::REPLACE</a></div><div class="ttdeci">@ REPLACE</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83a60cba2874369bd3790e14ea5f8a7bc58"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a60cba2874369bd3790e14ea5f8a7bc58">Kargono::StencilOptions::KEEP</a></div><div class="ttdeci">@ KEEP</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83a6501b4eff3345af27614635221cc6c59"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83a6501b4eff3345af27614635221cc6c59">Kargono::StencilOptions::DECR_WRAP</a></div><div class="ttdeci">@ DECR_WRAP</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83aa2727ae72447eea06d4cc0ef67187280"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83aa2727ae72447eea06d4cc0ef67187280">Kargono::StencilOptions::INVERT</a></div><div class="ttdeci">@ INVERT</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83ac121b991572aba8a5789d08d7e9cf76e"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83ac121b991572aba8a5789d08d7e9cf76e">Kargono::StencilOptions::DECR</a></div><div class="ttdeci">@ DECR</div></div>
-<div class="ttc" id="anamespaceKargono_html_ad824261f21c83d619bd4b291385cdb83afc67535e5273d466beba3c06c0dbd988"><div class="ttname"><a href="namespaceKargono.html#ad824261f21c83d619bd4b291385cdb83afc67535e5273d466beba3c06c0dbd988">Kargono::StencilOptions::INCR</a></div><div class="ttdeci">@ INCR</div></div>
-<div class="ttc" id="anamespaceKargono_html_af27050750cda824e48fa6cd932f4ab72"><div class="ttname"><a href="namespaceKargono.html#af27050750cda824e48fa6cd932f4ab72">Kargono::GLenum</a></div><div class="ttdeci">unsigned int GLenum</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00021">Shader.h:21</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><b>OpenGLRendererAPI.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

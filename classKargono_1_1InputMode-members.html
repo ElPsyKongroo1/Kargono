@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1InputMode.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1InputMode.html">InputMode</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::InputMode Member List</div>  </div>
@@ -74,43 +92,46 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a367efd06eaa0979dbc981ded00382237">AddKeyboardCustomCallsOnKeyPressedSlot</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#aba06bce5700fa9d8de5199bb48632b11">AddKeyboardCustomCallsOnUpdateSlot</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a4b1d13913f05d83447efbff817aae337">AddKeyboardPollingSlot</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a5a7635ff064fb6a5dbcbcb2cbefe054d">AddKeyboardScriptClassOnKeyPressedSlot</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a8a27c1fb4fb841c937e89d51fd5acd2e">AddKeyboardScriptClassOnUpdateSlot</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a93a4681dfdc6917d50d61ef8c5254626">Assets::AssetManager</a> class</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a87f544ebfa02755ba2b6b5f1229d0b45">ClearInputEngine</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a2d4c2b445e925108a18069d731077747">DeleteKeyboardCustomCallsOnKeyPressed</a>(InputMode::InputActionBinding *bindingRef)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a5190b32e7488901050cea791b30dde38">DeleteKeyboardCustomCallsOnUpdate</a>(InputMode::InputActionBinding *bindingRef)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#ac68cec2dc3f49ef545b8dd2e34827e68">DeleteKeyboardPollingSlot</a>(uint16_t slot)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a84d995726576401a175648c0047d1e71">DeleteKeyboardScriptClassOnKeyPressed</a>(InputMode::InputActionBinding *bindingRef)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a2480e18478cf1304010ca40465088064">DeleteKeyboardScriptClassOnUpdate</a>(InputMode::InputActionBinding *bindingRef)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#abfaa3c4563765f6ff7b7adf33bcb2e24">GetCustomCallsOnKeyPressed</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#abe7d61265ac22f18f79d980b3ed05b2f">GetCustomCallsOnUpdate</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a8042f86a246e379e2849fa67519b8030">GetKeyboardClassOnKeyPressed</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#af727d576a7a4a1f94c5d1bffba6233c6">GetKeyboardClassOnUpdate</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#abb925871fb62367abef39c6919624d36">GetKeyboardCustomCallsOnKeyPressed</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#ac7d692eb4ab4c898bfd26c490fcc0a4d">GetKeyboardCustomCallsOnUpdate</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a5ea617e99dfb8bb4d5eb3ba5da1b8583">GetKeyboardPolling</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a7d94be7bdbc0a069afeb04d1f8fc114c">GetScriptClassOnKeyPressed</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a9f4485fa598aa766aaaba687076a5e9d">GetScriptClassOnUpdate</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a07c7722facd7561f5097602c0e37b200">InputActionTypes</a> enum name</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#aed5e7f45285f3140e171b56e5ae0953d">IsKeyboardSlotPressed</a>(uint16_t slot)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a07c7722facd7561f5097602c0e37b200aedfce927fe15d45b1deaa0a5246244e8">KeyboardAction</a> enum value</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#aed4bb5ac50ce0dfc3183015e5f0d88f1">LoadInputMode</a>(Ref&lt; InputMode &gt; newInput, Assets::AssetHandle newHandle)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a6eec01411ee5b969726a9c7f3594ed21">LoadInputModeByName</a>(const std::string &amp;inputMode)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a07c7722facd7561f5097602c0e37b200a295e66767cc7ebd1d249a91bd68e0d08">None</a> enum value</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#aff6a3a983a2ff83b5050cff1351187a4">s_InputMode</a></td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a4aa31e5f43c87df2a93e9b1dc4170e4d">s_InputModeHandle</a></td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a61c631618917dbfae775330b8f588ba1">UpdateKeyboardClassOnKeyPressedName</a>(InputMode::InputActionBinding *bindingRef, const std::string &amp;newClassName)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a58d2f77e03cd42e63c9f7e4f966b7b1c">UpdateKeyboardClassOnUpdateName</a>(InputMode::InputActionBinding *bindingRef, const std::string &amp;newClassName)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a16c16c47a9206f0fa695408aa984690a">UpdateKeyboardPollingKey</a>(uint16_t slot, KeyCode newKey)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode.html#a5427555d4ae2a1617359191ca7d15368">UpdateKeyboardPollingSlot</a>(uint16_t originalSlot, uint16_t newSlot)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddKeyboardCustomCallsOnKeyPressedSlot</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>AddKeyboardCustomCallsOnUpdateSlot</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddKeyboardPollingSlot</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>AddKeyboardScriptClassOnKeyPressedSlot</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddKeyboardScriptClassOnUpdateSlot</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Assets::AssetManager</b> (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ClearInputEngine</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DeleteKeyboardCustomCallsOnKeyPressed</b>(InputMode::InputActionBinding *bindingRef) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DeleteKeyboardCustomCallsOnUpdate</b>(InputMode::InputActionBinding *bindingRef) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DeleteKeyboardPollingSlot</b>(uint16_t slot) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DeleteKeyboardScriptClassOnKeyPressed</b>(InputMode::InputActionBinding *bindingRef) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DeleteKeyboardScriptClassOnUpdate</b>(InputMode::InputActionBinding *bindingRef) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetCustomCallsOnKeyPressed</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetCustomCallsOnUpdate</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetKeyboardClassOnKeyPressed</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetKeyboardClassOnUpdate</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetKeyboardCustomCallsOnKeyPressed</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetKeyboardCustomCallsOnUpdate</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetKeyboardPolling</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetScriptClassOnKeyPressed</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetScriptClassOnUpdate</b>() (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>InputActionTypes</b> enum name (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>IsKeyboardSlotPressed</b>(uint16_t slot) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>KeyboardAction</b> enum value (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>LoadInputMode</b>(Ref&lt; InputMode &gt; newInput, Assets::AssetHandle newHandle) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>LoadInputModeByName</b>(const std::string &amp;inputMode) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>None</b> enum value (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>s_InputMode</b> (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>s_InputModeHandle</b> (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>UpdateKeyboardClassOnKeyPressedName</b>(InputMode::InputActionBinding *bindingRef, const std::string &amp;newClassName) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>UpdateKeyboardClassOnUpdateName</b>(InputMode::InputActionBinding *bindingRef, const std::string &amp;newClassName) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>UpdateKeyboardPollingKey</b>(uint16_t slot, KeyCode newKey) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>UpdateKeyboardPollingSlot</b>(uint16_t originalSlot, uint16_t newSlot) (defined in <a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode.html">Kargono::InputMode</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Camera_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,51 +84,42 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Camera.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Camera_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html">    7</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Camera.html">Camera</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    {</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html#aeca439261edd977baf1cde79a4bb936a">   10</a></span>&#160;        <a class="code" href="classKargono_1_1Camera.html#aeca439261edd977baf1cde79a4bb936a">Camera</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html#ad2db5c8775b01164eac2831c90d8c164">   11</a></span>&#160;        <a class="code" href="classKargono_1_1Camera.html#ad2db5c8775b01164eac2831c90d8c164">Camera</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&amp; projection)</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            :<a class="code" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a>(projection) {}</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <a class="code" href="classKargono_1_1Camera.html">Camera</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <a class="code" href="classKargono_1_1Camera.html">Camera</a>(<span class="keyword">const</span> Math::mat4&amp; projection)</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            :m_Projection(projection) {}</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html#aec73181f37d0c4b321c8151351533732">   14</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1Camera.html#aec73181f37d0c4b321c8151351533732">~Camera</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classKargono_1_1Camera.html">Camera</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">   16</a></span>&#160;        <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&amp; <a class="code" href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">GetProjection</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <a class="code" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a>; }</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">const</span> Math::mat4&amp; GetProjection()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_Projection; }</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// TODO: Something</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">   20</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> <a class="code" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a> = <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>(1.0f);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        Math::mat4 m_Projection = Math::mat4(1.0f);</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    };</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Camera_html"><div class="ttname"><a href="classKargono_1_1Camera.html">Kargono::Camera</a></div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00007">Camera.h:8</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_acf0d94b0d6ef1bbdf783b3ee8311aac3"><div class="ttname"><a href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">Kargono::Camera::m_Projection</a></div><div class="ttdeci">Math::mat4 m_Projection</div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00020">Camera.h:20</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_ad2db5c8775b01164eac2831c90d8c164"><div class="ttname"><a href="classKargono_1_1Camera.html#ad2db5c8775b01164eac2831c90d8c164">Kargono::Camera::Camera</a></div><div class="ttdeci">Camera(const Math::mat4 &amp;projection)</div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00011">Camera.h:11</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_ad67bbaa2ab76f4241f355f1e67583276"><div class="ttname"><a href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">Kargono::Camera::GetProjection</a></div><div class="ttdeci">const Math::mat4 &amp; GetProjection() const</div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00016">Camera.h:16</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_aec73181f37d0c4b321c8151351533732"><div class="ttname"><a href="classKargono_1_1Camera.html#aec73181f37d0c4b321c8151351533732">Kargono::Camera::~Camera</a></div><div class="ttdeci">virtual ~Camera()=default</div></div>
-<div class="ttc" id="aclassKargono_1_1Camera_html_aeca439261edd977baf1cde79a4bb936a"><div class="ttname"><a href="classKargono_1_1Camera.html#aeca439261edd977baf1cde79a4bb936a">Kargono::Camera::Camera</a></div><div class="ttdeci">Camera()=default</div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a73e119d2bf751b0cc19c088bd07a90f1"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Kargono::Math::mat4</a></div><div class="ttdeci">glm::mat4 mat4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00028">MathAliases.h:28</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Camera.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

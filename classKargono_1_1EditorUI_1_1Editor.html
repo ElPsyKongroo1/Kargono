@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1EditorUI_1_1Editor.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1EditorUI.html">EditorUI</a></li><li class="navelem"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html">Editor</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
@@ -75,2783 +93,324 @@ $(function() {
 <div class="title">Kargono::EditorUI::Editor Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Editor_8h_source.html">Editor.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ae7a5103619b065b054c7675d709c5ecf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ae7a5103619b065b054c7675d709c5ecf">Init</a> ()</td></tr>
+<tr class="memitem:ae7a5103619b065b054c7675d709c5ecf"><td class="memItemLeft" align="right" valign="top"><a id="ae7a5103619b065b054c7675d709c5ecf"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="separator:ae7a5103619b065b054c7675d709c5ecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabd4dfefddc51e6ab13a7f655c0d3a58"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aabd4dfefddc51e6ab13a7f655c0d3a58">Terminate</a> ()</td></tr>
+<tr class="memitem:aabd4dfefddc51e6ab13a7f655c0d3a58"><td class="memItemLeft" align="right" valign="top"><a id="aabd4dfefddc51e6ab13a7f655c0d3a58"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Terminate</b> ()</td></tr>
 <tr class="separator:aabd4dfefddc51e6ab13a7f655c0d3a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4de054bf3aa11a2b18331e479dbcf6c5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a4de054bf3aa11a2b18331e479dbcf6c5">StartRendering</a> ()</td></tr>
+<tr class="memitem:a4de054bf3aa11a2b18331e479dbcf6c5"><td class="memItemLeft" align="right" valign="top"><a id="a4de054bf3aa11a2b18331e479dbcf6c5"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>StartRendering</b> ()</td></tr>
 <tr class="separator:a4de054bf3aa11a2b18331e479dbcf6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5181f4850e30f0dc0f4f1964f4d943bc"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a5181f4850e30f0dc0f4f1964f4d943bc">EndRendering</a> ()</td></tr>
+<tr class="memitem:a5181f4850e30f0dc0f4f1964f4d943bc"><td class="memItemLeft" align="right" valign="top"><a id="a5181f4850e30f0dc0f4f1964f4d943bc"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>EndRendering</b> ()</td></tr>
 <tr class="separator:a5181f4850e30f0dc0f4f1964f4d943bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9add8c31d41ff84388c2080c77ed5d48"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a9add8c31d41ff84388c2080c77ed5d48">StartWindow</a> (const std::string &amp;label, bool *closeWindow=nullptr, int32_t flags=0)</td></tr>
+<tr class="memitem:a9add8c31d41ff84388c2080c77ed5d48"><td class="memItemLeft" align="right" valign="top"><a id="a9add8c31d41ff84388c2080c77ed5d48"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>StartWindow</b> (const std::string &amp;label, bool *closeWindow=nullptr, int32_t flags=0)</td></tr>
 <tr class="separator:a9add8c31d41ff84388c2080c77ed5d48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86852e6cd14d4a40e063d0dde1066779"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a86852e6cd14d4a40e063d0dde1066779">EndWindow</a> ()</td></tr>
+<tr class="memitem:a86852e6cd14d4a40e063d0dde1066779"><td class="memItemLeft" align="right" valign="top"><a id="a86852e6cd14d4a40e063d0dde1066779"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>EndWindow</b> ()</td></tr>
 <tr class="separator:a86852e6cd14d4a40e063d0dde1066779"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac63d34e1c024f4ad6c220a8a3353ff0a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac63d34e1c024f4ad6c220a8a3353ff0a">OnEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;e)</td></tr>
+<tr class="memitem:ac63d34e1c024f4ad6c220a8a3353ff0a"><td class="memItemLeft" align="right" valign="top"><a id="ac63d34e1c024f4ad6c220a8a3353ff0a"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEvent</b> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;e)</td></tr>
 <tr class="separator:ac63d34e1c024f4ad6c220a8a3353ff0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfdd2fab8fa9b4317517516c9da47913"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#abfdd2fab8fa9b4317517516c9da47913">Spacing</a> (float space)</td></tr>
+<tr class="memitem:abfdd2fab8fa9b4317517516c9da47913"><td class="memItemLeft" align="right" valign="top"><a id="abfdd2fab8fa9b4317517516c9da47913"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Spacing</b> (float space)</td></tr>
 <tr class="separator:abfdd2fab8fa9b4317517516c9da47913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b81543321d54d9febddb0be53c593e6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a7b81543321d54d9febddb0be53c593e6">Spacing</a> (<a class="el" href="namespaceKargono_1_1EditorUI.html#a021e80ea7b1db7bad67d596cbcc17edd">SpacingAmount</a> space)</td></tr>
+<tr class="memitem:a7b81543321d54d9febddb0be53c593e6"><td class="memItemLeft" align="right" valign="top"><a id="a7b81543321d54d9febddb0be53c593e6"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Spacing</b> (SpacingAmount space)</td></tr>
 <tr class="separator:a7b81543321d54d9febddb0be53c593e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadea65bb6c8ef1d2e25355e5de55b160"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aadea65bb6c8ef1d2e25355e5de55b160">Separator</a> ()</td></tr>
+<tr class="memitem:aadea65bb6c8ef1d2e25355e5de55b160"><td class="memItemLeft" align="right" valign="top"><a id="aadea65bb6c8ef1d2e25355e5de55b160"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Separator</b> ()</td></tr>
 <tr class="separator:aadea65bb6c8ef1d2e25355e5de55b160"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6708aefef42f88d5d0debb720c14cf17"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a6708aefef42f88d5d0debb720c14cf17">TitleText</a> (const std::string &amp;text)</td></tr>
+<tr class="memitem:a6708aefef42f88d5d0debb720c14cf17"><td class="memItemLeft" align="right" valign="top"><a id="a6708aefef42f88d5d0debb720c14cf17"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>TitleText</b> (const std::string &amp;text)</td></tr>
 <tr class="separator:a6708aefef42f88d5d0debb720c14cf17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e5dd53b2326ec790d2491b4783ab8e9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a4e5dd53b2326ec790d2491b4783ab8e9">GenericPopup</a> (<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a4e5dd53b2326ec790d2491b4783ab8e9"><td class="memItemLeft" align="right" valign="top"><a id="a4e5dd53b2326ec790d2491b4783ab8e9"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>GenericPopup</b> (<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a4e5dd53b2326ec790d2491b4783ab8e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34e527f52c97df8e61657d36062c8e4e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a34e527f52c97df8e61657d36062c8e4e">SelectOption</a> (<a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html">SelectOptionSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a34e527f52c97df8e61657d36062c8e4e"><td class="memItemLeft" align="right" valign="top"><a id="a34e527f52c97df8e61657d36062c8e4e"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SelectOption</b> (<a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html">SelectOptionSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a34e527f52c97df8e61657d36062c8e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a829ae605de44508446d59128bff46c10"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a829ae605de44508446d59128bff46c10">EditVariable</a> (<a class="el" href="structKargono_1_1EditorUI_1_1EditVariableSpec.html">EditVariableSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a829ae605de44508446d59128bff46c10"><td class="memItemLeft" align="right" valign="top"><a id="a829ae605de44508446d59128bff46c10"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>EditVariable</b> (<a class="el" href="structKargono_1_1EditorUI_1_1EditVariableSpec.html">EditVariableSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a829ae605de44508446d59128bff46c10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e41907edccb9394e918049126b8dc60"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a9e41907edccb9394e918049126b8dc60">NewItemScreen</a> (const std::string &amp;label1, std::function&lt; void()&gt; func1, const std::string &amp;label2, std::function&lt; void()&gt; func2)</td></tr>
+<tr class="memitem:a9e41907edccb9394e918049126b8dc60"><td class="memItemLeft" align="right" valign="top"><a id="a9e41907edccb9394e918049126b8dc60"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>NewItemScreen</b> (const std::string &amp;label1, std::function&lt; void()&gt; func1, const std::string &amp;label2, std::function&lt; void()&gt; func2)</td></tr>
 <tr class="separator:a9e41907edccb9394e918049126b8dc60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73f101df0029ab3f00a91af1e9ebf8ec"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a73f101df0029ab3f00a91af1e9ebf8ec">Checkbox</a> (<a class="el" href="structKargono_1_1EditorUI_1_1CheckboxSpec.html">CheckboxSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a73f101df0029ab3f00a91af1e9ebf8ec"><td class="memItemLeft" align="right" valign="top"><a id="a73f101df0029ab3f00a91af1e9ebf8ec"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Checkbox</b> (<a class="el" href="structKargono_1_1EditorUI_1_1CheckboxSpec.html">CheckboxSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a73f101df0029ab3f00a91af1e9ebf8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a624ffe44b284b8236c02f5c2cf14179e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a624ffe44b284b8236c02f5c2cf14179e">RadioSelector</a> (<a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html">RadioSelectorSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a624ffe44b284b8236c02f5c2cf14179e"><td class="memItemLeft" align="right" valign="top"><a id="a624ffe44b284b8236c02f5c2cf14179e"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>RadioSelector</b> (<a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html">RadioSelectorSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a624ffe44b284b8236c02f5c2cf14179e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf70e206a3937fb52524b80643c64a6d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#adf70e206a3937fb52524b80643c64a6d">Table</a> (<a class="el" href="structKargono_1_1EditorUI_1_1TableSpec.html">TableSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:adf70e206a3937fb52524b80643c64a6d"><td class="memItemLeft" align="right" valign="top"><a id="adf70e206a3937fb52524b80643c64a6d"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Table</b> (<a class="el" href="structKargono_1_1EditorUI_1_1TableSpec.html">TableSpec</a> &amp;spec)</td></tr>
 <tr class="separator:adf70e206a3937fb52524b80643c64a6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a377ec230c79d6ea310230934ed9f7d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a6a377ec230c79d6ea310230934ed9f7d">SelectorHeader</a> (<a class="el" href="structKargono_1_1EditorUI_1_1SelectorHeaderSpec.html">SelectorHeaderSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a6a377ec230c79d6ea310230934ed9f7d"><td class="memItemLeft" align="right" valign="top"><a id="a6a377ec230c79d6ea310230934ed9f7d"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SelectorHeader</b> (<a class="el" href="structKargono_1_1EditorUI_1_1SelectorHeaderSpec.html">SelectorHeaderSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a6a377ec230c79d6ea310230934ed9f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac221ff925d1f605105c3f1c99157ef8b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac221ff925d1f605105c3f1c99157ef8b">CollapsingHeader</a> (<a class="el" href="structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html">CollapsingHeaderSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:ac221ff925d1f605105c3f1c99157ef8b"><td class="memItemLeft" align="right" valign="top"><a id="ac221ff925d1f605105c3f1c99157ef8b"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CollapsingHeader</b> (<a class="el" href="structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html">CollapsingHeaderSpec</a> &amp;spec)</td></tr>
 <tr class="separator:ac221ff925d1f605105c3f1c99157ef8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf702c961ef1cfdb0b7de49d84432037"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aaf702c961ef1cfdb0b7de49d84432037">LabeledText</a> (const std::string &amp;Label, const std::string &amp;<a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac17af34dbf3d3a478ef49e39a76d2bc8">Text</a>)</td></tr>
+<tr class="memitem:aaf702c961ef1cfdb0b7de49d84432037"><td class="memItemLeft" align="right" valign="top"><a id="aaf702c961ef1cfdb0b7de49d84432037"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>LabeledText</b> (const std::string &amp;Label, const std::string &amp;Text)</td></tr>
 <tr class="separator:aaf702c961ef1cfdb0b7de49d84432037"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac17af34dbf3d3a478ef49e39a76d2bc8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac17af34dbf3d3a478ef49e39a76d2bc8">Text</a> (const std::string &amp;Text)</td></tr>
+<tr class="memitem:ac17af34dbf3d3a478ef49e39a76d2bc8"><td class="memItemLeft" align="right" valign="top"><a id="ac17af34dbf3d3a478ef49e39a76d2bc8"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Text</b> (const std::string &amp;Text)</td></tr>
 <tr class="separator:ac17af34dbf3d3a478ef49e39a76d2bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca29a121c7c7684e57808b7a25e2a38c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aca29a121c7c7684e57808b7a25e2a38c">TextInputPopup</a> (<a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html">TextInputSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:aca29a121c7c7684e57808b7a25e2a38c"><td class="memItemLeft" align="right" valign="top"><a id="aca29a121c7c7684e57808b7a25e2a38c"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>TextInputPopup</b> (<a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html">TextInputSpec</a> &amp;spec)</td></tr>
 <tr class="separator:aca29a121c7c7684e57808b7a25e2a38c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bf5bfccec21943f0e653e662226b699"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a7bf5bfccec21943f0e653e662226b699">GetActiveWidgetID</a> ()</td></tr>
+<tr class="memitem:a7bf5bfccec21943f0e653e662226b699"><td class="memItemLeft" align="right" valign="top"><a id="a7bf5bfccec21943f0e653e662226b699"></a>
+static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetActiveWidgetID</b> ()</td></tr>
 <tr class="separator:a7bf5bfccec21943f0e653e662226b699"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a159e6f4c4e14d4a877ab7c04f595904c"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a159e6f4c4e14d4a877ab7c04f595904c">GetFocusedWindowName</a> ()</td></tr>
+<tr class="memitem:a159e6f4c4e14d4a877ab7c04f595904c"><td class="memItemLeft" align="right" valign="top"><a id="a159e6f4c4e14d4a877ab7c04f595904c"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetFocusedWindowName</b> ()</td></tr>
 <tr class="separator:a159e6f4c4e14d4a877ab7c04f595904c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a150b22c00f3d2d56b51bf37e2dfcc96c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a150b22c00f3d2d56b51bf37e2dfcc96c">SetFocusedWindow</a> (const std::string &amp;windowName)</td></tr>
+<tr class="memitem:a150b22c00f3d2d56b51bf37e2dfcc96c"><td class="memItemLeft" align="right" valign="top"><a id="a150b22c00f3d2d56b51bf37e2dfcc96c"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFocusedWindow</b> (const std::string &amp;windowName)</td></tr>
 <tr class="separator:a150b22c00f3d2d56b51bf37e2dfcc96c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fb5e6e8fda34d86935002a7be2b6336"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a9fb5e6e8fda34d86935002a7be2b6336">HighlightFocusedWindow</a> ()</td></tr>
+<tr class="memitem:a9fb5e6e8fda34d86935002a7be2b6336"><td class="memItemLeft" align="right" valign="top"><a id="a9fb5e6e8fda34d86935002a7be2b6336"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>HighlightFocusedWindow</b> ()</td></tr>
 <tr class="separator:a9fb5e6e8fda34d86935002a7be2b6336"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1c6f3f5eee3aeb3dab73434e8b3bfe6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ad1c6f3f5eee3aeb3dab73434e8b3bfe6">SetDisableLeftClick</a> (bool option)</td></tr>
+<tr class="memitem:ad1c6f3f5eee3aeb3dab73434e8b3bfe6"><td class="memItemLeft" align="right" valign="top"><a id="ad1c6f3f5eee3aeb3dab73434e8b3bfe6"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetDisableLeftClick</b> (bool option)</td></tr>
 <tr class="separator:ad1c6f3f5eee3aeb3dab73434e8b3bfe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26567bd7ecd493261423a22667958434"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a26567bd7ecd493261423a22667958434">BlockMouseEvents</a> (bool block)</td></tr>
+<tr class="memitem:a26567bd7ecd493261423a22667958434"><td class="memItemLeft" align="right" valign="top"><a id="a26567bd7ecd493261423a22667958434"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>BlockMouseEvents</b> (bool block)</td></tr>
 <tr class="separator:a26567bd7ecd493261423a22667958434"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a3304acc990eaae3c1360a38a752cd8a7"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a3304acc990eaae3c1360a38a752cd8a7">s_AntaLarge</a> { nullptr }</td></tr>
+<tr class="memitem:a3304acc990eaae3c1360a38a752cd8a7"><td class="memItemLeft" align="right" valign="top"><a id="a3304acc990eaae3c1360a38a752cd8a7"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_AntaLarge</b> { nullptr }</td></tr>
 <tr class="separator:a3304acc990eaae3c1360a38a752cd8a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab34daad2705bbdb963a17e0529255b31"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab34daad2705bbdb963a17e0529255b31">s_AntaRegular</a> { nullptr }</td></tr>
+<tr class="memitem:ab34daad2705bbdb963a17e0529255b31"><td class="memItemLeft" align="right" valign="top"><a id="ab34daad2705bbdb963a17e0529255b31"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_AntaRegular</b> { nullptr }</td></tr>
 <tr class="separator:ab34daad2705bbdb963a17e0529255b31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ee777456e104b04a54179167e85bce4"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a0ee777456e104b04a54179167e85bce4">s_AntaSmall</a> { nullptr }</td></tr>
+<tr class="memitem:a0ee777456e104b04a54179167e85bce4"><td class="memItemLeft" align="right" valign="top"><a id="a0ee777456e104b04a54179167e85bce4"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_AntaSmall</b> { nullptr }</td></tr>
 <tr class="separator:a0ee777456e104b04a54179167e85bce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a977660f03d3480de6f05aff0315b26ad"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a977660f03d3480de6f05aff0315b26ad">s_PlexBold</a> { nullptr }</td></tr>
+<tr class="memitem:a977660f03d3480de6f05aff0315b26ad"><td class="memItemLeft" align="right" valign="top"><a id="a977660f03d3480de6f05aff0315b26ad"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_PlexBold</b> { nullptr }</td></tr>
 <tr class="separator:a977660f03d3480de6f05aff0315b26ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4657a324c30141abc93ebf696eb65f4"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab4657a324c30141abc93ebf696eb65f4">s_PlexRegular</a> { nullptr }</td></tr>
+<tr class="memitem:ab4657a324c30141abc93ebf696eb65f4"><td class="memItemLeft" align="right" valign="top"><a id="ab4657a324c30141abc93ebf696eb65f4"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_PlexRegular</b> { nullptr }</td></tr>
 <tr class="separator:ab4657a324c30141abc93ebf696eb65f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbba9080db1ac660822c4ee7f59e5daf"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#abbba9080db1ac660822c4ee7f59e5daf">s_OpenSansRegular</a> { nullptr }</td></tr>
+<tr class="memitem:abbba9080db1ac660822c4ee7f59e5daf"><td class="memItemLeft" align="right" valign="top"><a id="abbba9080db1ac660822c4ee7f59e5daf"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_OpenSansRegular</b> { nullptr }</td></tr>
 <tr class="separator:abbba9080db1ac660822c4ee7f59e5daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46b3d44c92d8e2d9cbe7a86c8bc3ee77"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a46b3d44c92d8e2d9cbe7a86c8bc3ee77">s_OpenSansBold</a> { nullptr }</td></tr>
+<tr class="memitem:a46b3d44c92d8e2d9cbe7a86c8bc3ee77"><td class="memItemLeft" align="right" valign="top"><a id="a46b3d44c92d8e2d9cbe7a86c8bc3ee77"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_OpenSansBold</b> { nullptr }</td></tr>
 <tr class="separator:a46b3d44c92d8e2d9cbe7a86c8bc3ee77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12e45dfe4339e4e81fe0623ccd7d8dce"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a12e45dfe4339e4e81fe0623ccd7d8dce">s_RobotoRegular</a> { nullptr }</td></tr>
+<tr class="memitem:a12e45dfe4339e4e81fe0623ccd7d8dce"><td class="memItemLeft" align="right" valign="top"><a id="a12e45dfe4339e4e81fe0623ccd7d8dce"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_RobotoRegular</b> { nullptr }</td></tr>
 <tr class="separator:a12e45dfe4339e4e81fe0623ccd7d8dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca6969363642b23c76c723d11095fad5"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aca6969363642b23c76c723d11095fad5">s_RobotoMono</a> { nullptr }</td></tr>
+<tr class="memitem:aca6969363642b23c76c723d11095fad5"><td class="memItemLeft" align="right" valign="top"><a id="aca6969363642b23c76c723d11095fad5"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_RobotoMono</b> { nullptr }</td></tr>
 <tr class="separator:aca6969363642b23c76c723d11095fad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad00133ce193596093407859abdff21ba"><td class="memItemLeft" align="right" valign="top">static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ad00133ce193596093407859abdff21ba">s_AnonymousRegular</a> { nullptr }</td></tr>
+<tr class="memitem:ad00133ce193596093407859abdff21ba"><td class="memItemLeft" align="right" valign="top"><a id="ad00133ce193596093407859abdff21ba"></a>
+static ImFont *&#160;</td><td class="memItemRight" valign="bottom"><b>s_AnonymousRegular</b> { nullptr }</td></tr>
 <tr class="separator:ad00133ce193596093407859abdff21ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af872dccb59c3c147270cbc0b8f061f61"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#af872dccb59c3c147270cbc0b8f061f61">s_IconPlay</a> {}</td></tr>
+<tr class="memitem:af872dccb59c3c147270cbc0b8f061f61"><td class="memItemLeft" align="right" valign="top"><a id="af872dccb59c3c147270cbc0b8f061f61"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconPlay</b> {}</td></tr>
 <tr class="separator:af872dccb59c3c147270cbc0b8f061f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2392250a40a14442e363366833953da"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac2392250a40a14442e363366833953da">s_IconPause</a> {}</td></tr>
+<tr class="memitem:ac2392250a40a14442e363366833953da"><td class="memItemLeft" align="right" valign="top"><a id="ac2392250a40a14442e363366833953da"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconPause</b> {}</td></tr>
 <tr class="separator:ac2392250a40a14442e363366833953da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb9af2ce1099330c16625ca20d9066f2"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aeb9af2ce1099330c16625ca20d9066f2">s_IconStop</a> {}</td></tr>
+<tr class="memitem:aeb9af2ce1099330c16625ca20d9066f2"><td class="memItemLeft" align="right" valign="top"><a id="aeb9af2ce1099330c16625ca20d9066f2"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconStop</b> {}</td></tr>
 <tr class="separator:aeb9af2ce1099330c16625ca20d9066f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad590feb389def40ccda0588496f9446b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ad590feb389def40ccda0588496f9446b">s_IconStep</a> {}</td></tr>
+<tr class="memitem:ad590feb389def40ccda0588496f9446b"><td class="memItemLeft" align="right" valign="top"><a id="ad590feb389def40ccda0588496f9446b"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconStep</b> {}</td></tr>
 <tr class="separator:ad590feb389def40ccda0588496f9446b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4360c46c2ecf26ea5e8bbe60f64ea4b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab4360c46c2ecf26ea5e8bbe60f64ea4b">s_IconSimulate</a> {}</td></tr>
+<tr class="memitem:ab4360c46c2ecf26ea5e8bbe60f64ea4b"><td class="memItemLeft" align="right" valign="top"><a id="ab4360c46c2ecf26ea5e8bbe60f64ea4b"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconSimulate</b> {}</td></tr>
 <tr class="separator:ab4360c46c2ecf26ea5e8bbe60f64ea4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a684639bf3c40d64f0d1db885403b04e6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a684639bf3c40d64f0d1db885403b04e6">s_IconAddItem</a> {}</td></tr>
+<tr class="memitem:a684639bf3c40d64f0d1db885403b04e6"><td class="memItemLeft" align="right" valign="top"><a id="a684639bf3c40d64f0d1db885403b04e6"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconAddItem</b> {}</td></tr>
 <tr class="separator:a684639bf3c40d64f0d1db885403b04e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4b5a519d1f36a88c2452813f4fe2973"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#aa4b5a519d1f36a88c2452813f4fe2973">s_IconDisplay</a> {}</td></tr>
+<tr class="memitem:aa4b5a519d1f36a88c2452813f4fe2973"><td class="memItemLeft" align="right" valign="top"><a id="aa4b5a519d1f36a88c2452813f4fe2973"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDisplay</b> {}</td></tr>
 <tr class="separator:aa4b5a519d1f36a88c2452813f4fe2973"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adef4124829b640b0da35e734ab613231"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#adef4124829b640b0da35e734ab613231">s_IconDisplayActive</a> {}</td></tr>
+<tr class="memitem:adef4124829b640b0da35e734ab613231"><td class="memItemLeft" align="right" valign="top"><a id="adef4124829b640b0da35e734ab613231"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDisplayActive</b> {}</td></tr>
 <tr class="separator:adef4124829b640b0da35e734ab613231"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fa78752092e9feb2d9f100039c2768f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a9fa78752092e9feb2d9f100039c2768f">s_IconCamera</a> {}</td></tr>
+<tr class="memitem:a9fa78752092e9feb2d9f100039c2768f"><td class="memItemLeft" align="right" valign="top"><a id="a9fa78752092e9feb2d9f100039c2768f"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCamera</b> {}</td></tr>
 <tr class="separator:a9fa78752092e9feb2d9f100039c2768f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ff3d0c7542a47257c915438eb464fe8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a8ff3d0c7542a47257c915438eb464fe8">s_IconCameraActive</a> {}</td></tr>
+<tr class="memitem:a8ff3d0c7542a47257c915438eb464fe8"><td class="memItemLeft" align="right" valign="top"><a id="a8ff3d0c7542a47257c915438eb464fe8"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCameraActive</b> {}</td></tr>
 <tr class="separator:a8ff3d0c7542a47257c915438eb464fe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05f4e807bfb807197b2e29dd7d23a0cb"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a05f4e807bfb807197b2e29dd7d23a0cb">s_IconPlayActive</a> {}</td></tr>
+<tr class="memitem:a05f4e807bfb807197b2e29dd7d23a0cb"><td class="memItemLeft" align="right" valign="top"><a id="a05f4e807bfb807197b2e29dd7d23a0cb"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconPlayActive</b> {}</td></tr>
 <tr class="separator:a05f4e807bfb807197b2e29dd7d23a0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a255365df025874e905fc4943c44df9e8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a255365df025874e905fc4943c44df9e8">s_IconStopActive</a> {}</td></tr>
+<tr class="memitem:a255365df025874e905fc4943c44df9e8"><td class="memItemLeft" align="right" valign="top"><a id="a255365df025874e905fc4943c44df9e8"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconStopActive</b> {}</td></tr>
 <tr class="separator:a255365df025874e905fc4943c44df9e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e0afb52de992f749bd307aa5a95754c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a2e0afb52de992f749bd307aa5a95754c">s_IconPauseActive</a> {}</td></tr>
+<tr class="memitem:a2e0afb52de992f749bd307aa5a95754c"><td class="memItemLeft" align="right" valign="top"><a id="a2e0afb52de992f749bd307aa5a95754c"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconPauseActive</b> {}</td></tr>
 <tr class="separator:a2e0afb52de992f749bd307aa5a95754c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc1e936aed4af63e6bdfcb388a191cb4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#acc1e936aed4af63e6bdfcb388a191cb4">s_IconStepActive</a> {}</td></tr>
+<tr class="memitem:acc1e936aed4af63e6bdfcb388a191cb4"><td class="memItemLeft" align="right" valign="top"><a id="acc1e936aed4af63e6bdfcb388a191cb4"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconStepActive</b> {}</td></tr>
 <tr class="separator:acc1e936aed4af63e6bdfcb388a191cb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1df0c6105b9dd02afafe7514733b14c7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a1df0c6105b9dd02afafe7514733b14c7">s_IconSimulateActive</a> {}</td></tr>
+<tr class="memitem:a1df0c6105b9dd02afafe7514733b14c7"><td class="memItemLeft" align="right" valign="top"><a id="a1df0c6105b9dd02afafe7514733b14c7"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconSimulateActive</b> {}</td></tr>
 <tr class="separator:a1df0c6105b9dd02afafe7514733b14c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8fa0984086a60a3aa3cd65f0b802d04"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ac8fa0984086a60a3aa3cd65f0b802d04">s_IconSettings</a> {}</td></tr>
+<tr class="memitem:ac8fa0984086a60a3aa3cd65f0b802d04"><td class="memItemLeft" align="right" valign="top"><a id="ac8fa0984086a60a3aa3cd65f0b802d04"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconSettings</b> {}</td></tr>
 <tr class="separator:ac8fa0984086a60a3aa3cd65f0b802d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a847683239d34eb72c9bd3b48421fd2f8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a847683239d34eb72c9bd3b48421fd2f8">s_IconDelete</a> {}</td></tr>
+<tr class="memitem:a847683239d34eb72c9bd3b48421fd2f8"><td class="memItemLeft" align="right" valign="top"><a id="a847683239d34eb72c9bd3b48421fd2f8"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDelete</b> {}</td></tr>
 <tr class="separator:a847683239d34eb72c9bd3b48421fd2f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab62c4474f9038513da3fe4c179682ae7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab62c4474f9038513da3fe4c179682ae7">s_IconDeleteActive</a> {}</td></tr>
+<tr class="memitem:ab62c4474f9038513da3fe4c179682ae7"><td class="memItemLeft" align="right" valign="top"><a id="ab62c4474f9038513da3fe4c179682ae7"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDeleteActive</b> {}</td></tr>
 <tr class="separator:ab62c4474f9038513da3fe4c179682ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c61f611da6bbb276bc001f63b33247f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a7c61f611da6bbb276bc001f63b33247f">s_IconEdit</a> {}</td></tr>
+<tr class="memitem:a7c61f611da6bbb276bc001f63b33247f"><td class="memItemLeft" align="right" valign="top"><a id="a7c61f611da6bbb276bc001f63b33247f"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconEdit</b> {}</td></tr>
 <tr class="separator:a7c61f611da6bbb276bc001f63b33247f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52a4aa95f41e11fd44f3887b1b854c78"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a52a4aa95f41e11fd44f3887b1b854c78">s_IconEdit_Active</a> {}</td></tr>
+<tr class="memitem:a52a4aa95f41e11fd44f3887b1b854c78"><td class="memItemLeft" align="right" valign="top"><a id="a52a4aa95f41e11fd44f3887b1b854c78"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconEdit_Active</b> {}</td></tr>
 <tr class="separator:a52a4aa95f41e11fd44f3887b1b854c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a373b82f2bca71abc97b46b581b237ebe"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a373b82f2bca71abc97b46b581b237ebe">s_IconCancel</a> {}</td></tr>
+<tr class="memitem:a373b82f2bca71abc97b46b581b237ebe"><td class="memItemLeft" align="right" valign="top"><a id="a373b82f2bca71abc97b46b581b237ebe"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCancel</b> {}</td></tr>
 <tr class="separator:a373b82f2bca71abc97b46b581b237ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d45ebd111897b0d640fbff6af204146"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a5d45ebd111897b0d640fbff6af204146">s_IconConfirm</a> {}</td></tr>
+<tr class="memitem:a5d45ebd111897b0d640fbff6af204146"><td class="memItemLeft" align="right" valign="top"><a id="a5d45ebd111897b0d640fbff6af204146"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconConfirm</b> {}</td></tr>
 <tr class="separator:a5d45ebd111897b0d640fbff6af204146"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19637308f4987509ae485ec61ad3e693"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a19637308f4987509ae485ec61ad3e693">s_IconSearch</a> {}</td></tr>
+<tr class="memitem:a19637308f4987509ae485ec61ad3e693"><td class="memItemLeft" align="right" valign="top"><a id="a19637308f4987509ae485ec61ad3e693"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconSearch</b> {}</td></tr>
 <tr class="separator:a19637308f4987509ae485ec61ad3e693"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae66e13a4443e5cef9b28777cd4a6cb67"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ae66e13a4443e5cef9b28777cd4a6cb67">s_IconCheckbox_Empty_Disabled</a> {}</td></tr>
+<tr class="memitem:ae66e13a4443e5cef9b28777cd4a6cb67"><td class="memItemLeft" align="right" valign="top"><a id="ae66e13a4443e5cef9b28777cd4a6cb67"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCheckbox_Empty_Disabled</b> {}</td></tr>
 <tr class="separator:ae66e13a4443e5cef9b28777cd4a6cb67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6331cf1ce32d79fa1a1cc0acfbf426a9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a6331cf1ce32d79fa1a1cc0acfbf426a9">s_IconCheckbox_Check_Disabled</a> {}</td></tr>
+<tr class="memitem:a6331cf1ce32d79fa1a1cc0acfbf426a9"><td class="memItemLeft" align="right" valign="top"><a id="a6331cf1ce32d79fa1a1cc0acfbf426a9"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCheckbox_Check_Disabled</b> {}</td></tr>
 <tr class="separator:a6331cf1ce32d79fa1a1cc0acfbf426a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77df84d4a09167219e556788d6964c66"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a77df84d4a09167219e556788d6964c66">s_IconCheckbox_Empty_Enabled</a> {}</td></tr>
+<tr class="memitem:a77df84d4a09167219e556788d6964c66"><td class="memItemLeft" align="right" valign="top"><a id="a77df84d4a09167219e556788d6964c66"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCheckbox_Empty_Enabled</b> {}</td></tr>
 <tr class="separator:a77df84d4a09167219e556788d6964c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5fc6e40ab386d80a005187998aa875b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ae5fc6e40ab386d80a005187998aa875b">s_IconCheckbox_Check_Enabled</a> {}</td></tr>
+<tr class="memitem:ae5fc6e40ab386d80a005187998aa875b"><td class="memItemLeft" align="right" valign="top"><a id="ae5fc6e40ab386d80a005187998aa875b"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconCheckbox_Check_Enabled</b> {}</td></tr>
 <tr class="separator:ae5fc6e40ab386d80a005187998aa875b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5df8c40c2bbea47093a2698a4577b4d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab5df8c40c2bbea47093a2698a4577b4d">s_IconOptions</a> {}</td></tr>
+<tr class="memitem:ab5df8c40c2bbea47093a2698a4577b4d"><td class="memItemLeft" align="right" valign="top"><a id="ab5df8c40c2bbea47093a2698a4577b4d"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconOptions</b> {}</td></tr>
 <tr class="separator:ab5df8c40c2bbea47093a2698a4577b4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a251b6d56c2e1fae9b9b85dcb896d87d4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a251b6d56c2e1fae9b9b85dcb896d87d4">s_IconDown</a> {}</td></tr>
+<tr class="memitem:a251b6d56c2e1fae9b9b85dcb896d87d4"><td class="memItemLeft" align="right" valign="top"><a id="a251b6d56c2e1fae9b9b85dcb896d87d4"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDown</b> {}</td></tr>
 <tr class="separator:a251b6d56c2e1fae9b9b85dcb896d87d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95392f820424a169e896ab37b3376f0f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a95392f820424a169e896ab37b3376f0f">s_IconRight</a> {}</td></tr>
+<tr class="memitem:a95392f820424a169e896ab37b3376f0f"><td class="memItemLeft" align="right" valign="top"><a id="a95392f820424a169e896ab37b3376f0f"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconRight</b> {}</td></tr>
 <tr class="separator:a95392f820424a169e896ab37b3376f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8115c61eb09662e4025267019f7b5bb1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a8115c61eb09662e4025267019f7b5bb1">s_IconDash</a> {}</td></tr>
+<tr class="memitem:a8115c61eb09662e4025267019f7b5bb1"><td class="memItemLeft" align="right" valign="top"><a id="a8115c61eb09662e4025267019f7b5bb1"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_IconDash</b> {}</td></tr>
 <tr class="separator:a8115c61eb09662e4025267019f7b5bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2d5483cbb8a5ceda41d5e7070188005"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ae2d5483cbb8a5ceda41d5e7070188005">s_DirectoryIcon</a> {}</td></tr>
+<tr class="memitem:ae2d5483cbb8a5ceda41d5e7070188005"><td class="memItemLeft" align="right" valign="top"><a id="ae2d5483cbb8a5ceda41d5e7070188005"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_DirectoryIcon</b> {}</td></tr>
 <tr class="separator:ae2d5483cbb8a5ceda41d5e7070188005"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a804c6d2fc50184e52ca9dc79d9c83770"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a804c6d2fc50184e52ca9dc79d9c83770">s_GenericFileIcon</a> {}</td></tr>
+<tr class="memitem:a804c6d2fc50184e52ca9dc79d9c83770"><td class="memItemLeft" align="right" valign="top"><a id="a804c6d2fc50184e52ca9dc79d9c83770"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_GenericFileIcon</b> {}</td></tr>
 <tr class="separator:a804c6d2fc50184e52ca9dc79d9c83770"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b1f3461ebd89dde775b7ed8b4f22614"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a7b1f3461ebd89dde775b7ed8b4f22614">s_BackIcon</a> {}</td></tr>
+<tr class="memitem:a7b1f3461ebd89dde775b7ed8b4f22614"><td class="memItemLeft" align="right" valign="top"><a id="a7b1f3461ebd89dde775b7ed8b4f22614"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_BackIcon</b> {}</td></tr>
 <tr class="separator:a7b1f3461ebd89dde775b7ed8b4f22614"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb01cb29f4c7cfb712f5c53cf3586b72"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#adb01cb29f4c7cfb712f5c53cf3586b72">s_BackInactiveIcon</a> {}</td></tr>
+<tr class="memitem:adb01cb29f4c7cfb712f5c53cf3586b72"><td class="memItemLeft" align="right" valign="top"><a id="adb01cb29f4c7cfb712f5c53cf3586b72"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_BackInactiveIcon</b> {}</td></tr>
 <tr class="separator:adb01cb29f4c7cfb712f5c53cf3586b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21ba72c18a11779342fb12ce1c4e4243"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a21ba72c18a11779342fb12ce1c4e4243">s_ForwardIcon</a> {}</td></tr>
+<tr class="memitem:a21ba72c18a11779342fb12ce1c4e4243"><td class="memItemLeft" align="right" valign="top"><a id="a21ba72c18a11779342fb12ce1c4e4243"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_ForwardIcon</b> {}</td></tr>
 <tr class="separator:a21ba72c18a11779342fb12ce1c4e4243"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af86c61d39d2134446b19f1c94915055e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#af86c61d39d2134446b19f1c94915055e">s_ForwardInactiveIcon</a> {}</td></tr>
+<tr class="memitem:af86c61d39d2134446b19f1c94915055e"><td class="memItemLeft" align="right" valign="top"><a id="af86c61d39d2134446b19f1c94915055e"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_ForwardInactiveIcon</b> {}</td></tr>
 <tr class="separator:af86c61d39d2134446b19f1c94915055e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab45341d8788297d528b132638f78d8d9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab45341d8788297d528b132638f78d8d9">s_AudioIcon</a> {}</td></tr>
+<tr class="memitem:ab45341d8788297d528b132638f78d8d9"><td class="memItemLeft" align="right" valign="top"><a id="ab45341d8788297d528b132638f78d8d9"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_AudioIcon</b> {}</td></tr>
 <tr class="separator:ab45341d8788297d528b132638f78d8d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a659ce522346c47bcea698c2b9814c3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a8a659ce522346c47bcea698c2b9814c3">s_ImageIcon</a> {}</td></tr>
+<tr class="memitem:a8a659ce522346c47bcea698c2b9814c3"><td class="memItemLeft" align="right" valign="top"><a id="a8a659ce522346c47bcea698c2b9814c3"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_ImageIcon</b> {}</td></tr>
 <tr class="separator:a8a659ce522346c47bcea698c2b9814c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30bfd50a0a56e7bde4ae89549323b5f2"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a30bfd50a0a56e7bde4ae89549323b5f2">s_BinaryIcon</a> {}</td></tr>
+<tr class="memitem:a30bfd50a0a56e7bde4ae89549323b5f2"><td class="memItemLeft" align="right" valign="top"><a id="a30bfd50a0a56e7bde4ae89549323b5f2"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_BinaryIcon</b> {}</td></tr>
 <tr class="separator:a30bfd50a0a56e7bde4ae89549323b5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a971085f7e7e2a4aabe08a4cfa82c8808"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a971085f7e7e2a4aabe08a4cfa82c8808">s_SceneIcon</a> {}</td></tr>
+<tr class="memitem:a971085f7e7e2a4aabe08a4cfa82c8808"><td class="memItemLeft" align="right" valign="top"><a id="a971085f7e7e2a4aabe08a4cfa82c8808"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_SceneIcon</b> {}</td></tr>
 <tr class="separator:a971085f7e7e2a4aabe08a4cfa82c8808"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a533ce30ebe4bd06603faf0f9dc6a769c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a533ce30ebe4bd06603faf0f9dc6a769c">s_RegistryIcon</a> {}</td></tr>
+<tr class="memitem:a533ce30ebe4bd06603faf0f9dc6a769c"><td class="memItemLeft" align="right" valign="top"><a id="a533ce30ebe4bd06603faf0f9dc6a769c"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_RegistryIcon</b> {}</td></tr>
 <tr class="separator:a533ce30ebe4bd06603faf0f9dc6a769c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70f341571d4a1209f8ecdc0a7ac984f7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a70f341571d4a1209f8ecdc0a7ac984f7">s_ScriptProjectIcon</a> {}</td></tr>
+<tr class="memitem:a70f341571d4a1209f8ecdc0a7ac984f7"><td class="memItemLeft" align="right" valign="top"><a id="a70f341571d4a1209f8ecdc0a7ac984f7"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_ScriptProjectIcon</b> {}</td></tr>
 <tr class="separator:a70f341571d4a1209f8ecdc0a7ac984f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ad46fc614adebaaaa9716436b3eea84"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a0ad46fc614adebaaaa9716436b3eea84">s_UserInterfaceIcon</a> {}</td></tr>
+<tr class="memitem:a0ad46fc614adebaaaa9716436b3eea84"><td class="memItemLeft" align="right" valign="top"><a id="a0ad46fc614adebaaaa9716436b3eea84"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_UserInterfaceIcon</b> {}</td></tr>
 <tr class="separator:a0ad46fc614adebaaaa9716436b3eea84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d1a6fbf8d9ce0c3b4b1ab55f9310c69"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a0d1a6fbf8d9ce0c3b4b1ab55f9310c69">s_FontIcon</a> {}</td></tr>
+<tr class="memitem:a0d1a6fbf8d9ce0c3b4b1ab55f9310c69"><td class="memItemLeft" align="right" valign="top"><a id="a0d1a6fbf8d9ce0c3b4b1ab55f9310c69"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_FontIcon</b> {}</td></tr>
 <tr class="separator:a0d1a6fbf8d9ce0c3b4b1ab55f9310c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d83ca6773f9c77af567a0da27f571fa"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a4d83ca6773f9c77af567a0da27f571fa">s_InputIcon</a> {}</td></tr>
+<tr class="memitem:a4d83ca6773f9c77af567a0da27f571fa"><td class="memItemLeft" align="right" valign="top"><a id="a4d83ca6773f9c77af567a0da27f571fa"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_InputIcon</b> {}</td></tr>
 <tr class="separator:a4d83ca6773f9c77af567a0da27f571fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00d9030774568ca73d78360f2a32f91f"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a00d9030774568ca73d78360f2a32f91f">s_PureWhite</a> {1.0f, 1.0f, 1.0f, 1.0f}</td></tr>
+<tr class="memitem:a00d9030774568ca73d78360f2a32f91f"><td class="memItemLeft" align="right" valign="top"><a id="a00d9030774568ca73d78360f2a32f91f"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_PureWhite</b> {1.0f, 1.0f, 1.0f, 1.0f}</td></tr>
 <tr class="separator:a00d9030774568ca73d78360f2a32f91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a803d09a55cee734acba4fa07702ab7fd"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a803d09a55cee734acba4fa07702ab7fd">s_PureBlack</a> {0.0f, 0.0f, 0.0f, 1.0f}</td></tr>
+<tr class="memitem:a803d09a55cee734acba4fa07702ab7fd"><td class="memItemLeft" align="right" valign="top"><a id="a803d09a55cee734acba4fa07702ab7fd"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_PureBlack</b> {0.0f, 0.0f, 0.0f, 1.0f}</td></tr>
 <tr class="separator:a803d09a55cee734acba4fa07702ab7fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa183adea6f05c0f5228215cb36dda1f"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#afa183adea6f05c0f5228215cb36dda1f">s_PureEmpty</a> {0.0f, 0.0f, 0.0f, 0.0f}</td></tr>
+<tr class="memitem:afa183adea6f05c0f5228215cb36dda1f"><td class="memItemLeft" align="right" valign="top"><a id="afa183adea6f05c0f5228215cb36dda1f"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_PureEmpty</b> {0.0f, 0.0f, 0.0f, 0.0f}</td></tr>
 <tr class="separator:afa183adea6f05c0f5228215cb36dda1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90fd003a9418d1d99c1cddbd805334d2"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a90fd003a9418d1d99c1cddbd805334d2">s_PearlBlue</a> {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f}</td></tr>
+<tr class="memitem:a90fd003a9418d1d99c1cddbd805334d2"><td class="memItemLeft" align="right" valign="top"><a id="a90fd003a9418d1d99c1cddbd805334d2"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_PearlBlue</b> {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f}</td></tr>
 <tr class="separator:a90fd003a9418d1d99c1cddbd805334d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cfe2e99139703f92864acf11c798238"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a3cfe2e99139703f92864acf11c798238">s_DarkPurple</a> {0.27843f, 0.011764f, 0.4f, 1.0f}</td></tr>
+<tr class="memitem:a3cfe2e99139703f92864acf11c798238"><td class="memItemLeft" align="right" valign="top"><a id="a3cfe2e99139703f92864acf11c798238"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_DarkPurple</b> {0.27843f, 0.011764f, 0.4f, 1.0f}</td></tr>
 <tr class="separator:a3cfe2e99139703f92864acf11c798238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c02a947c2a741f000d018ae464ebd66"><td class="memItemLeft" align="right" valign="top">static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a2c02a947c2a741f000d018ae464ebd66">s_LightPurple_Thin</a> { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f }</td></tr>
+<tr class="memitem:a2c02a947c2a741f000d018ae464ebd66"><td class="memItemLeft" align="right" valign="top"><a id="a2c02a947c2a741f000d018ae464ebd66"></a>
+static ImVec4&#160;</td><td class="memItemRight" valign="bottom"><b>s_LightPurple_Thin</b> { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f }</td></tr>
 <tr class="separator:a2c02a947c2a741f000d018ae464ebd66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cbbe2efd314249a6312ede999ab67f4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a7cbbe2efd314249a6312ede999ab67f4">s_SmallEditButton</a></td></tr>
+<tr class="memitem:a7cbbe2efd314249a6312ede999ab67f4"><td class="memItemLeft" align="right" valign="top"><a id="a7cbbe2efd314249a6312ede999ab67f4"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_SmallEditButton</b></td></tr>
 <tr class="separator:a7cbbe2efd314249a6312ede999ab67f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b2e6fa98bfa00e525056f20ef20ca2d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a6b2e6fa98bfa00e525056f20ef20ca2d">s_SmallExpandButton</a></td></tr>
+<tr class="memitem:a6b2e6fa98bfa00e525056f20ef20ca2d"><td class="memItemLeft" align="right" valign="top"><a id="a6b2e6fa98bfa00e525056f20ef20ca2d"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_SmallExpandButton</b></td></tr>
 <tr class="separator:a6b2e6fa98bfa00e525056f20ef20ca2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7b35dc6b2b972b00f58ec94c1700636"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab7b35dc6b2b972b00f58ec94c1700636">s_SmallOptionsButton</a></td></tr>
+<tr class="memitem:ab7b35dc6b2b972b00f58ec94c1700636"><td class="memItemLeft" align="right" valign="top"><a id="ab7b35dc6b2b972b00f58ec94c1700636"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_SmallOptionsButton</b></td></tr>
 <tr class="separator:ab7b35dc6b2b972b00f58ec94c1700636"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bb62ceb42c0d4f85511f67322ced3a6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a3bb62ceb42c0d4f85511f67322ced3a6">s_SmallCheckboxButton</a></td></tr>
+<tr class="memitem:a3bb62ceb42c0d4f85511f67322ced3a6"><td class="memItemLeft" align="right" valign="top"><a id="a3bb62ceb42c0d4f85511f67322ced3a6"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_SmallCheckboxButton</b></td></tr>
 <tr class="separator:a3bb62ceb42c0d4f85511f67322ced3a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3a85d350d9d8e6908aef9311916ba9c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ad3a85d350d9d8e6908aef9311916ba9c">s_SmallLinkButton</a></td></tr>
+<tr class="memitem:ad3a85d350d9d8e6908aef9311916ba9c"><td class="memItemLeft" align="right" valign="top"><a id="ad3a85d350d9d8e6908aef9311916ba9c"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_SmallLinkButton</b></td></tr>
 <tr class="separator:ad3a85d350d9d8e6908aef9311916ba9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab19e2b156f9bd6023c7fd3caf3a44715"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ab19e2b156f9bd6023c7fd3caf3a44715">s_LargeDeleteButton</a></td></tr>
+<tr class="memitem:ab19e2b156f9bd6023c7fd3caf3a44715"><td class="memItemLeft" align="right" valign="top"><a id="ab19e2b156f9bd6023c7fd3caf3a44715"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_LargeDeleteButton</b></td></tr>
 <tr class="separator:ab19e2b156f9bd6023c7fd3caf3a44715"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad21d26ac8ee9cdd87e613706a6f8a793"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#ad21d26ac8ee9cdd87e613706a6f8a793">s_LargeCancelButton</a></td></tr>
+<tr class="memitem:ad21d26ac8ee9cdd87e613706a6f8a793"><td class="memItemLeft" align="right" valign="top"><a id="ad21d26ac8ee9cdd87e613706a6f8a793"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_LargeCancelButton</b></td></tr>
 <tr class="separator:ad21d26ac8ee9cdd87e613706a6f8a793"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d789e538a2dc919f7a947ccd0733c16"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a5d789e538a2dc919f7a947ccd0733c16">s_LargeConfirmButton</a></td></tr>
+<tr class="memitem:a5d789e538a2dc919f7a947ccd0733c16"><td class="memItemLeft" align="right" valign="top"><a id="a5d789e538a2dc919f7a947ccd0733c16"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_LargeConfirmButton</b></td></tr>
 <tr class="separator:a5d789e538a2dc919f7a947ccd0733c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3b0352e5fd326b516def1cb1b7d9a3b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#af3b0352e5fd326b516def1cb1b7d9a3b">s_LargeSearchButton</a></td></tr>
+<tr class="memitem:af3b0352e5fd326b516def1cb1b7d9a3b"><td class="memItemLeft" align="right" valign="top"><a id="af3b0352e5fd326b516def1cb1b7d9a3b"></a>
+static <a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_LargeSearchButton</b></td></tr>
 <tr class="separator:af3b0352e5fd326b516def1cb1b7d9a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00072">72</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a26567bd7ecd493261423a22667958434"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26567bd7ecd493261423a22667958434">&#9670;&nbsp;</a></span>BlockMouseEvents()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Kargono::EditorUI::Editor::BlockMouseEvents </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00116">116</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a73f101df0029ab3f00a91af1e9ebf8ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73f101df0029ab3f00a91af1e9ebf8ec">&#9670;&nbsp;</a></span>Checkbox()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Checkbox </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1CheckboxSpec.html">CheckboxSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00963">963</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac221ff925d1f605105c3f1c99157ef8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac221ff925d1f605105c3f1c99157ef8b">&#9670;&nbsp;</a></span>CollapsingHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::CollapsingHeader </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html">CollapsingHeaderSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01227">1227</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a829ae605de44508446d59128bff46c10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a829ae605de44508446d59128bff46c10">&#9670;&nbsp;</a></span>EditVariable()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::EditVariable </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1EditVariableSpec.html">EditVariableSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00869">869</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a5181f4850e30f0dc0f4f1964f4d943bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5181f4850e30f0dc0f4f1964f4d943bc">&#9670;&nbsp;</a></span>EndRendering()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::EndRendering </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00344">344</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a86852e6cd14d4a40e063d0dde1066779"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86852e6cd14d4a40e063d0dde1066779">&#9670;&nbsp;</a></span>EndWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::EndWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00371">371</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4e5dd53b2326ec790d2491b4783ab8e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e5dd53b2326ec790d2491b4783ab8e9">&#9670;&nbsp;</a></span>GenericPopup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::GenericPopup </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00609">609</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7bf5bfccec21943f0e653e662226b699"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7bf5bfccec21943f0e653e662226b699">&#9670;&nbsp;</a></span>GetActiveWidgetID()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::EditorUI::Editor::GetActiveWidgetID </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00376">376</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a159e6f4c4e14d4a877ab7c04f595904c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a159e6f4c4e14d4a877ab7c04f595904c">&#9670;&nbsp;</a></span>GetFocusedWindowName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::EditorUI::Editor::GetFocusedWindowName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00381">381</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9fb5e6e8fda34d86935002a7be2b6336"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fb5e6e8fda34d86935002a7be2b6336">&#9670;&nbsp;</a></span>HighlightFocusedWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::HighlightFocusedWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00395">395</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae7a5103619b065b054c7675d709c5ecf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7a5103619b065b054c7675d709c5ecf">&#9670;&nbsp;</a></span>Init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Init </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00124">124</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aaf702c961ef1cfdb0b7de49d84432037"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf702c961ef1cfdb0b7de49d84432037">&#9670;&nbsp;</a></span>LabeledText()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::LabeledText </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>Label</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>Text</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01273">1273</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9e41907edccb9394e918049126b8dc60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e41907edccb9394e918049126b8dc60">&#9670;&nbsp;</a></span>NewItemScreen()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::NewItemScreen </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>label1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::function&lt; void()&gt;&#160;</td>
-          <td class="paramname"><em>func1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>label2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::function&lt; void()&gt;&#160;</td>
-          <td class="paramname"><em>func2</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00674">674</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac63d34e1c024f4ad6c220a8a3353ff0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac63d34e1c024f4ad6c220a8a3353ff0a">&#9670;&nbsp;</a></span>OnEvent()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::OnEvent </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;&#160;</td>
-          <td class="paramname"><em>e</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00412">412</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a624ffe44b284b8236c02f5c2cf14179e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a624ffe44b284b8236c02f5c2cf14179e">&#9670;&nbsp;</a></span>RadioSelector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::RadioSelector </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html">RadioSelectorSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01015">1015</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a34e527f52c97df8e61657d36062c8e4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34e527f52c97df8e61657d36062c8e4e">&#9670;&nbsp;</a></span>SelectOption()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::SelectOption </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html">SelectOptionSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00714">714</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6a377ec230c79d6ea310230934ed9f7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a377ec230c79d6ea310230934ed9f7d">&#9670;&nbsp;</a></span>SelectorHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::SelectorHeader </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1SelectorHeaderSpec.html">SelectorHeaderSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01199">1199</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aadea65bb6c8ef1d2e25355e5de55b160"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aadea65bb6c8ef1d2e25355e5de55b160">&#9670;&nbsp;</a></span>Separator()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Separator </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00468">468</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad1c6f3f5eee3aeb3dab73434e8b3bfe6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1c6f3f5eee3aeb3dab73434e8b3bfe6">&#9670;&nbsp;</a></span>SetDisableLeftClick()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::SetDisableLeftClick </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>option</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00407">407</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a150b22c00f3d2d56b51bf37e2dfcc96c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a150b22c00f3d2d56b51bf37e2dfcc96c">&#9670;&nbsp;</a></span>SetFocusedWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::SetFocusedWindow </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>windowName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00390">390</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="abfdd2fab8fa9b4317517516c9da47913"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfdd2fab8fa9b4317517516c9da47913">&#9670;&nbsp;</a></span>Spacing() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Spacing </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>space</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00428">428</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7b81543321d54d9febddb0be53c593e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b81543321d54d9febddb0be53c593e6">&#9670;&nbsp;</a></span>Spacing() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Spacing </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono_1_1EditorUI.html#a021e80ea7b1db7bad67d596cbcc17edd">SpacingAmount</a>&#160;</td>
-          <td class="paramname"><em>space</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00440">440</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4de054bf3aa11a2b18331e479dbcf6c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4de054bf3aa11a2b18331e479dbcf6c5">&#9670;&nbsp;</a></span>StartRendering()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::StartRendering </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00336">336</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9add8c31d41ff84388c2080c77ed5d48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9add8c31d41ff84388c2080c77ed5d48">&#9670;&nbsp;</a></span>StartWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::StartWindow </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>label</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool *&#160;</td>
-          <td class="paramname"><em>closeWindow</em> = <code>nullptr</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>flags</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00366">366</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="adf70e206a3937fb52524b80643c64a6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf70e206a3937fb52524b80643c64a6d">&#9670;&nbsp;</a></span>Table()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Table </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1TableSpec.html">TableSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01088">1088</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aabd4dfefddc51e6ab13a7f655c0d3a58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabd4dfefddc51e6ab13a7f655c0d3a58">&#9670;&nbsp;</a></span>Terminate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Terminate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00324">324</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac17af34dbf3d3a478ef49e39a76d2bc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac17af34dbf3d3a478ef49e39a76d2bc8">&#9670;&nbsp;</a></span>Text()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::Text </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>Text</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01282">1282</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aca29a121c7c7684e57808b7a25e2a38c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca29a121c7c7684e57808b7a25e2a38c">&#9670;&nbsp;</a></span>TextInputPopup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::TextInputPopup </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html">TextInputSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l01286">1286</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6708aefef42f88d5d0debb720c14cf17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6708aefef42f88d5d0debb720c14cf17">&#9670;&nbsp;</a></span>TitleText()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorUI::Editor::TitleText </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>text</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8cpp_source.html#l00433">433</a> of file <a class="el" href="Editor_8cpp_source.html">Editor.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ad00133ce193596093407859abdff21ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad00133ce193596093407859abdff21ba">&#9670;&nbsp;</a></span>s_AnonymousRegular</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_AnonymousRegular { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00131">131</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a3304acc990eaae3c1360a38a752cd8a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3304acc990eaae3c1360a38a752cd8a7">&#9670;&nbsp;</a></span>s_AntaLarge</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_AntaLarge { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00122">122</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab34daad2705bbdb963a17e0529255b31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab34daad2705bbdb963a17e0529255b31">&#9670;&nbsp;</a></span>s_AntaRegular</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_AntaRegular { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00123">123</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a0ee777456e104b04a54179167e85bce4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ee777456e104b04a54179167e85bce4">&#9670;&nbsp;</a></span>s_AntaSmall</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_AntaSmall { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00124">124</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab45341d8788297d528b132638f78d8d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab45341d8788297d528b132638f78d8d9">&#9670;&nbsp;</a></span>s_AudioIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_AudioIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00144">144</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a7b1f3461ebd89dde775b7ed8b4f22614"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b1f3461ebd89dde775b7ed8b4f22614">&#9670;&nbsp;</a></span>s_BackIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_BackIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00143">143</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="adb01cb29f4c7cfb712f5c53cf3586b72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb01cb29f4c7cfb712f5c53cf3586b72">&#9670;&nbsp;</a></span>s_BackInactiveIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_BackInactiveIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00143">143</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a30bfd50a0a56e7bde4ae89549323b5f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30bfd50a0a56e7bde4ae89549323b5f2">&#9670;&nbsp;</a></span>s_BinaryIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_BinaryIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00144">144</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a3cfe2e99139703f92864acf11c798238"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cfe2e99139703f92864acf11c798238">&#9670;&nbsp;</a></span>s_DarkPurple</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00152">152</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ae2d5483cbb8a5ceda41d5e7070188005"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2d5483cbb8a5ceda41d5e7070188005">&#9670;&nbsp;</a></span>s_DirectoryIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_DirectoryIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00142">142</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a0d1a6fbf8d9ce0c3b4b1ab55f9310c69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d1a6fbf8d9ce0c3b4b1ab55f9310c69">&#9670;&nbsp;</a></span>s_FontIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_FontIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00146">146</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a21ba72c18a11779342fb12ce1c4e4243"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21ba72c18a11779342fb12ce1c4e4243">&#9670;&nbsp;</a></span>s_ForwardIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_ForwardIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00143">143</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="af86c61d39d2134446b19f1c94915055e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af86c61d39d2134446b19f1c94915055e">&#9670;&nbsp;</a></span>s_ForwardInactiveIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_ForwardInactiveIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00143">143</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a804c6d2fc50184e52ca9dc79d9c83770"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a804c6d2fc50184e52ca9dc79d9c83770">&#9670;&nbsp;</a></span>s_GenericFileIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_GenericFileIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00142">142</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a684639bf3c40d64f0d1db885403b04e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a684639bf3c40d64f0d1db885403b04e6">&#9670;&nbsp;</a></span>s_IconAddItem</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconAddItem {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00134">134</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a9fa78752092e9feb2d9f100039c2768f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fa78752092e9feb2d9f100039c2768f">&#9670;&nbsp;</a></span>s_IconCamera</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCamera {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00135">135</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a8ff3d0c7542a47257c915438eb464fe8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ff3d0c7542a47257c915438eb464fe8">&#9670;&nbsp;</a></span>s_IconCameraActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCameraActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00135">135</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a373b82f2bca71abc97b46b581b237ebe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a373b82f2bca71abc97b46b581b237ebe">&#9670;&nbsp;</a></span>s_IconCancel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCancel {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a6331cf1ce32d79fa1a1cc0acfbf426a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6331cf1ce32d79fa1a1cc0acfbf426a9">&#9670;&nbsp;</a></span>s_IconCheckbox_Check_Disabled</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCheckbox_Check_Disabled {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00139">139</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ae5fc6e40ab386d80a005187998aa875b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5fc6e40ab386d80a005187998aa875b">&#9670;&nbsp;</a></span>s_IconCheckbox_Check_Enabled</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCheckbox_Check_Enabled {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00140">140</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ae66e13a4443e5cef9b28777cd4a6cb67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae66e13a4443e5cef9b28777cd4a6cb67">&#9670;&nbsp;</a></span>s_IconCheckbox_Empty_Disabled</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCheckbox_Empty_Disabled {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00138">138</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a77df84d4a09167219e556788d6964c66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77df84d4a09167219e556788d6964c66">&#9670;&nbsp;</a></span>s_IconCheckbox_Empty_Enabled</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconCheckbox_Empty_Enabled {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00139">139</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a5d45ebd111897b0d640fbff6af204146"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d45ebd111897b0d640fbff6af204146">&#9670;&nbsp;</a></span>s_IconConfirm</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconConfirm {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00138">138</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a8115c61eb09662e4025267019f7b5bb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8115c61eb09662e4025267019f7b5bb1">&#9670;&nbsp;</a></span>s_IconDash</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDash {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00140">140</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a847683239d34eb72c9bd3b48421fd2f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a847683239d34eb72c9bd3b48421fd2f8">&#9670;&nbsp;</a></span>s_IconDelete</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDelete {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab62c4474f9038513da3fe4c179682ae7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab62c4474f9038513da3fe4c179682ae7">&#9670;&nbsp;</a></span>s_IconDeleteActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDeleteActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="aa4b5a519d1f36a88c2452813f4fe2973"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4b5a519d1f36a88c2452813f4fe2973">&#9670;&nbsp;</a></span>s_IconDisplay</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDisplay {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00134">134</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="adef4124829b640b0da35e734ab613231"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adef4124829b640b0da35e734ab613231">&#9670;&nbsp;</a></span>s_IconDisplayActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDisplayActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00134">134</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a251b6d56c2e1fae9b9b85dcb896d87d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a251b6d56c2e1fae9b9b85dcb896d87d4">&#9670;&nbsp;</a></span>s_IconDown</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconDown {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00140">140</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a7c61f611da6bbb276bc001f63b33247f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c61f611da6bbb276bc001f63b33247f">&#9670;&nbsp;</a></span>s_IconEdit</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconEdit {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a52a4aa95f41e11fd44f3887b1b854c78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52a4aa95f41e11fd44f3887b1b854c78">&#9670;&nbsp;</a></span>s_IconEdit_Active</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconEdit_Active {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab5df8c40c2bbea47093a2698a4577b4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5df8c40c2bbea47093a2698a4577b4d">&#9670;&nbsp;</a></span>s_IconOptions</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconOptions {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00140">140</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac2392250a40a14442e363366833953da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2392250a40a14442e363366833953da">&#9670;&nbsp;</a></span>s_IconPause</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconPause {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00133">133</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a2e0afb52de992f749bd307aa5a95754c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e0afb52de992f749bd307aa5a95754c">&#9670;&nbsp;</a></span>s_IconPauseActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconPauseActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00136">136</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="af872dccb59c3c147270cbc0b8f061f61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af872dccb59c3c147270cbc0b8f061f61">&#9670;&nbsp;</a></span>s_IconPlay</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconPlay {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00133">133</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a05f4e807bfb807197b2e29dd7d23a0cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05f4e807bfb807197b2e29dd7d23a0cb">&#9670;&nbsp;</a></span>s_IconPlayActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconPlayActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00136">136</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a95392f820424a169e896ab37b3376f0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95392f820424a169e896ab37b3376f0f">&#9670;&nbsp;</a></span>s_IconRight</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconRight {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00140">140</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a19637308f4987509ae485ec61ad3e693"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19637308f4987509ae485ec61ad3e693">&#9670;&nbsp;</a></span>s_IconSearch</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconSearch {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00138">138</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac8fa0984086a60a3aa3cd65f0b802d04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8fa0984086a60a3aa3cd65f0b802d04">&#9670;&nbsp;</a></span>s_IconSettings</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconSettings {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00137">137</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab4360c46c2ecf26ea5e8bbe60f64ea4b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4360c46c2ecf26ea5e8bbe60f64ea4b">&#9670;&nbsp;</a></span>s_IconSimulate</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconSimulate {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00134">134</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a1df0c6105b9dd02afafe7514733b14c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1df0c6105b9dd02afafe7514733b14c7">&#9670;&nbsp;</a></span>s_IconSimulateActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconSimulateActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00136">136</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ad590feb389def40ccda0588496f9446b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad590feb389def40ccda0588496f9446b">&#9670;&nbsp;</a></span>s_IconStep</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconStep {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00134">134</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="acc1e936aed4af63e6bdfcb388a191cb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc1e936aed4af63e6bdfcb388a191cb4">&#9670;&nbsp;</a></span>s_IconStepActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconStepActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00136">136</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="aeb9af2ce1099330c16625ca20d9066f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb9af2ce1099330c16625ca20d9066f2">&#9670;&nbsp;</a></span>s_IconStop</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconStop {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00133">133</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a255365df025874e905fc4943c44df9e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a255365df025874e905fc4943c44df9e8">&#9670;&nbsp;</a></span>s_IconStopActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_IconStopActive {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00136">136</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a8a659ce522346c47bcea698c2b9814c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a659ce522346c47bcea698c2b9814c3">&#9670;&nbsp;</a></span>s_ImageIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_ImageIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00144">144</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a4d83ca6773f9c77af567a0da27f571fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d83ca6773f9c77af567a0da27f571fa">&#9670;&nbsp;</a></span>s_InputIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_InputIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00146">146</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ad21d26ac8ee9cdd87e613706a6f8a793"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad21d26ac8ee9cdd87e613706a6f8a793">&#9670;&nbsp;</a></span>s_LargeCancelButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_LargeCancelButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00161">161</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a5d789e538a2dc919f7a947ccd0733c16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d789e538a2dc919f7a947ccd0733c16">&#9670;&nbsp;</a></span>s_LargeConfirmButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_LargeConfirmButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00162">162</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab19e2b156f9bd6023c7fd3caf3a44715"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab19e2b156f9bd6023c7fd3caf3a44715">&#9670;&nbsp;</a></span>s_LargeDeleteButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_LargeDeleteButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00160">160</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="af3b0352e5fd326b516def1cb1b7d9a3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3b0352e5fd326b516def1cb1b7d9a3b">&#9670;&nbsp;</a></span>s_LargeSearchButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_LargeSearchButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00163">163</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a2c02a947c2a741f000d018ae464ebd66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c02a947c2a741f000d018ae464ebd66">&#9670;&nbsp;</a></span>s_LightPurple_Thin</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00153">153</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a46b3d44c92d8e2d9cbe7a86c8bc3ee77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46b3d44c92d8e2d9cbe7a86c8bc3ee77">&#9670;&nbsp;</a></span>s_OpenSansBold</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_OpenSansBold { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00128">128</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="abbba9080db1ac660822c4ee7f59e5daf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbba9080db1ac660822c4ee7f59e5daf">&#9670;&nbsp;</a></span>s_OpenSansRegular</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_OpenSansRegular { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00127">127</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a90fd003a9418d1d99c1cddbd805334d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90fd003a9418d1d99c1cddbd805334d2">&#9670;&nbsp;</a></span>s_PearlBlue</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00151">151</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a977660f03d3480de6f05aff0315b26ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a977660f03d3480de6f05aff0315b26ad">&#9670;&nbsp;</a></span>s_PlexBold</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_PlexBold { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00125">125</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab4657a324c30141abc93ebf696eb65f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4657a324c30141abc93ebf696eb65f4">&#9670;&nbsp;</a></span>s_PlexRegular</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_PlexRegular { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00126">126</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a803d09a55cee734acba4fa07702ab7fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a803d09a55cee734acba4fa07702ab7fd">&#9670;&nbsp;</a></span>s_PureBlack</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00149">149</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="afa183adea6f05c0f5228215cb36dda1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa183adea6f05c0f5228215cb36dda1f">&#9670;&nbsp;</a></span>s_PureEmpty</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00150">150</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a00d9030774568ca73d78360f2a32f91f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00d9030774568ca73d78360f2a32f91f">&#9670;&nbsp;</a></span>s_PureWhite</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImVec4 Kargono::EditorUI::Editor::s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00148">148</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a533ce30ebe4bd06603faf0f9dc6a769c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a533ce30ebe4bd06603faf0f9dc6a769c">&#9670;&nbsp;</a></span>s_RegistryIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_RegistryIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00145">145</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="aca6969363642b23c76c723d11095fad5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca6969363642b23c76c723d11095fad5">&#9670;&nbsp;</a></span>s_RobotoMono</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_RobotoMono { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00130">130</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a12e45dfe4339e4e81fe0623ccd7d8dce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12e45dfe4339e4e81fe0623ccd7d8dce">&#9670;&nbsp;</a></span>s_RobotoRegular</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ImFont * Kargono::EditorUI::Editor::s_RobotoRegular { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00129">129</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a971085f7e7e2a4aabe08a4cfa82c8808"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a971085f7e7e2a4aabe08a4cfa82c8808">&#9670;&nbsp;</a></span>s_SceneIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_SceneIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00145">145</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a70f341571d4a1209f8ecdc0a7ac984f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70f341571d4a1209f8ecdc0a7ac984f7">&#9670;&nbsp;</a></span>s_ScriptProjectIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_ScriptProjectIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00145">145</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a3bb62ceb42c0d4f85511f67322ced3a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bb62ceb42c0d4f85511f67322ced3a6">&#9670;&nbsp;</a></span>s_SmallCheckboxButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_SmallCheckboxButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00158">158</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a7cbbe2efd314249a6312ede999ab67f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cbbe2efd314249a6312ede999ab67f4">&#9670;&nbsp;</a></span>s_SmallEditButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_SmallEditButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00155">155</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a6b2e6fa98bfa00e525056f20ef20ca2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b2e6fa98bfa00e525056f20ef20ca2d">&#9670;&nbsp;</a></span>s_SmallExpandButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_SmallExpandButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00156">156</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ad3a85d350d9d8e6908aef9311916ba9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3a85d350d9d8e6908aef9311916ba9c">&#9670;&nbsp;</a></span>s_SmallLinkButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_SmallLinkButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00159">159</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab7b35dc6b2b972b00f58ec94c1700636"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7b35dc6b2b972b00f58ec94c1700636">&#9670;&nbsp;</a></span>s_SmallOptionsButton</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1EditorUI_1_1InlineButtonSpec.html">InlineButtonSpec</a> Kargono::EditorUI::Editor::s_SmallOptionsButton</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00157">157</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a0ad46fc614adebaaaa9716436b3eea84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ad46fc614adebaaaa9716436b3eea84">&#9670;&nbsp;</a></span>s_UserInterfaceIcon</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Texture2D.html">Texture2D</a> &gt; Kargono::EditorUI::Editor::s_UserInterfaceIcon {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00146">146</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/EditorUI/<a class="el" href="Editor_8h_source.html">Editor.h</a></li>
-<li>Engine/Source/Kargono/EditorUI/<a class="el" href="Editor_8cpp_source.html">Editor.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>EditorUI</b></li><li class="navelem"><a class="el" href="classKargono_1_1EditorUI_1_1Editor.html">Editor</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Scene_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,38 +84,33 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e70a2e04f9954ad5324341a8dcda6587.html">Scene</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Scene.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Scene_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Timestep_8h.html">Kargono/Core/Timestep.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UUID_8h.html">Kargono/Core/UUID.h</a>&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorCamera_8h.html">Kargono/Renderer/EditorCamera.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Physics2D_8h.html">Kargono/Physics/Physics2D.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Timestep.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/UUID.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/EditorCamera.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Physics/Physics2D.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="enttAPI_8h.html">API/EntityComponentSystem/enttAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;API/EntityComponentSystem/enttAPI.h&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// Forward Declarations</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">class </span><a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea6733d467561629aede2fe654ce9d8cbf">Shader</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">class </span>Shader;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">struct </span>Buffer;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a> </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>Kargono </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">// Forward Declarations</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">class </span><a class="code" href="namespaceKargono_1_1Script.html#acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f">Entity</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">class </span>Entity;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">struct </span>ShaderSpecification;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// Scene Class</span></div>
@@ -113,8 +131,8 @@ $(function() {
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">// Constructor/Destructor</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// This constructor/destructor manages the lifetime of the m_HoveredEntity variable.</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="classKargono_1_1Scene.html#a0257dd4c61febff72ff28b4e586a423f">Scene</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classKargono_1_1Scene.html#a2a2c71b1e8c0ed170e257b4bee35a894">~Scene</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="classKargono_1_1Scene.html">Scene</a>();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        ~<a class="code" href="classKargono_1_1Scene.html">Scene</a>();</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
@@ -123,24 +141,24 @@ $(function() {
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">//      and the runtime applications. Currently, the OnRuntimeStart function</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">//      initiates the Physics System and the Scripting System. The OnRuntimeStop</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="comment">//      cleans up the Physics and Scripting systems.</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#ac070e3c94237e1dc0641ba0526cfaf16">OnRuntimeStart</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#ab82ce03a6c9c8a39a07a61371fa903ee">OnRuntimeStop</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordtype">void</span> OnRuntimeStart();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">void</span> OnRuntimeStop();</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="comment">// These functions are run when the simulation option is started in the editor.</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="comment">//      These functions only start and stop the physics system currently.</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a75bc9b30fd1d03989353f99f7cf63fc9">OnSimulationStart</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a15eb99fcd127d2bf04cbe4dc623f80d2">OnSimulationStop</a>();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordtype">void</span> OnSimulationStart();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">void</span> OnSimulationStop();</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="comment">// Submits render data to the renderer.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a01fa9529b64a5fc711dd9e6508df8dbc">RenderScene</a>(<a class="code" href="classKargono_1_1Camera.html">Camera</a>&amp; camera, <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&amp; transform);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">void</span> RenderScene(<a class="code" href="classKargono_1_1Camera.html">Camera</a>&amp; camera, <span class="keyword">const</span> Math::mat4&amp; transform);</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="comment">// Updates Physics</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#aaabad52401796808ea792518e1789c92">OnUpdatePhysics</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">void</span> OnUpdatePhysics(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="comment">// Other LifeCycle Functions</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="comment">// These Getter/Setter Functions query the current state of the scene.</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">//      IsRunning and IsPaused allow certain functionality to be stopped based on their</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="comment">//      values. Step allows one iteration to occur</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a2c8f2a38a1459dd7b7ef4b39d0697801">   70</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Scene.html#a2c8f2a38a1459dd7b7ef4b39d0697801">IsRunning</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_IsRunning; }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordtype">bool</span> IsRunning()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_IsRunning; }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">// Supporting private functions for LifeCycle Functions</span></div>
@@ -148,7 +166,7 @@ $(function() {
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// This function template optionally runs code that involves</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="comment">//      the current scene and the newly instantiated component.</span></div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">void</span> OnComponentAdded(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity, <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>&amp; component);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">void</span> OnComponentAdded(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity, T&amp; component);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">// Rendering Pipeline Functions</span></div>
@@ -161,7 +179,7 @@ $(function() {
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">//      then sent to the Renderer to continue the process.</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="comment">// This function fills the buffer inside inputSpec with the current entityID.</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#afe829f10aa20c0b699338d93472ed480">FillEntityID</a>(<a class="code" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; inputSpec);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> FillEntityID(<a class="code" href="structKargono_1_1RendererInputSpec.html">RendererInputSpec</a>&amp; inputSpec);</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="comment">// Copy Scene</span></div>
@@ -170,47 +188,47 @@ $(function() {
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="comment">//      copying entities into new registry, and copying corresponding components for</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">//      each entity. This function is currently used in the editor</span></div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="comment">//      to provide a temporary scene for the runtime and simulation modes to work.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> <a class="code" href="classKargono_1_1Scene.html#a5860501fe2ac2effc95fb30401ef2a60">Copy</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> other);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">static</span> Ref&lt;Scene&gt; Copy(Ref&lt;Scene&gt; other);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="comment">// This functino replaces the current scene with the scene in the provided handle.</span></div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">//      The current scene is held in s_ActiveScene btw.</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a69cf59e3cdcd8d9f5d3bb9de642cc8e8">TransitionScene</a>(<a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newSceneHandle);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a69cf59e3cdcd8d9f5d3bb9de642cc8e8">TransitionScene</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> newScene);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#ac8ce11413a2341302d591ce93f5ecb10">TransitionSceneFromName</a>(<span class="keyword">const</span> std::string&amp; sceneName);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> TransitionScene(<a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newSceneHandle);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> TransitionScene(Ref&lt;Scene&gt; newScene);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> TransitionSceneFromName(<span class="keyword">const</span> std::string&amp; sceneName);</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// Create/Destroy Scene Entities</span></div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="comment">// This function creates a new entity inside the underlying m_Registry. This function</span></div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="comment">//      creates the new entity in the ECS, adds new Tag/Transform/ID components, and</span></div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="comment">//      registers the entity into the m_EntityMap.</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#a3c8d5e174029d305eec29c62286fb7f9">CreateEntityWithUUID</a>(<a class="code" href="classKargono_1_1UUID.html">UUID</a> uuid, <span class="keyword">const</span> std::string&amp; name = std::string());</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> CreateEntityWithUUID(<a class="code" href="classKargono_1_1UUID.html">UUID</a> uuid, <span class="keyword">const</span> std::string&amp; name = std::string());</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="comment">// This function calls the above function, but also pre-generates a UUID for the new entity</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#a6c8eb7afecf36268d2cd1e46551303a0">CreateEntity</a>(<span class="keyword">const</span> std::string&amp; name = std::string());</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> CreateEntity(<span class="keyword">const</span> std::string&amp; name = std::string());</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="comment">// This function creates a deep copy of another entity (calls CreateEntity()).</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#a6469a2728b142135a491a5f59023ce29">DuplicateEntity</a>(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> DuplicateEntity(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity);</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="comment">// This function removes an entity from the underlying ECS m_Registry and m_EntityMap.</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#ac2e17a2653075ad8c5e0d4db035039de">DestroyEntity</a>(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordtype">void</span> DestroyEntity(<a class="code" href="classKargono_1_1Entity.html">Entity</a> entity);</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="comment">// This function removes all entities from the underlying ECS m_Registry and clears the m_EntityMap</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a4658788a6fa370b808ec0ae17f541720">DestroyAllEntities</a>();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordtype">void</span> DestroyAllEntities();</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="comment">// Query Entity Functions</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="comment">// These functions query the current map of entities</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#a7389e5d4571218702808619ff0700bd6">FindEntityByName</a>(std::string_view name);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#aa38f81e599c728da9554d649d5ad3cd6">GetEntityByUUID</a>(<a class="code" href="classKargono_1_1UUID.html">UUID</a> uuid);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> <a class="code" href="classKargono_1_1Scene.html#a03f063167bf6eb75dcc4eb0d1ce7b4b8">GetPrimaryCameraEntity</a>();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Scene.html#af2e712993918707790679fd6cfef5848">CheckEntityExists</a>(entt::entity entity);</div>
-<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a040a4bb9b8bbccf63ac7099b2a3d07dd">  130</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Scene.html#a040a4bb9b8bbccf63ac7099b2a3d07dd">IsEntityValid</a>(entt::entity entity) { <span class="keywordflow">return</span> m_Registry.valid(entity); }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> FindEntityByName(std::string_view name);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> GetEntityByUUID(<a class="code" href="classKargono_1_1UUID.html">UUID</a> uuid);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a> GetPrimaryCameraEntity();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">bool</span> CheckEntityExists(entt::entity entity);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordtype">bool</span> IsEntityValid(entt::entity entity) { <span class="keywordflow">return</span> m_Registry.valid(entity); }</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="comment">// Update Scene Viewport Size (Not too important) and resize all camera in scene</span></div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="comment">//      if they require a fixed ratio (more important).</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#ae24688512905596f619cd0b3fad573f7">OnViewportResize</a>(uint32_t width, uint32_t height);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordtype">void</span> OnViewportResize(uint32_t width, uint32_t height);</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="comment">// Templated function that serves as external API to query current m_Registry for</span></div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="comment">//      various components. This returns a view that contains all the entities</span></div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="comment">//      that have the required components.</span></div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Components&gt;</div>
-<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a42176109eab53058ca3db5d90c17d0c3">  140</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classKargono_1_1Scene.html#a42176109eab53058ca3db5d90c17d0c3">GetAllEntitiesWith</a>()</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keyword">auto</span> GetAllEntitiesWith()</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        {</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <span class="keywordflow">return</span> m_Registry.view&lt;Components...&gt;();</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        }</div>
@@ -218,24 +236,24 @@ $(function() {
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="comment">//====================</span></div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="comment">// Getters/Setters</span></div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="comment">//====================</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#aa3e7765fc0348d16b3259478b5cdb4c6">  148</a></span>&#160;        <a class="code" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a>&amp; <a class="code" href="classKargono_1_1Scene.html#aa3e7765fc0348d16b3259478b5cdb4c6">GetPhysicsSpecification</a>() { <span class="keywordflow">return</span> m_PhysicsSpecification; }</div>
-<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a5dc81fa355f75e5b5488a057a110906f">  149</a></span>&#160;        <a class="code" href="classKargono_1_1Physics_1_1Physics2DWorld.html">Physics::Physics2DWorld</a>* <a class="code" href="classKargono_1_1Scene.html#a5dc81fa355f75e5b5488a057a110906f">GetPhysicsWorld</a>() { <span class="keywordflow">return</span> m_PhysicsWorld.get(); }</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <a class="code" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a>&amp; GetPhysicsSpecification() { <span class="keywordflow">return</span> m_PhysicsSpecification; }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <a class="code" href="classKargono_1_1Physics_1_1Physics2DWorld.html">Physics::Physics2DWorld</a>* GetPhysicsWorld() { <span class="keywordflow">return</span> m_PhysicsWorld.get(); }</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a4fd633b108e7d03bf5b11a0d3b7ebf3b">  151</a></span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* <a class="code" href="classKargono_1_1Scene.html#a4fd633b108e7d03bf5b11a0d3b7ebf3b">GetHoveredEntity</a>() { <span class="keywordflow">return</span> m_HoveredEntity; }</div>
-<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a35884aefdbb231dbfe613b7e8475283c">  152</a></span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* <a class="code" href="classKargono_1_1Scene.html#a35884aefdbb231dbfe613b7e8475283c">GetSelectedEntity</a>() { <span class="keywordflow">return</span> m_SelectedEntity; }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* GetHoveredEntity() { <span class="keywordflow">return</span> m_HoveredEntity; }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* GetSelectedEntity() { <span class="keywordflow">return</span> m_SelectedEntity; }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">  154</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> <a class="code" href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">GetActiveScene</a>() { <span class="keywordflow">return</span> s_ActiveScene; }</div>
-<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#aaff9f80493c4b3695e849515d6b5daa6">  155</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> <a class="code" href="classKargono_1_1Scene.html#aaff9f80493c4b3695e849515d6b5daa6">GetActiveSceneHandle</a>()</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keyword">static</span> Ref&lt;Scene&gt; GetActiveScene() { <span class="keywordflow">return</span> s_ActiveScene; }</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> GetActiveSceneHandle()</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        {</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            <span class="keywordflow">return</span> s_ActiveSceneHandle;</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        }</div>
-<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a65fcbfc2832645dc34183f2dbb21b153">  159</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scene.html#a65fcbfc2832645dc34183f2dbb21b153">SetActiveScene</a>(<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> newScene, <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newHandle)</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> SetActiveScene(Ref&lt;Scene&gt; newScene, <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newHandle)</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        {</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            s_ActiveScene = newScene;</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            s_ActiveSceneHandle = newHandle;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keyword">static</span> std::unordered_map&lt;std::string, std::vector&lt;UUID&gt;&gt;&amp; <a class="code" href="classKargono_1_1Scene.html#ae17cef9c146224271e80c66b8e199f3b">GetScriptClassToEntityList</a>();</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keyword">static</span> std::unordered_map&lt;std::string, std::vector&lt;UUID&gt;&gt;&amp; GetScriptClassToEntityList();</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="comment">// Underlying ECS registry that holds actual entities and their components</span></div>
@@ -251,86 +269,43 @@ $(function() {
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="comment">// Physics World</span></div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        Scope&lt;Physics::Physics2DWorld&gt; m_PhysicsWorld = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        Physics::PhysicsSpecification m_PhysicsSpecification{};</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <a class="code" href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Physics::PhysicsSpecification</a> m_PhysicsSpecification{};</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="comment">// Scene State Fields</span></div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordtype">bool</span> m_IsRunning = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="comment">// Currently Hovered Entity</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <a class="code" href="classKargono_1_1Scene.html#a614439ccac0344926adc4c0165d64060">Entity</a>* m_HoveredEntity = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <a class="code" href="classKargono_1_1Scene.html#a614439ccac0344926adc4c0165d64060">Entity</a>* m_SelectedEntity = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* m_HoveredEntity = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <a class="code" href="classKargono_1_1Entity.html">Entity</a>* m_SelectedEntity = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="comment">// Friend Declarations</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a614439ccac0344926adc4c0165d64060">  190</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Entity.html">Entity</a>;</div>
-<div class="line"><a name="l00191"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a5fa7cde0ffbc72d80ef032c1ea3e9c85">  191</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Scene.html#a5fa7cde0ffbc72d80ef032c1ea3e9c85">SceneSerializer</a>;</div>
-<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a776c3b89de428075a81a63c2e78d8eaf">  192</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a>;</div>
-<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="classKargono_1_1Scene.html#a93a4681dfdc6917d50d61ef8c5254626">  193</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a>;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Entity.html">Entity</a>;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span>SceneSerializer;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a>;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a>;</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="comment">// This represents the staticlly defined and managed scene that is currently</span></div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="comment">//      being rendered.</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scene&gt;</a> s_ActiveScene;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keyword">static</span> Ref&lt;Scene&gt; s_ActiveScene;</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="keyword">static</span> <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> s_ActiveSceneHandle;</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    };</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;}</div>
-<div class="ttc" id="aEditorCamera_8h_html"><div class="ttname"><a href="EditorCamera_8h.html">EditorCamera.h</a></div></div>
-<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
-<div class="ttc" id="aPhysics2D_8h_html"><div class="ttname"><a href="Physics2D_8h.html">Physics2D.h</a></div></div>
-<div class="ttc" id="aTimestep_8h_html"><div class="ttname"><a href="Timestep_8h.html">Timestep.h</a></div></div>
-<div class="ttc" id="aUUID_8h_html"><div class="ttname"><a href="UUID_8h.html">UUID.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html">Kargono::Assets::AssetManager</a></div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00042">AssetManager.h:43</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Camera_html"><div class="ttname"><a href="classKargono_1_1Camera.html">Kargono::Camera</a></div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00007">Camera.h:8</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Entity_html"><div class="ttname"><a href="classKargono_1_1Entity.html">Kargono::Entity</a></div><div class="ttdef"><b>Definition:</b> <a href="Entity_8h_source.html#l00011">Entity.h:12</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Physics_1_1Physics2DWorld_html"><div class="ttname"><a href="classKargono_1_1Physics_1_1Physics2DWorld.html">Kargono::Physics::Physics2DWorld</a></div><div class="ttdef"><b>Definition:</b> <a href="Physics2D_8h_source.html#l00071">Physics2D.h:72</a></div></div>
 <div class="ttc" id="aclassKargono_1_1SceneHierarchyPanel_html"><div class="ttname"><a href="classKargono_1_1SceneHierarchyPanel.html">Kargono::SceneHierarchyPanel</a></div><div class="ttdef"><b>Definition:</b> <a href="SceneHierarchyPanel_8h_source.html#l00007">SceneHierarchyPanel.h:8</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Scene_html"><div class="ttname"><a href="classKargono_1_1Scene.html">Kargono::Scene</a></div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00036">Scene.h:37</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a01fa9529b64a5fc711dd9e6508df8dbc"><div class="ttname"><a href="classKargono_1_1Scene.html#a01fa9529b64a5fc711dd9e6508df8dbc">Kargono::Scene::RenderScene</a></div><div class="ttdeci">void RenderScene(Camera &amp;camera, const Math::mat4 &amp;transform)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00284">Scene.cpp:284</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a0257dd4c61febff72ff28b4e586a423f"><div class="ttname"><a href="classKargono_1_1Scene.html#a0257dd4c61febff72ff28b4e586a423f">Kargono::Scene::Scene</a></div><div class="ttdeci">Scene()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00083">Scene.cpp:83</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a03f063167bf6eb75dcc4eb0d1ce7b4b8"><div class="ttname"><a href="classKargono_1_1Scene.html#a03f063167bf6eb75dcc4eb0d1ce7b4b8">Kargono::Scene::GetPrimaryCameraEntity</a></div><div class="ttdeci">Entity GetPrimaryCameraEntity()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00274">Scene.cpp:274</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a040a4bb9b8bbccf63ac7099b2a3d07dd"><div class="ttname"><a href="classKargono_1_1Scene.html#a040a4bb9b8bbccf63ac7099b2a3d07dd">Kargono::Scene::IsEntityValid</a></div><div class="ttdeci">bool IsEntityValid(entt::entity entity)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00130">Scene.h:130</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a15eb99fcd127d2bf04cbe4dc623f80d2"><div class="ttname"><a href="classKargono_1_1Scene.html#a15eb99fcd127d2bf04cbe4dc623f80d2">Kargono::Scene::OnSimulationStop</a></div><div class="ttdeci">void OnSimulationStop()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00184">Scene.cpp:184</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a2a2c71b1e8c0ed170e257b4bee35a894"><div class="ttname"><a href="classKargono_1_1Scene.html#a2a2c71b1e8c0ed170e257b4bee35a894">Kargono::Scene::~Scene</a></div><div class="ttdeci">~Scene()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00093">Scene.cpp:93</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a2c8f2a38a1459dd7b7ef4b39d0697801"><div class="ttname"><a href="classKargono_1_1Scene.html#a2c8f2a38a1459dd7b7ef4b39d0697801">Kargono::Scene::IsRunning</a></div><div class="ttdeci">bool IsRunning() const</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00070">Scene.h:70</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a35884aefdbb231dbfe613b7e8475283c"><div class="ttname"><a href="classKargono_1_1Scene.html#a35884aefdbb231dbfe613b7e8475283c">Kargono::Scene::GetSelectedEntity</a></div><div class="ttdeci">Entity * GetSelectedEntity()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00152">Scene.h:152</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a3c8d5e174029d305eec29c62286fb7f9"><div class="ttname"><a href="classKargono_1_1Scene.html#a3c8d5e174029d305eec29c62286fb7f9">Kargono::Scene::CreateEntityWithUUID</a></div><div class="ttdeci">Entity CreateEntityWithUUID(UUID uuid, const std::string &amp;name=std::string())</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00105">Scene.cpp:105</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a42176109eab53058ca3db5d90c17d0c3"><div class="ttname"><a href="classKargono_1_1Scene.html#a42176109eab53058ca3db5d90c17d0c3">Kargono::Scene::GetAllEntitiesWith</a></div><div class="ttdeci">auto GetAllEntitiesWith()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00140">Scene.h:140</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a4658788a6fa370b808ec0ae17f541720"><div class="ttname"><a href="classKargono_1_1Scene.html#a4658788a6fa370b808ec0ae17f541720">Kargono::Scene::DestroyAllEntities</a></div><div class="ttdeci">void DestroyAllEntities()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00126">Scene.cpp:126</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a4fd633b108e7d03bf5b11a0d3b7ebf3b"><div class="ttname"><a href="classKargono_1_1Scene.html#a4fd633b108e7d03bf5b11a0d3b7ebf3b">Kargono::Scene::GetHoveredEntity</a></div><div class="ttdeci">Entity * GetHoveredEntity()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00151">Scene.h:151</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a52f7ab896909ddd245cdfe7771a6375a"><div class="ttname"><a href="classKargono_1_1Scene.html#a52f7ab896909ddd245cdfe7771a6375a">Kargono::Scene::GetActiveScene</a></div><div class="ttdeci">static Ref&lt; Scene &gt; GetActiveScene()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00154">Scene.h:154</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a5860501fe2ac2effc95fb30401ef2a60"><div class="ttname"><a href="classKargono_1_1Scene.html#a5860501fe2ac2effc95fb30401ef2a60">Kargono::Scene::Copy</a></div><div class="ttdeci">static Ref&lt; Scene &gt; Copy(Ref&lt; Scene &gt; other)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00057">Scene.cpp:57</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a5dc81fa355f75e5b5488a057a110906f"><div class="ttname"><a href="classKargono_1_1Scene.html#a5dc81fa355f75e5b5488a057a110906f">Kargono::Scene::GetPhysicsWorld</a></div><div class="ttdeci">Physics::Physics2DWorld * GetPhysicsWorld()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00149">Scene.h:149</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a5fa7cde0ffbc72d80ef032c1ea3e9c85"><div class="ttname"><a href="classKargono_1_1Scene.html#a5fa7cde0ffbc72d80ef032c1ea3e9c85">Kargono::Scene::SceneSerializer</a></div><div class="ttdeci">friend class SceneSerializer</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00191">Scene.h:191</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a614439ccac0344926adc4c0165d64060"><div class="ttname"><a href="classKargono_1_1Scene.html#a614439ccac0344926adc4c0165d64060">Kargono::Scene::Entity</a></div><div class="ttdeci">friend class Entity</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00190">Scene.h:190</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a6469a2728b142135a491a5f59023ce29"><div class="ttname"><a href="classKargono_1_1Scene.html#a6469a2728b142135a491a5f59023ce29">Kargono::Scene::DuplicateEntity</a></div><div class="ttdeci">Entity DuplicateEntity(Entity entity)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00191">Scene.cpp:191</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a65fcbfc2832645dc34183f2dbb21b153"><div class="ttname"><a href="classKargono_1_1Scene.html#a65fcbfc2832645dc34183f2dbb21b153">Kargono::Scene::SetActiveScene</a></div><div class="ttdeci">static void SetActiveScene(Ref&lt; Scene &gt; newScene, Assets::AssetHandle newHandle)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00159">Scene.h:159</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a69cf59e3cdcd8d9f5d3bb9de642cc8e8"><div class="ttname"><a href="classKargono_1_1Scene.html#a69cf59e3cdcd8d9f5d3bb9de642cc8e8">Kargono::Scene::TransitionScene</a></div><div class="ttdeci">static void TransitionScene(Assets::AssetHandle newSceneHandle)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00240">Scene.cpp:240</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a6c8eb7afecf36268d2cd1e46551303a0"><div class="ttname"><a href="classKargono_1_1Scene.html#a6c8eb7afecf36268d2cd1e46551303a0">Kargono::Scene::CreateEntity</a></div><div class="ttdeci">Entity CreateEntity(const std::string &amp;name=std::string())</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00100">Scene.cpp:100</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a7389e5d4571218702808619ff0700bd6"><div class="ttname"><a href="classKargono_1_1Scene.html#a7389e5d4571218702808619ff0700bd6">Kargono::Scene::FindEntityByName</a></div><div class="ttdeci">Entity FindEntityByName(std::string_view name)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00200">Scene.cpp:200</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_a75bc9b30fd1d03989353f99f7cf63fc9"><div class="ttname"><a href="classKargono_1_1Scene.html#a75bc9b30fd1d03989353f99f7cf63fc9">Kargono::Scene::OnSimulationStart</a></div><div class="ttdeci">void OnSimulationStart()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00178">Scene.cpp:178</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_aa38f81e599c728da9554d649d5ad3cd6"><div class="ttname"><a href="classKargono_1_1Scene.html#aa38f81e599c728da9554d649d5ad3cd6">Kargono::Scene::GetEntityByUUID</a></div><div class="ttdeci">Entity GetEntityByUUID(UUID uuid)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00211">Scene.cpp:211</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_aa3e7765fc0348d16b3259478b5cdb4c6"><div class="ttname"><a href="classKargono_1_1Scene.html#aa3e7765fc0348d16b3259478b5cdb4c6">Kargono::Scene::GetPhysicsSpecification</a></div><div class="ttdeci">Physics::PhysicsSpecification &amp; GetPhysicsSpecification()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00148">Scene.h:148</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_aaabad52401796808ea792518e1789c92"><div class="ttname"><a href="classKargono_1_1Scene.html#aaabad52401796808ea792518e1789c92">Kargono::Scene::OnUpdatePhysics</a></div><div class="ttdeci">void OnUpdatePhysics(Timestep ts)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00315">Scene.cpp:315</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_aaff9f80493c4b3695e849515d6b5daa6"><div class="ttname"><a href="classKargono_1_1Scene.html#aaff9f80493c4b3695e849515d6b5daa6">Kargono::Scene::GetActiveSceneHandle</a></div><div class="ttdeci">static Assets::AssetHandle GetActiveSceneHandle()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00155">Scene.h:155</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ab82ce03a6c9c8a39a07a61371fa903ee"><div class="ttname"><a href="classKargono_1_1Scene.html#ab82ce03a6c9c8a39a07a61371fa903ee">Kargono::Scene::OnRuntimeStop</a></div><div class="ttdeci">void OnRuntimeStop()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00167">Scene.cpp:167</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ac070e3c94237e1dc0641ba0526cfaf16"><div class="ttname"><a href="classKargono_1_1Scene.html#ac070e3c94237e1dc0641ba0526cfaf16">Kargono::Scene::OnRuntimeStart</a></div><div class="ttdeci">void OnRuntimeStart()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00139">Scene.cpp:139</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ac2e17a2653075ad8c5e0d4db035039de"><div class="ttname"><a href="classKargono_1_1Scene.html#ac2e17a2653075ad8c5e0d4db035039de">Kargono::Scene::DestroyEntity</a></div><div class="ttdeci">void DestroyEntity(Entity entity)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00117">Scene.cpp:117</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ac8ce11413a2341302d591ce93f5ecb10"><div class="ttname"><a href="classKargono_1_1Scene.html#ac8ce11413a2341302d591ce93f5ecb10">Kargono::Scene::TransitionSceneFromName</a></div><div class="ttdeci">static void TransitionSceneFromName(const std::string &amp;sceneName)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00264">Scene.cpp:264</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ae17cef9c146224271e80c66b8e199f3b"><div class="ttname"><a href="classKargono_1_1Scene.html#ae17cef9c146224271e80c66b8e199f3b">Kargono::Scene::GetScriptClassToEntityList</a></div><div class="ttdeci">static std::unordered_map&lt; std::string, std::vector&lt; UUID &gt; &gt; &amp; GetScriptClassToEntityList()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00236">Scene.cpp:236</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_ae24688512905596f619cd0b3fad573f7"><div class="ttname"><a href="classKargono_1_1Scene.html#ae24688512905596f619cd0b3fad573f7">Kargono::Scene::OnViewportResize</a></div><div class="ttdeci">void OnViewportResize(uint32_t width, uint32_t height)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00223">Scene.cpp:223</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_af2e712993918707790679fd6cfef5848"><div class="ttname"><a href="classKargono_1_1Scene.html#af2e712993918707790679fd6cfef5848">Kargono::Scene::CheckEntityExists</a></div><div class="ttdeci">bool CheckEntityExists(entt::entity entity)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00218">Scene.cpp:218</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scene_html_afe829f10aa20c0b699338d93472ed480"><div class="ttname"><a href="classKargono_1_1Scene.html#afe829f10aa20c0b699338d93472ed480">Kargono::Scene::FillEntityID</a></div><div class="ttdeci">static void FillEntityID(RendererInputSpec &amp;inputSpec)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00319">Scene.cpp:319</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00005">Timestep.h:6</a></div></div>
 <div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
-<div class="ttc" id="aenttAPI_8h_html"><div class="ttname"><a href="enttAPI_8h.html">enttAPI.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Assets_html_a87d009e5376073cedbbc0c6a82318d5ea6733d467561629aede2fe654ce9d8cbf"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea6733d467561629aede2fe654ce9d8cbf">Kargono::Assets::Shader</a></div><div class="ttdeci">@ Shader</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00028">Asset.h:28</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">Kargono::Key::T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00050">KeyCodes.h:50</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Math_html_a73e119d2bf751b0cc19c088bd07a90f1"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Kargono::Math::mat4</a></div><div class="ttdeci">glm::mat4 mat4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00028">MathAliases.h:28</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Script_html_acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f"><div class="ttname"><a href="namespaceKargono_1_1Script.html#acaf69daf774e0063a11429c82e9d3435a1a434befae3f49ae09347ded52032f6f">Kargono::Script::ScriptFieldType::Entity</a></div><div class="ttdeci">@ Entity</div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
 <div class="ttc" id="astructKargono_1_1Physics_1_1PhysicsSpecification_html"><div class="ttname"><a href="structKargono_1_1Physics_1_1PhysicsSpecification.html">Kargono::Physics::PhysicsSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Physics2D_8h_source.html#l00063">Physics2D.h:64</a></div></div>
 <div class="ttc" id="astructKargono_1_1RendererInputSpec_html"><div class="ttname"><a href="structKargono_1_1RendererInputSpec.html">Kargono::RendererInputSpec</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00038">Shader.h:39</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e70a2e04f9954ad5324341a8dcda6587.html">Scene</a></li><li class="navelem"><b>Scene.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

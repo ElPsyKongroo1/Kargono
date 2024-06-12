@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Network_1_1Connection.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Network.html">Network</a></li><li class="navelem"><a class="el" href="classKargono_1_1Network_1_1Connection.html">Connection</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -75,802 +93,108 @@ $(function() {
 <div class="title">Kargono::Network::Connection Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Connection_8h_source.html">Connection.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a02063aab30727db5f2d8511ac3de887c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a02063aab30727db5f2d8511ac3de887c">Connection</a> (asio::io_context &amp;asioContext, asio::ip::tcp::socket &amp;&amp;socket, <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt; &amp;qIn, std::condition_variable &amp;newCV, std::mutex &amp;newMutex)</td></tr>
+<tr class="memitem:a02063aab30727db5f2d8511ac3de887c"><td class="memItemLeft" align="right" valign="top"><a id="a02063aab30727db5f2d8511ac3de887c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Connection</b> (asio::io_context &amp;asioContext, asio::ip::tcp::socket &amp;&amp;socket, <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt; &amp;qIn, std::condition_variable &amp;newCV, std::mutex &amp;newMutex)</td></tr>
 <tr class="separator:a02063aab30727db5f2d8511ac3de887c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27defa7813ad5ecc9c45792e02935ad7"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a27defa7813ad5ecc9c45792e02935ad7">~Connection</a> ()=default</td></tr>
-<tr class="separator:a27defa7813ad5ecc9c45792e02935ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a559d09fdfa2a22d29a17fc59b3e839bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a559d09fdfa2a22d29a17fc59b3e839bb">WakeUpNetworkThread</a> ()</td></tr>
+<tr class="memitem:a559d09fdfa2a22d29a17fc59b3e839bb"><td class="memItemLeft" align="right" valign="top"><a id="a559d09fdfa2a22d29a17fc59b3e839bb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>WakeUpNetworkThread</b> ()</td></tr>
 <tr class="separator:a559d09fdfa2a22d29a17fc59b3e839bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cd24aa066e0fb8cd1f68493719b442c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a4cd24aa066e0fb8cd1f68493719b442c">Send</a> (const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
+<tr class="memitem:a4cd24aa066e0fb8cd1f68493719b442c"><td class="memItemLeft" align="right" valign="top"><a id="a4cd24aa066e0fb8cd1f68493719b442c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Send</b> (const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
 <tr class="separator:a4cd24aa066e0fb8cd1f68493719b442c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee348865d4a7cbc391ac5517133284a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a9ee348865d4a7cbc391ac5517133284a">ReadHeader</a> ()</td></tr>
+<tr class="memitem:a9ee348865d4a7cbc391ac5517133284a"><td class="memItemLeft" align="right" valign="top"><a id="a9ee348865d4a7cbc391ac5517133284a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ReadHeader</b> ()</td></tr>
 <tr class="separator:a9ee348865d4a7cbc391ac5517133284a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d8c26c24c8790ecbbcfba1fce22441f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a0d8c26c24c8790ecbbcfba1fce22441f">ReadBody</a> ()</td></tr>
+<tr class="memitem:a0d8c26c24c8790ecbbcfba1fce22441f"><td class="memItemLeft" align="right" valign="top"><a id="a0d8c26c24c8790ecbbcfba1fce22441f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ReadBody</b> ()</td></tr>
 <tr class="separator:a0d8c26c24c8790ecbbcfba1fce22441f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa0a1b1d15bf29aa738dc482e3c0a5df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#afa0a1b1d15bf29aa738dc482e3c0a5df">WriteHeader</a> ()</td></tr>
+<tr class="memitem:afa0a1b1d15bf29aa738dc482e3c0a5df"><td class="memItemLeft" align="right" valign="top"><a id="afa0a1b1d15bf29aa738dc482e3c0a5df"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>WriteHeader</b> ()</td></tr>
 <tr class="separator:afa0a1b1d15bf29aa738dc482e3c0a5df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95a7ccd5dcf6eb5a93f522a7b37b84e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a95a7ccd5dcf6eb5a93f522a7b37b84e1">WriteBody</a> ()</td></tr>
+<tr class="memitem:a95a7ccd5dcf6eb5a93f522a7b37b84e1"><td class="memItemLeft" align="right" valign="top"><a id="a95a7ccd5dcf6eb5a93f522a7b37b84e1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>WriteBody</b> ()</td></tr>
 <tr class="separator:a95a7ccd5dcf6eb5a93f522a7b37b84e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c5c6183d9b56c7561bbf31fe399bca1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a6c5c6183d9b56c7561bbf31fe399bca1">Disconnect</a> ()=0</td></tr>
+<tr class="memitem:a6c5c6183d9b56c7561bbf31fe399bca1"><td class="memItemLeft" align="right" valign="top"><a id="a6c5c6183d9b56c7561bbf31fe399bca1"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Disconnect</b> ()=0</td></tr>
 <tr class="separator:a6c5c6183d9b56c7561bbf31fe399bca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a158edb38483fc686a1e64bc75473f028"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a158edb38483fc686a1e64bc75473f028">AddToIncomingMessageQueue</a> ()=0</td></tr>
+<tr class="memitem:a158edb38483fc686a1e64bc75473f028"><td class="memItemLeft" align="right" valign="top"><a id="a158edb38483fc686a1e64bc75473f028"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>AddToIncomingMessageQueue</b> ()=0</td></tr>
 <tr class="separator:a158edb38483fc686a1e64bc75473f028"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d686dc1a6358c7cabd1d8bb08fce955"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a2d686dc1a6358c7cabd1d8bb08fce955">Scramble</a> (uint64_t nInput)</td></tr>
+<tr class="memitem:a2d686dc1a6358c7cabd1d8bb08fce955"><td class="memItemLeft" align="right" valign="top"><a id="a2d686dc1a6358c7cabd1d8bb08fce955"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>Scramble</b> (uint64_t nInput)</td></tr>
 <tr class="separator:a2d686dc1a6358c7cabd1d8bb08fce955"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e452a856d0701aeef609d0b47be34e4"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a5e452a856d0701aeef609d0b47be34e4">GetUDPLocalEndpoint</a> ()</td></tr>
+<tr class="memitem:a5e452a856d0701aeef609d0b47be34e4"><td class="memItemLeft" align="right" valign="top"><a id="a5e452a856d0701aeef609d0b47be34e4"></a>
+asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetUDPLocalEndpoint</b> ()</td></tr>
 <tr class="separator:a5e452a856d0701aeef609d0b47be34e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a672a966b8c594c235f860943b9dad903"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a672a966b8c594c235f860943b9dad903">GetUDPRemoteSendEndpoint</a> ()</td></tr>
+<tr class="memitem:a672a966b8c594c235f860943b9dad903"><td class="memItemLeft" align="right" valign="top"><a id="a672a966b8c594c235f860943b9dad903"></a>
+asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetUDPRemoteSendEndpoint</b> ()</td></tr>
 <tr class="separator:a672a966b8c594c235f860943b9dad903"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc4f88acb7fa9ffed64cb15dbf480a7f"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#acc4f88acb7fa9ffed64cb15dbf480a7f">GetUDPRemoteReceiveEndpoint</a> ()</td></tr>
+<tr class="memitem:acc4f88acb7fa9ffed64cb15dbf480a7f"><td class="memItemLeft" align="right" valign="top"><a id="acc4f88acb7fa9ffed64cb15dbf480a7f"></a>
+asio::ip::udp::endpoint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetUDPRemoteReceiveEndpoint</b> ()</td></tr>
 <tr class="separator:acc4f88acb7fa9ffed64cb15dbf480a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0a3eb42c96e43325e2e5f1a722ab33e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#ac0a3eb42c96e43325e2e5f1a722ab33e">SetUDPLocalEndpoint</a> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
+<tr class="memitem:ac0a3eb42c96e43325e2e5f1a722ab33e"><td class="memItemLeft" align="right" valign="top"><a id="ac0a3eb42c96e43325e2e5f1a722ab33e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUDPLocalEndpoint</b> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
 <tr class="separator:ac0a3eb42c96e43325e2e5f1a722ab33e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a299a3cafe8ca49483b1c8095e13d1534"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a299a3cafe8ca49483b1c8095e13d1534">SetUDPRemoteSendEndpoint</a> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
+<tr class="memitem:a299a3cafe8ca49483b1c8095e13d1534"><td class="memItemLeft" align="right" valign="top"><a id="a299a3cafe8ca49483b1c8095e13d1534"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUDPRemoteSendEndpoint</b> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
 <tr class="separator:a299a3cafe8ca49483b1c8095e13d1534"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8817bcbfab8a97747e0b487f371196cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a8817bcbfab8a97747e0b487f371196cc">SetUDPRemoteReceiveEndpoint</a> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
+<tr class="memitem:a8817bcbfab8a97747e0b487f371196cc"><td class="memItemLeft" align="right" valign="top"><a id="a8817bcbfab8a97747e0b487f371196cc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUDPRemoteReceiveEndpoint</b> (asio::ip::udp::endpoint &amp;endpoint)</td></tr>
 <tr class="separator:a8817bcbfab8a97747e0b487f371196cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:ae25e96c7fa2aa66ba9244220d5387996"><td class="memItemLeft" align="right" valign="top">asio::ip::tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a></td></tr>
+<tr class="memitem:ae25e96c7fa2aa66ba9244220d5387996"><td class="memItemLeft" align="right" valign="top"><a id="ae25e96c7fa2aa66ba9244220d5387996"></a>
+asio::ip::tcp::socket&#160;</td><td class="memItemRight" valign="bottom"><b>m_TCPSocket</b></td></tr>
 <tr class="separator:ae25e96c7fa2aa66ba9244220d5387996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47cceaa23c9e54d9167acbd3650d4c8b"><td class="memItemLeft" align="right" valign="top">asio::io_context &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a47cceaa23c9e54d9167acbd3650d4c8b">m_asioContext</a></td></tr>
+<tr class="memitem:a47cceaa23c9e54d9167acbd3650d4c8b"><td class="memItemLeft" align="right" valign="top"><a id="a47cceaa23c9e54d9167acbd3650d4c8b"></a>
+asio::io_context &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_asioContext</b></td></tr>
 <tr class="separator:a47cceaa23c9e54d9167acbd3650d4c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1dd29b60eba2c34a560b5be6c5ef2632"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a1dd29b60eba2c34a560b5be6c5ef2632">m_qMessagesOut</a></td></tr>
+<tr class="memitem:a1dd29b60eba2c34a560b5be6c5ef2632"><td class="memItemLeft" align="right" valign="top"><a id="a1dd29b60eba2c34a560b5be6c5ef2632"></a>
+<a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_qMessagesOut</b></td></tr>
 <tr class="separator:a1dd29b60eba2c34a560b5be6c5ef2632"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac34645b3bd2d144b5acf36c1786dc137"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#ac34645b3bd2d144b5acf36c1786dc137">m_qMessagesIn</a></td></tr>
+<tr class="memitem:ac34645b3bd2d144b5acf36c1786dc137"><td class="memItemLeft" align="right" valign="top"><a id="ac34645b3bd2d144b5acf36c1786dc137"></a>
+<a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_qMessagesIn</b></td></tr>
 <tr class="separator:ac34645b3bd2d144b5acf36c1786dc137"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbcc18bb02f4aad535ffc5537f84d928"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#abbcc18bb02f4aad535ffc5537f84d928">m_UDPLocalEndpoint</a></td></tr>
+<tr class="memitem:abbcc18bb02f4aad535ffc5537f84d928"><td class="memItemLeft" align="right" valign="top"><a id="abbcc18bb02f4aad535ffc5537f84d928"></a>
+asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>m_UDPLocalEndpoint</b></td></tr>
 <tr class="separator:abbcc18bb02f4aad535ffc5537f84d928"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7423807bba000e9d8997d8339fbc98bb"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a7423807bba000e9d8997d8339fbc98bb">m_UDPRemoteSendEndpoint</a></td></tr>
+<tr class="memitem:a7423807bba000e9d8997d8339fbc98bb"><td class="memItemLeft" align="right" valign="top"><a id="a7423807bba000e9d8997d8339fbc98bb"></a>
+asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>m_UDPRemoteSendEndpoint</b></td></tr>
 <tr class="separator:a7423807bba000e9d8997d8339fbc98bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5841c789697fdf5b70945034f34f1e58"><td class="memItemLeft" align="right" valign="top">asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a5841c789697fdf5b70945034f34f1e58">m_UDPRemoteReceiveEndpoint</a></td></tr>
+<tr class="memitem:a5841c789697fdf5b70945034f34f1e58"><td class="memItemLeft" align="right" valign="top"><a id="a5841c789697fdf5b70945034f34f1e58"></a>
+asio::ip::udp::endpoint&#160;</td><td class="memItemRight" valign="bottom"><b>m_UDPRemoteReceiveEndpoint</b></td></tr>
 <tr class="separator:a5841c789697fdf5b70945034f34f1e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e11c428e12e9868588a79b362a7a830"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a8e11c428e12e9868588a79b362a7a830">m_msgTemporaryIn</a></td></tr>
+<tr class="memitem:a8e11c428e12e9868588a79b362a7a830"><td class="memItemLeft" align="right" valign="top"><a id="a8e11c428e12e9868588a79b362a7a830"></a>
+<a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_msgTemporaryIn</b></td></tr>
 <tr class="separator:a8e11c428e12e9868588a79b362a7a830"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b2ba1328362a559d942c8490f333ac2"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a9b2ba1328362a559d942c8490f333ac2">m_nHandshakeOut</a> = 0</td></tr>
+<tr class="memitem:a9b2ba1328362a559d942c8490f333ac2"><td class="memItemLeft" align="right" valign="top"><a id="a9b2ba1328362a559d942c8490f333ac2"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_nHandshakeOut</b> = 0</td></tr>
 <tr class="separator:a9b2ba1328362a559d942c8490f333ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed3347b058fd58c6d323878934a37df5"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#aed3347b058fd58c6d323878934a37df5">m_nHandshakeIn</a> = 0</td></tr>
+<tr class="memitem:aed3347b058fd58c6d323878934a37df5"><td class="memItemLeft" align="right" valign="top"><a id="aed3347b058fd58c6d323878934a37df5"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_nHandshakeIn</b> = 0</td></tr>
 <tr class="separator:aed3347b058fd58c6d323878934a37df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12d568616ba9445c21534c4015cd0adc"><td class="memItemLeft" align="right" valign="top">std::condition_variable &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#a12d568616ba9445c21534c4015cd0adc">m_BlockThreadCV</a></td></tr>
+<tr class="memitem:a12d568616ba9445c21534c4015cd0adc"><td class="memItemLeft" align="right" valign="top"><a id="a12d568616ba9445c21534c4015cd0adc"></a>
+std::condition_variable &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_BlockThreadCV</b></td></tr>
 <tr class="separator:a12d568616ba9445c21534c4015cd0adc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc08e1f592526e07113ddd9c9969f447"><td class="memItemLeft" align="right" valign="top">std::mutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Connection.html#acc08e1f592526e07113ddd9c9969f447">m_BlockThreadMx</a></td></tr>
+<tr class="memitem:acc08e1f592526e07113ddd9c9969f447"><td class="memItemLeft" align="right" valign="top"><a id="acc08e1f592526e07113ddd9c9969f447"></a>
+std::mutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_BlockThreadMx</b></td></tr>
 <tr class="separator:acc08e1f592526e07113ddd9c9969f447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00017">17</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a02063aab30727db5f2d8511ac3de887c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02063aab30727db5f2d8511ac3de887c">&#9670;&nbsp;</a></span>Connection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Network::Connection::Connection </td>
-          <td>(</td>
-          <td class="paramtype">asio::io_context &amp;&#160;</td>
-          <td class="paramname"><em>asioContext</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">asio::ip::tcp::socket &amp;&amp;&#160;</td>
-          <td class="paramname"><em>socket</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>qIn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::condition_variable &amp;&#160;</td>
-          <td class="paramname"><em>newCV</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::mutex &amp;&#160;</td>
-          <td class="paramname"><em>newMutex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00015">15</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a27defa7813ad5ecc9c45792e02935ad7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27defa7813ad5ecc9c45792e02935ad7">&#9670;&nbsp;</a></span>~Connection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Kargono::Network::Connection::~Connection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a158edb38483fc686a1e64bc75473f028"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a158edb38483fc686a1e64bc75473f028">&#9670;&nbsp;</a></span>AddToIncomingMessageQueue()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Network::Connection::AddToIncomingMessageQueue </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html#a23c6243ba35acda550c524597b077e42">Kargono::Network::ConnectionToClient</a>.</p>
-
-</div>
-</div>
-<a id="a6c5c6183d9b56c7561bbf31fe399bca1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c5c6183d9b56c7561bbf31fe399bca1">&#9670;&nbsp;</a></span>Disconnect()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Kargono::Network::Connection::Disconnect </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implemented in <a class="el" href="classKargono_1_1Network_1_1ConnectionToServer.html#a2acbbff6e1fa458bb9c3bb81e63bfe1a">Kargono::Network::ConnectionToServer</a>, and <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">Kargono::Network::ConnectionToClient</a>.</p>
-
-</div>
-</div>
-<a id="a5e452a856d0701aeef609d0b47be34e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e452a856d0701aeef609d0b47be34e4">&#9670;&nbsp;</a></span>GetUDPLocalEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint&amp; Kargono::Network::Connection::GetUDPLocalEndpoint </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00036">36</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="acc4f88acb7fa9ffed64cb15dbf480a7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc4f88acb7fa9ffed64cb15dbf480a7f">&#9670;&nbsp;</a></span>GetUDPRemoteReceiveEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint&amp; Kargono::Network::Connection::GetUDPRemoteReceiveEndpoint </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00038">38</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a672a966b8c594c235f860943b9dad903"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a672a966b8c594c235f860943b9dad903">&#9670;&nbsp;</a></span>GetUDPRemoteSendEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint&amp; Kargono::Network::Connection::GetUDPRemoteSendEndpoint </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00037">37</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a0d8c26c24c8790ecbbcfba1fce22441f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d8c26c24c8790ecbbcfba1fce22441f">&#9670;&nbsp;</a></span>ReadBody()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::ReadBody </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00065">65</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9ee348865d4a7cbc391ac5517133284a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ee348865d4a7cbc391ac5517133284a">&#9670;&nbsp;</a></span>ReadHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::ReadHeader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00036">36</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a2d686dc1a6358c7cabd1d8bb08fce955"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d686dc1a6358c7cabd1d8bb08fce955">&#9670;&nbsp;</a></span>Scramble()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Network::Connection::Scramble </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>nInput</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00136">136</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4cd24aa066e0fb8cd1f68493719b442c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cd24aa066e0fb8cd1f68493719b442c">&#9670;&nbsp;</a></span>Send()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::Send </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;&#160;</td>
-          <td class="paramname"><em>msg</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00024">24</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac0a3eb42c96e43325e2e5f1a722ab33e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0a3eb42c96e43325e2e5f1a722ab33e">&#9670;&nbsp;</a></span>SetUDPLocalEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::SetUDPLocalEndpoint </td>
-          <td>(</td>
-          <td class="paramtype">asio::ip::udp::endpoint &amp;&#160;</td>
-          <td class="paramname"><em>endpoint</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00040">40</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a8817bcbfab8a97747e0b487f371196cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8817bcbfab8a97747e0b487f371196cc">&#9670;&nbsp;</a></span>SetUDPRemoteReceiveEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::SetUDPRemoteReceiveEndpoint </td>
-          <td>(</td>
-          <td class="paramtype">asio::ip::udp::endpoint &amp;&#160;</td>
-          <td class="paramname"><em>endpoint</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00042">42</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a299a3cafe8ca49483b1c8095e13d1534"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a299a3cafe8ca49483b1c8095e13d1534">&#9670;&nbsp;</a></span>SetUDPRemoteSendEndpoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::SetUDPRemoteSendEndpoint </td>
-          <td>(</td>
-          <td class="paramtype">asio::ip::udp::endpoint &amp;&#160;</td>
-          <td class="paramname"><em>endpoint</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00041">41</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a559d09fdfa2a22d29a17fc59b3e839bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a559d09fdfa2a22d29a17fc59b3e839bb">&#9670;&nbsp;</a></span>WakeUpNetworkThread()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::WakeUpNetworkThread </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00019">19</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a95a7ccd5dcf6eb5a93f522a7b37b84e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95a7ccd5dcf6eb5a93f522a7b37b84e1">&#9670;&nbsp;</a></span>WriteBody()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::WriteBody </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00115">115</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afa0a1b1d15bf29aa738dc482e3c0a5df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa0a1b1d15bf29aa738dc482e3c0a5df">&#9670;&nbsp;</a></span>WriteHeader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Connection::WriteHeader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8cpp_source.html#l00080">80</a> of file <a class="el" href="Connection_8cpp_source.html">Connection.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a47cceaa23c9e54d9167acbd3650d4c8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47cceaa23c9e54d9167acbd3650d4c8b">&#9670;&nbsp;</a></span>m_asioContext</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::io_context&amp; Kargono::Network::Connection::m_asioContext</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00048">48</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a12d568616ba9445c21534c4015cd0adc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12d568616ba9445c21534c4015cd0adc">&#9670;&nbsp;</a></span>m_BlockThreadCV</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::condition_variable&amp; Kargono::Network::Connection::m_BlockThreadCV</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00070">70</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="acc08e1f592526e07113ddd9c9969f447"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc08e1f592526e07113ddd9c9969f447">&#9670;&nbsp;</a></span>m_BlockThreadMx</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex&amp; Kargono::Network::Connection::m_BlockThreadMx</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00071">71</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a8e11c428e12e9868588a79b362a7a830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e11c428e12e9868588a79b362a7a830">&#9670;&nbsp;</a></span>m_msgTemporaryIn</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> Kargono::Network::Connection::m_msgTemporaryIn</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00063">63</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="aed3347b058fd58c6d323878934a37df5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed3347b058fd58c6d323878934a37df5">&#9670;&nbsp;</a></span>m_nHandshakeIn</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Network::Connection::m_nHandshakeIn = 0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00067">67</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a9b2ba1328362a559d942c8490f333ac2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b2ba1328362a559d942c8490f333ac2">&#9670;&nbsp;</a></span>m_nHandshakeOut</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t Kargono::Network::Connection::m_nHandshakeOut = 0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00066">66</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="ac34645b3bd2d144b5acf36c1786dc137"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac34645b3bd2d144b5acf36c1786dc137">&#9670;&nbsp;</a></span>m_qMessagesIn</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt;<a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a>&gt;&amp; Kargono::Network::Connection::m_qMessagesIn</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00057">57</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a1dd29b60eba2c34a560b5be6c5ef2632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1dd29b60eba2c34a560b5be6c5ef2632">&#9670;&nbsp;</a></span>m_qMessagesOut</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt;<a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a>&gt; Kargono::Network::Connection::m_qMessagesOut</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00052">52</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="ae25e96c7fa2aa66ba9244220d5387996"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae25e96c7fa2aa66ba9244220d5387996">&#9670;&nbsp;</a></span>m_TCPSocket</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::tcp::socket Kargono::Network::Connection::m_TCPSocket</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00045">45</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="abbcc18bb02f4aad535ffc5537f84d928"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbcc18bb02f4aad535ffc5537f84d928">&#9670;&nbsp;</a></span>m_UDPLocalEndpoint</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint Kargono::Network::Connection::m_UDPLocalEndpoint</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00059">59</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a5841c789697fdf5b70945034f34f1e58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5841c789697fdf5b70945034f34f1e58">&#9670;&nbsp;</a></span>m_UDPRemoteReceiveEndpoint</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint Kargono::Network::Connection::m_UDPRemoteReceiveEndpoint</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00061">61</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<a id="a7423807bba000e9d8997d8339fbc98bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7423807bba000e9d8997d8339fbc98bb">&#9670;&nbsp;</a></span>m_UDPRemoteSendEndpoint</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">asio::ip::udp::endpoint Kargono::Network::Connection::m_UDPRemoteSendEndpoint</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Connection_8h_source.html#l00060">60</a> of file <a class="el" href="Connection_8h_source.html">Connection.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Network/<a class="el" href="Connection_8h_source.html">Connection.h</a></li>
-<li>Engine/Source/Kargono/Network/<a class="el" href="Connection_8cpp_source.html">Connection.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Network</b></li><li class="navelem"><a class="el" href="classKargono_1_1Network_1_1Connection.html">Connection</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

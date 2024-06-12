@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1ShaderSpecification.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -75,307 +93,54 @@ $(function() {
 <div class="title">Kargono::ShaderSpecification Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Shader_8h_source.html">Shader.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a754c67b1f19f55127fe1d33db58f9380"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a754c67b1f19f55127fe1d33db58f9380">operator&lt;=&gt;</a> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;) const =default</td></tr>
+<tr class="memitem:a754c67b1f19f55127fe1d33db58f9380"><td class="memItemLeft" align="right" valign="top"><a id="a754c67b1f19f55127fe1d33db58f9380"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;=&gt;</b> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;) const =default</td></tr>
 <tr class="separator:a754c67b1f19f55127fe1d33db58f9380"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77bc60e8a30761e0cab04ddccc1830c9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a77bc60e8a30761e0cab04ddccc1830c9">ShaderSpecification</a> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;)=default</td></tr>
+<tr class="memitem:a77bc60e8a30761e0cab04ddccc1830c9"><td class="memItemLeft" align="right" valign="top"><a id="a77bc60e8a30761e0cab04ddccc1830c9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ShaderSpecification</b> (const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;)=default</td></tr>
 <tr class="separator:a77bc60e8a30761e0cab04ddccc1830c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395e04590443c06895ff124914174f32"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a395e04590443c06895ff124914174f32">ShaderSpecification</a> ()=default</td></tr>
-<tr class="separator:a395e04590443c06895ff124914174f32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7609b090c76b7224e588c74de2488394"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a7609b090c76b7224e588c74de2488394">ShaderSpecification</a> (<a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9">ColorInputType</a> colorInput, <a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cf">TextureInputType</a> textureInput, bool addCircle, bool addProjection, bool addEntityID, <a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3f">RenderingType</a> renderType, bool drawOutline)</td></tr>
+<tr class="memitem:a7609b090c76b7224e588c74de2488394"><td class="memItemLeft" align="right" valign="top"><a id="a7609b090c76b7224e588c74de2488394"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ShaderSpecification</b> (ColorInputType colorInput, TextureInputType textureInput, bool addCircle, bool addProjection, bool addEntityID, RenderingType renderType, bool drawOutline)</td></tr>
 <tr class="separator:a7609b090c76b7224e588c74de2488394"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a140ce0c7c6e2ef26a8104698ff8ef100"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9">ColorInputType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">ColorInput</a> = <a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9a6adf97f83acf6453d4a6a4b1070f3754">ColorInputType::None</a></td></tr>
+<tr class="memitem:a140ce0c7c6e2ef26a8104698ff8ef100"><td class="memItemLeft" align="right" valign="top"><a id="a140ce0c7c6e2ef26a8104698ff8ef100"></a>
+ColorInputType&#160;</td><td class="memItemRight" valign="bottom"><b>ColorInput</b> = ColorInputType::None</td></tr>
 <tr class="separator:a140ce0c7c6e2ef26a8104698ff8ef100"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f1ba9cd7ee55f3b00f4a61078d6e421"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cf">TextureInputType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421">TextureInput</a> = <a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa6adf97f83acf6453d4a6a4b1070f3754">TextureInputType::None</a></td></tr>
+<tr class="memitem:a7f1ba9cd7ee55f3b00f4a61078d6e421"><td class="memItemLeft" align="right" valign="top"><a id="a7f1ba9cd7ee55f3b00f4a61078d6e421"></a>
+TextureInputType&#160;</td><td class="memItemRight" valign="bottom"><b>TextureInput</b> = TextureInputType::None</td></tr>
 <tr class="separator:a7f1ba9cd7ee55f3b00f4a61078d6e421"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b5380e555a306e220e3d5f360aade6b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a6b5380e555a306e220e3d5f360aade6b">AddCircleShape</a> = false</td></tr>
+<tr class="memitem:a6b5380e555a306e220e3d5f360aade6b"><td class="memItemLeft" align="right" valign="top"><a id="a6b5380e555a306e220e3d5f360aade6b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddCircleShape</b> = false</td></tr>
 <tr class="separator:a6b5380e555a306e220e3d5f360aade6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a041040f5516566722cb7f331dabccda3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a041040f5516566722cb7f331dabccda3">AddProjectionMatrix</a> = false</td></tr>
+<tr class="memitem:a041040f5516566722cb7f331dabccda3"><td class="memItemLeft" align="right" valign="top"><a id="a041040f5516566722cb7f331dabccda3"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddProjectionMatrix</b> = false</td></tr>
 <tr class="separator:a041040f5516566722cb7f331dabccda3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5fe3d99011c4d7ac112a598176f7af20"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#a5fe3d99011c4d7ac112a598176f7af20">AddEntityID</a> = false</td></tr>
+<tr class="memitem:a5fe3d99011c4d7ac112a598176f7af20"><td class="memItemLeft" align="right" valign="top"><a id="a5fe3d99011c4d7ac112a598176f7af20"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddEntityID</b> = false</td></tr>
 <tr class="separator:a5fe3d99011c4d7ac112a598176f7af20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4e6cf8ad840505b648984f9444ec674"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3f">RenderingType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#ab4e6cf8ad840505b648984f9444ec674">RenderType</a> = <a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa6adf97f83acf6453d4a6a4b1070f3754">RenderingType::None</a></td></tr>
+<tr class="memitem:ab4e6cf8ad840505b648984f9444ec674"><td class="memItemLeft" align="right" valign="top"><a id="ab4e6cf8ad840505b648984f9444ec674"></a>
+RenderingType&#160;</td><td class="memItemRight" valign="bottom"><b>RenderType</b> = RenderingType::None</td></tr>
 <tr class="separator:ab4e6cf8ad840505b648984f9444ec674"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7d7a3fcf661c4237d5da34211c7af5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1ShaderSpecification.html#ac7d7a3fcf661c4237d5da34211c7af5f">DrawOutline</a> = false</td></tr>
+<tr class="memitem:ac7d7a3fcf661c4237d5da34211c7af5f"><td class="memItemLeft" align="right" valign="top"><a id="ac7d7a3fcf661c4237d5da34211c7af5f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DrawOutline</b> = false</td></tr>
 <tr class="separator:ac7d7a3fcf661c4237d5da34211c7af5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00067">67</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a77bc60e8a30761e0cab04ddccc1830c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77bc60e8a30761e0cab04ddccc1830c9">&#9670;&nbsp;</a></span>ShaderSpecification() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::ShaderSpecification::ShaderSpecification </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a395e04590443c06895ff124914174f32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a395e04590443c06895ff124914174f32">&#9670;&nbsp;</a></span>ShaderSpecification() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::ShaderSpecification::ShaderSpecification </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7609b090c76b7224e588c74de2488394"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7609b090c76b7224e588c74de2488394">&#9670;&nbsp;</a></span>ShaderSpecification() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::ShaderSpecification::ShaderSpecification </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9">ColorInputType</a>&#160;</td>
-          <td class="paramname"><em>colorInput</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cf">TextureInputType</a>&#160;</td>
-          <td class="paramname"><em>textureInput</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>addCircle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>addProjection</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>addEntityID</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3f">RenderingType</a>&#160;</td>
-          <td class="paramname"><em>renderType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>drawOutline</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00091">91</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a754c67b1f19f55127fe1d33db58f9380"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a754c67b1f19f55127fe1d33db58f9380">&#9670;&nbsp;</a></span>operator&lt;=&gt;()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">auto Kargono::ShaderSpecification::operator&lt;=&gt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a> &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6b5380e555a306e220e3d5f360aade6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b5380e555a306e220e3d5f360aade6b">&#9670;&nbsp;</a></span>AddCircleShape</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ShaderSpecification::AddCircleShape = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00076">76</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a5fe3d99011c4d7ac112a598176f7af20"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fe3d99011c4d7ac112a598176f7af20">&#9670;&nbsp;</a></span>AddEntityID</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ShaderSpecification::AddEntityID = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00080">80</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a041040f5516566722cb7f331dabccda3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a041040f5516566722cb7f331dabccda3">&#9670;&nbsp;</a></span>AddProjectionMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ShaderSpecification::AddProjectionMatrix = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00079">79</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a140ce0c7c6e2ef26a8104698ff8ef100"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a140ce0c7c6e2ef26a8104698ff8ef100">&#9670;&nbsp;</a></span>ColorInput</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9">ColorInputType</a> Kargono::ShaderSpecification::ColorInput = <a class="el" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9a6adf97f83acf6453d4a6a4b1070f3754">ColorInputType::None</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00072">72</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="ac7d7a3fcf661c4237d5da34211c7af5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7d7a3fcf661c4237d5da34211c7af5f">&#9670;&nbsp;</a></span>DrawOutline</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ShaderSpecification::DrawOutline = false</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00084">84</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="ab4e6cf8ad840505b648984f9444ec674"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4e6cf8ad840505b648984f9444ec674">&#9670;&nbsp;</a></span>RenderType</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3f">RenderingType</a> Kargono::ShaderSpecification::RenderType = <a class="el" href="namespaceKargono.html#abfb412570a3ce997f36ecea045547b3fa6adf97f83acf6453d4a6a4b1070f3754">RenderingType::None</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00083">83</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<a id="a7f1ba9cd7ee55f3b00f4a61078d6e421"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f1ba9cd7ee55f3b00f4a61078d6e421">&#9670;&nbsp;</a></span>TextureInput</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cf">TextureInputType</a> Kargono::ShaderSpecification::TextureInput = <a class="el" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa6adf97f83acf6453d4a6a4b1070f3754">TextureInputType::None</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Shader_8h_source.html#l00073">73</a> of file <a class="el" href="Shader_8h_source.html">Shader.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="Shader_8h_source.html">Shader.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

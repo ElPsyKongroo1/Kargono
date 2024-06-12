@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1Script_1_1ScriptMethod.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Script.html">Script</a></li><li class="navelem"><a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html">ScriptMethod</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -74,77 +92,30 @@ $(function() {
 <div class="title">Kargono::Script::ScriptMethod Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ac6c3d46bebebb9f3bdfb26a127876fec"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html#ac6c3d46bebebb9f3bdfb26a127876fec">Name</a> {}</td></tr>
+<tr class="memitem:ac6c3d46bebebb9f3bdfb26a127876fec"><td class="memItemLeft" align="right" valign="top"><a id="ac6c3d46bebebb9f3bdfb26a127876fec"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Name</b> {}</td></tr>
 <tr class="separator:ac6c3d46bebebb9f3bdfb26a127876fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07989c057c6def530f2fdc8212b33dcd"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html#a07989c057c6def530f2fdc8212b33dcd">NumParameters</a> {}</td></tr>
+<tr class="memitem:a07989c057c6def530f2fdc8212b33dcd"><td class="memItemLeft" align="right" valign="top"><a id="a07989c057c6def530f2fdc8212b33dcd"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>NumParameters</b> {}</td></tr>
 <tr class="separator:a07989c057c6def530f2fdc8212b33dcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab740ec025e6135434cf4d23903cb23e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ScriptEngine_8h.html#ac964459d15f3df3dee4db02c353ba130">MonoMethod</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html#ab740ec025e6135434cf4d23903cb23e5">MonoMethod</a> { nullptr }</td></tr>
+<tr class="memitem:ab740ec025e6135434cf4d23903cb23e5"><td class="memItemLeft" align="right" valign="top"><a id="ab740ec025e6135434cf4d23903cb23e5"></a>
+MonoMethod *&#160;</td><td class="memItemRight" valign="bottom"><b>MonoMethod</b> { nullptr }</td></tr>
 <tr class="separator:ab740ec025e6135434cf4d23903cb23e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00256">256</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab740ec025e6135434cf4d23903cb23e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab740ec025e6135434cf4d23903cb23e5">&#9670;&nbsp;</a></span>MonoMethod</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="ScriptEngine_8h.html#ac964459d15f3df3dee4db02c353ba130">MonoMethod</a>* Kargono::Script::ScriptMethod::MonoMethod { nullptr }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00265">265</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-
-</div>
-</div>
-<a id="ac6c3d46bebebb9f3bdfb26a127876fec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6c3d46bebebb9f3bdfb26a127876fec">&#9670;&nbsp;</a></span>Name</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::Script::ScriptMethod::Name {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00261">261</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-
-</div>
-</div>
-<a id="a07989c057c6def530f2fdc8212b33dcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07989c057c6def530f2fdc8212b33dcd">&#9670;&nbsp;</a></span>NumParameters</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::Script::ScriptMethod::NumParameters {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00263">263</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Script/<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Script</b></li><li class="navelem"><a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html">ScriptMethod</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

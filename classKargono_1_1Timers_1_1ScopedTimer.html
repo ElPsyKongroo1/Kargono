@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Timers_1_1ScopedTimer.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Timers.html">Timers</a></li><li class="navelem"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html">ScopedTimer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -74,169 +92,33 @@ $(function() {
 <div class="title">Kargono::Timers::ScopedTimer Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Timers_8h_source.html">Timers.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3b97e69a955e5080b104f5fc2e106415"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html#a3b97e69a955e5080b104f5fc2e106415">ScopedTimer</a> ()</td></tr>
-<tr class="separator:a3b97e69a955e5080b104f5fc2e106415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6b70e024fa65ecc256aebec0ff8853c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html#ac6b70e024fa65ecc256aebec0ff8853c">Reset</a> ()</td></tr>
+<tr class="memitem:ac6b70e024fa65ecc256aebec0ff8853c"><td class="memItemLeft" align="right" valign="top"><a id="ac6b70e024fa65ecc256aebec0ff8853c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Reset</b> ()</td></tr>
 <tr class="separator:ac6b70e024fa65ecc256aebec0ff8853c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a698fa1cb9368da157af9b27670b2ac85"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html#a698fa1cb9368da157af9b27670b2ac85">Elapsed</a> ()</td></tr>
+<tr class="memitem:a698fa1cb9368da157af9b27670b2ac85"><td class="memItemLeft" align="right" valign="top"><a id="a698fa1cb9368da157af9b27670b2ac85"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>Elapsed</b> ()</td></tr>
 <tr class="separator:a698fa1cb9368da157af9b27670b2ac85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3233c53d52379480efff2bd1da6f5cd9"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html#a3233c53d52379480efff2bd1da6f5cd9">ElapsedMillis</a> ()</td></tr>
+<tr class="memitem:a3233c53d52379480efff2bd1da6f5cd9"><td class="memItemLeft" align="right" valign="top"><a id="a3233c53d52379480efff2bd1da6f5cd9"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ElapsedMillis</b> ()</td></tr>
 <tr class="separator:a3233c53d52379480efff2bd1da6f5cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a603dda3da8d4a4888f374cabbed09764"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html#a603dda3da8d4a4888f374cabbed09764">ElapsedMicro</a> ()</td></tr>
+<tr class="memitem:a603dda3da8d4a4888f374cabbed09764"><td class="memItemLeft" align="right" valign="top"><a id="a603dda3da8d4a4888f374cabbed09764"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ElapsedMicro</b> ()</td></tr>
 <tr class="separator:a603dda3da8d4a4888f374cabbed09764"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00019">19</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3b97e69a955e5080b104f5fc2e106415"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b97e69a955e5080b104f5fc2e106415">&#9670;&nbsp;</a></span>ScopedTimer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::Timers::ScopedTimer::ScopedTimer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00022">22</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a698fa1cb9368da157af9b27670b2ac85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a698fa1cb9368da157af9b27670b2ac85">&#9670;&nbsp;</a></span>Elapsed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::Timers::ScopedTimer::Elapsed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00032">32</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-
-</div>
-</div>
-<a id="a603dda3da8d4a4888f374cabbed09764"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a603dda3da8d4a4888f374cabbed09764">&#9670;&nbsp;</a></span>ElapsedMicro()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::Timers::ScopedTimer::ElapsedMicro </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00042">42</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-
-</div>
-</div>
-<a id="a3233c53d52379480efff2bd1da6f5cd9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3233c53d52379480efff2bd1da6f5cd9">&#9670;&nbsp;</a></span>ElapsedMillis()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::Timers::ScopedTimer::ElapsedMillis </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00037">37</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-
-</div>
-</div>
-<a id="ac6b70e024fa65ecc256aebec0ff8853c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6b70e024fa65ecc256aebec0ff8853c">&#9670;&nbsp;</a></span>Reset()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Timers::ScopedTimer::Reset </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Timers_8h_source.html#l00027">27</a> of file <a class="el" href="Timers_8h_source.html">Timers.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>Engine/Source/Kargono/Core/<a class="el" href="Timers_8h_source.html">Timers.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Timers</b></li><li class="navelem"><a class="el" href="classKargono_1_1Timers_1_1ScopedTimer.html">ScopedTimer</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

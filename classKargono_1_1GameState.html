@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1GameState.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1GameState.html">GameState</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -77,414 +95,67 @@ $(function() {
 <div class="title">Kargono::GameState Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="GameState_8h_source.html">GameState.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a00e5e78c290958f39793b4a29152a979"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a00e5e78c290958f39793b4a29152a979"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a00e5e78c290958f39793b4a29152a979">GetField</a> (const std::string &amp;fieldName)</td></tr>
+<tr class="memitem:a00e5e78c290958f39793b4a29152a979"><td class="memTemplParams" colspan="2"><a id="a00e5e78c290958f39793b4a29152a979"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a00e5e78c290958f39793b4a29152a979"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetField</b> (const std::string &amp;fieldName)</td></tr>
 <tr class="separator:a00e5e78c290958f39793b4a29152a979"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3a7a2d2f5384cddfde54ef542cd95d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#ab3a7a2d2f5384cddfde54ef542cd95d1">GetField</a> (const std::string &amp;fieldName)</td></tr>
+<tr class="memitem:ab3a7a2d2f5384cddfde54ef542cd95d1"><td class="memItemLeft" align="right" valign="top"><a id="ab3a7a2d2f5384cddfde54ef542cd95d1"></a>
+Ref&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetField</b> (const std::string &amp;fieldName)</td></tr>
 <tr class="separator:ab3a7a2d2f5384cddfde54ef542cd95d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefb877b605a7925591416ec28846b96b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#aefb877b605a7925591416ec28846b96b">SetField</a> (const std::string &amp;fieldName, void *value)</td></tr>
+<tr class="memitem:aefb877b605a7925591416ec28846b96b"><td class="memItemLeft" align="right" valign="top"><a id="aefb877b605a7925591416ec28846b96b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetField</b> (const std::string &amp;fieldName, void *value)</td></tr>
 <tr class="separator:aefb877b605a7925591416ec28846b96b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7344bcedf0eeefc750df44b7bb9c43a5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a7344bcedf0eeefc750df44b7bb9c43a5">AddField</a> (const std::string &amp;fieldName, <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> fieldType)</td></tr>
+<tr class="memitem:a7344bcedf0eeefc750df44b7bb9c43a5"><td class="memItemLeft" align="right" valign="top"><a id="a7344bcedf0eeefc750df44b7bb9c43a5"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddField</b> (const std::string &amp;fieldName, WrappedVarType fieldType)</td></tr>
 <tr class="separator:a7344bcedf0eeefc750df44b7bb9c43a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fe59cb4b2b64a76663793caa2afb10b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a6fe59cb4b2b64a76663793caa2afb10b">DeleteField</a> (const std::string &amp;fieldName)</td></tr>
+<tr class="memitem:a6fe59cb4b2b64a76663793caa2afb10b"><td class="memItemLeft" align="right" valign="top"><a id="a6fe59cb4b2b64a76663793caa2afb10b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteField</b> (const std::string &amp;fieldName)</td></tr>
 <tr class="separator:a6fe59cb4b2b64a76663793caa2afb10b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0650481501fdfc102ec8433242505575"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a0650481501fdfc102ec8433242505575">GetAllFields</a> ()</td></tr>
+<tr class="memitem:a0650481501fdfc102ec8433242505575"><td class="memItemLeft" align="right" valign="top"><a id="a0650481501fdfc102ec8433242505575"></a>
+std::unordered_map&lt; std::string, Ref&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetAllFields</b> ()</td></tr>
 <tr class="separator:a0650481501fdfc102ec8433242505575"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac161638cbef3029597f1d5ecba4c7652"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#ac161638cbef3029597f1d5ecba4c7652">GetName</a> ()</td></tr>
+<tr class="memitem:ac161638cbef3029597f1d5ecba4c7652"><td class="memItemLeft" align="right" valign="top"><a id="ac161638cbef3029597f1d5ecba4c7652"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> ()</td></tr>
 <tr class="separator:ac161638cbef3029597f1d5ecba4c7652"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f307e2f2a2a04e412e13f4225e739d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a8f307e2f2a2a04e412e13f4225e739d8">SetName</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:a8f307e2f2a2a04e412e13f4225e739d8"><td class="memItemLeft" align="right" valign="top"><a id="a8f307e2f2a2a04e412e13f4225e739d8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetName</b> (const std::string &amp;name)</td></tr>
 <tr class="separator:a8f307e2f2a2a04e412e13f4225e739d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a98ba2c26d7a67a6311fa61e1883fb179"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a98ba2c26d7a67a6311fa61e1883fb179">SetActiveGameStateField</a> (const std::string &amp;fieldName, void *value)</td></tr>
+<tr class="memitem:a98ba2c26d7a67a6311fa61e1883fb179"><td class="memItemLeft" align="right" valign="top"><a id="a98ba2c26d7a67a6311fa61e1883fb179"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetActiveGameStateField</b> (const std::string &amp;fieldName, void *value)</td></tr>
 <tr class="separator:a98ba2c26d7a67a6311fa61e1883fb179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a8e3dcb70c5e265886c2a020087516813"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1GameState.html">GameState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a8e3dcb70c5e265886c2a020087516813">s_GameState</a> { nullptr }</td></tr>
+<tr class="memitem:a8e3dcb70c5e265886c2a020087516813"><td class="memItemLeft" align="right" valign="top"><a id="a8e3dcb70c5e265886c2a020087516813"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1GameState.html">GameState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>s_GameState</b> { nullptr }</td></tr>
 <tr class="separator:a8e3dcb70c5e265886c2a020087516813"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c1702607fc15a0b9dde3c894137a3c8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a2c1702607fc15a0b9dde3c894137a3c8">s_GameStateHandle</a> {0}</td></tr>
+<tr class="memitem:a2c1702607fc15a0b9dde3c894137a3c8"><td class="memItemLeft" align="right" valign="top"><a id="a2c1702607fc15a0b9dde3c894137a3c8"></a>
+static <a class="el" href="classKargono_1_1UUID.html">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_GameStateHandle</b> {0}</td></tr>
 <tr class="separator:a2c1702607fc15a0b9dde3c894137a3c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1GameState.html#a93a4681dfdc6917d50d61ef8c5254626">Assets::AssetManager</a></td></tr>
+<tr class="memitem:a93a4681dfdc6917d50d61ef8c5254626"><td class="memItemLeft" align="right" valign="top"><a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Assets::AssetManager</b></td></tr>
 <tr class="separator:a93a4681dfdc6917d50d61ef8c5254626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00014">14</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7344bcedf0eeefc750df44b7bb9c43a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7344bcedf0eeefc750df44b7bb9c43a5">&#9670;&nbsp;</a></span>AddField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::GameState::AddField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td>
-          <td class="paramname"><em>fieldType</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00049">49</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a6fe59cb4b2b64a76663793caa2afb10b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fe59cb4b2b64a76663793caa2afb10b">&#9670;&nbsp;</a></span>DeleteField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::GameState::DeleteField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00074">74</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a0650481501fdfc102ec8433242505575"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0650481501fdfc102ec8433242505575">&#9670;&nbsp;</a></span>GetAllFields()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt;std::string, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a>&gt; &gt;&amp; Kargono::GameState::GetAllFields </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00086">86</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a00e5e78c290958f39793b4a29152a979"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00e5e78c290958f39793b4a29152a979">&#9670;&nbsp;</a></span>GetField() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">T&amp; Kargono::GameState::GetField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00018">18</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="ab3a7a2d2f5384cddfde54ef542cd95d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3a7a2d2f5384cddfde54ef542cd95d1">&#9670;&nbsp;</a></span>GetField() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a>&gt; Kargono::GameState::GetField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00028">28</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="ac161638cbef3029597f1d5ecba4c7652"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac161638cbef3029597f1d5ecba4c7652">&#9670;&nbsp;</a></span>GetName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::GameState::GetName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00092">92</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a98ba2c26d7a67a6311fa61e1883fb179"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98ba2c26d7a67a6311fa61e1883fb179">&#9670;&nbsp;</a></span>SetActiveGameStateField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Kargono::GameState::SetActiveGameStateField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00102">102</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="aefb877b605a7925591416ec28846b96b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefb877b605a7925591416ec28846b96b">&#9670;&nbsp;</a></span>SetField()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::GameState::SetField </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fieldName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00038">38</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a8f307e2f2a2a04e412e13f4225e739d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f307e2f2a2a04e412e13f4225e739d8">&#9670;&nbsp;</a></span>SetName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::GameState::SetName </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00097">97</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a93a4681dfdc6917d50d61ef8c5254626"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93a4681dfdc6917d50d61ef8c5254626">&#9670;&nbsp;</a></span>Assets::AssetManager</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00118">118</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a8e3dcb70c5e265886c2a020087516813"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e3dcb70c5e265886c2a020087516813">&#9670;&nbsp;</a></span>s_GameState</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1GameState.html">GameState</a> &gt; Kargono::GameState::s_GameState { nullptr }</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00113">113</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<a id="a2c1702607fc15a0b9dde3c894137a3c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c1702607fc15a0b9dde3c894137a3c8">&#9670;&nbsp;</a></span>s_GameStateHandle</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::GameState::s_GameStateHandle {0}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="GameState_8h_source.html#l00114">114</a> of file <a class="el" href="GameState_8h_source.html">GameState.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="GameState_8h_source.html">GameState.h</a></li>
-<li>Engine/Source/Kargono/Scene/<a class="el" href="GameState_8cpp_source.html">GameState.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1GameState.html">GameState</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1EditorUI_1_1GenericPopupSpec.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,14 +84,8 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1EditorUI.html">EditorUI</a></li><li class="navelem"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="structKargono_1_1EditorUI_1_1GenericPopupSpec-members.html">List of all members</a>  </div>
@@ -76,214 +93,48 @@ $(function() {
 <div class="title">Kargono::EditorUI::GenericPopupSpec Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Editor_8h_source.html">Editor.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:abfd5f7e59414e29da7d9a5348256e479"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#abfd5f7e59414e29da7d9a5348256e479">GenericPopupSpec</a> ()</td></tr>
-<tr class="separator:abfd5f7e59414e29da7d9a5348256e479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a3e098cec011fdfde80841f489408b934"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a3e098cec011fdfde80841f489408b934">Label</a></td></tr>
+<tr class="memitem:a3e098cec011fdfde80841f489408b934"><td class="memItemLeft" align="right" valign="top"><a id="a3e098cec011fdfde80841f489408b934"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Label</b></td></tr>
 <tr class="separator:a3e098cec011fdfde80841f489408b934"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae79b7035bb856be129b444f367e5cc4"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#aae79b7035bb856be129b444f367e5cc4">PopupWidth</a> { 700.0f }</td></tr>
+<tr class="memitem:aae79b7035bb856be129b444f367e5cc4"><td class="memItemLeft" align="right" valign="top"><a id="aae79b7035bb856be129b444f367e5cc4"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>PopupWidth</b> { 700.0f }</td></tr>
 <tr class="separator:aae79b7035bb856be129b444f367e5cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a835f112035a9025c80a44bc9b30b6791"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a835f112035a9025c80a44bc9b30b6791">PopupContents</a> {nullptr}</td></tr>
+<tr class="memitem:a835f112035a9025c80a44bc9b30b6791"><td class="memItemLeft" align="right" valign="top"><a id="a835f112035a9025c80a44bc9b30b6791"></a>
+std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>PopupContents</b> {nullptr}</td></tr>
 <tr class="separator:a835f112035a9025c80a44bc9b30b6791"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40189f2bd47fd44d6bd35541e9e95e55"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a40189f2bd47fd44d6bd35541e9e95e55">ConfirmAction</a> {nullptr}</td></tr>
+<tr class="memitem:a40189f2bd47fd44d6bd35541e9e95e55"><td class="memItemLeft" align="right" valign="top"><a id="a40189f2bd47fd44d6bd35541e9e95e55"></a>
+std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ConfirmAction</b> {nullptr}</td></tr>
 <tr class="separator:a40189f2bd47fd44d6bd35541e9e95e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9aa654bd24ed11445d583f6e94a46971"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a9aa654bd24ed11445d583f6e94a46971">DeleteAction</a> {nullptr}</td></tr>
+<tr class="memitem:a9aa654bd24ed11445d583f6e94a46971"><td class="memItemLeft" align="right" valign="top"><a id="a9aa654bd24ed11445d583f6e94a46971"></a>
+std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteAction</b> {nullptr}</td></tr>
 <tr class="separator:a9aa654bd24ed11445d583f6e94a46971"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06d6e7b79379b7ea907fe2cf3e404b73"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a06d6e7b79379b7ea907fe2cf3e404b73">PopupAction</a> {nullptr}</td></tr>
+<tr class="memitem:a06d6e7b79379b7ea907fe2cf3e404b73"><td class="memItemLeft" align="right" valign="top"><a id="a06d6e7b79379b7ea907fe2cf3e404b73"></a>
+std::function&lt; void(<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>PopupAction</b> {nullptr}</td></tr>
 <tr class="separator:a06d6e7b79379b7ea907fe2cf3e404b73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5153cf1e8c332dfef2bb9b477a809b76"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a5153cf1e8c332dfef2bb9b477a809b76">PopupActive</a> { false }</td></tr>
+<tr class="memitem:a5153cf1e8c332dfef2bb9b477a809b76"><td class="memItemLeft" align="right" valign="top"><a id="a5153cf1e8c332dfef2bb9b477a809b76"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>PopupActive</b> { false }</td></tr>
 <tr class="separator:a5153cf1e8c332dfef2bb9b477a809b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a7451094944c7fc42e6381d6dd0f7fb02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a7451094944c7fc42e6381d6dd0f7fb02">Editor::GenericPopup</a> (<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;spec)</td></tr>
+<tr class="memitem:a7451094944c7fc42e6381d6dd0f7fb02"><td class="memItemLeft" align="right" valign="top"><a id="a7451094944c7fc42e6381d6dd0f7fb02"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Editor::GenericPopup</b> (<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;spec)</td></tr>
 <tr class="separator:a7451094944c7fc42e6381d6dd0f7fb02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00171">171</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="abfd5f7e59414e29da7d9a5348256e479"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfd5f7e59414e29da7d9a5348256e479">&#9670;&nbsp;</a></span>GenericPopupSpec()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::EditorUI::GenericPopupSpec::GenericPopupSpec </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00174">174</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a7451094944c7fc42e6381d6dd0f7fb02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7451094944c7fc42e6381d6dd0f7fb02">&#9670;&nbsp;</a></span>Editor::GenericPopup</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classKargono_1_1EditorUI_1_1Editor.html#a4e5dd53b2326ec790d2491b4783ab8e9">Editor::GenericPopup</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a> &amp;&#160;</td>
-          <td class="paramname"><em>spec</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a40189f2bd47fd44d6bd35541e9e95e55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40189f2bd47fd44d6bd35541e9e95e55">&#9670;&nbsp;</a></span>ConfirmAction</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt;void()&gt; Kargono::EditorUI::GenericPopupSpec::ConfirmAction {nullptr}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00182">182</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a9aa654bd24ed11445d583f6e94a46971"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9aa654bd24ed11445d583f6e94a46971">&#9670;&nbsp;</a></span>DeleteAction</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt;void()&gt; Kargono::EditorUI::GenericPopupSpec::DeleteAction {nullptr}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00183">183</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a3e098cec011fdfde80841f489408b934"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e098cec011fdfde80841f489408b934">&#9670;&nbsp;</a></span>Label</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::EditorUI::GenericPopupSpec::Label</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00179">179</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a06d6e7b79379b7ea907fe2cf3e404b73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06d6e7b79379b7ea907fe2cf3e404b73">&#9670;&nbsp;</a></span>PopupAction</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt;void(<a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a>&amp;)&gt; Kargono::EditorUI::GenericPopupSpec::PopupAction {nullptr}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00184">184</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a5153cf1e8c332dfef2bb9b477a809b76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5153cf1e8c332dfef2bb9b477a809b76">&#9670;&nbsp;</a></span>PopupActive</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::EditorUI::GenericPopupSpec::PopupActive { false }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00185">185</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="a835f112035a9025c80a44bc9b30b6791"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a835f112035a9025c80a44bc9b30b6791">&#9670;&nbsp;</a></span>PopupContents</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt;void()&gt; Kargono::EditorUI::GenericPopupSpec::PopupContents {nullptr}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00181">181</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<a id="aae79b7035bb856be129b444f367e5cc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae79b7035bb856be129b444f367e5cc4">&#9670;&nbsp;</a></span>PopupWidth</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorUI::GenericPopupSpec::PopupWidth { 700.0f }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Editor_8h_source.html#l00180">180</a> of file <a class="el" href="Editor_8h_source.html">Editor.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Engine/Source/Kargono/EditorUI/<a class="el" href="Editor_8h_source.html">Editor.h</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>EditorUI</b></li><li class="navelem"><a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html">GenericPopupSpec</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

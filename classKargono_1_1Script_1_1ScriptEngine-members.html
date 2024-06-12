@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Script_1_1ScriptEngine.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Script.html">Script</a></li><li class="navelem"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">ScriptEngine</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::Script::ScriptEngine Member List</div>  </div>
@@ -74,34 +92,37 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a4c1c0663e440de4d3213158b5951c56c">AppDomainExists</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a20f69af2a0bcdcc437163b477870e649">EntityClassExists</a>(const std::string &amp;fullClassName)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#aaa4073a9845b62025ac5fe68a2b41d1f">GetAppDomain</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a8e11a16a1130e666f31053d9a7eadf61">GetCoreAssemblyImage</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#afccd81650cb5dab57924de53e836d76c">GetCustomCallMap</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a4385fff69372e1730607674cc9183698">GetEntityClass</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a526e6afc77f8fe2e4cbebb301ddb4aa4">GetEntityClasses</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a45602207f3f26ab32870f3f218afb54f">GetEntityScriptInstance</a>(UUID entityID)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ac3eec7aac623d605ecfa81960f9f944e">GetManagedInstance</a>(UUID uuid)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a3666075421f9995306affc92adaa9333">GetSceneContext</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a154a7095852c0f11f2b80d0e4a8ab5c7">GetScriptFieldMap</a>(Entity entity)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a3fcedd763237279f8bab0a13598c06fa">Init</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a94ad85f921dd973bef34d473d89dd625">InitialAssemblyLoad</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#aaca0ac7defaa8b1511eaf96d6be7d938">OnKeyPressed</a>(Events::KeyPressedEvent event)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a46d4efc7bfca350ec08ac1ae5d41a702">OnPhysicsCollision</a>(Events::PhysicsCollisionEvent event)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ac8f43ad1e1a7ce4a42b141dfa1443cb8">OnPhysicsCollisionEnd</a>(Events::PhysicsCollisionEnd event)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a58ea0c63378bf3f9c88181a73be15fd3">OnRuntimeStart</a>(Scene *scene)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a7ee408828563ff348475685611be6214">OnRuntimeStop</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a2aee09d37ddc853d2e4314d5bb9e490d">OnUpdate</a>(Timestep ts)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a71ad2dea00aa5d7865eac5074cfe5188">ReloadAssembly</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a67460b25c5512b7db606873045893a31">RunCustomCallsFunction</a>(const std::string &amp;functionName, void **parameters=nullptr)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ad565c5dec3cdaa54bc92e201ebc9e698">ScriptClass</a> class</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a50cc7ca2911e1e7d92c35e3601a4cbaa">ScriptGlue</a> class</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ae927230584c688e6f5179c63036e34e6">Shutdown</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AppDomainExists</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>EntityClassExists</b>(const std::string &amp;fullClassName) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetAppDomain</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetCoreAssemblyImage</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetCustomCallMap</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetEntityClass</b>(const std::string &amp;name) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetEntityClasses</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetEntityScriptInstance</b>(UUID entityID) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetManagedInstance</b>(UUID uuid) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetSceneContext</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetScriptFieldMap</b>(Entity entity) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Init</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>InitialAssemblyLoad</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnKeyPressed</b>(Events::KeyPressedEvent event) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnPhysicsCollision</b>(Events::PhysicsCollisionEvent event) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnPhysicsCollisionEnd</b>(Events::PhysicsCollisionEnd event) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnRuntimeStart</b>(Scene *scene) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnRuntimeStop</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnUpdate</b>(Timestep ts) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ReloadAssembly</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>RunCustomCallsFunction</b>(const std::string &amp;functionName, void **parameters=nullptr) (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ScriptClass</b> (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ScriptGlue</b> (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Shutdown</b>() (defined in <a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">Kargono::Script::ScriptEngine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

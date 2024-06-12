@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1SceneHierarchyPanel.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -74,132 +92,33 @@ $(function() {
 <div class="title">Kargono::SceneHierarchyPanel Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="SceneHierarchyPanel_8h_source.html">SceneHierarchyPanel.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8abda8c393fbd2ecc5b7d136d0b7ecc3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html#a8abda8c393fbd2ecc5b7d136d0b7ecc3">SceneHierarchyPanel</a> ()</td></tr>
-<tr class="separator:a8abda8c393fbd2ecc5b7d136d0b7ecc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6c07bf83f8d652f98a07d37cbc3dc32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html#ab6c07bf83f8d652f98a07d37cbc3dc32">OnEditorUIRender</a> ()</td></tr>
+<tr class="memitem:ab6c07bf83f8d652f98a07d37cbc3dc32"><td class="memItemLeft" align="right" valign="top"><a id="ab6c07bf83f8d652f98a07d37cbc3dc32"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEditorUIRender</b> ()</td></tr>
 <tr class="separator:ab6c07bf83f8d652f98a07d37cbc3dc32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a969395876e42c4afcd1505485e545f76"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html#a969395876e42c4afcd1505485e545f76">OnKeyPressedEditor</a> (<a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</td></tr>
+<tr class="memitem:a969395876e42c4afcd1505485e545f76"><td class="memItemLeft" align="right" valign="top"><a id="a969395876e42c4afcd1505485e545f76"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyPressedEditor</b> (<a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</td></tr>
 <tr class="separator:a969395876e42c4afcd1505485e545f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93ed693fb1b186a711d0c729c32da0af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html#a93ed693fb1b186a711d0c729c32da0af">SetSelectedEntity</a> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
+<tr class="memitem:a93ed693fb1b186a711d0c729c32da0af"><td class="memItemLeft" align="right" valign="top"><a id="a93ed693fb1b186a711d0c729c32da0af"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSelectedEntity</b> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
 <tr class="separator:a93ed693fb1b186a711d0c729c32da0af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09b555771e36c44c94d4970c3d9a5ac1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html#a09b555771e36c44c94d4970c3d9a5ac1">RefreshWidgetData</a> ()</td></tr>
+<tr class="memitem:a09b555771e36c44c94d4970c3d9a5ac1"><td class="memItemLeft" align="right" valign="top"><a id="a09b555771e36c44c94d4970c3d9a5ac1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>RefreshWidgetData</b> ()</td></tr>
 <tr class="separator:a09b555771e36c44c94d4970c3d9a5ac1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8h_source.html#l00007">7</a> of file <a class="el" href="SceneHierarchyPanel_8h_source.html">SceneHierarchyPanel.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8abda8c393fbd2ecc5b7d136d0b7ecc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8abda8c393fbd2ecc5b7d136d0b7ecc3">&#9670;&nbsp;</a></span>SceneHierarchyPanel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::SceneHierarchyPanel::SceneHierarchyPanel </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8cpp_source.html#l00171">171</a> of file <a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab6c07bf83f8d652f98a07d37cbc3dc32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6c07bf83f8d652f98a07d37cbc3dc32">&#9670;&nbsp;</a></span>OnEditorUIRender()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::SceneHierarchyPanel::OnEditorUIRender </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8cpp_source.html#l00199">199</a> of file <a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a969395876e42c4afcd1505485e545f76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a969395876e42c4afcd1505485e545f76">&#9670;&nbsp;</a></span>OnKeyPressedEditor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::SceneHierarchyPanel::OnKeyPressedEditor </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a>&#160;</td>
-          <td class="paramname"><em>event</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8cpp_source.html#l00235">235</a> of file <a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a09b555771e36c44c94d4970c3d9a5ac1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09b555771e36c44c94d4970c3d9a5ac1">&#9670;&nbsp;</a></span>RefreshWidgetData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::SceneHierarchyPanel::RefreshWidgetData </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8cpp_source.html#l00260">260</a> of file <a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a93ed693fb1b186a711d0c729c32da0af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93ed693fb1b186a711d0c729c32da0af">&#9670;&nbsp;</a></span>SetSelectedEntity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::SceneHierarchyPanel::SetSelectedEntity </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SceneHierarchyPanel_8cpp_source.html#l00239">239</a> of file <a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Editor/Source/Panels/<a class="el" href="SceneHierarchyPanel_8h_source.html">SceneHierarchyPanel.h</a></li>
-<li>Editor/Source/Panels/<a class="el" href="SceneHierarchyPanel_8cpp_source.html">SceneHierarchyPanel.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1SceneHierarchyPanel.html">SceneHierarchyPanel</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

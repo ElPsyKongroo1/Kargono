@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1EditorCamera.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1EditorCamera.html">EditorCamera</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
@@ -75,779 +93,115 @@ $(function() {
 <div class="title">Kargono::EditorCamera Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a49770fb627b73dd575ad2a97509d6491"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">MovementType</a> { <a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491a7bde9e4c6762a1d119b167be33b2f971">None</a> = 0
-, <a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491a9c2cdfb0793a60202ccc2ecf46aa26ec">ModelView</a>
-, <a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491a8f62d233a0c527503082810902d355c6">FreeFly</a>
+<tr class="memitem:a49770fb627b73dd575ad2a97509d6491"><td class="memItemLeft" align="right" valign="top"><a id="a49770fb627b73dd575ad2a97509d6491"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>MovementType</b> { <b>None</b> = 0
+, <b>ModelView</b>
+, <b>FreeFly</b>
  }</td></tr>
 <tr class="separator:a49770fb627b73dd575ad2a97509d6491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a099d0dbbe352abf91f2a6fe0ed4dcc4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a099d0dbbe352abf91f2a6fe0ed4dcc4f">EditorCamera</a> ()=default</td></tr>
-<tr class="separator:a099d0dbbe352abf91f2a6fe0ed4dcc4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a278737f384979159151c427d07caa4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a3a278737f384979159151c427d07caa4">EditorCamera</a> (float fov, float aspectRatio, float nearClip, float farClip)</td></tr>
+<tr class="memitem:a3a278737f384979159151c427d07caa4"><td class="memItemLeft" align="right" valign="top"><a id="a3a278737f384979159151c427d07caa4"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>EditorCamera</b> (float fov, float aspectRatio, float nearClip, float farClip)</td></tr>
 <tr class="separator:a3a278737f384979159151c427d07caa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04907a128827ae44bc90e81bfb62ab3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a04907a128827ae44bc90e81bfb62ab3e">OnUpdate</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
+<tr class="memitem:a04907a128827ae44bc90e81bfb62ab3e"><td class="memItemLeft" align="right" valign="top"><a id="a04907a128827ae44bc90e81bfb62ab3e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdate</b> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
 <tr class="separator:a04907a128827ae44bc90e81bfb62ab3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57e3939ed60ed5bcfbdad611a76d9c26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a57e3939ed60ed5bcfbdad611a76d9c26">OnEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;e)</td></tr>
+<tr class="memitem:a57e3939ed60ed5bcfbdad611a76d9c26"><td class="memItemLeft" align="right" valign="top"><a id="a57e3939ed60ed5bcfbdad611a76d9c26"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEvent</b> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;e)</td></tr>
 <tr class="separator:a57e3939ed60ed5bcfbdad611a76d9c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5e47b96de6c4601e2be8c6ccd601ff2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#ad5e47b96de6c4601e2be8c6ccd601ff2">OnKeyReleased</a> (<a class="el" href="classKargono_1_1Events_1_1KeyReleasedEvent.html">Events::KeyReleasedEvent</a> &amp;e)</td></tr>
+<tr class="memitem:ad5e47b96de6c4601e2be8c6ccd601ff2"><td class="memItemLeft" align="right" valign="top"><a id="ad5e47b96de6c4601e2be8c6ccd601ff2"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyReleased</b> (<a class="el" href="classKargono_1_1Events_1_1KeyReleasedEvent.html">Events::KeyReleasedEvent</a> &amp;e)</td></tr>
 <tr class="separator:ad5e47b96de6c4601e2be8c6ccd601ff2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a8bc246e803979bd5d2c0006aedac77"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a4a8bc246e803979bd5d2c0006aedac77">GetDistance</a> () const</td></tr>
+<tr class="memitem:a4a8bc246e803979bd5d2c0006aedac77"><td class="memItemLeft" align="right" valign="top"><a id="a4a8bc246e803979bd5d2c0006aedac77"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>GetDistance</b> () const</td></tr>
 <tr class="separator:a4a8bc246e803979bd5d2c0006aedac77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56750ddc2718b9cbb2a2369b284a7636"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a56750ddc2718b9cbb2a2369b284a7636">SetDistance</a> (float distance)</td></tr>
+<tr class="memitem:a56750ddc2718b9cbb2a2369b284a7636"><td class="memItemLeft" align="right" valign="top"><a id="a56750ddc2718b9cbb2a2369b284a7636"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetDistance</b> (float distance)</td></tr>
 <tr class="separator:a56750ddc2718b9cbb2a2369b284a7636"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4df50e517bb7fdc34ac4e27e423b9f83"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a4df50e517bb7fdc34ac4e27e423b9f83">GetViewMatrix</a> () const</td></tr>
+<tr class="memitem:a4df50e517bb7fdc34ac4e27e423b9f83"><td class="memItemLeft" align="right" valign="top"><a id="a4df50e517bb7fdc34ac4e27e423b9f83"></a>
+const Math::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetViewMatrix</b> () const</td></tr>
 <tr class="separator:a4df50e517bb7fdc34ac4e27e423b9f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11fc4f7a27b4dd7c288ef85c0a8e1653"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a11fc4f7a27b4dd7c288ef85c0a8e1653">GetViewProjection</a> () const</td></tr>
+<tr class="memitem:a11fc4f7a27b4dd7c288ef85c0a8e1653"><td class="memItemLeft" align="right" valign="top"><a id="a11fc4f7a27b4dd7c288ef85c0a8e1653"></a>
+Math::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>GetViewProjection</b> () const</td></tr>
 <tr class="separator:a11fc4f7a27b4dd7c288ef85c0a8e1653"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b8ae428c4ec56cad60f67661a939ecf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a2b8ae428c4ec56cad60f67661a939ecf">SetViewportSize</a> (float width, float height)</td></tr>
+<tr class="memitem:a2b8ae428c4ec56cad60f67661a939ecf"><td class="memItemLeft" align="right" valign="top"><a id="a2b8ae428c4ec56cad60f67661a939ecf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetViewportSize</b> (float width, float height)</td></tr>
 <tr class="separator:a2b8ae428c4ec56cad60f67661a939ecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af245ba35562c60fe5081cf7597cf6ce8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#af245ba35562c60fe5081cf7597cf6ce8">GetUpDirection</a> () const</td></tr>
+<tr class="memitem:af245ba35562c60fe5081cf7597cf6ce8"><td class="memItemLeft" align="right" valign="top"><a id="af245ba35562c60fe5081cf7597cf6ce8"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>GetUpDirection</b> () const</td></tr>
 <tr class="separator:af245ba35562c60fe5081cf7597cf6ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab02a78b7af5c56143caab7f205ee4828"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#ab02a78b7af5c56143caab7f205ee4828">GetRightDirection</a> () const</td></tr>
+<tr class="memitem:ab02a78b7af5c56143caab7f205ee4828"><td class="memItemLeft" align="right" valign="top"><a id="ab02a78b7af5c56143caab7f205ee4828"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>GetRightDirection</b> () const</td></tr>
 <tr class="separator:ab02a78b7af5c56143caab7f205ee4828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85135c53a2dd56475133fa5ba34b592c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a85135c53a2dd56475133fa5ba34b592c">GetForwardDirection</a> () const</td></tr>
+<tr class="memitem:a85135c53a2dd56475133fa5ba34b592c"><td class="memItemLeft" align="right" valign="top"><a id="a85135c53a2dd56475133fa5ba34b592c"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>GetForwardDirection</b> () const</td></tr>
 <tr class="separator:a85135c53a2dd56475133fa5ba34b592c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44153551e8859472b5fd2fbd2a1292c4"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a44153551e8859472b5fd2fbd2a1292c4">GetPosition</a> () const</td></tr>
+<tr class="memitem:a44153551e8859472b5fd2fbd2a1292c4"><td class="memItemLeft" align="right" valign="top"><a id="a44153551e8859472b5fd2fbd2a1292c4"></a>
+const Math::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPosition</b> () const</td></tr>
 <tr class="separator:a44153551e8859472b5fd2fbd2a1292c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ade03b320601dfdf6eb2be6bbc2b5fa"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a1ade03b320601dfdf6eb2be6bbc2b5fa">GetPitch</a> () const</td></tr>
+<tr class="memitem:a1ade03b320601dfdf6eb2be6bbc2b5fa"><td class="memItemLeft" align="right" valign="top"><a id="a1ade03b320601dfdf6eb2be6bbc2b5fa"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>GetPitch</b> () const</td></tr>
 <tr class="separator:a1ade03b320601dfdf6eb2be6bbc2b5fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9382537d22ef13d2b1e8acd559375a4"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#ae9382537d22ef13d2b1e8acd559375a4">GetYaw</a> () const</td></tr>
+<tr class="memitem:ae9382537d22ef13d2b1e8acd559375a4"><td class="memItemLeft" align="right" valign="top"><a id="ae9382537d22ef13d2b1e8acd559375a4"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>GetYaw</b> () const</td></tr>
 <tr class="separator:ae9382537d22ef13d2b1e8acd559375a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08de0f52035fbcfa012c1cca1f058d0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a08de0f52035fbcfa012c1cca1f058d0a">SetPitch</a> (float pitch)</td></tr>
+<tr class="memitem:a08de0f52035fbcfa012c1cca1f058d0a"><td class="memItemLeft" align="right" valign="top"><a id="a08de0f52035fbcfa012c1cca1f058d0a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetPitch</b> (float pitch)</td></tr>
 <tr class="separator:a08de0f52035fbcfa012c1cca1f058d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50da948ab02a0c36795f3cd0e455c1cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a50da948ab02a0c36795f3cd0e455c1cf">SetYaw</a> (float yaw)</td></tr>
+<tr class="memitem:a50da948ab02a0c36795f3cd0e455c1cf"><td class="memItemLeft" align="right" valign="top"><a id="a50da948ab02a0c36795f3cd0e455c1cf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetYaw</b> (float yaw)</td></tr>
 <tr class="separator:a50da948ab02a0c36795f3cd0e455c1cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8819792ff8aaafebcd2e9de1d7969aa5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">EditorCamera::MovementType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a8819792ff8aaafebcd2e9de1d7969aa5">GetMovementType</a> ()</td></tr>
+<tr class="memitem:a8819792ff8aaafebcd2e9de1d7969aa5"><td class="memItemLeft" align="right" valign="top"><a id="a8819792ff8aaafebcd2e9de1d7969aa5"></a>
+EditorCamera::MovementType &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetMovementType</b> ()</td></tr>
 <tr class="separator:a8819792ff8aaafebcd2e9de1d7969aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1f99136a5eaad30ab264a4f275a2cc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#ab1f99136a5eaad30ab264a4f275a2cc9">SetMovementType</a> (<a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">EditorCamera::MovementType</a> movementType)</td></tr>
+<tr class="memitem:ab1f99136a5eaad30ab264a4f275a2cc9"><td class="memItemLeft" align="right" valign="top"><a id="ab1f99136a5eaad30ab264a4f275a2cc9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMovementType</b> (EditorCamera::MovementType movementType)</td></tr>
 <tr class="separator:ab1f99136a5eaad30ab264a4f275a2cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47579186ff9b432cb6270946af5d118f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a47579186ff9b432cb6270946af5d118f">ToggleMovementType</a> ()</td></tr>
+<tr class="memitem:a47579186ff9b432cb6270946af5d118f"><td class="memItemLeft" align="right" valign="top"><a id="a47579186ff9b432cb6270946af5d118f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ToggleMovementType</b> ()</td></tr>
 <tr class="separator:a47579186ff9b432cb6270946af5d118f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38257a4367afed5d55f2800a7f05b0cf"><td class="memItemLeft" align="right" valign="top">float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a38257a4367afed5d55f2800a7f05b0cf">GetMovementSpeed</a> ()</td></tr>
+<tr class="memitem:a38257a4367afed5d55f2800a7f05b0cf"><td class="memItemLeft" align="right" valign="top"><a id="a38257a4367afed5d55f2800a7f05b0cf"></a>
+float &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetMovementSpeed</b> ()</td></tr>
 <tr class="separator:a38257a4367afed5d55f2800a7f05b0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d1bebdf3bebbfbb3ba9a1c10dde5ac3"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a8d1bebdf3bebbfbb3ba9a1c10dde5ac3">GetMaxMovementSpeed</a> () const</td></tr>
+<tr class="memitem:a8d1bebdf3bebbfbb3ba9a1c10dde5ac3"><td class="memItemLeft" align="right" valign="top"><a id="a8d1bebdf3bebbfbb3ba9a1c10dde5ac3"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>GetMaxMovementSpeed</b> () const</td></tr>
 <tr class="separator:a8d1bebdf3bebbfbb3ba9a1c10dde5ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9b9495b7c922af058aa40f9d53e6573"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#ad9b9495b7c922af058aa40f9d53e6573">GetMinMovementSpeed</a> () const</td></tr>
+<tr class="memitem:ad9b9495b7c922af058aa40f9d53e6573"><td class="memItemLeft" align="right" valign="top"><a id="ad9b9495b7c922af058aa40f9d53e6573"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>GetMinMovementSpeed</b> () const</td></tr>
 <tr class="separator:ad9b9495b7c922af058aa40f9d53e6573"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d9246c63029316ad098c487b199e9dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorCamera.html#a0d9246c63029316ad098c487b199e9dd">SetFocalPoint</a> (const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;focalPoint)</td></tr>
+<tr class="memitem:a0d9246c63029316ad098c487b199e9dd"><td class="memItemLeft" align="right" valign="top"><a id="a0d9246c63029316ad098c487b199e9dd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFocalPoint</b> (const Math::vec3 &amp;focalPoint)</td></tr>
 <tr class="separator:a0d9246c63029316ad098c487b199e9dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classKargono_1_1Camera"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classKargono_1_1Camera')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classKargono_1_1Camera.html">Kargono::Camera</a></td></tr>
-<tr class="memitem:aeca439261edd977baf1cde79a4bb936a inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Camera.html#aeca439261edd977baf1cde79a4bb936a">Camera</a> ()=default</td></tr>
-<tr class="separator:aeca439261edd977baf1cde79a4bb936a inherit pub_methods_classKargono_1_1Camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2db5c8775b01164eac2831c90d8c164 inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Camera.html#ad2db5c8775b01164eac2831c90d8c164">Camera</a> (const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;projection)</td></tr>
+<tr class="memitem:ad2db5c8775b01164eac2831c90d8c164 inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top"><a id="ad2db5c8775b01164eac2831c90d8c164"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Camera</b> (const Math::mat4 &amp;projection)</td></tr>
 <tr class="separator:ad2db5c8775b01164eac2831c90d8c164 inherit pub_methods_classKargono_1_1Camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec73181f37d0c4b321c8151351533732 inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Camera.html#aec73181f37d0c4b321c8151351533732">~Camera</a> ()=default</td></tr>
-<tr class="separator:aec73181f37d0c4b321c8151351533732 inherit pub_methods_classKargono_1_1Camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad67bbaa2ab76f4241f355f1e67583276 inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Camera.html#ad67bbaa2ab76f4241f355f1e67583276">GetProjection</a> () const</td></tr>
+<tr class="memitem:ad67bbaa2ab76f4241f355f1e67583276 inherit pub_methods_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top"><a id="ad67bbaa2ab76f4241f355f1e67583276"></a>
+const Math::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetProjection</b> () const</td></tr>
 <tr class="separator:ad67bbaa2ab76f4241f355f1e67583276 inherit pub_methods_classKargono_1_1Camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classKargono_1_1Camera"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classKargono_1_1Camera')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classKargono_1_1Camera.html">Kargono::Camera</a></td></tr>
-<tr class="memitem:acf0d94b0d6ef1bbdf783b3ee8311aac3 inherit pro_attribs_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Camera.html#acf0d94b0d6ef1bbdf783b3ee8311aac3">m_Projection</a> = <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>(1.0f)</td></tr>
+<tr class="memitem:acf0d94b0d6ef1bbdf783b3ee8311aac3 inherit pro_attribs_classKargono_1_1Camera"><td class="memItemLeft" align="right" valign="top"><a id="acf0d94b0d6ef1bbdf783b3ee8311aac3"></a>
+Math::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_Projection</b> = Math::mat4(1.0f)</td></tr>
 <tr class="separator:acf0d94b0d6ef1bbdf783b3ee8311aac3 inherit pro_attribs_classKargono_1_1Camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00012">12</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a49770fb627b73dd575ad2a97509d6491"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49770fb627b73dd575ad2a97509d6491">&#9670;&nbsp;</a></span>MovementType</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">Kargono::EditorCamera::MovementType</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a49770fb627b73dd575ad2a97509d6491a7bde9e4c6762a1d119b167be33b2f971"></a>None&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a49770fb627b73dd575ad2a97509d6491a9c2cdfb0793a60202ccc2ecf46aa26ec"></a>ModelView&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a49770fb627b73dd575ad2a97509d6491a8f62d233a0c527503082810902d355c6"></a>FreeFly&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00017">17</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a099d0dbbe352abf91f2a6fe0ed4dcc4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a099d0dbbe352abf91f2a6fe0ed4dcc4f">&#9670;&nbsp;</a></span>EditorCamera() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::EditorCamera::EditorCamera </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3a278737f384979159151c427d07caa4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a278737f384979159151c427d07caa4">&#9670;&nbsp;</a></span>EditorCamera() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Kargono::EditorCamera::EditorCamera </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>fov</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>aspectRatio</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>nearClip</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>farClip</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00015">15</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4a8bc246e803979bd5d2c0006aedac77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a8bc246e803979bd5d2c0006aedac77">&#9670;&nbsp;</a></span>GetDistance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorCamera::GetDistance </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00053">53</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a85135c53a2dd56475133fa5ba34b592c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85135c53a2dd56475133fa5ba34b592c">&#9670;&nbsp;</a></span>GetForwardDirection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::EditorCamera::GetForwardDirection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00265">265</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8d1bebdf3bebbfbb3ba9a1c10dde5ac3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d1bebdf3bebbfbb3ba9a1c10dde5ac3">&#9670;&nbsp;</a></span>GetMaxMovementSpeed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorCamera::GetMaxMovementSpeed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00111">111</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="ad9b9495b7c922af058aa40f9d53e6573"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9b9495b7c922af058aa40f9d53e6573">&#9670;&nbsp;</a></span>GetMinMovementSpeed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorCamera::GetMinMovementSpeed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00112">112</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a38257a4367afed5d55f2800a7f05b0cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38257a4367afed5d55f2800a7f05b0cf">&#9670;&nbsp;</a></span>GetMovementSpeed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float&amp; Kargono::EditorCamera::GetMovementSpeed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00110">110</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a8819792ff8aaafebcd2e9de1d7969aa5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8819792ff8aaafebcd2e9de1d7969aa5">&#9670;&nbsp;</a></span>GetMovementType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">EditorCamera::MovementType</a>&amp; Kargono::EditorCamera::GetMovementType </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00093">93</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a1ade03b320601dfdf6eb2be6bbc2b5fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ade03b320601dfdf6eb2be6bbc2b5fa">&#9670;&nbsp;</a></span>GetPitch()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorCamera::GetPitch </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00080">80</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a44153551e8859472b5fd2fbd2a1292c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44153551e8859472b5fd2fbd2a1292c4">&#9670;&nbsp;</a></span>GetPosition()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&amp; Kargono::EditorCamera::GetPosition </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00078">78</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="ab02a78b7af5c56143caab7f205ee4828"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab02a78b7af5c56143caab7f205ee4828">&#9670;&nbsp;</a></span>GetRightDirection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::EditorCamera::GetRightDirection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00260">260</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af245ba35562c60fe5081cf7597cf6ce8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af245ba35562c60fe5081cf7597cf6ce8">&#9670;&nbsp;</a></span>GetUpDirection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::EditorCamera::GetUpDirection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00255">255</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4df50e517bb7fdc34ac4e27e423b9f83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4df50e517bb7fdc34ac4e27e423b9f83">&#9670;&nbsp;</a></span>GetViewMatrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a>&amp; Kargono::EditorCamera::GetViewMatrix </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00064">64</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a11fc4f7a27b4dd7c288ef85c0a8e1653"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11fc4f7a27b4dd7c288ef85c0a8e1653">&#9670;&nbsp;</a></span>GetViewProjection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> Kargono::EditorCamera::GetViewProjection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00065">65</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="ae9382537d22ef13d2b1e8acd559375a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9382537d22ef13d2b1e8acd559375a4">&#9670;&nbsp;</a></span>GetYaw()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Kargono::EditorCamera::GetYaw </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00081">81</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a57e3939ed60ed5bcfbdad611a76d9c26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57e3939ed60ed5bcfbdad611a76d9c26">&#9670;&nbsp;</a></span>OnEvent()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::OnEvent </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &amp;&#160;</td>
-          <td class="paramname"><em>e</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00131">131</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad5e47b96de6c4601e2be8c6ccd601ff2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5e47b96de6c4601e2be8c6ccd601ff2">&#9670;&nbsp;</a></span>OnKeyReleased()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::EditorCamera::OnKeyReleased </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1KeyReleasedEvent.html">Events::KeyReleasedEvent</a> &amp;&#160;</td>
-          <td class="paramname"><em>e</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00139">139</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a04907a128827ae44bc90e81bfb62ab3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04907a128827ae44bc90e81bfb62ab3e">&#9670;&nbsp;</a></span>OnUpdate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::OnUpdate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Timestep.html">Timestep</a>&#160;</td>
-          <td class="paramname"><em>ts</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8cpp_source.html#l00062">62</a> of file <a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a56750ddc2718b9cbb2a2369b284a7636"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56750ddc2718b9cbb2a2369b284a7636">&#9670;&nbsp;</a></span>SetDistance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetDistance </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>distance</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00054">54</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a0d9246c63029316ad098c487b199e9dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d9246c63029316ad098c487b199e9dd">&#9670;&nbsp;</a></span>SetFocalPoint()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetFocalPoint </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> &amp;&#160;</td>
-          <td class="paramname"><em>focalPoint</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00113">113</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="ab1f99136a5eaad30ab264a4f275a2cc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1f99136a5eaad30ab264a4f275a2cc9">&#9670;&nbsp;</a></span>SetMovementType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetMovementType </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1EditorCamera.html#a49770fb627b73dd575ad2a97509d6491">EditorCamera::MovementType</a>&#160;</td>
-          <td class="paramname"><em>movementType</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00094">94</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a08de0f52035fbcfa012c1cca1f058d0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08de0f52035fbcfa012c1cca1f058d0a">&#9670;&nbsp;</a></span>SetPitch()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetPitch </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>pitch</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00082">82</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a2b8ae428c4ec56cad60f67661a939ecf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b8ae428c4ec56cad60f67661a939ecf">&#9670;&nbsp;</a></span>SetViewportSize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetViewportSize </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>width</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>height</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00067">67</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a50da948ab02a0c36795f3cd0e455c1cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50da948ab02a0c36795f3cd0e455c1cf">&#9670;&nbsp;</a></span>SetYaw()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::SetYaw </td>
-          <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>yaw</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00087">87</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<a id="a47579186ff9b432cb6270946af5d118f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47579186ff9b432cb6270946af5d118f">&#9670;&nbsp;</a></span>ToggleMovementType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::EditorCamera::ToggleMovementType </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="EditorCamera_8h_source.html#l00098">98</a> of file <a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="EditorCamera_8h_source.html">EditorCamera.h</a></li>
-<li>Engine/Source/Kargono/Renderer/<a class="el" href="EditorCamera_8cpp_source.html">EditorCamera.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1EditorCamera.html">EditorCamera</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

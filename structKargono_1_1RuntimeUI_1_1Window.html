@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1RuntimeUI_1_1Window.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1RuntimeUI.html">RuntimeUI</a></li><li class="navelem"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Window</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
@@ -76,8 +94,6 @@ $(function() {
 <div class="title">Kargono::RuntimeUI::Window Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="Runtime_8h_source.html">Runtime.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -86,416 +102,81 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06ad9318937759aec0d8e09b70d9b06f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a06ad9318937759aec0d8e09b70d9b06f">DisplayWindow</a> ()</td></tr>
+<tr class="memitem:a06ad9318937759aec0d8e09b70d9b06f"><td class="memItemLeft" align="right" valign="top"><a id="a06ad9318937759aec0d8e09b70d9b06f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>DisplayWindow</b> ()</td></tr>
 <tr class="separator:a06ad9318937759aec0d8e09b70d9b06f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5982e216b967ff9f73ef12ad64d02e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#ad5982e216b967ff9f73ef12ad64d02e6">HideWindow</a> ()</td></tr>
+<tr class="memitem:ad5982e216b967ff9f73ef12ad64d02e6"><td class="memItemLeft" align="right" valign="top"><a id="ad5982e216b967ff9f73ef12ad64d02e6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>HideWindow</b> ()</td></tr>
 <tr class="separator:ad5982e216b967ff9f73ef12ad64d02e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c672b2c63a03efe0382b473d9198a42"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a7c672b2c63a03efe0382b473d9198a42">GetWindowDisplayed</a> ()</td></tr>
+<tr class="memitem:a7c672b2c63a03efe0382b473d9198a42"><td class="memItemLeft" align="right" valign="top"><a id="a7c672b2c63a03efe0382b473d9198a42"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetWindowDisplayed</b> ()</td></tr>
 <tr class="separator:a7c672b2c63a03efe0382b473d9198a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a776e1aac94416ae155e649cd8b8422"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a9a776e1aac94416ae155e649cd8b8422">AddTextWidget</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1TextWidget.html">TextWidget</a> &gt; newWidget)</td></tr>
+<tr class="memitem:a9a776e1aac94416ae155e649cd8b8422"><td class="memItemLeft" align="right" valign="top"><a id="a9a776e1aac94416ae155e649cd8b8422"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddTextWidget</b> (Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1TextWidget.html">TextWidget</a> &gt; newWidget)</td></tr>
 <tr class="separator:a9a776e1aac94416ae155e649cd8b8422"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a929fb1f74ea0a22808599fb2d6d6db2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a929fb1f74ea0a22808599fb2d6d6db2b">AddButtonWidget</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ButtonWidget.html">ButtonWidget</a> &gt; newWidget)</td></tr>
+<tr class="memitem:a929fb1f74ea0a22808599fb2d6d6db2b"><td class="memItemLeft" align="right" valign="top"><a id="a929fb1f74ea0a22808599fb2d6d6db2b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddButtonWidget</b> (Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ButtonWidget.html">ButtonWidget</a> &gt; newWidget)</td></tr>
 <tr class="separator:a929fb1f74ea0a22808599fb2d6d6db2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4f496143bdfe633dbc4ea78936a162b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#af4f496143bdfe633dbc4ea78936a162b">AddCheckboxWidget</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1CheckboxWidget.html">CheckboxWidget</a> &gt; newWidget)</td></tr>
+<tr class="memitem:af4f496143bdfe633dbc4ea78936a162b"><td class="memItemLeft" align="right" valign="top"><a id="af4f496143bdfe633dbc4ea78936a162b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddCheckboxWidget</b> (Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1CheckboxWidget.html">CheckboxWidget</a> &gt; newWidget)</td></tr>
 <tr class="separator:af4f496143bdfe633dbc4ea78936a162b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f39980b981f3a48bb9fa4d6b39136d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a4f39980b981f3a48bb9fa4d6b39136d1">AddComboWidget</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ComboWidget.html">ComboWidget</a> &gt; newWidget)</td></tr>
+<tr class="memitem:a4f39980b981f3a48bb9fa4d6b39136d1"><td class="memItemLeft" align="right" valign="top"><a id="a4f39980b981f3a48bb9fa4d6b39136d1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddComboWidget</b> (Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ComboWidget.html">ComboWidget</a> &gt; newWidget)</td></tr>
 <tr class="separator:a4f39980b981f3a48bb9fa4d6b39136d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87de4b820736773b7ffb2cd16fa8956c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a87de4b820736773b7ffb2cd16fa8956c">AddPopupWidget</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1PopupWidget.html">PopupWidget</a> &gt; newWidget)</td></tr>
+<tr class="memitem:a87de4b820736773b7ffb2cd16fa8956c"><td class="memItemLeft" align="right" valign="top"><a id="a87de4b820736773b7ffb2cd16fa8956c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddPopupWidget</b> (Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1PopupWidget.html">PopupWidget</a> &gt; newWidget)</td></tr>
 <tr class="separator:a87de4b820736773b7ffb2cd16fa8956c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a147a038fde4f471743b2e346120ba2df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a147a038fde4f471743b2e346120ba2df">DeleteWidget</a> (int32_t widgetLocation)</td></tr>
+<tr class="memitem:a147a038fde4f471743b2e346120ba2df"><td class="memItemLeft" align="right" valign="top"><a id="a147a038fde4f471743b2e346120ba2df"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteWidget</b> (int32_t widgetLocation)</td></tr>
 <tr class="separator:a147a038fde4f471743b2e346120ba2df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1bd10586a83f9e93cba1ee76c75bfc18"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a1bd10586a83f9e93cba1ee76c75bfc18">Tag</a> { &quot;None&quot; }</td></tr>
+<tr class="memitem:a1bd10586a83f9e93cba1ee76c75bfc18"><td class="memItemLeft" align="right" valign="top"><a id="a1bd10586a83f9e93cba1ee76c75bfc18"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Tag</b> { &quot;None&quot; }</td></tr>
 <tr class="separator:a1bd10586a83f9e93cba1ee76c75bfc18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5854dc8dab44a61bed9dfca116f5bd54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a5854dc8dab44a61bed9dfca116f5bd54">ScreenPosition</a> {}</td></tr>
+<tr class="memitem:a5854dc8dab44a61bed9dfca116f5bd54"><td class="memItemLeft" align="right" valign="top"><a id="a5854dc8dab44a61bed9dfca116f5bd54"></a>
+Math::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>ScreenPosition</b> {}</td></tr>
 <tr class="separator:a5854dc8dab44a61bed9dfca116f5bd54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a404e51aa9994463d53c7b5f69cb304c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a404e51aa9994463d53c7b5f69cb304c0">Size</a> {}</td></tr>
+<tr class="memitem:a404e51aa9994463d53c7b5f69cb304c0"><td class="memItemLeft" align="right" valign="top"><a id="a404e51aa9994463d53c7b5f69cb304c0"></a>
+Math::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>Size</b> {}</td></tr>
 <tr class="separator:a404e51aa9994463d53c7b5f69cb304c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23896dcb3717664c42f56be612b7e012"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a23896dcb3717664c42f56be612b7e012">BackgroundColor</a> {1.0f}</td></tr>
+<tr class="memitem:a23896dcb3717664c42f56be612b7e012"><td class="memItemLeft" align="right" valign="top"><a id="a23896dcb3717664c42f56be612b7e012"></a>
+Math::vec4&#160;</td><td class="memItemRight" valign="bottom"><b>BackgroundColor</b> {1.0f}</td></tr>
 <tr class="separator:a23896dcb3717664c42f56be612b7e012"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a457f98f391553040ca518299402f972a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html">WidgetCounts</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a457f98f391553040ca518299402f972a">WidgetCounts</a> {}</td></tr>
+<tr class="memitem:a457f98f391553040ca518299402f972a"><td class="memItemLeft" align="right" valign="top"><a id="a457f98f391553040ca518299402f972a"></a>
+<a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html">WidgetCounts</a>&#160;</td><td class="memItemRight" valign="bottom"><b>WidgetCounts</b> {}</td></tr>
 <tr class="separator:a457f98f391553040ca518299402f972a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a6358d8a80ed9228a57a3f0dd06e095"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a6a6358d8a80ed9228a57a3f0dd06e095">ParentIndex</a> { -1 }</td></tr>
+<tr class="memitem:a6a6358d8a80ed9228a57a3f0dd06e095"><td class="memItemLeft" align="right" valign="top"><a id="a6a6358d8a80ed9228a57a3f0dd06e095"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ParentIndex</b> { -1 }</td></tr>
 <tr class="separator:a6a6358d8a80ed9228a57a3f0dd06e095"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedfc654a3423de843f7a67e930e0d7a8"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#aedfc654a3423de843f7a67e930e0d7a8">ChildBufferIndex</a> { -1 }</td></tr>
+<tr class="memitem:aedfc654a3423de843f7a67e930e0d7a8"><td class="memItemLeft" align="right" valign="top"><a id="aedfc654a3423de843f7a67e930e0d7a8"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ChildBufferIndex</b> { -1 }</td></tr>
 <tr class="separator:aedfc654a3423de843f7a67e930e0d7a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ec9f505a58846702d471a0483fdedba"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a5ec9f505a58846702d471a0483fdedba">ChildBufferSize</a> { 0 }</td></tr>
+<tr class="memitem:a5ec9f505a58846702d471a0483fdedba"><td class="memItemLeft" align="right" valign="top"><a id="a5ec9f505a58846702d471a0483fdedba"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ChildBufferSize</b> { 0 }</td></tr>
 <tr class="separator:a5ec9f505a58846702d471a0483fdedba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1946e7e9a8459845bf923c4efe1144fe"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a1946e7e9a8459845bf923c4efe1144fe">DefaultActiveWidget</a> { -1 }</td></tr>
+<tr class="memitem:a1946e7e9a8459845bf923c4efe1144fe"><td class="memItemLeft" align="right" valign="top"><a id="a1946e7e9a8459845bf923c4efe1144fe"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>DefaultActiveWidget</b> { -1 }</td></tr>
 <tr class="separator:a1946e7e9a8459845bf923c4efe1144fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31efd840e113b22867c0e0ec7938d773"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a31efd840e113b22867c0e0ec7938d773">DefaultActiveWidgetRef</a> { nullptr }</td></tr>
+<tr class="memitem:a31efd840e113b22867c0e0ec7938d773"><td class="memItemLeft" align="right" valign="top"><a id="a31efd840e113b22867c0e0ec7938d773"></a>
+Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>DefaultActiveWidgetRef</b> { nullptr }</td></tr>
 <tr class="separator:a31efd840e113b22867c0e0ec7938d773"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ae248e39c9e8cf0bc3929d99ab3b350"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a9ae248e39c9e8cf0bc3929d99ab3b350">Widgets</a> {}</td></tr>
+<tr class="memitem:a9ae248e39c9e8cf0bc3929d99ab3b350"><td class="memItemLeft" align="right" valign="top"><a id="a9ae248e39c9e8cf0bc3929d99ab3b350"></a>
+std::vector&lt; Ref&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Widgets</b> {}</td></tr>
 <tr class="separator:a9ae248e39c9e8cf0bc3929d99ab3b350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00150">150</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a929fb1f74ea0a22808599fb2d6d6db2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a929fb1f74ea0a22808599fb2d6d6db2b">&#9670;&nbsp;</a></span>AddButtonWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::AddButtonWidget </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ButtonWidget.html">ButtonWidget</a> &gt;&#160;</td>
-          <td class="paramname"><em>newWidget</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00807">807</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af4f496143bdfe633dbc4ea78936a162b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4f496143bdfe633dbc4ea78936a162b">&#9670;&nbsp;</a></span>AddCheckboxWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::AddCheckboxWidget </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1CheckboxWidget.html">CheckboxWidget</a> &gt;&#160;</td>
-          <td class="paramname"><em>newWidget</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00821">821</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4f39980b981f3a48bb9fa4d6b39136d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f39980b981f3a48bb9fa4d6b39136d1">&#9670;&nbsp;</a></span>AddComboWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::AddComboWidget </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1ComboWidget.html">ComboWidget</a> &gt;&#160;</td>
-          <td class="paramname"><em>newWidget</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00835">835</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a87de4b820736773b7ffb2cd16fa8956c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87de4b820736773b7ffb2cd16fa8956c">&#9670;&nbsp;</a></span>AddPopupWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::AddPopupWidget </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1PopupWidget.html">PopupWidget</a> &gt;&#160;</td>
-          <td class="paramname"><em>newWidget</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00849">849</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9a776e1aac94416ae155e649cd8b8422"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a776e1aac94416ae155e649cd8b8422">&#9670;&nbsp;</a></span>AddTextWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::AddTextWidget </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1RuntimeUI_1_1TextWidget.html">TextWidget</a> &gt;&#160;</td>
-          <td class="paramname"><em>newWidget</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00792">792</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a147a038fde4f471743b2e346120ba2df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a147a038fde4f471743b2e346120ba2df">&#9670;&nbsp;</a></span>DeleteWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::DeleteWidget </td>
-          <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>widgetLocation</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00864">864</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a06ad9318937759aec0d8e09b70d9b06f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06ad9318937759aec0d8e09b70d9b06f">&#9670;&nbsp;</a></span>DisplayWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::DisplayWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00768">768</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7c672b2c63a03efe0382b473d9198a42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c672b2c63a03efe0382b473d9198a42">&#9670;&nbsp;</a></span>GetWindowDisplayed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::RuntimeUI::Window::GetWindowDisplayed </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00787">787</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ad5982e216b967ff9f73ef12ad64d02e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5982e216b967ff9f73ef12ad64d02e6">&#9670;&nbsp;</a></span>HideWindow()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::RuntimeUI::Window::HideWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8cpp_source.html#l00778">778</a> of file <a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a23896dcb3717664c42f56be612b7e012"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23896dcb3717664c42f56be612b7e012">&#9670;&nbsp;</a></span>BackgroundColor</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Math::vec4</a> Kargono::RuntimeUI::Window::BackgroundColor {1.0f}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00169">169</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="aedfc654a3423de843f7a67e930e0d7a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedfc654a3423de843f7a67e930e0d7a8">&#9670;&nbsp;</a></span>ChildBufferIndex</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int32_t Kargono::RuntimeUI::Window::ChildBufferIndex { -1 }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00172">172</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a5ec9f505a58846702d471a0483fdedba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ec9f505a58846702d471a0483fdedba">&#9670;&nbsp;</a></span>ChildBufferSize</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t Kargono::RuntimeUI::Window::ChildBufferSize { 0 }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00173">173</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a1946e7e9a8459845bf923c4efe1144fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1946e7e9a8459845bf923c4efe1144fe">&#9670;&nbsp;</a></span>DefaultActiveWidget</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int32_t Kargono::RuntimeUI::Window::DefaultActiveWidget { -1 }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00174">174</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a31efd840e113b22867c0e0ec7938d773"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31efd840e113b22867c0e0ec7938d773">&#9670;&nbsp;</a></span>DefaultActiveWidgetRef</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a>&gt; Kargono::RuntimeUI::Window::DefaultActiveWidgetRef { nullptr }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00175">175</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a6a6358d8a80ed9228a57a3f0dd06e095"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a6358d8a80ed9228a57a3f0dd06e095">&#9670;&nbsp;</a></span>ParentIndex</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int32_t Kargono::RuntimeUI::Window::ParentIndex { -1 }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00171">171</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a5854dc8dab44a61bed9dfca116f5bd54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5854dc8dab44a61bed9dfca116f5bd54">&#9670;&nbsp;</a></span>ScreenPosition</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> Kargono::RuntimeUI::Window::ScreenPosition {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00167">167</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a404e51aa9994463d53c7b5f69cb304c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a404e51aa9994463d53c7b5f69cb304c0">&#9670;&nbsp;</a></span>Size</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> Kargono::RuntimeUI::Window::Size {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00168">168</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a1bd10586a83f9e93cba1ee76c75bfc18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bd10586a83f9e93cba1ee76c75bfc18">&#9670;&nbsp;</a></span>Tag</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Kargono::RuntimeUI::Window::Tag { &quot;None&quot; }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00166">166</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a457f98f391553040ca518299402f972a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a457f98f391553040ca518299402f972a">&#9670;&nbsp;</a></span>WidgetCounts</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html">WidgetCounts</a> <a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html">Kargono::RuntimeUI::Window::WidgetCounts</a> {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00170">170</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<a id="a9ae248e39c9e8cf0bc3929d99ab3b350"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ae248e39c9e8cf0bc3929d99ab3b350">&#9670;&nbsp;</a></span>Widgets</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Widget</a>&gt; &gt; Kargono::RuntimeUI::Window::Widgets {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Runtime_8h_source.html#l00176">176</a> of file <a class="el" href="Runtime_8h_source.html">Runtime.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following files:<ul>
-<li>Engine/Source/Kargono/RuntimeUI/<a class="el" href="Runtime_8h_source.html">Runtime.h</a></li>
-<li>Engine/Source/Kargono/RuntimeUI/<a class="el" href="Runtime_8cpp_source.html">Runtime.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>RuntimeUI</b></li><li class="navelem"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Window</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

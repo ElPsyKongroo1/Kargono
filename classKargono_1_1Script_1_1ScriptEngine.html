@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Script_1_1ScriptEngine.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Script.html">Script</a></li><li class="navelem"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">ScriptEngine</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
@@ -75,739 +93,96 @@ $(function() {
 <div class="title">Kargono::Script::ScriptEngine Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3fcedd763237279f8bab0a13598c06fa"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a3fcedd763237279f8bab0a13598c06fa">Init</a> ()</td></tr>
+<tr class="memitem:a3fcedd763237279f8bab0a13598c06fa"><td class="memItemLeft" align="right" valign="top"><a id="a3fcedd763237279f8bab0a13598c06fa"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="separator:a3fcedd763237279f8bab0a13598c06fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae927230584c688e6f5179c63036e34e6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ae927230584c688e6f5179c63036e34e6">Shutdown</a> ()</td></tr>
+<tr class="memitem:ae927230584c688e6f5179c63036e34e6"><td class="memItemLeft" align="right" valign="top"><a id="ae927230584c688e6f5179c63036e34e6"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Shutdown</b> ()</td></tr>
 <tr class="separator:ae927230584c688e6f5179c63036e34e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58ea0c63378bf3f9c88181a73be15fd3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a58ea0c63378bf3f9c88181a73be15fd3">OnRuntimeStart</a> (<a class="el" href="classKargono_1_1Scene.html">Scene</a> *scene)</td></tr>
+<tr class="memitem:a58ea0c63378bf3f9c88181a73be15fd3"><td class="memItemLeft" align="right" valign="top"><a id="a58ea0c63378bf3f9c88181a73be15fd3"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnRuntimeStart</b> (<a class="el" href="classKargono_1_1Scene.html">Scene</a> *scene)</td></tr>
 <tr class="separator:a58ea0c63378bf3f9c88181a73be15fd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ee408828563ff348475685611be6214"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a7ee408828563ff348475685611be6214">OnRuntimeStop</a> ()</td></tr>
+<tr class="memitem:a7ee408828563ff348475685611be6214"><td class="memItemLeft" align="right" valign="top"><a id="a7ee408828563ff348475685611be6214"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnRuntimeStop</b> ()</td></tr>
 <tr class="separator:a7ee408828563ff348475685611be6214"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2aee09d37ddc853d2e4314d5bb9e490d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a2aee09d37ddc853d2e4314d5bb9e490d">OnUpdate</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
+<tr class="memitem:a2aee09d37ddc853d2e4314d5bb9e490d"><td class="memItemLeft" align="right" valign="top"><a id="a2aee09d37ddc853d2e4314d5bb9e490d"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdate</b> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts)</td></tr>
 <tr class="separator:a2aee09d37ddc853d2e4314d5bb9e490d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaca0ac7defaa8b1511eaf96d6be7d938"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#aaca0ac7defaa8b1511eaf96d6be7d938">OnKeyPressed</a> (<a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</td></tr>
+<tr class="memitem:aaca0ac7defaa8b1511eaf96d6be7d938"><td class="memItemLeft" align="right" valign="top"><a id="aaca0ac7defaa8b1511eaf96d6be7d938"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyPressed</b> (<a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</td></tr>
 <tr class="separator:aaca0ac7defaa8b1511eaf96d6be7d938"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46d4efc7bfca350ec08ac1ae5d41a702"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a46d4efc7bfca350ec08ac1ae5d41a702">OnPhysicsCollision</a> (<a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a> event)</td></tr>
+<tr class="memitem:a46d4efc7bfca350ec08ac1ae5d41a702"><td class="memItemLeft" align="right" valign="top"><a id="a46d4efc7bfca350ec08ac1ae5d41a702"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnPhysicsCollision</b> (<a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a> event)</td></tr>
 <tr class="separator:a46d4efc7bfca350ec08ac1ae5d41a702"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8f43ad1e1a7ce4a42b141dfa1443cb8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ac8f43ad1e1a7ce4a42b141dfa1443cb8">OnPhysicsCollisionEnd</a> (<a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a> event)</td></tr>
+<tr class="memitem:ac8f43ad1e1a7ce4a42b141dfa1443cb8"><td class="memItemLeft" align="right" valign="top"><a id="ac8f43ad1e1a7ce4a42b141dfa1443cb8"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>OnPhysicsCollisionEnd</b> (<a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a> event)</td></tr>
 <tr class="separator:ac8f43ad1e1a7ce4a42b141dfa1443cb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94ad85f921dd973bef34d473d89dd625"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a94ad85f921dd973bef34d473d89dd625">InitialAssemblyLoad</a> ()</td></tr>
+<tr class="memitem:a94ad85f921dd973bef34d473d89dd625"><td class="memItemLeft" align="right" valign="top"><a id="a94ad85f921dd973bef34d473d89dd625"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>InitialAssemblyLoad</b> ()</td></tr>
 <tr class="separator:a94ad85f921dd973bef34d473d89dd625"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71ad2dea00aa5d7865eac5074cfe5188"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a71ad2dea00aa5d7865eac5074cfe5188">ReloadAssembly</a> ()</td></tr>
+<tr class="memitem:a71ad2dea00aa5d7865eac5074cfe5188"><td class="memItemLeft" align="right" valign="top"><a id="a71ad2dea00aa5d7865eac5074cfe5188"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>ReloadAssembly</b> ()</td></tr>
 <tr class="separator:a71ad2dea00aa5d7865eac5074cfe5188"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67460b25c5512b7db606873045893a31"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a67460b25c5512b7db606873045893a31">RunCustomCallsFunction</a> (const std::string &amp;functionName, void **parameters=nullptr)</td></tr>
+<tr class="memitem:a67460b25c5512b7db606873045893a31"><td class="memItemLeft" align="right" valign="top"><a id="a67460b25c5512b7db606873045893a31"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>RunCustomCallsFunction</b> (const std::string &amp;functionName, void **parameters=nullptr)</td></tr>
 <tr class="separator:a67460b25c5512b7db606873045893a31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e11a16a1130e666f31053d9a7eadf61"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="ScriptEngine_8h.html#ad29f7516c8d32e6364dfe0c24ce99d6b">MonoImage</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a8e11a16a1130e666f31053d9a7eadf61">GetCoreAssemblyImage</a> ()</td></tr>
+<tr class="memitem:a8e11a16a1130e666f31053d9a7eadf61"><td class="memItemLeft" align="right" valign="top"><a id="a8e11a16a1130e666f31053d9a7eadf61"></a>
+static MonoImage *&#160;</td><td class="memItemRight" valign="bottom"><b>GetCoreAssemblyImage</b> ()</td></tr>
 <tr class="separator:a8e11a16a1130e666f31053d9a7eadf61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c1c0663e440de4d3213158b5951c56c"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a4c1c0663e440de4d3213158b5951c56c">AppDomainExists</a> ()</td></tr>
+<tr class="memitem:a4c1c0663e440de4d3213158b5951c56c"><td class="memItemLeft" align="right" valign="top"><a id="a4c1c0663e440de4d3213158b5951c56c"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>AppDomainExists</b> ()</td></tr>
 <tr class="separator:a4c1c0663e440de4d3213158b5951c56c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa4073a9845b62025ac5fe68a2b41d1f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="ScriptEngine_8h.html#af55a21daab705c5424048ee4a4bdbd43">MonoDomain</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#aaa4073a9845b62025ac5fe68a2b41d1f">GetAppDomain</a> ()</td></tr>
+<tr class="memitem:aaa4073a9845b62025ac5fe68a2b41d1f"><td class="memItemLeft" align="right" valign="top"><a id="aaa4073a9845b62025ac5fe68a2b41d1f"></a>
+static MonoDomain *&#160;</td><td class="memItemRight" valign="bottom"><b>GetAppDomain</b> ()</td></tr>
 <tr class="separator:aaa4073a9845b62025ac5fe68a2b41d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3eec7aac623d605ecfa81960f9f944e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="ScriptEngine_8h.html#a0a2e212d2a23bcb91c2b1d0e86bb0fca">MonoObject</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ac3eec7aac623d605ecfa81960f9f944e">GetManagedInstance</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid)</td></tr>
+<tr class="memitem:ac3eec7aac623d605ecfa81960f9f944e"><td class="memItemLeft" align="right" valign="top"><a id="ac3eec7aac623d605ecfa81960f9f944e"></a>
+static MonoObject *&#160;</td><td class="memItemRight" valign="bottom"><b>GetManagedInstance</b> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> uuid)</td></tr>
 <tr class="separator:ac3eec7aac623d605ecfa81960f9f944e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4385fff69372e1730607674cc9183698"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a4385fff69372e1730607674cc9183698">GetEntityClass</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:a4385fff69372e1730607674cc9183698"><td class="memItemLeft" align="right" valign="top"><a id="a4385fff69372e1730607674cc9183698"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetEntityClass</b> (const std::string &amp;name)</td></tr>
 <tr class="separator:a4385fff69372e1730607674cc9183698"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a526e6afc77f8fe2e4cbebb301ddb4aa4"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; std::string, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a526e6afc77f8fe2e4cbebb301ddb4aa4">GetEntityClasses</a> ()</td></tr>
+<tr class="memitem:a526e6afc77f8fe2e4cbebb301ddb4aa4"><td class="memItemLeft" align="right" valign="top"><a id="a526e6afc77f8fe2e4cbebb301ddb4aa4"></a>
+static std::unordered_map&lt; std::string, Ref&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetEntityClasses</b> ()</td></tr>
 <tr class="separator:a526e6afc77f8fe2e4cbebb301ddb4aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afccd81650cb5dab57924de53e836d76c"><td class="memItemLeft" align="right" valign="top">static std::unordered_map&lt; std::string, <a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html">ScriptMethod</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#afccd81650cb5dab57924de53e836d76c">GetCustomCallMap</a> ()</td></tr>
+<tr class="memitem:afccd81650cb5dab57924de53e836d76c"><td class="memItemLeft" align="right" valign="top"><a id="afccd81650cb5dab57924de53e836d76c"></a>
+static std::unordered_map&lt; std::string, <a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html">ScriptMethod</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetCustomCallMap</b> ()</td></tr>
 <tr class="separator:afccd81650cb5dab57924de53e836d76c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20f69af2a0bcdcc437163b477870e649"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a20f69af2a0bcdcc437163b477870e649">EntityClassExists</a> (const std::string &amp;fullClassName)</td></tr>
+<tr class="memitem:a20f69af2a0bcdcc437163b477870e649"><td class="memItemLeft" align="right" valign="top"><a id="a20f69af2a0bcdcc437163b477870e649"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>EntityClassExists</b> (const std::string &amp;fullClassName)</td></tr>
 <tr class="separator:a20f69af2a0bcdcc437163b477870e649"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3666075421f9995306affc92adaa9333"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classKargono_1_1Scene.html">Scene</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a3666075421f9995306affc92adaa9333">GetSceneContext</a> ()</td></tr>
+<tr class="memitem:a3666075421f9995306affc92adaa9333"><td class="memItemLeft" align="right" valign="top"><a id="a3666075421f9995306affc92adaa9333"></a>
+static <a class="el" href="classKargono_1_1Scene.html">Scene</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetSceneContext</b> ()</td></tr>
 <tr class="separator:a3666075421f9995306affc92adaa9333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a154a7095852c0f11f2b80d0e4a8ab5c7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Script.html#a2ae622b94615437197376e520c655e9b">ScriptFieldMap</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a154a7095852c0f11f2b80d0e4a8ab5c7">GetScriptFieldMap</a> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
+<tr class="memitem:a154a7095852c0f11f2b80d0e4a8ab5c7"><td class="memItemLeft" align="right" valign="top"><a id="a154a7095852c0f11f2b80d0e4a8ab5c7"></a>
+static ScriptFieldMap &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetScriptFieldMap</b> (<a class="el" href="classKargono_1_1Entity.html">Entity</a> entity)</td></tr>
 <tr class="separator:a154a7095852c0f11f2b80d0e4a8ab5c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45602207f3f26ab32870f3f218afb54f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClassEntityInstance.html">ScriptClassEntityInstance</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a45602207f3f26ab32870f3f218afb54f">GetEntityScriptInstance</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID)</td></tr>
+<tr class="memitem:a45602207f3f26ab32870f3f218afb54f"><td class="memItemLeft" align="right" valign="top"><a id="a45602207f3f26ab32870f3f218afb54f"></a>
+static Ref&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClassEntityInstance.html">ScriptClassEntityInstance</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetEntityScriptInstance</b> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID)</td></tr>
 <tr class="separator:a45602207f3f26ab32870f3f218afb54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:ad565c5dec3cdaa54bc92e201ebc9e698"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#ad565c5dec3cdaa54bc92e201ebc9e698">ScriptClass</a></td></tr>
+<tr class="memitem:ad565c5dec3cdaa54bc92e201ebc9e698"><td class="memItemLeft" align="right" valign="top"><a id="ad565c5dec3cdaa54bc92e201ebc9e698"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>ScriptClass</b></td></tr>
 <tr class="separator:ad565c5dec3cdaa54bc92e201ebc9e698"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50cc7ca2911e1e7d92c35e3601a4cbaa"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html#a50cc7ca2911e1e7d92c35e3601a4cbaa">ScriptGlue</a></td></tr>
+<tr class="memitem:a50cc7ca2911e1e7d92c35e3601a4cbaa"><td class="memItemLeft" align="right" valign="top"><a id="a50cc7ca2911e1e7d92c35e3601a4cbaa"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>ScriptGlue</b></td></tr>
 <tr class="separator:a50cc7ca2911e1e7d92c35e3601a4cbaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00132">132</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4c1c0663e440de4d3213158b5951c56c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1c0663e440de4d3213158b5951c56c">&#9670;&nbsp;</a></span>AppDomainExists()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Script::ScriptEngine::AppDomainExists </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00383">383</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a20f69af2a0bcdcc437163b477870e649"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20f69af2a0bcdcc437163b477870e649">&#9670;&nbsp;</a></span>EntityClassExists()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Script::ScriptEngine::EntityClassExists </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>fullClassName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00378">378</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aaa4073a9845b62025ac5fe68a2b41d1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa4073a9845b62025ac5fe68a2b41d1f">&#9670;&nbsp;</a></span>GetAppDomain()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="ScriptEngine_8h.html#af55a21daab705c5424048ee4a4bdbd43">MonoDomain</a> * Kargono::Script::ScriptEngine::GetAppDomain </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00388">388</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a8e11a16a1130e666f31053d9a7eadf61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e11a16a1130e666f31053d9a7eadf61">&#9670;&nbsp;</a></span>GetCoreAssemblyImage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="ScriptEngine_8h.html#ad29f7516c8d32e6364dfe0c24ce99d6b">MonoImage</a> * Kargono::Script::ScriptEngine::GetCoreAssemblyImage </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00646">646</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afccd81650cb5dab57924de53e836d76c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afccd81650cb5dab57924de53e836d76c">&#9670;&nbsp;</a></span>GetCustomCallMap()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; std::string, <a class="el" href="structKargono_1_1Script_1_1ScriptMethod.html">ScriptMethod</a> &gt; &amp; Kargono::Script::ScriptEngine::GetCustomCallMap </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00674">674</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4385fff69372e1730607674cc9183698"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4385fff69372e1730607674cc9183698">&#9670;&nbsp;</a></span>GetEntityClass()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt; Kargono::Script::ScriptEngine::GetEntityClass </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00662">662</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a526e6afc77f8fe2e4cbebb301ddb4aa4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a526e6afc77f8fe2e4cbebb301ddb4aa4">&#9670;&nbsp;</a></span>GetEntityClasses()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt; std::string, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a> &gt; &gt; Kargono::Script::ScriptEngine::GetEntityClasses </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00669">669</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a45602207f3f26ab32870f3f218afb54f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45602207f3f26ab32870f3f218afb54f">&#9670;&nbsp;</a></span>GetEntityScriptInstance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Script_1_1ScriptClassEntityInstance.html">ScriptClassEntityInstance</a> &gt; Kargono::Script::ScriptEngine::GetEntityScriptInstance </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1UUID.html">UUID</a>&#160;</td>
-          <td class="paramname"><em>entityID</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00427">427</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac3eec7aac623d605ecfa81960f9f944e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3eec7aac623d605ecfa81960f9f944e">&#9670;&nbsp;</a></span>GetManagedInstance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="ScriptEngine_8h.html#a0a2e212d2a23bcb91c2b1d0e86bb0fca">MonoObject</a> * Kargono::Script::ScriptEngine::GetManagedInstance </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1UUID.html">UUID</a>&#160;</td>
-          <td class="paramname"><em>uuid</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00651">651</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a3666075421f9995306affc92adaa9333"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3666075421f9995306affc92adaa9333">&#9670;&nbsp;</a></span>GetSceneContext()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classKargono_1_1Scene.html">Scene</a> * Kargono::Script::ScriptEngine::GetSceneContext </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00657">657</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a154a7095852c0f11f2b80d0e4a8ab5c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a154a7095852c0f11f2b80d0e4a8ab5c7">&#9670;&nbsp;</a></span>GetScriptFieldMap()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Script.html#a2ae622b94615437197376e520c655e9b">ScriptFieldMap</a> &amp; Kargono::Script::ScriptEngine::GetScriptFieldMap </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Entity.html">Entity</a>&#160;</td>
-          <td class="paramname"><em>entity</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00679">679</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a3fcedd763237279f8bab0a13598c06fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3fcedd763237279f8bab0a13598c06fa">&#9670;&nbsp;</a></span>Init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::Init </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00199">199</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a94ad85f921dd973bef34d473d89dd625"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a94ad85f921dd973bef34d473d89dd625">&#9670;&nbsp;</a></span>InitialAssemblyLoad()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::InitialAssemblyLoad </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00335">335</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aaca0ac7defaa8b1511eaf96d6be7d938"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaca0ac7defaa8b1511eaf96d6be7d938">&#9670;&nbsp;</a></span>OnKeyPressed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnKeyPressed </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a>&#160;</td>
-          <td class="paramname"><em>event</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00486">486</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a46d4efc7bfca350ec08ac1ae5d41a702"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46d4efc7bfca350ec08ac1ae5d41a702">&#9670;&nbsp;</a></span>OnPhysicsCollision()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnPhysicsCollision </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a>&#160;</td>
-          <td class="paramname"><em>event</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00523">523</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac8f43ad1e1a7ce4a42b141dfa1443cb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8f43ad1e1a7ce4a42b141dfa1443cb8">&#9670;&nbsp;</a></span>OnPhysicsCollisionEnd()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnPhysicsCollisionEnd </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a>&#160;</td>
-          <td class="paramname"><em>event</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00542">542</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a58ea0c63378bf3f9c88181a73be15fd3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58ea0c63378bf3f9c88181a73be15fd3">&#9670;&nbsp;</a></span>OnRuntimeStart()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnRuntimeStart </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Scene.html">Scene</a> *&#160;</td>
-          <td class="paramname"><em>scene</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00364">364</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7ee408828563ff348475685611be6214"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ee408828563ff348475685611be6214">&#9670;&nbsp;</a></span>OnRuntimeStop()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnRuntimeStop </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00436">436</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a2aee09d37ddc853d2e4314d5bb9e490d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aee09d37ddc853d2e4314d5bb9e490d">&#9670;&nbsp;</a></span>OnUpdate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::OnUpdate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classKargono_1_1Timestep.html">Timestep</a>&#160;</td>
-          <td class="paramname"><em>ts</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00443">443</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a71ad2dea00aa5d7865eac5074cfe5188"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71ad2dea00aa5d7865eac5074cfe5188">&#9670;&nbsp;</a></span>ReloadAssembly()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::ReloadAssembly </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00301">301</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a67460b25c5512b7db606873045893a31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67460b25c5512b7db606873045893a31">&#9670;&nbsp;</a></span>RunCustomCallsFunction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::RunCustomCallsFunction </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>functionName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void **&#160;</td>
-          <td class="paramname"><em>parameters</em> = <code>nullptr</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00641">641</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae927230584c688e6f5179c63036e34e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae927230584c688e6f5179c63036e34e6">&#9670;&nbsp;</a></span>Shutdown()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Script::ScriptEngine::Shutdown </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8cpp_source.html#l00205">205</a> of file <a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="ad565c5dec3cdaa54bc92e201ebc9e698"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad565c5dec3cdaa54bc92e201ebc9e698">&#9670;&nbsp;</a></span>ScriptClass</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Script_1_1ScriptClass.html">ScriptClass</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00247">247</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-
-</div>
-</div>
-<a id="a50cc7ca2911e1e7d92c35e3601a4cbaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50cc7ca2911e1e7d92c35e3601a4cbaa">&#9670;&nbsp;</a></span>ScriptGlue</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">friend class <a class="el" href="classKargono_1_1Script_1_1ScriptGlue.html">ScriptGlue</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ScriptEngine_8h_source.html#l00248">248</a> of file <a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>Engine/Source/Kargono/Script/<a class="el" href="ScriptEngine_8h_source.html">ScriptEngine.h</a></li>
-<li>Engine/Source/Kargono/Script/<a class="el" href="ScriptEngine_8cpp_source.html">ScriptEngine.cpp</a></li>
-</ul>
-</div><!-- contents -->
+</div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Script</b></li><li class="navelem"><a class="el" href="classKargono_1_1Script_1_1ScriptEngine.html">ScriptEngine</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

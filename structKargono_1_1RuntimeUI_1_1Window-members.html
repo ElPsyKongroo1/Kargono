@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('structKargono_1_1RuntimeUI_1_1Window.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1RuntimeUI.html">RuntimeUI</a></li><li class="navelem"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Window</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::RuntimeUI::Window Member List</div>  </div>
@@ -74,30 +92,33 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a929fb1f74ea0a22808599fb2d6d6db2b">AddButtonWidget</a>(Ref&lt; ButtonWidget &gt; newWidget)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#af4f496143bdfe633dbc4ea78936a162b">AddCheckboxWidget</a>(Ref&lt; CheckboxWidget &gt; newWidget)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a4f39980b981f3a48bb9fa4d6b39136d1">AddComboWidget</a>(Ref&lt; ComboWidget &gt; newWidget)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a87de4b820736773b7ffb2cd16fa8956c">AddPopupWidget</a>(Ref&lt; PopupWidget &gt; newWidget)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a9a776e1aac94416ae155e649cd8b8422">AddTextWidget</a>(Ref&lt; TextWidget &gt; newWidget)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a23896dcb3717664c42f56be612b7e012">BackgroundColor</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#aedfc654a3423de843f7a67e930e0d7a8">ChildBufferIndex</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a5ec9f505a58846702d471a0483fdedba">ChildBufferSize</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a1946e7e9a8459845bf923c4efe1144fe">DefaultActiveWidget</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a31efd840e113b22867c0e0ec7938d773">DefaultActiveWidgetRef</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a147a038fde4f471743b2e346120ba2df">DeleteWidget</a>(int32_t widgetLocation)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a06ad9318937759aec0d8e09b70d9b06f">DisplayWindow</a>()</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a7c672b2c63a03efe0382b473d9198a42">GetWindowDisplayed</a>()</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#ad5982e216b967ff9f73ef12ad64d02e6">HideWindow</a>()</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a6a6358d8a80ed9228a57a3f0dd06e095">ParentIndex</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a5854dc8dab44a61bed9dfca116f5bd54">ScreenPosition</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a404e51aa9994463d53c7b5f69cb304c0">Size</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a1bd10586a83f9e93cba1ee76c75bfc18">Tag</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a457f98f391553040ca518299402f972a">WidgetCounts</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a9ae248e39c9e8cf0bc3929d99ab3b350">Widgets</a></td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddButtonWidget</b>(Ref&lt; ButtonWidget &gt; newWidget) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>AddCheckboxWidget</b>(Ref&lt; CheckboxWidget &gt; newWidget) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddComboWidget</b>(Ref&lt; ComboWidget &gt; newWidget) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>AddPopupWidget</b>(Ref&lt; PopupWidget &gt; newWidget) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>AddTextWidget</b>(Ref&lt; TextWidget &gt; newWidget) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>BackgroundColor</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ChildBufferIndex</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ChildBufferSize</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DefaultActiveWidget</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DefaultActiveWidgetRef</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DeleteWidget</b>(int32_t widgetLocation) (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DisplayWindow</b>() (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetWindowDisplayed</b>() (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>HideWindow</b>() (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ParentIndex</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ScreenPosition</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Size</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Tag</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>WidgetCounts</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Widgets</b> (defined in <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a>)</td><td class="entry"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

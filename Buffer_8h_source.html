@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Buffer_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,98 +84,93 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Buffer.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Buffer_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// Non-owning raw buffer struct</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html">    9</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1Buffer.html">Buffer</a></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">   11</a></span>&#160;        uint8_t* <a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">   12</a></span>&#160;        uint64_t <a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> = 0;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        uint8_t* Data = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        uint64_t Size = 0;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="comment">// Does not allocate any heap data</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a19c1d761c2882d706a7c8b5e3141b9c9">   15</a></span>&#160;        <a class="code" href="structKargono_1_1Buffer.html#a19c1d761c2882d706a7c8b5e3141b9c9">Buffer</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#ab4c691639f0df5d5f775b002120d2b64">   16</a></span>&#160;        <a class="code" href="structKargono_1_1Buffer.html#ab4c691639f0df5d5f775b002120d2b64">Buffer</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Buffer.html">Buffer</a>&amp;) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <a class="code" href="structKargono_1_1Buffer.html">Buffer</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="structKargono_1_1Buffer.html">Buffer</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Buffer.html">Buffer</a>&amp;) = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// Need to call release when instantiated this way</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a2c11e9383f5b3058e269a8ef537d1cef">   19</a></span>&#160;        <a class="code" href="structKargono_1_1Buffer.html#a2c11e9383f5b3058e269a8ef537d1cef">Buffer</a>(uint64_t size)</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <a class="code" href="structKargono_1_1Buffer.html">Buffer</a>(uint64_t size)</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(size);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            Allocate(size);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        }</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a7815fcfd838024c6f73c68370c0f095b">   24</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> <a class="code" href="structKargono_1_1Buffer.html#a7815fcfd838024c6f73c68370c0f095b">Copy</a>(<a class="code" href="structKargono_1_1Buffer.html">Buffer</a> other)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">static</span> <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> Copy(<a class="code" href="structKargono_1_1Buffer.html">Buffer</a> other)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">if</span> (other)</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> result(other.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                memcpy_s(result.<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>, other.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>, other.<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>, other.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                <a class="code" href="structKargono_1_1Buffer.html">Buffer</a> result(other.Size);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                memcpy_s(result.Data, other.Size, other.Data, other.Size);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                <span class="keywordflow">return</span> result;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            }</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">return</span> {};</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        }</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">   36</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(uint64_t size)</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordtype">void</span> Allocate(uint64_t size)</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Release</a>();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a> = <span class="keyword">new</span> uint8_t[size];</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> = size;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            Release();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            Data = <span class="keyword">new</span> uint8_t[size];</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            Size = size;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        }</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">   43</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Release</a>()</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">void</span> Release()</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            <span class="keyword">delete</span>[] <a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> = 0;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            <span class="keyword">delete</span>[] Data;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            Data = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            Size = 0;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a69d2074af963436336edeab9f3298c2c">   50</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1Buffer.html#a69d2074af963436336edeab9f3298c2c">SetDataToByte</a>(uint8_t <span class="keywordtype">byte</span>)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordtype">void</span> SetDataToByte(uint8_t <span class="keywordtype">byte</span>)</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> == 0) { <span class="keywordflow">return</span>; }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            memset(<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>, <span class="keywordtype">byte</span>, <a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (Size == 0) { <span class="keywordflow">return</span>; }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            memset(Data, <span class="keywordtype">byte</span>, Size);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#af5eb215d9ba2fbae3d2fb4cd2103b93a">   57</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>* <a class="code" href="structKargono_1_1Buffer.html#af5eb215d9ba2fbae3d2fb4cd2103b93a">As</a>()</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        T* As()</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keywordflow">return</span> (<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>*)<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keywordflow">return</span> (T*)Data;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#aa128b2acdcbec5be9d1514d4af873bb5">   63</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>* <a class="code" href="structKargono_1_1Buffer.html#aa128b2acdcbec5be9d1514d4af873bb5">As</a>(std::size_t offsetInBytes)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        T* As(std::size_t offsetInBytes)</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">return</span> (<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>*)(<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a> + offsetInBytes);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">return</span> (T*)(Data + offsetInBytes);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#a40ee6d950e7d3af86fe129ff4faa6cf2">   67</a></span>&#160;        <span class="keyword">operator</span> bool()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">operator</span> bool()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keywordflow">return</span> (<span class="keywordtype">bool</span>)<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keywordflow">return</span> (<span class="keywordtype">bool</span>)Data;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#ae7fe587e44d7f77e3204a47dd1f528e1">   72</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1Buffer.html#ae7fe587e44d7f77e3204a47dd1f528e1">SetString</a>(<span class="keyword">const</span> std::string&amp; <span class="keywordtype">string</span>)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">void</span> SetString(<span class="keyword">const</span> std::string&amp; <span class="keywordtype">string</span>)</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a> &lt; <span class="keywordtype">string</span>.size())</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="keywordflow">if</span> (Size &lt; <span class="keywordtype">string</span>.size())</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                <a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(<span class="keywordtype">string</span>.size());</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                Allocate(<span class="keywordtype">string</span>.size());</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            <a class="code" href="structKargono_1_1Buffer.html#a69d2074af963436336edeab9f3298c2c">SetDataToByte</a>(0);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            memcpy(<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>, <span class="keywordtype">string</span>.data(), <span class="keywordtype">string</span>.size());</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            SetDataToByte(0);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            memcpy(Data, <span class="keywordtype">string</span>.data(), <span class="keywordtype">string</span>.size());</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="structKargono_1_1Buffer.html#af76653bda59dfc93bb29e83bcac6c456">   82</a></span>&#160;        std::string <a class="code" href="structKargono_1_1Buffer.html#af76653bda59dfc93bb29e83bcac6c456">GetString</a>()</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        std::string GetString()</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        {</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">return</span> { this-&gt;As&lt;char&gt;() };</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
@@ -161,38 +179,38 @@ $(function() {
 <div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html">   88</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    {</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#a8ff72fbbea6a38938b678533d4e207e1">   91</a></span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html#a8ff72fbbea6a38938b678533d4e207e1">ScopedBuffer</a>(<a class="code" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a>(<a class="code" href="structKargono_1_1Buffer.html">Buffer</a> buffer)</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            :m_Buffer(buffer)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        {</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#a5a7cc6d33eb43564212a8c6742329c16">   96</a></span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html#a5a7cc6d33eb43564212a8c6742329c16">ScopedBuffer</a>(uint64_t size)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a>(uint64_t size)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            : m_Buffer(size)</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#a11d84d2475ae6a2f9a0e0d4ae42e1447">  102</a></span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html#a11d84d2475ae6a2f9a0e0d4ae42e1447">ScopedBuffer</a>()</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a>()</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        {</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            </div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#a15307497650835217db01ce165cc5f9d">  107</a></span>&#160;        <a class="code" href="structKargono_1_1ScopedBuffer.html#a15307497650835217db01ce165cc5f9d">~ScopedBuffer</a>()</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        ~<a class="code" href="structKargono_1_1ScopedBuffer.html">ScopedBuffer</a>()</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            m_Buffer.<a class="code" href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Release</a>();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            m_Buffer.Release();</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        }</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#aef41e1df2369cf72a6d0eec01870a8d1">  112</a></span>&#160;        uint8_t* <a class="code" href="structKargono_1_1ScopedBuffer.html#aef41e1df2369cf72a6d0eec01870a8d1">Data</a>() { <span class="keywordflow">return</span> m_Buffer.<a class="code" href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Data</a>; }</div>
-<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#a453e423b3bab73715550177fdf96b7dd">  113</a></span>&#160;        uint64_t <a class="code" href="structKargono_1_1ScopedBuffer.html#a453e423b3bab73715550177fdf96b7dd">Size</a>() { <span class="keywordflow">return</span> m_Buffer.<a class="code" href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Size</a>; }</div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#af790177d0f8fd7c307dde04d5d445591">  114</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structKargono_1_1ScopedBuffer.html#af790177d0f8fd7c307dde04d5d445591">Allocate</a>(uint64_t size) { m_Buffer.<a class="code" href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Allocate</a>(size); }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        uint8_t* Data() { <span class="keywordflow">return</span> m_Buffer.Data; }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        uint64_t Size() { <span class="keywordflow">return</span> m_Buffer.Size; }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keywordtype">void</span> Allocate(uint64_t size) { m_Buffer.Allocate(size); }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#ab89608f4c347666f752fdf10be657f9e">  117</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>* <a class="code" href="structKargono_1_1ScopedBuffer.html#ab89608f4c347666f752fdf10be657f9e">As</a>()</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        T* As()</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        {</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <span class="keywordflow">return</span> m_Buffer.<a class="code" href="structKargono_1_1Buffer.html#af5eb215d9ba2fbae3d2fb4cd2103b93a">As</a>&lt;<a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a>&gt;();</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <span class="keywordflow">return</span> m_Buffer.As&lt;T&gt;();</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        }</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="structKargono_1_1ScopedBuffer.html#ada3f9b8c1d078b13bc876ca32a2fcef0">  122</a></span>&#160;        <span class="keyword">operator</span> bool()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keyword">operator</span> bool()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keyword">        </span>{</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <span class="keywordflow">return</span> m_Buffer;</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
@@ -269,35 +287,16 @@ $(function() {
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">//  }</span></div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="comment">//};</span></div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;}</div>
-<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">Kargono::Key::T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00050">KeyCodes.h:50</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 <div class="ttc" id="astructKargono_1_1Buffer_html"><div class="ttname"><a href="structKargono_1_1Buffer.html">Kargono::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00009">Buffer.h:10</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a19c1d761c2882d706a7c8b5e3141b9c9"><div class="ttname"><a href="structKargono_1_1Buffer.html#a19c1d761c2882d706a7c8b5e3141b9c9">Kargono::Buffer::Buffer</a></div><div class="ttdeci">Buffer()=default</div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a2c11e9383f5b3058e269a8ef537d1cef"><div class="ttname"><a href="structKargono_1_1Buffer.html#a2c11e9383f5b3058e269a8ef537d1cef">Kargono::Buffer::Buffer</a></div><div class="ttdeci">Buffer(uint64_t size)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00019">Buffer.h:19</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a403949c7cdb8c0b9d3232edfede45537"><div class="ttname"><a href="structKargono_1_1Buffer.html#a403949c7cdb8c0b9d3232edfede45537">Kargono::Buffer::Allocate</a></div><div class="ttdeci">void Allocate(uint64_t size)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00036">Buffer.h:36</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a44e92bdd7ab68abd70b24fa3596415ff"><div class="ttname"><a href="structKargono_1_1Buffer.html#a44e92bdd7ab68abd70b24fa3596415ff">Kargono::Buffer::Size</a></div><div class="ttdeci">uint64_t Size</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00012">Buffer.h:12</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a69d2074af963436336edeab9f3298c2c"><div class="ttname"><a href="structKargono_1_1Buffer.html#a69d2074af963436336edeab9f3298c2c">Kargono::Buffer::SetDataToByte</a></div><div class="ttdeci">void SetDataToByte(uint8_t byte)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00050">Buffer.h:50</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_a7815fcfd838024c6f73c68370c0f095b"><div class="ttname"><a href="structKargono_1_1Buffer.html#a7815fcfd838024c6f73c68370c0f095b">Kargono::Buffer::Copy</a></div><div class="ttdeci">static Buffer Copy(Buffer other)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00024">Buffer.h:24</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_aa128b2acdcbec5be9d1514d4af873bb5"><div class="ttname"><a href="structKargono_1_1Buffer.html#aa128b2acdcbec5be9d1514d4af873bb5">Kargono::Buffer::As</a></div><div class="ttdeci">T * As(std::size_t offsetInBytes)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00063">Buffer.h:63</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_aa35229f34b4585c0743628f48a1c6031"><div class="ttname"><a href="structKargono_1_1Buffer.html#aa35229f34b4585c0743628f48a1c6031">Kargono::Buffer::Data</a></div><div class="ttdeci">uint8_t * Data</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00011">Buffer.h:11</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_ab4c691639f0df5d5f775b002120d2b64"><div class="ttname"><a href="structKargono_1_1Buffer.html#ab4c691639f0df5d5f775b002120d2b64">Kargono::Buffer::Buffer</a></div><div class="ttdeci">Buffer(const Buffer &amp;)=default</div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_ae7fe587e44d7f77e3204a47dd1f528e1"><div class="ttname"><a href="structKargono_1_1Buffer.html#ae7fe587e44d7f77e3204a47dd1f528e1">Kargono::Buffer::SetString</a></div><div class="ttdeci">void SetString(const std::string &amp;string)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00072">Buffer.h:72</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_af0f8569aea2e8b8f0b692e20d6011635"><div class="ttname"><a href="structKargono_1_1Buffer.html#af0f8569aea2e8b8f0b692e20d6011635">Kargono::Buffer::Release</a></div><div class="ttdeci">void Release()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00043">Buffer.h:43</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_af5eb215d9ba2fbae3d2fb4cd2103b93a"><div class="ttname"><a href="structKargono_1_1Buffer.html#af5eb215d9ba2fbae3d2fb4cd2103b93a">Kargono::Buffer::As</a></div><div class="ttdeci">T * As()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00057">Buffer.h:57</a></div></div>
-<div class="ttc" id="astructKargono_1_1Buffer_html_af76653bda59dfc93bb29e83bcac6c456"><div class="ttname"><a href="structKargono_1_1Buffer.html#af76653bda59dfc93bb29e83bcac6c456">Kargono::Buffer::GetString</a></div><div class="ttdeci">std::string GetString()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00082">Buffer.h:82</a></div></div>
 <div class="ttc" id="astructKargono_1_1ScopedBuffer_html"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html">Kargono::ScopedBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00088">Buffer.h:89</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_a11d84d2475ae6a2f9a0e0d4ae42e1447"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#a11d84d2475ae6a2f9a0e0d4ae42e1447">Kargono::ScopedBuffer::ScopedBuffer</a></div><div class="ttdeci">ScopedBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00102">Buffer.h:102</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_a15307497650835217db01ce165cc5f9d"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#a15307497650835217db01ce165cc5f9d">Kargono::ScopedBuffer::~ScopedBuffer</a></div><div class="ttdeci">~ScopedBuffer()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00107">Buffer.h:107</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_a453e423b3bab73715550177fdf96b7dd"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#a453e423b3bab73715550177fdf96b7dd">Kargono::ScopedBuffer::Size</a></div><div class="ttdeci">uint64_t Size()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00113">Buffer.h:113</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_a5a7cc6d33eb43564212a8c6742329c16"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#a5a7cc6d33eb43564212a8c6742329c16">Kargono::ScopedBuffer::ScopedBuffer</a></div><div class="ttdeci">ScopedBuffer(uint64_t size)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00096">Buffer.h:96</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_a8ff72fbbea6a38938b678533d4e207e1"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#a8ff72fbbea6a38938b678533d4e207e1">Kargono::ScopedBuffer::ScopedBuffer</a></div><div class="ttdeci">ScopedBuffer(Buffer buffer)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00091">Buffer.h:91</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_ab89608f4c347666f752fdf10be657f9e"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#ab89608f4c347666f752fdf10be657f9e">Kargono::ScopedBuffer::As</a></div><div class="ttdeci">T * As()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00117">Buffer.h:117</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_aef41e1df2369cf72a6d0eec01870a8d1"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#aef41e1df2369cf72a6d0eec01870a8d1">Kargono::ScopedBuffer::Data</a></div><div class="ttdeci">uint8_t * Data()</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00112">Buffer.h:112</a></div></div>
-<div class="ttc" id="astructKargono_1_1ScopedBuffer_html_af790177d0f8fd7c307dde04d5d445591"><div class="ttname"><a href="structKargono_1_1ScopedBuffer.html#af790177d0f8fd7c307dde04d5d445591">Kargono::ScopedBuffer::Allocate</a></div><div class="ttdeci">void Allocate(uint64_t size)</div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00114">Buffer.h:114</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>Buffer.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

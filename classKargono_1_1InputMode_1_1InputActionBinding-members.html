@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1InputMode_1_1InputActionBinding.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1InputMode.html">InputMode</a></li><li class="navelem"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">InputActionBinding</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::InputMode::InputActionBinding Member List</div>  </div>
@@ -74,18 +92,21 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a540ac4c449cc6e877bd30ab61cb7897d">CallFunction</a>()=0</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#ab877860678fba20630b16511e61b7b0c">CheckStatus</a>()=0</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a6a3d96f8e5083630257ba3a8e07ae245">GetActionType</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a55a740764e1c3c4a4040e7708ede26d5">GetFunctionBinding</a>()</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#aab17871ddf17e2f74e76a25e0672cc57">m_BindingType</a></td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a90916b5ddf17439c83ecc9034c8fbd0e">m_FunctionName</a></td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a10d00268cf389c1ff1f8cec9a76897ac">SetFunctionBinding</a>(const std::string &amp;function)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html#a228cde5d24cceb26644399fce10db96b">~InputActionBinding</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>CallFunction</b>()=0 (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>CheckStatus</b>()=0 (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetActionType</b>() const (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetFunctionBinding</b>() (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_BindingType</b> (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_FunctionName</b> (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetFunctionBinding</b>(const std::string &amp;function) (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~InputActionBinding</b>()=default (defined in <a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a>)</td><td class="entry"><a class="el" href="classKargono_1_1InputMode_1_1InputActionBinding.html">Kargono::InputMode::InputActionBinding</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

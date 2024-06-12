@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Events_1_1MouseScrolledEvent.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Events.html">Events</a></li><li class="navelem"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">MouseScrolledEvent</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::Events::MouseScrolledEvent Member List</div>  </div>
@@ -74,21 +92,24 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#abe38679e3e70aa17b63492526e857a77">GetCategoryFlags</a>() const override</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#ab2bd3343dc060a82d56d0eebfd8ddc81">GetEventType</a>() const override</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#a621b84f9981321d2f4270413f4ba477b">GetName</a>() const override</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#a28838374d6ab6f23a4300024805d20cc">GetStaticType</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#a83aafe5af46270eb10a58209f4632321">GetXOffset</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#a61532d006b1da1f011b714473efabb1b">GetYOffset</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html#aee60a88ef30ec1ac0988e13061be55d8">Handled</a></td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html#a4b83372d47729396817db4f6e37cb905">IsInCategory</a>(EventCategory category)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#a75255eed5fbf229c1ebf74631d81a263">MouseScrolledEvent</a>(const float xOffset, const float yOffset)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html#aaa3cfdcc52df462c155653fbe004bce3">ToString</a>() const override</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html#a9bbbefee827c31fdc3e1d158a2a8b00e">~Event</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetCategoryFlags</b>() const override (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetEventType</b>() const override (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetName</b>() const override (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetStaticType</b>() (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetXOffset</b>() const (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetYOffset</b>() const (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Handled</b> (defined in <a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>IsInCategory</b>(EventCategory category) (defined in <a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>MouseScrolledEvent</b>(const float xOffset, const float yOffset) (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ToString</b>() const override (defined in <a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~Event</b>()=default (defined in <a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1EditorApp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1EditorApp.html">EditorApp</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::EditorApp Member List</div>  </div>
@@ -74,35 +92,38 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Application.html#a3cbce74213816ddcd8ad7fd4f2bd0cca">Application</a>(const std::string &amp;name=&quot;Layer&quot;)</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a8625c4e71b63d948a39fd53ac4efbcb9">EditorApp</a>()</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">GetCurrentApp</a>()</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Application.html#a6cf88f0cd4cb94b041fc7810fab5dcf6">GetName</a>() const</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a2b94aa272a85b7162989c7ef8bd65521">m_ContentBrowserPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Application.html#af68312a5906a5205c24243b07a353a17">m_DebugName</a></td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a1105f3f9bd95046498f13f3c57ae8849">m_EntityClassEditor</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a93364f4887249628cb7bc5109bee3597">m_GameStatePanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a671e1279f7c354bc6e8cb5c5d180613c">m_InputEditorPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a200eb51ba2ec3f01daeb4cb6e9d8b837">m_LogPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a6850142a0fb8c4f2ac718bae0cb2a282">m_ProjectPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#acb83d55ab8aa70d301b08003273710a5">m_SceneHierarchyPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a19adb8a090e9877bd52d9eed98721e57">m_ScriptEditorPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#abfe70da8aaae2570120f961fdfda9ad3">m_StatisticsPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#aa56a59b685d485f2cbfa313ec3dd6fc6">m_TextEditorPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#af5dd4c892f1f25faf4fe22ecb3eb6d98">m_UIEditorPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a330b31c4621439618878cd016a88f686">m_ViewportPanel</a></td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#ad438e0629ca059d901422ffff1c75391">OnAttach</a>() override</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a7a3bb708dd6b8c4c7b87383175caa6a6">OnDetach</a>() override</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#aea0ffac6d6e33794758ccbd764760ec0">OnEditorUIRender</a>() override</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a257b679fe460eaa86b87185fbbc96279">OnEvent</a>(Events::Event &amp;event) override</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a1c9eecbf3b95480f96fb981c5d5d5a44">OnUpdate</a>(Timestep ts) override</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#aec2ea32ec343b21e87285c7f5fc05baa">OpenScene</a>(const std::filesystem::path &amp;path)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Application.html#a946795bdbcf6236c525dfeced8c6d36b">~Application</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html#a1b65910faa38ec727b622b219a4497e4">~EditorApp</a>() override=default</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Application</b>(const std::string &amp;name=&quot;Layer&quot;) (defined in <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>EditorApp</b>() (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetCurrentApp</b>() (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetName</b>() const (defined in <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_ContentBrowserPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_DebugName</b> (defined in <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_EntityClassEditor</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_GameStatePanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_InputEditorPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_LogPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_ProjectPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_SceneHierarchyPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_ScriptEditorPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_StatisticsPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_TextEditorPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_UIEditorPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_ViewportPanel</b> (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnAttach</b>() override (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnDetach</b>() override (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnEditorUIRender</b>() override (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OnEvent</b>(Events::Event &amp;event) override (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>OnUpdate</b>(Timestep ts) override (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>OpenScene</b>(const std::filesystem::path &amp;path) (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~Application</b>()=default (defined in <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~EditorApp</b>() override=default (defined in <a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>)</td><td class="entry"><a class="el" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

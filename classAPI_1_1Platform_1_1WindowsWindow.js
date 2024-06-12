@@ -1,0 +1,28 @@
+var classAPI_1_1Platform_1_1WindowsWindow =
+[
+    [ "WindowsWindow", "classAPI_1_1Platform_1_1WindowsWindow.html#ad23aeffe8013c51a4143862b28475c28", null ],
+    [ "~WindowsWindow", "classAPI_1_1Platform_1_1WindowsWindow.html#ab9212cd7bb4a9f90d5ab2c964f1454a4", null ],
+    [ "Init", "classAPI_1_1Platform_1_1WindowsWindow.html#afad30a6da2df7ef705606322312652fe", null ],
+    [ "Init", "classAPI_1_1Platform_1_1WindowsWindow.html#a5e75396a98df7ca536442a7352049b9b", null ],
+    [ "Shutdown", "classAPI_1_1Platform_1_1WindowsWindow.html#a589104e3db751ac67057d45536494a2c", null ],
+    [ "OnUpdate", "classAPI_1_1Platform_1_1WindowsWindow.html#a729de1c727d30f5344e54f84d912766b", null ],
+    [ "SetVSync", "classAPI_1_1Platform_1_1WindowsWindow.html#a48c45eca0fd234a69646a933b0e3ac95", null ],
+    [ "SetFullscreen", "classAPI_1_1Platform_1_1WindowsWindow.html#a8ce8f9aa0d35b21e0f4dd581e26bf37a", null ],
+    [ "SetResizable", "classAPI_1_1Platform_1_1WindowsWindow.html#afb16434e9a806d4d546bbd05c394cc13", null ],
+    [ "CenterWindow", "classAPI_1_1Platform_1_1WindowsWindow.html#aca44f20b8cd3ec5a1f85fefcf68ef6eb", null ],
+    [ "GetMonitorDimensions", "classAPI_1_1Platform_1_1WindowsWindow.html#a925215eba7c3fa970247bf6929f8c13f", null ],
+    [ "ResizeWindow", "classAPI_1_1Platform_1_1WindowsWindow.html#a535c92784be34aad136b4ac9a60c57a1", null ],
+    [ "ToggleMaximized", "classAPI_1_1Platform_1_1WindowsWindow.html#a14ed6e9b7f85c112a9556f4dc95eda5a", null ],
+    [ "SetMouseCursorVisible", "classAPI_1_1Platform_1_1WindowsWindow.html#ab5db196ad79626eebfcad5681e5e5ede", null ],
+    [ "SetVisible", "classAPI_1_1Platform_1_1WindowsWindow.html#a18dd40f851d90f00f64a8ec1206cb8c7", null ],
+    [ "GetWidth", "classAPI_1_1Platform_1_1WindowsWindow.html#ac51042eb6e8c06a25234798d99ca1bbb", null ],
+    [ "GetHeight", "classAPI_1_1Platform_1_1WindowsWindow.html#af7fe593f5cb36d3481f40c9aa2860bea", null ],
+    [ "GetViewportWidth", "classAPI_1_1Platform_1_1WindowsWindow.html#a89ee5e10eeb2eddeb5b0af2022c4d6fe", null ],
+    [ "GetViewportHeight", "classAPI_1_1Platform_1_1WindowsWindow.html#afbc5ef5d603bacb6a6f8561e9026ae32", null ],
+    [ "SetViewportWidth", "classAPI_1_1Platform_1_1WindowsWindow.html#afbe9a08f726e0b60f85ca920dc14bc3f", null ],
+    [ "SetViewportHeight", "classAPI_1_1Platform_1_1WindowsWindow.html#a2dc46446b6d13310d31cccadd7efbd60", null ],
+    [ "GetNativeWindow", "classAPI_1_1Platform_1_1WindowsWindow.html#aff8ace59c7b9925784fc1ecdc2535459", null ],
+    [ "IsVSync", "classAPI_1_1Platform_1_1WindowsWindow.html#af21d7a7678491a6913ecdc1700b5cea2", null ],
+    [ "SetEventCallback", "classAPI_1_1Platform_1_1WindowsWindow.html#af0d08a3948a6531ff43e9d2ba6c0fc92", null ],
+    [ "GetEventCallback", "classAPI_1_1Platform_1_1WindowsWindow.html#a83612316ae5588e3732ea0fd6ec0aabb", null ]
+];

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('EntryPoint_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,43 +84,38 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">EntryPoint.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="EntryPoint_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Timers_8h.html">Kargono/Core/Timers.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Base.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EngineCore.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Timers.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifdef KG_PLATFORM_WINDOWS</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="WindowsBackendAPI_8h.html">API/Platform/WindowsBackendAPI.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;API/Platform/WindowsBackendAPI.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">extern</span> <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>* <a class="code" href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a>(CommandLineArgs args);</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">extern</span> <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>* Kargono::InitEngineAndCreateApp(CommandLineArgs args);</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keywordtype">void</span> EntryPoint (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a>();</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Starting Application&quot;</span>);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>* core = <a class="code" href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a>({ argc, argv });</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        Kargono::Log::Init();</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Starting Application&quot;</span>);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>* core = Kargono::InitEngineAndCreateApp({ argc, argv });</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        KG_VERIFY(core, <span class="stringliteral">&quot;Engine Core Initialization&quot;</span>);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        core-&gt;<a class="code" href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">Run</a>();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ab73ef5b7fbe7f4c12a5e4f3f8819e822">Kargono::Timers::AsyncBusyTimer::CloseAllTimers</a>();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        core-&gt;Run();</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        Kargono::Timers::AsyncBusyTimer::CloseAllTimers();</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keyword">delete</span> core;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        core = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        KG_VERIFY(!core, <span class="stringliteral">&quot;Core Closed&quot;</span>);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    }</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        EntryPoint(argc, argv);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
@@ -112,26 +130,20 @@ $(function() {
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        LocalFree(argv);</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        KG_INFO(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
-<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
-<div class="ttc" id="aEngineCore_8h_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="EngineCore_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
-<div class="ttc" id="aTimers_8h_html"><div class="ttname"><a href="Timers_8h.html">Timers.h</a></div></div>
-<div class="ttc" id="aWindowsBackendAPI_8h_html"><div class="ttname"><a href="WindowsBackendAPI_8h.html">WindowsBackendAPI.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1EngineCore_html"><div class="ttname"><a href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00046">EngineCore.h:47</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a956daf03e57f14c4d69e7018937b170a"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a956daf03e57f14c4d69e7018937b170a">Kargono::EngineCore::Run</a></div><div class="ttdeci">void Run()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00121">EngineCore.cpp:121</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00010">Log.cpp:10</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_ab73ef5b7fbe7f4c12a5e4f3f8819e822"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ab73ef5b7fbe7f4c12a5e4f3f8819e822">Kargono::Timers::AsyncBusyTimer::CloseAllTimers</a></div><div class="ttdeci">static void CloseAllTimers()</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00038">Timers.cpp:38</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a45923d73887d88bd86f612361e918d0b"><div class="ttname"><a href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">EngineCore * InitEngineAndCreateApp(CommandLineArgs args)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeInit_8cpp_source.html#l00014">RuntimeInit.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>EntryPoint.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1RendererAPI.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1RendererAPI.html">RendererAPI</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::RendererAPI Member List</div>  </div>
@@ -74,27 +92,30 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a076ad12940bd86e259ea0e863040d632">Clear</a>()=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#ac7e656fe34998eab15c39b17e04c515e">ClearDepthBuffer</a>()=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#ac40a23fd4e52f822980a9306db74426a">Create</a>()</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#ad48eb8311c0b9e59e55c11c8ffd3caf8">DrawIndexed</a>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t indexCount=0)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a2443b868bdd6765bfad1b54f9a9a90e9">DrawIndexed</a>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t *indexPointer, uint32_t indexCount)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a50d4a1f82e8045f98bcbd3265df57f95">DrawLines</a>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#aa67ff603438c124fa66437baaf2c3562">DrawTriangles</a>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a8537ebd4976ad5786f4675fecb719b84">GetAPI</a>()</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a55f3b0b2e5a498e2ffe44d376ef24f49">Init</a>()=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a49d766b32e5780002be5a845bc3777b9">SetClearColor</a>(const Math::vec4 &amp;color)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a4aa96bb5009a3d934a96882cec4d2462">SetDepthTesting</a>(bool value)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a2aeb5f37baf644b8ecf6cba2f6bdc0e8">SetLineWidth</a>(float width)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a3438ff5149f20935b02e0b9041bed52e">SetStencilMask</a>(uint32_t value)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#ac96d83ac8de3ccae1362090ab757e330">SetViewport</a>(uint32_t x, uint32_t y, uint32_t width, uint32_t height)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#aa58f286831f40ea3e2142e661d1adaa0">StencilTestFunc</a>(StencilComparisonType comparisonType, int32_t reference, uint32_t mask)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#aa0cdbe60f9a883076ac7856faaafed32">StencilTestOptions</a>(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass)=0</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html#a568df6fa506481387f8666390ec3d2db">~RendererAPI</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Clear</b>()=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>ClearDepthBuffer</b>()=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Create</b>() (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DrawIndexed</b>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t indexCount=0)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DrawIndexed</b>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t *indexPointer, uint32_t indexCount)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>DrawLines</b>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>DrawTriangles</b>(const Ref&lt; VertexArray &gt; &amp;vertexArray, uint32_t vertexCount)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>GetAPI</b>() (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Init</b>()=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetClearColor</b>(const Math::vec4 &amp;color)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetDepthTesting</b>(bool value)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetLineWidth</b>(float width)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SetStencilMask</b>(uint32_t value)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>SetViewport</b>(uint32_t x, uint32_t y, uint32_t width, uint32_t height)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>StencilTestFunc</b>(StencilComparisonType comparisonType, int32_t reference, uint32_t mask)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>StencilTestOptions</b>(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass)=0 (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~RendererAPI</b>()=default (defined in <a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a>)</td><td class="entry"><a class="el" href="classKargono_1_1RendererAPI.html">Kargono::RendererAPI</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

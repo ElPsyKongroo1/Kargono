@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('ShaderBuilder_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,20 +84,15 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">ShaderBuilder.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="ShaderBuilder_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ShaderBuilder_8h.html">Kargono/Renderer/ShaderBuilder.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/ShaderBuilder.h&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="comment">// Primitives</span></div>
@@ -134,25 +152,25 @@ $(function() {
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">static</span> constexpr std::string_view s_TripleArgument = <span class="stringliteral">&quot;{0},{1},{2}&quot;</span>;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">static</span> constexpr std::string_view s_QuadArgument = <span class="stringliteral">&quot;{0},{1},{2},{3}&quot;</span>;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">   64</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a> = uint8_t;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">using</span> Priority = uint8_t;</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> std::stringstream s_OutputStream;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <a class="code" href="classKargono_1_1InputBufferLayout.html">InputBufferLayout</a> s_InputBufferLayout;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="classKargono_1_1UniformBufferList.html">UniformBufferList</a> s_UniformBufferLayout;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> InputBufferLayout s_InputBufferLayout;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> UniformBufferList s_UniformBufferLayout;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="comment">// Maps to Hold Lambdas</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_VertexStructs {};</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>(uint16_t count)&gt;&gt; s_VertexInput {};</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_VertexToFragmentSmooth {};</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>(uint16_t count, std::string_view inputOrOutput)&gt;&gt; s_VertexToFragmentFlat {};</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>(uint16_t count)&gt;&gt; s_VertexUniforms {};</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_VertexMain {};</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_VertexStructs {};</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void(uint16_t count)&gt;&gt; s_VertexInput {};</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_VertexToFragmentSmooth {};</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void(uint16_t count, std::string_view inputOrOutput)&gt;&gt; s_VertexToFragmentFlat {};</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void(uint16_t count)&gt;&gt; s_VertexUniforms {};</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_VertexMain {};</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_FragmentStructs {};</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_FragmentFunctions {};</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>(uint16_t count)&gt;&gt; s_FragmentOutput {};</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>(uint16_t count)&gt;&gt; s_FragmentUniforms {};</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">static</span> std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">void</a>()&gt;&gt; s_FragmentMain {};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_FragmentStructs {};</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_FragmentFunctions {};</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void(uint16_t count)&gt;&gt; s_FragmentOutput {};</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void(uint16_t count)&gt;&gt; s_FragmentUniforms {};</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">static</span> std::map&lt;Priority, std::function&lt;void()&gt;&gt; s_FragmentMain {};</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// Support Functions</span></div>
@@ -160,16 +178,16 @@ $(function() {
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> UpdateInputBuffer(std::string_view name, std::string_view type)</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        s_InputBufferLayout.<a class="code" href="classKargono_1_1InputBufferLayout.html#ae2ded49ded426436c4298a268dfce65d">AddBufferElement</a>(InputBufferElement(Utility::StringToInputDataType(type), name));</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        s_InputBufferLayout.AddBufferElement(InputBufferElement(Utility::StringToInputDataType(type), name));</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> UpdateUniformBuffer(std::string_view name, std::string_view type)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        s_UniformBufferLayout.<a class="code" href="classKargono_1_1UniformBufferList.html#aed983326a2205a0925c7d81b090bfc0f">AddBufferElement</a>(UniformElement(Utility::StringToUniformDataType(type), name));</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        s_UniformBufferLayout.AddBufferElement(UniformElement(Utility::StringToUniformDataType(type), name));</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="comment">// Function to Run all lambdas in each map</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="comment">// TODO: Consider templating these functions if they get crazy!</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctions(std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<span class="keywordtype">void</span>()&gt;&gt;&amp; map)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctions(std::map&lt;Priority, std::function&lt;<span class="keywordtype">void</span>()&gt;&gt;&amp; map)</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    {</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        uint16_t iterator{ 0 };</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [priority, <span class="keyword">function</span>] : map)</div>
@@ -180,7 +198,7 @@ $(function() {
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">return</span> iterator;</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="comment">// Function to Run all lambdas in each map</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctionsWithCount(std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<span class="keywordtype">void</span>(uint16_t)&gt;&gt;&amp; map, uint16_t initialCount = 0)</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctionsWithCount(std::map&lt;Priority, std::function&lt;<span class="keywordtype">void</span>(uint16_t)&gt;&gt;&amp; map, uint16_t initialCount = 0)</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    {</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        uint16_t iterator{ initialCount };</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [priority, <span class="keyword">function</span>] : map)</div>
@@ -192,7 +210,7 @@ $(function() {
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="comment">// Function to Run all lambdas in each map</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctionsWithTypeAndCount(std::map&lt;<a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a>, std::function&lt;<span class="keywordtype">void</span>(uint16_t, std::string_view)&gt;&gt;&amp; map, std::string_view type, uint16_t initialCount = 0)</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">static</span> uint16_t RunFunctionsWithTypeAndCount(std::map&lt;Priority, std::function&lt;<span class="keywordtype">void</span>(uint16_t, std::string_view)&gt;&gt;&amp; map, std::string_view type, uint16_t initialCount = 0)</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    {</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        uint16_t iterator{ initialCount };</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [priority, <span class="keyword">function</span>] : map)</div>
@@ -205,7 +223,7 @@ $(function() {
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="comment">// Function to ensure no collisions when adding an element into a map!</span></div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Map, <span class="keyword">typename</span> Lambda&gt;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> InsertMap(Map&amp; map, <a class="code" href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Priority</a> key, Lambda lambda)</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> InsertMap(Map&amp; map, Priority key, Lambda lambda)</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    {</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordflow">while</span> (map.contains(key))</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        {</div>
@@ -608,10 +626,10 @@ $(function() {
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    }</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;}</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="keyword">namespace </span>Kargono</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;{</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160; </div>
-<div class="line"><a name="l00541"></a><span class="lineno"><a class="line" href="classKargono_1_1ShaderBuilder.html#a6744667e8fc5909e29cb3b2c14f79082">  541</a></span>&#160;    std::tuple&lt;ShaderSource, InputBufferLayout, UniformBufferList&gt; <a class="code" href="classKargono_1_1ShaderBuilder.html#a6744667e8fc5909e29cb3b2c14f79082">ShaderBuilder::BuildShader</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a>&amp; shaderSpec)</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    std::tuple&lt;ShaderSource, InputBufferLayout, UniformBufferList&gt; ShaderBuilder::BuildShader(<span class="keyword">const</span> ShaderSpecification&amp; shaderSpec)</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    {</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;        uint16_t countBuffer = 0;</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160; </div>
@@ -621,8 +639,8 @@ $(function() {
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160; </div>
 <div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;        <span class="comment">// Clear static Output</span></div>
 <div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;        s_OutputStream.str(<span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        s_InputBufferLayout.<a class="code" href="classKargono_1_1InputBufferLayout.html#aa0b76f556db5e8cf290f2343321f76c5">Clear</a>();</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;        s_UniformBufferLayout.<a class="code" href="classKargono_1_1UniformBufferList.html#a7aa7182c5dd6a58ddc376b72483f61dd">Clear</a>();</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        s_InputBufferLayout.Clear();</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;        s_UniformBufferLayout.Clear();</div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;        <span class="comment">// Clear All Lambda Maps</span></div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;        s_VertexStructs.clear();</div>
@@ -645,24 +663,24 @@ $(function() {
 <div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        AddSimpleVertexOutput();</div>
 <div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;        AddSimpleFragmentOutput();</div>
 <div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160; </div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">ColorInput</a> == <a class="code" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9a090681f7d7a99e99d8c3d3f2bd0d94e6">ColorInputType::FlatColor</a> || shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">ColorInput</a> == <a class="code" href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9ac25b8613f8d34348272fc9f803018a36">ColorInputType::VertexColor</a>)</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.ColorInput == ColorInputType::FlatColor || shaderSpec.ColorInput == ColorInputType::VertexColor)</div>
 <div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        {</div>
 <div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            AddColorOutput();</div>
 <div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;        }</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a041040f5516566722cb7f331dabccda3">AddProjectionMatrix</a>) { AddProjectionMatrix(); }</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a5fe3d99011c4d7ac112a598176f7af20">AddEntityID</a>) { AddEntityID(); }</div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a6b5380e555a306e220e3d5f360aade6b">AddCircleShape</a>) { AddCircleShape(); }</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421">TextureInput</a> == <a class="code" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa6252d6e0c3eba07a408eadcb15abf8b6">TextureInputType::ColorTexture</a>) { AddTextureOutput(); }</div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421">TextureInput</a> == <a class="code" href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa3e73310ee12c338ad477262c33cc2ffa">TextureInputType::TextTexture</a>) { AddTextTextureOutput(); }</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.AddProjectionMatrix) { AddProjectionMatrix(); }</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.AddEntityID) { AddEntityID(); }</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.AddCircleShape) { AddCircleShape(); }</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.TextureInput == TextureInputType::ColorTexture) { AddTextureOutput(); }</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;        <span class="keywordflow">if</span> (shaderSpec.TextureInput == TextureInputType::TextTexture) { AddTextTextureOutput(); }</div>
 <div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160; </div>
 <div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;        <span class="comment">//=================</span></div>
 <div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;        <span class="comment">// Start Building Shader</span></div>
 <div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;        <span class="comment">//=================</span></div>
 <div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160; </div>
 <div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        <span class="comment">// ==== Vertex Shader ====</span></div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Rendering Type: &quot;</span> &lt;&lt; Utility::RenderingTypeToString(shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#ab4e6cf8ad840505b648984f9444ec674">RenderType</a>) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Color Type: &quot;</span> &lt;&lt; Utility::ColorInputTypeToString(shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">ColorInput</a>) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Draw Outline: &quot;</span> &lt;&lt; (shaderSpec.<a class="code" href="structKargono_1_1ShaderSpecification.html#ac7d7a3fcf661c4237d5da34211c7af5f">DrawOutline</a> ? <span class="stringliteral">&quot;true&quot;</span> : <span class="stringliteral">&quot;false&quot;</span>) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Rendering Type: &quot;</span> &lt;&lt; Utility::RenderingTypeToString(shaderSpec.RenderType) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Color Type: &quot;</span> &lt;&lt; Utility::ColorInputTypeToString(shaderSpec.ColorInput) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        s_OutputStream &lt;&lt; <span class="stringliteral">&quot;// Draw Outline: &quot;</span> &lt;&lt; (shaderSpec.DrawOutline ? <span class="stringliteral">&quot;true&quot;</span> : <span class="stringliteral">&quot;false&quot;</span>) &lt;&lt; <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;        BeginShader(<span class="stringliteral">&quot;vertex&quot;</span>);</div>
 <div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;        <span class="comment">// Structs/Classes</span></div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        RunFunctions(s_VertexStructs);</div>
@@ -716,34 +734,14 @@ $(function() {
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;}</div>
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160; </div>
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160; </div>
-<div class="ttc" id="aShaderBuilder_8h_html"><div class="ttname"><a href="ShaderBuilder_8h.html">ShaderBuilder.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputBufferLayout_html"><div class="ttname"><a href="classKargono_1_1InputBufferLayout.html">Kargono::InputBufferLayout</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00121">InputBuffer.h:122</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputBufferLayout_html_aa0b76f556db5e8cf290f2343321f76c5"><div class="ttname"><a href="classKargono_1_1InputBufferLayout.html#aa0b76f556db5e8cf290f2343321f76c5">Kargono::InputBufferLayout::Clear</a></div><div class="ttdeci">void Clear()</div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00152">InputBuffer.h:152</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputBufferLayout_html_ae2ded49ded426436c4298a268dfce65d"><div class="ttname"><a href="classKargono_1_1InputBufferLayout.html#ae2ded49ded426436c4298a268dfce65d">Kargono::InputBufferLayout::AddBufferElement</a></div><div class="ttdeci">void AddBufferElement(const InputBufferElement &amp;bufferElement)</div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00135">InputBuffer.h:135</a></div></div>
-<div class="ttc" id="aclassKargono_1_1ShaderBuilder_html_a6744667e8fc5909e29cb3b2c14f79082"><div class="ttname"><a href="classKargono_1_1ShaderBuilder.html#a6744667e8fc5909e29cb3b2c14f79082">Kargono::ShaderBuilder::BuildShader</a></div><div class="ttdeci">static std::tuple&lt; ShaderSource, InputBufferLayout, UniformBufferList &gt; BuildShader(const ShaderSpecification &amp;shaderSpec)</div><div class="ttdef"><b>Definition:</b> <a href="ShaderBuilder_8cpp_source.html#l00541">ShaderBuilder.cpp:541</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UniformBufferList_html"><div class="ttname"><a href="classKargono_1_1UniformBufferList.html">Kargono::UniformBufferList</a></div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8h_source.html#l00050">UniformBuffer.h:51</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UniformBufferList_html_a7aa7182c5dd6a58ddc376b72483f61dd"><div class="ttname"><a href="classKargono_1_1UniformBufferList.html#a7aa7182c5dd6a58ddc376b72483f61dd">Kargono::UniformBufferList::Clear</a></div><div class="ttdeci">void Clear()</div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8h_source.html#l00067">UniformBuffer.h:67</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UniformBufferList_html_aed983326a2205a0925c7d81b090bfc0f"><div class="ttname"><a href="classKargono_1_1UniformBufferList.html#aed983326a2205a0925c7d81b090bfc0f">Kargono::UniformBufferList::AddBufferElement</a></div><div class="ttdeci">void AddBufferElement(const UniformElement &amp;uniformElement)</div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8h_source.html#l00062">UniformBuffer.h:62</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a534547dd4cb4fbdca9642fc759c1a6fd"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a534547dd4cb4fbdca9642fc759c1a6fd">Kargono::Scripting::void</a></div><div class="ttdeci">void</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00302">Scripting.cpp:302</a></div></div>
-<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a63b23c0262ab6f3274c75194801e2b64"><div class="ttname"><a href="namespaceKargono.html#a63b23c0262ab6f3274c75194801e2b64">Kargono::Priority</a></div><div class="ttdeci">uint8_t Priority</div><div class="ttdef"><b>Definition:</b> <a href="ShaderBuilder_8cpp_source.html#l00064">ShaderBuilder.cpp:64</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a647341595431ff28d3c1a9ef2c315dd9a090681f7d7a99e99d8c3d3f2bd0d94e6"><div class="ttname"><a href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9a090681f7d7a99e99d8c3d3f2bd0d94e6">Kargono::ColorInputType::FlatColor</a></div><div class="ttdeci">@ FlatColor</div></div>
-<div class="ttc" id="anamespaceKargono_html_a647341595431ff28d3c1a9ef2c315dd9ac25b8613f8d34348272fc9f803018a36"><div class="ttname"><a href="namespaceKargono.html#a647341595431ff28d3c1a9ef2c315dd9ac25b8613f8d34348272fc9f803018a36">Kargono::ColorInputType::VertexColor</a></div><div class="ttdeci">@ VertexColor</div></div>
-<div class="ttc" id="anamespaceKargono_html_a78ca3bff72a4c61055856bea1b5600cfa3e73310ee12c338ad477262c33cc2ffa"><div class="ttname"><a href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa3e73310ee12c338ad477262c33cc2ffa">Kargono::TextureInputType::TextTexture</a></div><div class="ttdeci">@ TextTexture</div></div>
-<div class="ttc" id="anamespaceKargono_html_a78ca3bff72a4c61055856bea1b5600cfa6252d6e0c3eba07a408eadcb15abf8b6"><div class="ttname"><a href="namespaceKargono.html#a78ca3bff72a4c61055856bea1b5600cfa6252d6e0c3eba07a408eadcb15abf8b6">Kargono::TextureInputType::ColorTexture</a></div><div class="ttdeci">@ ColorTexture</div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00067">Shader.h:68</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_a041040f5516566722cb7f331dabccda3"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#a041040f5516566722cb7f331dabccda3">Kargono::ShaderSpecification::AddProjectionMatrix</a></div><div class="ttdeci">bool AddProjectionMatrix</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00079">Shader.h:79</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_a140ce0c7c6e2ef26a8104698ff8ef100"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#a140ce0c7c6e2ef26a8104698ff8ef100">Kargono::ShaderSpecification::ColorInput</a></div><div class="ttdeci">ColorInputType ColorInput</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00072">Shader.h:72</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_a5fe3d99011c4d7ac112a598176f7af20"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#a5fe3d99011c4d7ac112a598176f7af20">Kargono::ShaderSpecification::AddEntityID</a></div><div class="ttdeci">bool AddEntityID</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00080">Shader.h:80</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_a6b5380e555a306e220e3d5f360aade6b"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#a6b5380e555a306e220e3d5f360aade6b">Kargono::ShaderSpecification::AddCircleShape</a></div><div class="ttdeci">bool AddCircleShape</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00076">Shader.h:76</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_a7f1ba9cd7ee55f3b00f4a61078d6e421"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421">Kargono::ShaderSpecification::TextureInput</a></div><div class="ttdeci">TextureInputType TextureInput</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00073">Shader.h:73</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_ab4e6cf8ad840505b648984f9444ec674"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#ab4e6cf8ad840505b648984f9444ec674">Kargono::ShaderSpecification::RenderType</a></div><div class="ttdeci">RenderingType RenderType</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00083">Shader.h:83</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html_ac7d7a3fcf661c4237d5da34211c7af5f"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html#ac7d7a3fcf661c4237d5da34211c7af5f">Kargono::ShaderSpecification::DrawOutline</a></div><div class="ttdeci">bool DrawOutline</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00084">Shader.h:84</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>ShaderBuilder.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

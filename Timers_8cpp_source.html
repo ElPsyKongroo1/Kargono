@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Timers_8cpp_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,42 +84,37 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Timers.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="Timers_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Timers_8h.html">Kargono/Core/Timers.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/Timers.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="namespaceKargono_1_1Timers.html">    5</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Timers.html">Kargono::Timers</a></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono::Timers</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    std::vector&lt;Ref&lt;AsyncBusyTimer&gt;&gt; AsyncBusyTimer::s_AllTimers {};</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    std::mutex AsyncBusyTimer::s_BusyTimerMutex {};</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ad1d13ff651f4494640f52ca7a8ccdeea">   10</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ad1d13ff651f4494640f52ca7a8ccdeea">AsyncBusyTimer::CreateTimer</a>(<span class="keywordtype">float</span> waitTime, std::function&lt;<span class="keywordtype">void</span>()&gt; <span class="keyword">function</span>)</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">void</span> AsyncBusyTimer::CreateTimer(<span class="keywordtype">float</span> waitTime, std::function&lt;<span class="keywordtype">void</span>()&gt; <span class="keyword">function</span>)</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        std::scoped_lock lock(s_BusyTimerMutex);</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        s_AllTimers.push_back(CreateRef&lt;AsyncBusyTimer&gt;(waitTime, <span class="keyword">function</span>));</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="comment">// TODO: Not amazing solution, but passively cleans up timers</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">CleanUpClosedTimers</a>();</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        CleanUpClosedTimers();</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    }</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aafb72b8067f297b6c23b62317edc6a73">   17</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aafb72b8067f297b6c23b62317edc6a73">AsyncBusyTimer::CreateRecurringTimer</a>(<span class="keywordtype">float</span> waitTime, uint32_t reoccurCount, std::function&lt;<span class="keywordtype">void</span>()&gt; reoccurFunction, std::function&lt;<span class="keywordtype">void</span>()&gt; terminationFunction)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> AsyncBusyTimer::CreateRecurringTimer(<span class="keywordtype">float</span> waitTime, uint32_t reoccurCount, std::function&lt;<span class="keywordtype">void</span>()&gt; reoccurFunction, std::function&lt;<span class="keywordtype">void</span>()&gt; terminationFunction)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        std::scoped_lock lock(s_BusyTimerMutex);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        s_AllTimers.push_back(CreateRef&lt;AsyncBusyTimer&gt;(waitTime, reoccurCount, reoccurFunction, terminationFunction));</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">// TODO: Not amazing solution, but passively cleans up timers</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">CleanUpClosedTimers</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        CleanUpClosedTimers();</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    }</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">   24</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">AsyncBusyTimer::CleanUpClosedTimers</a>()</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">void</span> AsyncBusyTimer::CleanUpClosedTimers()</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">auto</span> iterator = std::remove_if(s_AllTimers.begin(), s_AllTimers.end(), [&amp;](<a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;AsyncBusyTimer&gt;</a> timer)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">auto</span> iterator = std::remove_if(s_AllTimers.begin(), s_AllTimers.end(), [&amp;](Ref&lt;AsyncBusyTimer&gt; timer)</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                if (timer-&gt;m_Done)</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                {</div>
@@ -108,7 +126,7 @@ $(function() {
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        s_AllTimers.erase(iterator, s_AllTimers.end());</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    }</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ab73ef5b7fbe7f4c12a5e4f3f8819e822">   38</a></span>&#160;    <span class="keywordtype">void</span> AsyncBusyTimer::CloseAllTimers()</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> AsyncBusyTimer::CloseAllTimers()</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    {</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        std::scoped_lock lock(s_BusyTimerMutex);</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
@@ -128,17 +146,17 @@ $(function() {
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        KG_VERIFY(s_AllTimers.size() == 0, <span class="stringliteral">&quot;All async timers closed successfully!&quot;</span>)</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ae0e3c861e8b873052eb81b9ef6b390f8">   58</a></span>&#160;    AsyncBusyTimer::AsyncBusyTimer(<span class="keywordtype">float</span> waitTime, std::function&lt;<span class="keywordtype">void</span>()&gt; <span class="keyword">function</span>)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    AsyncBusyTimer::AsyncBusyTimer(<span class="keywordtype">float</span> waitTime, std::function&lt;<span class="keywordtype">void</span>()&gt; <span class="keyword">function</span>)</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        : m_TerminationFunction(function), m_WaitTime(waitTime), m_ElapsedTime(0)</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    {</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        m_TimerThread = std::thread(&amp;AsyncBusyTimer::Wait, <span class="keyword">this</span>);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#a36b3dd07bbc7144a2fe272371a66f2c8">   63</a></span>&#160;    <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ae0e3c861e8b873052eb81b9ef6b390f8">AsyncBusyTimer::AsyncBusyTimer</a>(<span class="keywordtype">float</span> waitTime, uint32_t reoccurCount, std::function&lt;<span class="keywordtype">void</span>()&gt; reoccurFunction, std::function&lt;<span class="keywordtype">void</span>()&gt; terminationFunction)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    AsyncBusyTimer::AsyncBusyTimer(<span class="keywordtype">float</span> waitTime, uint32_t reoccurCount, std::function&lt;<span class="keywordtype">void</span>()&gt; reoccurFunction, std::function&lt;<span class="keywordtype">void</span>()&gt; terminationFunction)</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        : m_TerminationFunction(terminationFunction), m_WaitTime(waitTime), m_ElapsedTime(0), m_ReoccurCount(reoccurCount), m_ReoccurFunction(reoccurFunction)</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    {</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        m_TimerThread = std::thread(&amp;AsyncBusyTimer::ReoccurWait, <span class="keyword">this</span>);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#a35c5f70a6507cc763bcc9aecb94f6e60">   68</a></span>&#160;    <a class="code" href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#a35c5f70a6507cc763bcc9aecb94f6e60">AsyncBusyTimer::~AsyncBusyTimer</a>()</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    AsyncBusyTimer::~AsyncBusyTimer()</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    {</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">if</span> (m_TimerThread.joinable())</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        {</div>
@@ -220,19 +238,14 @@ $(function() {
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        m_Done = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    }</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;}</div>
-<div class="ttc" id="aTimers_8h_html"><div class="ttname"><a href="Timers_8h.html">Timers.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_a35c5f70a6507cc763bcc9aecb94f6e60"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#a35c5f70a6507cc763bcc9aecb94f6e60">Kargono::Timers::AsyncBusyTimer::~AsyncBusyTimer</a></div><div class="ttdeci">~AsyncBusyTimer()</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00068">Timers.cpp:68</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_aa0f57aa90e703e65c52f96334630079f"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aa0f57aa90e703e65c52f96334630079f">Kargono::Timers::AsyncBusyTimer::CleanUpClosedTimers</a></div><div class="ttdeci">static void CleanUpClosedTimers()</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00024">Timers.cpp:24</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_aafb72b8067f297b6c23b62317edc6a73"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#aafb72b8067f297b6c23b62317edc6a73">Kargono::Timers::AsyncBusyTimer::CreateRecurringTimer</a></div><div class="ttdeci">static void CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function&lt; void()&gt; reoccurFunction, std::function&lt; void()&gt; terminationFunction=nullptr)</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00017">Timers.cpp:17</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_ad1d13ff651f4494640f52ca7a8ccdeea"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ad1d13ff651f4494640f52ca7a8ccdeea">Kargono::Timers::AsyncBusyTimer::CreateTimer</a></div><div class="ttdeci">static void CreateTimer(float waitTime, std::function&lt; void()&gt; function)</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00010">Timers.cpp:10</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Timers_1_1AsyncBusyTimer_html_ae0e3c861e8b873052eb81b9ef6b390f8"><div class="ttname"><a href="classKargono_1_1Timers_1_1AsyncBusyTimer.html#ae0e3c861e8b873052eb81b9ef6b390f8">Kargono::Timers::AsyncBusyTimer::AsyncBusyTimer</a></div><div class="ttdeci">AsyncBusyTimer(float waitTime, std::function&lt; void()&gt; function)</div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00058">Timers.cpp:58</a></div></div>
-<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Timers_html"><div class="ttname"><a href="namespaceKargono_1_1Timers.html">Kargono::Timers</a></div><div class="ttdef"><b>Definition:</b> <a href="Timers_8cpp_source.html#l00005">Timers.cpp:6</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00047">Base.h:47</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>Timers.cpp</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

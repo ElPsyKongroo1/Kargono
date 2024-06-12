@@ -9,10 +9,16 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -47,6 +53,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classKargono_1_1Network_1_1tsqueue.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -61,11 +84,6 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Network.html">Network</a></li><li class="navelem"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">Kargono::Network::tsqueue&lt; T &gt; Member List</div>  </div>
@@ -74,26 +92,29 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#ad57096e608cd7f0b857c3f891ff3f14a">back</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#ac1ccbeb76e8a0813265c4f28c149d730">clear</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a754b189130455c5f759428ab861f9d7e">count</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a3c8ab508e1c507aad1a0d19af71374fb">cvBlocking</a></td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a93033c830fc9cdcb11904a41ac1b7ed0">deqQueue</a></td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#ac53337388e2ccea84a6c6c0ffcb9c4bf">empty</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#afd983ece911514271b5fda018222957b">front</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a42dfc43f22d5ab9b8bd98a656611acd8">muxBlocking</a></td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#af8f1f7be52f7ef67ede92370aa6f8d75">muxQueue</a></td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a85c45d908c9a0751209ccfe4495f4777">pop_back</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#af7ef3a83388fb4e19307287bdd4a46ea">pop_front</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#aeb666b5abc3081aa14099f7492400112">push_back</a>(const T &amp;item)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a17cb2ba3afb065d19cb0c42c12739329">push_front</a>(const T &amp;item)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a30af464abbbd811fdde5409676e0cdc7">tsqueue</a>()=default</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a1c3a586ccc94bc83bf2176c97c14f76d">tsqueue</a>(const tsqueue&lt; T &gt; &amp;)=delete</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html#aaec7f33819eb7dbe3299267798de3597">~tsqueue</a>()</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>back</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>clear</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>count</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>cvBlocking</b> (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>deqQueue</b> (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>empty</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>front</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>muxBlocking</b> (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>muxQueue</b> (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>pop_back</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>pop_front</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>push_back</b>(const T &amp;item) (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>push_front</b>(const T &amp;item) (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>tsqueue</b>()=default (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>tsqueue</b>(const tsqueue&lt; T &gt; &amp;)=delete (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~tsqueue</b>() (defined in <a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a>)</td><td class="entry"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue&lt; T &gt;</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>
