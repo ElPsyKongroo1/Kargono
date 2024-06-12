@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/Framebuffer.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL FrameBuffer Class

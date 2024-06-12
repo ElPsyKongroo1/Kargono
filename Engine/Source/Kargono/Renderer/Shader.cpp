@@ -11,7 +11,7 @@ namespace Kargono
 {
 	Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
 	{
-		return  CreateRef<API::OpenGL::OpenGLShader>(name, shaderBinaries);
+		return  CreateRef<API::RenderingAPI::OpenGLShader>(name, shaderBinaries);
 	}
 
 	void Shader::SetSpecification(const ShaderSpecification& shaderSpec)

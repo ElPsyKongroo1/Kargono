@@ -7,11 +7,10 @@
 #include "Kargono/Core/EngineCore.h"
 
 #include "API/Platform/WindowsBackendAPI.h"
-#include "API/Windowing/GlfwBackendAPI.h"
+#include "API/Platform/GlfwBackendAPI.h"
 
 namespace Kargono::Utility
 {
-
 	float Time::GetTime()
 	{
 		return (float)glfwGetTime();

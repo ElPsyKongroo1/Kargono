@@ -8,7 +8,7 @@
 
 #include "API/Platform/WindowsWindow.h"
 #include "API/ImageProcessing/stbAPI.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
 namespace API::Utility
 {
@@ -18,7 +18,7 @@ namespace API::Utility
 	}
 }
 
-namespace API::Windows
+namespace API::Platform
 {
 	static uint8_t s_GLFWWindowCount = 0;
 

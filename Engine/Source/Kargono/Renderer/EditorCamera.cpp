@@ -7,7 +7,7 @@
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/EditorUI/Editor.h"
 
-#include "API/Windowing/GlfwAPI.h"
+#include "API/Platform/GlfwAPI.h"
 
 
 namespace Kargono {

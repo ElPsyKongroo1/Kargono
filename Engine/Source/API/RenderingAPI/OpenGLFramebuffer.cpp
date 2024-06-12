@@ -2,7 +2,7 @@
 
 #include "API/RenderingAPI/OpenGLFramebuffer.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
 namespace API::Utility
 {
@@ -87,7 +87,7 @@ namespace API::Utility
 	}
 }
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	static const uint32_t s_MaxFramebufferSize = 8192;
 

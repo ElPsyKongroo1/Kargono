@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Renderer/VertexArray.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Vertex Array Class

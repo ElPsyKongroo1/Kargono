@@ -33,6 +33,7 @@ bin-int/**
 /Runtime/Resources/Scripts/**
 /Server/Resources/Scripts/**
 /Kargono.sln.DotSettings.user
+/docs/**
 
 # Specific File Paths
 **/Assets/Scripts/Binaries/**

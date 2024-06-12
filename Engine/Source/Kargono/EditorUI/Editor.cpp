@@ -8,8 +8,8 @@
 #include "Kargono/Input/InputMode.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
-#include "API/Windowing/GlfwAPI.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/GlfwAPI.h"
+#include "API/Platform/gladAPI.h"
 
 
 namespace Kargono::EditorUI

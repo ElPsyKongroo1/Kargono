@@ -10,6 +10,6 @@ namespace Kargono
 
 	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
 	{
-		return CreateRef<API::OpenGL::OpenGLUniformBuffer>(size, binding);
+		return CreateRef<API::RenderingAPI::OpenGLUniformBuffer>(size, binding);
 	}
 }

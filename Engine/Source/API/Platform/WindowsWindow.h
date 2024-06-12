@@ -3,9 +3,9 @@
 #include "Kargono/Core/Window.h"
 #include "Kargono/Math/Math.h"
 
-#include "API/Windowing/GlfwAPI.h"
+#include "API/Platform/GlfwAPI.h"
 
-namespace API::Windows
+namespace API::Platform
 {
 	//============================================================
 	// Windows(Platform) Window Class

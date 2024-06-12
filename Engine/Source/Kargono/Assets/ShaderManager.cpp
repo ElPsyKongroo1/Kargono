@@ -8,7 +8,7 @@
 
 #include "API/Serialization/yamlcppAPI.h"
 #include "API/RenderingAPI/VulkanAPI.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
 namespace Kargono::Utility
 {

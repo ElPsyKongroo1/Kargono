@@ -9,7 +9,7 @@ namespace Kargono {
 
 	Ref<VertexArray> VertexArray::Create()
 	{
-		return CreateRef<API::OpenGL::OpenGLVertexArray>();
+		return CreateRef<API::RenderingAPI::OpenGLVertexArray>();
 	}
 
 
