@@ -31,6 +31,7 @@ bin-int/**
 /Intermediates/**
 /Editor/Resources/Scripts/**
 /Runtime/Resources/Scripts/**
+/Server/Resources/Scripts/**
 /Kargono.sln.DotSettings.user
 
 # Specific File Paths
