@@ -1,15 +1,5 @@
 Registry: Audio
 Assets:
-  - AssetHandle: 8971184297765158014
-    MetaData:
-      CheckSum: 91a01fea6cda6d3adbd52ce135789f23af66e3d50fd0b685b6fd68eb389b96e3
-      IntermediateLocation: Audio/Intermediates/8971184297765158014.kgaudio
-      AssetType: Audio
-      Channels: 2
-      SampleRate: 48000
-      TotalPcmFrameCount: 5678312
-      TotalSize: 22713248
-      InitialFileLocation: Audio\Manoria-Cathedral.wav
   - AssetHandle: 4772404760776306022
     MetaData:
       CheckSum: f533eade437d80d58145bacddddd588cec46d78abf8bec6879d1f81d1fb3fb61
@@ -20,16 +10,16 @@ Assets:
       TotalPcmFrameCount: 10475
       TotalSize: 41900
       InitialFileLocation: Audio\menu_select.wav
-  - AssetHandle: 8671885103280513201
+  - AssetHandle: 8971184297765158014
     MetaData:
-      CheckSum: 05b3a183410b7cde9ec5f2406248caee88c51180267400e8b42d1b0eb381957a
-      IntermediateLocation: Audio/Intermediates/8671885103280513201.kgaudio
+      CheckSum: 91a01fea6cda6d3adbd52ce135789f23af66e3d50fd0b685b6fd68eb389b96e3
+      IntermediateLocation: Audio/Intermediates/8971184297765158014.kgaudio
       AssetType: Audio
       Channels: 2
-      SampleRate: 44100
-      TotalPcmFrameCount: 34816
-      TotalSize: 139264
-      InitialFileLocation: Audio\menu_confirm.wav
+      SampleRate: 48000
+      TotalPcmFrameCount: 5678312
+      TotalSize: 22713248
+      InitialFileLocation: Audio\Manoria-Cathedral.wav
   - AssetHandle: 12873632591324649681
     MetaData:
       CheckSum: 7afd0510ddd03da8545f86776a81c8288d508ca9b38679b3058036440e5ff77b
@@ -40,6 +30,26 @@ Assets:
       TotalPcmFrameCount: 8688750
       TotalSize: 34755000
       InitialFileLocation: Audio\mechanist-theme.wav
+  - AssetHandle: 8671885103280513201
+    MetaData:
+      CheckSum: 05b3a183410b7cde9ec5f2406248caee88c51180267400e8b42d1b0eb381957a
+      IntermediateLocation: Audio/Intermediates/8671885103280513201.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 34816
+      TotalSize: 139264
+      InitialFileLocation: Audio\menu_confirm.wav
+  - AssetHandle: 18286149760878530696
+    MetaData:
+      CheckSum: 486b4fafa2f7576055c030104cc6555a6fdb2d1991a0f3845b15e6955f0b1fbd
+      IntermediateLocation: Audio/Intermediates/18286149760878530696.kgaudio
+      AssetType: Audio
+      Channels: 2
+      SampleRate: 44100
+      TotalPcmFrameCount: 3631104
+      TotalSize: 14524416
+      InitialFileLocation: Audio\blueA.wav
   - AssetHandle: 6515589321809716456
     MetaData:
       CheckSum: 54d0fe26bcdf59665cf53869d85788e2b8b92bed17fa605ea3dbaa5a49ad4076
@@ -60,16 +70,6 @@ Assets:
       TotalPcmFrameCount: 4411632
       TotalSize: 17646528
       InitialFileLocation: Audio\test-song.wav
-  - AssetHandle: 4693761790148616627
-    MetaData:
-      CheckSum: 486b4fafa2f7576055c030104cc6555a6fdb2d1991a0f3845b15e6955f0b1fbd
-      IntermediateLocation: Audio/Intermediates/4693761790148616627.kgaudio
-      AssetType: Audio
-      Channels: 2
-      SampleRate: 44100
-      TotalPcmFrameCount: 3631104
-      TotalSize: 14524416
-      InitialFileLocation: Audio\blueA.wav
   - AssetHandle: 2121478283880279507
     MetaData:
       CheckSum: ddf01cf657fbac7c16227de0cb038243df7b8343d634c46b42cdb2d3c70b9ffc
@@ -80,10 +80,10 @@ Assets:
       TotalPcmFrameCount: 41666
       TotalSize: 166664
       InitialFileLocation: Audio\lose_sound.wav
-  - AssetHandle: 12995125410410391558
+  - AssetHandle: 12818418233085346858
     MetaData:
       CheckSum: 4c6f057c1d030f5024b5e8b120fedc7af78bd93c2e8202b10f83f264d4037225
-      IntermediateLocation: Audio/Intermediates/12995125410410391558.kgaudio
+      IntermediateLocation: Audio/Intermediates/12818418233085346858.kgaudio
       AssetType: Audio
       Channels: 2
       SampleRate: 44100

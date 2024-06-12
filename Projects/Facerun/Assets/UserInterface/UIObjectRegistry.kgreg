@@ -1,7 +1,0 @@
-Registry: UserInterface
-Assets:
-  - AssetHandle: 1979474340128151036
-    MetaData:
-      CheckSum: 99a2d0d8edca848778d4f613d203ff8127a62cad045cda2247c5c40ec320ec0b
-      IntermediateLocation: UserInterface/RuntimeUI.kgui
-      AssetType: UIObject
