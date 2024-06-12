@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['tag_4076',['Tag',['../structKargono_1_1RuntimeUI_1_1Window.html#a1bd10586a83f9e93cba1ee76c75bfc18',1,'Kargono::RuntimeUI::Window::Tag()'],['../classKargono_1_1RuntimeUI_1_1Widget.html#aa2ae3d24272b2852983ee1788ddd16cc',1,'Kargono::RuntimeUI::Widget::Tag()'],['../structKargono_1_1TagComponent.html#a02d8af0f95f7f40f7d907561bca5be6c',1,'Kargono::TagComponent::Tag()']]],
+  ['targetresolution_4077',['TargetResolution',['../structKargono_1_1Projects_1_1ProjectConfig.html#a535658a3ca5be2237d8862b4c406a71a',1,'Kargono::Projects::ProjectConfig']]],
+  ['texcoordinatemax_4078',['TexCoordinateMax',['../structKargono_1_1RuntimeUI_1_1Character.html#a9b789c47866ac5493ca2ff93ef342374',1,'Kargono::RuntimeUI::Character']]],
+  ['texcoordinatemin_4079',['TexCoordinateMin',['../structKargono_1_1RuntimeUI_1_1Character.html#ab41519811e79f8cec7d30e1c47d9e830',1,'Kargono::RuntimeUI::Character']]],
+  ['text_4080',['Text',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#a5b8a95b7215cd90017f37a5fa63792cf',1,'Kargono::RuntimeUI::TextWidget']]],
+  ['textabsolutedimensions_4081',['TextAbsoluteDimensions',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#a1a77e641efbab30167ba60074ba6a56e',1,'Kargono::RuntimeUI::TextWidget']]],
+  ['textbuffer_4082',['TextBuffer',['../structKargono_1_1Document.html#a3834c74f73fe370961810f56cc23396c',1,'Kargono::Document']]],
+  ['textcentered_4083',['TextCentered',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#a2dfcb66194d8f5c35c2cdcb5888333e9',1,'Kargono::RuntimeUI::TextWidget']]],
+  ['textcolor_4084',['TextColor',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#a5f3c0815346b3c30e51d188b922d58cc',1,'Kargono::RuntimeUI::TextWidget']]],
+  ['textsize_4085',['TextSize',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#ad051d953c452f5801d388243a67ff2dc',1,'Kargono::RuntimeUI::TextWidget']]],
+  ['texture_4086',['Texture',['../structKargono_1_1RendererInputSpec.html#a836e6342dfc358a31dbfff6f9c210542',1,'Kargono::RendererInputSpec::Texture()'],['../structKargono_1_1ShapeComponent.html#a51c3bba319d7021aa79b690cb606accf',1,'Kargono::ShapeComponent::Texture()']]],
+  ['texturecoordinates_4087',['TextureCoordinates',['../structKargono_1_1ShapeComponent.html#ab1884e464507a9bc9454e357923fd21b',1,'Kargono::ShapeComponent']]],
+  ['texturehandle_4088',['TextureHandle',['../structKargono_1_1ShapeComponent.html#a547fda16a2bb3ebb20f320a3e8e95257',1,'Kargono::ShapeComponent']]],
+  ['textureinput_4089',['TextureInput',['../structKargono_1_1ShaderSpecification.html#a7f1ba9cd7ee55f3b00f4a61078d6e421',1,'Kargono::ShaderSpecification']]],
+  ['textures_4090',['Textures',['../structKargono_1_1DrawCallBuffer.html#ac3f9929a17ea24612409932ac2b29dd3',1,'Kargono::DrawCallBuffer']]],
+  ['textwidgetcount_4091',['TextWidgetCount',['../structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html#a3da719765fe75f720a58f38fad0f3df3',1,'Kargono::RuntimeUI::Window::WidgetCounts']]],
+  ['textwidgetlocation_4092',['TextWidgetLocation',['../structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html#a5c36535a694686a9053b115713c04f75',1,'Kargono::RuntimeUI::Window::WidgetCounts']]],
+  ['thrcontext_4093',['thrContext',['../classKargono_1_1Network_1_1ClientInterface.html#a401b7e471f06ab7b0bc36a4675c70b3b',1,'Kargono::Network::ClientInterface']]],
+  ['title_4094',['Title',['../structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95',1,'Kargono::WindowProps']]],
+  ['toggleboolean_4095',['ToggleBoolean',['../structKargono_1_1EditorUI_1_1CheckboxSpec.html#ae4a33c9eb95d57ffdb79b2acc187ed18',1,'Kargono::EditorUI::CheckboxSpec']]],
+  ['totalpcmframecount_4096',['TotalPcmFrameCount',['../structKargono_1_1Assets_1_1AudioMetaData.html#a472540abab349238b813b72cd8097540',1,'Kargono::Assets::AudioMetaData']]],
+  ['totalsize_4097',['TotalSize',['../structKargono_1_1Assets_1_1AudioMetaData.html#a481ac64bb031a880934fa7c49a1d17c2',1,'Kargono::Assets::AudioMetaData']]],
+  ['transformmatrix_4098',['TransformMatrix',['../structKargono_1_1RendererInputSpec.html#a2c4f5dc02662c1927c3d3ff7aa0274e3',1,'Kargono::RendererInputSpec']]],
+  ['translation_4099',['Translation',['../structKargono_1_1TransformComponent.html#ab10d04e6ef7141f16d119fe84ec967ca',1,'Kargono::TransformComponent']]],
+  ['type_4100',['Type',['../structKargono_1_1Assets_1_1Metadata.html#a334a7844dbe00bc03c95c30410c24129',1,'Kargono::Assets::Metadata::Type()'],['../structKargono_1_1Assets_1_1AssetManager_1_1ScriptSpec.html#a1287df6b3b7b5519c0f0ddcb6ff16a58',1,'Kargono::Assets::AssetManager::ScriptSpec::Type()'],['../structKargono_1_1InputBufferElement.html#a489ee9f97dbef16af556dd7c0c369bfe',1,'Kargono::InputBufferElement::Type()'],['../structKargono_1_1UniformElement.html#acf4de37544171dcbe616f6cbd3bfff9e',1,'Kargono::UniformElement::Type()'],['../structKargono_1_1Rigidbody2DComponent.html#a2f2e39dc9f257990d09d39567d27f004',1,'Kargono::Rigidbody2DComponent::Type()'],['../structKargono_1_1ClassField.html#a68fed9f27745362e160454b0e64540f3',1,'Kargono::ClassField::Type()'],['../structKargono_1_1Script_1_1ScriptField.html#a6b8c619b18a65d4a041f00e1e7a9eada',1,'Kargono::Script::ScriptField::Type()']]]
+];
