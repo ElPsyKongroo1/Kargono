@@ -4,11 +4,11 @@
 #include "Kargono/Utility/FileSystem.h"
 
 #include "API/RenderingAPI/OpenGLShader.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 #include "API/RenderingAPI/VulkanAPI.h"
 
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)

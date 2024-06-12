@@ -4,7 +4,7 @@
 
 #include "API/RenderingAPI/OpenGLTexture.h"
 #include "API/ImageProcessing/stbAPI.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
 namespace API::Utility
 {
@@ -38,7 +38,7 @@ namespace API::Utility
 	}
 }
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	OpenGLTexture2D::OpenGLTexture2D(const Kargono::TextureSpecification& spec)
 		: m_Width(spec.Width), m_Height(spec.Height)

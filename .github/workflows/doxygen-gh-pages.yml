@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - Stable-Branch
+      - Development-Branch
 
 jobs:
   deploy:

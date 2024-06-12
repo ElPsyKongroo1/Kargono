@@ -10,7 +10,7 @@ namespace Kargono {
 
 	Scope<RendererAPI> RendererAPI::Create()
 	{
-		return CreateScope<::API::OpenGL::OpenGLRendererAPI>();
+		return CreateScope<::API::RenderingAPI::OpenGLRendererAPI>();
 	}
 
 }

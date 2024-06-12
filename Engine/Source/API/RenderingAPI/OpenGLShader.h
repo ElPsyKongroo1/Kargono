@@ -3,7 +3,7 @@
 #include "Kargono/Renderer/Shader.h"
 #include "Kargono/Math/Math.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Shader Class

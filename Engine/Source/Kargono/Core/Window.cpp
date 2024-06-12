@@ -11,7 +11,7 @@ namespace Kargono
 	Scope<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef KG_PLATFORM_WINDOWS
-		return CreateScope<API::Windows::WindowsWindow>(props);
+		return CreateScope<API::Platform::WindowsWindow>(props);
 #else
 		KG_CORE_ASSERT(false, "Unknown platform!");
 		return nullptr;

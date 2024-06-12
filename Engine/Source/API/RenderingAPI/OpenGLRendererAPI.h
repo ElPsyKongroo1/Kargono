@@ -5,7 +5,7 @@
 #include "Kargono/Renderer/VertexArray.h"
 #include "Kargono/Math/Math.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Renderer Class

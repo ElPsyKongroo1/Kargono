@@ -2,7 +2,7 @@
 
 #include "Kargono/Renderer/UniformBuffer.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Uniform Buffer Class
