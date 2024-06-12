@@ -568,7 +568,7 @@ namespace Kargono
 			if (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())
 			{
 				
-				EngineCore::GetCurrentEngineCore().GetWindow().Init();
+				EngineCore::GetActiveWindow().Init();
 				RenderCommand::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
