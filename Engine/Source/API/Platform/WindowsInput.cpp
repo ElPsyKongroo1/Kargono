@@ -7,7 +7,7 @@
 #include "API/Platform/GlfwAPI.h"
 
 
-namespace Kargono
+namespace Kargono::Input
 {
 	bool InputPolling::IsKeyPressed(const KeyCode key)
 	{

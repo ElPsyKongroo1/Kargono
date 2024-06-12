@@ -2,16 +2,17 @@
 
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Scene/SceneCamera.h"
-#include "Kargono/Renderer/Texture.h"
 #include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Renderer/Shader.h"
-#include "Kargono/Renderer/Shape.h"
+#include "Kargono/Rendering/Shader.h"
+#include "Kargono/Rendering/Shape.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Scene/EntityClass.h"
 
 #include <string>
 #include <unordered_map>
+
+namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono
 {
@@ -196,15 +197,15 @@ namespace Kargono
 
 	struct ShapeComponent
 	{
-		ShapeTypes CurrentShape = ShapeTypes::None;
+		Rendering::ShapeTypes CurrentShape = Rendering::ShapeTypes::None;
 		Ref<std::vector<Math::vec3>> Vertices {};
 		Ref<std::vector<Math::vec2>> TextureCoordinates {};
 		Ref<std::vector<uint32_t>> Indices {};
 		Ref<std::vector<Math::vec4>> VertexColors {};
-		Ref<Shader> Shader;
-		ShaderSpecification ShaderSpecification {ColorInputType::None, TextureInputType::None, false, true, true, RenderingType::DrawIndex, false};
+		Ref<Rendering::Shader> Shader;
+		Rendering::ShaderSpecification ShaderSpecification {Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
 		Assets::AssetHandle ShaderHandle;
-		Ref<Texture2D> Texture;
+		Ref<Rendering::Texture2D> Texture;
 		Assets::AssetHandle TextureHandle;
 		Buffer ShaderData;
 

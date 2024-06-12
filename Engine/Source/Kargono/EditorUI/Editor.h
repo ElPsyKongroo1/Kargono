@@ -13,7 +13,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace Kargono { class Texture2D; }
+namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
@@ -61,8 +61,8 @@ namespace Kargono::EditorUI
 		float XPosition {0.0f};
 		float YPosition {0.0f};
 		float IconSize{ 0.0f };
-		Ref<Texture2D> ActiveIcon { nullptr };
-		Ref<Texture2D> InactiveIcon { nullptr };
+		Ref<Rendering::Texture2D> ActiveIcon { nullptr };
+		Ref<Rendering::Texture2D> InactiveIcon { nullptr };
 		std::string ActiveTooltip {};
 		std::string InactiveTooltip{};
 		PositionType XPositionType{ PositionType::Inline };
@@ -130,7 +130,7 @@ namespace Kargono::EditorUI
 		static ImFont* s_RobotoMono;
 		static ImFont* s_AnonymousRegular;
 
-		static Ref<Texture2D> s_IconPlay, s_IconPause, s_IconStop,
+		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop,
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
@@ -139,7 +139,7 @@ namespace Kargono::EditorUI
 			s_IconCheckbox_Check_Disabled, s_IconCheckbox_Empty_Enabled,
 			s_IconCheckbox_Check_Enabled, s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
 
-		static Ref<Texture2D> s_DirectoryIcon, s_GenericFileIcon,
+		static Ref<Rendering::Texture2D> s_DirectoryIcon, s_GenericFileIcon,
 			s_BackIcon, s_BackInactiveIcon, s_ForwardIcon, s_ForwardInactiveIcon,
 			s_AudioIcon, s_ImageIcon, s_BinaryIcon,
 			s_SceneIcon, s_RegistryIcon, s_ScriptProjectIcon,

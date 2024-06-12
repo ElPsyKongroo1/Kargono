@@ -1,7 +1,10 @@
 #pragma once
 
 
-namespace Kargono { using MouseCode = uint16_t; }
+namespace Kargono
+{
+	using MouseCode = uint16_t;
+}
 
 namespace Kargono::Mouse
 {

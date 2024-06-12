@@ -21,7 +21,7 @@ namespace Kargono
 			bool switchScriptClassToCustomCalls = false;
 			bool updateClassName = false;
 			std::string newClassName {};
-			InputMode::InputActionBinding* bindingToUpdate{};
+			Input::InputActionBinding* bindingToUpdate{};
 
 			// Enable Delete Option
 			static bool deleteMenuToggle = false;
@@ -40,7 +40,7 @@ namespace Kargono
 			{
 				if (ImGui::Selectable("Add New Slot"))
 				{
-					InputMode::AddKeyboardCustomCallsOnUpdateSlot();
+					Input::InputMode::AddKeyboardCustomCallsOnUpdateSlot();
 					ImGui::CloseCurrentPopup();
 				}
 				if (ImGui::Selectable("Toggle Delete Option", deleteMenuToggle))
@@ -61,7 +61,7 @@ namespace Kargono
 				if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
 				ImGui::TableHeadersRow();
 				uint32_t customCallsIterator{ 0 };
-				for (auto& binding : InputMode::GetKeyboardCustomCallsOnUpdate())
+				for (auto& binding : Input::InputMode::GetKeyboardCustomCallsOnUpdate())
 				{
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
@@ -136,7 +136,7 @@ namespace Kargono
 				}
 
 				uint32_t scriptClassIterator{ 0 };
-				for (auto& [className, binding] : InputMode::GetKeyboardClassOnUpdate())
+				for (auto& [className, binding] : Input::InputMode::GetKeyboardClassOnUpdate())
 				{
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
@@ -238,25 +238,25 @@ namespace Kargono
 			}
 
 			if (updateType) {}
-			if (deleteCustomCalls) { InputMode::DeleteKeyboardCustomCallsOnUpdate(bindingToUpdate); }
-			if (deleteScriptClass) { InputMode::DeleteKeyboardScriptClassOnUpdate(bindingToUpdate); }
+			if (deleteCustomCalls) { Input::InputMode::DeleteKeyboardCustomCallsOnUpdate(bindingToUpdate); }
+			if (deleteScriptClass) { Input::InputMode::DeleteKeyboardScriptClassOnUpdate(bindingToUpdate); }
 			if (switchCustomToScriptClass)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::DeleteKeyboardCustomCallsOnUpdate(bindingToUpdate);
-				InputMode::AddKeyboardScriptClassOnUpdateSlot();
+				Input::InputMode::DeleteKeyboardCustomCallsOnUpdate(bindingToUpdate);
+				Input::InputMode::AddKeyboardScriptClassOnUpdateSlot();
 			}
 			if (switchScriptClassToCustomCalls)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::DeleteKeyboardScriptClassOnUpdate(bindingToUpdate);
-				InputMode::AddKeyboardCustomCallsOnUpdateSlot();
+				Input::InputMode::DeleteKeyboardScriptClassOnUpdate(bindingToUpdate);
+				Input::InputMode::AddKeyboardCustomCallsOnUpdateSlot();
 			}
 
 			if (updateClassName)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::UpdateKeyboardClassOnUpdateName(bindingToUpdate, newClassName);
+				Input::InputMode::UpdateKeyboardClassOnUpdateName(bindingToUpdate, newClassName);
 			}
 			ImGui::TreePop();
 		}
@@ -277,7 +277,7 @@ namespace Kargono
 			bool switchScriptClassToCustomCalls = false;
 			bool updateClassName = false;
 			std::string newClassName {};
-			InputMode::InputActionBinding* bindingToUpdate{};
+			Input::InputActionBinding* bindingToUpdate{};
 
 			// Enable Delete Option
 			static bool deleteMenuToggle = false;
@@ -296,7 +296,7 @@ namespace Kargono
 			{
 				if (ImGui::Selectable("Add New Slot"))
 				{
-					InputMode::AddKeyboardCustomCallsOnKeyPressedSlot();
+					Input::InputMode::AddKeyboardCustomCallsOnKeyPressedSlot();
 					ImGui::CloseCurrentPopup();
 				}
 				if (ImGui::Selectable("Toggle Delete Option", deleteMenuToggle))
@@ -317,7 +317,7 @@ namespace Kargono
 				if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
 				ImGui::TableHeadersRow();
 				uint32_t customCallsIterator{ 0 };
-				for (auto& binding : InputMode::GetKeyboardCustomCallsOnKeyPressed())
+				for (auto& binding : Input::InputMode::GetKeyboardCustomCallsOnKeyPressed())
 				{
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
@@ -392,7 +392,7 @@ namespace Kargono
 				}
 
 				uint32_t scriptClassIterator{ 0 };
-				for (auto& [className, binding] : InputMode::GetKeyboardClassOnKeyPressed())
+				for (auto& [className, binding] : Input::InputMode::GetKeyboardClassOnKeyPressed())
 				{
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
@@ -494,25 +494,25 @@ namespace Kargono
 			}
 
 			if (updateType) {}
-			if (deleteCustomCalls) { InputMode::DeleteKeyboardCustomCallsOnKeyPressed(bindingToUpdate); }
-			if (deleteScriptClass) { InputMode::DeleteKeyboardScriptClassOnKeyPressed(bindingToUpdate); }
+			if (deleteCustomCalls) { Input::InputMode::DeleteKeyboardCustomCallsOnKeyPressed(bindingToUpdate); }
+			if (deleteScriptClass) { Input::InputMode::DeleteKeyboardScriptClassOnKeyPressed(bindingToUpdate); }
 			if (switchCustomToScriptClass)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::DeleteKeyboardCustomCallsOnKeyPressed(bindingToUpdate);
-				InputMode::AddKeyboardScriptClassOnKeyPressedSlot();
+				Input::InputMode::DeleteKeyboardCustomCallsOnKeyPressed(bindingToUpdate);
+				Input::InputMode::AddKeyboardScriptClassOnKeyPressedSlot();
 			}
 			if (switchScriptClassToCustomCalls)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::DeleteKeyboardScriptClassOnKeyPressed(bindingToUpdate);
-				InputMode::AddKeyboardCustomCallsOnKeyPressedSlot();
+				Input::InputMode::DeleteKeyboardScriptClassOnKeyPressed(bindingToUpdate);
+				Input::InputMode::AddKeyboardCustomCallsOnKeyPressedSlot();
 			}
 
 			if (updateClassName)
 			{
 				bindingToUpdate->SetFunctionBinding("None");
-				InputMode::UpdateKeyboardClassOnKeyPressedName(bindingToUpdate, newClassName);
+				Input::InputMode::UpdateKeyboardClassOnKeyPressedName(bindingToUpdate, newClassName);
 			}
 			ImGui::TreePop();
 		}
@@ -544,7 +544,7 @@ namespace Kargono
 		{
 			if (ImGui::Selectable("Add New Slot"))
 			{
-				InputMode::AddKeyboardPollingSlot();
+				Input::InputMode::AddKeyboardPollingSlot();
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::Selectable("Toggle Delete Option", deleteMenuToggle))
@@ -564,7 +564,7 @@ namespace Kargono
 			if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
 			ImGui::TableHeadersRow();
 
-			for (auto& [key, value] : InputMode::GetKeyboardPolling())
+			for (auto& [key, value] : Input::InputMode::GetKeyboardPolling())
 			{
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);
@@ -621,9 +621,9 @@ namespace Kargono
 			ImGui::EndTable();
 		}
 
-		if (updateKeySlot) { InputMode::UpdateKeyboardPollingSlot(updateKeySlotValues.x, updateKeySlotValues.y); }
-		if (updateKey) { InputMode::UpdateKeyboardPollingKey(updateKeyValues.x, updateKeyValues.y); }
-		if (deleteKeySlot) { InputMode::DeleteKeyboardPollingSlot(slotToDelete); }
+		if (updateKeySlot) { Input::InputMode::UpdateKeyboardPollingSlot(updateKeySlotValues.x, updateKeySlotValues.y); }
+		if (updateKey) { Input::InputMode::UpdateKeyboardPollingKey(updateKeyValues.x, updateKeyValues.y); }
+		if (deleteKeySlot) { Input::InputMode::DeleteKeyboardPollingSlot(slotToDelete); }
 	}
 
 	InputEditorPanel::InputEditorPanel()
@@ -638,20 +638,20 @@ namespace Kargono
 		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow(m_PanelName, &(s_EditorApp->m_ShowInputEditor));
 
-		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(InputMode::s_InputModeHandle).string().c_str() : "None"))
+		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(Input::InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(Input::InputMode::s_InputModeHandle).string().c_str() : "None"))
 		{
 			if (ImGui::Selectable("None"))
 			{
-				InputMode::ClearInputEngine();
+				Input::InputMode::ClearInputEngine();
 				
 			}
 			for (auto& [uuid, asset] : Assets::AssetManager::GetInputModeRegistry())
 			{
 				if (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))
 				{
-					InputMode::ClearInputEngine();
+					Input::InputMode::ClearInputEngine();
 
-					InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(uuid), uuid);
+					Input::InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(uuid), uuid);
 				}
 			}
 			ImGui::EndCombo();
@@ -661,7 +661,7 @@ namespace Kargono
 
 		if (ImGui::Button("Save Current Input Mode"))
 		{
-			Assets::AssetManager::SaveInputMode(InputMode::s_InputModeHandle, InputMode::s_InputMode);
+			Assets::AssetManager::SaveInputMode(Input::InputMode::s_InputModeHandle, Input::InputMode::s_InputMode);
 		}
 		ImGui::SameLine();
 
@@ -678,14 +678,14 @@ namespace Kargono
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
 				Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewInputMode(std::string(buffer));
-				InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(newHandle), newHandle);
+				Input::InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(newHandle), newHandle);
 
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		if (!InputMode::s_InputMode)
+		if (!Input::InputMode::s_InputMode)
 		{
 			EditorUI::Editor::EndWindow();
 			return;

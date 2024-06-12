@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Renderer/Camera.h"
+#include "Kargono/Rendering/Camera.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Events/KeyEvent.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	class EditorCamera : public Camera
 	{

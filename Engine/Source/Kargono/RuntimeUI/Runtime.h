@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/Asset.h"

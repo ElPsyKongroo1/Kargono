@@ -33,21 +33,21 @@ namespace Kargono
 		// These functions are called in OnUpdate() depending on the current scene state (Edit, Runtime, and Simulation)
 
 		// This function simply renders the active scene
-		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
+		void OnUpdateEditor(Timestep ts, Rendering::EditorCamera& camera);
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
 		// This functions renders the active scene and updates the scene's physics.
-		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
+		void OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera);
 
 		// This function initializes the static data used by the OnOverlayRender()
 		//		function below. This function is called in OnAttach().
 		void InitializeOverlayData();
 	public:
-		EditorCamera m_EditorCamera;
+		Rendering::EditorCamera m_EditorCamera;
 	private:
 		std::string m_PanelName{ "Viewport" };
 		// Viewport Resources
-		Ref<Framebuffer> m_ViewportFramebuffer;
+		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		Math::vec2 m_ViewportBounds[2];

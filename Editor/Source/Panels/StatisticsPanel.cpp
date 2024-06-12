@@ -30,7 +30,7 @@ namespace Kargono
 
 		ImGui::Text("Renderer");
 		ImGui::Separator();
-		auto stats = Renderer::GetStats();
+		auto stats = Rendering::RenderingEngine::GetStats();
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::NewLine();
 

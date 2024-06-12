@@ -2,7 +2,7 @@
 
 #include "Kargono/Math/Math.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	class Camera
 	{

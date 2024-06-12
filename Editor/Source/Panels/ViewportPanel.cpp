@@ -19,7 +19,7 @@ namespace Kargono
 	{
 		// Adjust Framebuffer Size Based on Viewport
 		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
-		if (FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
+		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
 			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
 		{
@@ -28,10 +28,10 @@ namespace Kargono
 		}
 
 		// Reset Framebuffer
-		Renderer::ResetStats();
+		Rendering::RenderingEngine::ResetStats();
 		m_ViewportFramebuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		RenderCommand::Clear();
+		Rendering::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RenderCommand::Clear();
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
@@ -82,7 +82,7 @@ namespace Kargono
 			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
 				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-				Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
 				Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 				if (mainCamera)
@@ -102,11 +102,11 @@ namespace Kargono
 	}
 	void ViewportPanel::InitializeFrameBuffer()
 	{
-		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferDataFormat::RGBA8, FramebufferDataFormat::RED_INTEGER,  FramebufferDataFormat::Depth };
+		Rendering::FramebufferSpecification fbSpec;
+		fbSpec.Attachments = {Rendering::FramebufferDataFormat::RGBA8, Rendering::FramebufferDataFormat::RED_INTEGER, Rendering::FramebufferDataFormat::Depth };
 		fbSpec.Width = EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
 		fbSpec.Height = EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
-		m_ViewportFramebuffer = Framebuffer::Create(fbSpec);
+		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
@@ -192,7 +192,7 @@ namespace Kargono
 				Math::mat4 transform = tc.GetTransform();
 
 				// Snapping
-				bool snap = InputPolling::IsKeyPressed(Key::LeftControl);
+				bool snap = Input::InputPolling::IsKeyPressed(Key::LeftControl);
 				float snapValue = 0.5f;
 				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
 
@@ -223,7 +223,7 @@ namespace Kargono
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 windowPos = ImGui::GetWindowPos();
 		ImVec2 windowSize = ImGui::GetWindowSize();
-		Ref<Texture2D> icon {nullptr};
+		Ref<Rendering::Texture2D> icon {nullptr};
 
 		if (toolbarEnabled)
 		{
@@ -414,14 +414,14 @@ namespace Kargono
 			if (ImGui::BeginPopup("Toggle Viewport Camera Options"))
 			{
 				if (ImGui::MenuItem("Model Viewer", 0,
-					m_EditorCamera.GetMovementType() == EditorCamera::MovementType::ModelView))
+					m_EditorCamera.GetMovementType() == Rendering::EditorCamera::MovementType::ModelView))
 				{
-					m_EditorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+					m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
 				}
 				if (ImGui::MenuItem("FreeFly", 0,
-					m_EditorCamera.GetMovementType() == EditorCamera::MovementType::FreeFly))
+					m_EditorCamera.GetMovementType() == Rendering::EditorCamera::MovementType::FreeFly))
 				{
-					m_EditorCamera.SetMovementType(EditorCamera::MovementType::FreeFly);
+					m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::FreeFly);
 				}
 				ImGui::EndPopup();
 			}
@@ -514,9 +514,9 @@ namespace Kargono
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
-		bool shift = InputPolling::IsKeyPressed(Key::LeftShift) || InputPolling::IsKeyPressed(Key::RightShift);
-		bool alt = InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt);
+		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
+		bool shift = Input::InputPolling::IsKeyPressed(Key::LeftShift) || Input::InputPolling::IsKeyPressed(Key::RightShift);
+		bool alt = Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
@@ -583,7 +583,7 @@ namespace Kargono
 		}
 	}
 
-	void ViewportPanel::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorCamera& camera)
 	{
 		Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
@@ -593,7 +593,7 @@ namespace Kargono
 
 		// Render 2D
 		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 		if (mainCamera)
@@ -604,7 +604,7 @@ namespace Kargono
 
 	}
 
-	void ViewportPanel::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
+	void ViewportPanel::OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera)
 	{
 		EditorApp* editorLayer = EditorApp::GetCurrentApp();
 
@@ -617,8 +617,8 @@ namespace Kargono
 		Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
-	static RendererInputSpec s_CircleInputSpec{};
-	static RendererInputSpec s_LineInputSpec{};
+	static Rendering::RendererInputSpec s_CircleInputSpec{};
+	static Rendering::RendererInputSpec s_LineInputSpec{};
 	static Math::vec4 s_RectangleVertexPositions[4]
 	{
 		{ -0.5f, -0.5f, 0.0f, 1.0f },
@@ -692,14 +692,14 @@ namespace Kargono
 	{
 		// Set up Line Input Specifications for Overlay Calls
 		{
-			ShaderSpecification lineShaderSpec{ ColorInputType::FlatColor, TextureInputType::None, false, true, false, RenderingType::DrawLine, false };
+			Rendering::ShaderSpecification lineShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
 			auto [uuid, localShader] = Assets::AssetManager::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
 			ShapeComponent* lineShapeComponent = new ShapeComponent();
-			lineShapeComponent->CurrentShape = ShapeTypes::None;
+			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
 			lineShapeComponent->Vertices = nullptr;
 
 			s_LineInputSpec.Shader = localShader;
@@ -708,18 +708,18 @@ namespace Kargono
 		}
 		// Set up Circle Input Specification for Overlay Calls
 		{
-			ShaderSpecification shaderSpec{ ColorInputType::FlatColor,  TextureInputType::None, true, true, false, RenderingType::DrawIndex, false };
+			Rendering::ShaderSpecification shaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, true, true, false, Rendering::RenderingType::DrawIndex, false };
 			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
-			Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
-			Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
 
 			ShapeComponent* shapeComp = new ShapeComponent();
-			shapeComp->CurrentShape = ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Shape::s_Quad.GetIndices());
+			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 			s_CircleInputSpec.Shader = localShader;
 			s_CircleInputSpec.Buffer = localBuffer;
@@ -735,11 +735,11 @@ namespace Kargono
 		{
 			Entity camera = Scene::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
-			Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, glm::inverse(camera.GetComponent<TransformComponent>().GetTransform()));
+			Rendering::RenderingEngine::BeginScene(camera.GetComponent<CameraComponent>().Camera, glm::inverse(camera.GetComponent<TransformComponent>().GetTransform()));
 		}
 		else
 		{
-			Renderer::BeginScene(m_EditorCamera);
+			Rendering::RenderingEngine::BeginScene(m_EditorCamera);
 		}
 
 		if (s_EditorApp->m_ShowPhysicsColliders)
@@ -759,7 +759,7 @@ namespace Kargono
 						* glm::scale(Math::mat4(1.0f), scale);
 
 					s_CircleInputSpec.TransformMatrix = transform;
-					Renderer::SubmitDataToRenderer(s_CircleInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_CircleInputSpec);
 				}
 			}
 			// Box Colliders
@@ -777,7 +777,7 @@ namespace Kargono
 						* glm::scale(Math::mat4(1.0f), scale);
 
 					static Math::vec4 boxColliderColor {0.0f, 1.0f, 0.0f, 1.0f};
-					Shader::SetDataAtInputLocation<Math::vec4>(boxColliderColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+					Rendering::Shader::SetDataAtInputLocation<Math::vec4>(boxColliderColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
 					Math::vec3 lineVertices[4];
 					for (size_t i = 0; i < 4; i++)
@@ -788,22 +788,22 @@ namespace Kargono
 					s_OutputVector->push_back(lineVertices[0]);
 					s_OutputVector->push_back(lineVertices[1]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[1]);
 					s_OutputVector->push_back(lineVertices[2]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[2]);
 					s_OutputVector->push_back(lineVertices[3]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[3]);
 					s_OutputVector->push_back(lineVertices[0]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 				}
 			}
 		}
@@ -814,7 +814,7 @@ namespace Kargono
 			if (Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity()) {
 				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
-				Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
 				Math::vec3 lineVertices[8];
 
@@ -829,7 +829,7 @@ namespace Kargono
 					s_OutputVector->push_back(lineVertices[indices.x]);
 					s_OutputVector->push_back(lineVertices[indices.y]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Renderer::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
 				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
@@ -839,7 +839,7 @@ namespace Kargono
 			}
 		}
 
-		Renderer::EndScene();
+		Rendering::RenderingEngine::EndScene();
 	}
 
 	void ViewportPanel::DrawFrustrum(Entity& entity)
@@ -851,7 +851,7 @@ namespace Kargono
 		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
 		auto cameraProjectionType = camera.Camera.GetProjectionType();
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
-		Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
 		Math::vec3 lineVertices[9];
 
@@ -872,14 +872,14 @@ namespace Kargono
 			if (iteration >= 12 && !colorChanged)
 			{
 				selectionColor = { 0.3f, 0.1f, 0.8f, 1.0f };
-				Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 				colorChanged = true;
 			}
 			s_OutputVector->clear();
 			s_OutputVector->push_back(lineVertices[indices.x]);
 			s_OutputVector->push_back(lineVertices[indices.y]);
 			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Renderer::SubmitDataToRenderer(s_LineInputSpec);
+			Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 			iteration++;
 		}
 

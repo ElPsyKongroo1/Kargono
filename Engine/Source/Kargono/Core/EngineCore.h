@@ -5,7 +5,7 @@
 #include "Kargono/Core/Window.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/ApplicationEvent.h"
-#include "Kargono/Renderer/InputBuffer.h"
+#include "Kargono/Rendering/InputBuffer.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/Events/NetworkingEvent.h"
@@ -15,8 +15,6 @@
 #include <atomic>
 #include <filesystem>
 #include <chrono>
-
-
 
 int main(int argc, char** argv);
 

@@ -8,12 +8,12 @@
 
 namespace API::Utility
 {
-	static GLenum KargonoFormatToGLDataFormat(Kargono::ImageFormat format)
+	static GLenum KargonoFormatToGLDataFormat(Kargono::Rendering::ImageFormat format)
 	{
 		switch (format)
 		{
-		case Kargono::ImageFormat::RGB8: return GL_RGB;
-		case Kargono::ImageFormat::RGBA8: return GL_RGBA;
+		case Kargono::Rendering::ImageFormat::RGB8: return GL_RGB;
+		case Kargono::Rendering::ImageFormat::RGBA8: return GL_RGBA;
 		default:
 		{
 			KG_ERROR("Invalid ImageFormat in KargonoFormatToGLDataFormat");
@@ -22,12 +22,12 @@ namespace API::Utility
 		}
 	}
 
-	static GLenum KargonoFormatToGLInternalFormat(Kargono::ImageFormat format)
+	static GLenum KargonoFormatToGLInternalFormat(Kargono::Rendering::ImageFormat format)
 	{
 		switch (format)
 		{
-		case Kargono::ImageFormat::RGB8: return GL_RGB8;
-		case Kargono::ImageFormat::RGBA8: return GL_RGBA8;
+		case Kargono::Rendering::ImageFormat::RGB8: return GL_RGB8;
+		case Kargono::Rendering::ImageFormat::RGBA8: return GL_RGBA8;
 		default:
 		{
 			KG_ERROR("Invalid ImageFormat in KargonoFormatToGLInternalFormat");
@@ -40,7 +40,7 @@ namespace API::Utility
 
 namespace API::RenderingAPI
 {
-	OpenGLTexture2D::OpenGLTexture2D(const Kargono::TextureSpecification& spec)
+	OpenGLTexture2D::OpenGLTexture2D(const Kargono::Rendering::TextureSpecification& spec)
 		: m_Width(spec.Width), m_Height(spec.Height)
 	{
 		m_InternalFormat = Utility::KargonoFormatToGLInternalFormat(spec.Format);

@@ -41,17 +41,17 @@
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
 
-//-----------------Renderer-----------------//
-#include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/RenderCommand.h"
-#include "Kargono/Renderer/InputBuffer.h"
-#include "Kargono/Renderer/Shader.h"
-#include "Kargono/Renderer/Shape.h"
-#include "Kargono/Renderer/Framebuffer.h"
-#include "Kargono/Renderer/Texture.h"
-#include "Kargono/Renderer/VertexArray.h"
-#include "Kargono/Renderer/EditorCamera.h"
+//-----------------Rendering-----------------//
+#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderCommand.h"
+#include "Kargono/Rendering/InputBuffer.h"
+#include "Kargono/Rendering/Shader.h"
+#include "Kargono/Rendering/Shape.h"
+#include "Kargono/Rendering/Framebuffer.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/Rendering/VertexArray.h"
+#include "Kargono/Rendering/EditorCamera.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scene/Scene.h"

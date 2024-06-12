@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Kargono/Renderer/RendererAPI.h"
+#include "Kargono/Rendering/RendererAPI.h"
 #include "Kargono/Math/Math.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	class RenderCommand
 	{

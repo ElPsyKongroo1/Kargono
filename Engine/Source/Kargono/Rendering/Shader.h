@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/InputBuffer.h"
-#include "Kargono/Renderer/UniformBuffer.h"
-#include "Kargono/Renderer/VertexArray.h"
+#include "Kargono/Rendering/InputBuffer.h"
+#include "Kargono/Rendering/UniformBuffer.h"
+#include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Core/Buffer.h"
-#include "Kargono/Renderer/Shape.h"
+#include "Kargono/Rendering/Shape.h"
 #include "Kargono/Math/Math.h"
 
 #include <string>
@@ -17,13 +17,16 @@
 
 namespace Kargono
 {
+	struct ShapeComponent;
+	struct TransformComponent;
+}
 
+namespace Kargono::Rendering
+{
 	typedef unsigned int GLenum;
 
 	class Shader;
 	class Texture2D;
-	struct ShapeComponent;
-	struct TransformComponent;
 
 	struct DrawCallBuffer
 	{
@@ -175,47 +178,47 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	static std::string ColorInputTypeToString(ColorInputType colorInput)
+	static std::string ColorInputTypeToString(Rendering::ColorInputType colorInput)
 	{
 		switch (colorInput)
 		{
-		case ColorInputType::None: return "None";
-		case ColorInputType::FlatColor: return "FlatColor";
-		case ColorInputType::VertexColor: return "VertexColor";
+		case Rendering::ColorInputType::None: return "None";
+		case Rendering::ColorInputType::FlatColor: return "FlatColor";
+		case Rendering::ColorInputType::VertexColor: return "VertexColor";
 		}
 		KG_ERROR("Unknown Data Type sent to ColorInputToString Function");
 		return "None";
 	}
 
-	static ColorInputType StringToColorInputType(std::string_view string)
+	static Rendering::ColorInputType StringToColorInputType(std::string_view string)
 	{
-		if (string == "None") { return ColorInputType::None; }
-		if (string == "FlatColor") { return ColorInputType::FlatColor; }
-		if (string == "VertexColor") { return ColorInputType::VertexColor; }
+		if (string == "None") { return Rendering::ColorInputType::None; }
+		if (string == "FlatColor") { return Rendering::ColorInputType::FlatColor; }
+		if (string == "VertexColor") { return Rendering::ColorInputType::VertexColor; }
 
-		KG_ERROR("Unknown Data Type sent to StringToColorInputType Function");
-		return ColorInputType::None;
+		KG_ERROR("Unknown Data Type sent to StringToRendering::ColorInputType Function");
+		return Rendering::ColorInputType::None;
 	}
 
-	static std::string TextureInputTypeToString(TextureInputType textureInput)
+	static std::string TextureInputTypeToString(Rendering::TextureInputType textureInput)
 	{
 		switch (textureInput)
 		{
-		case TextureInputType::None: return "None";
-		case TextureInputType::ColorTexture: return "ColorTexture";
-		case TextureInputType::TextTexture: return "TextTexture";
+		case Rendering::TextureInputType::None: return "None";
+		case Rendering::TextureInputType::ColorTexture: return "ColorTexture";
+		case Rendering::TextureInputType::TextTexture: return "TextTexture";
 		}
 		KG_ERROR("Unknown Data Type sent to TextureInputToString Function");
 		return "None";
 	}
 
-	static TextureInputType StringToTextureInputType(std::string_view string)
+	static Rendering::TextureInputType StringToTextureInputType(std::string_view string)
 	{
-		if (string == "None") { return TextureInputType::None; }
-		if (string == "ColorTexture") { return TextureInputType::ColorTexture; }
-		if (string == "TextTexture") { return TextureInputType::TextTexture; }
+		if (string == "None") { return Rendering::TextureInputType::None; }
+		if (string == "ColorTexture") { return Rendering::TextureInputType::ColorTexture; }
+		if (string == "TextTexture") { return Rendering::TextureInputType::TextTexture; }
 
 		KG_ERROR("Unknown Data Type sent to StringToTextureInputType Function");
-		return TextureInputType::None;
+		return Rendering::TextureInputType::None;
 	}
 }

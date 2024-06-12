@@ -518,7 +518,7 @@ TIMESTAMP              = NO
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -649,13 +649,13 @@ HIDE_COMPOUND_REFERENCE= NO
 # will show which file needs to be included to use the class.
 # The default value is: YES.
 
-SHOW_HEADERFILE        = NO
+SHOW_HEADERFILE        = YES
 
 # If the SHOW_INCLUDE_FILES tag is set to YES then doxygen will put a list of
 # the files that are included by a file in the documentation of that file.
 # The default value is: YES.
 
-SHOW_INCLUDE_FILES     = NO
+SHOW_INCLUDE_FILES     = YES
 
 # If the SHOW_GROUPED_MEMB_INC tag is set to YES then Doxygen will add for each
 # grouped member an include statement to the documentation, telling the reader
@@ -777,7 +777,7 @@ MAX_INITIALIZER_LINES  = 30
 # list will mention the files that were used to generate the documentation.
 # The default value is: YES.
 
-SHOW_USED_FILES        = NO
+SHOW_USED_FILES        = YES
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page. This
 # will remove the Files entry from the Quick Index and from the Folder Tree View
@@ -791,7 +791,7 @@ SHOW_FILES             = YES
 # Folder Tree View (if specified).
 # The default value is: YES.
 
-SHOW_NAMESPACES        = NO
+SHOW_NAMESPACES        = YES
 
 # The FILE_VERSION_FILTER tag can be used to specify a program or script that
 # doxygen should invoke to get the current version for each file (typically from
@@ -2489,7 +2489,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # set to NO
 # The default value is: NO.
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
 # to run in parallel. When set to 0 doxygen will base this on the number of
@@ -2548,7 +2548,7 @@ DOT_FONTPATH           =
 # Possible values are: NO, YES, TEXT, GRAPH and BUILTIN.
 # The default value is: YES.
 
-CLASS_GRAPH            = NO
+CLASS_GRAPH            = YES
 
 # If the COLLABORATION_GRAPH tag is set to YES then doxygen will generate a
 # graph for each documented class showing the direct and indirect implementation
@@ -2646,7 +2646,7 @@ INCLUDED_BY_GRAPH      = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALL_GRAPH             = NO
+CALL_GRAPH             = YES
 
 # If the CALLER_GRAPH tag is set to YES then doxygen will generate a caller
 # dependency graph for every global function or class method.
@@ -2658,7 +2658,7 @@ CALL_GRAPH             = NO
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALLER_GRAPH           = NO
+CALLER_GRAPH           = YES
 
 # If the GRAPHICAL_HIERARCHY tag is set to YES then doxygen will graphical
 # hierarchy of all classes instead of a textual one.

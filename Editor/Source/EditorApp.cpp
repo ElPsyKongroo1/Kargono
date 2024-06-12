@@ -47,12 +47,12 @@ namespace Kargono
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
-		Renderer::Init();
-		Renderer::SetLineWidth(1.0f);
+		Rendering::RenderingEngine::Init();
+		Rendering::RenderingEngine::SetLineWidth(1.0f);
 		RuntimeUI::Text::Init();
 		RuntimeUI::Runtime::Init();
 
-		m_ViewportPanel->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
 		m_ViewportPanel->InitializeOverlayData();
 
@@ -341,9 +341,9 @@ namespace Kargono
 			}
 		}
 
-		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
-		bool shift = InputPolling::IsKeyPressed(Key::LeftShift) || InputPolling::IsKeyPressed(Key::RightShift);
-		bool alt = InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt);
+		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
+		bool shift = Input::InputPolling::IsKeyPressed(Key::LeftShift) || Input::InputPolling::IsKeyPressed(Key::RightShift);
+		bool alt = Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
@@ -419,7 +419,7 @@ namespace Kargono
 	{
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
-			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !InputPolling::IsKeyPressed(Key::LeftAlt) && *Scene::GetActiveScene()->GetHoveredEntity())
+			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputPolling::IsKeyPressed(Key::LeftAlt) && *Scene::GetActiveScene()->GetHoveredEntity())
 			{
 				m_SceneHierarchyPanel->SetSelectedEntity(*Scene::GetActiveScene()->GetHoveredEntity());
 				// Algorithm to enable double clicking for an entity!
@@ -431,7 +431,7 @@ namespace Kargono
 					auto& transformComponent = Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<TransformComponent>();
 					m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
 					m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-					m_ViewportPanel->m_EditorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+					m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
 				}
 				previousTime = currentTime;
 				previousEntity = *Scene::GetActiveScene()->GetHoveredEntity();
@@ -569,7 +569,7 @@ namespace Kargono
 			{
 				
 				EngineCore::GetActiveWindow().Init();
-				RenderCommand::Init();
+				Rendering::RenderCommand::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
 
@@ -687,11 +687,11 @@ namespace Kargono
 			m_EditorUIObjectHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
 		}
 
-		if (!InputMode::s_InputMode) { m_EditorInputMode = nullptr; }
+		if (!Input::InputMode::s_InputMode) { m_EditorInputMode = nullptr; }
 		else
 		{
-			m_EditorInputMode = InputMode::s_InputMode;
-			m_EditorInputModeHandle = InputMode::s_InputModeHandle;
+			m_EditorInputMode = Input::InputMode::s_InputMode;
+			m_EditorInputModeHandle = Input::InputMode::s_InputModeHandle;
 		}
 
 		// Load Default Game State
@@ -763,12 +763,12 @@ namespace Kargono
 		// Clear InputModes during runtime.
 		if (m_EditorInputMode)
 		{
-			InputMode::LoadInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputMode::LoadInputMode(m_EditorInputMode, m_EditorInputModeHandle);
 		}
 		else
 		{
-			InputMode::s_InputMode = nullptr;
-			InputMode::s_InputModeHandle = 0;
+			Input::InputMode::s_InputMode = nullptr;
+			Input::InputMode::s_InputModeHandle = 0;
 		}
 
 		GameState::s_GameState = nullptr;

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/RendererAPI.h"
-#include "Kargono/Renderer/VertexArray.h"
+#include "Kargono/Rendering/RendererAPI.h"
+#include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Math/Math.h"
 
 namespace API::RenderingAPI
@@ -12,7 +12,7 @@ namespace API::RenderingAPI
 	//============================================================
 	// This class does not hold any data, but helps initialize the default OpenGL settings required
 	//		by the renderer and provides a list of functions that update the OpenGL context.
-	class OpenGLRendererAPI : public Kargono::RendererAPI
+	class OpenGLRendererAPI : public Kargono::Rendering::RendererAPI
 	{
 	public:
 		//==============================
@@ -52,11 +52,11 @@ namespace API::RenderingAPI
 		//		with the function denoted by comparisonType. Ex. We can pass if the stencil buffer value at that location equals
 		//		the reference value. Note that this function is only meant to dictate how the stencil buffer should be updated
 		//		depending on the results of the stencil test. This does not affect the rendering of the pixel!
-		virtual void StencilTestFunc(Kargono::StencilComparisonType comparisonType, int32_t reference, uint32_t mask) override;
+		virtual void StencilTestFunc(Kargono::Rendering::StencilComparisonType comparisonType, int32_t reference, uint32_t mask) override;
 		// This function denotes the actions that occur when a stencil test is passed or failed or if the depth test fails. The functions denotes
 		//		by the enums can modify the stencil buffer in numerous different ways. Ex: You can set the stencil test to StencilOptions::Replace
 		//		to update the stencil buffer with the ref value from StencilTestFunc() when the stencil test fails.
-		virtual void StencilTestOptions(Kargono::StencilOptions sfail, Kargono::StencilOptions dfail, Kargono::StencilOptions sdpass) override;
+		virtual void StencilTestOptions(Kargono::Rendering::StencilOptions sfail, Kargono::Rendering::StencilOptions dfail, Kargono::Rendering::StencilOptions sdpass) override;
 		// This function sets the line width when a render call is made to the DrawLines() function.
 		virtual void SetLineWidth(float width) override;
 
@@ -70,16 +70,16 @@ namespace API::RenderingAPI
 		//		0, 5, 6   1, 2, 0  6, 4 ,2; which will draw three separate triangles using the given vertices.
 
 		// This DrawIndexed() uses the currently bound indexArray in the OpenGL context
-		virtual void DrawIndexed(const Kargono::Ref<Kargono::VertexArray>& vertexArray, uint32_t indexCount = 0) override;
+		virtual void DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t indexCount = 0) override;
 		// This DrawIndexed() uses the provided index buffer to draw.
-		virtual void DrawIndexed(const Kargono::Ref<Kargono::VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount) override;
+		virtual void DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount) override;
 		// This function simply connects each pair of vertices as an individual line.
 		//		Ex: A vertex buffer with vertices 0, 1, 2, 3, 4, 5 will draw the following lines:
 		//		{0, 1} {2, 3} {4, 5}
-		virtual void DrawLines(const Kargono::Ref<Kargono::VertexArray>& vertexArray, uint32_t vertexCount) override;
+		virtual void DrawLines(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount) override;
 		// This function simply connects trios of vertices to form a triangle.
 		//		Ex: A vertex buffer with vertices 0, 1, 2, 3, 4, 5 will draw the following triangles:
 		//		{0, 1, 2} {3, 4, 5}
-		virtual void DrawTriangles(const Kargono::Ref<Kargono::VertexArray>& vertexArray, uint32_t vertexCount) override;
+		virtual void DrawTriangles(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount) override;
 	};
 }

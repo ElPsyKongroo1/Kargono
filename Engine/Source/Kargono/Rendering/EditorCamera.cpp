@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
@@ -10,7 +10,8 @@
 #include "API/Platform/GlfwAPI.h"
 
 
-namespace Kargono {
+namespace Kargono::Rendering
+{
 
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
@@ -61,7 +62,7 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
-		if (InputPolling::IsKeyPressed(Key::LeftAlt) || InputPolling::IsKeyPressed(Key::RightAlt))
+		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt))
 		{
 			EditorUI::Editor::SetDisableLeftClick(true);
 		}
@@ -83,17 +84,17 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdateModelView(Timestep ts)
 	{
-		if (InputPolling::IsKeyPressed(Key::LeftAlt))
+		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
-			const Math::vec2& mouse{ InputPolling::GetMouseX(), InputPolling::GetMouseY() };
+			const Math::vec2& mouse{ Input::InputPolling::GetMouseX(), Input::InputPolling::GetMouseY() };
 			Math::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
-			if (InputPolling::IsMouseButtonPressed(Mouse::ButtonMiddle))
+			if (Input::InputPolling::IsMouseButtonPressed(Mouse::ButtonMiddle))
 				MousePan(delta);
-			else if (InputPolling::IsMouseButtonPressed(Mouse::ButtonLeft))
+			else if (Input::InputPolling::IsMouseButtonPressed(Mouse::ButtonLeft))
 				MouseRotate(delta);
-			else if (InputPolling::IsMouseButtonPressed(Mouse::ButtonRight))
+			else if (Input::InputPolling::IsMouseButtonPressed(Mouse::ButtonRight))
 				MouseZoom(delta.y);
 
 			UpdateView();
@@ -103,7 +104,7 @@ namespace Kargono {
 
 	void EditorCamera::OnUpdateFreeFly(Timestep ts)
 	{
-		if (InputPolling::IsKeyPressed(Key::LeftAlt))
+		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			MouseMovement();
 			KeyboardMovement(ts);
@@ -114,7 +115,7 @@ namespace Kargono {
 
 	void EditorCamera::MouseMovement()
 	{
-		const Math::vec2& mouse{ InputPolling::GetMouseX(), InputPolling::GetMouseY() };
+		const Math::vec2& mouse{ Input::InputPolling::GetMouseX(), Input::InputPolling::GetMouseY() };
 		Math::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 		m_InitialMousePosition = mouse;
 		if (m_MousePaused)
@@ -174,7 +175,7 @@ namespace Kargono {
 
 	bool EditorCamera::OnMouseScrollModelView(Events::MouseScrolledEvent& e)
 	{
-		if (InputPolling::IsKeyPressed(Key::LeftAlt))
+		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			float delta = e.GetYOffset() * 0.1f;
 			MouseZoom(delta);
@@ -185,7 +186,7 @@ namespace Kargono {
 
 	bool EditorCamera::OnMouseScrollFreeFly(Events::MouseScrolledEvent& e)
 	{
-		if (InputPolling::IsKeyPressed(Key::LeftAlt))
+		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt))
 		{
 			float delta = e.GetYOffset() * 5.0f;
 			MouseKeyboardSpeed(delta);
@@ -195,27 +196,27 @@ namespace Kargono {
 
 	void EditorCamera::KeyboardMovement(Timestep ts)
 	{
-		if (InputPolling::IsKeyPressed(Key::W))
+		if (Input::InputPolling::IsKeyPressed(Key::W))
 		{
 			m_FocalPoint += GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (InputPolling::IsKeyPressed(Key::S))
+		if (Input::InputPolling::IsKeyPressed(Key::S))
 		{
 			m_FocalPoint -= GetForwardDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (InputPolling::IsKeyPressed(Key::A))
+		if (Input::InputPolling::IsKeyPressed(Key::A))
 		{
 			m_FocalPoint -= GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (InputPolling::IsKeyPressed(Key::D))
+		if (Input::InputPolling::IsKeyPressed(Key::D))
 		{
 			m_FocalPoint += GetRightDirection() * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (InputPolling::IsKeyPressed(Key::Q))
+		if (Input::InputPolling::IsKeyPressed(Key::Q))
 		{
 			m_FocalPoint += Math::vec3(0.0f, -1.0f, 0.0f) * static_cast<float>(ts) * m_KeyboardSpeed;
 		}
-		if (InputPolling::IsKeyPressed(Key::E))
+		if (Input::InputPolling::IsKeyPressed(Key::E))
 		{
 			m_FocalPoint += Math::vec3(0.0f, 1.0f, 0.0f) * static_cast<float>(ts) * m_KeyboardSpeed;
 		}

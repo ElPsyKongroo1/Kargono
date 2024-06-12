@@ -10,57 +10,60 @@
 #include <functional>
 #include <string>
 
-namespace Kargono::Assets { class AssetManager; }
-namespace Kargono
+namespace Kargono::Assets
 {
-	class InputMode
+	class AssetManager;
+}
+
+namespace Kargono::Input
+{
+
+	enum InputActionTypes
+	{
+		None = 0, KeyboardAction = 1
+	};
+
+	class InputActionBinding
 	{
 	public:
+		virtual ~InputActionBinding() = default;
+	public:
+		virtual void CallFunction() = 0;
+	protected:
+		virtual void CheckStatus() = 0;
+	public:
+		InputActionTypes GetActionType() const { return m_BindingType; }
+		std::string& GetFunctionBinding() { return m_FunctionName; }
+		void SetFunctionBinding(const std::string& function) { m_FunctionName = function; }
+	protected:
+		InputActionTypes m_BindingType{ InputActionTypes::None };
+		std::string m_FunctionName{"None"};
+	};
 
-		enum InputActionTypes
+
+	class KeyboardActionBinding : public InputActionBinding
+	{
+	public:
+		KeyboardActionBinding()
+			: InputActionBinding()
 		{
-			None = 0, KeyboardAction = 1
-		};
+			m_BindingType = InputActionTypes::KeyboardAction;
+		}
+		virtual ~KeyboardActionBinding() override = default;
+	public:
+		virtual void CallFunction() override;
+	protected:
+		virtual void CheckStatus() override;
+	public:
+		KeyCode GetKeyBinding() const { return m_KeyBinding; }
+		void SetKeyBinding(KeyCode code) { m_KeyBinding = code; }
 
-		class InputActionBinding
-		{
-		public:
-			virtual ~InputActionBinding() = default;
-		public:
-			virtual void CallFunction() = 0;
-		protected:
-			virtual void CheckStatus() = 0;
-		public:
-			InputActionTypes GetActionType() const { return m_BindingType; }
-			std::string& GetFunctionBinding() { return m_FunctionName; }
-			void SetFunctionBinding(const std::string& function) { m_FunctionName = function; }
-		protected:
-			InputActionTypes m_BindingType{ InputActionTypes::None };
-			std::string m_FunctionName{"None"};
-		};
+	private:
+		KeyCode m_KeyBinding{ Key::D0 };
+	};
 
-
-		class KeyboardActionBinding : public InputActionBinding
-		{
-		public:
-			KeyboardActionBinding()
-				: InputActionBinding()
-			{
-				m_BindingType = InputActionTypes::KeyboardAction;
-			}
-			virtual ~KeyboardActionBinding() override = default;
-		public:
-			virtual void CallFunction() override;
-		protected:
-			virtual void CheckStatus() override;
-		public:
-			KeyCode GetKeyBinding() const { return m_KeyBinding; }
-			void SetKeyBinding(KeyCode code) { m_KeyBinding = code; }
-
-		private:
-			KeyCode m_KeyBinding{Key::D0};
-		};
-
+	class InputMode
+	{
 	public:
 		static void ClearInputEngine();
 
@@ -77,22 +80,22 @@ namespace Kargono
 		static std::vector<std::tuple<uint16_t, KeyCode>>& GetKeyboardPolling();
 
 		static void AddKeyboardCustomCallsOnUpdateSlot();
-		static void DeleteKeyboardCustomCallsOnUpdate(InputMode::InputActionBinding* bindingRef);
+		static void DeleteKeyboardCustomCallsOnUpdate(InputActionBinding* bindingRef);
 		static std::vector<KeyboardActionBinding*>& GetKeyboardCustomCallsOnUpdate();
 
 		static void AddKeyboardScriptClassOnUpdateSlot();
-		static void DeleteKeyboardScriptClassOnUpdate(InputMode::InputActionBinding* bindingRef);
-		static void UpdateKeyboardClassOnUpdateName(InputMode::InputActionBinding* bindingRef, const std::string& newClassName);
-		static std::vector<std::tuple<std::string, InputMode::KeyboardActionBinding*>>& GetKeyboardClassOnUpdate();
+		static void DeleteKeyboardScriptClassOnUpdate(InputActionBinding* bindingRef);
+		static void UpdateKeyboardClassOnUpdateName(InputActionBinding* bindingRef, const std::string& newClassName);
+		static std::vector<std::tuple<std::string, KeyboardActionBinding*>>& GetKeyboardClassOnUpdate();
 
 		static void AddKeyboardCustomCallsOnKeyPressedSlot();
-		static void DeleteKeyboardCustomCallsOnKeyPressed(InputMode::InputActionBinding* bindingRef);
+		static void DeleteKeyboardCustomCallsOnKeyPressed(InputActionBinding* bindingRef);
 		static std::vector<KeyboardActionBinding*>& GetKeyboardCustomCallsOnKeyPressed();
 
 		static void AddKeyboardScriptClassOnKeyPressedSlot();
-		static void DeleteKeyboardScriptClassOnKeyPressed(InputMode::InputActionBinding* bindingRef);
-		static void UpdateKeyboardClassOnKeyPressedName(InputMode::InputActionBinding* bindingRef, const std::string& newClassName);
-		static std::vector<std::tuple<std::string, InputMode::KeyboardActionBinding*>>& GetKeyboardClassOnKeyPressed();
+		static void DeleteKeyboardScriptClassOnKeyPressed(InputActionBinding* bindingRef);
+		static void UpdateKeyboardClassOnKeyPressedName(InputActionBinding* bindingRef, const std::string& newClassName);
+		static std::vector<std::tuple<std::string, KeyboardActionBinding*>>& GetKeyboardClassOnKeyPressed();
 
 
 		//=========================
@@ -131,23 +134,23 @@ namespace Kargono::Utility
 	//==============================
 	// InputMode::InputActionTypes <-> String Conversions
 	//==============================
-	inline std::string InputActionTypeToString(Kargono::InputMode::InputActionTypes type)
+	inline std::string InputActionTypeToString(Input::InputActionTypes type)
 	{
 		switch (type)
 		{
-		case Kargono::InputMode::InputActionTypes::KeyboardAction: return "KeyboardAction";
-		case Kargono::InputMode::InputActionTypes::None: return "None";
+		case Input::InputActionTypes::KeyboardAction: return "KeyboardAction";
+		case Input::InputActionTypes::None: return "None";
 		}
 		KG_ERROR("Unknown Type of InputMode::InputActionTypes.");
 		return "";
 	}
 
-	inline Kargono::InputMode::InputActionTypes StringToInputActionType(std::string type)
+	inline Input::InputActionTypes StringToInputActionType(std::string type)
 	{
-		if (type == "KeyboardAction") { return Kargono::InputMode::InputActionTypes::KeyboardAction; }
-		if (type == "None") { return Kargono::InputMode::InputActionTypes::None; }
+		if (type == "KeyboardAction") { return Input::InputActionTypes::KeyboardAction; }
+		if (type == "None") { return Input::InputActionTypes::None; }
 
 		KG_ERROR("Unknown Type of InputMode::InputActionTypes String.");
-		return Kargono::InputMode::InputActionTypes::None;
+		return Input::InputActionTypes::None;
 	}
 }

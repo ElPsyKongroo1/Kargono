@@ -1,11 +1,11 @@
 #include "kgpch.h"
 
-#include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/Texture.h"
+#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/Texture.h"
 
 #include "API/RenderingAPI/OpenGLTexture.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	Ref<Texture2D> Texture2D::Create(const TextureSpecification& spec)
 	{
@@ -19,7 +19,7 @@ namespace Kargono
 	{
 		return CreateRef<API::RenderingAPI::OpenGLTexture2D>(buffer, metadata);
 	}
-	Ref<Kargono::Texture2D> Texture2D::CreateEditorTexture(const std::filesystem::path& path)
+	Ref<Texture2D> Texture2D::CreateEditorTexture(const std::filesystem::path& path)
 	{
 		KG_ASSERT(path.is_absolute(), "Path provided to texture create function is not an absolute path!")
 			return CreateRef<API::RenderingAPI::OpenGLTexture2D>(path.string());
