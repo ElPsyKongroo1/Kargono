@@ -10,6 +10,6 @@ namespace Kargono
 {
 	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
-		return CreateRef<API::OpenGL::OpenGLFramebuffer>(spec);
+		return CreateRef<API::RenderingAPI::OpenGLFramebuffer>(spec);
 	}
 }

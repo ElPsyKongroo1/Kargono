@@ -2,9 +2,9 @@
 
 #include "API/RenderingAPI/OpenGLBuffer.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// Vertex Buffer

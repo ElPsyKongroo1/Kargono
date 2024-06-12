@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Kargono\Renderer\InputBuffer.h"
+#include "Kargono/Renderer/InputBuffer.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL VertexBuffer Class

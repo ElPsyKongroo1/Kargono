@@ -4,9 +4,9 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Core/Buffer.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Texture Class

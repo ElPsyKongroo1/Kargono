@@ -10,16 +10,16 @@
 namespace Kargono {
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
-		return CreateRef<API::OpenGL::OpenGLVertexBuffer>(size);
+		return CreateRef<API::RenderingAPI::OpenGLVertexBuffer>(size);
 	}
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
-		return CreateRef<API::OpenGL::OpenGLVertexBuffer>(vertices, size);
+		return CreateRef<API::RenderingAPI::OpenGLVertexBuffer>(vertices, size);
 	}
 
 	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
-		return CreateRef<API::OpenGL::OpenGLIndexBuffer>(indices, count);
+		return CreateRef<API::RenderingAPI::OpenGLIndexBuffer>(indices, count);
 	}
 
 }
