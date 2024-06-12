@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Kargono/Renderer/Camera.h"
+#include "Kargono/Rendering/Camera.h"
 #include "Kargono/Math/Math.h"
 
 namespace Kargono
 {
-	class SceneCamera : public Camera
+	class SceneCamera : public Rendering::Camera
 	{
 	public:
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };

@@ -3,7 +3,7 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Projects/Project.h"
 
 #include "API/Platform/WindowsWindow.h"
@@ -67,7 +67,7 @@ namespace API::Platform
 
 		// Create New Window Through GLFW
 		#if defined(KG_DEBUG)
-		if (Kargono::Renderer::GetAPI() == Kargono::RenderAPI::OpenGL)
+		if (Kargono::Rendering::RenderingEngine::GetAPI() == Kargono::Rendering::RenderAPI::OpenGL)
 		{
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		}

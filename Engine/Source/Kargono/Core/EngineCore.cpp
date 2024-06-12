@@ -5,8 +5,8 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Renderer/RenderCommand.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderCommand.h"
+#include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
@@ -172,14 +172,14 @@ namespace Kargono
 		}
 
 		m_Minimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		Rendering::RenderingEngine::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}
 
 	bool EngineCore::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
-		Timers::AsyncBusyTimer::CleanUpClosedTimers();
+		AsyncBusyTimer::CleanUpClosedTimers();
 		return false;
 	}
 

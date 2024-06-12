@@ -201,8 +201,8 @@ namespace Kargono
 							case ImGuiInputTextFlags_CallbackAlways:
 							{
 								Document& activeDocument = *(Document*)data->UserData;
-								if (activeDocument.Edited && InputPolling::IsKeyPressed(Key::S) &&
-									(InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl)))
+								if (activeDocument.Edited && Input::InputPolling::IsKeyPressed(Key::S) &&
+									(Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl)))
 								{
 									s_OnSaveFile();
 								}
@@ -259,7 +259,7 @@ namespace Kargono
 	}
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = InputPolling::IsKeyPressed(Key::LeftControl) || InputPolling::IsKeyPressed(Key::RightControl);
+		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
 
 		switch (event.GetKeyCode())
 		{

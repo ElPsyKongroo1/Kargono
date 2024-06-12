@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Renderer/Texture.h"
+#include "Kargono/Rendering/Texture.h"
 
 #include "API/Cryptography/hashlibraryAPI.h"
 #include "API/ImageProcessing/stbAPI.h"

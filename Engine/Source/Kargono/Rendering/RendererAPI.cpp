@@ -1,10 +1,11 @@
 #include "kgpch.h"
 
-#include "Kargono/Renderer/RendererAPI.h"
+#include "Kargono/Rendering/RendererAPI.h"
 
 #include "API/RenderingAPI/OpenGLRendererAPI.h"
 
-namespace Kargono {
+namespace Kargono::Rendering
+{
 
 	RenderAPI RendererAPI::s_API = RenderAPI::OpenGL;
 

@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 
 	enum class UniformDataType
@@ -87,56 +87,56 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	static uint32_t UniformDataTypeSize(UniformDataType type)
+	static uint32_t UniformDataTypeSize(Rendering::UniformDataType type)
 	{
 		switch (type)
 		{
-		case UniformDataType::Float:		return 4;
-		case UniformDataType::Float2:		return 4 * 2;
-		case UniformDataType::Float3:		return 4 * 3;
-		case UniformDataType::Float4:		return 4 * 4;
-		case UniformDataType::Mat3:			return 4 * 3 * 3;
-		case UniformDataType::Mat4:			return 4 * 4 * 4;
-		case UniformDataType::Int:			return 4;
-		case UniformDataType::Int2:			return 4 * 2;
-		case UniformDataType::Int3:			return 4 * 3;
-		case UniformDataType::Int4:			return 4 * 4;
-		case UniformDataType::Bool:			return 1;
-		case UniformDataType::Sampler2D:	return 4 * 4;
+		case Rendering::UniformDataType::Float:		return 4;
+		case Rendering::UniformDataType::Float2:		return 4 * 2;
+		case Rendering::UniformDataType::Float3:		return 4 * 3;
+		case Rendering::UniformDataType::Float4:		return 4 * 4;
+		case Rendering::UniformDataType::Mat3:			return 4 * 3 * 3;
+		case Rendering::UniformDataType::Mat4:			return 4 * 4 * 4;
+		case Rendering::UniformDataType::Int:			return 4;
+		case Rendering::UniformDataType::Int2:			return 4 * 2;
+		case Rendering::UniformDataType::Int3:			return 4 * 3;
+		case Rendering::UniformDataType::Int4:			return 4 * 4;
+		case Rendering::UniformDataType::Bool:			return 1;
+		case Rendering::UniformDataType::Sampler2D:	return 4 * 4;
 		}
 		KG_ERROR("Unknown UniformDataType!");
 		return 0;
 	}
 
-	static UniformDataType StringToUniformDataType(std::string_view type)
+	static Rendering::UniformDataType StringToUniformDataType(std::string_view type)
 	{
-		if (type == "int") { return UniformDataType::Int; }
-		if (type == "float") { return UniformDataType::Float; }
-		if (type == "vec2") { return UniformDataType::Float2; }
-		if (type == "vec3") { return UniformDataType::Float3; }
-		if (type == "vec4") { return UniformDataType::Float4; }
-		if (type == "mat3") { return UniformDataType::Mat3; }
-		if (type == "mat4") { return UniformDataType::Mat4; }
-		if (type == "sampler2D") { return UniformDataType::Sampler2D; }
-		if (type == "bool") { return UniformDataType::Bool; }
+		if (type == "int") { return Rendering::UniformDataType::Int; }
+		if (type == "float") { return Rendering::UniformDataType::Float; }
+		if (type == "vec2") { return Rendering::UniformDataType::Float2; }
+		if (type == "vec3") { return Rendering::UniformDataType::Float3; }
+		if (type == "vec4") { return Rendering::UniformDataType::Float4; }
+		if (type == "mat3") { return Rendering::UniformDataType::Mat3; }
+		if (type == "mat4") { return Rendering::UniformDataType::Mat4; }
+		if (type == "sampler2D") { return Rendering::UniformDataType::Sampler2D; }
+		if (type == "bool") { return Rendering::UniformDataType::Bool; }
 
 		KG_ERROR("Unknown String trying to convert to UniformDataType!");
-		return UniformDataType::None;
+		return Rendering::UniformDataType::None;
 	}
 
-	static std::string UniformDataTypeToString(UniformDataType type)
+	static std::string UniformDataTypeToString(Rendering::UniformDataType type)
 	{
 		switch (type)
 		{
-		case UniformDataType::Float:		return "float";
-		case UniformDataType::Float2:		return "vec2";
-		case UniformDataType::Float3:		return "vec3";
-		case UniformDataType::Float4:		return "vec4";
-		case UniformDataType::Mat3:			return "mat3";
-		case UniformDataType::Mat4:			return "mat4";
-		case UniformDataType::Int:			return "int";
-		case UniformDataType::Bool:			return "bool";
-		case UniformDataType::Sampler2D:	return "sampler2D";
+		case Rendering::UniformDataType::Float:		return "float";
+		case Rendering::UniformDataType::Float2:		return "vec2";
+		case Rendering::UniformDataType::Float3:		return "vec3";
+		case Rendering::UniformDataType::Float4:		return "vec4";
+		case Rendering::UniformDataType::Mat3:			return "mat3";
+		case Rendering::UniformDataType::Mat4:			return "mat4";
+		case Rendering::UniformDataType::Int:			return "int";
+		case Rendering::UniformDataType::Bool:			return "bool";
+		case Rendering::UniformDataType::Sampler2D:	return "sampler2D";
 		}
 
 		KG_ERROR("Unknown UniformDataType for conversion to string!");

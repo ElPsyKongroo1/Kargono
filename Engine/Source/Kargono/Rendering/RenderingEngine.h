@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/RendererAPI.h"
-#include "Kargono/Renderer/EditorCamera.h"
-#include "Kargono/Renderer/Camera.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/RendererAPI.h"
+#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/Camera.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/Math/Math.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
-	class Renderer
+	class RenderingEngine
 	{
 	public:
 		//============================================================

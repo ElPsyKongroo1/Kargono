@@ -295,7 +295,7 @@ namespace Kargono
 			auto& transformComponent = entity.GetComponent<TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-			editorCamera.SetMovementType(EditorCamera::MovementType::ModelView);
+			editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
 		}
 		bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
@@ -846,7 +846,7 @@ namespace Kargono
 			{
 				// Get Previous Buffer and Previous Shader
 				Buffer oldBuffer = component.ShaderData;
-				Ref<Shader> oldShader = component.Shader;
+				Ref<Rendering::Shader> oldShader = component.Shader;
 				// Get New Shader
 				auto [newShaderAssetHandle, newShader] = Assets::AssetManager::GetShader(component.ShaderSpecification);
 				// Assign New Shader to Component
@@ -869,7 +869,7 @@ namespace Kargono
 						uint8_t* oldLocationPointer = oldBuffer.As<uint8_t>(oldLocation);
 
 						// Get Location of New Data Pointer
-						uint8_t* newLocationPointer = Shader::GetInputLocation<uint8_t>(element.Name, newBuffer, newShader);
+						uint8_t* newLocationPointer = Rendering::Shader::GetInputLocation<uint8_t>(element.Name, newBuffer, newShader);
 
 						// Get Size of Data to Transfer
 						std::size_t size = element.Size;
@@ -899,24 +899,24 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("No Color"))
 					{
-						component.ShaderSpecification.ColorInput = ColorInputType::None;
+						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
 						updateComponent();
 					}
 
 					if (ImGui::Selectable("Flat Color"))
 					{
-						component.ShaderSpecification.ColorInput = ColorInputType::FlatColor;
+						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
 						updateComponent();
-						Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
+						Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
 					}
 					if (ImGui::Selectable("Vertex Color"))
 					{
 						Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
-						if (component.ShaderSpecification.ColorInput == ColorInputType::FlatColor)
+						if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 						{
-							transferColor = *Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+							transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
 						}
-						component.ShaderSpecification.ColorInput = ColorInputType::VertexColor;
+						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
 						updateComponent();
 						if (component.VertexColors) { component.VertexColors->clear(); }
 						component.VertexColors = CreateRef<std::vector<Math::vec4>>();
@@ -929,14 +929,14 @@ namespace Kargono
 					ImGui::EndPopup();
 				}
 
-				if (component.ShaderSpecification.ColorInput == ColorInputType::None) { return; }
+				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::None) { return; }
 
-				if (component.ShaderSpecification.ColorInput == ColorInputType::FlatColor)
+				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 				{
-					Math::vec4* color = Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+					Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
 					ImGui::ColorEdit4("Color", glm::value_ptr(*color));
 				}
-				if (component.ShaderSpecification.ColorInput == ColorInputType::VertexColor)
+				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
 				{
 					uint32_t iterator{ 1 };
 					for (auto& color : *component.VertexColors)
@@ -949,32 +949,32 @@ namespace Kargono
 
 			auto AddTextureSection = [&]()
 			{
-				s_ShapeAddTextureCheckboxSpec.ToggleBoolean = component.ShaderSpecification.TextureInput == TextureInputType::ColorTexture ? true : false;
+				s_ShapeAddTextureCheckboxSpec.ToggleBoolean = component.ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
 				EditorUI::Editor::Checkbox(s_ShapeAddTextureCheckboxSpec);
 				s_ShapeAddTextureCheckboxSpec.ConfirmAction = [&](bool value)
 				{
-					value ? component.ShaderSpecification.TextureInput = TextureInputType::ColorTexture :
-						component.ShaderSpecification.TextureInput = TextureInputType::None;
+					value ? component.ShaderSpecification.TextureInput = Rendering::TextureInputType::ColorTexture :
+						component.ShaderSpecification.TextureInput = Rendering::TextureInputType::None;
 					updateComponent();
 					// Checkbox is switched on
 					if (value)
 					{
-						if (component.CurrentShape == ShapeTypes::Cube || component.CurrentShape == ShapeTypes::Pyramid)
+						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 						{
-							component.ShaderSpecification.RenderType = RenderingType::DrawTriangle;
+							component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawTriangle;
 							updateComponent();
 							component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleVertices());
 							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleTextureCoordinates());
 							if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
 						}
-						Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
+						Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
 					}
 					// Checkbox is switched off
 					if (!value)
 					{
-						if (component.CurrentShape == ShapeTypes::Cube || component.CurrentShape == ShapeTypes::Pyramid)
+						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 						{
-							component.ShaderSpecification.RenderType = RenderingType::DrawIndex;
+							component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawIndex;
 							updateComponent();
 							component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndexVertices());
 							component.Indices = CreateRef<std::vector<uint32_t>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndices());
@@ -994,7 +994,7 @@ namespace Kargono
 							std::filesystem::path texturePath(path);
 							Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewTextureFromFile(texturePath);
 							component.TextureHandle = currentHandle;
-							Ref<Texture2D> texture = Assets::AssetManager::GetTexture(currentHandle);
+							Ref<Rendering::Texture2D> texture = Assets::AssetManager::GetTexture(currentHandle);
 							if (texture)
 								component.Texture = texture;
 							else
@@ -1003,7 +1003,7 @@ namespace Kargono
 						ImGui::EndDragDropTarget();
 					}
 
-					float* tilingFactor = Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+					float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
 					ImGui::DragFloat("Tiling Factor", tilingFactor, 0.1f, 0.0f, 100.0f);
 				}
 			};
@@ -1016,18 +1016,18 @@ namespace Kargono
 					updateComponent();
 					if (value)
 					{
-						Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
-						Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
+						Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
+						Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
 					}
 				};
 				s_ShapeAddCircleSpec.ToggleBoolean = component.ShaderSpecification.AddCircleShape;
 				EditorUI::Editor::Checkbox(s_ShapeAddCircleSpec);
 				if (component.ShaderSpecification.AddCircleShape)
 				{
-					float* thickness = Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+					float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
 					ImGui::DragFloat("Thickness", thickness, 0.025f, 0.0f, 1.0f);
 
-					float* fade = Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+					float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
 					ImGui::DragFloat("Fade", fade, 0.00025f, 0.0f, 1.0f);
 				}
 			};
@@ -1059,30 +1059,30 @@ namespace Kargono
 			// Beginning of Main Functionality
 			//=========================
 			// Display Selection Popup Button to choose Shape
-			ShapeTypes selectedShape = component.CurrentShape;
+			Rendering::ShapeTypes selectedShape = component.CurrentShape;
 			if (ImGui::Button("Select a Shape")) { ImGui::OpenPopup("Shape Selection"); }
 			ImGui::SameLine();
 			ImGui::TextUnformatted(Utility::ShapeTypeToString(selectedShape).c_str());
 			if (ImGui::BeginPopup("Shape Selection"))
 			{
-				for (const auto& shape : Shape::s_AllShapes)
+				for (const auto& shape : Rendering::Shape::s_AllShapes)
 				{
 					if (ImGui::Selectable(Utility::ShapeTypeToString(shape->GetShapeType()).c_str()))
 					{
 						component.CurrentShape = shape->GetShapeType();
 						component.ShaderSpecification.RenderType = shape->GetRenderingType();
-						if (shape->GetRenderingType() == RenderingType::DrawIndex)
+						if (shape->GetRenderingType() == Rendering::RenderingType::DrawIndex)
 						{
 							component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetIndexVertices());
 							component.Indices = CreateRef<std::vector<uint32_t>>(shape->GetIndices());
 							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetIndexTextureCoordinates());
 						}
-						if (shape->GetRenderingType() == RenderingType::DrawTriangle)
+						if (shape->GetRenderingType() == Rendering::RenderingType::DrawTriangle)
 						{
 							component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetTriangleVertices());
 							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetTriangleTextureCoordinates());
 						}
-						if (component.CurrentShape == ShapeTypes::Cube || component.CurrentShape == ShapeTypes::Pyramid)
+						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 						{
 							//component.ShaderSpecification.AddTexture = false;
 							component.ShaderSpecification.AddCircleShape = false;
@@ -1097,8 +1097,8 @@ namespace Kargono
 			ImGui::Text("Shader Specification");
 
 			// This section displays the shader specification options available for the chosen object
-			if (selectedShape == ShapeTypes::None) { return; }
-			if (selectedShape == ShapeTypes::Quad)
+			if (selectedShape == Rendering::ShapeTypes::None) { return; }
+			if (selectedShape == Rendering::ShapeTypes::Quad)
 			{
 				AddFlatColorSection();
 				AddTextureSection();
@@ -1107,7 +1107,7 @@ namespace Kargono
 				AddEntityIDSection();
 				
 			}
-			if (selectedShape == ShapeTypes::Cube || selectedShape == ShapeTypes::Pyramid)
+			if (selectedShape == Rendering::ShapeTypes::Cube || selectedShape == Rendering::ShapeTypes::Pyramid)
 			{
 				AddFlatColorSection();
 				AddTextureSection();

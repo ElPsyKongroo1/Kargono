@@ -5,8 +5,8 @@
 #include <string>
 #include <filesystem>
 
-namespace Kargono { class Texture2D; }
 namespace Kargono::Assets { class AssetManager; }
+namespace Kargono::Rendering { class Texture2D; }
 
 //============================================================
 // UI (User Interface) Namespace
@@ -79,7 +79,7 @@ namespace Kargono::RuntimeUI
 		void SetLineHeight(float height) { m_LineHeight = height; }
 
 	public:
-		Ref<Texture2D> m_AtlasTexture = nullptr;
+		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 	private:
 		float m_LineHeight {0};
 		std::unordered_map<unsigned char, Character> m_Characters{};

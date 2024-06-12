@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Shape.h"
+#include "Kargono/Rendering/Shape.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	Shape Shape::s_None {};
 	Shape Shape::s_Quad

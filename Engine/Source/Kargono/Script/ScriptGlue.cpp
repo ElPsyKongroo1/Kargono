@@ -323,7 +323,7 @@ namespace Kargono::Script
 
 	static void InputMode_LoadInputMode(MonoString* inputModeLocation)
 	{
-		static Ref<InputMode> s_InputRef {nullptr};
+		static Ref<Input::InputMode> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
 
 		const std::string inputLocation = std::string(mono_string_to_utf8(inputModeLocation));
@@ -334,7 +334,7 @@ namespace Kargono::Script
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
-				InputMode::LoadInputMode(s_InputRef, s_InputHandle);
+				Input::InputMode::LoadInputMode(s_InputRef, s_InputHandle);
 			});
 			
 		}
@@ -461,12 +461,12 @@ namespace Kargono::Script
 
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
-		return InputPolling::IsKeyPressed(keycode);
+		return Input::InputPolling::IsKeyPressed(keycode);
 	}
 
 	static bool InputMode_IsKeySlotDown(uint16_t keySlot)
 	{
-		return InputMode::IsKeyboardSlotPressed(keySlot);
+		return Input::InputMode::IsKeyboardSlotPressed(keySlot);
 	}
 
 	

@@ -5,9 +5,9 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Renderer/RenderCommand.h"
-#include "Kargono/Renderer/Renderer.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/RenderCommand.h"
+#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Script/ScriptEngine.h"
 
@@ -16,7 +16,7 @@ namespace Kargono::RuntimeUI
 	Runtime Runtime::s_Engine{};
 	Ref<Font> s_DefaultFont = nullptr;
 
-	static RendererInputSpec s_BackgroundInputSpec{};
+	static Rendering::RendererInputSpec s_BackgroundInputSpec{};
 
 	// Editor Specific Fields
 	static int32_t s_WindowToDelete { -1 };
@@ -37,16 +37,16 @@ namespace Kargono::RuntimeUI
 		s_Engine.m_FontHandle = 0;
 		// Initialize Window Spec Data
 		{
-			ShaderSpecification shaderSpec {ColorInputType::FlatColor, TextureInputType::None, false, true, false, RenderingType::DrawIndex, false};
+			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
 			ShapeComponent* shapeComp = new ShapeComponent();
-			shapeComp->CurrentShape = ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Shape::s_Quad.GetIndices());
+			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 			s_BackgroundInputSpec.Shader = localShader;
 			s_BackgroundInputSpec.Buffer = localBuffer;
@@ -156,7 +156,7 @@ namespace Kargono::RuntimeUI
 
 	void Runtime::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
-		RenderCommand::ClearDepthBuffer();
+		Rendering::RenderCommand::ClearDepthBuffer();
 		// Iterate through all characters
 		Math::mat4 orthographicProjection = glm::ortho((float)0, static_cast<float>(viewportWidth),
 			(float)0, static_cast<float>(viewportHeight), (float)-1, (float)1);
@@ -165,7 +165,7 @@ namespace Kargono::RuntimeUI
 		/*Math::vec2 windowLocation = Math::vec2(0.3f, 0.2f);
 		Math::vec2 windowSize = Math::vec2(0.2f, 0.2f);*/
 
-		Renderer::BeginScene(outputMatrix);
+		Rendering::RenderingEngine::BeginScene(outputMatrix);
 
 		// Submit all windows
 		for (auto window : s_Engine.m_DisplayedWindows)
@@ -176,9 +176,9 @@ namespace Kargono::RuntimeUI
 
 			s_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
 				* glm::scale(Math::mat4(1.0f), scale);
-			Shader::SetDataAtInputLocation<Math::vec4>(window->BackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->BackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
 
-			Renderer::SubmitDataToRenderer(s_BackgroundInputSpec);
+			Rendering::RenderingEngine::SubmitDataToRenderer(s_BackgroundInputSpec);
 
 			initialTranslation.z += 0.001f;
 			for (auto& widget : window->Widgets)
@@ -187,7 +187,7 @@ namespace Kargono::RuntimeUI
 			}
 		}
 
-		Renderer::EndScene();
+		Rendering::RenderingEngine::EndScene();
 
 	}
 
@@ -888,8 +888,8 @@ namespace Kargono::RuntimeUI
 		s_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 			* glm::scale(Math::mat4(1.0f), widgetSize);
 
-		Shader::SetDataAtInputLocation<Math::vec4>(ActiveBackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
-		Renderer::SubmitDataToRenderer(s_BackgroundInputSpec);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(ActiveBackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
+		Rendering::RenderingEngine::SubmitDataToRenderer(s_BackgroundInputSpec);
 
 		widgetTranslation.z += 0.001f;
 

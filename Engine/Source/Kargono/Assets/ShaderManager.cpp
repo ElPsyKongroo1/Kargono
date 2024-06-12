@@ -3,8 +3,8 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Renderer/Shader.h"
-#include "Kargono/Renderer/ShaderBuilder.h"
+#include "Kargono/Rendering/Shader.h"
+#include "Kargono/Rendering/ShaderBuilder.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 #include "API/RenderingAPI/VulkanAPI.h"
@@ -139,7 +139,7 @@ namespace Kargono::Assets
 {
 
 	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_ShaderRegistry {};
-	std::unordered_map<AssetHandle, Ref<Kargono::Shader>> AssetManager::s_Shaders {};
+	std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> AssetManager::s_Shaders {};
 
 	void AssetManager::DeserializeShaderRegistry()
 	{
@@ -195,14 +195,14 @@ namespace Kargono::Assets
 					shaderMetaData->ShaderSpec.DrawOutline = metadata["DrawOutline"].as<bool>();
 					shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadata["RenderType"].as<std::string>());
 
-					KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+					KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
 					{
 						// InputBufferLayout Section
 						auto inputBufferLayout = metadata["InputBufferLayout"];
 						auto elementList = inputBufferLayout["Elements"];
 						for (const auto& element : elementList)
 						{
-							shaderMetaData->InputLayout.AddBufferElement(InputBufferElement(
+							shaderMetaData->InputLayout.AddBufferElement(Rendering::InputBufferElement(
 								Utility::StringToInputDataType(element["Type"].as<std::string>()),
 								element["Name"].as<std::string>()
 							));
@@ -214,7 +214,7 @@ namespace Kargono::Assets
 						auto elementList = uniformBufferList["Elements"];
 						for (const auto& element : elementList)
 						{
-							shaderMetaData->UniformList.AddBufferElement(UniformElement(
+							shaderMetaData->UniformList.AddBufferElement(Rendering::UniformElement(
 								Utility::StringToUniformDataType(element["Type"].as<std::string>()),
 								element["Name"].as<std::string>()
 							));
@@ -303,10 +303,10 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::CreateNewShader(const ShaderSpecification& shaderSpec)
+	AssetHandle AssetManager::CreateNewShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
 		// Create Checksum
-		auto [shaderSource, bufferLayout, uniformList] = ShaderBuilder::BuildShader(shaderSpec);
+		auto [shaderSource, bufferLayout, uniformList] = Rendering::ShaderBuilder::BuildShader(shaderSpec);
 		std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(shaderSource);
 
 		if (currentCheckSum.empty())
@@ -346,13 +346,13 @@ namespace Kargono::Assets
 		// Register New Asset and Create Shader
 		s_ShaderRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
 		SerializeShaderRegistry(); // Update Registry File on Disk
-		Ref<Kargono::Shader> newShader = InstantiateShaderIntoMemory(newAsset);
+		Ref<Kargono::Rendering::Shader> newShader = InstantiateShaderIntoMemory(newAsset);
 		s_Shaders.insert({ newHandle, newShader });
 
 		return newHandle;
 	}
 
-	Ref<Kargono::Shader> AssetManager::GetShader(const AssetHandle& handle)
+	Ref<Kargono::Rendering::Shader> AssetManager::GetShader(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
 
@@ -362,7 +362,7 @@ namespace Kargono::Assets
 		{
 			auto asset = s_ShaderRegistry[handle];
 
-			Ref<Kargono::Shader> newShader = InstantiateShaderIntoMemory(asset);
+			Ref<Kargono::Rendering::Shader> newShader = InstantiateShaderIntoMemory(asset);
 			s_Shaders.insert({ asset.Handle, newShader });
 			return newShader;
 		}
@@ -371,7 +371,7 @@ namespace Kargono::Assets
 		return nullptr;
 	}
 
-	std::tuple<AssetHandle, Ref<Kargono::Shader>> AssetManager::GetShader(const ShaderSpecification& shaderSpec)
+	std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> AssetManager::GetShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
 
@@ -388,7 +388,7 @@ namespace Kargono::Assets
 			Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
 			if (metadata.ShaderSpec == shaderSpec)
 			{
-				Ref<Kargono::Shader> newShader = InstantiateShaderIntoMemory(asset);
+				Ref<Kargono::Rendering::Shader> newShader = InstantiateShaderIntoMemory(asset);
 				s_Shaders.insert({ asset.Handle, newShader });
 				return std::make_tuple(assetHandle, newShader);
 			}
@@ -406,7 +406,7 @@ namespace Kargono::Assets
 		s_Shaders.clear();
 	}
 
-	Ref<Kargono::Shader> AssetManager::InstantiateShaderIntoMemory(Assets::Asset& asset)
+	Ref<Kargono::Rendering::Shader> AssetManager::InstantiateShaderIntoMemory(Assets::Asset& asset)
 	{
 		Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
@@ -431,7 +431,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		Ref<Kargono::Shader> newShader = Shader::Create(static_cast<std::string>(asset.Handle), openGLSPIRV);
+		Ref<Kargono::Rendering::Shader> newShader = Rendering::Shader::Create(static_cast<std::string>(asset.Handle), openGLSPIRV);
 		newShader->SetSpecification(metadata.ShaderSpec);
 		newShader->SetInputLayout(metadata.InputLayout);
 		newShader->SetUniformList(metadata.UniformList);
@@ -440,8 +440,8 @@ namespace Kargono::Assets
 	}
 
 
-	void AssetManager::CreateShaderIntermediate(const ShaderSource& shaderSource, Assets::Asset& newAsset, const ShaderSpecification& shaderSpec,
-		const InputBufferLayout& inputLayout, const UniformBufferList& uniformLayout)
+	void AssetManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
+		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
 	{
 		// Create Shader Binary
 		auto shaderSources = Utility::PreProcess(shaderSource);

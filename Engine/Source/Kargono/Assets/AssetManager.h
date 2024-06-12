@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/Renderer/Texture.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/RuntimeUI/Runtime.h"
@@ -93,7 +93,7 @@ namespace Kargono::Assets
 		// Load and Retrieve In-Memory Texture
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<Texture2D> GetTexture(const AssetHandle& handle);
+		static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
 		
 	private:
 		//==============================
@@ -106,7 +106,7 @@ namespace Kargono::Assets
 		//		format along with relevant asset metadata.
 		static void CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset);
 		// Create Final Texture and to s_Textures
-		static Ref<Texture2D> InstantiateTextureIntoMemory(Assets::Asset& asset);
+		static Ref<Rendering::Texture2D> InstantiateTextureIntoMemory(Assets::Asset& asset);
 	private:
 		// This registry holds a reference to all of the available textures in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects
@@ -115,7 +115,7 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Assets::Asset> s_TextureRegistry;
 		// This map holds all of the textures that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<Texture2D>> s_Textures;
+		static std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> s_Textures;
 
 	//============================================================
 	// Shaders
@@ -145,9 +145,9 @@ namespace Kargono::Assets
 		// Load and Retrieve In-Memory Shader
 		//==============================
 		// Function finds shader associated with handle
-		static Ref<Kargono::Shader> GetShader(const AssetHandle& handle);
+		static Ref<Kargono::Rendering::Shader> GetShader(const AssetHandle& handle);
 		// Function finds shader associated with Specification and returns asset handle along with shader
-		static std::tuple<AssetHandle, Ref<Kargono::Shader>> GetShader(const ShaderSpecification& shaderSpec);
+		static std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> GetShader(const Rendering::ShaderSpecification& shaderSpec);
 	private:
 		//==============================
 		// Internal Functionality
@@ -161,14 +161,14 @@ namespace Kargono::Assets
 		//		3. Register the new file with the in-memory s_ShaderRegistry and the on disk shader
 		//		registry
 		//		4. Instantiate the new shader into memory and return a handle to the new shader.
-		static AssetHandle CreateNewShader(const ShaderSpecification& shaderSpec);
+		static AssetHandle CreateNewShader(const Rendering::ShaderSpecification& shaderSpec);
 		// This function takes the shader source, splits the shader text into fragment/vertex shaders, compiles
 		//		the shaders into binary .kgvert/.kgfrag source files, and stores those files along with
 		//		a fill text version for debugging as .kgsource. Finally metadata is created for the shader.
-		static void CreateShaderIntermediate(const ShaderSource& shaderSource, Assets::Asset& newAsset, const ShaderSpecification& shaderSpec,
-			const InputBufferLayout& inputLayout, const UniformBufferList& uniformLayout);
+		static void CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
+			const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout);
 		// Create Final Shader and to s_Shaders
-		static Ref<Kargono::Shader> InstantiateShaderIntoMemory(Assets::Asset& asset);
+		static Ref<Kargono::Rendering::Shader> InstantiateShaderIntoMemory(Assets::Asset& asset);
 	private:
 		// This registry holds a reference to all of the available shaders in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects
@@ -177,7 +177,7 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Assets::Asset> s_ShaderRegistry;
 		// This map holds all of the shaders that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<Kargono::Shader>> s_Shaders;
+		static std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> s_Shaders;
 
 
 	//============================================================
@@ -512,14 +512,14 @@ namespace Kargono::Assets
 		// Save a InputMode
 		//==============================
 		// Save Current InputMode
-		static void SaveInputMode(AssetHandle inputModeHandle, Ref<Kargono::InputMode> inputMode);
+		static void SaveInputMode(AssetHandle inputModeHandle, Ref<Input::InputMode> inputMode);
 
 		//==============================
 		// Load and Retrieve In-Memory InputMode
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<Kargono::InputMode> GetInputMode(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Kargono::InputMode>> GetInputMode(const std::filesystem::path& filepath);
+		static Ref<Input::InputMode> GetInputMode(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Input::InputMode>> GetInputMode(const std::filesystem::path& filepath);
 
 		//==============================
 		// Getters/Setters
@@ -539,11 +539,11 @@ namespace Kargono::Assets
 		//		with relevant metadata.
 		static void CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset);
 		// Save a single inputMode
-		static void SerializeInputMode(Ref<Kargono::InputMode> inputMode, const std::filesystem::path& filepath);
+		static void SerializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath);
 		// Load a single inputMode
-		static bool DeserializeInputMode(Ref<Kargono::InputMode> inputMode, const std::filesystem::path& filepath);
+		static bool DeserializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath);
 		// Instantiate a new inputMode
-		static Ref<Kargono::InputMode> InstantiateInputMode(const Assets::Asset& inputModeAsset);
+		static Ref<Input::InputMode> InstantiateInputMode(const Assets::Asset& inputModeAsset);
 	private:
 		// This registry holds a reference to all of the available InputMode in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects

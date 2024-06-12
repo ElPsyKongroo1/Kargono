@@ -13,9 +13,8 @@
 #include <atomic>
 
 
-
-namespace Kargono::Timers {
-
+namespace Kargono
+{
 	class ScopedTimer
 	{
 	public:

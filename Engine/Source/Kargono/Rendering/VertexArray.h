@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Kargono/Renderer/InputBuffer.h"
+#include "Kargono/Rendering/InputBuffer.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	class VertexArray
 	{

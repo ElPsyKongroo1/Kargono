@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Timers.h"
 
-namespace Kargono::Timers
+namespace Kargono
 {
 	std::vector<Ref<AsyncBusyTimer>> AsyncBusyTimer::s_AllTimers {};
 	std::mutex AsyncBusyTimer::s_BusyTimerMutex {};

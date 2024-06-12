@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Renderer/UniformBuffer.h"
+#include "Kargono/Rendering/UniformBuffer.h"
 
 namespace API::RenderingAPI
 {
@@ -13,7 +13,7 @@ namespace API::RenderingAPI
 	//		be accessed by any shader program. This is particularly useful for data that
 	//		does not change per render pass such as the view projection matrix of the current
 	//		camera.
-	class OpenGLUniformBuffer : public Kargono::UniformBuffer
+	class OpenGLUniformBuffer : public Kargono::Rendering::UniformBuffer
 	{
 	public:
 		//==============================

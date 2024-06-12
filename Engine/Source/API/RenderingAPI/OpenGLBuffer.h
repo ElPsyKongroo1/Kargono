@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Renderer/InputBuffer.h"
+#include "Kargono/Rendering/InputBuffer.h"
 
 namespace API::RenderingAPI
 {
@@ -10,7 +10,7 @@ namespace API::RenderingAPI
 	// This class is the OpenGL Implementation of a Vertex Buffer in the Core Code.
 	//		A VertexBuffer holds data specific to a particular vertex such as
 	//		model location, vertex color, texture location, etc...
-	class OpenGLVertexBuffer : public Kargono::VertexBuffer
+	class OpenGLVertexBuffer : public Kargono::Rendering::VertexBuffer
 	{
 	public:
 		//=============================
@@ -41,8 +41,8 @@ namespace API::RenderingAPI
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual const Kargono::InputBufferLayout& GetLayout() const override { return m_Layout; }
-		virtual void SetLayout(const Kargono::InputBufferLayout& layout) override { m_Layout = layout; }
+		virtual const Kargono::Rendering::InputBufferLayout& GetLayout() const override { return m_Layout; }
+		virtual void SetLayout(const Kargono::Rendering::InputBufferLayout& layout) override { m_Layout = layout; }
 	private:
 		// RendererID holds the numerical reference to the underlying OpenGL VertexBuffer
 		//		Ex. A renderer ID of three would represent the third vertex buffer created
@@ -52,7 +52,7 @@ namespace API::RenderingAPI
 		//		Ex: vec3, vec2, float, vec3, mat4 is a sample pattern
 		//		that can represent concepts such as the vertex's world position,
 		//		color, and transform.
-		Kargono::InputBufferLayout m_Layout;
+		Kargono::Rendering::InputBufferLayout m_Layout;
 	};
 
 	//============================================================
@@ -64,7 +64,7 @@ namespace API::RenderingAPI
 	//		An index buffer could hold the numbers 2, 3, 1. The numbers in the index buffer
 	//		represent OpenGL drawing a triangle starting at vertex 2, that going to vertex 3,
 	//		and ending on vertex 1.
-	class OpenGLIndexBuffer : public Kargono::IndexBuffer
+	class OpenGLIndexBuffer : public Kargono::Rendering::IndexBuffer
 	{
 	public:
 		//==============================

@@ -45,8 +45,8 @@ namespace Kargono
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
 
-		Renderer::Init();
-		Renderer::SetLineWidth(4.0f);
+		RenderingEngine::Init();
+		RenderingEngine::SetLineWidth(4.0f);
 		RuntimeUI::Text::Init();
 		RuntimeUI::Runtime::Init();
 
@@ -72,7 +72,7 @@ namespace Kargono
 	{
 		
 		// Render
-		Renderer::ResetStats();
+		RenderingEngine::ResetStats();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 

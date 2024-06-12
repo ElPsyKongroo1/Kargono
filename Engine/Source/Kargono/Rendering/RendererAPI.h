@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Kargono/Renderer/VertexArray.h"
+#include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Math/Math.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	enum class RenderAPI
 	{

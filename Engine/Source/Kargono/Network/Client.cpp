@@ -270,7 +270,7 @@ namespace Kargono::Network
 			{
 				float waitTime{};
 				msg >> waitTime;
-				Timers::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+				AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Note Starting Update
 					Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::StartSession>());
@@ -286,7 +286,7 @@ namespace Kargono::Network
 			{
 				float waitTime{};
 				msg >> waitTime;
-				Timers::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+				AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Open Gameplay
 					EngineCore::GetCurrentEngineCore().EngineCore::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
