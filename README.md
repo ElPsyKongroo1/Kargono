@@ -20,6 +20,9 @@ The Editor only supports Windows. I do not have plans for supporting Linux or Ma
 - Inside the Applications virtual directory, set either the Editor, Runtime, or Server as the default startup project.
 - Build and Run!
 
+# Documentation
+- [Internal Documentation covering the structure of the game engine can be viewed here](https://elpsykongroo1.github.io/Kargono/)
+
 # Games
 ## Games in Progress
 - Pong Clone
