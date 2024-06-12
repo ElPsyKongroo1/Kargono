@@ -8,7 +8,7 @@
 #include <filesystem>
 
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 
 	enum class ImageFormat
@@ -62,15 +62,15 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	inline uint32_t ImageFormatToBytes(ImageFormat format)
+	inline uint32_t ImageFormatToBytes(Rendering::ImageFormat format)
 	{
 		switch (format)
 		{
-		case ImageFormat::R8:		{ return 1;}
-		case ImageFormat::RGB8:		{ return 3;}
-		case ImageFormat::RGBA8:	{ return 4;}
-		case ImageFormat::RGBA32F:	{ return 16;}
-		case ImageFormat::None:		{ return 1; }
+		case Rendering::ImageFormat::R8:		{ return 1;}
+		case Rendering::ImageFormat::RGB8:		{ return 3;}
+		case Rendering::ImageFormat::RGBA8:	{ return 4;}
+		case Rendering::ImageFormat::RGBA32F:	{ return 16;}
+		case Rendering::ImageFormat::None:		{ return 1; }
 		default:
 			{
 				KG_ERROR("Invalid ImageFormat submitted to ImageFormatToSize");

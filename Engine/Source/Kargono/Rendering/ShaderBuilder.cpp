@@ -1,7 +1,7 @@
 #include "kgpch.h"
-#include "Kargono/Renderer/ShaderBuilder.h"
+#include "Kargono/Rendering/ShaderBuilder.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	//============================================================
 	// Primitives
@@ -535,7 +535,7 @@ namespace Kargono
 	}
 }
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 
 	std::tuple<ShaderSource, InputBufferLayout, UniformBufferList> ShaderBuilder::BuildShader(const ShaderSpecification& shaderSpec)

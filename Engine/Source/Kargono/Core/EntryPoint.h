@@ -15,7 +15,7 @@
 		Kargono::EngineCore* core = Kargono::InitEngineAndCreateApp({ argc, argv });
 		KG_VERIFY(core, "Engine Core Initialization");
 		core->Run();
-		Kargono::Timers::AsyncBusyTimer::CloseAllTimers();
+		Kargono::AsyncBusyTimer::CloseAllTimers();
 		delete core;
 		core = nullptr;
 		KG_VERIFY(!core, "Core Closed");

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/VertexArray.h"
+#include "Kargono/Rendering/VertexArray.h"
 
 namespace API::RenderingAPI
 {
@@ -15,7 +15,7 @@ namespace API::RenderingAPI
 	//		but there is only one IndexBuffer. VertexBuffers are held in
 	//		the OpenGL memory contiguously. A vertex array can be bound
 	//		and all of the connected buffers get automatically connected.
-	class OpenGLVertexArray : public Kargono::VertexArray
+	class OpenGLVertexArray : public Kargono::Rendering::VertexArray
 	{
 	public:
 		//==============================
@@ -42,21 +42,21 @@ namespace API::RenderingAPI
 		//		This process requires binding both the vertex array and the vertexBuffer, adding all of the
 		//		elements inside the vertexBuffer's layout individually to the vertex array, and adding the
 		//		new vertexBuffer to m_VertexBuffers.
-		virtual void AddVertexBuffer(const Kargono::Ref<Kargono::VertexBuffer>& vertexBuffer) override;
+		virtual void AddVertexBuffer(const Kargono::Ref<Kargono::Rendering::VertexBuffer>& vertexBuffer) override;
 		// This function adds the provided index buffer to both the m_IndexBuffer variable and associates
 		//		the indexBuffer with the underlying OpenGL vertex array
-		virtual void SetIndexBuffer(const Kargono::Ref<Kargono::IndexBuffer>& indexBuffer) override;
+		virtual void SetIndexBuffer(const Kargono::Ref<Kargono::Rendering::IndexBuffer>& indexBuffer) override;
 
 		//==============================
 		// Getters
 		//==============================
-		virtual const std::vector<Kargono::Ref<Kargono::VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
-		virtual const Kargono::Ref<Kargono::IndexBuffer>& GetIndexBuffer() const  override { return m_IndexBuffer; }
+		virtual const std::vector<Kargono::Ref<Kargono::Rendering::VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
+		virtual const Kargono::Ref<Kargono::Rendering::IndexBuffer>& GetIndexBuffer() const  override { return m_IndexBuffer; }
 	private:
 		// m_VertexBuffers holds the in-engine representations of the vertexBuffers associated with this vertex array
-		std::vector<Kargono::Ref<Kargono::VertexBuffer>> m_VertexBuffers;
+		std::vector<Kargono::Ref<Kargono::Rendering::VertexBuffer>> m_VertexBuffers;
 		// m_IndexBuffer holds the in-engine representation of the indexBuffer associated with this vertex array
-		Kargono::Ref<Kargono::IndexBuffer> m_IndexBuffer;
+		Kargono::Ref<Kargono::Rendering::IndexBuffer> m_IndexBuffer;
 		// m_VertexBufferIndex is a running total for the number of vertexBuffer elements associated with this
 		//		vertex array. This value gets incremented for every element inside the layout of every vertexBuffer
 		//		that gets added to this vertex array.

@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Renderer/EditorCamera.h"
+#include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Math/Math.h"
 
@@ -59,7 +59,7 @@ namespace Kargono
 		void OnSimulationStop();
 
 		// Submits render data to the renderer.
-		void RenderScene(Camera& camera, const Math::mat4& transform);
+		void RenderScene(Rendering::Camera& camera, const Math::mat4& transform);
 		// Updates Physics
 		void OnUpdatePhysics(Timestep ts);
 
@@ -88,7 +88,7 @@ namespace Kargono
 		//		then sent to the Renderer to continue the process.
 
 		// This function fills the buffer inside inputSpec with the current entityID.
-		static void FillEntityID(RendererInputSpec& inputSpec);
+		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
 
 		//====================
 		// Copy Scene

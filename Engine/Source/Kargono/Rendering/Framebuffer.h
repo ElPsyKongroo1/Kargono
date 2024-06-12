@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	enum class FramebufferDataFormat
 	{

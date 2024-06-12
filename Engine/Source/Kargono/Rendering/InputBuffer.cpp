@@ -1,13 +1,14 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Renderer/InputBuffer.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/InputBuffer.h"
+#include "Kargono/Rendering/RenderingEngine.h"
 
 #include "API/RenderingAPI/OpenGLBuffer.h"
 
 
-namespace Kargono {
+namespace Kargono::Rendering
+{
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
 		return CreateRef<API::RenderingAPI::OpenGLVertexBuffer>(size);

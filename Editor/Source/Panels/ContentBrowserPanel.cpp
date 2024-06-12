@@ -9,7 +9,7 @@
 
 namespace Kargono::Utility
 {
-	static Ref<Texture2D> BrowserFileTypeToIcon(BrowserFileType type)
+	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(BrowserFileType type)
 	{
 		switch (type)
 		{
@@ -234,7 +234,7 @@ namespace Kargono
 			std::string filenameString = path.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
+			Ref<Rendering::Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 			if (ImGui::BeginDragDropSource())

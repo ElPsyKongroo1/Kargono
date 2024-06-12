@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	enum class RenderingType
 	{
@@ -86,65 +86,65 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	static std::string RenderingTypeToString(RenderingType renderType)
+	static std::string RenderingTypeToString(Rendering::RenderingType renderType)
 	{
 		switch (renderType)
 		{
-		case RenderingType::None: return "None";
-		case RenderingType::DrawIndex: return "DrawIndex";
-		case RenderingType::DrawTriangle: return "DrawTriangle";
-		case RenderingType::DrawLine: return "DrawLine";
+		case Rendering::RenderingType::None: return "None";
+		case Rendering::RenderingType::DrawIndex: return "DrawIndex";
+		case Rendering::RenderingType::DrawTriangle: return "DrawTriangle";
+		case Rendering::RenderingType::DrawLine: return "DrawLine";
 		}
 		KG_ERROR("Unknown Data Type sent to RenderingTypeToString Function");
 		return "None";
 	}
 
-	static RenderingType StringToRenderingType(std::string_view string)
+	static Rendering::RenderingType StringToRenderingType(std::string_view string)
 	{
-		if (string == "None") { return RenderingType::None; }
-		if (string == "DrawIndex") { return RenderingType::DrawIndex; }
-		if (string == "DrawTriangle") { return RenderingType::DrawTriangle; }
-		if (string == "DrawLine") { return RenderingType::DrawLine; }
+		if (string == "None") { return Rendering::RenderingType::None; }
+		if (string == "DrawIndex") { return Rendering::RenderingType::DrawIndex; }
+		if (string == "DrawTriangle") { return Rendering::RenderingType::DrawTriangle; }
+		if (string == "DrawLine") { return Rendering::RenderingType::DrawLine; }
 
 		KG_ERROR("Unknown Data Type sent to StringToRenderingType Function");
-		return RenderingType::None;
+		return Rendering::RenderingType::None;
 	}
 
-	static std::string ShapeTypeToString(ShapeTypes shapeType)
+	static std::string ShapeTypeToString(Rendering::ShapeTypes shapeType)
 	{
 		switch (shapeType)
 		{
-		case ShapeTypes::None: return "None";
-		case ShapeTypes::Quad: return "Quad";
-		case ShapeTypes::Cube: return "Cube";
-		case ShapeTypes::Pyramid: return "Pyramid";
+		case Rendering::ShapeTypes::None: return "None";
+		case Rendering::ShapeTypes::Quad: return "Quad";
+		case Rendering::ShapeTypes::Cube: return "Cube";
+		case Rendering::ShapeTypes::Pyramid: return "Pyramid";
 		}
 		KG_ERROR("Unknown Data Type sent to ShapeTypeToString Function");
 		return "None";
 	}
 
-	static ShapeTypes StringToShapeType(std::string_view string)
+	static Rendering::ShapeTypes StringToShapeType(std::string_view string)
 	{
-		if (string == "None") { return ShapeTypes::None; }
-		if (string == "Quad") { return ShapeTypes::Quad; }
-		if (string == "Cube") { return ShapeTypes::Cube; }
-		if (string == "Pyramid") { return ShapeTypes::Pyramid; }
+		if (string == "None") { return Rendering::ShapeTypes::None; }
+		if (string == "Quad") { return Rendering::ShapeTypes::Quad; }
+		if (string == "Cube") { return Rendering::ShapeTypes::Cube; }
+		if (string == "Pyramid") { return Rendering::ShapeTypes::Pyramid; }
 
 		KG_ERROR("Unknown Data Type sent to StringToShapeType Function");
-		return ShapeTypes::None;
+		return Rendering::ShapeTypes::None;
 	}
 
-	static const Shape& ShapeTypeToShape(ShapeTypes shapeType)
+	static const Rendering::Shape& ShapeTypeToShape(Rendering::ShapeTypes shapeType)
 	{
 		switch (shapeType)
 		{
-		case ShapeTypes::Pyramid: return Shape::s_Pyramid;
-		case ShapeTypes::Quad: return Shape::s_Quad;
-		case ShapeTypes::Cube: return Shape::s_Cube;
-		case ShapeTypes::None: return Shape::s_None;
+		case Rendering::ShapeTypes::Pyramid: return Rendering::Shape::s_Pyramid;
+		case Rendering::ShapeTypes::Quad: return Rendering::Shape::s_Quad;
+		case Rendering::ShapeTypes::Cube: return Rendering::Shape::s_Cube;
+		case Rendering::ShapeTypes::None: return Rendering::Shape::s_None;
 		}
 
 		KG_ERROR("Unknown Data Type sent to StringToShapeType Function");
-		return Shape::s_None;
+		return Rendering::Shape::s_None;
 	}
 }

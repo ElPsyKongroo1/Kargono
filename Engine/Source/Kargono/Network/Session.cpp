@@ -154,7 +154,7 @@ namespace Kargono::Network
 		}
 
 		// TODO: Start Server Thread
-		Timers::AsyncBusyTimer::CreateTimer(longestLatency, [&]()
+		AsyncBusyTimer::CreateTimer(longestLatency, [&]()
 		{
 			// Start Thread
 			Server::GetActiveServer()->SubmitToEventQueue(CreateRef<Events::StartSession>());

@@ -1,7 +1,7 @@
 #pragma once
-#include "Shader.h"
+#include "Kargono/Rendering/Shader.h"
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	class ShaderBuilder
 	{

@@ -84,7 +84,7 @@ namespace Kargono::Network
 			// Start Context Thread
 			thrContext = std::thread([this]() { m_context.run(); });
 
-			Timers::AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
+			AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
 			{
 				Client::GetActiveClient()->SubmitToFunctionQueue([&]()
 				{

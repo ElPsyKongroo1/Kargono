@@ -2,13 +2,13 @@
 
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Scene/Components.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Renderer/RenderCommand.h"
-#include "Kargono/Renderer/Texture.h"
+#include "Kargono/Rendering/RenderCommand.h"
+#include "Kargono/Rendering/Texture.h"
 #include "Kargono/Projects/Project.h"
 
 #include "API/Text/msdfgenAPI.h"
@@ -17,7 +17,7 @@
 namespace Kargono::Utility
 {
 	template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
-	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+	static Ref<Rendering::Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
 		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
 	{
 		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
@@ -31,12 +31,12 @@ namespace Kargono::Utility
 
 		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
 
-		TextureSpecification spec;
+		Rendering::TextureSpecification spec;
 		spec.Width = bitmap.width;
 		spec.Height = bitmap.height;
-		spec.Format = ImageFormat::RGB8;
+		spec.Format = Rendering::ImageFormat::RGB8;
 		spec.GenerateMipMaps = false;
-		Ref<Texture2D> texture = Texture2D::Create(spec);
+		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
 		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
 		return texture;
 	}
@@ -44,7 +44,7 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
-	static RendererInputSpec s_TextInputSpec{};
+	static Rendering::RendererInputSpec s_TextInputSpec{};
 	static Ref<std::vector<Math::vec3>> s_Vertices;
 	static Ref<std::vector<Math::vec2>> s_TexCoordinates;
 
@@ -54,14 +54,14 @@ namespace Kargono::RuntimeUI
 		if (!s_TextInputSpec.Shader)
 		{
 			// TODO: Unreleased Heap Data with Buffer
-			ShaderSpecification textShaderSpec {ColorInputType::FlatColor, TextureInputType::TextTexture, false, true, false, RenderingType::DrawTriangle, false};
+			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, false, Rendering::RenderingType::DrawTriangle, false};
 			auto [uuid, localShader] = Assets::AssetManager::GetShader(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
 			s_TextInputSpec.ShapeComponent = new ShapeComponent();
-			s_TextInputSpec.ShapeComponent->CurrentShape = ShapeTypes::Quad;
+			s_TextInputSpec.ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
 
 			s_TextInputSpec.Shader = localShader;
 			s_TextInputSpec.ShapeComponent->Shader = localShader;
@@ -201,10 +201,10 @@ namespace Kargono::RuntimeUI
 
 	void Font::PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
-		Ref<Texture2D> fontAtlas = m_AtlasTexture;
+		Ref<Rendering::Texture2D> fontAtlas = m_AtlasTexture;
 
 		s_TextInputSpec.ShapeComponent->Texture = fontAtlas;
-		Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
 
 		double x = translation.x;
 		double y = translation.y;
@@ -279,7 +279,7 @@ namespace Kargono::RuntimeUI
 
 			s_TextInputSpec.ShapeComponent->Vertices = s_Vertices;
 
-			Renderer::SubmitDataToRenderer(s_TextInputSpec);
+			Rendering::RenderingEngine::SubmitDataToRenderer(s_TextInputSpec);
 
 			// TODO: Add Kerning back! Info on Kerning is here: https://freetype.org/freetype2/docs/glyphs/glyphs-4.html
 			//double advance = 0;

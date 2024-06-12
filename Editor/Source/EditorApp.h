@@ -188,7 +188,7 @@ namespace Kargono
 		// Cached Scene Data
 		Ref<RuntimeUI::UIObject> m_EditorUIObject = nullptr;
 		Assets::AssetHandle m_EditorUIObjectHandle{0};
-		Ref<InputMode> m_EditorInputMode = nullptr;
+		Ref<Input::InputMode> m_EditorInputMode = nullptr;
 		Assets::AssetHandle m_EditorInputModeHandle{0};
 
 		// Stepping Fields

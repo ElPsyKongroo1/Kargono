@@ -4,10 +4,10 @@
 #include "Kargono/Scene/Components.h"
 #include "Kargono/Scene/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Core/EngineCore.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/Shader.h"
 
 
 
@@ -281,10 +281,9 @@ namespace Kargono
 		}
 		return {};
 	}
-	void Scene::RenderScene(Camera& camera, const Math::mat4& transform)
+	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transform)
 	{
-
-		Renderer::BeginScene(camera, transform);
+		Rendering::RenderingEngine::BeginScene(camera, transform);
 		// Draw Shapes
 		{
 			auto view = m_Registry.view<TransformComponent, ShapeComponent>();
@@ -292,7 +291,7 @@ namespace Kargono
 			{
 				const auto& [transform, shape] = view.get<TransformComponent, ShapeComponent>(entity);
 
-				static RendererInputSpec inputSpec{};
+				static Rendering::RendererInputSpec inputSpec{};
 				inputSpec.Shader = shape.Shader;
 				inputSpec.Buffer = shape.ShaderData;
 				inputSpec.Entity = static_cast<uint32_t>(entity);
@@ -305,20 +304,20 @@ namespace Kargono
 					PerObjectSceneFunction(inputSpec);
 				}
 
-				Renderer::SubmitDataToRenderer(inputSpec);
+				Rendering::RenderingEngine::SubmitDataToRenderer(inputSpec);
 			}
 		}
 
-		Renderer::EndScene();
+		Rendering::RenderingEngine::EndScene();
 
 	}
 	void Scene::OnUpdatePhysics(Timestep ts)
 	{
 		m_PhysicsWorld->OnUpdate(ts);
 	}
-	void Scene::FillEntityID(RendererInputSpec& inputSpec)
+	void Scene::FillEntityID(Rendering::RendererInputSpec& inputSpec)
 	{
-		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
+		Rendering::Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	template <typename T>

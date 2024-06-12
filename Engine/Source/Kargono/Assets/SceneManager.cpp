@@ -151,13 +151,13 @@ namespace Kargono::Utility
 			{
 				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
 			}
-			KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+			KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
 			if (shapeComponent.Shader)
 			{
 				// Add Shader Handle
 				out << YAML::Key << "ShaderHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.ShaderHandle);
 				// Add Shader Specification
-				const ShaderSpecification& shaderSpec = shapeComponent.Shader->GetSpecification();
+				const Rendering::ShaderSpecification& shaderSpec = shapeComponent.Shader->GetSpecification();
 				out << YAML::Key << "ShaderSpecification" << YAML::Value;
 				out << YAML::BeginMap;
 				out << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(shaderSpec.ColorInput);
@@ -628,7 +628,7 @@ namespace Kargono::Assets
 						if (!sc.Shader)
 						{
 							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
-							ShaderSpecification shaderSpec{};
+							Rendering::ShaderSpecification shaderSpec{};
 							// ShaderSpecification Section
 							shaderSpec.ColorInput = Utility::StringToColorInputType(shaderSpecificationNode["ColorInputType"].as<std::string>());
 							shaderSpec.AddProjectionMatrix = shaderSpecificationNode["AddProjectionMatrix"].as<bool>();
@@ -647,16 +647,16 @@ namespace Kargono::Assets
 						Buffer buffer{ binary.size() };
 						memcpy_s(buffer.Data, buffer.Size, binary.data(), buffer.Size);
 						sc.ShaderData = buffer;
-						if (sc.CurrentShape != ShapeTypes::None)
+						if (sc.CurrentShape != Rendering::ShapeTypes::None)
 						{
-							if (sc.ShaderSpecification.RenderType == RenderingType::DrawIndex)
+							if (sc.ShaderSpecification.RenderType == Rendering::RenderingType::DrawIndex)
 							{
 								sc.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(sc.CurrentShape).GetIndexVertices());
 								sc.Indices = CreateRef<std::vector<uint32_t>>(Utility::ShapeTypeToShape(sc.CurrentShape).GetIndices());
 								sc.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(sc.CurrentShape).GetIndexTextureCoordinates());
 							}
 
-							if (sc.ShaderSpecification.RenderType == RenderingType::DrawTriangle)
+							if (sc.ShaderSpecification.RenderType == Rendering::RenderingType::DrawTriangle)
 							{
 								sc.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(sc.CurrentShape).GetTriangleVertices());
 								sc.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(sc.CurrentShape).GetTriangleTextureCoordinates());

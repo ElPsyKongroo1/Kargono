@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Renderer/Texture.h"
+#include "Kargono/Rendering/Texture.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Core/Buffer.h"
 
@@ -15,7 +15,7 @@ namespace API::RenderingAPI
 	//		an already instantiated texture, create/instantiate a texture from a path (used in editor),
 	//		or instantiate a texture through a pre-loaded intermediate. The m_RendererID holds the
 	//		reference to the OpenGL implementation of the texture.
-	class OpenGLTexture2D : public Kargono::Texture2D
+	class OpenGLTexture2D : public Kargono::Rendering::Texture2D
 	{
 	public:
 		//==============================
@@ -25,7 +25,7 @@ namespace API::RenderingAPI
 		// All of these constructors instantiate the OpenGL version of a texture.
 
 		// TODO: This should be a temporary api for creating a texture!
-		OpenGLTexture2D(const Kargono::TextureSpecification& spec);
+		OpenGLTexture2D(const Kargono::Rendering::TextureSpecification& spec);
 		// This constructor takes an already instantiated texture and wraps it inside
 		//		this class. I plan to remove this constructor once I make the
 		//		texture creation API more complete.

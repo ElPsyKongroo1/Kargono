@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 	enum class InputDataType
 	{
@@ -16,53 +16,53 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	static uint32_t ShaderDataTypeSize(InputDataType type)
+	static uint32_t ShaderDataTypeSize(Rendering::InputDataType type)
 	{
 		switch (type)
 		{
-		case InputDataType::Float:		return 4;
-		case InputDataType::Float2:		return 4 * 2;
-		case InputDataType::Float3:		return 4 * 3;
-		case InputDataType::Float4:		return 4 * 4;
-		case InputDataType::Mat3:		return 4 * 3 * 3;
-		case InputDataType::Mat4:		return 4 * 4 * 4;
-		case InputDataType::Int:		return 4;
-		case InputDataType::Int2:		return 4 * 2;
-		case InputDataType::Int3:		return 4 * 3;
-		case InputDataType::Int4:		return 4 * 4;
-		case InputDataType::Bool:		return 1;
+		case Rendering::InputDataType::Float:		return 4;
+		case Rendering::InputDataType::Float2:		return 4 * 2;
+		case Rendering::InputDataType::Float3:		return 4 * 3;
+		case Rendering::InputDataType::Float4:		return 4 * 4;
+		case Rendering::InputDataType::Mat3:		return 4 * 3 * 3;
+		case Rendering::InputDataType::Mat4:		return 4 * 4 * 4;
+		case Rendering::InputDataType::Int:		return 4;
+		case Rendering::InputDataType::Int2:		return 4 * 2;
+		case Rendering::InputDataType::Int3:		return 4 * 3;
+		case Rendering::InputDataType::Int4:		return 4 * 4;
+		case Rendering::InputDataType::Bool:		return 1;
 		}
 		KG_ERROR("Unknown ShaderDataType!");
 		return 0;
 	}
 
-	static InputDataType StringToInputDataType(std::string_view type)
+	static Rendering::InputDataType StringToInputDataType(std::string_view type)
 	{
-		if (type == "int") { return InputDataType::Int; }
-		if (type == "float") { return InputDataType::Float; }
-		if (type == "vec2") { return InputDataType::Float2; }
-		if (type == "vec3") { return InputDataType::Float3; }
-		if (type == "vec4") { return InputDataType::Float4; }
-		if (type == "mat3") { return InputDataType::Mat3; }
-		if (type == "mat4") { return InputDataType::Mat4; }
-		if (type == "bool") { return InputDataType::Bool; }
+		if (type == "int") { return Rendering::InputDataType::Int; }
+		if (type == "float") { return Rendering::InputDataType::Float; }
+		if (type == "vec2") { return Rendering::InputDataType::Float2; }
+		if (type == "vec3") { return Rendering::InputDataType::Float3; }
+		if (type == "vec4") { return Rendering::InputDataType::Float4; }
+		if (type == "mat3") { return Rendering::InputDataType::Mat3; }
+		if (type == "mat4") { return Rendering::InputDataType::Mat4; }
+		if (type == "bool") { return Rendering::InputDataType::Bool; }
 
 		KG_ERROR("Unknown String trying to convert to InputDataType!");
-		return InputDataType::None;
+		return Rendering::InputDataType::None;
 	}
 
-	static std::string InputDataTypeToString(InputDataType type)
+	static std::string InputDataTypeToString(Rendering::InputDataType type)
 	{
 		switch (type)
 		{
-		case InputDataType::Float:		return "float";
-		case InputDataType::Float2:		return "vec2";
-		case InputDataType::Float3:		return "vec3";
-		case InputDataType::Float4:		return "vec4";
-		case InputDataType::Mat3:		return "mat3";
-		case InputDataType::Mat4:		return 	"mat4";
-		case InputDataType::Int:		return "int";
-		case InputDataType::Bool:		return "bool";
+		case Rendering::InputDataType::Float:		return "float";
+		case Rendering::InputDataType::Float2:		return "vec2";
+		case Rendering::InputDataType::Float3:		return "vec3";
+		case Rendering::InputDataType::Float4:		return "vec4";
+		case Rendering::InputDataType::Mat3:		return "mat3";
+		case Rendering::InputDataType::Mat4:		return 	"mat4";
+		case Rendering::InputDataType::Int:		return "int";
+		case Rendering::InputDataType::Bool:		return "bool";
 		}
 
 		KG_ERROR("Unknown DataType to String Conversion");
@@ -72,7 +72,7 @@ namespace Kargono::Utility
 }
 
 
-namespace Kargono
+namespace Kargono::Rendering
 {
 
 	struct InputBufferElement
