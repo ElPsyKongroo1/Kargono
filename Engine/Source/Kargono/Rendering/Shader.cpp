@@ -2,7 +2,7 @@
 
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/RenderingEngine.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Utility/FileSystem.h"
 
 #include "API/RenderingAPI/OpenGLShader.h"
@@ -51,7 +51,7 @@ namespace Kargono::Rendering
 
 		if (m_ShaderSpecification.AddEntityID)
 		{
-			m_FillDataInScene.push_back(Scene::FillEntityID);
+			m_FillDataInScene.push_back(Scenes::Scene::FillEntityID);
 		}
 		if (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture ||
 			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)

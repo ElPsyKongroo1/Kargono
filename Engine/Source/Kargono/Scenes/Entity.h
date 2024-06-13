@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Scene/Components.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Components.h"
+#include "Kargono/Scenes/Scene.h"
 
 #include "API/EntityComponentSystem/enttAPI.h"
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	class Entity
 	{

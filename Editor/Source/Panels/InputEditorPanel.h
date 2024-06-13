@@ -2,7 +2,7 @@
 #include "Kargono.h"
 #include <string>
 
-namespace Kargono
+namespace Kargono::Panels
 {
 	class InputEditorPanel
 	{

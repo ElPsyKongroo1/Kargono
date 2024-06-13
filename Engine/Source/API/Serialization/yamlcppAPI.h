@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Scene/Components.h"
+#include "Kargono/Scenes/Components.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/WrappedData.h"
 
@@ -342,26 +342,26 @@ namespace Kargono::Utility
 	}
 
 	// These are simply here to help with serialization for the rigid body components in an entity
-	inline std::string RigidBody2DBodyTypeToString(Rigidbody2DComponent::BodyType bodyType)
+	inline std::string RigidBody2DBodyTypeToString(Scenes::Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
 		{
-		case Rigidbody2DComponent::BodyType::Static:	return "Static";
-		case Rigidbody2DComponent::BodyType::Dynamic:	return "Dynamic";
-		case Rigidbody2DComponent::BodyType::Kinematic:	return "Kinematic";
+		case Scenes::Rigidbody2DComponent::BodyType::Static:	return "Static";
+		case Scenes::Rigidbody2DComponent::BodyType::Dynamic:	return "Dynamic";
+		case Scenes::Rigidbody2DComponent::BodyType::Kinematic:	return "Kinematic";
 		}
 
 		KG_ERROR("Unknown body type")
 			return {};
 	}
 
-	inline Rigidbody2DComponent::BodyType StringToRigidBody2DBodyType(const std::string& bodyTypeString)
+	inline Scenes::Rigidbody2DComponent::BodyType StringToRigidBody2DBodyType(const std::string& bodyTypeString)
 	{
-		if (bodyTypeString == "Static") return Rigidbody2DComponent::BodyType::Static;
-		if (bodyTypeString == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
-		if (bodyTypeString == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
+		if (bodyTypeString == "Static") return Scenes::Rigidbody2DComponent::BodyType::Static;
+		if (bodyTypeString == "Dynamic") return Scenes::Rigidbody2DComponent::BodyType::Dynamic;
+		if (bodyTypeString == "Kinematic") return Scenes::Rigidbody2DComponent::BodyType::Kinematic;
 
 		KG_ERROR("Unknown body type")
-			return Rigidbody2DComponent::BodyType::Static;
+			return Scenes::Rigidbody2DComponent::BodyType::Static;
 	}
 }

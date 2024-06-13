@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	
 }

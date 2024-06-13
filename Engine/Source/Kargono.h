@@ -54,11 +54,11 @@
 #include "Kargono/Rendering/EditorCamera.h"
 
 //-----------------Scene-----------------//
-#include "Kargono/Scene/Scene.h"
-#include "Kargono/Scene/Components.h"
-#include "Kargono/Scene/Entity.h"
-#include "Kargono/Scene/EntityClass.h"
-#include "Kargono/Scene/GameState.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Scenes/Components.h"
+#include "Kargono/Scenes/Entity.h"
+#include "Kargono/Scenes/EntityClass.h"
+#include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
 #include "Kargono/Script/ScriptEngine.h"

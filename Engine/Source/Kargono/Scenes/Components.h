@@ -1,20 +1,20 @@
 #pragma once
 
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Scene/SceneCamera.h"
+#include "Kargono/Scenes/SceneCamera.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/Shape.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/Math/Math.h"
-#include "Kargono/Scene/EntityClass.h"
+#include "Kargono/Scenes/EntityClass.h"
 
 #include <string>
 #include <unordered_map>
 
 namespace Kargono::Rendering { class Texture2D; }
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	struct IDComponent
 	{

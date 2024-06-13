@@ -2,9 +2,10 @@
 
 #include "Kargono.h"
 
-namespace Kargono
+namespace Kargono { class EditorApp; }
+
+namespace Kargono::Panels
 {
-	class EditorApp;
 
 	class ViewportPanel
 	{
@@ -26,7 +27,7 @@ namespace Kargono
 		void OnOverlayRender();
 		// This function holds the underlying logic to draw Camera Frustrum visualizations.
 		//		This function is called in OnOverlayRender().
-		void DrawFrustrum(Entity& entity);
+		void DrawFrustrum(Scenes::Entity& entity);
 
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
 		//		update physics, and update scripts for m_ActiveScene.
@@ -53,6 +54,6 @@ namespace Kargono
 		Math::vec2 m_ViewportBounds[2];
 		int m_GizmoType = -1;
 
-		friend EditorApp;
+		friend Kargono::EditorApp;
 	};
 }

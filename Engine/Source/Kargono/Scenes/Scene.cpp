@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Kargono/Scene/Scene.h"
-#include "Kargono/Scene/Components.h"
-#include "Kargono/Scene/Entity.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Scenes/Components.h"
+#include "Kargono/Scenes/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Script/ScriptEngine.h"
@@ -11,7 +11,7 @@
 
 
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	Ref<Scene> Scene::s_ActiveScene {nullptr};
 	Assets::AssetHandle Scene::s_ActiveSceneHandle {Assets::EmptyHandle};

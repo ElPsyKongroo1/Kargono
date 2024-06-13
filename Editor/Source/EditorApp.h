@@ -143,7 +143,7 @@ namespace Kargono
 		void OpenScene(Assets::AssetHandle newScene);
 		void SaveScene();
 		// This function is called by SaveSceneAs() to actually serialize the scene.
-		void SerializeScene(Ref<Scene> scene);
+		void SerializeScene(Ref<Scenes::Scene> scene);
 
 		//=========================
 		// Scene State Transitions
@@ -181,7 +181,7 @@ namespace Kargono
 		bool m_RuntimeFullscreen = false;
 		bool m_ShowUserInterface = true;
 		// Editor Scenes
-		Ref<Scene> m_EditorScene;
+		Ref<Scenes::Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;
 		SceneState m_SceneState = SceneState::Edit;
 
@@ -199,31 +199,31 @@ namespace Kargono
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
 	public:
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
-		Scope<LogPanel>  m_LogPanel;
-		Scope<InputEditorPanel>  m_InputEditorPanel;
-		Scope<StatisticsPanel>  m_StatisticsPanel;
-		Scope<ProjectPanel>  m_ProjectPanel;
-		Scope<UIEditorPanel>  m_UIEditorPanel;
-		Scope<ViewportPanel>  m_ViewportPanel;
-		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
-		Scope<EntityClassEditor>  m_EntityClassEditor;
-		Scope<TextEditorPanel>  m_TextEditorPanel;
-		Scope<GameStatePanel>  m_GameStatePanel;
+		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
+		Scope<Panels::LogPanel>  m_LogPanel;
+		Scope<Panels::InputEditorPanel>  m_InputEditorPanel;
+		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
+		Scope<Panels::ProjectPanel>  m_ProjectPanel;
+		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
+		Scope<Panels::ViewportPanel>  m_ViewportPanel;
+		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
+		Scope<Panels::EntityClassEditor>  m_EntityClassEditor;
+		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
+		Scope<Panels::GameStatePanel>  m_GameStatePanel;
 	private:
-		friend ViewportPanel;
-		friend SceneHierarchyPanel;
-		friend ContentBrowserPanel;
-		friend LogPanel;
-		friend StatisticsPanel;
-		friend ProjectPanel;
-		friend UIEditorPanel;
-		friend InputEditorPanel;
-		friend ScriptEditorPanel;
-		friend EntityClassEditor;
-		friend TextEditorPanel;
-		friend GameStatePanel;
+		friend Panels::ViewportPanel;
+		friend Panels::SceneHierarchyPanel;
+		friend Panels::ContentBrowserPanel;
+		friend Panels::LogPanel;
+		friend Panels::StatisticsPanel;
+		friend Panels::ProjectPanel;
+		friend Panels::UIEditorPanel;
+		friend Panels::InputEditorPanel;
+		friend Panels::ScriptEditorPanel;
+		friend Panels::EntityClassEditor;
+		friend Panels::TextEditorPanel;
+		friend Panels::GameStatePanel;
 
 	};
 

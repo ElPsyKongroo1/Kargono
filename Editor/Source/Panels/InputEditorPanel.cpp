@@ -2,10 +2,10 @@
 
 #include "EditorApp.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
 	void InputEditorPanel::InputEditor_Keyboard_OnUpdate()
 	{
 		if (ImGui::TreeNodeEx("OnUpdate##Keyboard", ImGuiTreeNodeFlags_AllowItemOverlap))

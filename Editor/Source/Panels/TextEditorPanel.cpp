@@ -4,7 +4,9 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "Kargono.h"
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
 	struct Document
 	{
@@ -15,7 +17,6 @@ namespace Kargono
 		bool SetActive{ false };
 	};
 
-	static EditorApp* s_EditorApp { nullptr };
 
 	static uint32_t s_ActiveDocument = 0;
 	static std::vector<Document> s_AllDocuments {};

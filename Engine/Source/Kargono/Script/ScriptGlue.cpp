@@ -5,8 +5,8 @@
 #include "Kargono/Script/ScriptGlue.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Scene/Entity.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Entity.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Input/InputMode.h"
@@ -19,15 +19,15 @@
 
 namespace Kargono::Script
 {
-	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
+	static std::unordered_map<MonoType*, std::function<bool(Scenes::Entity)>> s_EntityHasComponentFuncs;
 
 #define KG_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Kargono.InternalCalls::" #Name, Name)
 
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
@@ -40,9 +40,9 @@ namespace Kargono::Script
 	{
 		char* cStr = mono_string_to_utf8(name);
 
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-		Entity entity = scene->FindEntityByName(cStr);
+		Scenes::Entity entity = scene->FindEntityByName(cStr);
 		mono_free(cStr);
 
 		if (!entity) { return 0; }
@@ -57,23 +57,23 @@ namespace Kargono::Script
 
 	static void TransformComponent_GetTranslation(UUID entityID, Math::vec3* outTranslation)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 
-		*outTranslation = entity.GetComponent<TransformComponent>().Translation;
+		*outTranslation = entity.GetComponent<Scenes::TransformComponent>().Translation;
 
 	}
 	
 	static void TransformComponent_SetTranslation(UUID entityID, Math::vec3* translation)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 
-		entity.GetComponent<TransformComponent>().Translation = *translation;
+		entity.GetComponent<Scenes::TransformComponent>().Translation = *translation;
 
-		if (entity.HasComponent<Rigidbody2DComponent>())
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation->x, translation->y }, body->GetAngle());
 		}
@@ -82,36 +82,36 @@ namespace Kargono::Script
 
 	static void Rigidbody2DComponent_ApplyLinearImpulse(UUID entityID, Math::vec2* impulse, Math::vec2* point, bool wake)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->ApplyLinearImpulse(b2Vec2(impulse->x, impulse->y), b2Vec2(point->x, point->y), wake);
 	}
 
 	static void Rigidbody2DComponent_ApplyLinearImpulseToCenter(UUID entityID, Math::vec2* impulse, bool wake)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-			Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
 
 	static void Rigidbody2DComponent_GetLinearVelocity(UUID entityID, Math::vec2* outLinearVelocity)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-			Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		*outLinearVelocity = Math::vec2(linearVelocity.x, linearVelocity.y);
@@ -119,61 +119,61 @@ namespace Kargono::Script
 
 	static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2* linearVelocity)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->SetLinearVelocity(b2Vec2(linearVelocity->x, linearVelocity->y));
 	}
 
-	static void Rigidbody2DComponent_SetType(UUID entityID, Rigidbody2DComponent::BodyType bodyType)
+	static void Rigidbody2DComponent_SetType(UUID entityID, Scenes::Rigidbody2DComponent::BodyType bodyType)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-			Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->SetType(Utility::Rigidbody2DTypeToBox2DBody(bodyType));
 	}
 
-	static Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetType(UUID entityID)
+	static Scenes::Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetType(UUID entityID)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-			Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		return Utility::Rigidbody2DTypeFromBox2DBody(body->GetType());
 	}
 
 	static MonoString* TagComponent_GetTag(UUID entityID)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene)
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-		auto& tagComponent = entity.GetComponent<TagComponent>();
+		auto& tagComponent = entity.GetComponent<Scenes::TagComponent>();
 		return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
 	}
 
 	static void* GameState_GetField(MonoString* fieldName)
 	{
 		const std::string name = std::string(mono_string_to_utf8(fieldName));
-		if (!GameState::s_GameState)
+		if (!Scenes::GameState::s_GameState)
 		{
 			KG_ERROR("Unable to get active Game State when getting field in C# marshalling method");
 			return nullptr;
 		}
 
-		Ref<WrappedVariable> field = GameState::s_GameState->GetField(name);
+		Ref<WrappedVariable> field = Scenes::GameState::s_GameState->GetField(name);
 		if (!field)
 		{
 			KG_ERROR("Unable to get field from active game state in C# marshalling method");
@@ -190,13 +190,13 @@ namespace Kargono::Script
 	static void GameState_SetField(MonoString* fieldName, void* value)
 	{
 		const std::string name = std::string(mono_string_to_utf8(fieldName));
-		if (!GameState::s_GameState)
+		if (!Scenes::GameState::s_GameState)
 		{
 			KG_ERROR("Unable to get active Game State when getting field in C# marshalling method");
 			return;
 		}
 
-		Ref<WrappedVariable> field = GameState::s_GameState->GetField(name);
+		Ref<WrappedVariable> field = Scenes::GameState::s_GameState->GetField(name);
 		if (!field)
 		{
 			KG_ERROR("Unable to get field from active game state in C# marshalling method");
@@ -238,7 +238,7 @@ namespace Kargono::Script
 		auto [handle, sceneReference] = Assets::AssetManager::GetScene(sceneLocation);
 		if (sceneReference)
 		{
-			Scene::TransitionScene(sceneReference);
+			Scenes::Scene::TransitionScene(sceneReference);
 		}
 	}
 
@@ -423,35 +423,34 @@ namespace Kargono::Script
 
 	static void AudioComponent_PlayAudio(UUID entityID)
 	{
-
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene);
-			Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
 
-		if (!entity.HasComponent<AudioComponent>()) { return; }
-		auto& audioComponent = entity.GetComponent<AudioComponent>();
+		if (!entity.HasComponent<Scenes::AudioComponent>()) { return; }
+		auto& audioComponent = entity.GetComponent<Scenes::AudioComponent>();
 		Audio::AudioEngine::PlaySound(audioComponent.Audio);
 	}
 
 	static void AudioComponent_PlayAudioByName(UUID entityID, MonoString* audioTag)
 	{
 		std::string aTag = std::string(mono_string_to_utf8(audioTag));
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = ScriptEngine::GetSceneContext();
 		KG_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
 
-		if (entity.HasComponent<MultiAudioComponent>())
+		if (entity.HasComponent<Scenes::MultiAudioComponent>())
 		{
-			if (entity.GetComponent<MultiAudioComponent>().AudioComponents.contains(aTag))
+			if (entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.contains(aTag))
 			{
-				Audio::AudioEngine::PlaySound(entity.GetComponent<MultiAudioComponent>().AudioComponents.at(aTag).Audio);
+				Audio::AudioEngine::PlaySound(entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.at(aTag).Audio);
 				return;
 			}
 		}
 
-		auto& audioComponent = entity.GetComponent<AudioComponent>();
+		auto& audioComponent = entity.GetComponent<Scenes::AudioComponent>();
 		if (audioComponent.Name == aTag)
 		{
 			Audio::AudioEngine::PlaySound(audioComponent.Audio);
@@ -487,12 +486,12 @@ namespace Kargono::Script
 				//KG_ERROR("Could not find component type {}", managedTypename);
 				return;
 			}
-		s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };
+		s_EntityHasComponentFuncs[managedType] = [](Scenes::Entity entity) { return entity.HasComponent<Component>(); };
 			}(), ...);
 	}
 
 	template<typename ... Component>
-	static void RegisterComponent(ComponentGroup<Component ...>)
+	static void RegisterComponent(Scenes::ComponentGroup<Component ...>)
 	{
 		RegisterComponent<Component ...>();
 	}
@@ -500,7 +499,7 @@ namespace Kargono::Script
 	void ScriptGlue::RegisterComponents()
 	{
 		s_EntityHasComponentFuncs.clear();
-		RegisterComponent (AllComponents{});
+		RegisterComponent (Scenes::AllComponents{});
 	}
 
 	void ScriptGlue::RegisterFunctions()

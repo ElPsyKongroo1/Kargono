@@ -4,10 +4,11 @@
 #include "EditorApp.h"
 #include "EntityClassEditor.h"
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp { nullptr };
-	static Ref<EntityClass> s_EditorEntityClass { nullptr };
+	static Ref<Scenes::EntityClass> s_EditorEntityClass { nullptr };
 	static Assets::AssetHandle s_EditorEntityClassHandle { Assets::EmptyHandle };
 
 	static std::string s_CurrentField {};
@@ -605,7 +606,7 @@ namespace Kargono
 			return;
 		}
 
-		Ref<Kargono::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
+		Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
 		if (!entityClass)
 		{
 			KG_WARN("Invalid entity class pointer returned when attempting to refresh entity scripts");

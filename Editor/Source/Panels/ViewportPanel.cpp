@@ -5,9 +5,10 @@
 #include "EditorApp.h"
 
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp { nullptr };
 
 	ViewportPanel::ViewportPanel()
 	{
@@ -65,7 +66,7 @@ namespace Kargono
 
 				Script::ScriptEngine::OnUpdate(ts);
 
-				Scene::GetActiveScene()->OnUpdatePhysics(ts);
+				Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 			}
 			OnUpdateRuntime(ts);
 			break;
@@ -81,9 +82,9 @@ namespace Kargono
 			auto& currentApplication = EngineCore::GetCurrentEngineCore().GetWindow();
 			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
-				Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-				Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+				Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+				Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 				if (mainCamera)
 				{
@@ -159,7 +160,7 @@ namespace Kargono
 		Math::uvec2 viewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		if (oldViewportSize != viewportSize)
 		{
-			Scene::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
+			Scenes::Scene::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -174,7 +175,7 @@ namespace Kargono
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
 			// Gizmos
-			Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 			if (selectedEntity && m_GizmoType != -1)
 			{
 				ImGuizmo::SetOrthographic(false);
@@ -188,7 +189,7 @@ namespace Kargono
 				Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 				// Entity Transform
-				auto& tc = selectedEntity.GetComponent<TransformComponent>();
+				auto& tc = selectedEntity.GetComponent<Scenes::TransformComponent>();
 				Math::mat4 transform = tc.GetTransform();
 
 				// Snapping
@@ -579,27 +580,29 @@ namespace Kargono
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scene::GetActiveScene()->GetHoveredEntity() = Scene::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ? Entity((entt::entity)pixelData, Scene::GetActiveScene().get()) : Entity();
+			*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = 
+				Scenes::Scene::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ? 
+				Scenes::Entity((entt::entity)pixelData, Scenes::Scene::GetActiveScene().get()) : Scenes::Entity();
 		}
 	}
 
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorCamera& camera)
 	{
-		Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
 
 		// Render 2D
-		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 
 	}
@@ -610,11 +613,11 @@ namespace Kargono
 
 		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
 		{
-			Scene::GetActiveScene()->OnUpdatePhysics(ts);
+			Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 		}
 
 		// Render
-		Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	static Rendering::RendererInputSpec s_CircleInputSpec{};
@@ -698,7 +701,7 @@ namespace Kargono
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			ShapeComponent* lineShapeComponent = new ShapeComponent();
+			Scenes::ShapeComponent* lineShapeComponent = new Scenes::ShapeComponent();
 			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
 			lineShapeComponent->Vertices = nullptr;
 
@@ -716,7 +719,7 @@ namespace Kargono
 			Rendering::Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
 			Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
 
-			ShapeComponent* shapeComp = new ShapeComponent();
+			Scenes::ShapeComponent* shapeComp = new Scenes::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
@@ -733,9 +736,9 @@ namespace Kargono
 	{
 		if (s_EditorApp->m_SceneState == SceneState::Play)
 		{
-			Entity camera = Scene::GetActiveScene()->GetPrimaryCameraEntity();
+			Scenes::Entity camera = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
-			Rendering::RenderingEngine::BeginScene(camera.GetComponent<CameraComponent>().Camera, glm::inverse(camera.GetComponent<TransformComponent>().GetTransform()));
+			Rendering::RenderingEngine::BeginScene(camera.GetComponent<Scenes::CameraComponent>().Camera, glm::inverse(camera.GetComponent<Scenes::TransformComponent>().GetTransform()));
 		}
 		else
 		{
@@ -746,10 +749,10 @@ namespace Kargono
 		{
 			// Circle Colliders
 			{
-				auto view = Scene::GetActiveScene()->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+				auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>();
 				for (auto entity : view)
 				{
-					auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+					auto [tc, cc2d] = view.get<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>(entity);
 
 					Math::vec3 translation = tc.Translation + Math::vec3(cc2d.Offset.x, cc2d.Offset.y, 0.001f);
 
@@ -764,10 +767,10 @@ namespace Kargono
 			}
 			// Box Colliders
 			{
-				auto view = Scene::GetActiveScene()->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+				auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>();
 				for (auto entity : view)
 				{
-					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+					auto [tc, bc2d] = view.get<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>(entity);
 
 					Math::vec3 translation = tc.Translation + Math::vec3(bc2d.Offset.x, bc2d.Offset.y, 0.001f);
 					Math::vec3 scale = tc.Scale * Math::vec3(bc2d.Size * 2.0f, 1.0f);
@@ -811,8 +814,8 @@ namespace Kargono
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate || (s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
 		{
 			// Draw selected entity outline 
-			if (Entity selectedEntity = *Scene::GetActiveScene()->GetSelectedEntity()) {
-				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
+			if (Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity()) {
+				Scenes::TransformComponent transform = selectedEntity.GetComponent<Scenes::TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
@@ -832,7 +835,7 @@ namespace Kargono
 					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
+				if (selectedEntity.HasComponent<Scenes::CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
 				{
 					DrawFrustrum(selectedEntity);
 				}
@@ -842,10 +845,10 @@ namespace Kargono
 		Rendering::RenderingEngine::EndScene();
 	}
 
-	void ViewportPanel::DrawFrustrum(Entity& entity)
+	void ViewportPanel::DrawFrustrum(Scenes::Entity& entity)
 	{
-		auto& transform = entity.GetComponent<TransformComponent>();
-		auto& camera = entity.GetComponent<CameraComponent>();
+		auto& transform = entity.GetComponent<Scenes::TransformComponent>();
+		auto& camera = entity.GetComponent<Scenes::CameraComponent>();
 		float windowWidth = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
 		float windowHeight = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
 		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };

@@ -5,14 +5,14 @@
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/RuntimeUI/Runtime.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Network/Client.h"
-#include "Kargono/Scene/GameState.h"
+#include "Kargono/Scenes/GameState.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
@@ -532,9 +532,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputMode::LoadInputModeByName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) 
-		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scene::TransitionSceneFromName,VoidString) 
+		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) 
-		AddEngineFunctionPointerToDll(SetGameStateField, GameState::SetActiveGameStateField, VoidStringVoidPtr) 
+		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameState::SetActiveGameStateField, VoidStringVoidPtr) 
 		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::Runtime::SetWidgetText,VoidStringStringString) 
 		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::Runtime::SetSelectedWidget,VoidStringString) 
 		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) 
