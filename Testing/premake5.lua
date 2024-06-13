@@ -42,7 +42,8 @@ project "Testing"
 
     defines 
     {
-        "KG_EXPORT=0"
+        "KG_EXPORT=0",
+		"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"

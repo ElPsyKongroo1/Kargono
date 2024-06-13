@@ -50,7 +50,10 @@ project "Server"
     filter "system:windows"
         
         systemversion "latest"
-
+		buildoptions 
+		{
+		"/wd4996" 
+		}
         defines 
         {
             "KG_PLATFORM_WINDOWS"

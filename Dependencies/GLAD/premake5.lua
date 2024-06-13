@@ -15,8 +15,12 @@ project "GLAD"
 
     includedirs
     {
-
         "include"
+    }
+	
+	defines 
+    {
+		"_CRT_SECURE_NO_WARNINGS",
     }
 
     filter "system:windows"

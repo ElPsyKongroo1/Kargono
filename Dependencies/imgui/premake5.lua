@@ -6,6 +6,11 @@ project "ImGui"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	defines 
+    {
+		"_CRT_SECURE_NO_WARNINGS"
+    }
+
 	files
 	{
 		"imconfig.h",
