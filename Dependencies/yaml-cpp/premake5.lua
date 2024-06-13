@@ -20,7 +20,8 @@ project "yaml-cpp"
 
 	defines
 	{
-		"YAML_CPP_STATIC_DEFINE"
+		"YAML_CPP_STATIC_DEFINE",
+		"_CRT_SECURE_NO_WARNINGS",
 	}
 
 	filter "system:windows"
