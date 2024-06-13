@@ -43,13 +43,17 @@ project "Runtime"
     defines 
     {
         "KG_RUNTIME",
+		"_CRT_SECURE_NO_WARNINGS",
         "KG_EXPORT=0"
     }
 
     filter "system:windows"
         
         systemversion "latest"
-
+		buildoptions 
+		{
+		"/wd4996" 
+		}
         defines 
         {
             "KG_PLATFORM_WINDOWS"
