@@ -9,72 +9,71 @@
 
 namespace Kargono::Utility
 {
-	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(BrowserFileType type)
+	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(Panels::BrowserFileType type)
 	{
 		switch (type)
 		{
-		case BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
-		case BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
-		case BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
-		case BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
-		case BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
-
-		case BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
-		case BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
-		case BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
-		case BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
-		case BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
-
-		case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
+		case Panels::BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
+		case Panels::BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
+		case Panels::BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
+		case Panels::BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
+		case Panels::BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
+		case Panels::BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
+		case Panels::BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
+		case Panels::BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
+		case Panels::BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
+		case Panels::BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
+		case Panels::BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
 		return EditorUI::Editor::s_GenericFileIcon;
 	}
 
-	static BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
+	static Panels::BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
 	{
-		if (entry.is_directory()) { return BrowserFileType::Directory; }
-		if (!entry.path().has_extension()) { return BrowserFileType::None; }
+		if (entry.is_directory()) { return Panels::BrowserFileType::Directory; }
+		if (!entry.path().has_extension()) { return Panels::BrowserFileType::None; }
 		auto extension = entry.path().extension();
-		if (extension == ".jpg" || extension == ".png") { return BrowserFileType::Image; }
-		if (extension == ".wav" || extension == ".mp3") { return BrowserFileType::Audio; }
-		if (extension == ".kgreg") { return BrowserFileType::Registry; }
-		if (extension == ".kgui") { return BrowserFileType::UserInterface; }
-		if (extension == ".ttf") { return BrowserFileType::Font; }
-		if (extension == ".kgscene") { return BrowserFileType::Scene; }
-		if (extension == ".csproj") { return BrowserFileType::ScriptProject; }
-		if (extension == ".kginput") { return BrowserFileType::Input; }
+		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
+		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
+		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
+		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
+		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
+		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
+		if (extension == ".csproj") { return Panels::BrowserFileType::ScriptProject; }
+		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
 		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
 			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
-			return BrowserFileType::Binary;
+			return Panels::BrowserFileType::Binary;
 		}
-		return BrowserFileType::None;
+		return Panels::BrowserFileType::None;
 	}
 
-	static std::string BrowserFileTypeToPayloadString(BrowserFileType type)
+	static std::string BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
 	{
 		switch (type)
 		{
-		case BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
-		case BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
-		case BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
-		case BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
-		case BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
+		case Panels::BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
+		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
+		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
+		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
+		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
+		case Panels::BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
 		return "CONTENT_BROWSER_ITEM";
 	}
 }
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp{ nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp{ nullptr };
 	static std::vector<std::filesystem::directory_entry> s_CachedDirectoryEntries {};
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)

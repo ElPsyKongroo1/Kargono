@@ -6,11 +6,11 @@
 #include "Kargono/Audio/AudioEngine.h"
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/RuntimeUI/Runtime.h"
-#include "Kargono/Scene/GameState.h"
+#include "Kargono/Scenes/GameState.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
-#include "Kargono/Scene/EntityClass.h"
+#include "Kargono/Scenes/EntityClass.h"
 
 #include <filesystem>
 #include <tuple>
@@ -20,7 +20,7 @@
 
 namespace Kargono
 {
-	class Scene;
+	namespace Scenes { class Scene; }
 	namespace Projects { class Project; }
 }
 
@@ -352,19 +352,19 @@ namespace Kargono::Assets
 		// Save a Scene
 		//==============================
 		// Save/Update Current Scene
-		static void SaveScene(AssetHandle sceneHandle, Ref<Kargono::Scene> scene);
+		static void SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene);
 		// Save a single scene
-		static void SerializeScene(Ref<Kargono::Scene> scene, const std::filesystem::path& filepath);
+		static void SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath);
 		// Load a single scene
-		static bool DeserializeScene(Ref<Kargono::Scene> scene, const std::filesystem::path& filepath);
+		static bool DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath);
 
 		//==============================
 		// Load and Retrieve In-Memory Scene
 		//==============================
-		static Ref<Kargono::Scene> GetScene(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Kargono::Scene>> GetScene(const std::filesystem::path& filepath);
+		static Ref<Scenes::Scene> GetScene(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Scenes::Scene>> GetScene(const std::filesystem::path& filepath);
 		// Instantiate a new scene
-		static Ref<Kargono::Scene> InstantiateScene(const Assets::Asset& sceneAsset);
+		static Ref<Scenes::Scene> InstantiateScene(const Assets::Asset& sceneAsset);
 
 
 		//==============================
@@ -593,7 +593,7 @@ namespace Kargono::Assets
 		// Save a GameState
 		//==============================
 		// Save Current GameState
-		static void SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::GameState> GameState);
+		static void SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::Scenes::GameState> GameState);
 
 		//==============================
 		// Delete a GameState
@@ -604,8 +604,8 @@ namespace Kargono::Assets
 		// Load and Retrieve In-Memory GameState
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<Kargono::GameState> GetGameState(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Kargono::GameState>> GetGameState(const std::filesystem::path& filepath);
+		static Ref<Kargono::Scenes::GameState> GetGameState(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> GetGameState(const std::filesystem::path& filepath);
 
 		//==============================
 		// Getters/Setters
@@ -625,11 +625,11 @@ namespace Kargono::Assets
 		//		with relevant metadata.
 		static void CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset);
 		// Save a single GameState
-		static void SerializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath);
+		static void SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath);
 		// Load a single GameState
-		static bool DeserializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath);
+		static bool DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath);
 		// Instantiate a new GameState
-		static Ref<Kargono::GameState> InstantiateGameState(const Assets::Asset& GameStateAsset);
+		static Ref<Kargono::Scenes::GameState> InstantiateGameState(const Assets::Asset& GameStateAsset);
 	private:
 		// This registry holds a reference to all of the available GameState in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects
@@ -638,9 +638,9 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Assets::Asset> s_GameStateRegistry;
 
 
-	//============================================================
-	// EntityClass
-	//============================================================
+		//============================================================
+		// EntityClass
+		//============================================================
 	public:
 		//==============================
 		// Manage EntityClass Registry
@@ -680,19 +680,19 @@ namespace Kargono::Assets
 		// Save a EntityClass
 		//==============================
 		// Save Current EntityClass
-		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Kargono::EntityClass> EntityClass, Ref<Kargono::Scene> editorScene = nullptr);
+		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Scenes::EntityClass> EntityClass, Ref<Scenes::Scene> editorScene = nullptr);
 
 		//==============================
 		// Delete a EntityClass
 		//==============================
-		static void DeleteEntityClass(AssetHandle handle, Ref<Kargono::Scene> editorScene = nullptr);
+		static void DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene = nullptr);
 
 		//==============================
 		// Load and Retrieve In-Memory EntityClass
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<Kargono::EntityClass> GetEntityClass(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Kargono::EntityClass>> GetEntityClass(const std::filesystem::path& filepath);
+		static Ref<Scenes::EntityClass> GetEntityClass(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<Scenes::EntityClass>> GetEntityClass(const std::filesystem::path& filepath);
 
 		//==============================
 		// Getters/Setters
@@ -712,11 +712,11 @@ namespace Kargono::Assets
 		//		with relevant metadata.
 		static void CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset);
 		// Save a single EntityClass
-		static void SerializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath);
+		static void SerializeEntityClass(Ref<Kargono::Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath);
 		// Load a single EntityClass
-		static bool DeserializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath);
+		static bool DeserializeEntityClass(Ref<Kargono::Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath);
 		// Instantiate a new EntityClass
-		static Ref<Kargono::EntityClass> InstantiateEntityClass(const Assets::Asset& EntityClassAsset);
+		static Ref<Kargono::Scenes::EntityClass> InstantiateEntityClass(const Assets::Asset& EntityClassAsset);
 	private:
 		// This registry holds a reference to all of the available EntityClass in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects

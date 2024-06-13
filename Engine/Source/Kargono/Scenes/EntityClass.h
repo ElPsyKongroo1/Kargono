@@ -10,7 +10,7 @@
 
 namespace Kargono::Assets { class AssetManager; }
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	struct EntityScripts
 	{

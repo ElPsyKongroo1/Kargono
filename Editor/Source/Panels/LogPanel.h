@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Kargono
+namespace Kargono::Panels
 {
 
 	// Usage:

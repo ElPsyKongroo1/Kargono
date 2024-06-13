@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 
-namespace Kargono
+namespace Kargono::Panels
 {
 	class TextEditorPanel
 	{

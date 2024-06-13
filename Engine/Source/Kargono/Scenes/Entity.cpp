@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Kargono/Scene/Entity.h"
+#include "Kargono/Scenes/Entity.h"
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	Entity::Entity(entt::entity handle, Scene* scene)
 	{

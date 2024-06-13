@@ -5,19 +5,20 @@
 #include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Assets/Asset.h"
 
 #include "API/EntityComponentSystem/enttAPI.h"
 
 #include <vector>
 #include <unordered_map>
 
+
 // Forward Declarations
 class Shader;
 struct Buffer;
 
-namespace Kargono 
+namespace Kargono::Scenes
 {
-
 	// Forward Declarations
 	class Entity;
 	struct ShaderSpecification;
@@ -163,10 +164,9 @@ namespace Kargono
 		}
 
 		static std::unordered_map<std::string, std::vector<UUID>>& GetScriptClassToEntityList();
-
-	private:
 		// Underlying ECS registry that holds actual entities and their components
 		entt::registry m_Registry;
+	private:
 		// Entity Map that holds easy to access reference to all entities in the scene.
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		// This map holds lists of entitys (UUID) using the key of a script class.
@@ -189,7 +189,6 @@ namespace Kargono
 		// Friend Declarations
 		friend class Entity;
 		friend class SceneSerializer;
-		friend class SceneHierarchyPanel;
 		friend class Assets::AssetManager;
 		// This represents the staticlly defined and managed scene that is currently
 		//		being rendered.

@@ -6,10 +6,10 @@
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
 	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
@@ -35,11 +35,11 @@ namespace Kargono
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
-				Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
-				auto& component = entity.GetComponent<ClassInstanceComponent>();
-				if (entity.HasComponent<ClassInstanceComponent>())
+				Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+				auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
+				if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 				{
-					entity.RemoveComponent<ClassInstanceComponent>();
+					entity.RemoveComponent<Scenes::ClassInstanceComponent>();
 				}
 			});
 		});
@@ -59,8 +59,8 @@ namespace Kargono
 		};
 		s_SelectClassOption.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
-			auto& component = entity.GetComponent<ClassInstanceComponent>();
+			Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 
 			if (entry.Handle == Assets::EmptyHandle)
 			{
@@ -88,14 +88,14 @@ namespace Kargono
 		s_InstanceFieldsTable.Expanded = true;
 		s_InstanceFieldsTable.OnRefresh = [&]()
 		{
-			Entity entity = *Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 
-			if (!entity || !entity.HasComponent<ClassInstanceComponent>())
+			if (!entity || !entity.HasComponent<Scenes::ClassInstanceComponent>())
 			{
 				return;
 			}
 
-			auto& component = entity.GetComponent<ClassInstanceComponent>();
+			auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 			uint32_t iteration{ 0 };
 			s_InstanceFieldsTable.ClearTable();
 			for(auto& wrappedVar : component.Fields)
@@ -108,8 +108,8 @@ namespace Kargono
 					[&](EditorUI::TableEntry& optionEntry)
 					{
 						s_CurrentClassField = optionEntry.Label;
-						Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-						auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+						Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+						auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 						s_CurrentClassFieldLocation = comp.ClassReference->GetFieldLocation(s_CurrentClassField);
 						if (s_CurrentClassFieldLocation == -1)
 						{
@@ -128,8 +128,8 @@ namespace Kargono
 		s_EditClassFieldPopup.PopupWidth = 420.0f;
 		s_EditClassFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
 		{
-			Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
 
 			if (!field)
@@ -152,8 +152,8 @@ namespace Kargono
 		};
 		s_EditClassFieldPopup.ConfirmAction = [&]()
 		{
-			Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
-			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
 			bool success = Utility::FillWrappedVarWithStringBuffer(field, s_EditFieldValue.FieldBuffer);
 			if (!success)
@@ -201,13 +201,15 @@ namespace Kargono
 		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
-		if (Scene::GetActiveScene())
+		if (Scenes::Scene::GetActiveScene())
 		{
-			Scene::GetActiveScene()->m_Registry.each([&](auto entityID)
+			Scenes::Scene::GetActiveScene()->m_Registry.each([&](auto entityID)
 			{
-				Entity entity{ entityID, Scene::GetActiveScene().get() };
+				Scenes::Entity entity{ entityID, Scenes::Scene::GetActiveScene().get() };
 				DrawEntityNode(entity);
 			});
+
+			
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			{
@@ -217,7 +219,7 @@ namespace Kargono
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 			{
-				if (ImGui::MenuItem("Create Empty Entity")) { Scene::GetActiveScene()->CreateEntity("Empty Entity"); }
+				if (ImGui::MenuItem("Create Empty Entity")) { Scenes::Scene::GetActiveScene()->CreateEntity("Empty Entity"); }
 				ImGui::EndPopup();
 			}
 
@@ -225,9 +227,9 @@ namespace Kargono
 		EditorUI::Editor::EndWindow();
 
 		EditorUI::Editor::StartWindow("Properties");
-		if (*Scene::GetActiveScene()->GetSelectedEntity())
+		if (*Scenes::Scene::GetActiveScene()->GetSelectedEntity())
 		{
-			DrawComponents(*Scene::GetActiveScene()->GetSelectedEntity());
+			DrawComponents(*Scenes::Scene::GetActiveScene()->GetSelectedEntity());
 		}
 
 		EditorUI::Editor::EndWindow();
@@ -236,14 +238,14 @@ namespace Kargono
 	{
 		return false;
 	}
-	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(Scenes::Entity entity)
 	{
-		*Scene::GetActiveScene()->GetSelectedEntity() = entity;
+		*Scenes::Scene::GetActiveScene()->GetSelectedEntity() = entity;
 		if (entity)
 		{
-			if (entity.HasComponent<ClassInstanceComponent>())
+			if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 			{
-				ClassInstanceComponent& instanceComp = entity.GetComponent<ClassInstanceComponent>();
+				Scenes::ClassInstanceComponent& instanceComp = entity.GetComponent<Scenes::ClassInstanceComponent>();
 				if (instanceComp.ClassHandle == Assets::EmptyHandle)
 				{
 					s_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
@@ -259,14 +261,14 @@ namespace Kargono
 	}
 	void SceneHierarchyPanel::RefreshWidgetData()
 	{
-		Entity currentEntity = *Scene::GetActiveScene()->GetSelectedEntity();
+		Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 		if (!currentEntity)
 		{
 			return;
 		}
-		if (currentEntity.HasComponent<ClassInstanceComponent>())
+		if (currentEntity.HasComponent<Scenes::ClassInstanceComponent>())
 		{
-			auto& comp = currentEntity.GetComponent<ClassInstanceComponent>();
+			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 			if (!Assets::AssetManager::GetEntityClass(comp.ClassHandle))
 			{
 				comp.ClassHandle = Assets::EmptyHandle;
@@ -277,11 +279,11 @@ namespace Kargono
 			s_InstanceFieldsTable.OnRefresh();
 		}
 	}
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Scenes::Entity entity)
 	{
-		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((*Scene::GetActiveScene()->GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
+		ImGuiTreeNodeFlags flags = ((*Scenes::Scene::GetActiveScene()->GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
 			ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
@@ -292,7 +294,7 @@ namespace Kargono
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
 			auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
-			auto& transformComponent = entity.GetComponent<TransformComponent>();
+			auto& transformComponent = entity.GetComponent<Scenes::TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
 			editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
@@ -315,10 +317,10 @@ namespace Kargono
 
 		if (entityDeleted)
 		{
-			Scene::GetActiveScene()->DestroyEntity(entity);
-			if (*Scene::GetActiveScene()->GetSelectedEntity() == entity)
+			Scenes::Scene::GetActiveScene()->DestroyEntity(entity);
+			if (*Scenes::Scene::GetActiveScene()->GetSelectedEntity() == entity)
 			{
-				*Scene::GetActiveScene()->GetSelectedEntity() = {};
+				*Scenes::Scene::GetActiveScene()->GetSelectedEntity() = {};
 			}
 		}
 	}
@@ -389,7 +391,7 @@ namespace Kargono
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	static void DrawComponent(const std::string& name, Scenes::Entity entity, UIFunction uiFunction)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | 
 			ImGuiTreeNodeFlags_AllowItemOverlap | 
@@ -430,19 +432,19 @@ namespace Kargono
 			if (removeComponent)
 			{
 				entity.RemoveComponent<T>();
-				if (typeid(T) == typeid(AudioComponent) && entity.HasComponent<MultiAudioComponent>())
+				if (typeid(T) == typeid(Scenes::AudioComponent) && entity.HasComponent<Scenes::MultiAudioComponent>())
 				{
-					entity.RemoveComponent<MultiAudioComponent>();
+					entity.RemoveComponent<Scenes::MultiAudioComponent>();
 				}
 			}
 		}
 	}
 
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	void SceneHierarchyPanel::DrawComponents(Scenes::Entity entity)
 	{
-		if (entity.HasComponent<TagComponent>())
+		if (entity.HasComponent<Scenes::TagComponent>())
 		{
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
 
 			char buffer[256] = {};
 			strncpy_s(buffer, tag.c_str(), sizeof(buffer));
@@ -476,85 +478,85 @@ namespace Kargono
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 
-			DisplayAddComponentEntry<ClassInstanceComponent>("Class Instance");
-			DisplayAddComponentEntry<CameraComponent>("Camera");
-			DisplayAddComponentEntry<ScriptComponent>("Script");
-			DisplayAddComponentEntry<ShapeComponent>("Shape");
-			DisplayAddComponentEntry<AudioComponent>("Audio");
-			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
-			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
-			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DisplayAddComponentEntry<Scenes::ClassInstanceComponent>("Class Instance");
+			DisplayAddComponentEntry<Scenes::CameraComponent>("Camera");
+			DisplayAddComponentEntry<Scenes::ScriptComponent>("Script");
+			DisplayAddComponentEntry<Scenes::ShapeComponent>("Shape");
+			DisplayAddComponentEntry<Scenes::AudioComponent>("Audio");
+			DisplayAddComponentEntry<Scenes::Rigidbody2DComponent>("Rigidbody 2D");
+			DisplayAddComponentEntry<Scenes::BoxCollider2DComponent>("Box Collider 2D");
+			DisplayAddComponentEntry<Scenes::CircleCollider2DComponent>("Circle Collider 2D");
 
 			ImGui::EndPopup();
 		}
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
-			{
-				DrawVec3Control("Translation", component.Translation);
-				Math::vec3 rotation = glm::degrees(component.Rotation);
-				DrawVec3Control("Rotation", rotation);
-				component.Rotation = glm::radians(rotation);
-				DrawVec3Control("Scale", component.Scale, 1.0f);
-			});
-
-		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
-			{
-				auto& camera = component.Camera;
-
-				// Set Primary Camera Checkbox
-				s_PrimaryCameraCheckboxSpec.ToggleBoolean = component.Primary;
-				s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
-				{
-					component.Primary = value;
-				};
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-				EditorUI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-
-
-				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-				const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
-				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-				{
-					for (int i = 0; i < 2; i++)
-					{
-						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-						{
-							currentProjectionTypeString = projectionTypeStrings[i];
-							camera.SetProjectionType((SceneCamera::ProjectionType)i);
-						}
-						if (isSelected) { ImGui::SetItemDefaultFocus(); }
-					}
-					ImGui::EndCombo();
-				}
-
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-				{
-					float verticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-					if (ImGui::DragFloat("Vertical FOV", &verticalFOV, 1, 0, 10000)) { camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV)); }
-					float perspectiveNear = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near Plane", &perspectiveNear, 1, 0, 10000)) { camera.SetPerspectiveNearClip(perspectiveNear); }
-					float perspectiveFar = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far Plane", &perspectiveFar, 1, 0, 10000)) { camera.SetPerspectiveFarClip(perspectiveFar); }
-				}
-
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-				{
-					float orthoSize = camera.GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &orthoSize, 1, 0, 10000)) { camera.SetOrthographicSize(orthoSize); }
-					float orthoNear = camera.GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Plane", &orthoNear, 1, 0, 10000)) { camera.SetOrthographicNearClip(orthoNear); }
-					float orthoFar = camera.GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
-				}
-			});
-
-		if (entity.HasComponent<ClassInstanceComponent>())
+		DrawComponent<Scenes::TransformComponent>("Transform", entity, [](auto& component)
 		{
-			ClassInstanceComponent& component = entity.GetComponent<ClassInstanceComponent>();
+			DrawVec3Control("Translation", component.Translation);
+			Math::vec3 rotation = glm::degrees(component.Rotation);
+			DrawVec3Control("Rotation", rotation);
+			component.Rotation = glm::radians(rotation);
+			DrawVec3Control("Scale", component.Scale, 1.0f);
+		});
+
+		DrawComponent<Scenes::CameraComponent>("Camera", entity, [](auto& component)
+		{
+			auto& camera = component.Camera;
+
+			// Set Primary Camera Checkbox
+			s_PrimaryCameraCheckboxSpec.ToggleBoolean = component.Primary;
+			s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
+			{
+				component.Primary = value;
+			};
+			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
+			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+
+
+			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+					{
+						currentProjectionTypeString = projectionTypeStrings[i];
+						camera.SetProjectionType((Scenes::SceneCamera::ProjectionType)i);
+					}
+					if (isSelected) { ImGui::SetItemDefaultFocus(); }
+				}
+				ImGui::EndCombo();
+			}
+
+			if (camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
+			{
+				float verticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
+				if (ImGui::DragFloat("Vertical FOV", &verticalFOV, 1, 0, 10000)) { camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV)); }
+				float perspectiveNear = camera.GetPerspectiveNearClip();
+				if (ImGui::DragFloat("Near Plane", &perspectiveNear, 1, 0, 10000)) { camera.SetPerspectiveNearClip(perspectiveNear); }
+				float perspectiveFar = camera.GetPerspectiveFarClip();
+				if (ImGui::DragFloat("Far Plane", &perspectiveFar, 1, 0, 10000)) { camera.SetPerspectiveFarClip(perspectiveFar); }
+			}
+
+			if (camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Orthographic)
+			{
+				float orthoSize = camera.GetOrthographicSize();
+				if (ImGui::DragFloat("Size", &orthoSize, 1, 0, 10000)) { camera.SetOrthographicSize(orthoSize); }
+				float orthoNear = camera.GetOrthographicNearClip();
+				if (ImGui::DragFloat("Near Plane", &orthoNear, 1, 0, 10000)) { camera.SetOrthographicNearClip(orthoNear); }
+				float orthoFar = camera.GetOrthographicFarClip();
+				if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
+			}
+		});
+
+		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 			EditorUI::Editor::CollapsingHeader(s_ClassInstanceHeader);
 			if (s_ClassInstanceHeader.Expanded)
 			{
@@ -567,7 +569,7 @@ namespace Kargono
 			}
 		}
 
-		DrawComponent<ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
+		DrawComponent<Scenes::ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
 		{
 			// Load in all entity class names
 			auto entityClasses = Script::ScriptEngine::GetEntityClasses();
@@ -608,25 +610,25 @@ namespace Kargono
 
 
 			// Fields
-			bool sceneRunning = Scene::GetActiveScene()->IsRunning();
+			bool sceneRunning = Scenes::Scene::GetActiveScene()->IsRunning();
 			if (sceneRunning)
 			{
 				Ref<Script::ScriptClassEntityInstance> scriptInstance = Script::ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-			   if (scriptInstance)
-			   {
-				   const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-				   for (const auto& [name, field] : fields)
-				   {
-					   if (field.Type == Script::ScriptFieldType::Float)
-					   {
-						   float data = scriptInstance->GetFieldValue<float>(name);
-						   if (ImGui::DragFloat(name.c_str(), &data))
-						   {
-							   scriptInstance->SetFieldValue(name, data);
-						   }
-					   }
-				   }
-			   }
+				if (scriptInstance)
+				{
+					const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+					for (const auto& [name, field] : fields)
+					{
+						if (field.Type == Script::ScriptFieldType::Float)
+						{
+							float data = scriptInstance->GetFieldValue<float>(name);
+							if (ImGui::DragFloat(name.c_str(), &data))
+							{
+								scriptInstance->SetFieldValue(name, data);
+							}
+						}
+					}
+				}
 			}
 			else
 			{
@@ -638,7 +640,7 @@ namespace Kargono
 					auto& entityFields = Script::ScriptEngine::GetScriptFieldMap(entity);
 					for (const auto& [name, field] : fields)
 					{
-							// Field has been set in editor
+						// Field has been set in editor
 						if (entityFields.find(name) != entityFields.end())
 						{
 							Script::ScriptFieldInstance& scriptField = entityFields.at(name);
@@ -669,14 +671,14 @@ namespace Kargono
 
 		});
 
-		DrawComponent<AudioComponent>("Audio", entity, [&](auto& component)
+		DrawComponent<Scenes::AudioComponent>("Audio", entity, [&](auto& component)
 		{
 			bool replaceComponent = false;
 			bool deleteComponent = false;
 			static std::string oldComponentName {};
-			AudioComponent replacementComponent{};
+			Scenes::AudioComponent replacementComponent{};
 
-			auto AudioTableRow = [&](uint32_t slot, AudioComponent& audioComp) mutable
+			auto AudioTableRow = [&](uint32_t slot, Scenes::AudioComponent& audioComp) mutable
 			{
 				ImGui::TableNextRow();
 				// Column One Displays Slot Number
@@ -784,10 +786,10 @@ namespace Kargono
 				AudioTableRow(iterator, component);
 
 				// Add Multi Audio Component Slots
-				if (entity.HasComponent<MultiAudioComponent>())
+				if (entity.HasComponent<Scenes::MultiAudioComponent>())
 				{
 					iterator++;
-					for (auto& [title, audioComp] : entity.GetComponent<MultiAudioComponent>().AudioComponents)
+					for (auto& [title, audioComp] : entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents)
 					{
 						AudioTableRow(iterator, audioComp);
 						iterator++;
@@ -799,41 +801,41 @@ namespace Kargono
 			// Add New Slot Section
 			if (ImGui::Button("Add Audio Slot"))
 			{
-				if (!entity.HasComponent<MultiAudioComponent>())
+				if (!entity.HasComponent<Scenes::MultiAudioComponent>())
 				{
-					entity.AddComponent<MultiAudioComponent>();
+					entity.AddComponent<Scenes::MultiAudioComponent>();
 				}
-				AudioComponent newComponent = AudioComponent();
+				Scenes::AudioComponent newComponent = Scenes::AudioComponent();
 				newComponent.Audio = nullptr;
 				uint32_t iterator{ 0 };
 				std::string temporaryName {"Empty"};
 				// TODO: Potential Infinite Loop
-				while (entity.GetComponent<MultiAudioComponent>().AudioComponents.
-					contains(temporaryName + std::to_string(iterator))) { iterator++; }
+				while (entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.
+				              contains(temporaryName + std::to_string(iterator))) { iterator++; }
 				newComponent.Name = temporaryName + std::to_string(iterator);
-				entity.GetComponent<MultiAudioComponent>().AudioComponents.insert({ temporaryName + std::to_string(iterator), newComponent });
+				entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.insert({ temporaryName + std::to_string(iterator), newComponent });
 			}
 
 			// Replace Component outside of for loop to prevent errors
 			if (replaceComponent)
 			{
-				entity.GetComponent<MultiAudioComponent>().AudioComponents.erase(oldComponentName);
-				entity.GetComponent<MultiAudioComponent>().AudioComponents.insert({ replacementComponent.Name, replacementComponent });
+				entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.erase(oldComponentName);
+				entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.insert({ replacementComponent.Name, replacementComponent });
 			}
 			if (deleteComponent)
 			{
-				entity.GetComponent<MultiAudioComponent>().AudioComponents.erase(oldComponentName);
-				if (entity.HasComponent<MultiAudioComponent>())
+				entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.erase(oldComponentName);
+				if (entity.HasComponent<Scenes::MultiAudioComponent>())
 				{
-					if (entity.GetComponent<MultiAudioComponent>().AudioComponents.size() <= 0)
+					if (entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.size() <= 0)
 					{
-						entity.RemoveComponent<MultiAudioComponent>();
+						entity.RemoveComponent<Scenes::MultiAudioComponent>();
 					}
 				}
 			}
 		});
 
-		DrawComponent<ShapeComponent>("Shape", entity, [](auto& component)
+		DrawComponent<Scenes::ShapeComponent>("Shape", entity, [](auto& component)
 		{
 			//=========================
 			// Lambda Functions for Later Use (Scroll down to find main function body)
@@ -1118,34 +1120,34 @@ namespace Kargono
 			
 		});
 
-		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
+		DrawComponent<Scenes::Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
+		{
+			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic"};
+			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
+			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
-				const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic"};
-				const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
-				if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+				for (int i = 0; i < 2; i++)
 				{
-					for (int i = 0; i < 2; i++)
+					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
 					{
-						bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
-						if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
-						{
-							currentBodyTypeString = bodyTypeStrings[i];
-							component.Type = (Rigidbody2DComponent::BodyType)i;
-						}
-						if (isSelected) { ImGui::SetItemDefaultFocus(); }
+						currentBodyTypeString = bodyTypeStrings[i];
+						component.Type = (Scenes::Rigidbody2DComponent::BodyType)i;
 					}
-					ImGui::EndCombo();
+					if (isSelected) { ImGui::SetItemDefaultFocus(); }
 				}
+				ImGui::EndCombo();
+			}
 
-				s_RigidBodyFixedRotSpec.ConfirmAction = [&](bool value)
-				{
-					component.FixedRotation = value;
-				};
-				s_RigidBodyFixedRotSpec.ToggleBoolean = component.FixedRotation;
-				EditorUI::Editor::Checkbox(s_RigidBodyFixedRotSpec);
-			});
+			s_RigidBodyFixedRotSpec.ConfirmAction = [&](bool value)
+			{
+				component.FixedRotation = value;
+			};
+			s_RigidBodyFixedRotSpec.ToggleBoolean = component.FixedRotation;
+			EditorUI::Editor::Checkbox(s_RigidBodyFixedRotSpec);
+		});
 
-		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
+		DrawComponent<Scenes::BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
 			{
 				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.005f);
 				ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.005f);
@@ -1155,7 +1157,7 @@ namespace Kargono
 				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
 
-		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
+		DrawComponent<Scenes::CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
 			{
 				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
 				ImGui::DragFloat("Radius", &component.Radius, 0.01f, 0.0f, 1.0f);
@@ -1168,11 +1170,11 @@ namespace Kargono
 
 	template<typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-		if (!(*Scene::GetActiveScene()->GetSelectedEntity()).HasComponent<T>())
+		if (!(*Scenes::Scene::GetActiveScene()->GetSelectedEntity()).HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				(*Scene::GetActiveScene()->GetSelectedEntity()).AddComponent<T>();
+				(*Scenes::Scene::GetActiveScene()->GetSelectedEntity()).AddComponent<T>();
 				ImGui::CloseCurrentPopup();
 			}
 		}

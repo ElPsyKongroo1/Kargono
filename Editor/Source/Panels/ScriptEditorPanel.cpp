@@ -4,9 +4,10 @@
 
 #include "Kargono.h"
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp { nullptr };
 
 	// Script Table (Create)
 	static EditorUI::TableSpec s_AllScriptsTable {};

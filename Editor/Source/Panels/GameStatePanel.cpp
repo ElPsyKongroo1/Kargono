@@ -3,11 +3,11 @@
 #include "EditorApp.h"
 #include "Kargono.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
-	static GameStatePanel* s_GameStatePanel { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
+	static GameStatePanel* s_GameStatePanel { nullptr };
 	static std::string s_CurrentField {};
 
 	static std::function<void()> s_OnOpenClass { nullptr };

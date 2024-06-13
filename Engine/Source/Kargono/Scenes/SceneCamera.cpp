@@ -1,10 +1,10 @@
 #include "kgpch.h"
 
-#include "Kargono/Scene/SceneCamera.h"
+#include "Kargono/Scenes/SceneCamera.h"
 
 #include "Kargono/Core/EngineCore.h"
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	SceneCamera::SceneCamera()
 	{
