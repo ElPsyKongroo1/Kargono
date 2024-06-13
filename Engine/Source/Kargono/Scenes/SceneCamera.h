@@ -3,7 +3,7 @@
 #include "Kargono/Rendering/Camera.h"
 #include "Kargono/Math/Math.h"
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	class SceneCamera : public Rendering::Camera
 	{

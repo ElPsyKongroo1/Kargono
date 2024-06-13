@@ -210,7 +210,7 @@ namespace Kargono::Assets
 		// If script is associated with a class, add script to class's scripts
 		if (spec.Type == Scripting::ScriptType::Class)
 		{
-			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 			if (!entityClass)
 			{
 				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
@@ -249,7 +249,7 @@ namespace Kargono::Assets
 
 		// Check if an original entity class needs to be updated
 		AssetHandle classHandle{ 0 };
-		Ref<Kargono::EntityClass> entityClass {nullptr};
+		Ref<Scenes::EntityClass> entityClass {nullptr};
 		if (spec.Type == Scripting::ScriptType::Class)
 		{
 			for (auto& [handle, asset] : s_EntityClassRegistry)
@@ -318,7 +318,7 @@ namespace Kargono::Assets
 			// Erase Script inside original entity class
 			for (auto& [classHandle, asset] : s_EntityClassRegistry)
 			{
-				Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+				Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 				if (!entityClass)
 				{
 					continue;
@@ -382,7 +382,7 @@ namespace Kargono::Assets
 		// Delete Handle inside associated class
 		for (auto& [classHandle, asset] : s_EntityClassRegistry)
 		{
-			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 			if (!entityClass)
 			{
 				continue;

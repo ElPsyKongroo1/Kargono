@@ -8,7 +8,7 @@
 #include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Rendering/Shader.h"
-#include "Kargono/Scene/Components.h"
+#include "Kargono/Scenes/Components.h"
 #include "Kargono/Script/ScriptEngine.h"
 
 namespace Kargono::RuntimeUI
@@ -43,7 +43,7 @@ namespace Kargono::RuntimeUI
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			ShapeComponent* shapeComp = new ShapeComponent();
+			Scenes::ShapeComponent* shapeComp = new Scenes::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());

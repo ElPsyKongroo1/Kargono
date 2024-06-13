@@ -10,8 +10,8 @@
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Scene/Entity.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Entity.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scripting/Scripting.h"
@@ -207,16 +207,16 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
 		if (!scene) { return false; }
-		Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
-		entity.GetComponent<TransformComponent>().Translation = translation;
+		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Rigidbody2DComponent>())
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
@@ -225,17 +225,17 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
 		if (!scene) { return false; }
-		Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
-		entity.GetComponent<TransformComponent>().Translation = translation;
+		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Rigidbody2DComponent>())
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));

@@ -1,11 +1,11 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/Buffer.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Script/ScriptEngine.h"
 
 #include "Kargono/Script/ScriptGlue.h"
-#include "Kargono/Scene/Entity.h"
+#include "Kargono/Scenes/Entity.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Utility/FileSystem.h"
@@ -169,7 +169,7 @@ namespace Kargono::Script
 
 
 		// Runtime
-		Scene* SceneContext = nullptr;
+		Scenes::Scene* SceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_ScriptData = nullptr;
@@ -361,15 +361,15 @@ namespace Kargono::Script
 		s_ScriptData->EntityClass = ScriptClass("Kargono", "Entity", true);
 	}
 
-	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	void ScriptEngine::OnRuntimeStart(Scenes::Scene* scene)
 	{
 		s_ScriptData->SceneContext = scene;
 
 		// Instantiate all script entities
-		auto view = scene->GetAllEntitiesWith<ScriptComponent>();
+		auto view = scene->GetAllEntitiesWith<Scenes::ScriptComponent>();
 		for (auto e : view)
 		{
-			Entity entity = { e, scene };
+			Scenes::Entity entity = { e, scene };
 
 			OnCreateEntity(entity);
 		}
@@ -390,9 +390,9 @@ namespace Kargono::Script
 		return s_ScriptData->AppDomain;
 	}
 
-	void ScriptEngine::OnCreateEntity(Entity entity)
+	void ScriptEngine::OnCreateEntity(Scenes::Entity entity)
 	{
-		const auto& sc = entity.GetComponent<ScriptComponent>();
+		const auto& sc = entity.GetComponent<Scenes::ScriptComponent>();
 		if (ScriptEngine::EntityClassExists(sc.ClassName))
 		{
 			// Create a ScriptInstance specific to the entity and its ScriptClass
@@ -415,7 +415,7 @@ namespace Kargono::Script
 		}
 	}
 
-	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
+	void ScriptEngine::OnUpdateEntity(Scenes::Entity entity, Timestep ts)
 	{
 		UUID entityUUID = entity.GetUUID();
 
@@ -455,9 +455,9 @@ namespace Kargono::Script
 
 			for (auto& [className, bindingVector] : Input::InputMode::GetScriptClassOnUpdate())
 			{
-				if (!Scene::GetScriptClassToEntityList().contains(className)) { continue; }
+				if (!Scenes::Scene::GetScriptClassToEntityList().contains(className)) { continue; }
 
-				for (auto& entity : Scene::GetScriptClassToEntityList().at(className))
+				for (auto& entity : Scenes::Scene::GetScriptClassToEntityList().at(className))
 				{
 					for (auto& binding : bindingVector)
 					{
@@ -473,12 +473,12 @@ namespace Kargono::Script
 			}
 		}
 
-		auto view = s_ScriptData->SceneContext->GetAllEntitiesWith<ScriptComponent>();
+		auto view = s_ScriptData->SceneContext->GetAllEntitiesWith<Scenes::ScriptComponent>();
 		// Run On-Update function for each ScriptObject
 		for (auto e : view)
 		{
-			Entity entity = { e, s_ScriptData->SceneContext };
-			if (entity.GetComponent<ScriptComponent>().ClassName == "None") { continue; }
+			Scenes::Entity entity = { e, s_ScriptData->SceneContext };
+			if (entity.GetComponent<Scenes::ScriptComponent>().ClassName == "None") { continue; }
 			ScriptEngine::OnUpdateEntity(entity, ts);
 		}
 	}
@@ -501,9 +501,9 @@ namespace Kargono::Script
 			auto& scriptClassBindings = Input::InputMode::GetScriptClassOnKeyPressed();
 			for (auto& [className, bindingVector] : scriptClassBindings)
 			{
-				if (!Scene::GetScriptClassToEntityList().contains(className)) { continue; }
+				if (!Scenes::Scene::GetScriptClassToEntityList().contains(className)) { continue; }
 
-				for (auto& entity : Scene::GetScriptClassToEntityList().at(className))
+				for (auto& entity : Scenes::Scene::GetScriptClassToEntityList().at(className))
 				{
 					for (auto& binding : bindingVector)
 					{
@@ -654,7 +654,7 @@ namespace Kargono::Script
 		return s_ScriptData->EntityInstances.at(uuid)->GetInstance();
 	}
 
-	Scene* ScriptEngine::GetSceneContext()
+	Scenes::Scene* ScriptEngine::GetSceneContext()
 	{
 		return s_ScriptData->SceneContext;
 	}
@@ -676,7 +676,7 @@ namespace Kargono::Script
 		return s_ScriptData->CustomEngineCalls->m_Methods;
 	}
 
-	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Scenes::Entity entity)
 	{
 		KG_ASSERT(entity)
 		UUID entityID = entity.GetUUID();
@@ -734,7 +734,7 @@ namespace Kargono::Script
 		return insertionSuccessful;
 	}
 
-	ScriptClassEntityInstance::ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Entity entity)
+	ScriptClassEntityInstance::ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Scenes::Entity entity)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = scriptClass->Instantiate();

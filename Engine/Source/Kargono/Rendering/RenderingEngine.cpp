@@ -6,7 +6,7 @@
 #include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Scene.h"
 
 namespace Kargono::Rendering
 {

@@ -3,10 +3,10 @@
 #include "Kargono.h"
 #include "EditorApp.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
 	static EditorUI::SelectOptionSpec s_SelectStartSceneSpec {};
 	static EditorUI::CheckboxSpec s_DefaultFullscreenSpec {};
 	static EditorUI::CheckboxSpec s_ToggleNetworkSpec {};
@@ -679,10 +679,10 @@ namespace Kargono
 		ImGui::Text("Physics Settings:");
 		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
 		{
-			if (Scene::GetActiveScene()->GetPhysicsWorld())
+			if (Scenes::Scene::GetActiveScene()->GetPhysicsWorld())
 			{
-				Scene::GetActiveScene()->GetPhysicsSpecification().Gravity = s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Scene::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
+				Scenes::Scene::GetActiveScene()->GetPhysicsSpecification().Gravity = s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity;
+				Scenes::Scene::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
 

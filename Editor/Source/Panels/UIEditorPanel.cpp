@@ -4,10 +4,10 @@
 
 #include "Kargono.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
 	static void DisplayWidgetSpecificInfo(Ref<RuntimeUI::Widget> widget, int32_t selectedWidget)
 	{
 		switch (widget->WidgetType)

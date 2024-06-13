@@ -106,7 +106,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	void AssetManager::SerializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath)
+	void AssetManager::SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -159,7 +159,7 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::DeserializeGameState(Ref<Kargono::GameState> GameState, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
 		try
@@ -232,7 +232,7 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::GameState> GameState)
+	void AssetManager::SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::Scenes::GameState> GameState)
 	{
 		if (!s_GameStateRegistry.contains(GameStateHandle))
 		{
@@ -269,7 +269,7 @@ namespace Kargono::Assets
 		return s_GameStateRegistry[handle].Data.IntermediateLocation;
 	}
 
-	Ref<Kargono::GameState> AssetManager::GetGameState(const AssetHandle& handle)
+	Ref<Kargono::Scenes::GameState> AssetManager::GetGameState(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving GameState!");
 
@@ -282,7 +282,7 @@ namespace Kargono::Assets
 		KG_ERROR("No GameState is associated with provided handle!");
 		return nullptr;
 	}
-	std::tuple<AssetHandle, Ref<Kargono::GameState>> AssetManager::GetGameState(const std::filesystem::path& filepath)
+	std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> AssetManager::GetGameState(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
@@ -306,9 +306,9 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetGameState(newHandle));
 	}
 
-	Ref<Kargono::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
+	Ref<Scenes::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
 	{
-		Ref<Kargono::GameState> newGameState = CreateRef<Kargono::GameState>();
+		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
 		DeserializeGameState(newGameState, (Projects::Project::GetAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
 		return newGameState;
 	}
@@ -322,7 +322,7 @@ namespace Kargono::Assets
 	void AssetManager::CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset)
 	{
 		// Create Temporary GameState
-		Ref<Kargono::GameState> temporaryGameState = CreateRef<Kargono::GameState>();
+		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
 		temporaryGameState->SetName(GameStateName);
 
 		// Save Binary Intermediate into File

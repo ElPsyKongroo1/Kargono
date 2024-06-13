@@ -9,7 +9,7 @@
 
 namespace Kargono::Assets { class AssetManager; }
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	class GameState
 	{

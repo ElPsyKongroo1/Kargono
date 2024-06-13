@@ -29,7 +29,7 @@ namespace Kargono::Events
 	class KeyPressedEvent;
 }
 
-namespace Kargono
+namespace Kargono::Scenes
 {
 	class Scene;
 	class Entity;
@@ -149,7 +149,7 @@ namespace Kargono::Script
 		// This function stores the active scene pointer and associates each entity
 		//		that has a script component with an EntityInstance class and adds it
 		//		to the EntityInstances Map
-		static void OnRuntimeStart(Scene* scene);
+		static void OnRuntimeStart(Scenes::Scene* scene);
 		// This function removes the scene pointer and clears the EntityInstances Map
 		static void OnRuntimeStop();
 		// This function calls the OnUpdate function for all registered entities with a ScriptComponent
@@ -172,11 +172,11 @@ namespace Kargono::Script
 		static void ShutdownMono();
 		// Function calls OnUpdate function in C# for an individual entity
 		// Function called in OnUpdate(ts)
-		static void OnUpdateEntity(Entity entity, Timestep ts);
+		static void OnUpdateEntity(Scenes::Entity entity, Timestep ts);
 		// Add Entity into EntityInstances Map and corresponding C# entity
 		// public fields
 		// Function called in OnRuntimeStart()
-		static void OnCreateEntity(Entity entity);
+		static void OnCreateEntity(Scenes::Entity entity);
 
 	public:
 		//============================
@@ -238,8 +238,8 @@ namespace Kargono::Script
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 		static std::unordered_map<std::string, ScriptMethod>& GetCustomCallMap();
 		static bool EntityClassExists(const std::string& fullClassName);
-		static Scene* GetSceneContext();
-		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
+		static Scenes::Scene* GetSceneContext();
+		static ScriptFieldMap& GetScriptFieldMap(Scenes::Entity entity);
 		static Ref<ScriptClassEntityInstance> GetEntityScriptInstance(UUID entityID);
 
 	private:
@@ -399,7 +399,7 @@ namespace Kargono::Script
 		//		2. Get references to class methods (currently this includes
 		//		the constructor, OnCreate, OnUpdate, and OnPhysicsCollision) from scriptClass
 		//		3. Calls constructor for MonoObject*
-		ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Entity entity);
+		ScriptClassEntityInstance(Ref<ScriptClass> scriptClass, Scenes::Entity entity);
 
 		//============================
 		// Getter/Setter
