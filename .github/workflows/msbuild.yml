@@ -36,7 +36,11 @@ jobs:
       run: |
         cd BuildScripts
         ./VS_GenProjects.bat
-
+    - name:
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        cd Binary/Debug-windows-x86_64/Testing
+        ./Testing.exe
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
