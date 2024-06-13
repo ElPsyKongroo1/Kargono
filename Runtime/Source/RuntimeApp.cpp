@@ -24,7 +24,7 @@ namespace Kargono
 
 		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 
-		Scene::SetActiveScene(CreateRef<Scene>());
+		Scenes::Scene::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 		#if KG_EXPORT == 0
 		if (!OpenProject())
 		{
@@ -45,8 +45,8 @@ namespace Kargono
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
 
-		RenderingEngine::Init();
-		RenderingEngine::SetLineWidth(4.0f);
+		Rendering::RenderingEngine::Init();
+		Rendering::RenderingEngine::SetLineWidth(4.0f);
 		RuntimeUI::Text::Init();
 		RuntimeUI::Runtime::Init();
 
@@ -57,11 +57,11 @@ namespace Kargono
 	void RuntimeApp::OnDetach()
 	{
 		
-		auto view = Scene::GetActiveScene()->GetAllEntitiesWith<AudioComponent>();
+		auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::AudioComponent>();
 		for (auto& entity : view)
 		{
-			Entity e = { entity, Scene::GetActiveScene().get() };
-			auto& audioComponent = e.GetComponent<AudioComponent>();
+			Scenes::Entity e = { entity, Scenes::Scene::GetActiveScene().get() };
+			auto& audioComponent = e.GetComponent<Scenes::AudioComponent>();
 			audioComponent.Audio.reset();
 		}
 		OnStop();
@@ -72,14 +72,14 @@ namespace Kargono
 	{
 		
 		// Render
-		RenderingEngine::ResetStats();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		RenderCommand::Clear();
+		Rendering::RenderingEngine::ResetStats();
+		Rendering::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RenderCommand::Clear();
 
 		OnUpdateRuntime(ts);
-		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -119,7 +119,7 @@ namespace Kargono
 	{
 		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportWidth(event.GetWidth());
 		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportHeight(event.GetHeight());
-		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		Scenes::Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
 
@@ -146,17 +146,17 @@ namespace Kargono
 		// Update Scripts
 		Script::ScriptEngine::OnUpdate(ts);
 
-		Scene::GetActiveScene()->OnUpdatePhysics(ts);
+		Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 
 		// Render 2D
-		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 
@@ -277,15 +277,15 @@ namespace Kargono
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif
-				RenderCommand::Init();
+				Rendering::RenderCommand::Init();
 			}
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
 			else { Script::ScriptEngine::InitialAssemblyLoad(); }
-			if (Scene::GetActiveScene())
+			if (Scenes::Scene::GetActiveScene())
 			{
-				Scene::GetActiveScene()->DestroyAllEntities();
+				Scenes::Scene::GetActiveScene()->DestroyAllEntities();
 			}
 			Assets::AssetManager::ClearAll();
 			Assets::AssetManager::DeserializeAll();
@@ -297,15 +297,15 @@ namespace Kargono
 
 	void RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)
 	{
-		Ref<Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
-		if (!newScene) { newScene = CreateRef<Scene>(); }
-		Scene::SetActiveScene(newScene);
+		Ref<Scenes::Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
+		Scenes::Scene::SetActiveScene(newScene, sceneHandle);
 	}
 
 
 	void RuntimeApp::OnPlay()
 	{
-		Scene::GetActiveScene()->OnRuntimeStart();
+		Scenes::Scene::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
 		if (scriptHandle != 0)
 		{
@@ -320,8 +320,8 @@ namespace Kargono
 
 	void RuntimeApp::OnStop()
 	{
-		Scene::GetActiveScene()->OnRuntimeStop();
-		Scene::GetActiveScene()->DestroyAllEntities();
+		Scenes::Scene::GetActiveScene()->OnRuntimeStop();
+		Scenes::Scene::GetActiveScene()->DestroyAllEntities();
 		if (Projects::Project::GetAppIsNetworked())
 		{
 			Network::Client::GetActiveClient()->StopClient();

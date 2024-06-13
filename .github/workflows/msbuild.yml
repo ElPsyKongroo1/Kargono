@@ -8,8 +8,6 @@ name: MSBuild
 on:
   push:
     branches: [ "Stable-Branch", "Development-Branch" ]
-  pull_request:
-    branches: [ "Stable-Branch", "Development-Branch" ]
 
 env:
   # Path to the solution file relative to the root of the project.
