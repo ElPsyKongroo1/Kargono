@@ -25,6 +25,11 @@ project "GLFW"
 		"src/vulkan.c",
 		"src/window.c",
 	}
+	
+	defines 
+    {
+		"_CRT_SECURE_NO_WARNINGS",
+    }
 
 	filter "system:linux"
 		pic "On"
