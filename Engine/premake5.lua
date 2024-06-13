@@ -1,9 +1,9 @@
-project "Engine"
+ project "Engine"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
-    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099" }
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
 
     targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
