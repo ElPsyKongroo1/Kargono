@@ -25,6 +25,7 @@ IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Dependencies/msdf_atlas_gen"
 IncludeDir["dr_wav"] = "%{wks.location}/Dependencies/dr_wav/include"
 IncludeDir["optick"] = "%{wks.location}/Dependencies/optick/include"
 IncludeDir["asio"] = "%{wks.location}/Dependencies/asio/include"
+IncludeDir["doctest"] = "%{wks.location}/Dependencies/doctest"
 
 -- Include Directories: Points to a directory with a variable number if library files.
 -- Linker will check these paths when finding external libraries.

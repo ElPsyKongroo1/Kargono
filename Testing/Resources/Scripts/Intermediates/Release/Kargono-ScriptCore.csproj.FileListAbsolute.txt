@@ -1,0 +1,6 @@
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Intermediates\Release\Kargono-ScriptCore.csproj.AssemblyReference.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Intermediates\Release\Kargono-ScriptCore.csproj.CoreCompileInputs.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Intermediates\Release\Kargono-ScriptCore.dll
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Intermediates\Release\Kargono-ScriptCore.pdb
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Kargono-ScriptCore.dll
+F:\Charles_Files\Personal_Projects\Personal_Games\Kargono-Editor\Resources\Scripts\Kargono-ScriptCore.pdb
