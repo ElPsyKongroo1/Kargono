@@ -6,7 +6,6 @@ int main(int argc, char** argv) {
 	doctest::Context context;
 	Kargono::s_TestingActive = true;
 	Kargono::Log::Init();
-	// !!! THIS IS JUST AN EXAMPLE SHOWING HOW DEFAULTS/OVERRIDES ARE SET !!!
 
 	// defaults
 	//context.addFilter("test-case-exclude", "*math*"); // exclude test cases with "math" in their name
@@ -25,3 +24,21 @@ int main(int argc, char** argv) {
 
 	return res; // the result from doctest is propagated here as well
 }
+
+// Testing Principles
+
+/*
+ * Equivalence Partitioning: Discover sections of input that can be grouped together and likely react the same
+ * as test cases.
+ * Ex: If we are accepting a numeric value for a date, we know that values between 1-31 should be valid (for most months).
+ *		This means that we can segment the input into three sections: -inf-0 (Invalid), 1-31 (Valid), and 32-inf (Invalid).
+ *		These partitions can be tested once/ a few times since it is likely they will result in similar outcomes.
+ *
+ * Boundary Analysis: This works together with equivalence partitioning. The partitions discussed earlier have boundaries (for 1-31, 0,1,31,32 are boundaries)
+ *		that are most likely to cause issues. Testing can focus on these boundaries in the partition to quickly resolve off-by-one errors.
+ *
+ * Decision Table: Table that lists all combinations of possible conditions for a specified system and provides the corresponding actions. These actions can be
+ *		validated. Pretty much just a big truth table haha. These are useful for mapping out the decision space of a function if there are a lot of conditionals
+ *		and specific results need to occur in particular cases.
+ *
+ */
