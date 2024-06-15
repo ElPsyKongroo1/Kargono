@@ -105,7 +105,7 @@ namespace Kargono::Panels
 			spec.Name = s_CreateScriptName.CurrentOption;
 			spec.Type = s_CreateScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_CreateScriptSectionLabel.CurrentOption.Label;
-			spec.FunctionType = Utility::StringToWrappedFuncType(s_CreateScriptFuncType.CurrentOption.Label);
+			spec.FunctionType = (WrappedFuncType)(uint64_t)s_CreateScriptFuncType.CurrentOption.Handle;
 			auto [handle, successful] = Assets::AssetManager::CreateNewScript(spec);
 			if (!successful)
 			{
@@ -134,10 +134,42 @@ namespace Kargono::Panels
 		s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
 		s_CreateScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			spec.ClearOptions();
-			for (auto func : s_AllWrappedFuncs)
+			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), Assets::EmptyHandle);
+				spec.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					// Check if function's first parameter is a UInt64
+					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
+
+					if (match)
+					{
+						// Display the function without the first parameter, since it is used as the entity number in the func
+						// Replace with _None, if only one parameter is present
+						std::string funcDisplayName;
+						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_None");
+						}
+						else
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_");
+						}
+						
+						spec.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+					}
+					
+				}
+			}
+			else
+			{
+				spec.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+				}
 			}
 		};
 
@@ -147,9 +179,10 @@ namespace Kargono::Panels
 		s_CreateScriptType.SecondOptionLabel = "Global";
 		s_CreateScriptType.SelectAction = [&](uint16_t option)
 		{
+			// If we set the option to 'Class', try to get the first entity class option
 			if (option == 0)
 			{
-				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
+				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
 				{
 					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
 					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
@@ -160,6 +193,9 @@ namespace Kargono::Panels
 				s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			s_CreateScriptSectionLabel.PopupAction(s_CreateScriptSectionLabel);
+
+			// Reset Func Type to prevent incorrect types
+			s_CreateScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		s_CreateScriptSectionLabel.Label = "Group";
@@ -201,7 +237,7 @@ namespace Kargono::Panels
 			spec.Name = s_EditScriptName.CurrentOption;
 			spec.Type = s_EditScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_EditScriptSectionLabel.CurrentOption.Label;
-			spec.FunctionType = Utility::StringToWrappedFuncType(s_EditScriptFuncType.CurrentOption.Label);
+			spec.FunctionType = (WrappedFuncType)(uint64_t)s_EditScriptFuncType.CurrentOption.Handle;
 			auto successful = Assets::AssetManager::UpdateScript(s_ActiveScriptHandle, spec);
 			if (!successful)
 			{
@@ -228,11 +264,34 @@ namespace Kargono::Panels
 		s_EditScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
 		{
 			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
-			s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(
-				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType);
 			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
 				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
 			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
+
+			if (s_EditScriptType.SelectedOption == 0)
+			{
+				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				std::string funcDisplayName;
+
+				if (Utility::WrappedFuncTypeToParameterTypes(currentFuncType).size() == 1)
+				{
+					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
+						"_UInt64", "_None");
+				}
+				else
+				{
+					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
+						"_UInt64", "_");
+				}
+				s_EditScriptFuncType.CurrentOption = { funcDisplayName,
+					(uint64_t)currentFuncType };
+			}
+			else
+			{
+				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				s_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
+					(uint64_t)currentFuncType };
+			}
 		};
 		s_EditScriptPopup.PopupContents = [&]()
 		{
@@ -311,11 +370,42 @@ namespace Kargono::Panels
 		s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
 		s_EditScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			spec.ClearOptions();
-			for (auto func : s_AllWrappedFuncs)
+			if (s_EditScriptType.SelectedOption == 0)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func),
-					Assets::EmptyHandle);
+				spec.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					// Check if function's first parameter is a UInt64
+					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
+
+					if (match)
+					{
+						// Display the function without the first parameter, since it is used as the entity number in the func
+						// Replace with _None, if only one parameter is present
+						std::string funcDisplayName;
+						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_None");
+						}
+						else
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_");
+						}
+
+						spec.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+					}
+
+				}
+			}
+			else
+			{
+				spec.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+				}
 			}
 		};
 
@@ -338,6 +428,8 @@ namespace Kargono::Panels
 				s_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			s_EditScriptSectionLabel.PopupAction(s_EditScriptSectionLabel);
+			// Reset Func Type to prevent issues with cache
+			s_EditScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		s_EditScriptSectionLabel.Label = "Group";
