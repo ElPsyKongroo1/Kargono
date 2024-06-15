@@ -6,5 +6,4 @@ namespace Kargono
 {
 	Application::Application(const std::string& debugName) : m_DebugName(debugName)
 	{}
-
 }

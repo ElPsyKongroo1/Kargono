@@ -284,7 +284,7 @@ namespace Kargono::Assets
 
 			// Build Regular Expression
 			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->FunctionType))};
-			std::string functionName { std::string("KG_FUNC_") + std::string(scriptHandle)};
+			std::string functionName { metadata->Name };
 			std::stringstream parameters {};
 			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->FunctionType))
 			{
@@ -302,12 +302,12 @@ namespace Kargono::Assets
 			uint64_t count = Utility::Regex::GetMatchCount(scriptFile, matchingExpression);
 			if (count == 0)
 			{
-				KG_WARN("Unable to locate function signature when replacing function type in script manager");
+				KG_ERROR("Unable to locate function signature when replacing function type in script manager");
 				return false;
 			}
 			if (count > 1)
 			{
-				KG_WARN("Too many matches for function signature when replacing function type in script manager");
+				KG_ERROR("Too many matches for function signature when replacing function type in script manager");
 				return false;
 			}
 		}
