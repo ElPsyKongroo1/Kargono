@@ -5,6 +5,9 @@
 
 namespace Kargono
 {
+	//==============================
+	// Buffer Class
+	//==============================
 	// Non-owning raw buffer struct
 	struct Buffer
 	{
@@ -84,7 +87,9 @@ namespace Kargono
 			return { this->As<char>() };
 		}
 	};
-
+	//==============================
+	// Scoped Buffer Class
+	//==============================
 	struct ScopedBuffer
 	{
 
@@ -127,73 +132,4 @@ namespace Kargono
 	private:
 		Buffer m_Buffer;
 	};
-
-
-	//// Non-owning raw buffer struct
-	//struct SharedBuffer
-	//{
-	//	uint8_t* Data = nullptr;
-	//	uint64_t Size = 0;
-	//	int* count;
-
-	//	// Does not allocate any heap data
-	//	SharedBuffer() : count(nullptr) {}
-	//	SharedBuffer(const SharedBuffer& other)
-	//		:  Data(other.Data), Size(other.Size), count(other.count)
-	//	{
-	//		++(*count);
-	//	}
-
-	//	// Need to call release when instantiated this way
-	//	SharedBuffer(uint64_t size)
-	//		:count(new int(1))
-	//	{
-	//		Allocate(size);
-	//	}
-
-	//	~SharedBuffer()
-	//	{
-	//		if (count != nullptr && --(*count) <= 0)
-	//		{
-	//			Release();
-	//			delete count;
-	//		}
-	//	}
-
-	//	void Allocate(uint64_t size)
-	//	{
-	//		Release();
-	//		Data = new uint8_t[size];
-	//		Size = size;
-	//	}
-
-	//	void Release()
-	//	{
-	//		delete[] Data;
-	//		Data = nullptr;
-	//		Size = 0;
-	//	}
-
-	//	void SetDataToByte(uint8_t byte)
-	//	{
-	//		if (Size == 0) { return; }
-	//		memset(Data, byte, Size);
-	//	}
-
-	//	template<typename T>
-	//	T* As()
-	//	{
-	//		return (T*)Data;
-	//	}
-
-	//	template<typename T>
-	//	T* As(std::size_t offsetInBytes)
-	//	{
-	//		return (T*)(Data + offsetInBytes);
-	//	}
-	//	operator bool() const
-	//	{
-	//		return (bool)Data;
-	//	}
-	//};
 }

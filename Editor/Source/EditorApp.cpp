@@ -569,7 +569,7 @@ namespace Kargono
 			{
 				
 				EngineCore::GetActiveWindow().Init();
-				Rendering::RenderCommand::Init();
+				Rendering::RendererAPI::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
 

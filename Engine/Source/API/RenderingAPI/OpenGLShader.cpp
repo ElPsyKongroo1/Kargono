@@ -7,6 +7,7 @@
 #include "API/Platform/gladAPI.h"
 #include "API/RenderingAPI/VulkanAPI.h"
 
+#ifdef KG_RENDERER_OPENGL
 
 namespace API::RenderingAPI
 {
@@ -123,3 +124,5 @@ namespace API::RenderingAPI
 	}
 
 }
+
+#endif

@@ -9,6 +9,8 @@
 #include "API/Platform/WindowsBackendAPI.h"
 #include "API/Platform/GlfwBackendAPI.h"
 
+#ifdef KG_PLATFORM_WINDOWS
+
 namespace Kargono::Utility
 {
 	float Time::GetTime()
@@ -230,3 +232,5 @@ namespace Kargono::Utility
 	}
 
 }
+
+#endif

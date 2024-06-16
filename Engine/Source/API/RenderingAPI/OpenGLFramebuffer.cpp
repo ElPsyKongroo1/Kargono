@@ -4,6 +4,8 @@
 
 #include "API/Platform/gladAPI.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::Utility
 {
 	static GLenum TextureTarget(bool multisampled)
@@ -237,3 +239,5 @@ namespace API::RenderingAPI
 			Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &value);
 	}
 }
+
+#endif

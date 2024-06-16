@@ -5,10 +5,9 @@
 
 namespace Kargono::Utility
 {
-	//============================================================
-	// Conversion Functions
-	//============================================================
-	// These functions to convert between box2d enums and Kargono BodyType enums enums
+	//==============================
+	// Simple Conversions
+	//==============================
 
 	inline static b2BodyType Rigidbody2DTypeToBox2DBody(Scenes::Rigidbody2DComponent::BodyType bodyType)
 	{

@@ -43,8 +43,6 @@
 
 //-----------------Rendering-----------------//
 #include "Kargono/Rendering/RenderingEngine.h"
-#include "Kargono/Rendering/RenderingEngine.h"
-#include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/InputBuffer.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/Shape.h"

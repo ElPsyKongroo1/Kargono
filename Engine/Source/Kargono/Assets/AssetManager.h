@@ -853,9 +853,9 @@ namespace Kargono::Assets
 
 	static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
 
-	//============================================================
+	//==============================
 	// General API
-	//============================================================
+	//==============================
 	public:
 
 		// Deserializes all registries into memory

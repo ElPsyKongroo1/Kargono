@@ -21,7 +21,6 @@ namespace Kargono::Rendering
 		// RendererAPI Connection Functions
 		//============================================================
 		static void OnWindowResize(uint32_t width, uint32_t height);
-		static RenderAPI GetAPI() { return RendererAPI::GetAPI(); }
 
 		//============================================================
 		// Scene Rendering Submission LifeTime Functions

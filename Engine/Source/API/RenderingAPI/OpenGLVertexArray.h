@@ -3,6 +3,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Rendering/VertexArray.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
 	//============================================================
@@ -66,4 +68,6 @@ namespace API::RenderingAPI
 		uint32_t m_RendererID;
 	};
 }
+
+#endif
 

@@ -3,6 +3,8 @@
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Math/Math.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
 	//============================================================
@@ -68,3 +70,5 @@ namespace API::RenderingAPI
 	};
 
 }
+
+#endif

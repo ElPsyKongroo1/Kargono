@@ -1,7 +1,6 @@
 #include "kgpch.h"
 
 #include "Kargono/Rendering/RenderingEngine.h"
-#include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Rendering/UniformBuffer.h"
@@ -40,7 +39,7 @@ namespace Kargono::Rendering
 
 	void RenderingEngine::OnWindowResize(uint32_t width, uint32_t height)
 	{
-		RenderCommand::SetViewport(0, 0, width, height);
+		RendererAPI::SetViewport(0, 0, width, height);
 	}
 
 	void RenderingEngine::Init()
@@ -232,20 +231,20 @@ namespace Kargono::Rendering
 
 	void RenderingEngine::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
 	{
-		RenderCommand::DrawIndexed(buffer->Shader->GetVertexArray(), buffer->IndexBuffer.data(), static_cast<uint32_t>(buffer->IndexBuffer.size()));
+		RendererAPI::DrawIndexed(buffer->Shader->GetVertexArray(), buffer->IndexBuffer.data(), static_cast<uint32_t>(buffer->IndexBuffer.size()));
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingEngine::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
-		RenderCommand::SetLineWidth(s_Data.LineWidth);
-		RenderCommand::DrawLines(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		RendererAPI::SetLineWidth(s_Data.LineWidth);
+		RendererAPI::DrawLines(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingEngine::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
 	{
-		RenderCommand::DrawTriangles(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawTriangles(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 

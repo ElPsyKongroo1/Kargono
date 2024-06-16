@@ -2,6 +2,8 @@
 
 #include "Kargono/Rendering/Framebuffer.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
 	//============================================================
@@ -72,7 +74,7 @@ namespace API::RenderingAPI
 		// Invalidate is a function that gets called by many other public functions in this class.
 		//		It takes the current m_Specification, m_ColorAttachmentSpecifications, and
 		//		m_DepthAttachmentSpecification to generate the actual OpenGL color attachments, OpenGL depth attachment,
-		//		and the final OpenGL Framebuffer. This function is fairly long, but managable. Take a look at it yourself.
+		//		and the final OpenGL Framebuffer. This function is fairly long, but manageable. Take a look at it yourself.
 		void Invalidate();
 	private:
 		// m_RendererID represents the framebuffer instance in OpenGL.
@@ -90,3 +92,5 @@ namespace API::RenderingAPI
 		
 	};
 }
+
+#endif

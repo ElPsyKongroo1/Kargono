@@ -2,11 +2,13 @@
 
 #include "Kargono/Rendering/RendererAPI.h"
 
-#include "API/RenderingAPI/OpenGLRendererAPI.h"
 #include "API/Platform/gladAPI.h"
 
+#include <string>
 
-namespace API::Utility
+#ifdef KG_RENDERER_OPENGL
+
+namespace Kargono::Utility
 {
 	static void OpenGLMessageCallback(unsigned source, unsigned type, unsigned id,
 		unsigned severity, int length, const char* message, const void* userParam)
@@ -104,10 +106,10 @@ namespace API::Utility
 	}
 }
 
-namespace API::RenderingAPI
+namespace Kargono::Rendering
 {
 
-	void OpenGLRendererAPI::Init()
+	void RendererAPI::Init()
 	{
 
 	// Only Enable OpenGL logging if debug is enabled
@@ -129,68 +131,70 @@ namespace API::RenderingAPI
 		glEnable(GL_LINE_SMOOTH);
 	}
 
-	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void RendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRendererAPI::ClearDepthBuffer()
+	void RendererAPI::ClearDepthBuffer()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::SetClearColor(const Kargono::Math::vec4& color)
+	void RendererAPI::SetClearColor(const Kargono::Math::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
-	void OpenGLRendererAPI::SetDepthTesting(bool value)
+	void RendererAPI::SetDepthTesting(bool value)
 	{
 		value ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	}
-	void OpenGLRendererAPI::SetStencilMask(uint32_t value)
+	void RendererAPI::SetStencilMask(uint32_t value)
 	{
 		glStencilMask(value);
 	}
-	void OpenGLRendererAPI::StencilTestFunc(Kargono::Rendering::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
+	void RendererAPI::StencilTestFunc(Kargono::Rendering::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
 	{
 		glStencilFunc(Utility::StencilComparisonToGLenum(comparisonType), reference, mask);
 	}
 
-	void OpenGLRendererAPI::StencilTestOptions(Kargono::Rendering::StencilOptions sfail, Kargono::Rendering::StencilOptions dfail, Kargono::Rendering::StencilOptions sdpass)
+	void RendererAPI::StencilTestOptions(Kargono::Rendering::StencilOptions sfail, Kargono::Rendering::StencilOptions dfail, Kargono::Rendering::StencilOptions sdpass)
 	{
 		glStencilOp(Utility::StencilOptionsToGLEnum(sfail), Utility::StencilOptionsToGLEnum(dfail), Utility::StencilOptionsToGLEnum(sdpass));
 	}
-	void OpenGLRendererAPI::Clear()
+	void RendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
-	void OpenGLRendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t indexCount)
+	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t indexCount)
 	{
 		vertexArray->Bind();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray,uint32_t* indexPointer, uint32_t indexCount)
+	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray,uint32_t* indexPointer, uint32_t indexCount)
 	{
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indexPointer);
 	}
 
-	void OpenGLRendererAPI::DrawLines(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
+	void RendererAPI::DrawLines(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
 		glDrawArrays(GL_LINES, 0, vertexCount);
 	}
 
-	void OpenGLRendererAPI::DrawTriangles(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
+	void RendererAPI::DrawTriangles(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	}
 
-	void OpenGLRendererAPI::SetLineWidth(float width)
+	void RendererAPI::SetLineWidth(float width)
 	{
 		glLineWidth(width);
 	}
 }
+
+#endif

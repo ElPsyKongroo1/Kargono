@@ -7,7 +7,9 @@
 #include "API/Platform/WindowsBackendAPI.h"
 	
 	extern Kargono::EngineCore* Kargono::InitEngineAndCreateApp(CommandLineArgs args);
-
+	//==============================
+	// General Entry Point
+	//==============================
 	void EntryPoint (int argc, char** argv)
 	{
 		Kargono::Log::Init();
@@ -20,14 +22,18 @@
 		core = nullptr;
 		KG_VERIFY(!core, "Core Closed");
 	}
-
+	//==============================
+	// Main with console
+	//==============================
 	int main(int argc, char** argv)
 	{
 		EntryPoint(argc, argv);
 		KG_INFO("Application Shut Down Successfully!");
 		return 0;
 	}
-
+	//==============================
+	// Main without console
+	//==============================
 	int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 	{
 		// Get Command Line Arguments in the form of argc and argv line int main(char**, int)
