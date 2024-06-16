@@ -4,6 +4,8 @@
 
 #include "API/Platform/gladAPI.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::Utility
 {
 	static GLenum ShaderDataTypeToOpenGLBaseType(Kargono::Rendering::InputDataType type)
@@ -124,3 +126,5 @@ namespace API::RenderingAPI
 		m_IndexBuffer = indexBuffer;
 	}
 }
+
+#endif

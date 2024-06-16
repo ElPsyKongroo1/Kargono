@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef _WIN32
+#ifdef KG_PLATFORM_WINDOWS
 #define _WIN32_WINNT 0x0A00
 #endif
 

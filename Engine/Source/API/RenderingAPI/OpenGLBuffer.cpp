@@ -4,6 +4,8 @@
 
 #include "API/Platform/gladAPI.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
 	//============================================================
@@ -71,3 +73,5 @@ namespace API::RenderingAPI
 	}
 
 }
+
+#endif

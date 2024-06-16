@@ -5,11 +5,6 @@
 
 namespace Kargono::Rendering
 {
-	enum class RenderAPI
-	{
-		None = 0, OpenGL = 1
-	};
-
 	enum class StencilComparisonType
 	{
 		None = 0, NEVER, LESS, LEQUAL, GREATER, GEQUAL,
@@ -24,27 +19,20 @@ namespace Kargono::Rendering
 	class RendererAPI
 	{
 	public:
-		virtual ~RendererAPI() = default;
-		virtual void Init() = 0;
-		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-		virtual void ClearDepthBuffer() = 0;
-		virtual void SetClearColor(const Math::vec4& color) = 0;
-		virtual void SetDepthTesting(bool value) = 0;
-		virtual void SetStencilMask(uint32_t value) = 0;
-		virtual void StencilTestFunc(StencilComparisonType comparisonType, int32_t reference, uint32_t mask) = 0;
-		virtual void StencilTestOptions(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass) = 0;
-		virtual void Clear() = 0;
+		static void Init();
+		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+		static void ClearDepthBuffer();
+		static void SetClearColor(const Math::vec4& color);
+		static void SetDepthTesting(bool value);
+		static void SetStencilMask(uint32_t value);
+		static void StencilTestFunc(StencilComparisonType comparisonType, int32_t reference, uint32_t mask);
+		static void StencilTestOptions(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass);
+		static void Clear();
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount) = 0;
-		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
-		virtual void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
-
-		virtual void SetLineWidth(float width) = 0;
-
-		static RenderAPI GetAPI() { return s_API; }
-		static Scope<RendererAPI> Create();
-	private:
-		static RenderAPI s_API;
+		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
+		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount);
+		static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void SetLineWidth(float width);
 	};
 }

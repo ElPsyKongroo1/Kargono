@@ -10,6 +10,9 @@ namespace Kargono
 
 namespace Kargono::Key
 {
+	//==============================
+	// Key Code Definition (Keyboard)
+	//==============================
 	enum : KeyCode
 	{
 		// From glfw3.h
@@ -159,7 +162,9 @@ namespace Kargono::Key
 
 namespace Kargono::Utility
 {
-
+	//==============================
+	// Conversion KeyCode <-> String
+	//==============================
 	inline std::string KeyCodeToString(KeyCode key)
 	{
 		switch (key)

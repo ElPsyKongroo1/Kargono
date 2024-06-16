@@ -5,8 +5,29 @@
 
 #include "API/Platform/GlfwAPI.h"
 
+#ifdef KG_PLATFORM_WINDOWS
+
 namespace API::Platform
 {
+	//==============================
+	// WindowsWindow Structs
+	//==============================
+	// This struct holds data that describes the GLFW window. The member variable m_Data
+	//		represents that information. The title is the name presented on the window,
+	//		width/height are the dimensions, VSync indicates if VSync is currently enabled,
+	//		Versions simply state what version of OpenGL we are using, and EventCallback is
+	//		the function that is called when an event needs to be handled. Currently the
+	//		EventCallback is always connected to the Application function OnEvent()
+	struct WindowsWindowData
+	{
+		std::string Title;
+		uint32_t Width, Height;
+		uint32_t ViewportWidth, ViewportHeight;
+		bool VSync;
+		uint8_t VersionMajor = 4, VersionMinor = 5;
+		Kargono::Events::EventCallbackFn EventCallback;
+	};
+
 	//============================================================
 	// Windows(Platform) Window Class
 	//============================================================
@@ -20,25 +41,6 @@ namespace API::Platform
 	//		handled later in the engine through the Application class.
 	class WindowsWindow : public Kargono::Window
 	{
-	private:
-		//==============================
-		// Internal Structs
-		//==============================
-		// This struct holds data that describes the GLFW window. The member variable m_Data
-		//		represents that information. The title is the name presented on the window,
-		//		width/height are the dimensions, VSync indicates if VSync is currently enabled,
-		//		Versions simply state what version of OpenGL we are using, and EventCallback is
-		//		the function that is called when an event needs to be handled. Currently the
-		//		EventCallback is always connected to the Application function OnEvent()
-		struct WindowData
-		{
-			std::string Title;
-			uint32_t Width, Height;
-			uint32_t ViewportWidth, ViewportHeight;
-			bool VSync;
-			uint8_t VersionMajor = 4, VersionMinor = 5;
-			Kargono::Events::EventCallbackFn EventCallback;
-		};
 
 	public:
 		//==============================
@@ -48,10 +50,10 @@ namespace API::Platform
 		//		The Init Description will be more useful.
 		WindowsWindow(const Kargono::WindowProps& props);
 		// This destructor simply calls the Shutdown() lifetime function.
-		virtual ~WindowsWindow();
+		virtual ~WindowsWindow() override;
 
 		//==============================
-		// Object Lifecycle Functions
+		// Lifecycle Functions
 		//==============================
 	public:
 		// The main focus of this function is to initialize the underlying GLFW window.
@@ -79,11 +81,11 @@ namespace API::Platform
 		// This function swaps the framebuffer. Swapping the framebuffer reveals what has been
 		//		drawn on the framebuffer in one step. Not using this can cause many issues such as screen tearing.
 		void SwapBuffers();
+	public:
 		//==============================
 		// Update GLFW Window Settings and GLFW Functionality
 		//==============================
 		// The following functions make calls to the underlying GLFW window to modify specific window properties.
-	public:
 		// This function enables or disables VSync. VSync requires the OpenGL context to sync the frame rate
 		//		of the GPU with the refresh rate of the monitor. This can have many different advantages and
 		//		disadvantages.
@@ -102,7 +104,9 @@ namespace API::Platform
 		// This function enables or disables the mouse cursor over the GLFW window
 		virtual void SetMouseCursorVisible(bool choice) override;
 		virtual void SetVisible(bool visible) override;
-	
+		bool IsVSync() const override { return m_Data.VSync; }
+		void SetEventCallback(const Kargono::Events::EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+		virtual Kargono::Events::EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
 
 		//==============================
 		// Getters/Setters
@@ -118,16 +122,13 @@ namespace API::Platform
 		virtual void SetViewportHeight(uint32_t height) override { m_Data.ViewportHeight = height; }
 
 		virtual void* GetNativeWindow() const override { return m_Window; }
-		bool IsVSync() const override { return m_Data.VSync; }
-		void SetEventCallback(const Kargono::Events::EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		virtual Kargono::Events::EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
-
 	private:
 		// m_Window holds the reference to the underlying GLFW window that is represented by this class.
 		GLFWwindow* m_Window;
 		// m_Data holds specification data for the window such as its size.
-		WindowData m_Data;
+		WindowsWindowData m_Data;
 
 	};
 }
 
+#endif
