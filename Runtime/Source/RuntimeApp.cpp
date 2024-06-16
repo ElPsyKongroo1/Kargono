@@ -73,8 +73,8 @@ namespace Kargono
 		
 		// Render
 		Rendering::RenderingEngine::ResetStats();
-		Rendering::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		Rendering::RenderCommand::Clear();
+		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RendererAPI::Clear();
 
 		OnUpdateRuntime(ts);
 		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
@@ -277,7 +277,7 @@ namespace Kargono
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif
-				Rendering::RenderCommand::Init();
+				Rendering::RendererAPI::Init();
 			}
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 

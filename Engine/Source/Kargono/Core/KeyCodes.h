@@ -137,7 +137,9 @@ namespace Kargono::Key
 		RightSuper = 347,
 		Menu = 348
 	};
-
+	//==============================
+	// Array for Listing KeyCodes
+	//==============================
 	inline std::array<uint16_t, 120> s_AllKeyCodes
 	{
 		32, 39, 44, 45, 46, 47, 48,
