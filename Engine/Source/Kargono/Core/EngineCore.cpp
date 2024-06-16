@@ -5,7 +5,6 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/Timers.h"

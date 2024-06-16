@@ -2,11 +2,13 @@
 
 #include "Kargono/Rendering/InputBuffer.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
-	//============================================================
+	//=============================
 	// OpenGL VertexBuffer Class
-	//============================================================
+	//=============================
 	// This class is the OpenGL Implementation of a Vertex Buffer in the Core Code.
 	//		A VertexBuffer holds data specific to a particular vertex such as
 	//		model location, vertex color, texture location, etc...
@@ -36,7 +38,7 @@ namespace API::RenderingAPI
 		//==============================
 		// Update OpenGL Context
 		//==============================
-		// This function allows new vertices to be pushed into the OpenGL vertex buffer.
+		// This function allows new vertices to be added into the OpenGL vertex buffer.
 		virtual void SetData(const void* data, uint32_t size) override;
 		//==============================
 		// Getters/Setters
@@ -55,9 +57,9 @@ namespace API::RenderingAPI
 		Kargono::Rendering::InputBufferLayout m_Layout;
 	};
 
-	//============================================================
-	// OpenGL IndexBuffer Class
-	//============================================================
+	//=============================
+	// OpenGL IndexBuffer Class	
+	//=============================
 	// This class is the OpenGL Implementation of an Index Buffer in the Core Code.
 	//		The index buffer represents the ordered pattern of vertices that get displayed.
 	//		Example. An object can have the vertices 0, 1, 2, 3, 4, 5.
@@ -96,3 +98,4 @@ namespace API::RenderingAPI
 	};
 }
 
+#endif

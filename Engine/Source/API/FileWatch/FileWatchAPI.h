@@ -8,7 +8,7 @@
 namespace API::FileWatch
 {
 	//==============================
-	// Internal Redefinition
+	// Dependency Type Redefinitions
 	//==============================
 	using EventType = filewatch::Event;
 

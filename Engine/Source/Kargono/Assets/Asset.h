@@ -13,7 +13,9 @@
 
 namespace Kargono::Assets
 {
-
+	//==============================
+	// Core Assets Types
+	//==============================
 	// An AssetHandle is a unique identifier for an Asset.
 	using AssetHandle = Kargono::UUID;
 

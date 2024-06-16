@@ -6,6 +6,8 @@
 #include "API/ImageProcessing/stbAPI.h"
 #include "API/Platform/gladAPI.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::Utility
 {
 	static GLenum KargonoFormatToGLDataFormat(Kargono::Rendering::ImageFormat format)
@@ -161,3 +163,6 @@ namespace API::RenderingAPI
 		glBindTextureUnit(slot, m_RendererID);
 	}
 }
+
+
+#endif

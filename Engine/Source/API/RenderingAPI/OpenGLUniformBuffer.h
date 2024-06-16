@@ -2,6 +2,8 @@
 
 #include "Kargono/Rendering/UniformBuffer.h"
 
+#ifdef KG_RENDERER_OPENGL
+
 namespace API::RenderingAPI
 {
 	//============================================================
@@ -39,3 +41,5 @@ namespace API::RenderingAPI
 		uint32_t m_RendererID = 0;
 	};
 }
+
+#endif

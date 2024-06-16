@@ -7,7 +7,6 @@
 #include "Kargono/Scenes/Components.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/Texture.h"
 #include "Kargono/Projects/Project.h"
 

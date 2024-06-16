@@ -31,8 +31,8 @@ namespace Kargono::Panels
 		// Reset Framebuffer
 		Rendering::RenderingEngine::ResetStats();
 		m_ViewportFramebuffer->Bind();
-		Rendering::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		Rendering::RenderCommand::Clear();
+		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RendererAPI::Clear();
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);

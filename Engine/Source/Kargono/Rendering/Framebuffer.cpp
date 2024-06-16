@@ -10,6 +10,8 @@ namespace Kargono::Rendering
 {
 	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
+#ifdef KG_RENDERER_OPENGL
 		return CreateRef<API::RenderingAPI::OpenGLFramebuffer>(spec);
+#endif
 	}
 }

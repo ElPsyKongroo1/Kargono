@@ -5,7 +5,6 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Rendering/RenderCommand.h"
 #include "Kargono/Rendering/RenderingEngine.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Scenes/Components.h"
@@ -156,7 +155,7 @@ namespace Kargono::RuntimeUI
 
 	void Runtime::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
-		Rendering::RenderCommand::ClearDepthBuffer();
+		Rendering::RendererAPI::ClearDepthBuffer();
 		// Iterate through all characters
 		Math::mat4 orthographicProjection = glm::ortho((float)0, static_cast<float>(viewportWidth),
 			(float)0, static_cast<float>(viewportHeight), (float)-1, (float)1);

@@ -6,8 +6,10 @@
 
 namespace Kargono
 {
+	//==============================
+	// Testing Types/Data
+	//==============================
 	inline bool s_TestingActive = false;
-
 	// Exception Class used for doctest unit testing
 	class TestingException : public std::runtime_error {
 	public:
@@ -44,6 +46,9 @@ namespace Kargono
 
 namespace Kargono
 {
+	//==============================
+	// Engine Types
+	//==============================
 	// Definition of Scope, which is a wrapper for a Unique Pointer
 	template<typename T>
 	using Scope = std::unique_ptr<T>;

@@ -11,7 +11,9 @@ namespace Kargono::Rendering
 {
 	Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
 	{
+#ifdef KG_RENDERER_OPENGL
 		return  CreateRef<API::RenderingAPI::OpenGLShader>(name, shaderBinaries);
+#endif
 	}
 
 	void Shader::SetSpecification(const ShaderSpecification& shaderSpec)
