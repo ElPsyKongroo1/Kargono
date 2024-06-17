@@ -41,7 +41,6 @@ namespace Kargono::Events
 			return ss.str();
 		}
 	private:
-		
 		uint32_t m_UserCount;
 	};
 
