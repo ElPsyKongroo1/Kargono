@@ -233,14 +233,14 @@ namespace Kargono::Panels
 				ImVec2(windowPos.x + (windowSize.x / 2) + 90.0f, windowPos.y + 43.0f),
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
-			// Draw Camera Options Background
+			// Draw Display Options Background
 			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 80.0f, windowPos.y),
 				ImVec2(windowPos.x + (windowSize.x) - 48.0f, windowPos.y + 30.0f),
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
-			// Draw Display Options Background
-			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 182.0f, windowPos.y),
-				ImVec2(windowPos.x + (windowSize.x) - 112.0f, windowPos.y + 30.0f),
+			// Draw Camera Options Background
+			draw_list->AddRectFilled(ImVec2(windowPos.x + windowSize.x - 170.0f, windowPos.y),
+				ImVec2(windowPos.x + (windowSize.x) - 100.0f, windowPos.y + 30.0f),
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Toggle Top Bar Background
@@ -395,7 +395,7 @@ namespace Kargono::Panels
 
 			// Camera Options Button
 			icon = EditorUI::Editor::s_IconCameraActive;
-			ImGui::SetCursorPos(ImVec2(windowSize.x - 175, 7));
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 163, 7));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(16, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
@@ -429,7 +429,7 @@ namespace Kargono::Panels
 
 			// Camera Speed
 			ImGui::SetNextItemWidth(30.0f);
-			ImGui::SetCursorPos(ImVec2(windowSize.x - 148, 4));
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 136, 4));
 			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
 				s_EditorApp->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
 				"%.0f", ImGuiSliderFlags_NoInput);
