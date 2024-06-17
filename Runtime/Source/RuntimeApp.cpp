@@ -263,7 +263,7 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())
+			if (!EngineCore::GetActiveWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
 				WindowProps projectProps =
@@ -273,7 +273,7 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.y)
 				};
 				#if KG_EXPORT == 0
-				EngineCore::GetCurrentEngineCore().GetWindow().Init(projectProps);
+				EngineCore::GetActiveWindow().Init(projectProps);
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif
