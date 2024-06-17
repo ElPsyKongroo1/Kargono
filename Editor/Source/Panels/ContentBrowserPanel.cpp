@@ -29,11 +29,11 @@ namespace Kargono::Utility
 		return EditorUI::Editor::s_GenericFileIcon;
 	}
 
-	static Panels::BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
+	static Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
 	{
-		if (entry.is_directory()) { return Panels::BrowserFileType::Directory; }
-		if (!entry.path().has_extension()) { return Panels::BrowserFileType::None; }
-		auto extension = entry.path().extension();
+		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
+		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
+		auto extension = entry.extension();
 		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
 		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
 		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
@@ -74,7 +74,7 @@ static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Panels
 {
-	static std::vector<std::filesystem::directory_entry> s_CachedDirectoryEntries {};
+	static std::vector<std::filesystem::path> s_CachedDirectoryEntries {};
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
@@ -86,10 +86,15 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::UpdateCurrentDirectory(const std::filesystem::path& newPath)
 	{
-		API::FileWatch::EndWatch(m_CurrentDirectory);
-		m_CurrentDirectory = newPath;
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
-		RefreshCachedDirectoryEntries();
+		static std::filesystem::path currentPath;
+		currentPath = newPath;
+		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		{
+			API::FileWatch::EndWatch(m_CurrentDirectory);
+			m_CurrentDirectory = currentPath;
+			API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+			RefreshCachedDirectoryEntries();
+		});
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
@@ -189,16 +194,6 @@ namespace Kargono::Panels
 			ImGui::EndDragDropTarget();
 		}
 
-		//if (ImGui::BeginPopup("Options"))
-		//{
-		//	ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		//	ImGui::SliderFloat("Padding", &padding, 0, 32);
-		//	ImGui::EndPopup();
-		//}
-		//// Main window
-		//if (ImGui::Button("Options", { 70, 28 }))
-		//	ImGui::OpenPopup("Options");
-
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
 
 		std::vector<std::string> tokenizedDirectoryPath{};
@@ -226,11 +221,9 @@ namespace Kargono::Panels
 		ImGui::Separator();
 
 		ImGui::Columns(columnCount, 0, false);
-
 		for (auto& directoryEntry: s_CachedDirectoryEntries)
 		{
-			const auto& path = directoryEntry.path();
-			std::string filenameString = path.filename().string();
+			std::string filenameString = directoryEntry.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
 			ImGui::PushID(filenameString.c_str());
 			Ref<Rendering::Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
@@ -238,7 +231,7 @@ namespace Kargono::Panels
 			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 			if (ImGui::BeginDragDropSource())
 			{
-				std::filesystem::path relativePath(path);
+				std::filesystem::path relativePath(directoryEntry);
 				const wchar_t* itemPath = relativePath.c_str();
 				ImGui::SetDragDropPayload(Utility::BrowserFileTypeToPayloadString(fileType).c_str(),
 					itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
@@ -263,7 +256,7 @@ namespace Kargono::Panels
 						{
 							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 							std::filesystem::path payloadPath(payloadPathPointer);
-							Utility::FileSystem::MoveFileToDirectory(payloadPath, path);
+							Utility::FileSystem::MoveFileToDirectory(payloadPath, directoryEntry);
 							break;
 						}
 					}
@@ -272,12 +265,12 @@ namespace Kargono::Panels
 			}
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				if (directoryEntry.is_directory())
+				if ( std::filesystem::is_directory(directoryEntry))
 				{
-					UpdateCurrentDirectory(m_CurrentDirectory / path.filename());
-					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+					UpdateCurrentDirectory(m_CurrentDirectory / directoryEntry.filename());
+					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), s_LongestRecentPath))
 					{
-						s_LongestRecentPath = m_CurrentDirectory;
+						s_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
 					}
 				}
 			}
@@ -298,7 +291,7 @@ namespace Kargono::Panels
 				{
 					if (ImGui::Selectable("Open File In Text Editor"))
 					{
-						s_EditorApp->m_TextEditorPanel->OpenFile(path);
+						s_EditorApp->m_TextEditorPanel->OpenFile(directoryEntry);
 					}
 				}
 
@@ -306,7 +299,7 @@ namespace Kargono::Panels
 				{
 					if (ImGui::Selectable("Open Scripting Project"))
 					{
-						Utility::OSCommands::OpenScriptProject(path);
+						Utility::OSCommands::OpenScriptProject(directoryEntry);
 					}
 				}
 
@@ -314,7 +307,7 @@ namespace Kargono::Panels
 				{
 					if (ImGui::Selectable("Open Scene"))
 					{
-						EditorApp::GetCurrentApp()->OpenScene(path);
+						EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
 					}
 				}
 
@@ -322,14 +315,14 @@ namespace Kargono::Panels
 				{
 					if (ImGui::Selectable("Use Font In Current User Interface"))
 					{
-						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(path);
+						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(directoryEntry);
 						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
 							RuntimeUI::Runtime::SetFont(font, currentHandle);
 						}
 
-						else { KG_WARN("Could not load font {0}", path.filename().string()); }
+						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
 					}
 				}
 
@@ -373,12 +366,12 @@ namespace Kargono::Panels
 			if (ImGui::BeginPopupModal("Delete File", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::Text("Are you sure you want to delete this file?\n");
-				ImGui::Text("%s", path.string().c_str());
+				ImGui::Text("%s", directoryEntry.string().c_str());
 				ImGui::Separator();
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					Utility::FileSystem::DeleteSelectedFile(path);
+					Utility::FileSystem::DeleteSelectedFile(directoryEntry);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -390,12 +383,12 @@ namespace Kargono::Panels
 			if (ImGui::BeginPopupModal("Delete Directory", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::Text("Are you sure you want to delete this directory?\n");
-				ImGui::Text("%s", path.string().c_str());
+				ImGui::Text("%s", directoryEntry.string().c_str());
 				ImGui::Separator();
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					Utility::FileSystem::DeleteSelectedDirectory(path);
+					Utility::FileSystem::DeleteSelectedDirectory(directoryEntry);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -408,11 +401,11 @@ namespace Kargono::Panels
 			if (openRenamePopup) { ImGui::OpenPopup("NewFileName"); }
 			if (ImGui::BeginPopup("NewFileName"))
 			{
-				strcpy_s(buffer, path.filename().string().c_str());
+				strcpy_s(buffer, directoryEntry.filename().string().c_str());
 				ImGui::InputText("New File Name", buffer, sizeof(buffer));
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 				{
-					Utility::FileSystem::RenameFile(path, std::string(buffer));
+					Utility::FileSystem::RenameFile(directoryEntry, std::string(buffer));
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndPopup();
@@ -475,7 +468,7 @@ namespace Kargono::Panels
 		s_CachedDirectoryEntries.clear();
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			s_CachedDirectoryEntries.push_back(directoryEntry);
+			s_CachedDirectoryEntries.push_back(directoryEntry.path());
 		}
 	}
 }
