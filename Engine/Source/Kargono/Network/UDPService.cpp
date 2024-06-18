@@ -85,7 +85,7 @@ namespace Kargono::Network
 
 				memcpy_s(&receivedCRC, sizeof(uint32_t), s_SocketReceiveBuffer.data(), sizeof(uint32_t));
 
-				uint32_t currentCRC = Utility::FileSystem::ChecksumCRCFromBuffer(s_SocketReceiveBuffer.data() + sizeof(uint32_t),
+				uint32_t currentCRC = Utility::FileSystem::CRCFromBuffer(s_SocketReceiveBuffer.data() + sizeof(uint32_t),
 					sizeof(MessageHeader) + payloadSize);
 
 				// If cyclic redundency check fails, move on! It happens...
@@ -144,7 +144,7 @@ namespace Kargono::Network
 				payloadSize);
 		}
 
-		uint32_t hash = Utility::FileSystem::ChecksumCRCFromBuffer(s_SocketSendBuffer.data() + sizeof(uint32_t),
+		uint32_t hash = Utility::FileSystem::CRCFromBuffer(s_SocketSendBuffer.data() + sizeof(uint32_t),
 			sizeof(MessageHeader) + payloadSize);
 
 		// Fill CRC location

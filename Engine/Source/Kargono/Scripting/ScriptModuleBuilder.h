@@ -2,13 +2,25 @@
 
 namespace Kargono::Scripting
 {
+	//==============================
+	// Script Module Builder Class	
+	//==============================
 	class ScriptModuleBuilder
 	{
 	public:
-		static void CreateDll(bool addDebugSymbols = true);
-		static void CreateDllHeader();
-		static void CreateDllCPPFiles();
-		static void CompileDll(bool addDebugSymbols);
-		static void AddEngineFuncsToDll();
+		//==============================
+		// Create Script Module
+		//==============================
+		static void CreateScriptModule(bool addDebugSymbols = true);
+	private:
+		//==============================
+		// Internal Functionality to Support Creation
+		//==============================
+		static void CreateModuleHeaderFile();
+		static void CreateModuleCPPFile();
+		static void CompileModuleCode(bool addDebugSymbols);
+		static void AttachEngineFunctionsToModule();
+	public:
+		friend ScriptCore;
 	};
 }

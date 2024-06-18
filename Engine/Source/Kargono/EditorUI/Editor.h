@@ -17,6 +17,9 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
+	//==============================
+	// Widget Forward Declarations
+	//==============================
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct TextInputSpec;
@@ -26,19 +29,14 @@ namespace Kargono::EditorUI
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
 	struct TableSpec;
+	struct InlineButtonSpec;
 
+	//==============================
+	// Type Defines
+	//==============================
 	using WidgetID = uint32_t;
 	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
 	using WidgetFlags = uint8_t;
-	inline uint32_t widgetCounter {1};
-
-	// Maintain unique id for each widget
-	static WidgetID IncrementWidgetCounter()
-	{
-		widgetCounter++;
-		return widgetCounter * 0x400'000; // 2 to the power of 22
-	}
-
 	enum class SpacingAmount
 	{
 		None = 0,
@@ -59,7 +57,7 @@ namespace Kargono::EditorUI
 	{
 	public:
 		float XPosition {0.0f};
-		float YPosition {0.0f};
+		float YPosition{ 0.0f };
 		float IconSize{ 0.0f };
 		Ref<Rendering::Texture2D> ActiveIcon { nullptr };
 		Ref<Rendering::Texture2D> InactiveIcon { nullptr };
@@ -69,10 +67,26 @@ namespace Kargono::EditorUI
 		bool Disabled{ false };
 	};
 
+	//==============================
+	// Widget Count Management
+	//==============================
+	inline uint32_t widgetCounter {1};
+	// Maintain unique id for each widget
+	static WidgetID IncrementWidgetCounter()
+	{
+		widgetCounter++;
+		return widgetCounter * 0x400'000; // 2 to the power of 22
+	}
+
+	//==============================
+	// Editor Class
+	//==============================
 	class Editor
 	{
 	public:
-		// Lifetime Functions
+		//==============================
+		// LifeCycle Functions
+		//==============================
 		static void Init();
 		static void Terminate();
 
@@ -81,16 +95,23 @@ namespace Kargono::EditorUI
 
 		static void StartWindow(const std::string& label, bool* closeWindow = nullptr, int32_t flags = 0);
 		static void EndWindow();
-
+	public:
+		//==============================
+		// Event Functions
+		//==============================
 		static void OnEvent(Events::Event& e);
 
 	public:
-		// Modify Visuals
+		//==============================
+		// Modify Visuals Functions
+		//==============================
 		static void Spacing(float space);
 		static void Spacing(SpacingAmount space);
 		static void Separator();
 
-		// Use Widget Functions
+		//==============================
+		// Create/Display Widget Functions
+		//==============================
 		static void TitleText(const std::string& text);
 		static void GenericPopup(GenericPopupSpec& spec);
 		static void SelectOption(SelectOptionSpec& spec);
@@ -106,19 +127,19 @@ namespace Kargono::EditorUI
 		static void TextInputPopup(TextInputSpec& spec);
 
 	public:
-		// Getter/Setter Functions
+		//==============================
+		// Interact With UI State Functions
+		//==============================
 		static uint32_t GetActiveWidgetID();
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
-
-		static void BlockMouseEvents(bool block)
-		{
-			s_BlockMouseEvents = block;
-		}
+		static void BlockMouseEvents(bool block);
 	public:
-		// Additional Resources
+		//==============================
+		// UI Fonts
+		//==============================
 		static ImFont* s_AntaLarge;
 		static ImFont* s_AntaRegular;
 		static ImFont* s_AntaSmall;
@@ -130,6 +151,10 @@ namespace Kargono::EditorUI
 		static ImFont* s_RobotoMono;
 		static ImFont* s_AnonymousRegular;
 
+	public:
+		//==============================
+		// UI Images/Textures
+		//==============================
 		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop,
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive,
@@ -145,13 +170,20 @@ namespace Kargono::EditorUI
 			s_SceneIcon, s_RegistryIcon, s_ScriptProjectIcon,
 			s_UserInterfaceIcon, s_FontIcon, s_InputIcon;
 
+	public:
+		//==============================
+		// UI Colors
+		//==============================
 		inline static ImVec4 s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f};
 		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
 		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
-
+	public:
+		//==============================
+		// UI Button Presets
+		//==============================
 		inline static InlineButtonSpec s_SmallEditButton;
 		inline static InlineButtonSpec s_SmallExpandButton;
 		inline static InlineButtonSpec s_SmallOptionsButton;
@@ -162,12 +194,17 @@ namespace Kargono::EditorUI
 		inline static InlineButtonSpec s_LargeConfirmButton;
 		inline static InlineButtonSpec s_LargeSearchButton;
 	private:
-		// Internal Data
+		//==============================
+		// Internal Fields
+		//==============================
 		inline static bool s_BlockMouseEvents = true;
 		inline static bool s_Running = false;
 		inline static bool s_DisableLeftClick = false;
 	};
 
+	//==============================
+	// Widget Specifications
+	//==============================
 	struct GenericPopupSpec
 	{
 	public:
@@ -222,7 +259,7 @@ namespace Kargono::EditorUI
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
+		std::string Label ;
 		uint16_t SelectedOption{ 0 };
 		std::string FirstOptionLabel {"None"};
 		std::string SecondOptionLabel {"None"};

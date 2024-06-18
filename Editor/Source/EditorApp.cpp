@@ -170,13 +170,13 @@ namespace Kargono
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Reload Script DLL"))
+				if (ImGui::MenuItem("Reload Script Module"))
 				{
-					Scripting::ScriptCore::OpenDll();
+					Scripting::ScriptCore::LoadActiveScriptModule();
 				}
-				if (ImGui::MenuItem("Rebuild Script DLL"))
+				if (ImGui::MenuItem("Rebuild Script Module"))
 				{
-					Scripting::ScriptModuleBuilder::CreateDll();
+					Scripting::ScriptModuleBuilder::CreateScriptModule();
 				}
 
 				ImGui::Separator();
@@ -573,7 +573,7 @@ namespace Kargono
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
 
-			Scripting::ScriptCore::OpenDll();
+			Scripting::ScriptCore::LoadActiveScriptModule();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
 			else { Script::ScriptEngine::InitialAssemblyLoad(); }
@@ -687,11 +687,11 @@ namespace Kargono
 			m_EditorUIObjectHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
 		}
 
-		if (!Input::InputMode::s_InputMode) { m_EditorInputMode = nullptr; }
+		if (!Input::InputMode::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
 		else
 		{
-			m_EditorInputMode = Input::InputMode::s_InputMode;
-			m_EditorInputModeHandle = Input::InputMode::s_InputModeHandle;
+			m_EditorInputMode = Input::InputMode::GetActiveInputMode();
+			m_EditorInputModeHandle = Input::InputMode::GetActiveInputModeHandle();
 		}
 
 		// Load Default Game State
@@ -763,12 +763,11 @@ namespace Kargono
 		// Clear InputModes during runtime.
 		if (m_EditorInputMode)
 		{
-			Input::InputMode::LoadInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputMode::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
 		}
 		else
 		{
-			Input::InputMode::s_InputMode = nullptr;
-			Input::InputMode::s_InputModeHandle = 0;
+			Input::InputMode::SetActiveInputMode(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameState::s_GameState = nullptr;

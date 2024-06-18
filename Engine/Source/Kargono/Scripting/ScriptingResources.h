@@ -2,6 +2,9 @@
 
 namespace Kargono::Scripting
 {
+	//==============================
+	// Script Type Definition
+	//==============================
 	enum class ScriptType
 	{
 		None = 0,
@@ -13,6 +16,9 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
+	//==============================
+	// Conversion ScriptType <-> String
+	//==============================
 	inline std::string ScriptTypeToString(Scripting::ScriptType type)
 	{
 		switch (type)
