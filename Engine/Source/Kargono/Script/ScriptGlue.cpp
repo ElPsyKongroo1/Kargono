@@ -334,7 +334,7 @@ namespace Kargono::Script
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
-				Input::InputMode::LoadInputMode(s_InputRef, s_InputHandle);
+				Input::InputMode::SetActiveInputMode(s_InputRef, s_InputHandle);
 			});
 			
 		}

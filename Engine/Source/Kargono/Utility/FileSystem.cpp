@@ -124,21 +124,21 @@ namespace Kargono::Utility
 		}
 	}
 
-	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileSystem::FileTypes fileType)
+	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileTypes fileType)
 	{
 		uint32_t channels{ 0 };
 		std::filesystem::path outputPath = filepath;
 
 		switch (fileType)
 		{
-		case FileSystem::FileTypes::png:
+		case FileTypes::png:
 			{
 			channels = 4;
 			outputPath.replace_extension(".png");
 			stbi_write_png(outputPath.string().c_str(), width, height, channels, buffer, width * channels);
 			return true;
 			}
-		case FileSystem::FileTypes::bmp:
+		case FileTypes::bmp:
 		{
 			channels = 1;
 			outputPath.replace_extension(".bmp");
@@ -242,7 +242,7 @@ namespace Kargono::Utility
 		return sha256stream.getHash();
 	}
 
-	uint32_t FileSystem::ChecksumCRCFromBuffer(void* bufferPointer, uint64_t bufferSize)
+	uint32_t FileSystem::CRCFromBuffer(void* bufferPointer, uint64_t bufferSize)
 	{
 		CRC32 crc;
 		return crc.CalculateHash(bufferPointer, bufferSize);

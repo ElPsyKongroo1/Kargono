@@ -15,7 +15,7 @@ namespace Kargono::Utility
 			}\
 		}
 
-#define alec(FUNCTION_CALL)\
+#define CallAndCheckALError(FUNCTION_CALL)\
 		FUNCTION_CALL;\
 		OpenAL_ErrorCheck(FUNCTION_CALL)
 }

@@ -21,13 +21,13 @@ namespace Kargono::Audio
 
 	AudioSource::AudioSource()
 	{
-		alec(alGenSources(1, &m_SourceID));
+		CallAndCheckALError(alGenSources(1, &m_SourceID));
 	}
 
 	AudioSource::~AudioSource()
 	{
-		alec(alSourceStop(m_SourceID));
-		alec(alDeleteSources(1, &(m_SourceID)));
+		CallAndCheckALError(alSourceStop(m_SourceID));
+		CallAndCheckALError(alDeleteSources(1, &(m_SourceID)));
 	}
 
 
@@ -41,12 +41,12 @@ namespace Kargono::Audio
 
 	AudioBuffer::AudioBuffer()
 	{
-		alec(alGenBuffers(1, &m_BufferID));
+		CallAndCheckALError(alGenBuffers(1, &m_BufferID));
 	}
 
 	AudioBuffer::~AudioBuffer()
 	{
-		alec(alDeleteBuffers(1, &(m_BufferID)));
+		CallAndCheckALError(alDeleteBuffers(1, &(m_BufferID)));
 	}
 
 	void AudioEngine::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
@@ -60,13 +60,13 @@ namespace Kargono::Audio
 		auto audioSource = s_AudioContext->m_StereoMusicSource.get();
 		uint32_t sourceID = audioSource->GetSourceID();
 
-		alec(alSourceStop(sourceID));
+		CallAndCheckALError(alSourceStop(sourceID));
 		if (!audioBuffer) { return; }
-		alec(alSourcei(sourceID, AL_BUFFER, audioBuffer->m_BufferID));
-		alec(alListener3f(AL_POSITION, 0, 0, 0));
-		alec(alListener3f(AL_VELOCITY, 0, 0, 0));
-		alec(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
-		alec(alSourcePlay(sourceID));
+		CallAndCheckALError(alSourcei(sourceID, AL_BUFFER, audioBuffer->m_BufferID));
+		CallAndCheckALError(alListener3f(AL_POSITION, 0, 0, 0));
+		CallAndCheckALError(alListener3f(AL_VELOCITY, 0, 0, 0));
+		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
+		CallAndCheckALError(alSourcePlay(sourceID));
 	}
 	void AudioEngine::PlayStereoSoundFromName(const std::string& audioName)
 	{
@@ -81,26 +81,26 @@ namespace Kargono::Audio
 		auto audioSource = s_AudioContext->m_AudioSourceQueue.front();
 		uint32_t sourceID = audioSource->GetSourceID();
 
-		alec(alSourceStop(sourceID));
+		CallAndCheckALError(alSourceStop(sourceID));
 		s_AudioContext->m_AudioSourceQueue.pop();
-		alec(alSource3f(sourceID, AL_POSITION, sourceSpec.Position.x, sourceSpec.Position.y, sourceSpec.Position.z));
-		alec(alSource3f(sourceID, AL_VELOCITY, sourceSpec.Velocity.x, sourceSpec.Velocity.y, sourceSpec.Velocity.z));
-		alec(alSourcef(sourceID, AL_PITCH, sourceSpec.Pitch));
-		alec(alSourcef(sourceID, AL_GAIN, sourceSpec.Gain));
-		alec(alSourcei(sourceID, AL_LOOPING, static_cast<ALint>(sourceSpec.IsLooping)));
+		CallAndCheckALError(alSource3f(sourceID, AL_POSITION, sourceSpec.Position.x, sourceSpec.Position.y, sourceSpec.Position.z));
+		CallAndCheckALError(alSource3f(sourceID, AL_VELOCITY, sourceSpec.Velocity.x, sourceSpec.Velocity.y, sourceSpec.Velocity.z));
+		CallAndCheckALError(alSourcef(sourceID, AL_PITCH, sourceSpec.Pitch));
+		CallAndCheckALError(alSourcef(sourceID, AL_GAIN, sourceSpec.Gain));
+		CallAndCheckALError(alSourcei(sourceID, AL_LOOPING, static_cast<ALint>(sourceSpec.IsLooping)));
 		if (!sourceSpec.CurrentBuffer) { return; }
-		alec(alSourcei(sourceID, AL_BUFFER, sourceSpec.CurrentBuffer->m_BufferID));
+		CallAndCheckALError(alSourcei(sourceID, AL_BUFFER, sourceSpec.CurrentBuffer->m_BufferID));
 
-		alec(alListener3f(AL_POSITION, listenerSpec.Position.x, listenerSpec.Position.y, listenerSpec.Position.z));
-		alec(alListener3f(AL_VELOCITY, listenerSpec.Velocity.x, listenerSpec.Velocity.y, listenerSpec.Velocity.z));
+		CallAndCheckALError(alListener3f(AL_POSITION, listenerSpec.Position.x, listenerSpec.Position.y, listenerSpec.Position.z));
+		CallAndCheckALError(alListener3f(AL_VELOCITY, listenerSpec.Velocity.x, listenerSpec.Velocity.y, listenerSpec.Velocity.z));
 		ALfloat forwardAndUpVectors[] =
 		{
 			listenerSpec.Forward.x, listenerSpec.Forward.y, listenerSpec.Forward.z,  // Forward Vectors
 			listenerSpec.Up.x, listenerSpec.Up.y, listenerSpec.Up.z   // Up Vectors
 		};
-		alec(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
+		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 
-		alec(alSourcePlay(sourceID));
+		CallAndCheckALError(alSourcePlay(sourceID));
 
 		s_AudioContext->m_AudioSourceQueue.push(audioSource);
 		
@@ -125,12 +125,12 @@ namespace Kargono::Audio
 		for (uint32_t iterator{0}; iterator < s_AudioContext->m_AudioSourceQueue.size(); iterator++)
 		{
 			auto audioSource = s_AudioContext->m_AudioSourceQueue.front();
-			alec(alSourceStop(audioSource->GetSourceID()));
+			CallAndCheckALError(alSourceStop(audioSource->GetSourceID()));
 			s_AudioContext->m_AudioSourceQueue.pop();
 			s_AudioContext->m_AudioSourceQueue.push(audioSource);
 		}
 
-		alec(alSourceStop(s_AudioContext->m_StereoMusicSource->GetSourceID()));
+		CallAndCheckALError(alSourceStop(s_AudioContext->m_StereoMusicSource->GetSourceID()));
 	}
 	void AudioEngine::Init()
 	{
@@ -153,11 +153,11 @@ namespace Kargono::Audio
 
 		// Initialize all Sound Sources
 		s_AudioContext->m_StereoMusicSource = CreateScope<AudioSource>();
-		alec(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_POSITION, 0, 0, 0));
-		alec(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_VELOCITY, 0, 0, 0));
-		alec(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_PITCH, 1.0f));
-		alec(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
-		alec(alSourcei(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_LOOPING, true));
+		CallAndCheckALError(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_POSITION, 0, 0, 0));
+		CallAndCheckALError(alSource3f(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_VELOCITY, 0, 0, 0));
+		CallAndCheckALError(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_PITCH, 1.0f));
+		CallAndCheckALError(alSourcef(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
+		CallAndCheckALError(alSourcei(s_AudioContext->m_StereoMusicSource->GetSourceID(), AL_LOOPING, true));
 
 		for (uint32_t iterator{0}; iterator < 15; iterator++)
 		{
