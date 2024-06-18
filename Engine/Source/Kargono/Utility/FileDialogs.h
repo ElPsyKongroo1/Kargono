@@ -12,6 +12,9 @@ namespace Kargono::Utility
 	class FileDialogs
 	{
 	public:
+		//==============================
+		// Create File Dialog Functions
+		//==============================
 		// This function opens a file dialog box that requests the user
 		//		to select a file whose extension matches the filter provided
 		//		in the parameter. The selected file can be later handled

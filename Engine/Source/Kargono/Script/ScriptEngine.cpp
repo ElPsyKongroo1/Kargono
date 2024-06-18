@@ -442,7 +442,7 @@ namespace Kargono::Script
 
 	void ScriptEngine::OnUpdate(Timestep ts)
 	{
-		if (Input::InputMode::s_InputMode)
+		if (Input::InputMode::GetActiveInputMode())
 		{
 			auto& globalBindings = Input::InputMode::GetCustomCallsOnUpdate();
 			for (auto& binding : globalBindings)
@@ -488,7 +488,7 @@ namespace Kargono::Script
 		KG_PROFILE_FUNCTION()
 
 		if (event.IsRepeat()) { return; }
-		if (Input::InputMode::s_InputMode)
+		if (Input::InputMode::GetActiveInputMode())
 		{
 			auto& globalBindings = Input::InputMode::GetCustomCallsOnKeyPressed();
 			for (auto& binding : globalBindings)

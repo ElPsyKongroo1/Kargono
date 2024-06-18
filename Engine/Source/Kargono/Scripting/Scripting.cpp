@@ -42,7 +42,7 @@ namespace Kargono::Scripting
 
 		if (s_ScriptingData->DLLInstance)
 		{
-			CloseDll();
+			CloseActiveScriptModule();
 		}
 
 		delete s_ScriptingData;
@@ -51,7 +51,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(!s_ScriptingData, "Close Scripting System")
 	}
 
-	void ScriptCore::OpenDll()
+	void ScriptCore::LoadActiveScriptModule()
 	{
 		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
 		
@@ -68,7 +68,7 @@ namespace Kargono::Scripting
 			attemptedToRebuild = true;
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
 			{
-				ScriptModuleBuilder::CreateDll();
+				ScriptModuleBuilder::CreateScriptModule();
 			});
 			return;
 		}
@@ -83,7 +83,7 @@ namespace Kargono::Scripting
 		if (s_ScriptingData->DLLInstance)
 		{
 			KG_INFO("Closing existing script dll");
-			CloseDll();
+			CloseActiveScriptModule();
 		}
 
 		s_ScriptingData->DLLInstance = new HINSTANCE();
@@ -93,17 +93,17 @@ namespace Kargono::Scripting
 		if (*s_ScriptingData->DLLInstance == NULL)
 		{
 			KG_CRITICAL("Failed to open dll with path {} with an error code of {}", dllLocation.string(), GetLastError());
-			CloseDll();
+			CloseActiveScriptModule();
 			return;
 		}
 
 
-		ScriptModuleBuilder::AddEngineFuncsToDll();
+		ScriptModuleBuilder::AttachEngineFunctionsToModule();
 
 		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting DLL Opened");
 
 	}
-	void ScriptCore::CloseDll()
+	void ScriptCore::CloseActiveScriptModule()
 	{
 		if (!s_ScriptingData)
 		{
@@ -308,19 +308,19 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 	DefineInsertFunction(UInt16None, uint16_t)
 
-	void ScriptModuleBuilder::CreateDll(bool addDebugSymbols)
+	void ScriptModuleBuilder::CreateScriptModule(bool addDebugSymbols)
 	{
-		ScriptCore::CloseDll();
+		ScriptCore::CloseActiveScriptModule();
 
-		CreateDllHeader();
-		CreateDllCPPFiles();
-		CompileDll(addDebugSymbols);
+		CreateModuleHeaderFile();
+		CreateModuleCPPFile();
+		CompileModuleCode(addDebugSymbols);
 
-		ScriptCore::OpenDll();
+		ScriptCore::LoadActiveScriptModule();
 		Assets::AssetManager::DeserializeScriptRegistry();
 	}
 
-	void ScriptModuleBuilder::CreateDllHeader()
+	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
 		// Write out return value and function name
 		std::stringstream outputStream {};
@@ -381,7 +381,7 @@ namespace Kargono::Scripting
 		Utility::FileSystem::WriteFileString(headerFile, outputStream.str());
 	}
 
-	void ScriptModuleBuilder::CreateDllCPPFiles()
+	void ScriptModuleBuilder::CreateModuleCPPFile()
 	{
 		std::stringstream outputStream {};
 		outputStream << "#include \"ExportHeader.h\"\n";
@@ -463,7 +463,7 @@ namespace Kargono::Scripting
 		Utility::FileSystem::WriteFileString(file, outputStream.str());
 	}
 
-	void ScriptModuleBuilder::CompileDll(bool addDebugSymbols)
+	void ScriptModuleBuilder::CompileModuleCode(bool addDebugSymbols)
 	{
 		//Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
 		Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
@@ -515,7 +515,7 @@ namespace Kargono::Scripting
 	}
 
 
-	void ScriptModuleBuilder::AddEngineFuncsToDll()
+	void ScriptModuleBuilder::AttachEngineFunctionsToModule()
 	{
 		ImportInsertFunction(VoidNone)
 		ImportInsertFunction(VoidString) 
@@ -530,7 +530,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputMode::LoadInputModeByName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputMode::SetActiveInputModeByName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) 

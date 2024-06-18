@@ -19,19 +19,34 @@ namespace Kargono::Assets { class AssetManager; }
 namespace Kargono::Scripting
 {
 	class Script;
-
+	//==============================
+	// Script Core Class // TODO RENAME TO SCRIPTENGINE after removing mono!
+	//==============================
 	class ScriptCore
 	{
 	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
 		static void Init();
 		static void Terminate();
 	public:
-		static void OpenDll();
-		static void CloseDll();
-		
+		//==============================
+		// Manage Active Script Module
+		//==============================
+		static void LoadActiveScriptModule();
+		static void CloseActiveScriptModule();
+	private:
+		//==============================
+		// Manage Individual Scripts
+		//==============================
 		static void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
+	private:
+		friend Assets::AssetManager;
 	};
-
+	//==============================
+	// Script Class
+	//==============================
 	class Script
 	{
 	public:
@@ -48,6 +63,9 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
+	//==============================
+	// Utility for Creating Function Definition/Signatures
+	//==============================
 	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name)
 	{
 		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);

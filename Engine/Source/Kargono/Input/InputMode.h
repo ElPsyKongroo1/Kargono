@@ -17,20 +17,21 @@ namespace Kargono::Assets
 
 namespace Kargono::Input
 {
-
+	//=========================
+	// Input Type Defines
+	//=========================
 	enum InputActionTypes
 	{
 		None = 0, KeyboardAction = 1
 	};
 
+	//=========================
+	// Action Bindings (i.e. Bind Input -> Function Call)
+	//=========================
 	class InputActionBinding
 	{
 	public:
 		virtual ~InputActionBinding() = default;
-	public:
-		virtual void CallFunction() = 0;
-	protected:
-		virtual void CheckStatus() = 0;
 	public:
 		InputActionTypes GetActionType() const { return m_BindingType; }
 		std::string& GetFunctionBinding() { return m_FunctionName; }
@@ -51,24 +52,17 @@ namespace Kargono::Input
 		}
 		virtual ~KeyboardActionBinding() override = default;
 	public:
-		virtual void CallFunction() override;
-	protected:
-		virtual void CheckStatus() override;
-	public:
 		KeyCode GetKeyBinding() const { return m_KeyBinding; }
 		void SetKeyBinding(KeyCode code) { m_KeyBinding = code; }
 
 	private:
 		KeyCode m_KeyBinding{ Key::D0 };
 	};
-
+	//=========================
+	// Input Mode Class
+	//=========================
 	class InputMode
 	{
-	public:
-		static void ClearInputEngine();
-
-		static void LoadInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle);
-		static void LoadInputModeByName(const std::string& inputMode);
 	public:
 		//=========================
 		// Editor Management Functions
@@ -97,7 +91,6 @@ namespace Kargono::Input
 		static void UpdateKeyboardClassOnKeyPressedName(InputActionBinding* bindingRef, const std::string& newClassName);
 		static std::vector<std::tuple<std::string, KeyboardActionBinding*>>& GetKeyboardClassOnKeyPressed();
 
-
 		//=========================
 		// Engine Getter Functions
 		//=========================
@@ -107,23 +100,46 @@ namespace Kargono::Input
 
 		static std::vector<Ref<InputActionBinding>>& GetCustomCallsOnKeyPressed();
 		static std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>>& GetScriptClassOnKeyPressed();
-
-
+	public:
+		//=========================
+		// Getter/Setter
+		//=========================
+		static void ClearActiveInputMode();
+		static void SetActiveInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle);
+		static void SetActiveInputModeByName(const std::string& inputMode);
+		static Ref<InputMode> GetActiveInputMode()
+		{
+			return s_ActiveInputMode;
+		}
+		static Assets::AssetHandle GetActiveInputModeHandle()
+		{
+			return s_ActiveInputModeHandle;
+		}
 	private:
+		//=========================
+		// Current Input Mode
+		//=========================
+		static Ref<InputMode> s_ActiveInputMode;
+		static Assets::AssetHandle s_ActiveInputModeHandle;
+	private:
+		//=========================
+		// Input Polling Bindings
+		//=========================
 		// Maps Vector Locations to Engine KeyCodes
 		std::unordered_map<uint16_t, KeyCode> m_KeyboardPolling {};
 
 	private:
-		// On Event Input -> Action(Function Pointer) Bindings
+		//=========================
+		// OnEvent -> Action Bindings
+		//=========================
 		std::vector<Ref<InputActionBinding>> m_CustomCallsOnUpdateBindings{};
 		std::unordered_map<std::string , std::vector<Ref<InputActionBinding>>> m_ScriptClassOnUpdateBindings{};
 
 		std::vector<Ref<InputActionBinding>> m_CustomCallsOnKeyPressedBindings{};
 		std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>> m_ScriptClassOnKeyPressedBindings{};
 
-	public:
-		static Ref<InputMode> s_InputMode;
-		static Assets::AssetHandle s_InputModeHandle;
+	
+	private:
 		friend class Assets::AssetManager;
 	};
 }

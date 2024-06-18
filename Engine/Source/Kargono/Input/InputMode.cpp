@@ -8,8 +8,8 @@
 
 namespace Kargono::Input
 {
-	Ref<InputMode> InputMode::s_InputMode { nullptr };
-	Assets::AssetHandle InputMode::s_InputModeHandle {0};
+	Ref<InputMode> InputMode::s_ActiveInputMode { nullptr };
+	Assets::AssetHandle InputMode::s_ActiveInputModeHandle {0};
 
 	// Caching for User Interface! TODO: Might want to make this code editor only.
 	// This cache only exists so that polling slots can be displayed in order!
@@ -28,17 +28,10 @@ namespace Kargono::Input
 	static std::vector<std::tuple<std::string, KeyboardActionBinding*>> s_ClassKeyboardOnKeyPressedCache{};
 	static bool s_ClassOnKeyPressedModified = true;
 
-	void KeyboardActionBinding::CallFunction()
-	{
-
-	}
-	void KeyboardActionBinding::CheckStatus()
-	{
-	}
 	void InputMode::AddKeyboardPollingSlot()
 	{
 		s_KeyboardPollingModified = true;
-		auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+		auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 		for (uint16_t iterator{0}; iterator < 120; iterator++)
 		{
 			if (!keyboardPolling.contains(iterator))
@@ -51,7 +44,7 @@ namespace Kargono::Input
 	void InputMode::UpdateKeyboardPollingSlot(uint16_t originalSlot ,uint16_t newSlot)
 	{
 		s_KeyboardPollingModified = true;
-		auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+		auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 		KeyCode keyCode{ Key::D0 };
 		if (keyboardPolling.contains(originalSlot))
 		{
@@ -64,24 +57,24 @@ namespace Kargono::Input
 	void InputMode::UpdateKeyboardPollingKey(uint16_t slot, KeyCode newKey)
 	{
 		s_KeyboardPollingModified = true;
-		auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+		auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 		keyboardPolling.insert_or_assign(slot, newKey);
 	}
 
 	void InputMode::DeleteKeyboardPollingSlot(uint16_t slot)
 	{
 		s_KeyboardPollingModified = true;
-		auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+		auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 		if (keyboardPolling.contains(slot))
 		{
 			keyboardPolling.erase(slot);
 		}
 	}
 
-	void InputMode::ClearInputEngine()
+	void InputMode::ClearActiveInputMode()
 	{
-		s_InputMode = { nullptr };
-		s_InputModeHandle = {0};
+		s_ActiveInputMode = { nullptr };
+		s_ActiveInputModeHandle = {0};
 		s_KeyboardPollingModified = true;
 		s_CustomCallsOnUpdateModified = true;
 		s_ClassOnUpdateModified = true;
@@ -89,15 +82,15 @@ namespace Kargono::Input
 		s_ClassOnKeyPressedModified = true;
 	}
 
-	void InputMode::LoadInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle)
+	void InputMode::SetActiveInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle)
 	{
-		InputMode::ClearInputEngine();
+		InputMode::ClearActiveInputMode();
 
-		s_InputMode = newInput;
-		s_InputModeHandle = newHandle;
+		s_ActiveInputMode = newInput;
+		s_ActiveInputModeHandle = newHandle;
 	}
 
-	void InputMode::LoadInputModeByName(const std::string& inputMode)
+	void InputMode::SetActiveInputModeByName(const std::string& inputMode)
 	{
 		static Ref<InputMode> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
@@ -109,15 +102,14 @@ namespace Kargono::Input
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 				{
-					LoadInputMode(s_InputRef, s_InputHandle);
+					SetActiveInputMode(s_InputRef, s_InputHandle);
 				});
-
 		}
 	}
 
 	bool InputMode::IsKeyboardSlotPressed(uint16_t slot)
 	{
-		auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+		auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 		if (keyboardPolling.contains(slot))
 		{
 			return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
@@ -130,7 +122,7 @@ namespace Kargono::Input
 	{
 		if (s_KeyboardPollingModified)
 		{
-			auto& keyboardPolling = s_InputMode->m_KeyboardPolling;
+			auto& keyboardPolling = s_ActiveInputMode->m_KeyboardPolling;
 			std::map<uint16_t, KeyCode> temporaryMap {};
 			for (auto& [key, value] : keyboardPolling) { temporaryMap.insert({ key, value }); }
 			s_KeyboardPollingCache.clear();
@@ -143,19 +135,19 @@ namespace Kargono::Input
 	void InputMode::AddKeyboardCustomCallsOnUpdateSlot()
 	{
 		s_CustomCallsOnUpdateModified = true;
-		s_InputMode->m_CustomCallsOnUpdateBindings.push_back(CreateRef<KeyboardActionBinding>());
+		s_ActiveInputMode->m_CustomCallsOnUpdateBindings.push_back(CreateRef<KeyboardActionBinding>());
 	}
 
 	void InputMode::AddKeyboardCustomCallsOnKeyPressedSlot()
 	{
 		s_CustomCallsOnKeyPressedModified = true;
-		s_InputMode->m_CustomCallsOnKeyPressedBindings.push_back(CreateRef<KeyboardActionBinding>());
+		s_ActiveInputMode->m_CustomCallsOnKeyPressedBindings.push_back(CreateRef<KeyboardActionBinding>());
 	}
 
 	void InputMode::UpdateKeyboardClassOnUpdateName(InputActionBinding* bindingRef, const std::string& newClassName)
 	{
 		s_ClassOnUpdateModified = true;
-		auto& classOnUpdate = s_InputMode->m_ScriptClassOnUpdateBindings;
+		auto& classOnUpdate = s_ActiveInputMode->m_ScriptClassOnUpdateBindings;
 
 
 		uint32_t iterator{ 0 };
@@ -199,7 +191,7 @@ namespace Kargono::Input
 	void InputMode::UpdateKeyboardClassOnKeyPressedName(InputActionBinding* bindingRef, const std::string& newClassName)
 	{
 		s_ClassOnKeyPressedModified = true;
-		auto& classOnKeyPressed = s_InputMode->m_ScriptClassOnKeyPressedBindings;
+		auto& classOnKeyPressed = s_ActiveInputMode->m_ScriptClassOnKeyPressedBindings;
 
 
 		uint32_t iterator{ 0 };
@@ -243,7 +235,7 @@ namespace Kargono::Input
 	void InputMode::AddKeyboardScriptClassOnUpdateSlot()
 	{
 		s_ClassOnUpdateModified = true;
-		auto& scriptMap = s_InputMode->m_ScriptClassOnUpdateBindings;
+		auto& scriptMap = s_ActiveInputMode->m_ScriptClassOnUpdateBindings;
 		if (!scriptMap.contains("None"))
 		{
 			scriptMap.insert({"None", {}});
@@ -257,7 +249,7 @@ namespace Kargono::Input
 	void InputMode::AddKeyboardScriptClassOnKeyPressedSlot()
 	{
 		s_ClassOnKeyPressedModified = true;
-		auto& scriptMap = s_InputMode->m_ScriptClassOnKeyPressedBindings;
+		auto& scriptMap = s_ActiveInputMode->m_ScriptClassOnKeyPressedBindings;
 		if (!scriptMap.contains("None"))
 		{
 			scriptMap.insert({ "None", {} });
@@ -274,7 +266,7 @@ namespace Kargono::Input
 		if (s_CustomCallsOnUpdateModified)
 		{
 			s_CustomCallsKeyboardOnUpdateCache.clear();
-			for (auto& binding : s_InputMode->m_CustomCallsOnUpdateBindings)
+			for (auto& binding : s_ActiveInputMode->m_CustomCallsOnUpdateBindings)
 			{
 				if (binding->GetActionType() == KeyboardAction)
 				{
@@ -293,7 +285,7 @@ namespace Kargono::Input
 		if (s_CustomCallsOnKeyPressedModified)
 		{
 			s_CustomCallsKeyboardOnKeyPressedCache.clear();
-			for (auto& binding : s_InputMode->m_CustomCallsOnKeyPressedBindings)
+			for (auto& binding : s_ActiveInputMode->m_CustomCallsOnKeyPressedBindings)
 			{
 				if (binding->GetActionType() == KeyboardAction)
 				{
@@ -314,7 +306,7 @@ namespace Kargono::Input
 		if (s_ClassOnUpdateModified)
 		{
 			s_ClassKeyboardOnUpdateCache.clear();
-			for (auto& [className, classBindings] : s_InputMode->m_ScriptClassOnUpdateBindings)
+			for (auto& [className, classBindings] : s_ActiveInputMode->m_ScriptClassOnUpdateBindings)
 			{
 				for (auto& binding: classBindings)
 				{
@@ -335,7 +327,7 @@ namespace Kargono::Input
 		if (s_ClassOnKeyPressedModified)
 		{
 			s_ClassKeyboardOnKeyPressedCache.clear();
-			for (auto& [className, classBindings] : s_InputMode->m_ScriptClassOnKeyPressedBindings)
+			for (auto& [className, classBindings] : s_ActiveInputMode->m_ScriptClassOnKeyPressedBindings)
 			{
 				for (auto& binding : classBindings)
 				{
@@ -354,28 +346,28 @@ namespace Kargono::Input
 
 	std::vector<Ref<InputActionBinding>>& InputMode::GetCustomCallsOnUpdate()
 	{
-		return s_InputMode->m_CustomCallsOnUpdateBindings;
+		return s_ActiveInputMode->m_CustomCallsOnUpdateBindings;
 	}
 
 	std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>>& InputMode::GetScriptClassOnUpdate()
 	{
-		return s_InputMode->m_ScriptClassOnUpdateBindings;
+		return s_ActiveInputMode->m_ScriptClassOnUpdateBindings;
 	}
 
 	std::vector<Ref<InputActionBinding>>& InputMode::GetCustomCallsOnKeyPressed()
 	{
-		return s_InputMode->m_CustomCallsOnKeyPressedBindings;
+		return s_ActiveInputMode->m_CustomCallsOnKeyPressedBindings;
 	}
 
 	std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>>& InputMode::GetScriptClassOnKeyPressed()
 	{
-		return s_InputMode->m_ScriptClassOnKeyPressedBindings;
+		return s_ActiveInputMode->m_ScriptClassOnKeyPressedBindings;
 	}
 
 	void InputMode::DeleteKeyboardCustomCallsOnUpdate(InputActionBinding* bindingRef)
 	{
 		s_CustomCallsOnUpdateModified = true;
-		auto& customCallsOnUpdate = s_InputMode->m_CustomCallsOnUpdateBindings;
+		auto& customCallsOnUpdate = s_ActiveInputMode->m_CustomCallsOnUpdateBindings;
 		uint32_t iterator{ 0 };
 		uint32_t refSlot{ 0 };
 		bool refFound = false;
@@ -401,7 +393,7 @@ namespace Kargono::Input
 	void InputMode::DeleteKeyboardCustomCallsOnKeyPressed(InputActionBinding* bindingRef)
 	{
 		s_CustomCallsOnKeyPressedModified = true;
-		auto& customCallsOnKeyPressed = s_InputMode->m_CustomCallsOnKeyPressedBindings;
+		auto& customCallsOnKeyPressed = s_ActiveInputMode->m_CustomCallsOnKeyPressedBindings;
 		uint32_t iterator{ 0 };
 		uint32_t refSlot{ 0 };
 		bool refFound = false;
@@ -429,7 +421,7 @@ namespace Kargono::Input
 	void InputMode::DeleteKeyboardScriptClassOnUpdate(InputActionBinding* bindingRef)
 	{
 		s_ClassOnUpdateModified = true;
-		auto& classOnUpdate = s_InputMode->m_ScriptClassOnUpdateBindings;
+		auto& classOnUpdate = s_ActiveInputMode->m_ScriptClassOnUpdateBindings;
 
 
 		uint32_t iterator{ 0 };
@@ -464,8 +456,7 @@ namespace Kargono::Input
 	void InputMode::DeleteKeyboardScriptClassOnKeyPressed(InputActionBinding* bindingRef)
 	{
 		s_ClassOnKeyPressedModified = true;
-		auto& classOnKeyPressed = s_InputMode->m_ScriptClassOnKeyPressedBindings;
-
+		auto& classOnKeyPressed = s_ActiveInputMode->m_ScriptClassOnKeyPressedBindings;
 
 		uint32_t iterator{ 0 };
 		uint32_t refSlot{ 0 };

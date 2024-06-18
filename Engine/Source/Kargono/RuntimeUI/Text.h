@@ -23,6 +23,7 @@ namespace Kargono::RuntimeUI
 	//============================================================
 	// This class provides static functions to manage the creation of an unmanaged
 	//		font (Editor Font) and initialize the rendering pipeline for all text.
+
 	class Text
 	{
 	public:
@@ -57,20 +58,18 @@ namespace Kargono::RuntimeUI
 		Math::vec2 QuadMin;
 		Math::vec2 QuadMax;
 		float Advance;
-
 	};
 
 	class Font
 	{
 	public:
 		//==============================
-		// External Functionality
+		// Font API
 		//==============================
-		
 		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
-		
 		Math::vec2 CalculateTextSize(const std::string& text);
 
+	public:
 		//==============================
 		// Getters/Setters
 		//==============================
@@ -78,11 +77,14 @@ namespace Kargono::RuntimeUI
 		float GetLineHeight() const { return m_LineHeight; }
 		void SetLineHeight(float height) { m_LineHeight = height; }
 
-	public:
-		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 		float m_LineHeight {0};
 		std::unordered_map<unsigned char, Character> m_Characters{};
+	private:
 		friend class Assets::AssetManager;
 		friend class Text;
 	};

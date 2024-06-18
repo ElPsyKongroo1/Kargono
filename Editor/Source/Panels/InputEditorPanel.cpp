@@ -638,20 +638,20 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::Editor::StartWindow(m_PanelName, &(s_EditorApp->m_ShowInputEditor));
 
-		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(Input::InputMode::s_InputMode) ? Assets::AssetManager::GetInputModeLocation(Input::InputMode::s_InputModeHandle).string().c_str() : "None"))
+		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(Input::InputMode::GetActiveInputMode()) ? Assets::AssetManager::GetInputModeLocation(Input::InputMode::GetActiveInputModeHandle()).string().c_str() : "None"))
 		{
 			if (ImGui::Selectable("None"))
 			{
-				Input::InputMode::ClearInputEngine();
+				Input::InputMode::ClearActiveInputMode();
 				
 			}
 			for (auto& [uuid, asset] : Assets::AssetManager::GetInputModeRegistry())
 			{
 				if (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))
 				{
-					Input::InputMode::ClearInputEngine();
+					Input::InputMode::ClearActiveInputMode();
 
-					Input::InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(uuid), uuid);
+					Input::InputMode::SetActiveInputMode(Assets::AssetManager::GetInputMode(uuid), uuid);
 				}
 			}
 			ImGui::EndCombo();
@@ -661,7 +661,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Save Current Input Mode"))
 		{
-			Assets::AssetManager::SaveInputMode(Input::InputMode::s_InputModeHandle, Input::InputMode::s_InputMode);
+			Assets::AssetManager::SaveInputMode(Input::InputMode::GetActiveInputModeHandle(), Input::InputMode::GetActiveInputMode());
 		}
 		ImGui::SameLine();
 
@@ -678,14 +678,14 @@ namespace Kargono::Panels
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
 				Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewInputMode(std::string(buffer));
-				Input::InputMode::LoadInputMode(Assets::AssetManager::GetInputMode(newHandle), newHandle);
+				Input::InputMode::SetActiveInputMode(Assets::AssetManager::GetInputMode(newHandle), newHandle);
 
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		if (!Input::InputMode::s_InputMode)
+		if (!Input::InputMode::GetActiveInputMode())
 		{
 			EditorUI::Editor::EndWindow();
 			return;

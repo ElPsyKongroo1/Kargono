@@ -409,6 +409,11 @@ namespace Kargono::EditorUI
 		s_DisableLeftClick = option;
 	}
 
+	void Editor::BlockMouseEvents(bool block)
+	{
+		s_BlockMouseEvents = block;
+	}
+
 	void Editor::OnEvent(Events::Event& e)
 	{
 		KG_PROFILE_FUNCTION();
