@@ -64,7 +64,6 @@ namespace Kargono::Panels
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 
 			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer.GetString());
-			//Utility::FileSystem::WriteFileBinary(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());
 		};
@@ -185,18 +184,15 @@ namespace Kargono::Panels
 					{
 						switch (data->EventFlag)
 						{
-							case ImGuiInputTextFlags_CallbackEdit:
+							case ImGuiInputTextFlags_CallbackResize:
 							{
-								if ((float)data->BufTextLen / (float)data->BufSize > 0.75f)
-								{
-									Document& activeDocument = *(Document*)data->UserData;
-									Buffer newBuffer{};
-									newBuffer.Allocate(activeDocument.TextBuffer.Size * 2);
-									newBuffer.SetDataToByte(0);
-									memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
-									activeDocument.TextBuffer.Release();
-									activeDocument.TextBuffer = newBuffer;
-								}
+								Document& activeDocument = *(Document*)data->UserData;
+								Buffer newBuffer{};
+								newBuffer.Allocate(data->BufSize);
+								newBuffer.SetDataToByte(0);
+								memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
+								activeDocument.TextBuffer.Release();
+								activeDocument.TextBuffer = newBuffer;
 								return 0;
 							}
 							case ImGuiInputTextFlags_CallbackAlways:
@@ -207,6 +203,7 @@ namespace Kargono::Panels
 								{
 									s_OnSaveFile();
 								}
+								return 0;
 							}
 							default:
 							{
@@ -217,7 +214,7 @@ namespace Kargono::Panels
 
 					if (ImGui::InputTextMultiline("##textLabel", document.TextBuffer.As<char>(),
 						document.TextBuffer.Size, ImGui::GetContentRegionAvail(),
-						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CallbackAlways,
+						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackAlways,
 						typeCallback, (void*)&document))
 					{
 						document.Edited = true;
