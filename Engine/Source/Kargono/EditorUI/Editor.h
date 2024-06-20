@@ -134,7 +134,6 @@ namespace Kargono::EditorUI
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
 		static void ClearWindowFocus();
-		static void ResizeActiveTextBuffer(uint64_t newSize);
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
 		static void BlockMouseEvents(bool block);
