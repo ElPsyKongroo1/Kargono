@@ -233,6 +233,23 @@ namespace Kargono::Scenes
 		}
 
 	}
+	bool Scene::CheckHasComponent(UUID entityID, const std::string& componentName)
+	{
+		KG_ASSERT(s_ActiveScene);
+		Entity activeEntity = s_ActiveScene->GetEntityByUUID(entityID);
+		KG_ASSERT(activeEntity);
+		return false;
+		/*activeEntity.HasComponent<>()
+		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
+		KG_ASSERT(scene)
+			Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity)
+
+			MonoType* managedType = mono_reflection_type_get_type(componentType);
+
+		KG_ASSERT(s_EntityHasComponentFuncs.contains(managedType))
+			return s_EntityHasComponentFuncs.at(managedType)(entity);*/
+	}
 	std::unordered_map<std::string, std::vector<UUID>>& Scene::GetScriptClassToEntityList()
 	{
 		return s_ActiveScene->m_ScriptClassToEntityList;

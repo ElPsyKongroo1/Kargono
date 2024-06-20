@@ -306,6 +306,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
 
 	void ScriptModuleBuilder::CreateScriptModule(bool addDebugSymbols)
@@ -347,6 +348,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) 
 		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
+		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 
 		// Add Script Function Declarations
@@ -398,6 +400,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
@@ -444,6 +447,10 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
 		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolUInt64String)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt16None, uint16_t)
 		outputStream << "{\n";
@@ -525,6 +532,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidStringStringBool) 
 		ImportInsertFunction(VoidStringStringString) 
 		ImportInsertFunction(VoidStringStringVec4) 
+		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(UInt16None)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
 		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
@@ -540,6 +548,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) 
+		AddEngineFunctionPointerToDll(SetWidgetSelectable, Scenes::Scene::CheckHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 	}
 }

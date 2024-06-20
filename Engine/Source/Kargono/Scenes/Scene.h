@@ -163,6 +163,8 @@ namespace Kargono::Scenes
 			s_ActiveSceneHandle = newHandle;
 		}
 
+		static bool CheckHasComponent(UUID entityID, const std::string& componentName);
+
 		static std::unordered_map<std::string, std::vector<UUID>>& GetScriptClassToEntityList();
 		// Underlying ECS registry that holds actual entities and their components
 		entt::registry m_Registry;
