@@ -28,6 +28,8 @@
         "%{wks.location}/Dependencies/hash_library/crc32.h",
         "%{wks.location}/Dependencies/optick/src/**.cpp",
         "%{wks.location}/Dependencies/optick/src/**.h",
+        "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.cpp",
+        "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.h",
         "Source/API/**.h",
         "Source/API/**.cpp"
     }
@@ -73,7 +75,8 @@
         "%{IncludeDir.msdf_atlas_gen}",
         "%{IncludeDir.msdfgen}",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.asio}",
+        "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
     libdirs
@@ -102,6 +105,8 @@
         flags{ "NoPCH" }
 
     filter "files:../Dependencies/optick/src/**.cpp"
+        flags{ "NoPCH" }
+    filter "files:../Dependencies/ImGuiColorTextEdit/**.cpp"
         flags{ "NoPCH" }
 
     filter "system:windows"
