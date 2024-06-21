@@ -188,9 +188,14 @@ namespace Kargono::Panels
 				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
 					&document.Opened, tabItemFlags))
 				{
-					s_ActiveDocument = iteration;
 					s_TextEditor.Render("TextEditorSpace");
 					ImGui::EndTabItem();
+				}
+
+				if (ImGui::IsItemClicked())
+				{
+					s_ActiveDocument = iteration;
+					s_TextEditor.SetText(s_AllDocuments.at(s_ActiveDocument).TextBuffer);
 				}
 
 				if (setColorBlue)
