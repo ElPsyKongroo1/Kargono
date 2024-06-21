@@ -21,6 +21,7 @@ namespace Kargono
 	{
 		Script::ScriptEngine::Init();
 		Audio::AudioEngine::Init();
+		Scenes::SceneEngine::Init();
 
 		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 
