@@ -95,6 +95,45 @@ namespace Kargono::Utility
 		outputStream << GenerateFunctionSignature(funcType, name);
 		outputStream << '\n';
 		outputStream << "{" << "\n";
+		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+		if (returnType != WrappedVarType::Void)
+		{
+			outputStream << "\treturn ";
+			switch (returnType)
+			{
+				case WrappedVarType::Bool:
+				{
+					outputStream << "false\n";
+					break;
+				}
+				case WrappedVarType::String:
+				{
+					outputStream << "\"\"\n";
+					break;
+				}
+				case WrappedVarType::Vector3:
+				{
+					outputStream << "Math::vec3(0.0f, 0.0f, 0.0f)\n";
+					break;
+				}
+				case WrappedVarType::Float:
+				case WrappedVarType::UInteger16:
+				case WrappedVarType::UInteger32:
+				case WrappedVarType::Integer32:
+				case WrappedVarType::UInteger64:
+				{
+					outputStream << "0\n";
+					break;
+				}
+				case WrappedVarType::Void:
+				case WrappedVarType::None:
+				default:
+				{
+					KG_ERROR("Unsupported return type provided {}", Utility::WrappedVarTypeToString(returnType));
+					break;
+				}
+			}
+		}
 		outputStream << "}" << "\n";
 
 		return outputStream.str();

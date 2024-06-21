@@ -15,6 +15,7 @@ namespace Kargono::Scenes
 {
 	Ref<Scene> Scene::s_ActiveScene {nullptr};
 	Assets::AssetHandle Scene::s_ActiveSceneHandle {Assets::EmptyHandle};
+	static std::unordered_map<std::string, std::function<bool(Scenes::Entity)>> s_EntityHasComponentFunc;
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
@@ -52,6 +53,24 @@ namespace Kargono::Scenes
 	static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src)
 	{
 		CopyComponentIfExists<Component...>(dst, src);
+	}
+
+	template<typename ... Component>
+	static void RegisterHasComponent()
+	{
+		([]()
+			{
+				std::string fullName = typeid(Component).name();
+				size_t pos = fullName.find_last_of(':');
+				std::string componentName = fullName.substr(pos + 1);
+				s_EntityHasComponentFunc[componentName] = [](Scenes::Entity entity) { return entity.HasComponent<Component>(); };
+			}(), ...);
+	}
+
+	template<typename ... Component>
+	static void RegisterHasComponent(Scenes::ComponentGroup<Component ...>)
+	{
+		RegisterHasComponent<Component ...>();
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
@@ -144,6 +163,20 @@ namespace Kargono::Scenes
 
 		// Scripts
 		Script::ScriptEngine::OnRuntimeStart(this);
+		// Invoke OnCreate
+		auto classInstanceView = GetAllEntitiesWith<ClassInstanceComponent>();
+		for (auto e : classInstanceView)
+		{
+			Scenes::Entity entity = { e, this };
+			ClassInstanceComponent& classInstanceComp = entity.GetComponent<ClassInstanceComponent>();
+			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(classInstanceComp.ClassHandle);
+			KG_ASSERT(entityClass);
+			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnCreateHandle;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				((WrappedVoidUInt64*)entityClass->GetScripts().OnCreate->m_Function.get())->m_Value(entity.GetUUID());
+			}
+		}
 
 		// Instantiate all script entities
 		auto view = GetAllEntitiesWith<ScriptComponent>();
@@ -229,26 +262,20 @@ namespace Kargono::Scenes
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			
 			cameraComponent.Camera.OnViewportResize();
-					
 		}
 
 	}
 	bool Scene::CheckHasComponent(UUID entityID, const std::string& componentName)
 	{
+		if (!s_EntityHasComponentFunc.contains(componentName))
+		{
+			KG_ERROR("Invalid Component name provided.")
+			return false;
+		}
 		KG_ASSERT(s_ActiveScene);
 		Entity activeEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(activeEntity);
-		return false;
-		/*activeEntity.HasComponent<>()
-		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
-		KG_ASSERT(scene)
-			Scenes::Entity entity = scene->GetEntityByUUID(entityID);
-		KG_ASSERT(entity)
-
-			MonoType* managedType = mono_reflection_type_get_type(componentType);
-
-		KG_ASSERT(s_EntityHasComponentFuncs.contains(managedType))
-			return s_EntityHasComponentFuncs.at(managedType)(entity);*/
+		return s_EntityHasComponentFunc.at(componentName)(activeEntity);
 	}
 	std::unordered_map<std::string, std::vector<UUID>>& Scene::GetScriptClassToEntityList()
 	{
@@ -346,5 +373,16 @@ namespace Kargono::Scenes
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
 		
+	}
+	void SceneEngine::Init()
+	{
+		RegisterHasComponent(AllComponents{});
+	}
+	Math::vec3 SceneEngine::TransformComponent_GetTranslation(UUID entityID)
+	{
+		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+
+		return entity.GetComponent<Scenes::TransformComponent>().Translation;
 	}
 }
