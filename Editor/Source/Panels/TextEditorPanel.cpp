@@ -36,6 +36,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
+		s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 		s_OnCreateFile = [&]()
 		{
 			const std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
@@ -194,8 +195,18 @@ namespace Kargono::Panels
 
 				if (ImGui::IsItemClicked())
 				{
+					Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 					s_ActiveDocument = iteration;
-					s_TextEditor.SetText(s_AllDocuments.at(s_ActiveDocument).TextBuffer);
+					s_TextEditor.SetText(activeDocument.TextBuffer);
+					if (activeDocument.FilePath.extension().string() == ".cpp")
+					{
+						s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+					}
+					else
+					{
+						// Default Case
+						s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
+					}
 				}
 
 				if (setColorBlue)
@@ -284,6 +295,15 @@ namespace Kargono::Panels
 			s_AllDocuments.push_back(newDocument);
 			s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
 			s_TextEditor.SetText(newDocument.TextBuffer);
+			if (newDocument.FilePath.extension().string() == ".cpp")
+			{
+				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+			}
+			else
+			{
+				// Default Case
+				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
+			}
 		}
 	}
 }

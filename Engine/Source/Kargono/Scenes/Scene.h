@@ -22,6 +22,15 @@ namespace Kargono::Scenes
 	// Forward Declarations
 	class Entity;
 	struct ShaderSpecification;
+
+	class SceneEngine
+	{
+	public:
+		static void Init();
+	public:
+		static Math::vec3 TransformComponent_GetTranslation(UUID entityID);
+	};
+
 	//============================================================
 	// Scene Class
 	//============================================================

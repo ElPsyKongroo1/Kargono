@@ -20,6 +20,7 @@ namespace Kargono
 		Script::ScriptEngine::Init();
 		Scripting::ScriptCore::Init();
 		Audio::AudioEngine::Init();
+		Scenes::SceneEngine::Init();
 
 		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
 
@@ -457,7 +458,7 @@ namespace Kargono
 	bool EditorApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateUserCount();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
 		}
@@ -468,7 +469,7 @@ namespace Kargono
 	bool EditorApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnApproveJoinSession();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
 		}
@@ -479,7 +480,7 @@ namespace Kargono
 	bool EditorApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
 		}
@@ -490,7 +491,7 @@ namespace Kargono
 	bool EditorApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnUserLeftSession();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
 		}
@@ -500,7 +501,7 @@ namespace Kargono
 	bool EditorApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnCurrentSessionInit();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
 		}
@@ -510,7 +511,7 @@ namespace Kargono
 	bool EditorApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnConnectionTerminated();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
 		}
@@ -520,7 +521,7 @@ namespace Kargono
 	bool EditorApp::OnStartSession(Events::StartSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnStartSession();
-		if (scriptHandle != 0)
+		if (scriptHandle != Assets::EmptyHandle)
 		{
 			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
 		}
