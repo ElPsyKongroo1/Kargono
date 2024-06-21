@@ -448,7 +448,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
 		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(BoolUInt64String)
+		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
 		outputStream << "}\n";
