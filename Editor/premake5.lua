@@ -26,7 +26,8 @@ project "Editor"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.asio}",
+        "%{IncludeDir.ImGuiColorTextEdit}",
 
     }
 

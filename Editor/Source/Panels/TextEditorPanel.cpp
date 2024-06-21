@@ -2,6 +2,7 @@
 
 #include "EditorApp.h"
 #include "API/EditorUI/ImGuiBackendAPI.h"
+#include "API/EditorUI/ImGuiColorTextEditorAPI.h"
 #include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
@@ -10,14 +11,14 @@ namespace Kargono::Panels
 {
 	struct Document
 	{
-		Buffer TextBuffer{};
+		std::string TextBuffer {};
 		std::filesystem::path FilePath { "" };
 		bool Edited{ false };
 		bool Opened{ false };
 		bool SetActive{ false };
 	};
 
-
+	static TextEditor s_TextEditor {};
 	static uint32_t s_ActiveDocument = 0;
 	static std::vector<Document> s_AllDocuments {};
 	static std::function<void()> s_OnOpenFile { nullptr };
@@ -42,15 +43,15 @@ namespace Kargono::Panels
 			if (!filepath.empty())
 			{
 				Document newDocument{};
-				newDocument.TextBuffer.Allocate(4096);
-				newDocument.TextBuffer.SetDataToByte(0);
 				Utility::FileSystem::WriteFileString(filepath, "");
+				newDocument.TextBuffer = "";
 				newDocument.FilePath = filepath;
 				newDocument.Edited = false;
 				newDocument.Opened = true;
 				newDocument.SetActive = true;
 				s_AllDocuments.push_back(newDocument);
 				s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
+				s_TextEditor.SetText("");
 			}
 		};
 		s_OnOpenFile = [&]()
@@ -63,16 +64,18 @@ namespace Kargono::Panels
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 
-			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer.GetString());
+			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());
 		};
+		s_TextEditor.SetSaveCallback(s_OnSaveFile);
+
 		s_OnDeleteFile = [&]()
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 			if (Utility::FileSystem::DeleteSelectedFile(activeDocument.FilePath))
 			{
-				activeDocument.TextBuffer.Release();
+				activeDocument.TextBuffer = "";
 				s_AllDocuments.erase(s_AllDocuments.begin() + s_ActiveDocument);
 				s_ActiveDocument = 0;
 				if (s_AllDocuments.size() > 0)
@@ -84,7 +87,7 @@ namespace Kargono::Panels
 		s_OnCloseFile = [&]()
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
-			activeDocument.TextBuffer.Release();
+			activeDocument.TextBuffer = "";
 			s_AllDocuments.erase(s_AllDocuments.begin() + s_ActiveDocument);
 			s_ActiveDocument = 0;
 			if (s_AllDocuments.size() > 0)
@@ -106,6 +109,7 @@ namespace Kargono::Panels
 		{
 			ImGui::Text("Are you sure you want to close this file without saving?");
 		};
+
 
 
 	}
@@ -157,6 +161,14 @@ namespace Kargono::Panels
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };
+
+			if (s_TextEditor.IsTextChanged())
+			{
+				Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
+				activeDocument.TextBuffer = s_TextEditor.GetText();
+				activeDocument.Edited = true;
+			}
+
 			for (auto& document : s_AllDocuments)
 			{
 				bool setColorBlue = false;
@@ -177,49 +189,7 @@ namespace Kargono::Panels
 					&document.Opened, tabItemFlags))
 				{
 					s_ActiveDocument = iteration;
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PureWhite);
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.0f);
-
-					static ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
-					{
-						switch (data->EventFlag)
-						{
-							case ImGuiInputTextFlags_CallbackResize:
-							{
-								Document& activeDocument = *(Document*)data->UserData;
-								Buffer newBuffer{};
-								newBuffer.Allocate(data->BufSize);
-								newBuffer.SetDataToByte(0);
-								memcpy(newBuffer.Data, activeDocument.TextBuffer.Data, activeDocument.TextBuffer.Size);
-								activeDocument.TextBuffer.Release();
-								activeDocument.TextBuffer = newBuffer;
-								return 0;
-							}
-							case ImGuiInputTextFlags_CallbackAlways:
-							{
-								Document& activeDocument = *(Document*)data->UserData;
-								if (activeDocument.Edited && Input::InputPolling::IsKeyPressed(Key::S) &&
-									(Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl)))
-								{
-									s_OnSaveFile();
-								}
-								return 0;
-							}
-							default:
-							{
-								return 0;
-							}
-						}
-					};
-
-					if (ImGui::InputTextMultiline("##textLabel", document.TextBuffer.As<char>(),
-						document.TextBuffer.Size, ImGui::GetContentRegionAvail(),
-						ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackAlways,
-						typeCallback, (void*)&document))
-					{
-						document.Edited = true;
-					}
-					ImGui::PopStyleColor();
+					s_TextEditor.Render("TextEditorSpace");
 					ImGui::EndTabItem();
 				}
 
@@ -301,16 +271,14 @@ namespace Kargono::Panels
 			}
 
 			Document newDocument{};
-			std::string fileString = Utility::FileSystem::ReadFileString(filepath);
-			newDocument.TextBuffer.Allocate(static_cast<uint64_t>(fileString.size() * 1.5f));
-			newDocument.TextBuffer.SetDataToByte(0);
-			memcpy(newDocument.TextBuffer.Data, fileString.data(), fileString.size());
+			newDocument.TextBuffer = Utility::FileSystem::ReadFileString(filepath);
 			newDocument.FilePath = filepath;
 			newDocument.Edited = false;
 			newDocument.Opened = true;
 			newDocument.SetActive = true;
 			s_AllDocuments.push_back(newDocument);
 			s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
+			s_TextEditor.SetText(newDocument.TextBuffer);
 		}
 	}
 }
