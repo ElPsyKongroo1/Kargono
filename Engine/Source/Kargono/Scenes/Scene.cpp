@@ -359,6 +359,25 @@ namespace Kargono::Scenes
 	{
 		m_PhysicsWorld->OnUpdate(ts);
 	}
+	void Scene::OnUpdateEntities(Timestep ts)
+	{
+		auto view = GetAllEntitiesWith<ClassInstanceComponent>();
+
+		// Invoke OnUpdate
+		auto classInstanceView = GetAllEntitiesWith<ClassInstanceComponent>();
+		for (auto e : classInstanceView)
+		{
+			Scenes::Entity entity = { e, this };
+			ClassInstanceComponent& classInstanceComp = entity.GetComponent<ClassInstanceComponent>();
+			Ref<EntityClass> entityClass = classInstanceComp.ClassReference;
+			KG_ASSERT(entityClass);
+			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnUpdateHandle;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				((WrappedVoidUInt64Float*)entityClass->GetScripts().OnUpdate->m_Function.get())->m_Value(entity.GetUUID(), ts);
+			}
+		}
+	}
 	void Scene::FillEntityID(Rendering::RendererInputSpec& inputSpec)
 	{
 		Rendering::Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
@@ -380,9 +399,31 @@ namespace Kargono::Scenes
 	}
 	Math::vec3 SceneEngine::TransformComponent_GetTranslation(UUID entityID)
 	{
-		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
 		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 
 		return entity.GetComponent<Scenes::TransformComponent>().Translation;
+	}
+	void SceneEngine::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
+	{
+		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+		KG_ASSERT(scene);
+		KG_ASSERT(entity);
+		if (!entity.HasComponent<ClassInstanceComponent>())
+		{
+			KG_ERROR("No valid ClassInstanceComponent associated with entity");
+			return;
+		}
+
+		ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
+		KG_ASSERT(comp.ClassHandle != Assets::EmptyHandle);
+		Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+		KG_ASSERT(entityClass);
+		int32_t fieldLocation = entityClass->GetFieldLocation(fieldName);
+		KG_ASSERT(fieldLocation != -1);
+		comp.Fields.at(fieldLocation)->SetValue(fieldValue);
+		return;
+		
 	}
 }

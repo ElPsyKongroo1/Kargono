@@ -147,6 +147,7 @@ namespace Kargono
 		// Update Scripts
 		Script::ScriptEngine::OnUpdate(ts);
 
+		Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
 		Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 
 		// Render 2D

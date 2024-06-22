@@ -63,9 +63,8 @@ namespace Kargono::Panels
 			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
 			{
 				// Update Scripts
-
 				Script::ScriptEngine::OnUpdate(ts);
-
+				Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
 				Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 			}
 			OnUpdateRuntime(ts);

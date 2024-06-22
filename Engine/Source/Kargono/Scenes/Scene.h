@@ -29,6 +29,7 @@ namespace Kargono::Scenes
 		static void Init();
 	public:
 		static Math::vec3 TransformComponent_GetTranslation(UUID entityID);
+		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
 	};
 
 	//============================================================
@@ -72,6 +73,7 @@ namespace Kargono::Scenes
 		void RenderScene(Rendering::Camera& camera, const Math::mat4& transform);
 		// Updates Physics
 		void OnUpdatePhysics(Timestep ts);
+		void OnUpdateEntities(Timestep ts);
 
 		// Other LifeCycle Functions
 		// These Getter/Setter Functions query the current state of the scene.
