@@ -306,6 +306,8 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
@@ -355,6 +357,8 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) 
 		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
+		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
@@ -387,7 +391,6 @@ namespace Kargono::Scripting
 		outputStream << "}" << "\n";
 
 		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
-
 		Utility::FileSystem::WriteFileString(headerFile, outputStream.str());
 	}
 
@@ -414,10 +417,12 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
+		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
+		AddEngineFunctionToCPPFileThreeParameters(SetEntityFieldByName, void, uint64_t, const std::string&, void*)
 
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
@@ -459,6 +464,10 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
 		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
 		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SendAllEntityLocation)
+		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
@@ -470,6 +479,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(Vec3UInt64, Math::vec3, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TransformComponent_GetTranslation)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SetEntityFieldByName)
 		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
@@ -547,6 +560,8 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidStringStringBool) 
 		ImportInsertFunction(VoidStringStringString) 
 		ImportInsertFunction(VoidStringStringVec4) 
+		ImportInsertFunction(VoidUInt64StringVoidPtr)
+		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(UInt16None)
 		ImportInsertFunction(Vec3UInt64)
@@ -567,7 +582,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneEngine::TransformComponent_GetTranslation, Vec3UInt64)
+		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneEngine::SetEntityFieldByName, VoidUInt64StringVoidPtr)
 	}
 }
 

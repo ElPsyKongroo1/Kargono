@@ -365,6 +365,14 @@ namespace Kargono::Network
 		return std::numeric_limits<uint16_t>::max();
 	}
 
+	void Client::SendAllEntityLocation(UUID entityID, Math::vec3 location)
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
+		}
+	}
+
 	void Client::EnableReadyCheck()
 	{
 		if (GetActiveClient())
