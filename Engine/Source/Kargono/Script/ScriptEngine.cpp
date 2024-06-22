@@ -474,6 +474,7 @@ namespace Kargono::Script
 		}
 
 		auto view = s_ScriptData->SceneContext->GetAllEntitiesWith<Scenes::ScriptComponent>();
+
 		// Run On-Update function for each ScriptObject
 		for (auto e : view)
 		{

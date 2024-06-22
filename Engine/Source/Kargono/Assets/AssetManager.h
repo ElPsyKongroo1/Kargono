@@ -515,6 +515,11 @@ namespace Kargono::Assets
 		static void SaveInputMode(AssetHandle inputModeHandle, Ref<Input::InputMode> inputMode);
 
 		//==============================
+		// Delete a InputMode
+		//==============================
+		static void DeleteInputMode(AssetHandle handle);
+
+		//==============================
 		// Load and Retrieve In-Memory InputMode
 		//==============================
 		// Function to get a texture with a given name
