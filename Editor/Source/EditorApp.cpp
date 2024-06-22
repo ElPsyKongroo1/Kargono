@@ -41,7 +41,6 @@ namespace Kargono
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
-		m_OldInputEditorPanel = CreateScope<Panels::OldInputEditorPanel>();
 		m_EntityClassEditor = CreateScope<Panels::EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
@@ -198,7 +197,6 @@ namespace Kargono
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
-				ImGui::MenuItem("Old Input Mode Editor", NULL, &m_ShowOldInputEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
@@ -252,7 +250,6 @@ namespace Kargono
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
-		if (m_ShowOldInputEditor) { m_OldInputEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
@@ -691,11 +688,11 @@ namespace Kargono
 			m_EditorUIObjectHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
 		}
 
-		if (!Input::InputMode::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
+		if (!Input::InputModeEngine::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
 		else
 		{
-			m_EditorInputMode = Input::InputMode::GetActiveInputMode();
-			m_EditorInputModeHandle = Input::InputMode::GetActiveInputModeHandle();
+			m_EditorInputMode = Input::InputModeEngine::GetActiveInputMode();
+			m_EditorInputModeHandle = Input::InputModeEngine::GetActiveInputModeHandle();
 		}
 
 		// Load Default Game State
@@ -767,11 +764,11 @@ namespace Kargono
 		// Clear InputModes during runtime.
 		if (m_EditorInputMode)
 		{
-			Input::InputMode::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputModeEngine::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
 		}
 		else
 		{
-			Input::InputMode::SetActiveInputMode(nullptr, Assets::EmptyHandle);
+			Input::InputModeEngine::SetActiveInputMode(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameState::s_GameState = nullptr;

@@ -124,16 +124,16 @@ namespace Kargono::Assets
 		}
 
 		{
-			// CustomCalls OnUpdate
-			out << YAML::Key << "CustomCallsOnUpdate" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnUpdate Seq
+			// OnUpdate
+			out << YAML::Key << "OnUpdate" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnUpdate Seq
 
-			for (auto& inputBinding : inputMode->m_CustomCallsOnUpdateBindings)
+			for (auto& inputBinding : inputMode->m_OnUpdateBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
 				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-				out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
 
 				switch (inputBinding->GetActionType())
 				{
@@ -153,66 +153,20 @@ namespace Kargono::Assets
 
 				out << YAML::EndMap; // InputActionBinding End
 			}
-			out << YAML::EndSeq; // End of CustomCalls OnUpdate Seq
+			out << YAML::EndSeq; // End of OnUpdate Seq
 		}
 
 		{
-			// ScriptClass OnUpdate
-			out << YAML::Key << "ScriptClassOnUpdate" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnUpdate Seq
+			// OnKeyPressed
+			out << YAML::Key << "OnKeyPressed" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnKeyPressed Seq
 
-			for (auto& [className, bindingList] : inputMode->m_ScriptClassOnUpdateBindings)
-			{
-				out << YAML::BeginMap; // Binding List Start
-
-				out << YAML::Key << "ClassName" << YAML::Value << className;
-
-				out << YAML::Key << "AllBindings" << YAML::Value;
-				out << YAML::BeginSeq; // Start of All Bindings Seq
-
-				for (auto& inputBinding : bindingList)
-				{
-					out << YAML::BeginMap; // InputActionBinding Start
-					out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-					out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
-
-					switch (inputBinding->GetActionType())
-					{
-					case Input::InputActionTypes::KeyboardAction:
-					{
-						Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-						out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
-						break;
-					}
-					case Input::InputActionTypes::None:
-					default:
-					{
-						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
-						break;
-					}
-					}
-					out << YAML::EndMap; // InputActionBinding End
-				}
-
-				out << YAML::EndSeq; // End of All Bindings Seq
-
-
-				out << YAML::EndMap; // Binding List End
-			}
-			out << YAML::EndSeq; // End of CustomCalls OnUpdate Seq
-		}
-
-		{
-			// CustomCalls OnKeyPressed
-			out << YAML::Key << "CustomCallsOnKeyPressed" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnKeyPressed Seq
-
-			for (auto& inputBinding : inputMode->m_CustomCallsOnKeyPressedBindings)
+			for (auto& inputBinding : inputMode->m_OnKeyPressedBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
 				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-				out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
 
 				switch (inputBinding->GetActionType())
 				{
@@ -232,55 +186,8 @@ namespace Kargono::Assets
 
 				out << YAML::EndMap; // InputActionBinding End
 			}
-			out << YAML::EndSeq; // End of CustomCalls OnKeyPressed Seq
+			out << YAML::EndSeq; // End of OnKeyPressed Seq
 		}
-
-		{
-			// ScriptClass OnKeyPressed
-			out << YAML::Key << "ScriptClassOnKeyPressed" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnKeyPressed Seq
-
-			for (auto& [className, bindingList] : inputMode->m_ScriptClassOnKeyPressedBindings)
-			{
-				out << YAML::BeginMap; // Binding List Start
-
-				out << YAML::Key << "ClassName" << YAML::Value << className;
-
-				out << YAML::Key << "AllBindings" << YAML::Value;
-				out << YAML::BeginSeq; // Start of All Bindings Seq
-
-				for (auto& inputBinding : bindingList)
-				{
-					out << YAML::BeginMap; // InputActionBinding Start
-					out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-					out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
-
-					switch (inputBinding->GetActionType())
-					{
-					case Input::InputActionTypes::KeyboardAction:
-					{
-						Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-						out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
-						break;
-					}
-					case Input::InputActionTypes::None:
-					default:
-					{
-						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
-						break;
-					}
-					}
-					out << YAML::EndMap; // InputActionBinding End
-				}
-
-				out << YAML::EndSeq; // End of All Bindings Seq
-
-
-				out << YAML::EndMap; // Binding List End
-			}
-			out << YAML::EndSeq; // End of CustomCalls OnKeyPressed Seq
-		}
-
 
 		out << YAML::EndMap; // Start of File Map
 
@@ -329,7 +236,6 @@ namespace Kargono::Assets
 
 		// Get Keyboard Polling!
 		{
-
 			auto keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
@@ -343,13 +249,13 @@ namespace Kargono::Assets
 			}
 		}
 
-		// CustomCalls OnUpdate
+		// OnUpdate
 		{
-			auto customOnUpdate = data["CustomCallsOnUpdate"];
-			if (customOnUpdate)
+			auto onUpdate = data["OnUpdate"];
+			if (onUpdate)
 			{
-				auto& customOnUpdateNew = inputMode->m_CustomCallsOnUpdateBindings;
-				for (auto binding : customOnUpdate)
+				auto& onUpdateNew = inputMode->m_OnUpdateBindings;
+				for (auto binding : onUpdate)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
 					Ref<Input::InputActionBinding> newActionBinding = nullptr;
@@ -369,63 +275,20 @@ namespace Kargono::Assets
 					}
 					}
 
-					newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-					customOnUpdateNew.push_back(newActionBinding);
+					newActionBinding->SetScript(binding["ScriptHandle"].as<uint64_t>());
+					onUpdateNew.push_back(newActionBinding);
 				}
 			}
 		}
 
-		// ScriptClass OnUpdate
+
+		// OnKeyPressed
 		{
-			auto classOnUpdate = data["ScriptClassOnUpdate"];
-			if (classOnUpdate)
+			auto onKeyPressed = data["CustomCallsOnKeyPressed"];
+			if (onKeyPressed)
 			{
-				auto& classOnUpdateNew = inputMode->m_ScriptClassOnUpdateBindings;
-				for (auto classDescription : classOnUpdate)
-				{
-					std::string className = classDescription["ClassName"].as<std::string>();
-
-					auto allBindings = classDescription["AllBindings"];
-
-					classOnUpdateNew.insert({ className, {} });
-					if (allBindings)
-					{
-						for (auto binding : allBindings)
-						{
-							Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-							Ref<Input::InputActionBinding> newActionBinding = nullptr;
-							switch (bindingType)
-							{
-							case Input::InputActionTypes::KeyboardAction:
-							{
-								newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-								((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
-								break;
-							}
-							case Input::InputActionTypes::None:
-							default:
-							{
-								KG_ERROR("Invalid bindingType while deserializing InputMode");
-								break;
-							}
-							}
-
-							newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-
-							classOnUpdateNew.at(className).push_back(newActionBinding);
-						}
-					}
-				}
-			}
-		}
-
-		// CustomCalls OnKeyPressed
-		{
-			auto customOnKeyPressed = data["CustomCallsOnKeyPressed"];
-			if (customOnKeyPressed)
-			{
-				auto& customOnKeyPressedNew = inputMode->m_CustomCallsOnKeyPressedBindings;
-				for (auto binding : customOnKeyPressed)
+				auto& onKeyPressedNew = inputMode->m_OnKeyPressedBindings;
+				for (auto binding : onKeyPressed)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
 					Ref<Input::InputActionBinding> newActionBinding = nullptr;
@@ -445,52 +308,8 @@ namespace Kargono::Assets
 					}
 					}
 
-					newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-					customOnKeyPressedNew.push_back(newActionBinding);
-				}
-			}
-		}
-
-		// ScriptClass OnKeyPressed
-		{
-			auto classOnKeyPressed = data["ScriptClassOnKeyPressed"];
-			if (classOnKeyPressed)
-			{
-				auto& classOnKeyPressedNew = inputMode->m_ScriptClassOnKeyPressedBindings;
-				for (auto classDescription : classOnKeyPressed)
-				{
-					std::string className = classDescription["ClassName"].as<std::string>();
-
-					auto allBindings = classDescription["AllBindings"];
-
-					classOnKeyPressedNew.insert({ className, {} });
-					if (allBindings)
-					{
-						for (auto binding : allBindings)
-						{
-							Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-							Ref<Input::InputActionBinding> newActionBinding = nullptr;
-							switch (bindingType)
-							{
-							case Input::InputActionTypes::KeyboardAction:
-							{
-								newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-								((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
-								break;
-							}
-							case Input::InputActionTypes::None:
-							default:
-							{
-								KG_ERROR("Invalid bindingType while deserializing InputMode");
-								break;
-							}
-							}
-
-							newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-
-							classOnKeyPressedNew.at(className).push_back(newActionBinding);
-						}
-					}
+					newActionBinding->SetScript(binding["ScriptHandle"].as<uint64_t>());
+					onKeyPressedNew.push_back(newActionBinding);
 				}
 			}
 		}

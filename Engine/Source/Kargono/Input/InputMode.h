@@ -10,6 +10,8 @@
 #include <functional>
 #include <string>
 
+#include "Kargono/Scripting/Scripting.h"
+
 namespace Kargono::Assets
 {
 	class AssetManager;
@@ -33,12 +35,28 @@ namespace Kargono::Input
 	public:
 		virtual ~InputActionBinding() = default;
 	public:
-		InputActionTypes GetActionType() const { return m_BindingType; }
-		std::string& GetFunctionBinding() { return m_FunctionName; }
-		void SetFunctionBinding(const std::string& function) { m_FunctionName = function; }
+		InputActionTypes GetActionType() const
+		{
+			return m_BindingType;
+		}
+		Ref<Scripting::Script> GetScript()
+		{
+			return m_Script;
+		}
+		Assets::AssetHandle GetScriptHandle()
+		{
+			return m_ScriptHandle;
+		}
+		void SetScript(Ref<Scripting::Script> script, Assets::AssetHandle handle)
+		{
+			m_ScriptHandle = handle;
+			m_Script = script;
+		}
+		void SetScript(Assets::AssetHandle handle);
 	protected:
 		InputActionTypes m_BindingType{ InputActionTypes::None };
-		std::string m_FunctionName{"None"};
+		Assets::AssetHandle m_ScriptHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> m_Script { nullptr };
 	};
 
 
@@ -65,42 +83,47 @@ namespace Kargono::Input
 	{
 	public:
 		//=========================
-		// Editor Management Functions
+		// Getters/Setters
 		//=========================
-		static void AddKeyboardPollingSlot();
-		static void UpdateKeyboardPollingSlot(uint16_t originalSlot, uint16_t newSlot);
-		static void UpdateKeyboardPollingKey(uint16_t slot, KeyCode newKey);
-		static void DeleteKeyboardPollingSlot(uint16_t slot);
-		static std::vector<std::tuple<uint16_t, KeyCode>>& GetKeyboardPolling();
-
-		static void AddKeyboardCustomCallsOnUpdateSlot();
-		static void DeleteKeyboardCustomCallsOnUpdate(InputActionBinding* bindingRef);
-		static std::vector<KeyboardActionBinding*>& GetKeyboardCustomCallsOnUpdate();
-
-		static void AddKeyboardScriptClassOnUpdateSlot();
-		static void DeleteKeyboardScriptClassOnUpdate(InputActionBinding* bindingRef);
-		static void UpdateKeyboardClassOnUpdateName(InputActionBinding* bindingRef, const std::string& newClassName);
-		static std::vector<std::tuple<std::string, KeyboardActionBinding*>>& GetKeyboardClassOnUpdate();
-
-		static void AddKeyboardCustomCallsOnKeyPressedSlot();
-		static void DeleteKeyboardCustomCallsOnKeyPressed(InputActionBinding* bindingRef);
-		static std::vector<KeyboardActionBinding*>& GetKeyboardCustomCallsOnKeyPressed();
-
-		static void AddKeyboardScriptClassOnKeyPressedSlot();
-		static void DeleteKeyboardScriptClassOnKeyPressed(InputActionBinding* bindingRef);
-		static void UpdateKeyboardClassOnKeyPressedName(InputActionBinding* bindingRef, const std::string& newClassName);
-		static std::vector<std::tuple<std::string, KeyboardActionBinding*>>& GetKeyboardClassOnKeyPressed();
+		std::vector<Ref<InputActionBinding>>& GetOnUpdateBindings()
+		{
+			return m_OnUpdateBindings;
+		}
+		std::vector<Ref<InputActionBinding>>& GetOnKeyPressedBindings()
+		{
+			return m_OnKeyPressedBindings;
+		}
+		std::unordered_map<uint16_t, KeyCode>& GetKeyboardPolling()
+		{
+			return m_KeyboardPolling;
+		}
+	private:
+		//=========================
+		// Input Polling Bindings
+		//=========================
+		// Maps Vector Locations to Engine KeyCodes
+		std::unordered_map<uint16_t, KeyCode> m_KeyboardPolling {};
 
 		//=========================
-		// Engine Getter Functions
+		// OnEvent -> Action Bindings
 		//=========================
-		static bool IsKeyboardSlotPressed(uint16_t slot);
-		static std::vector<Ref<InputActionBinding>>& GetCustomCallsOnUpdate();
-		static std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>>& GetScriptClassOnUpdate();
+		std::vector<Ref<InputActionBinding>> m_OnUpdateBindings{};
+		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
+	private:
+		friend class Assets::AssetManager;
+	};
 
-		static std::vector<Ref<InputActionBinding>>& GetCustomCallsOnKeyPressed();
-		static std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>>& GetScriptClassOnKeyPressed();
+	class InputModeEngine
+	{
 	public:
+		
+		//=========================
+		// Active Input Mode API
+		//=========================
+		static bool IsActiveKeyboardSlotPressed(uint16_t slot);
+		static std::vector<Ref<InputActionBinding>>& GetActiveOnUpdate();
+		static std::vector<Ref<InputActionBinding>>& GetActiveOnKeyPressed();
+
 		//=========================
 		// Getter/Setter
 		//=========================
@@ -121,26 +144,6 @@ namespace Kargono::Input
 		//=========================
 		static Ref<InputMode> s_ActiveInputMode;
 		static Assets::AssetHandle s_ActiveInputModeHandle;
-	private:
-		//=========================
-		// Input Polling Bindings
-		//=========================
-		// Maps Vector Locations to Engine KeyCodes
-		std::unordered_map<uint16_t, KeyCode> m_KeyboardPolling {};
-
-	private:
-		//=========================
-		// OnEvent -> Action Bindings
-		//=========================
-		std::vector<Ref<InputActionBinding>> m_CustomCallsOnUpdateBindings{};
-		std::unordered_map<std::string , std::vector<Ref<InputActionBinding>>> m_ScriptClassOnUpdateBindings{};
-
-		std::vector<Ref<InputActionBinding>> m_CustomCallsOnKeyPressedBindings{};
-		std::unordered_map<std::string, std::vector<Ref<InputActionBinding>>> m_ScriptClassOnKeyPressedBindings{};
-
-	
-	private:
-		friend class Assets::AssetManager;
 	};
 }
 

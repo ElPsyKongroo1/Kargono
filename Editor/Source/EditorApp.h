@@ -2,7 +2,6 @@
 #include "Kargono.h"
 
 #include "Panels/SceneHierarchyPanel.h"
-#include "Panels/OldInputEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
@@ -171,7 +170,6 @@ namespace Kargono
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowUserInterfaceEditor = false;
-		bool m_ShowOldInputEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
@@ -205,7 +203,6 @@ namespace Kargono
 		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
-		Scope<Panels::OldInputEditorPanel>  m_OldInputEditorPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
@@ -223,7 +220,6 @@ namespace Kargono
 		friend Panels::StatisticsPanel;
 		friend Panels::ProjectPanel;
 		friend Panels::UIEditorPanel;
-		friend Panels::OldInputEditorPanel;
 		friend Panels::ScriptEditorPanel;
 		friend Panels::EntityClassEditor;
 		friend Panels::TextEditorPanel;

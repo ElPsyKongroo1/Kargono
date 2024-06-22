@@ -334,7 +334,7 @@ namespace Kargono::Script
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
-				Input::InputMode::SetActiveInputMode(s_InputRef, s_InputHandle);
+				Input::InputModeEngine::SetActiveInputMode(s_InputRef, s_InputHandle);
 			});
 			
 		}
@@ -465,7 +465,7 @@ namespace Kargono::Script
 
 	static bool InputMode_IsKeySlotDown(uint16_t keySlot)
 	{
-		return Input::InputMode::IsKeyboardSlotPressed(keySlot);
+		return Input::InputModeEngine::IsActiveKeyboardSlotPressed(keySlot);
 	}
 
 	
