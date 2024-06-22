@@ -4,10 +4,10 @@
 
 namespace Kargono::Panels
 {
-	class InputEditorPanel
+	class OldInputEditorPanel
 	{
 	public:
-		InputEditorPanel();
+		OldInputEditorPanel();
 
 		// This panel allows the editor to create different input modes that can be swapped out
 		void OnEditorUIRender();
@@ -21,6 +21,6 @@ namespace Kargono::Panels
 		// This function displays the keyboard input polling interface.
 		void InputEditor_Keyboard_Polling();
 	private:
-		std::string m_PanelName{ "Input Mode Editor" };
+		std::string m_PanelName{ "Old Input Mode Editor" };
 	};
 }

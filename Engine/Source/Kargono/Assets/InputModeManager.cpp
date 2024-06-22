@@ -547,6 +547,22 @@ namespace Kargono::Assets
 		SerializeInputMode(inputMode, (Projects::Project::GetAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
 	}
 
+	void AssetManager::DeleteInputMode(AssetHandle handle)
+	{
+		if (!s_InputModeRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete input mode in AssetManager");
+			return;
+		}
+
+		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+			s_InputModeRegistry.at(handle).Data.IntermediateLocation);
+
+		s_InputModeRegistry.erase(handle);
+
+		SerializeInputModeRegistry();
+	}
+
 	std::filesystem::path AssetManager::GetInputModeLocation(const AssetHandle& handle)
 	{
 		if (!s_InputModeRegistry.contains(handle))
