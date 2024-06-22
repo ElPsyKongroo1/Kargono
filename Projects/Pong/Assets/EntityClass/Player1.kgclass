@@ -9,7 +9,7 @@ FieldTypes:
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
 OnCreate: 4805234009752154696
-OnUpdate: 0
+OnUpdate: 8188330720880382876
 AllScripts:
   - 2120369914074997380
   - 4805234009752154696

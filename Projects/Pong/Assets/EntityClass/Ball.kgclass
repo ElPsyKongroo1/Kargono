@@ -12,7 +12,7 @@ FieldTypes:
     Type: Vector3
 OnPhysicsCollisionStart: 0
 OnPhysicsCollisionEnd: 0
-OnCreate: 0
+OnCreate: 209298783402426078
 OnUpdate: 0
 AllScripts:
   - 209298783402426078

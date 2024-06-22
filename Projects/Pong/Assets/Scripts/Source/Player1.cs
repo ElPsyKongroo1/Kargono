@@ -66,7 +66,6 @@ namespace Pong
 			{
 				Network.SendAllEntityLocation(ID, m_Transform.Translation);
 			}
-			
 		}
 
 	}
