@@ -125,6 +125,10 @@ namespace Kargono::EditorUI
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
 		static void TextInputPopup(TextInputSpec& spec);
+		static void BeginTabBar(const std::string& title);
+		static void EndTabBar();
+		static bool BeginTabItem(const std::string& title);
+		static void EndTabItem();
 
 	public:
 		//==============================
@@ -481,7 +485,7 @@ namespace Kargono::EditorUI
 		std::function<void(const OptionEntry&)> ConfirmAction {nullptr};
 		std::function<void(SelectOptionSpec&)> PopupAction {nullptr};
 		// Only used if PopupOnly is true
-		bool StartPopup{ false };
+		bool PopupActive{ false };
 		WidgetFlags Flags{ 0 };
 		void ClearOptions()
 		{

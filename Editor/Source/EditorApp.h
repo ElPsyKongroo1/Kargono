@@ -2,7 +2,7 @@
 #include "Kargono.h"
 
 #include "Panels/SceneHierarchyPanel.h"
-#include "Panels/InputEditorPanel.h"
+#include "Panels/OldInputEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
@@ -13,12 +13,14 @@
 #include "Panels/ScriptEditorPanel.h"
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
+#include "Panels/InputModePanel.h"
 
 #include <filesystem>
 #include <thread>
 #include <unordered_map>
 #include <string>
 #include <functional>
+
 
 namespace Kargono
 {
@@ -169,11 +171,12 @@ namespace Kargono
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowUserInterfaceEditor = false;
-		bool m_ShowInputEditor = false;
+		bool m_ShowOldInputEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
+		bool m_ShowInputModeEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -202,7 +205,7 @@ namespace Kargono
 		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
-		Scope<Panels::InputEditorPanel>  m_InputEditorPanel;
+		Scope<Panels::OldInputEditorPanel>  m_OldInputEditorPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
@@ -211,6 +214,7 @@ namespace Kargono
 		Scope<Panels::EntityClassEditor>  m_EntityClassEditor;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
+		Scope<Panels::InputModePanel>  m_InputModePanel;
 	private:
 		friend Panels::ViewportPanel;
 		friend Panels::SceneHierarchyPanel;
@@ -219,11 +223,12 @@ namespace Kargono
 		friend Panels::StatisticsPanel;
 		friend Panels::ProjectPanel;
 		friend Panels::UIEditorPanel;
-		friend Panels::InputEditorPanel;
+		friend Panels::OldInputEditorPanel;
 		friend Panels::ScriptEditorPanel;
 		friend Panels::EntityClassEditor;
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
+		friend Panels::InputModePanel;
 
 	};
 

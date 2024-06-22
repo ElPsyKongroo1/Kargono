@@ -729,10 +729,10 @@ namespace Kargono::EditorUI
 
 		if (spec.Flags & SelectOption_PopupOnly)
 		{
-			if (spec.StartPopup)
+			if (spec.PopupActive)
 			{
 				ImGui::OpenPopup(id.c_str());
-				spec.StartPopup = false;
+				spec.PopupActive = false;
 				if (spec.PopupAction)
 				{
 					spec.PopupAction(spec);
@@ -1361,5 +1361,21 @@ namespace Kargono::EditorUI
 			ImGui::PopFont();
 			ImGui::EndPopup();
 		}
+	}
+	void Editor::BeginTabBar(const std::string& title)
+	{
+		ImGui::BeginTabBar(title.c_str());
+	}
+	void Editor::EndTabBar()
+	{
+		ImGui::EndTabBar();
+	}
+	bool Editor::BeginTabItem(const std::string& title)
+	{
+		return ImGui::BeginTabItem(title.c_str());
+	}
+	void Editor::EndTabItem()
+	{
+		ImGui::EndTabItem();
 	}
 }

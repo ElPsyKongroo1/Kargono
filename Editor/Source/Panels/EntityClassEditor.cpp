@@ -43,7 +43,7 @@ namespace Kargono::Panels
 	{
 		s_OnOpenClass = [&]()
 		{
-			s_OpenClassPopupSpec.StartPopup = true;
+			s_OpenClassPopupSpec.PopupActive = true;
 		};
 
 		s_OnCreateClass = [&]()
@@ -218,7 +218,7 @@ namespace Kargono::Panels
 		s_FieldsTable.Column2Title = "Field Type";
 		s_FieldsTable.AddToSelectionList("Add New Field", [&]()
 			{
-				s_AddFieldPopup.StartPopup = true;
+				s_AddFieldPopup.PopupActive = true;
 			});
 
 		s_AddFieldPopup.Label = "Add New Field";

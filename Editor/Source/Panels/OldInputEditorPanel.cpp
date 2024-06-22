@@ -1,4 +1,4 @@
-#include "Panels/InputEditorPanel.h"
+#include "Panels/OldInputEditorPanel.h"
 
 #include "EditorApp.h"
 
@@ -6,7 +6,7 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-	void InputEditorPanel::InputEditor_Keyboard_OnUpdate()
+	void OldInputEditorPanel::InputEditor_Keyboard_OnUpdate()
 	{
 		if (ImGui::TreeNodeEx("OnUpdate##Keyboard", ImGuiTreeNodeFlags_AllowItemOverlap))
 		{
@@ -262,7 +262,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void InputEditorPanel::InputEditor_Keyboard_OnKeyPressed()
+	void OldInputEditorPanel::InputEditor_Keyboard_OnKeyPressed()
 	{
 		if (ImGui::TreeNodeEx("OnKeyPressed##Keyboard", ImGuiTreeNodeFlags_AllowItemOverlap))
 		{
@@ -518,7 +518,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void InputEditorPanel::InputEditor_Keyboard_Polling()
+	void OldInputEditorPanel::InputEditor_Keyboard_Polling()
 	{
 		// Delayed Update Variables. Update Data structure after it has been fully output.
 		bool updateKeySlot = false;
@@ -626,17 +626,17 @@ namespace Kargono::Panels
 		if (deleteKeySlot) { Input::InputMode::DeleteKeyboardPollingSlot(slotToDelete); }
 	}
 
-	InputEditorPanel::InputEditorPanel()
+	OldInputEditorPanel::OldInputEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
-			KG_BIND_CLASS_FN(InputEditorPanel::OnKeyPressedEditor));
+			KG_BIND_CLASS_FN(OldInputEditorPanel::OnKeyPressedEditor));
 	}
 
-	void InputEditorPanel::OnEditorUIRender()
+	void OldInputEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &(s_EditorApp->m_ShowInputEditor));
+		EditorUI::Editor::StartWindow(m_PanelName, &(s_EditorApp->m_ShowOldInputEditor));
 
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(Input::InputMode::GetActiveInputMode()) ? Assets::AssetManager::GetInputModeLocation(Input::InputMode::GetActiveInputModeHandle()).string().c_str() : "None"))
 		{
@@ -716,7 +716,7 @@ namespace Kargono::Panels
 		}
 		EditorUI::Editor::EndWindow();
 	}
-	bool InputEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	bool OldInputEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
 	}

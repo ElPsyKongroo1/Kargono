@@ -41,10 +41,11 @@ namespace Kargono
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
-		m_InputEditorPanel = CreateScope<Panels::InputEditorPanel>();
+		m_OldInputEditorPanel = CreateScope<Panels::OldInputEditorPanel>();
 		m_EntityClassEditor = CreateScope<Panels::EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
+		m_InputModePanel = CreateScope<Panels::InputModePanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
@@ -197,7 +198,8 @@ namespace Kargono
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
-				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputEditor);
+				ImGui::MenuItem("Old Input Mode Editor", NULL, &m_ShowOldInputEditor);
+				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
@@ -250,12 +252,13 @@ namespace Kargono
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
-		if (m_ShowInputEditor) { m_InputEditorPanel->OnEditorUIRender(); }
+		if (m_ShowOldInputEditor) { m_OldInputEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
+		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		
 
