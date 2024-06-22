@@ -570,7 +570,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputMode::SetActiveInputModeByName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeEngine::SetActiveInputModeByName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) 

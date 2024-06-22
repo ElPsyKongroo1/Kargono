@@ -442,34 +442,15 @@ namespace Kargono::Script
 
 	void ScriptEngine::OnUpdate(Timestep ts)
 	{
-		if (Input::InputMode::GetActiveInputMode())
+		if (Input::InputModeEngine::GetActiveInputMode())
 		{
-			auto& globalBindings = Input::InputMode::GetCustomCallsOnUpdate();
+			auto& globalBindings = Input::InputModeEngine::GetActiveOnUpdate();
 			for (auto& binding : globalBindings)
 			{
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)binding.get();
 				if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 				void* param = &ts;
-				s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(binding->GetFunctionBinding(), &param);
-			}
-
-			for (auto& [className, bindingVector] : Input::InputMode::GetScriptClassOnUpdate())
-			{
-				if (!Scenes::Scene::GetScriptClassToEntityList().contains(className)) { continue; }
-
-				for (auto& entity : Scenes::Scene::GetScriptClassToEntityList().at(className))
-				{
-					for (auto& binding : bindingVector)
-					{
-						Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)binding.get();
-						if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
-
-						Ref<ScriptClassEntityInstance> instance = s_ScriptData->EntityInstances[entity];
-						void* param = &ts;
-						instance->m_ScriptClass->InvokeCustomMethod(instance->GetInstance(), binding->GetFunctionBinding(), &param);
-					}
-				}
-
+				//s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(binding->GetFunctionBinding(), &param); TODO
 			}
 		}
 
@@ -489,33 +470,15 @@ namespace Kargono::Script
 		KG_PROFILE_FUNCTION()
 
 		if (event.IsRepeat()) { return; }
-		if (Input::InputMode::GetActiveInputMode())
+		if (Input::InputModeEngine::GetActiveInputMode())
 		{
-			auto& globalBindings = Input::InputMode::GetCustomCallsOnKeyPressed();
+			auto& globalBindings = Input::InputModeEngine::GetActiveOnKeyPressed();
 			for (auto& binding : globalBindings)
 			{
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)binding.get();
 				if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 
-				s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(binding->GetFunctionBinding());
-			}
-			auto& scriptClassBindings = Input::InputMode::GetScriptClassOnKeyPressed();
-			for (auto& [className, bindingVector] : scriptClassBindings)
-			{
-				if (!Scenes::Scene::GetScriptClassToEntityList().contains(className)) { continue; }
-
-				for (auto& entity : Scenes::Scene::GetScriptClassToEntityList().at(className))
-				{
-					for (auto& binding : bindingVector)
-					{
-						Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)binding.get();
-						if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
-
-						Ref<ScriptClassEntityInstance> instance = s_ScriptData->EntityInstances[entity];
-						instance->m_ScriptClass->InvokeCustomMethod(instance->GetInstance(), binding->GetFunctionBinding());
-					}
-				}
-
+				//s_ScriptData->CustomEngineCallInstance.InvokeCustomMethod(binding->GetFunctionBinding()); TODO
 			}
 		}
 		
