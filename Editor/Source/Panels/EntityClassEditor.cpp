@@ -75,15 +75,15 @@ namespace Kargono::Panels
 		s_OpenClassPopupSpec.Label = "Open Class";
 		s_OpenClassPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_OpenClassPopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_OpenClassPopupSpec.PopupAction = [&]()
 		{
-			spec.GetAllOptions().clear();
-			spec.CurrentOption = { "None", Assets::EmptyHandle };
+			s_OpenClassPopupSpec.GetAllOptions().clear();
+			s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_OpenClassPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenClassPopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 		};
 
@@ -225,13 +225,13 @@ namespace Kargono::Panels
 		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
 		s_AddFieldPopup.LineCount = 2;
-		s_AddFieldPopup.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_AddFieldPopup.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_AddFieldPopup.ClearOptions();
+			s_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				s_AddFieldPopup.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		s_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -261,12 +261,12 @@ namespace Kargono::Panels
 		s_EditFieldType.Label = "Field Type";
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
 		s_EditFieldType.LineCount = 2;
-		s_EditFieldType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditFieldType.PopupAction = [&]()
 		{
-			spec.ClearOptions();
+			s_EditFieldType.ClearOptions();
 			for (auto& type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				s_EditFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		s_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -286,7 +286,7 @@ namespace Kargono::Panels
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupWidth = 420.0f;
-		s_EditFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditFieldPopup.PopupAction = [&]()
 		{
 			WrappedVarType fieldType = s_EditorEntityClass->GetField(s_CurrentField);
 
@@ -326,20 +326,20 @@ namespace Kargono::Panels
 		s_SelectOnPhysicsCollisionStartSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionStartSpec.LineCount = 3;
 		s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnPhysicsCollisionStartSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnPhysicsCollisionStartSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnPhysicsCollisionStartSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnPhysicsCollisionStartSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnPhysicsCollisionStartSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			const Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -370,20 +370,20 @@ namespace Kargono::Panels
 		s_SelectOnPhysicsCollisionEndSpec.LineCount = 3;
 		s_SelectOnPhysicsCollisionEndSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnPhysicsCollisionEndSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnPhysicsCollisionEndSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnPhysicsCollisionEndSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnPhysicsCollisionEndSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnPhysicsCollisionEndSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -414,20 +414,20 @@ namespace Kargono::Panels
 		s_SelectOnCreateSpec.LineCount = 3;
 		s_SelectOnCreateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnCreateSpec.CurrentOption = { "None", Assets::EmptyHandle};
-		s_SelectOnCreateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnCreateSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnCreateSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnCreateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_FuncType == WrappedFuncType::Void_UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnCreateSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnCreateHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnCreateSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -458,20 +458,20 @@ namespace Kargono::Panels
 		s_SelectOnUpdateSpec.LineCount = 3;
 		s_SelectOnUpdateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnUpdateSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnUpdateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnUpdateSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnUpdateSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnUpdateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_FuncType == WrappedFuncType::Void_UInt64Float)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnUpdateSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnUpdateHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnUpdateSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};

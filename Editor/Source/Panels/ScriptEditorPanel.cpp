@@ -85,7 +85,7 @@ namespace Kargono::Panels
 
 		s_CreateScriptPopup.Label = "Create New Script";
 		s_CreateScriptPopup.PopupWidth = 420.0f;
-		s_CreateScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_CreateScriptPopup.PopupAction = [&]()
 		{
 			s_CreateScriptName.CurrentOption = "Empty";
 			s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
@@ -132,11 +132,11 @@ namespace Kargono::Panels
 
 		s_CreateScriptFuncType.Label = "Function Type";
 		s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-		s_CreateScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_CreateScriptFuncType.PopupAction = [&]()
 		{
 			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_CreateScriptFuncType.ClearOptions();
 				for (auto func : s_AllWrappedFuncs)
 				{
 					// Check if function's first parameter is a UInt64
@@ -157,18 +157,18 @@ namespace Kargono::Panels
 							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
 								"_UInt64", "_");
 						}
-						
-						spec.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+
+						s_CreateScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
 					}
-					
+
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
+				s_CreateScriptFuncType.ClearOptions();
 				for (auto func : s_AllWrappedFuncs)
 				{
-					spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+					s_CreateScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
 				}
 			}
 		};
@@ -192,7 +192,7 @@ namespace Kargono::Panels
 			{
 				s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			s_CreateScriptSectionLabel.PopupAction(s_CreateScriptSectionLabel);
+			s_CreateScriptSectionLabel.PopupAction();
 
 			// Reset Func Type to prevent incorrect types
 			s_CreateScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
@@ -200,25 +200,25 @@ namespace Kargono::Panels
 
 		s_CreateScriptSectionLabel.Label = "Group";
 		s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
-		s_CreateScriptSectionLabel.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_CreateScriptSectionLabel.PopupAction = [&]()
 		{
 			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_CreateScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
+					s_CreateScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				s_CreateScriptSectionLabel.ClearOptions();
+				s_CreateScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
 				{
-					spec.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
+					s_CreateScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
 			}
 		};
@@ -261,7 +261,7 @@ namespace Kargono::Panels
 
 		s_EditScriptPopup.Label = "Edit New Script";
 		s_EditScriptPopup.PopupWidth = 420.0f;
-		s_EditScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditScriptPopup.PopupAction = [&]()
 		{
 			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
 			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
@@ -368,11 +368,11 @@ namespace Kargono::Panels
 
 		s_EditScriptFuncType.Label = "Function Type";
 		s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-		s_EditScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditScriptFuncType.PopupAction = [&]()
 		{
 			if (s_EditScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_EditScriptFuncType.ClearOptions();
 				for (auto func : s_AllWrappedFuncs)
 				{
 					// Check if function's first parameter is a UInt64
@@ -394,17 +394,17 @@ namespace Kargono::Panels
 								"_UInt64", "_");
 						}
 
-						spec.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+						s_EditScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
 					}
 
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
+				s_EditScriptFuncType.ClearOptions();
 				for (auto func : s_AllWrappedFuncs)
 				{
-					spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+					s_EditScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
 				}
 			}
 		};
@@ -427,32 +427,32 @@ namespace Kargono::Panels
 			{
 				s_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			s_EditScriptSectionLabel.PopupAction(s_EditScriptSectionLabel);
+			s_EditScriptSectionLabel.PopupAction();
 			// Reset Func Type to prevent issues with cache
 			s_EditScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		s_EditScriptSectionLabel.Label = "Group";
 		s_EditScriptSectionLabel.CurrentOption = {"None", Assets::EmptyHandle};
-		s_EditScriptSectionLabel.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditScriptSectionLabel.PopupAction = [&]()
 		{
 			if (s_EditScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_EditScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
+					s_EditScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				s_EditScriptSectionLabel.ClearOptions();
+				s_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
 				{
-					spec.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
+					s_EditScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
 				
 			}
@@ -497,7 +497,7 @@ namespace Kargono::Panels
 
 		s_EditGroupLabelPopup.Label = "Edit Group Label";
 		s_EditGroupLabelPopup.PopupWidth = 420.0f;
-		s_EditGroupLabelPopup.PopupAction = [](EditorUI::GenericPopupSpec& spec)
+		s_EditGroupLabelPopup.PopupAction = []()
 		{
 			s_EditGroupLabelText.CurrentOption = s_ActiveLabel;
 		};

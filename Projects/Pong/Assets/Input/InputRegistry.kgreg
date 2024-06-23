@@ -5,3 +5,8 @@ Assets:
       CheckSum: f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b
       IntermediateLocation: Input/asdf.kginput
       AssetType: InputMode
+  - AssetHandle: 7007382351025691691
+    MetaData:
+      CheckSum: d87d72dd54743bbf9454776bdc7f8c33981d0646dfa567a727a17a577aa13909
+      IntermediateLocation: Input/MainMenu.kginput
+      AssetType: InputMode
