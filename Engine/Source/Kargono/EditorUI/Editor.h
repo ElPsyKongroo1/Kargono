@@ -409,9 +409,9 @@ namespace Kargono::EditorUI
 		std::function<void()> OnRefresh { nullptr };
 	public:
 		void InsertTableEntry(const std::string& label, const std::string& value, 
-			std::function<void(TableEntry& entry)> func, Assets::AssetHandle handle = 0)
+			std::function<void(TableEntry& entry)> onEdit, Assets::AssetHandle handle = 0)
 		{
-			TableEntry newEntry{label, value, handle, func, nullptr };
+			TableEntry newEntry{label, value, handle, onEdit, nullptr };
 			TableValues.push_back(newEntry);
 		}
 
