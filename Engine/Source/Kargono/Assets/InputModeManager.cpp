@@ -110,15 +110,16 @@ namespace Kargono::Assets
 			// Keyboard Polling
 			out << YAML::Key << "KeyboardPolling" << YAML::Value;
 			out << YAML::BeginSeq; // Start of KeyboardPolling Seq
-
-			for (auto& [slot, keyCode] : inputMode->m_KeyboardPolling)
+			uint32_t iteration{ 0 };
+			for (auto keyCode : inputMode->m_KeyboardPolling)
 			{
 				out << YAML::BeginMap; // Start Polling Combo
 
-				out << YAML::Key << "Slot" << YAML::Value << slot;
+				out << YAML::Key << "Slot" << YAML::Value << iteration;
 				out << YAML::Key << "KeyCode" << YAML::Value << keyCode;
 
 				out << YAML::EndMap; // End Polling Combo
+				iteration++;
 			}
 			out << YAML::EndSeq; // End of KeyboardPolling Seq
 		}
@@ -244,7 +245,7 @@ namespace Kargono::Assets
 				{
 					uint16_t slot = (uint16_t)binding["Slot"].as<uint32_t>();
 					uint16_t keyCode = (uint16_t)binding["KeyCode"].as<uint32_t>();
-					keyboardPollingNew.insert({ slot, keyCode });
+					keyboardPollingNew.push_back(keyCode);
 				}
 			}
 		}

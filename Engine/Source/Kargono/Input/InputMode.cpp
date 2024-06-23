@@ -31,25 +31,26 @@ namespace Kargono::Input
 		auto [handle, inputReference] = Assets::AssetManager::GetInputMode(inputMode);
 		s_InputRef = inputReference;
 		s_InputHandle = handle;
-		if (inputReference)
+
+		if (!inputReference)
 		{
-			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
-			{
-				SetActiveInputMode(s_InputRef, s_InputHandle);
-			});
+			KG_WARN("Input mode is invalid. Failed to set active input mode by name!");
+			return;
 		}
+
+		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		{
+			SetActiveInputMode(s_InputRef, s_InputHandle);
+		});
+		
 	}
 
 	bool InputModeEngine::IsActiveKeyboardSlotPressed(uint16_t slot)
 	{
 		KG_ASSERT(s_ActiveInputMode);
 		auto& keyboardPolling = s_ActiveInputMode->GetKeyboardPolling();
-		if (keyboardPolling.contains(slot))
-		{
-			return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
-		}
-		KG_WARN("Atttempt to use key slot that does not exist in current InputMode. The slot is {}", slot);
-		return false;
+		KG_ASSERT(slot < (uint16_t)keyboardPolling.size(), "Invalid range provided to function");
+		return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
 	}
 	std::vector<Ref<InputActionBinding>>& InputModeEngine::GetActiveOnUpdate()
 	{
