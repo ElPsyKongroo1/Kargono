@@ -28,7 +28,7 @@ namespace Kargono::Input
 	};
 
 	//=========================
-	// Action Bindings (i.e. Bind Input -> Function Call)
+	// Input Action Bindings (i.e. Bind Input -> Function Call)
 	//=========================
 	class InputActionBinding
 	{
@@ -43,7 +43,7 @@ namespace Kargono::Input
 		{
 			return m_Script;
 		}
-		Assets::AssetHandle GetScriptHandle()
+		Assets::AssetHandle GetScriptHandle() const
 		{
 			return m_ScriptHandle;
 		}
@@ -93,7 +93,7 @@ namespace Kargono::Input
 		{
 			return m_OnKeyPressedBindings;
 		}
-		std::unordered_map<uint16_t, KeyCode>& GetKeyboardPolling()
+		std::vector<KeyCode>& GetKeyboardPolling()
 		{
 			return m_KeyboardPolling;
 		}
@@ -102,7 +102,7 @@ namespace Kargono::Input
 		// Input Polling Bindings
 		//=========================
 		// Maps Vector Locations to Engine KeyCodes
-		std::unordered_map<uint16_t, KeyCode> m_KeyboardPolling {};
+		std::vector<KeyCode> m_KeyboardPolling {};
 
 		//=========================
 		// OnEvent -> Action Bindings

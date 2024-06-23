@@ -16,10 +16,34 @@ namespace Kargono
 	static EditorUI::GenericPopupSpec s_CloseInputModeWarning {};
 
 	// Keyboard Panel
+	//	OnUpdate
 	static EditorUI::TableSpec s_KeyboardOnUpdateTable {};
-	static EditorUI::GenericPopupSpec s_AddKeyboardOnUpdatePopup {};
-	static EditorUI::SelectOptionSpec s_SelectKeyCode {};
-	static EditorUI::SelectOptionSpec s_SelectFunction {};
+	static EditorUI::GenericPopupSpec s_KeyboardOnUpdateAddSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnUpdateAddKeyCode {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnUpdateAddFunction {};
+	static EditorUI::GenericPopupSpec s_KeyboardOnUpdateEditSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnUpdateEditKeyCode {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnUpdateEditFunction {};
+	static uint32_t s_KeyboardOnUpdateActiveSlot {};
+
+	//	OnKeyPressed
+	static EditorUI::TableSpec s_KeyboardOnKeyPressedTable {};
+	static EditorUI::GenericPopupSpec s_KeyboardOnKeyPressedAddSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnKeyPressedAddKeyCode {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnKeyPressedAddFunction {};
+	static EditorUI::GenericPopupSpec s_KeyboardOnKeyPressedEditSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnKeyPressedEditKeyCode {};
+	static EditorUI::SelectOptionSpec s_KeyboardOnKeyPressedEditFunction {};
+	static uint32_t s_KeyboardOnKeyPressedActiveSlot {};
+
+	//  Polling
+	static EditorUI::TableSpec s_KeyboardPollingTable {};
+	static EditorUI::GenericPopupSpec s_KeyboardPollingAddSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardPollingAddKeyCode {};
+	static EditorUI::GenericPopupSpec s_KeyboardPollingEditSlot {};
+	static EditorUI::SelectOptionSpec s_KeyboardPollingEditKeyCode {};
+	static uint32_t s_KeyboardPollingActiveSlot {};
+
 
 	// Reusable Functions
 	static void OnOpenInputMode()
@@ -34,6 +58,8 @@ namespace Kargono
 	static void OnRefreshData()
 	{
 		s_KeyboardOnUpdateTable.OnRefresh();
+		s_KeyboardOnKeyPressedTable.OnRefresh();
+		s_KeyboardPollingTable.OnRefresh();
 	}
 }
 
@@ -75,7 +101,18 @@ namespace Kargono::Panels
 			{
 				// On Update
 				EditorUI::Editor::Table(s_KeyboardOnUpdateTable);
-				EditorUI::Editor::GenericPopup(s_AddKeyboardOnUpdatePopup);
+				EditorUI::Editor::GenericPopup(s_KeyboardOnUpdateAddSlot);
+				EditorUI::Editor::GenericPopup(s_KeyboardOnUpdateEditSlot);
+
+				// On Key Pressed
+				EditorUI::Editor::Table(s_KeyboardOnKeyPressedTable);
+				EditorUI::Editor::GenericPopup(s_KeyboardOnKeyPressedAddSlot);
+				EditorUI::Editor::GenericPopup(s_KeyboardOnKeyPressedEditSlot);
+
+				// Keyboard Polling
+				EditorUI::Editor::Table(s_KeyboardPollingTable);
+				EditorUI::Editor::GenericPopup(s_KeyboardPollingAddSlot);
+				EditorUI::Editor::GenericPopup(s_KeyboardPollingEditSlot);
 
 				EditorUI::Editor::EndTabItem();
 			}
@@ -225,6 +262,7 @@ namespace Kargono::Panels
 		s_KeyboardOnUpdateTable.OnRefresh = [&]()
 		{
 			s_KeyboardOnUpdateTable.ClearTable();
+			uint32_t iteration{ 0 };
 			for (auto& inputBinding : m_EditorInputMode->GetOnUpdateBindings())
 			{
 
@@ -234,15 +272,21 @@ namespace Kargono::Panels
 				}
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 
+				static std::function<void(EditorUI::TableEntry&)> s_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				{
+					s_KeyboardOnUpdateActiveSlot = (uint32_t)entry.Handle;
+					s_KeyboardOnUpdateEditSlot.PopupActive = true;
+				};
+
 				EditorUI::TableEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
 				if (scriptHandle == Assets::EmptyHandle)
 				{
 					newEntry = {
-						Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						"None",
-						Assets::EmptyHandle,
-						nullptr,
+						iteration,
+						s_EditKeyboardSlot,
 						nullptr
 					};
 				}
@@ -251,75 +295,75 @@ namespace Kargono::Panels
 					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
 					std::string displayValue {script->m_SectionLabel + ":" + script->m_ScriptName };
 					newEntry = {
-						Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						displayValue,
-						scriptHandle,
-						nullptr,
+						iteration,
+						s_EditKeyboardSlot,
 						nullptr
 					};
 				}
 
 				s_KeyboardOnUpdateTable.InsertTableEntry(newEntry);
-				
+				iteration++;
 			}
 		};
 		s_KeyboardOnUpdateTable.Column1Title = "KeyCode";
 		s_KeyboardOnUpdateTable.Column2Title = "Function";
 		s_KeyboardOnUpdateTable.AddToSelectionList("Add New Slot", [&]()
 		{
-			s_AddKeyboardOnUpdatePopup.PopupActive = true;
+			s_KeyboardOnUpdateAddSlot.PopupActive = true;
 		});
 
-		s_AddKeyboardOnUpdatePopup.Label = "Add New Slot";
-		s_AddKeyboardOnUpdatePopup.PopupWidth = 420.0f;
-		s_AddKeyboardOnUpdatePopup.PopupAction = [&]()
+		s_KeyboardOnUpdateAddSlot.Label = "Add New Slot";
+		s_KeyboardOnUpdateAddSlot.PopupWidth = 420.0f;
+		s_KeyboardOnUpdateAddSlot.PopupAction = [&]()
 		{
-			s_SelectKeyCode.CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
-			s_SelectFunction.CurrentOption = {"None", Assets::EmptyHandle};
+			s_KeyboardOnUpdateAddKeyCode.CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
+			s_KeyboardOnUpdateAddFunction.CurrentOption = {"None", Assets::EmptyHandle};
 		};
-		s_AddKeyboardOnUpdatePopup.PopupContents = [&]()
+		s_KeyboardOnUpdateAddSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_SelectKeyCode);
-			EditorUI::Editor::SelectOption(s_SelectFunction);
+			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateAddKeyCode);
+			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateAddFunction);
 		};
 
-		s_AddKeyboardOnUpdatePopup.ConfirmAction = [&]()
+		s_KeyboardOnUpdateAddSlot.ConfirmAction = [&]()
 		{
 			auto& keyboardBindings = m_EditorInputMode->GetOnUpdateBindings();
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
-			newBinding->SetKeyBinding((KeyCode)s_SelectKeyCode.CurrentOption.Handle);
+			newBinding->SetKeyBinding((KeyCode)s_KeyboardOnUpdateAddKeyCode.CurrentOption.Handle);
 			Ref<Scripting::Script> script;
-			if (s_SelectFunction.CurrentOption.Handle == Assets::EmptyHandle)
+			if (s_KeyboardOnUpdateAddFunction.CurrentOption.Handle == Assets::EmptyHandle)
 			{
 				script = nullptr;
 			}
 			else
 			{
-				script = Assets::AssetManager::GetScript(s_SelectFunction.CurrentOption.Handle);
+				script = Assets::AssetManager::GetScript(s_KeyboardOnUpdateAddFunction.CurrentOption.Handle);
 			}
-			newBinding->SetScript(script, s_SelectFunction.CurrentOption.Handle);
+			newBinding->SetScript(script, s_KeyboardOnUpdateAddFunction.CurrentOption.Handle);
 
 			keyboardBindings.push_back(newBinding);
 			OnRefreshData();
 			s_MainHeader.EditColorActive = true;
 		};
 
-		s_SelectKeyCode.Label = "Select Key";
-		s_SelectKeyCode.LineCount = 7;
-		s_SelectKeyCode.PopupAction = [&]()
+		s_KeyboardOnUpdateAddKeyCode.Label = "Select Key";
+		s_KeyboardOnUpdateAddKeyCode.LineCount = 7;
+		s_KeyboardOnUpdateAddKeyCode.PopupAction = [&]()
 		{
-			s_SelectKeyCode.ClearOptions();
+			s_KeyboardOnUpdateAddKeyCode.ClearOptions();
 			for (auto key : Key::s_AllKeyCodes)
 			{
-				s_SelectKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				s_KeyboardOnUpdateAddKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
 			}
 		};
 
-		s_SelectFunction.Label = "Select Function";
-		s_SelectFunction.PopupAction = [&]()
+		s_KeyboardOnUpdateAddFunction.Label = "Select Function";
+		s_KeyboardOnUpdateAddFunction.PopupAction = [&]()
 		{
-			s_SelectFunction.ClearOptions();
-			s_SelectFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_KeyboardOnUpdateAddFunction.ClearOptions();
+			s_KeyboardOnUpdateAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
@@ -328,7 +372,7 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_SelectFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateAddFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 				if (script->m_ScriptType == Scripting::ScriptType::Global)
 				{
@@ -336,8 +380,421 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_SelectFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateAddFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
+			}
+		};
+
+		s_KeyboardOnUpdateEditSlot.Label = "Edit Slot";
+		s_KeyboardOnUpdateEditSlot.PopupWidth = 420.0f;
+		s_KeyboardOnUpdateEditSlot.PopupAction = [&]()
+		{
+			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnUpdateBindings().at(s_KeyboardOnUpdateActiveSlot).get();
+			KG_ASSERT(activeBinding);
+
+			s_KeyboardOnUpdateEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
+			if (activeBinding->GetScriptHandle() == Assets::EmptyHandle)
+			{
+				s_KeyboardOnUpdateEditFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			else
+			{
+				KG_ASSERT(activeBinding->GetScript());
+				s_KeyboardOnUpdateEditFunction.CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle()};
+			}
+		};
+		s_KeyboardOnUpdateEditSlot.PopupContents = [&]()
+		{
+			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateEditKeyCode);
+			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateEditFunction);
+		};
+		s_KeyboardOnUpdateEditSlot.DeleteAction = [&]()
+		{
+			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMode->GetOnUpdateBindings();
+			bindings.erase(bindings.begin() + s_KeyboardOnUpdateActiveSlot);
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardOnUpdateEditSlot.ConfirmAction = [&]()
+		{
+			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnUpdateBindings().at(s_KeyboardOnUpdateActiveSlot).get();
+			KG_ASSERT(newBinding);
+			newBinding->SetKeyBinding((KeyCode)s_KeyboardOnUpdateEditKeyCode.CurrentOption.Handle);
+			Ref<Scripting::Script> script;
+			if (s_KeyboardOnUpdateEditFunction.CurrentOption.Handle == Assets::EmptyHandle)
+			{
+				script = nullptr;
+			}
+			else
+			{
+				script = Assets::AssetManager::GetScript(s_KeyboardOnUpdateEditFunction.CurrentOption.Handle);
+			}
+			newBinding->SetScript(script, s_KeyboardOnUpdateEditFunction.CurrentOption.Handle);
+
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardOnUpdateEditKeyCode.Label = "Select Key";
+		s_KeyboardOnUpdateEditKeyCode.LineCount = 7;
+		s_KeyboardOnUpdateEditKeyCode.PopupAction = [&]()
+		{
+			s_KeyboardOnUpdateEditKeyCode.ClearOptions();
+			for (auto key : Key::s_AllKeyCodes)
+			{
+				s_KeyboardOnUpdateEditKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+			}
+		};
+
+		s_KeyboardOnUpdateEditFunction.Label = "Select Function";
+		s_KeyboardOnUpdateEditFunction.PopupAction = [&]()
+		{
+			s_KeyboardOnUpdateEditFunction.ClearOptions();
+			s_KeyboardOnUpdateEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			{
+				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					{
+						continue;
+					}
+					s_KeyboardOnUpdateEditFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+					s_KeyboardOnUpdateEditFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+			}
+		};
+
+
+		// On Key Pressed Table
+		s_KeyboardOnKeyPressedTable.Label = "On Key Pressed";
+		s_KeyboardOnKeyPressedTable.Expanded = true;
+		s_KeyboardOnKeyPressedTable.OnRefresh = [&]()
+		{
+			s_KeyboardOnKeyPressedTable.ClearTable();
+			uint32_t iteration{ 0 };
+			for (auto& inputBinding : m_EditorInputMode->GetOnKeyPressedBindings())
+			{
+
+				if (inputBinding->GetActionType() != Input::KeyboardAction)
+				{
+					continue;
+				}
+				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+
+				static std::function<void(EditorUI::TableEntry&)> s_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				{
+					s_KeyboardOnKeyPressedActiveSlot = (uint32_t)entry.Handle;
+					s_KeyboardOnKeyPressedEditSlot.PopupActive = true;
+				};
+
+				EditorUI::TableEntry newEntry;
+				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
+				if (scriptHandle == Assets::EmptyHandle)
+				{
+					newEntry = {
+						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						"None",
+						iteration,
+						s_EditKeyboardSlot,
+						nullptr
+					};
+				}
+				else
+				{
+					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
+					std::string displayValue {script->m_SectionLabel + ":" + script->m_ScriptName };
+					newEntry = {
+						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						displayValue,
+						iteration,
+						s_EditKeyboardSlot,
+						nullptr
+					};
+				}
+
+				s_KeyboardOnKeyPressedTable.InsertTableEntry(newEntry);
+				iteration++;
+			}
+		};
+		s_KeyboardOnKeyPressedTable.Column1Title = "KeyCode";
+		s_KeyboardOnKeyPressedTable.Column2Title = "Function";
+		s_KeyboardOnKeyPressedTable.AddToSelectionList("Add New Slot", [&]()
+			{
+				s_KeyboardOnKeyPressedAddSlot.PopupActive = true;
+			});
+
+		s_KeyboardOnKeyPressedAddSlot.Label = "Add New Slot";
+		s_KeyboardOnKeyPressedAddSlot.PopupWidth = 420.0f;
+		s_KeyboardOnKeyPressedAddSlot.PopupAction = [&]()
+		{
+			s_KeyboardOnKeyPressedAddKeyCode.CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
+			s_KeyboardOnKeyPressedAddFunction.CurrentOption = { "None", Assets::EmptyHandle };
+		};
+		s_KeyboardOnKeyPressedAddSlot.PopupContents = [&]()
+		{
+			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedAddKeyCode);
+			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedAddFunction);
+		};
+
+		s_KeyboardOnKeyPressedAddSlot.ConfirmAction = [&]()
+		{
+			auto& keyboardBindings = m_EditorInputMode->GetOnKeyPressedBindings();
+			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
+			newBinding->SetKeyBinding((KeyCode)s_KeyboardOnKeyPressedAddKeyCode.CurrentOption.Handle);
+			Ref<Scripting::Script> script;
+			if (s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle == Assets::EmptyHandle)
+			{
+				script = nullptr;
+			}
+			else
+			{
+				script = Assets::AssetManager::GetScript(s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle);
+			}
+			newBinding->SetScript(script, s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle);
+
+			keyboardBindings.push_back(newBinding);
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardOnKeyPressedAddKeyCode.Label = "Select Key";
+		s_KeyboardOnKeyPressedAddKeyCode.LineCount = 7;
+		s_KeyboardOnKeyPressedAddKeyCode.PopupAction = [&]()
+		{
+			s_KeyboardOnKeyPressedAddKeyCode.ClearOptions();
+			for (auto key : Key::s_AllKeyCodes)
+			{
+				s_KeyboardOnKeyPressedAddKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+			}
+		};
+
+		s_KeyboardOnKeyPressedAddFunction.Label = "Select Function";
+		s_KeyboardOnKeyPressedAddFunction.PopupAction = [&]()
+		{
+			s_KeyboardOnKeyPressedAddFunction.ClearOptions();
+			s_KeyboardOnKeyPressedAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			{
+				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					{
+						continue;
+					}
+					s_KeyboardOnKeyPressedAddFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+					s_KeyboardOnKeyPressedAddFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+			}
+		};
+
+		s_KeyboardOnKeyPressedEditSlot.Label = "Edit Slot";
+		s_KeyboardOnKeyPressedEditSlot.PopupWidth = 420.0f;
+		s_KeyboardOnKeyPressedEditSlot.PopupAction = [&]()
+		{
+			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnKeyPressedBindings().at(s_KeyboardOnKeyPressedActiveSlot).get();
+			KG_ASSERT(activeBinding);
+
+			s_KeyboardOnKeyPressedEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
+			if (activeBinding->GetScriptHandle() == Assets::EmptyHandle)
+			{
+				s_KeyboardOnKeyPressedEditFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			else
+			{
+				KG_ASSERT(activeBinding->GetScript());
+				s_KeyboardOnKeyPressedEditFunction.CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle() };
+			}
+		};
+		s_KeyboardOnKeyPressedEditSlot.PopupContents = [&]()
+		{
+			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedEditKeyCode);
+			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedEditFunction);
+		};
+		s_KeyboardOnKeyPressedEditSlot.DeleteAction = [&]()
+		{
+			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMode->GetOnKeyPressedBindings();
+			bindings.erase(bindings.begin() + s_KeyboardOnKeyPressedActiveSlot);
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardOnKeyPressedEditSlot.ConfirmAction = [&]()
+		{
+			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnKeyPressedBindings().at(s_KeyboardOnKeyPressedActiveSlot).get();
+			KG_ASSERT(newBinding);
+			newBinding->SetKeyBinding((KeyCode)s_KeyboardOnKeyPressedEditKeyCode.CurrentOption.Handle);
+			Ref<Scripting::Script> script;
+			if (s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle == Assets::EmptyHandle)
+			{
+				script = nullptr;
+			}
+			else
+			{
+				script = Assets::AssetManager::GetScript(s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle);
+			}
+			newBinding->SetScript(script, s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle);
+
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardOnKeyPressedEditKeyCode.Label = "Select Key";
+		s_KeyboardOnKeyPressedEditKeyCode.LineCount = 7;
+		s_KeyboardOnKeyPressedEditKeyCode.PopupAction = [&]()
+		{
+			s_KeyboardOnKeyPressedEditKeyCode.ClearOptions();
+			for (auto key : Key::s_AllKeyCodes)
+			{
+				s_KeyboardOnKeyPressedEditKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+			}
+		};
+
+		s_KeyboardOnKeyPressedEditFunction.Label = "Select Function";
+		s_KeyboardOnKeyPressedEditFunction.PopupAction = [&]()
+		{
+			s_KeyboardOnKeyPressedEditFunction.ClearOptions();
+			s_KeyboardOnKeyPressedEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			{
+				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					{
+						continue;
+					}
+					s_KeyboardOnKeyPressedEditFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+					s_KeyboardOnKeyPressedEditFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				}
+			}
+		};
+
+		// Polling Table
+		s_KeyboardPollingTable.Label = "Polling";
+		s_KeyboardPollingTable.Expanded = true;
+		s_KeyboardPollingTable.OnRefresh = [&]()
+		{
+			s_KeyboardPollingTable.ClearTable();
+			uint32_t iteration{ 0 };
+			for (auto code: m_EditorInputMode->GetKeyboardPolling())
+			{
+
+				static std::function<void(EditorUI::TableEntry&)> s_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				{
+					s_KeyboardPollingActiveSlot = (uint32_t)entry.Handle;
+					s_KeyboardPollingEditSlot.PopupActive = true;
+				};
+
+				EditorUI::TableEntry newEntry = {
+					"Slot::" + std::to_string(iteration),
+					"Key::" + Utility::KeyCodeToString(code),
+					iteration,
+					s_EditKeyboardSlot,
+					nullptr
+				};
+
+				s_KeyboardPollingTable.InsertTableEntry(newEntry);
+				iteration++;
+			}
+		};
+		s_KeyboardPollingTable.Column1Title = "Slot";
+		s_KeyboardPollingTable.Column2Title = "KeyCode";
+		s_KeyboardPollingTable.AddToSelectionList("Add New Slot", [&]()
+		{
+			s_KeyboardPollingAddSlot.PopupActive = true;
+		});
+
+		s_KeyboardPollingAddSlot.Label = "Add New Slot";
+		s_KeyboardPollingAddSlot.PopupWidth = 420.0f;
+		s_KeyboardPollingAddSlot.PopupAction = [&]()
+		{
+			s_KeyboardPollingAddKeyCode.CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
+		};
+		s_KeyboardPollingAddSlot.PopupContents = [&]()
+		{
+			EditorUI::Editor::SelectOption(s_KeyboardPollingAddKeyCode);
+		};
+
+		s_KeyboardPollingAddSlot.ConfirmAction = [&]()
+		{
+			auto& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
+			KeyCode code = (KeyCode)s_KeyboardPollingAddKeyCode.CurrentOption.Handle;
+			keyboardPolling.push_back(code);
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardPollingAddKeyCode.Label = "Select Key";
+		s_KeyboardPollingAddKeyCode.LineCount = 7;
+		s_KeyboardPollingAddKeyCode.PopupAction = [&]()
+		{
+			s_KeyboardPollingAddKeyCode.ClearOptions();
+			for (auto key : Key::s_AllKeyCodes)
+			{
+				s_KeyboardPollingAddKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+			}
+		};
+
+		s_KeyboardPollingEditSlot.Label = "Edit Slot";
+		s_KeyboardPollingEditSlot.PopupWidth = 420.0f;
+		s_KeyboardPollingEditSlot.PopupAction = [&]()
+		{
+			KeyCode activeCode = m_EditorInputMode->GetKeyboardPolling().at(s_KeyboardPollingActiveSlot);
+
+			s_KeyboardPollingEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeCode), activeCode };
+		};
+		s_KeyboardPollingEditSlot.PopupContents = [&]()
+		{
+			EditorUI::Editor::SelectOption(s_KeyboardPollingEditKeyCode);
+		};
+
+		s_KeyboardPollingEditSlot.DeleteAction = [&]()
+		{
+			std::vector<KeyCode>& codes = m_EditorInputMode->GetKeyboardPolling();
+			codes.erase(codes.begin() + s_KeyboardPollingActiveSlot);
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardPollingEditSlot.ConfirmAction = [&]()
+		{
+			auto& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
+			KeyCode code = (KeyCode)s_KeyboardPollingEditKeyCode.CurrentOption.Handle;
+			keyboardPolling[s_KeyboardPollingActiveSlot] = code;
+			OnRefreshData();
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_KeyboardPollingEditKeyCode.Label = "Select Key";
+		s_KeyboardPollingEditKeyCode.LineCount = 7;
+		s_KeyboardPollingEditKeyCode.PopupAction = [&]()
+		{
+			s_KeyboardPollingEditKeyCode.ClearOptions();
+			for (auto key : Key::s_AllKeyCodes)
+			{
+				s_KeyboardPollingEditKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
 			}
 		};
 	}

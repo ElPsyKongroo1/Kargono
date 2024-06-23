@@ -2,7 +2,7 @@ KeyboardPolling:
   []
 OnUpdate:
   - BindingType: KeyboardAction
-    ScriptHandle: 10434215347402886708
-    KeyBinding: 345
+    ScriptHandle: 6410065240318073462
+    KeyBinding: 65
 OnKeyPressed:
   []
