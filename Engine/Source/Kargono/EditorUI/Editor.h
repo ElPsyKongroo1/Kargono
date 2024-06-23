@@ -223,7 +223,7 @@ namespace Kargono::EditorUI
 		std::function<void()> PopupContents {nullptr};
 		std::function<void()> ConfirmAction {nullptr};
 		std::function<void()> DeleteAction {nullptr};
-		std::function<void(GenericPopupSpec&)> PopupAction {nullptr};
+		std::function<void()> PopupAction {nullptr};
 		bool PopupActive{ false };
 	private:
 		WidgetID WidgetID;
@@ -483,7 +483,7 @@ namespace Kargono::EditorUI
 		OptionEntry CurrentOption{};
 		uint32_t LineCount{ 3 };
 		std::function<void(const OptionEntry&)> ConfirmAction {nullptr};
-		std::function<void(SelectOptionSpec&)> PopupAction {nullptr};
+		std::function<void()> PopupAction {nullptr};
 		// Only used if PopupOnly is true
 		bool PopupActive{ false };
 		WidgetFlags Flags{ 0 };

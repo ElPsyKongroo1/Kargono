@@ -32,14 +32,14 @@ namespace Kargono::Panels
 		s_SelectStartSceneSpec.CurrentOption = {
 			Projects::Project::GetStartScenePath(false).string(),
 			Projects::Project::GetStartSceneHandle()};
-		s_SelectStartSceneSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectStartSceneSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectStartSceneSpec.GetAllOptions().clear();
 			for (auto& [handle, asset] : Assets::AssetManager::GetSceneRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_SelectStartSceneSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
-			spec.CurrentOption = {
+			s_SelectStartSceneSpec.CurrentOption = {
 				Projects::Project::GetStartScenePath(false).string(),
 			Projects::Project::GetStartSceneHandle()};
 		};
@@ -79,7 +79,7 @@ namespace Kargono::Panels
 		{
 			Projects::Project::SetTargetResolution(Utility::StringToScreenResolution(selection.Label));
 		};
-		s_SelectResolutionSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_SelectResolutionSpec.PopupAction = [&]()
 		{
 			s_SelectResolutionSpec.CurrentOption = {
 				Utility::ScreenResolutionToString(Projects::Project::GetTargetResolution()),
@@ -110,24 +110,24 @@ namespace Kargono::Panels
 		{
 			s_SelectStartGameStateSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		}
-		s_SelectStartGameStateSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_SelectStartGameStateSpec.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectStartGameStateSpec.ClearOptions();
+			s_SelectStartGameStateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_SelectStartGameStateSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
-			
+
 			if (Projects::Project::GetStartGameState() != Assets::EmptyHandle)
 			{
-				spec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
+				s_SelectStartGameStateSpec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
 				(Projects::Project::GetStartGameState()).Data.IntermediateLocation.string(),
-				Projects::Project::GetStartGameState()};
+				Projects::Project::GetStartGameState() };
 			}
 			else
 			{
-				spec.CurrentOption = { "None", Assets::EmptyHandle };
+				s_SelectStartGameStateSpec.CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
 		};
@@ -149,20 +149,20 @@ namespace Kargono::Panels
 		s_SelectRuntimeStartSpec.CurrentOption = { Projects::Project::GetOnRuntimeStart() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None",
 			Projects::Project::GetOnRuntimeStart()};
-		s_SelectRuntimeStartSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectRuntimeStartSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectRuntimeStartSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectRuntimeStartSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_None)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectRuntimeStartSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnRuntimeStart() ?
+			s_SelectRuntimeStartSpec.CurrentOption = { Projects::Project::GetOnRuntimeStart() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnRuntimeStart())->m_ScriptName : "None",
 				Projects::Project::GetOnRuntimeStart()};
 		};
@@ -182,20 +182,20 @@ namespace Kargono::Panels
 		s_SelectUpdateUserCountSpec.CurrentOption = { Projects::Project::GetOnUpdateUserCount() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None",
 		Projects::Project::GetOnUpdateUserCount()};
-		s_SelectUpdateUserCountSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectUpdateUserCountSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectUpdateUserCountSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectUpdateUserCountSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_UInt32)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectUpdateUserCountSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnUpdateUserCount() ?
+			s_SelectUpdateUserCountSpec.CurrentOption = { Projects::Project::GetOnUpdateUserCount() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateUserCount())->m_ScriptName : "None",
 				Projects::Project::GetOnUpdateUserCount()};
 		};
@@ -215,20 +215,20 @@ namespace Kargono::Panels
 		s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::Project::GetOnApproveJoinSession() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnApproveJoinSession())->m_ScriptName : "None",
 			Projects::Project::GetOnApproveJoinSession() };
-		s_SelectApproveJoinSessionSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectApproveJoinSessionSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectApproveJoinSessionSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectApproveJoinSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_UInt16)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectApproveJoinSessionSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnApproveJoinSession() ?
+			s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::Project::GetOnApproveJoinSession() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnApproveJoinSession())->m_ScriptName : "None",
 				Projects::Project::GetOnApproveJoinSession()};
 		};
@@ -248,20 +248,20 @@ namespace Kargono::Panels
 		s_SelectUserLeftSessionSpec.CurrentOption = { Projects::Project::GetOnUserLeftSession() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None",
 			Projects::Project::GetOnUserLeftSession() };
-		s_SelectUserLeftSessionSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectUserLeftSessionSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectUserLeftSessionSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectUserLeftSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_UInt16)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectUserLeftSessionSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnUserLeftSession() ?
+			s_SelectUserLeftSessionSpec.CurrentOption = { Projects::Project::GetOnUserLeftSession() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnUserLeftSession())->m_ScriptName : "None",
 				Projects::Project::GetOnUserLeftSession()};
 		};
@@ -281,20 +281,20 @@ namespace Kargono::Panels
 		s_SelectSessionInitSpec.CurrentOption = { Projects::Project::GetOnCurrentSessionInit() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None",
 			Projects::Project::GetOnCurrentSessionInit()};
-		s_SelectSessionInitSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectSessionInitSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectSessionInitSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectSessionInitSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_None)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectSessionInitSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnCurrentSessionInit() ?
+			s_SelectSessionInitSpec.CurrentOption = { Projects::Project::GetOnCurrentSessionInit() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnCurrentSessionInit())->m_ScriptName : "None",
 				Projects::Project::GetOnCurrentSessionInit()};
 		};
@@ -314,20 +314,20 @@ namespace Kargono::Panels
 		s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::Project::GetOnConnectionTerminated() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None",
 			Projects::Project::GetOnConnectionTerminated()};
-		s_SelectConnectionTerminatedSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectConnectionTerminatedSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectConnectionTerminatedSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectConnectionTerminatedSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_None)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectConnectionTerminatedSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnConnectionTerminated() ?
+			s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::Project::GetOnConnectionTerminated() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnConnectionTerminated())->m_ScriptName : "None",
 			Projects::Project::GetOnConnectionTerminated()};
 		};
@@ -347,20 +347,20 @@ namespace Kargono::Panels
 		s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::Project::GetOnUpdateSessionUserSlot() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None",
 			Projects::Project::GetOnUpdateSessionUserSlot()};
-		s_SelectUpdateSessionSlotSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectUpdateSessionSlotSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectUpdateSessionSlotSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectUpdateSessionSlotSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_UInt16)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectUpdateSessionSlotSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnUpdateSessionUserSlot() ?
+			s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::Project::GetOnUpdateSessionUserSlot() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnUpdateSessionUserSlot())->m_ScriptName : "None",
 				Projects::Project::GetOnUpdateSessionUserSlot()};
 		};
@@ -380,20 +380,20 @@ namespace Kargono::Panels
 		s_SelectStartSessionSpec.CurrentOption = { Projects::Project::GetOnStartSession() ?
 			Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None",
 			Projects::Project::GetOnStartSession()};
-		s_SelectStartSessionSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectStartSessionSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectStartSessionSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectStartSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_Function->Type() == WrappedFuncType::Void_None)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectStartSessionSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 
-			spec.CurrentOption = { Projects::Project::GetOnStartSession() ?
+			s_SelectStartSessionSpec.CurrentOption = { Projects::Project::GetOnStartSession() ?
 				Assets::AssetManager::GetScript(Projects::Project::GetOnStartSession())->m_ScriptName : "None",
 				Projects::Project::GetOnStartSession() };
 		};
@@ -410,14 +410,14 @@ namespace Kargono::Panels
 		// Update On Session Ready Check
 		s_SelectSessionReadyCheckSpec.Label = "Session Ready Check";
 		s_SelectSessionReadyCheckSpec.LineCount = 3;
-		s_SelectSessionReadyCheckSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectSessionReadyCheckSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectSessionReadyCheckSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectSessionReadyCheckSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
 			{
-				spec.AddToOptions("All Options", name, Assets::EmptyHandle);
+				s_SelectSessionReadyCheckSpec.AddToOptions("All Options", name, Assets::EmptyHandle);
 			}
 		};
 		s_SelectSessionReadyCheckSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -442,14 +442,14 @@ namespace Kargono::Panels
 		// Update On Receive Signal
 		s_SelectReceiveSignalSpec.Label = "Receive Signal";
 		s_SelectReceiveSignalSpec.LineCount = 3;
-		s_SelectReceiveSignalSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectReceiveSignalSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectReceiveSignalSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectReceiveSignalSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
 			{
-				spec.AddToOptions("All Options", name, Assets::EmptyHandle);
+				s_SelectReceiveSignalSpec.AddToOptions("All Options", name, Assets::EmptyHandle);
 			}
 		};
 		s_SelectReceiveSignalSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)

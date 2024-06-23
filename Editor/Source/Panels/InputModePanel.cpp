@@ -101,15 +101,15 @@ namespace Kargono::Panels
 		s_OpenInputModePopupSpec.Label = "Open Input Mode";
 		s_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		s_OpenInputModePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
-		s_OpenInputModePopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_OpenInputModePopupSpec.PopupAction = [&]()
 		{
-			spec.GetAllOptions().clear();
-			spec.CurrentOption = { "None", Assets::EmptyHandle };
+			s_OpenInputModePopupSpec.GetAllOptions().clear();
+			s_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_OpenInputModePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetInputModeRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenInputModePopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 		};
 
@@ -272,7 +272,7 @@ namespace Kargono::Panels
 
 		s_AddKeyboardOnUpdatePopup.Label = "Add New Slot";
 		s_AddKeyboardOnUpdatePopup.PopupWidth = 420.0f;
-		s_AddKeyboardOnUpdatePopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_AddKeyboardOnUpdatePopup.PopupAction = [&]()
 		{
 			s_SelectKeyCode.CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
 			s_SelectFunction.CurrentOption = {"None", Assets::EmptyHandle};
@@ -306,20 +306,20 @@ namespace Kargono::Panels
 
 		s_SelectKeyCode.Label = "Select Key";
 		s_SelectKeyCode.LineCount = 7;
-		s_SelectKeyCode.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_SelectKeyCode.PopupAction = [&]()
 		{
-			spec.ClearOptions();
+			s_SelectKeyCode.ClearOptions();
 			for (auto key : Key::s_AllKeyCodes)
 			{
-				spec.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				s_SelectKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
 			}
 		};
 
 		s_SelectFunction.Label = "Select Function";
-		s_SelectFunction.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_SelectFunction.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectFunction.ClearOptions();
+			s_SelectFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
@@ -328,7 +328,7 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					spec.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_SelectFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 				if (script->m_ScriptType == Scripting::ScriptType::Global)
 				{
@@ -336,7 +336,7 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					spec.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_SelectFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 			}
 		};

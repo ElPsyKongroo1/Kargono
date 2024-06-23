@@ -47,13 +47,13 @@ namespace Kargono::Panels
 		s_SelectClassOption.Label = "Class";
 		s_SelectClassOption.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectClassOption.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_SelectClassOption.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectClassOption.ClearOptions();
+			s_SelectClassOption.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
-				spec.AddToOptions("All Options", 
+				s_SelectClassOption.AddToOptions("All Options",
 					asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name, handle);
 			}
 		};
@@ -126,7 +126,7 @@ namespace Kargono::Panels
 
 		s_EditClassFieldPopup.Label = "Edit Field";
 		s_EditClassFieldPopup.PopupWidth = 420.0f;
-		s_EditClassFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditClassFieldPopup.PopupAction = [&]()
 		{
 			Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();

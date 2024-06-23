@@ -162,9 +162,11 @@ namespace Kargono::Panels
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };
-
+			
 			if (s_TextEditor.IsTextChanged())
 			{
+				std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+				std::string comparedWindow = m_EditorWindowName;
 				Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 				activeDocument.TextBuffer = s_TextEditor.GetText();
 				activeDocument.Edited = true;
@@ -178,25 +180,13 @@ namespace Kargono::Panels
 					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PearlBlue);
 					setColorBlue = true;
 				}
-
+				// Handle case 
 				ImGuiTabItemFlags tabItemFlags = 0;
 				if (document.SetActive)
 				{
 					tabItemFlags |= ImGuiTabItemFlags_SetSelected;
-					document.SetActive = false;
-				}
-
-				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
-					&document.Opened, tabItemFlags))
-				{
-					s_TextEditor.Render("TextEditorSpace");
-					ImGui::EndTabItem();
-				}
-
-				if (ImGui::IsItemClicked())
-				{
-					Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 					s_ActiveDocument = iteration;
+					Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 					s_TextEditor.SetText(activeDocument.TextBuffer);
 					if (activeDocument.FilePath.extension().string() == ".cpp")
 					{
@@ -207,6 +197,22 @@ namespace Kargono::Panels
 						// Default Case
 						s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 					}
+					document.SetActive = false;
+				}
+
+				bool checkTab = true;
+				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
+					&document.Opened, tabItemFlags))
+				{
+					s_TextEditor.Render(m_EditorWindowName.c_str());
+					checkTab = false;
+					ImGui::EndTabItem();
+				}
+
+				// Handle Case of switching tabs by clicking
+				if (ImGui::IsItemClicked() && checkTab)
+				{
+					document.SetActive = true;
 				}
 
 				if (setColorBlue)

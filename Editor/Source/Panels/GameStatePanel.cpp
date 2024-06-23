@@ -42,15 +42,15 @@ namespace Kargono::Panels
 		s_OpenGameStatePopupSpec.Label = "Open Game State";
 		s_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		s_OpenGameStatePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
-		s_OpenGameStatePopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_OpenGameStatePopupSpec.PopupAction = [&]()
 		{
-			spec.GetAllOptions().clear();
-			spec.CurrentOption = { "None", Assets::EmptyHandle };
+			s_OpenGameStatePopupSpec.GetAllOptions().clear();
+			s_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 		};
 
@@ -203,11 +203,11 @@ namespace Kargono::Panels
 		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
 		s_AddFieldPopup.LineCount = 2;
-		s_AddFieldPopup.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_AddFieldPopup.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			s_AddFieldPopup.ClearOptions();
+			s_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_AddFieldPopup.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
 		s_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -239,10 +239,10 @@ namespace Kargono::Panels
 		s_EditFieldType.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
 		s_EditFieldType.LineCount = 2;
-		s_EditFieldType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditFieldType.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			s_EditFieldType.ClearOptions();
+			s_EditFieldType.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
 		s_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -263,7 +263,7 @@ namespace Kargono::Panels
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupWidth = 420.0f;
-		s_EditFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditFieldPopup.PopupAction = [&]()
 		{
 			Ref<WrappedVariable> field = s_GameStatePanel->m_EditorGameState->GetField(s_CurrentField);
 

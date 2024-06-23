@@ -629,7 +629,7 @@ namespace Kargono::EditorUI
 
 			if (spec.PopupAction)
 			{
-				spec.PopupAction(spec);
+				spec.PopupAction();
 			}
 		}
 
@@ -735,7 +735,7 @@ namespace Kargono::EditorUI
 				spec.PopupActive = false;
 				if (spec.PopupAction)
 				{
-					spec.PopupAction(spec);
+					spec.PopupAction();
 				}
 				spec.CachedSelection = spec.CurrentOption;
 			}
@@ -759,7 +759,7 @@ namespace Kargono::EditorUI
 				ImGui::OpenPopup(id.c_str());
 				if (spec.PopupAction)
 				{
-					spec.PopupAction(spec);
+					spec.PopupAction();
 				}
 				spec.CachedSelection = spec.CurrentOption;
 			},
