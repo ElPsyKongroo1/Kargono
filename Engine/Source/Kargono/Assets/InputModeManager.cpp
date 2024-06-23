@@ -274,8 +274,15 @@ namespace Kargono::Assets
 						break;
 					}
 					}
-
-					newActionBinding->SetScript(binding["ScriptHandle"].as<uint64_t>());
+					Assets::AssetHandle handle = binding["ScriptHandle"].as<uint64_t>();
+					if (handle == Assets::EmptyHandle)
+					{
+						newActionBinding->SetScript(nullptr, Assets::EmptyHandle);
+					}
+					else
+					{
+						newActionBinding->SetScript(handle);
+					}
 					onUpdateNew.push_back(newActionBinding);
 				}
 			}
