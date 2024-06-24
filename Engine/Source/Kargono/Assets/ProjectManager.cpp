@@ -15,7 +15,7 @@ namespace Kargono::Assets
 
 		if (!std::filesystem::exists(filepath))
 		{
-			KG_WARN("Not server_variables.env file found. Default settings applied.");
+			KG_WARN("No server_variables.env file found. Default settings applied.");
 			return false;
 		}
 
@@ -99,8 +99,8 @@ namespace Kargono::Assets
 				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(config.OnConnectionTerminated);
 				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(config.OnUpdateSessionUserSlot);
 				out << YAML::Key << "OnStartSession" << YAML::Value << static_cast<uint64_t>(config.OnStartSession);
-				out << YAML::Key << "OnSessionReadyCheckConfirmFunction" << YAML::Value << config.OnSessionReadyCheckConfirmFunction;
-				out << YAML::Key << "OnReceiveSignalFunction" << YAML::Value << config.OnReceiveSignalFunction;
+				out << YAML::Key << "OnSessionReadyCheckConfirm" << YAML::Value << (uint64_t)config.OnSessionReadyCheckConfirm;
+				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)config.OnReceiveSignal;
 				out << YAML::Key << "AppIsNetworked" << YAML::Value << config.AppIsNetworked;
 
 				if (config.AppTickGenerators.size() > 0)
@@ -160,9 +160,9 @@ namespace Kargono::Assets
 		config.OnConnectionTerminated = static_cast<AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());
 		config.OnUpdateSessionUserSlot = static_cast<AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
 		config.OnStartSession = static_cast<AssetHandle>(projectNode["OnStartSession"].as<uint64_t>());
-		config.OnSessionReadyCheckConfirmFunction = projectNode["OnSessionReadyCheckConfirmFunction"].as<std::string>();
-		config.OnReceiveSignalFunction = projectNode["OnReceiveSignalFunction"].as<std::string>();
-		config.AppIsNetworked = projectNode["AppIsNetworked"].as<bool>();
+		config.OnSessionReadyCheckConfirm = static_cast<AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
+		config.OnReceiveSignal = static_cast<AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
+		config.AppIsNetworked = static_cast<AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
 
 		auto tickGenerators = projectNode["AppTickGenerators"];
 

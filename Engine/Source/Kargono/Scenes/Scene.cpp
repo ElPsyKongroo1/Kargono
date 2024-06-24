@@ -381,9 +381,9 @@ namespace Kargono::Scenes
 	}
 	void Scene::OnUpdateInputMode(Timestep ts)
 	{
-		if (Input::InputModeEngine::GetActiveInputMode())
+		if (Input::InputModeService::GetActiveInputMode())
 		{
-			for (auto& inputBinding : Input::InputModeEngine::GetActiveOnUpdate())
+			for (auto& inputBinding : Input::InputModeService::GetActiveOnUpdate())
 			{
 				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
 				{
@@ -397,9 +397,9 @@ namespace Kargono::Scenes
 	void Scene::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		if (event.IsRepeat()) { return; }
-		if (Input::InputModeEngine::GetActiveInputMode())
+		if (Input::InputModeService::GetActiveInputMode())
 		{
-			for (auto& inputBinding : Input::InputModeEngine::GetActiveOnKeyPressed())
+			for (auto& inputBinding : Input::InputModeService::GetActiveOnKeyPressed())
 			{
 				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
 				{

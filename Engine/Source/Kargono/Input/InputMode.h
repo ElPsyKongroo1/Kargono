@@ -3,6 +3,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
+#include "Kargono/Scripting/Scripting.h"
 
 #include <vector>
 #include <unordered_map>
@@ -10,7 +11,6 @@
 #include <functional>
 #include <string>
 
-#include "Kargono/Scripting/Scripting.h"
 
 namespace Kargono::Assets
 {
@@ -113,7 +113,7 @@ namespace Kargono::Input
 		friend class Assets::AssetManager;
 	};
 
-	class InputModeEngine
+	class InputModeService
 	{
 	public:
 		
