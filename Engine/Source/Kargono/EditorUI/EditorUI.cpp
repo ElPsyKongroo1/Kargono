@@ -852,7 +852,7 @@ namespace Kargono::EditorUI
 						ImGui::PushStyleColor(ImGuiCol_Button, s_DarkPurple);
 					}
 
-					if (ImGui::Button((option.Label + id).c_str()))
+					if (ImGui::Button((option.Label + id + std::string(option.Handle)).c_str()))
 					{
 						spec.CachedSelection = option;
 					}

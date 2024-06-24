@@ -7,6 +7,7 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Core/EngineCore.h"
+#include "Kargono/Input/InputPolling.h"
 #include "Kargono/Rendering/Shader.h"
 
 
@@ -375,6 +376,37 @@ namespace Kargono::Scenes
 			if (scriptHandle != Assets::EmptyHandle)
 			{
 				((WrappedVoidUInt64Float*)entityClass->GetScripts().OnUpdate->m_Function.get())->m_Value(entity.GetUUID(), ts);
+			}
+		}
+	}
+	void Scene::OnUpdateInputMode(Timestep ts)
+	{
+		if (Input::InputModeEngine::GetActiveInputMode())
+		{
+			for (auto& inputBinding : Input::InputModeEngine::GetActiveOnUpdate())
+			{
+				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
+				{
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+				}
+			}
+		}
+	}
+	void Scene::OnKeyPressed(Events::KeyPressedEvent event)
+	{
+		if (event.IsRepeat()) { return; }
+		if (Input::InputModeEngine::GetActiveInputMode())
+		{
+			for (auto& inputBinding : Input::InputModeEngine::GetActiveOnKeyPressed())
+			{
+				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
+				{
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+				}
 			}
 		}
 	}

@@ -292,7 +292,7 @@ namespace Kargono::Assets
 
 		// OnKeyPressed
 		{
-			auto onKeyPressed = data["CustomCallsOnKeyPressed"];
+			auto onKeyPressed = data["OnKeyPressed"];
 			if (onKeyPressed)
 			{
 				auto& onKeyPressedNew = inputMode->m_OnKeyPressedBindings;
