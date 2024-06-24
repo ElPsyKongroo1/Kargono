@@ -11,24 +11,15 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
-  - AssetHandle: 11340263726195393183
+  - AssetHandle: 8444652895326507655
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/Player2MoveDown.cpp
+      IntermediateLocation: Scripting/OnCurrentSessionInit.cpp
       AssetType: Script
-      Name: Player2MoveDown
-      SectionLabel: Player2
-      ScriptType: Class
-      FunctionType: Void_UInt64Float
-  - AssetHandle: 18163504705534252383
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/UpdateOnlineCount.cpp
-      AssetType: Script
-      Name: UpdateOnlineCount
+      Name: OnCurrentSessionInit
       SectionLabel: None
       ScriptType: Global
-      FunctionType: Void_UInt32
+      FunctionType: Void_None
   - AssetHandle: 18418190839039201319
     MetaData:
       CheckSum: ""
@@ -47,12 +38,30 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
-  - AssetHandle: 8444652895326507655
+  - AssetHandle: 11340263726195393183
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/OnCurrentSessionInit.cpp
+      IntermediateLocation: Scripting/Player2MoveDown.cpp
       AssetType: Script
-      Name: OnCurrentSessionInit
+      Name: Player2MoveDown
+      SectionLabel: Player2
+      ScriptType: Class
+      FunctionType: Void_UInt64Float
+  - AssetHandle: 18163504705534252383
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/UpdateOnlineCount.cpp
+      AssetType: Script
+      Name: UpdateOnlineCount
+      SectionLabel: None
+      ScriptType: Global
+      FunctionType: Void_UInt32
+  - AssetHandle: 1819971799574496652
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/OnStartSession.cpp
+      AssetType: Script
+      Name: OnStartSession
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
@@ -65,24 +74,6 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
-  - AssetHandle: 1819971799574496652
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/OnStartSession.cpp
-      AssetType: Script
-      Name: OnStartSession
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_None
-  - AssetHandle: 14683932765512752045
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/OpenMainMenu.cpp
-      AssetType: Script
-      Name: OpenMainMenu
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_None
   - AssetHandle: 11507116285654136237
     MetaData:
       CheckSum: ""
@@ -92,12 +83,12 @@ Assets:
       SectionLabel: Player1
       ScriptType: Class
       FunctionType: Void_UInt64Float
-  - AssetHandle: 4342390925410131221
+  - AssetHandle: 14683932765512752045
     MetaData:
       CheckSum: ""
-      IntermediateLocation: Scripting/OnConnectionTerminated.cpp
+      IntermediateLocation: Scripting/OpenMainMenu.cpp
       AssetType: Script
-      Name: OnConnectionTerminated
+      Name: OpenMainMenu
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
@@ -107,6 +98,15 @@ Assets:
       IntermediateLocation: Scripting/OpenPongGameplay.cpp
       AssetType: Script
       Name: OpenPongGameplay
+      SectionLabel: None
+      ScriptType: Global
+      FunctionType: Void_None
+  - AssetHandle: 4342390925410131221
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/OnConnectionTerminated.cpp
+      AssetType: Script
+      Name: OnConnectionTerminated
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
@@ -128,15 +128,6 @@ Assets:
       SectionLabel: Player1
       ScriptType: Class
       FunctionType: Void_UInt64Float
-  - AssetHandle: 8188330720880382876
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/Player1OnUpdate.cpp
-      AssetType: Script
-      Name: Player1OnUpdate
-      SectionLabel: Player1
-      ScriptType: Class
-      FunctionType: Void_UInt64Float
   - AssetHandle: 13218836288168913308
     MetaData:
       CheckSum: ""
@@ -146,6 +137,15 @@ Assets:
       SectionLabel: Player2
       ScriptType: Class
       FunctionType: Void_UInt64
+  - AssetHandle: 8188330720880382876
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/Player1OnUpdate.cpp
+      AssetType: Script
+      Name: Player1OnUpdate
+      SectionLabel: Player1
+      ScriptType: Class
+      FunctionType: Void_UInt64Float
   - AssetHandle: 16135958558406264166
     MetaData:
       CheckSum: ""
@@ -191,24 +191,6 @@ Assets:
       SectionLabel: Ball
       ScriptType: Class
       FunctionType: Bool_UInt64UInt64
-  - AssetHandle: 8571497670596147318
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/BallOnlineCollision.cpp
-      AssetType: Script
-      Name: BallOnlineCollision
-      SectionLabel: Ball
-      ScriptType: Class
-      FunctionType: Bool_UInt64UInt16UInt64
-  - AssetHandle: 6410065240318073462
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/StartOnlineGame.cpp
-      AssetType: Script
-      Name: StartOnlineGame
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_None
   - AssetHandle: 11068697129652250038
     MetaData:
       CheckSum: ""
@@ -218,21 +200,30 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_UInt16
+  - AssetHandle: 6410065240318073462
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/StartOnlineGame.cpp
+      AssetType: Script
+      Name: StartOnlineGame
+      SectionLabel: None
+      ScriptType: Global
+      FunctionType: Void_None
+  - AssetHandle: 8571497670596147318
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/BallOnlineCollision.cpp
+      AssetType: Script
+      Name: BallOnlineCollision
+      SectionLabel: Ball
+      ScriptType: Class
+      FunctionType: Bool_UInt64UInt16UInt64
   - AssetHandle: 12876544886975453239
     MetaData:
       CheckSum: ""
       IntermediateLocation: Scripting/BallOnPhysicsCollision.cpp
       AssetType: Script
       Name: BallOnPhysicsCollision
-      SectionLabel: Ball
-      ScriptType: Class
-      FunctionType: Bool_UInt64UInt64
-  - AssetHandle: 7325163182931923051
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/BallOnPhysicsCollisionEnd.cpp
-      AssetType: Script
-      Name: BallOnPhysicsCollisionEnd
       SectionLabel: Ball
       ScriptType: Class
       FunctionType: Bool_UInt64UInt64
@@ -245,6 +236,15 @@ Assets:
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None
+  - AssetHandle: 7325163182931923051
+    MetaData:
+      CheckSum: ""
+      IntermediateLocation: Scripting/BallOnPhysicsCollisionEnd.cpp
+      AssetType: Script
+      Name: BallOnPhysicsCollisionEnd
+      SectionLabel: Ball
+      ScriptType: Class
+      FunctionType: Bool_UInt64UInt64
   - AssetHandle: 14932517309747987395
     MetaData:
       CheckSum: ""
@@ -269,15 +269,6 @@ Assets:
       IntermediateLocation: Scripting/OpenOnlineGameplay.cpp
       AssetType: Script
       Name: OpenOnlineGameplay
-      SectionLabel: None
-      ScriptType: Global
-      FunctionType: Void_None
-  - AssetHandle: 2098640601614802021
-    MetaData:
-      CheckSum: ""
-      IntermediateLocation: Scripting/CloseApplication.cpp
-      AssetType: Script
-      Name: CloseApplication
       SectionLabel: None
       ScriptType: Global
       FunctionType: Void_None

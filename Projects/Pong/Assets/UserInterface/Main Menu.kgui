@@ -1,5 +1,5 @@
 SelectColor: [0.403921574, 0.0666666701, 0.686274529, 0.745098054]
-FunctionPointerOnMove: PlayMenuSelect
+FunctionPointerOnMove: 16979334666329041451
 Font: 7507720298335089313
 Windows:
   - Tag: main_window
@@ -32,7 +32,7 @@ Windows:
         DirectionPointerDown: 1
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: OpenPongGameplay
+        FunctionPointerOnPress: 1863101606230896085
         TextWidget:
           Text: Local Multiplayer
           TextSize: 0.430000007
@@ -49,7 +49,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: CloseApplication
+        FunctionPointerOnPress: 10882227211325647722
         TextWidget:
           Text: Exit
           TextSize: 0.550000012
@@ -66,7 +66,7 @@ Windows:
         DirectionPointerDown: 0
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: Pong
           TextSize: 0.850000024
@@ -83,7 +83,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: 1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: ElPsy Incorporated
           TextSize: 0.300000012
@@ -100,7 +100,7 @@ Windows:
         DirectionPointerDown: 1
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: OpenOnlineGameplay
+        FunctionPointerOnPress: 10434215347402886708
         TextWidget:
           Text: Online Multiplayer
           TextSize: 0.430000007
@@ -117,7 +117,7 @@ Windows:
         DirectionPointerDown: 0
         DirectionPointerLeft: 0
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: Offline
           TextSize: 0.469999999

@@ -1,5 +1,5 @@
 SelectColor: [1, 0.647058845, 1, 1]
-FunctionPointerOnMove: ""
+FunctionPointerOnMove: 0
 Font: 7507720298335089313
 Windows:
   - Tag: base_window
@@ -32,7 +32,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: 0
           TextSize: 1
@@ -49,7 +49,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: 0
           TextSize: 1
@@ -86,7 +86,7 @@ Windows:
         DirectionPointerDown: 1
         DirectionPointerLeft: 1
         DirectionPointerRight: 2
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: Press Space To Play!
           TextSize: 0.600000024
@@ -103,7 +103,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
         DirectionPointerRight: 0
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: "Player 1\nW = Up\nA = Down\nLeft Shift = Speed Up"
           TextSize: 0.200000003
@@ -120,7 +120,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: 1
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: "Player 2\nO = Up\nSemicolon = Down \nRight Shift = Speed Up"
           TextSize: 0.200000003
@@ -157,7 +157,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: 1
         DirectionPointerRight: 2
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: Waiting for Players...
           TextSize: 0.5
@@ -174,7 +174,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: -1
         DirectionPointerRight: 0
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: No Player 1
           TextSize: 0.400000006
@@ -191,7 +191,7 @@ Windows:
         DirectionPointerDown: -1
         DirectionPointerLeft: 0
         DirectionPointerRight: -1
-        FunctionPointerOnPress: ""
+        FunctionPointerOnPress: 0
         TextWidget:
           Text: No Player 2
           TextSize: 0.400000006

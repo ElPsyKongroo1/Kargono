@@ -84,9 +84,26 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveRight->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>();
-		
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveRight);
 		engineScripts.push_back(RuntimeUI_MoveRight);
+
+		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
+		RuntimeUI_OnPress->m_ScriptName = "OnPress";
+		RuntimeUI_OnPress->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_OnPress->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::OnPress);
+		engineScripts.push_back(RuntimeUI_OnPress);
+
+		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
+		EngineCore_CloseApplication->m_ScriptName = "CloseApplication";
+		EngineCore_CloseApplication->m_ID = Utility::GeneratePseudoRandomNumber();
+		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
+		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
+		EngineCore_CloseApplication->m_SectionLabel = "EngineCore";
+		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineCore::CloseApplication);
+		engineScripts.push_back(EngineCore_CloseApplication);
 	}
 
 	void ScriptService::Init()
@@ -548,6 +565,10 @@ namespace Kargono::Scripting
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
 		{
+			if (asset.Data.GetSpecificFileData<Assets::ScriptMetaData>()->ScriptType == ScriptType::Engine)
+			{
+				continue;
+			}
 			outputStream << Utility::FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
 			outputStream << '\n';
 		}
