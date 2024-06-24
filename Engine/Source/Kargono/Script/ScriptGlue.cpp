@@ -343,11 +343,11 @@ namespace Kargono::Script
 	static void Core_CloseApplication()
 	{
 		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
-			{
-				Events::ApplicationCloseEvent event {};
-				Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
-				eventCallback(event);
-			});
+		{
+			Events::ApplicationCloseEvent event {};
+			Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
+			eventCallback(event);
+		});
 	}
 
 	static void Network_RequestJoinSession()

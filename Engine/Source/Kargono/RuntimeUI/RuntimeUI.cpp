@@ -67,6 +67,7 @@ namespace Kargono::RuntimeUI
 		s_Engine.m_Windows = uiObject->Windows;
 		s_Engine.m_SelectColor = uiObject->m_SelectColor;
 		s_Engine.m_FunctionPointers.OnMove = uiObject->m_FunctionPointers.OnMove;
+		s_Engine.m_FunctionPointers.OnMoveHandle = uiObject->m_FunctionPointers.OnMoveHandle;
 		RefreshDisplayedWindows();
 		s_Engine.m_CurrentFont = uiObject->m_Font;
 		s_Engine.m_FontHandle = uiObject->m_FontHandle;
@@ -137,6 +138,7 @@ namespace Kargono::RuntimeUI
 		CalculateDirections();
 		auto currentUI = s_Engine.m_CurrentUI;
 		currentUI->m_FunctionPointers.OnMove = s_Engine.m_FunctionPointers.OnMove;
+		currentUI->m_FunctionPointers.OnMoveHandle = s_Engine.m_FunctionPointers.OnMoveHandle;
 		currentUI->m_SelectColor = s_Engine.m_SelectColor;
 		currentUI->m_Font = s_Engine.m_CurrentFont;
 		currentUI->m_FontHandle = s_Engine.m_FontHandle;
@@ -331,7 +333,10 @@ namespace Kargono::RuntimeUI
 						s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
 						s_Engine.m_SelectedWidget = widget.get();
 						s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
-						Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+						if (s_Engine.m_FunctionPointers.OnMove)
+						{
+							((WrappedVoidNone*)s_Engine.m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+						}
 						return;
 					}
 				}
@@ -397,14 +402,20 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeService::SetFunctionOnMove(const std::string& function)
+	void RuntimeService::SetOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
 	{
 		s_Engine.m_FunctionPointers.OnMove = function;
+		s_Engine.m_FunctionPointers.OnMoveHandle = functionHandle;
 	}
 
-	std::string RuntimeService::GetFunctionOnMove()
+	Ref<Scripting::Script> RuntimeService::GetOnMove()
 	{
 		return s_Engine.m_FunctionPointers.OnMove;
+	}
+
+	Assets::AssetHandle RuntimeService::GetOnMoveHandle()
+	{
+		return s_Engine.m_FunctionPointers.OnMoveHandle;
 	}
 
 	void RuntimeService::SetDisplayWindow(const std::string& windowTag, bool display)
@@ -434,7 +445,10 @@ namespace Kargono::RuntimeUI
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
 			s_Engine.m_SelectedWidget = s_Engine.m_ActiveWindow->Widgets.at(s_Engine.m_SelectedWidget->DirectionPointer.Right).get();
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
-			Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+			if (s_Engine.m_FunctionPointers.OnMove)
+			{
+				((WrappedVoidNone*)s_Engine.m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+			}
 		}
 	}
 
@@ -446,7 +460,10 @@ namespace Kargono::RuntimeUI
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
 			s_Engine.m_SelectedWidget = s_Engine.m_ActiveWindow->Widgets.at(s_Engine.m_SelectedWidget->DirectionPointer.Left).get();
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
-			Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+			if (s_Engine.m_FunctionPointers.OnMove)
+			{
+				((WrappedVoidNone*)s_Engine.m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+			}
 		}
 	}
 
@@ -458,7 +475,10 @@ namespace Kargono::RuntimeUI
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
 			s_Engine.m_SelectedWidget = s_Engine.m_ActiveWindow->Widgets.at(s_Engine.m_SelectedWidget->DirectionPointer.Up).get();
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
-			Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+			if (s_Engine.m_FunctionPointers.OnMove)
+			{
+				((WrappedVoidNone*)s_Engine.m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+			}
 		}
 	}
 
@@ -470,14 +490,21 @@ namespace Kargono::RuntimeUI
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectedWidget->DefaultBackgroundColor;
 			s_Engine.m_SelectedWidget = s_Engine.m_ActiveWindow->Widgets.at(s_Engine.m_SelectedWidget->DirectionPointer.Down).get();
 			s_Engine.m_SelectedWidget->ActiveBackgroundColor = s_Engine.m_SelectColor;
-			Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_FunctionPointers.OnMove);
+			if (s_Engine.m_FunctionPointers.OnMove)
+			{
+				((WrappedVoidNone*)s_Engine.m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+			}
+			
 		}
 	}
 
 	void RuntimeService::OnPress()
 	{
 		if (!s_Engine.m_SelectedWidget) { return; }
-		Script::ScriptEngine::RunCustomCallsFunction(s_Engine.m_SelectedWidget->FunctionPointers.OnPress);
+		if (s_Engine.m_SelectedWidget->FunctionPointers.OnPress)
+		{
+			((WrappedVoidNone*)s_Engine.m_SelectedWidget->FunctionPointers.OnPress->m_Function.get())->m_Value();
+		}
 	}
 
 	void RuntimeService::CalculateDirections()

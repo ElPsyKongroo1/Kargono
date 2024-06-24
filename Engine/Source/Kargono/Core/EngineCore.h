@@ -88,6 +88,7 @@ namespace Kargono
 		//==============================
 		void SubmitToMainThread(const std::function<void()>& function);
 		void SubmitToEventQueue(Ref<Events::Event> e);
+		static void CloseApplication();
 
 	public:
 		//==============================
