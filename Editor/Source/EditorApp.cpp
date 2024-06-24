@@ -51,7 +51,7 @@ namespace Kargono
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::Text::Init();
-		RuntimeUI::RuntimeService::Init();
+		RuntimeUI::RuntimeUIService::Init();
 
 		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
@@ -446,13 +446,73 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
-		Script::ScriptEngine::OnPhysicsCollision(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+			}
+		}
+
+		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+			}
+		}
 		return false;
 	}
 
 	bool EditorApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+			}
+		}
+
+		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+			}
+		}
 		return false;
 	}
 
@@ -531,15 +591,21 @@ namespace Kargono
 
 	bool EditorApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool EditorApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		uint16_t signal = event.GetSignal();
-		void* param = &signal;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnReceiveSignal();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+		}
 		return false;
 	}
 
@@ -681,19 +747,19 @@ namespace Kargono
 	void EditorApp::OnPlay()
 	{
 		// Cache Current UIObject/InputMode in editor
-		if (!RuntimeUI::RuntimeService::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
+		if (!RuntimeUI::RuntimeUIService::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
 		else
 		{
-			RuntimeUI::RuntimeService::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = RuntimeUI::RuntimeService::GetCurrentUIObject();
-			m_EditorUIObjectHandle = RuntimeUI::RuntimeService::GetCurrentUIHandle();
+			RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject();
+			m_EditorUIObject = RuntimeUI::RuntimeUIService::GetCurrentUIObject();
+			m_EditorUIObjectHandle = RuntimeUI::RuntimeUIService::GetCurrentUIHandle();
 		}
 
-		if (!Input::InputModeEngine::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
+		if (!Input::InputModeService::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
 		else
 		{
-			m_EditorInputMode = Input::InputModeEngine::GetActiveInputMode();
-			m_EditorInputModeHandle = Input::InputModeEngine::GetActiveInputModeHandle();
+			m_EditorInputMode = Input::InputModeService::GetActiveInputMode();
+			m_EditorInputModeHandle = Input::InputModeService::GetActiveInputModeHandle();
 		}
 
 		// Load Default Game State
@@ -755,21 +821,21 @@ namespace Kargono
 		// Clear UIObjects during runtime.
 		if (m_EditorUIObject)
 		{
-			RuntimeUI::RuntimeService::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::RuntimeUIService::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
 		}
 		else
 		{
-			RuntimeUI::RuntimeService::ClearUIEngine();
+			RuntimeUI::RuntimeUIService::ClearUIEngine();
 		}
 
 		// Clear InputModes during runtime.
 		if (m_EditorInputMode)
 		{
-			Input::InputModeEngine::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputModeService::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
 		}
 		else
 		{
-			Input::InputModeEngine::SetActiveInputMode(nullptr, Assets::EmptyHandle);
+			Input::InputModeService::SetActiveInputMode(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameState::s_GameState = nullptr;

@@ -49,7 +49,7 @@ namespace Kargono
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::Text::Init();
-		RuntimeUI::RuntimeService::Init();
+		RuntimeUI::RuntimeUIService::Init();
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -84,7 +84,7 @@ namespace Kargono
 
 		if (mainCamera)
 		{
-			RuntimeUI::RuntimeService::PushRenderData(glm::inverse(cameraTransform), 
+			RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
 				EngineCore::GetCurrentEngineCore().GetWindow().GetWidth(), EngineCore::GetCurrentEngineCore().GetWindow().GetHeight());
 		}
 	}

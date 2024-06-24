@@ -57,7 +57,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveUp->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveUp);
+		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
 		engineScripts.push_back(RuntimeUI_MoveUp);
 
 		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
@@ -66,7 +66,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveDown->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveDown);
+		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
 		engineScripts.push_back(RuntimeUI_MoveDown);
 
 		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
@@ -75,7 +75,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveLeft->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveLeft);
+		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
 		engineScripts.push_back(RuntimeUI_MoveLeft);
 
 		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
@@ -84,7 +84,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveRight->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveRight);
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
 		engineScripts.push_back(RuntimeUI_MoveRight);
 
 		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
@@ -93,7 +93,7 @@ namespace Kargono::Scripting
 		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_OnPress->m_SectionLabel = "RuntimeUI";
-		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::OnPress);
+		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
 		engineScripts.push_back(RuntimeUI_OnPress);
 
 		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
@@ -651,16 +651,16 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeEngine::SetActiveInputModeByName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeService::LoadUserInterfaceFromName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
-		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeService::SetDisplayWindow,VoidStringBool) 
+		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow,VoidStringBool) 
 		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameState::SetActiveGameStateField, VoidStringVoidPtr) 
-		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeService::SetWidgetText,VoidStringStringString) 
-		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeService::SetSelectedWidget,VoidStringString) 
-		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeService::SetWidgetTextColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeService::SetWidgetBackgroundColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeService::SetWidgetSelectable,VoidStringStringBool) 
+		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetWidgetText,VoidStringStringString) 
+		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget,VoidStringString) 
+		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)

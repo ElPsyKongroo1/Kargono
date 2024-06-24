@@ -8,22 +8,22 @@
 
 namespace Kargono::Input
 {
-	Ref<InputMode> InputModeEngine::s_ActiveInputMode { nullptr };
-	Assets::AssetHandle InputModeEngine::s_ActiveInputModeHandle {0};
+	Ref<InputMode> InputModeService::s_ActiveInputMode { nullptr };
+	Assets::AssetHandle InputModeService::s_ActiveInputModeHandle {0};
 
-	void InputModeEngine::ClearActiveInputMode()
+	void InputModeService::ClearActiveInputMode()
 	{
 		s_ActiveInputMode = { nullptr };
 		s_ActiveInputModeHandle = {0};
 	}
 
-	void InputModeEngine::SetActiveInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle)
+	void InputModeService::SetActiveInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle)
 	{
 		s_ActiveInputMode = newInput;
 		s_ActiveInputModeHandle = newHandle;
 	}
 
-	void InputModeEngine::SetActiveInputModeByName(const std::string& inputMode)
+	void InputModeService::SetActiveInputModeByName(const std::string& inputMode)
 	{
 		static Ref<InputMode> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
@@ -45,19 +45,19 @@ namespace Kargono::Input
 		
 	}
 
-	bool InputModeEngine::IsActiveKeyboardSlotPressed(uint16_t slot)
+	bool InputModeService::IsActiveKeyboardSlotPressed(uint16_t slot)
 	{
 		KG_ASSERT(s_ActiveInputMode);
 		auto& keyboardPolling = s_ActiveInputMode->GetKeyboardPolling();
 		KG_ASSERT(slot < (uint16_t)keyboardPolling.size(), "Invalid range provided to function");
 		return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
 	}
-	std::vector<Ref<InputActionBinding>>& InputModeEngine::GetActiveOnUpdate()
+	std::vector<Ref<InputActionBinding>>& InputModeService::GetActiveOnUpdate()
 	{
 		KG_ASSERT(s_ActiveInputMode);
 		return s_ActiveInputMode->GetOnUpdateBindings();
 	}
-	std::vector<Ref<InputActionBinding>>& InputModeEngine::GetActiveOnKeyPressed()
+	std::vector<Ref<InputActionBinding>>& InputModeService::GetActiveOnKeyPressed()
 	{
 		KG_ASSERT(s_ActiveInputMode);
 		return s_ActiveInputMode->GetOnKeyPressedBindings();

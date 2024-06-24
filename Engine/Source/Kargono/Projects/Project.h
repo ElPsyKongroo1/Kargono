@@ -67,27 +67,27 @@ namespace Kargono::Projects
 		ScreenResolutionOptions TargetResolution{ ScreenResolutionOptions::MatchDevice };
 		// OnRuntimeStartFunction holds the name of the custom call that is run when
 		//		the application is started.
-		Assets::AssetHandle OnRuntimeStart {0};
+		Assets::AssetHandle OnRuntimeStart {Assets::EmptyHandle};
 
-		Assets::AssetHandle StartGameState {0};
+		Assets::AssetHandle StartGameState {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnUpdateUserCount {0};
+		Assets::AssetHandle OnUpdateUserCount {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnApproveJoinSession {0};
+		Assets::AssetHandle OnApproveJoinSession {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnUserLeftSession {0};
+		Assets::AssetHandle OnUserLeftSession {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnCurrentSessionInit {0};
+		Assets::AssetHandle OnCurrentSessionInit {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnConnectionTerminated {0};
+		Assets::AssetHandle OnConnectionTerminated {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnUpdateSessionUserSlot {0};
+		Assets::AssetHandle OnUpdateSessionUserSlot {Assets::EmptyHandle};
 
-		Assets::AssetHandle OnStartSession {0};
+		Assets::AssetHandle OnStartSession {Assets::EmptyHandle};
 
-		std::string OnSessionReadyCheckConfirmFunction {"None"};
+		Assets::AssetHandle OnSessionReadyCheckConfirm {Assets::EmptyHandle};
 
-		std::string OnReceiveSignalFunction {"None"};
+		Assets::AssetHandle OnReceiveSignal {Assets::EmptyHandle};
 
 		std::unordered_set<uint64_t> AppTickGenerators{};
 
@@ -371,28 +371,28 @@ namespace Kargono::Projects
 			s_ActiveProject->m_Config.OnStartSession = id;
 		}
 
-		static std::string& GetProjectOnSessionReadyCheckConfirm()
+		static Assets::AssetHandle GetProjectOnSessionReadyCheckConfirm()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnSessionReadyCheckConfirmFunction;
+			return s_ActiveProject->m_Config.OnSessionReadyCheckConfirm;
 		}
 
-		static void SetProjectOnSessionReadyCheckConfirm(const std::string& name)
+		static void SetProjectOnSessionReadyCheckConfirm(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnSessionReadyCheckConfirmFunction = name;
+			s_ActiveProject->m_Config.OnSessionReadyCheckConfirm = id;
 		}
 
-		static std::string& GetProjectOnReceiveSignal()
+		static Assets::AssetHandle GetProjectOnReceiveSignal()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnReceiveSignalFunction;
+			return s_ActiveProject->m_Config.OnReceiveSignal;
 		}
 
-		static void SetProjectOnReceiveSignal(const std::string& name)
+		static void SetProjectOnReceiveSignal(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnReceiveSignalFunction = name;
+			s_ActiveProject->m_Config.OnReceiveSignal = id;
 		}
 
 		static std::string GetServerIP()
