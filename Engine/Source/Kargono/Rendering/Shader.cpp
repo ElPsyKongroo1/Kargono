@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Rendering/Shader.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Utility/FileSystem.h"
 
@@ -27,7 +27,7 @@ namespace Kargono::Rendering
 		m_InputBufferLayout = shaderInputLayout;
 		m_VertexArray = VertexArray::Create();
 
-		auto quadVertexBuffer = VertexBuffer::Create(RenderingEngine::s_MaxVertexBufferSize);
+		auto quadVertexBuffer = VertexBuffer::Create(RenderingService::s_MaxVertexBufferSize);
 		quadVertexBuffer->SetLayout(m_InputBufferLayout);
 		m_VertexArray->AddVertexBuffer(quadVertexBuffer);
 	}
@@ -38,17 +38,17 @@ namespace Kargono::Rendering
 	{
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawLine)
 		{
-			m_DrawFunctions.push_back(RenderingEngine::DrawBufferLine);
+			m_DrawFunctions.push_back(RenderingService::DrawBufferLine);
 		}
 
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawLine ||
 			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)
 		{
-			m_FillDataPerVertex.push_back(RenderingEngine::FillWorldPositionNoTransform);
+			m_FillDataPerVertex.push_back(RenderingService::FillWorldPositionNoTransform);
 		}
 		else
 		{
-			m_FillDataPerVertex.push_back(RenderingEngine::FillWorldPosition);
+			m_FillDataPerVertex.push_back(RenderingService::FillWorldPosition);
 		}
 
 		if (m_ShaderSpecification.AddEntityID)
@@ -58,30 +58,30 @@ namespace Kargono::Rendering
 		if (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture ||
 			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)
 		{
-			m_FillDataPerObject.push_back( RenderingEngine::FillTextureIndex);
-			m_FillDataPerVertex.push_back(RenderingEngine::FillTextureCoordinate);
-			m_SubmitUniforms.push_back(RenderingEngine::FillTextureUniform);
+			m_FillDataPerObject.push_back( RenderingService::FillTextureIndex);
+			m_FillDataPerVertex.push_back(RenderingService::FillTextureCoordinate);
+			m_SubmitUniforms.push_back(RenderingService::FillTextureUniform);
 		}
 
 		if (m_ShaderSpecification.ColorInput == ColorInputType::VertexColor)
 		{
-			m_FillDataPerVertex.push_back(RenderingEngine::FillVertexColor);
+			m_FillDataPerVertex.push_back(RenderingService::FillVertexColor);
 		}
 
 		if (m_ShaderSpecification.AddCircleShape)
 		{
-			m_FillDataPerVertex.push_back(RenderingEngine::FillLocalPosition);
+			m_FillDataPerVertex.push_back(RenderingService::FillLocalPosition);
 		}
 
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawIndex)
 		{
-			m_FillDataPerObject.push_back(RenderingEngine::FillIndicesData);
-			m_DrawFunctions.push_back(RenderingEngine::DrawBufferIndices);
+			m_FillDataPerObject.push_back(RenderingService::FillIndicesData);
+			m_DrawFunctions.push_back(RenderingService::DrawBufferIndices);
 		}
 
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawTriangle)
 		{
-			m_DrawFunctions.push_back(RenderingEngine::DrawBufferTriangles);
+			m_DrawFunctions.push_back(RenderingService::DrawBufferTriangles);
 		}
 
 		KG_ASSERT(sizeof(ShaderSpecification) == sizeof(uint8_t) * 20, "Please Update Render section in Shader Code! It looks like you updated the shaderspecification");

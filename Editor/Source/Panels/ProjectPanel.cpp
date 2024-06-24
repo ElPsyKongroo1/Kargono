@@ -483,78 +483,78 @@ namespace Kargono::Panels
 	void ProjectPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
 		// Project Name
-		EditorUI::Editor::LabeledText("Project Name", Projects::Project::GetProjectName());
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::LabeledText("Project Name", Projects::Project::GetProjectName());
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Project Directory
-		EditorUI::Editor::LabeledText("Project Directory", Projects::Project::GetProjectDirectory().string());
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::LabeledText("Project Directory", Projects::Project::GetProjectDirectory().string());
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select Starting Scene
-		EditorUI::Editor::SelectOption(s_SelectStartSceneSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectStartSceneSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Default Fullscreen
 		s_DefaultFullscreenSpec.ToggleBoolean = Projects::Project::GetIsFullscreen();
-		EditorUI::Editor::Checkbox(s_DefaultFullscreenSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Checkbox(s_DefaultFullscreenSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Networking Checkbox
 		s_ToggleNetworkSpec.ToggleBoolean = Projects::Project::GetAppIsNetworked();
-		EditorUI::Editor::Checkbox(s_ToggleNetworkSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Checkbox(s_ToggleNetworkSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select Starting Game State
-		EditorUI::Editor::SelectOption(s_SelectStartGameStateSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectStartGameStateSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Resolution Select Option
-		EditorUI::Editor::SelectOption(s_SelectResolutionSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectResolutionSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Runtime Start
-		EditorUI::Editor::SelectOption(s_SelectRuntimeStartSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectRuntimeStartSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Update User Count
-		EditorUI::Editor::SelectOption(s_SelectUpdateUserCountSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectUpdateUserCountSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Approve Join Session
-		EditorUI::Editor::SelectOption(s_SelectApproveJoinSessionSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectApproveJoinSessionSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On User Left Session
-		EditorUI::Editor::SelectOption(s_SelectUserLeftSessionSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectUserLeftSessionSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Current Session Start
-		EditorUI::Editor::SelectOption(s_SelectSessionInitSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectSessionInitSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Connection Terminated
-		EditorUI::Editor::SelectOption(s_SelectConnectionTerminatedSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectConnectionTerminatedSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Update Session User Slot
-		EditorUI::Editor::SelectOption(s_SelectUpdateSessionSlotSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectUpdateSessionSlotSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Start Session
-		EditorUI::Editor::SelectOption(s_SelectStartSessionSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectStartSessionSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Session Ready Check
 		s_SelectSessionReadyCheckSpec.CurrentOption = { Projects::Project::GetProjectOnSessionReadyCheckConfirm(), Assets::EmptyHandle };
-		EditorUI::Editor::SelectOption(s_SelectSessionReadyCheckSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectSessionReadyCheckSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Select On Receive Signal Function
 		s_SelectReceiveSignalSpec.CurrentOption = { Projects::Project::GetProjectOnReceiveSignal(), Assets::EmptyHandle };
-		EditorUI::Editor::SelectOption(s_SelectReceiveSignalSpec);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::SelectOption(s_SelectReceiveSignalSpec);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 
 		ImGui::TextUnformatted("App Tick Generators:");
@@ -568,7 +568,7 @@ namespace Kargono::Panels
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 126.0f);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::Editor::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 		{
 			ImGui::OpenPopup("AppTickGeneratorSettings");
 		}
@@ -656,7 +656,7 @@ namespace Kargono::Panels
 					ImGui::TableSetColumnIndex(1);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-					if (ImGui::ImageButton(("Delete Generator##AppTickGeneratorDelete" + std::to_string(generatorValue)).c_str(), (ImTextureID)(uint64_t)EditorUI::Editor::s_IconDelete->GetRendererID(),
+					if (ImGui::ImageButton(("Delete Generator##AppTickGeneratorDelete" + std::to_string(generatorValue)).c_str(), (ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconDelete->GetRendererID(),
 						ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
 					{
 						deleteGenerator = true;
@@ -686,7 +686,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool ProjectPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

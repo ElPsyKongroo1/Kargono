@@ -140,7 +140,7 @@ namespace Kargono::Panels
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_SelectClassNameSpec);
+			EditorUI::EditorUIService::TextInputPopup(s_SelectClassNameSpec);
 		};
 	}
 
@@ -157,7 +157,7 @@ namespace Kargono::Panels
 		};
 		s_DeleteEntityClassWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this entity class object?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this entity class object?");
 		};
 
 		s_CloseEntityClassWarning.Label = "Close Entity Class";
@@ -168,7 +168,7 @@ namespace Kargono::Panels
 		};
 		s_CloseEntityClassWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to close this entity class object without saving?");
+			EditorUI::EditorUIService::Text("Are you sure you want to close this entity class object without saving?");
 		};
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
@@ -313,8 +313,8 @@ namespace Kargono::Panels
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditFieldName);
-			EditorUI::Editor::SelectOption(s_EditFieldType);
+			EditorUI::EditorUIService::TextInputPopup(s_EditFieldName);
+			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 		};
 
 		// Static Function Section
@@ -553,47 +553,47 @@ namespace Kargono::Panels
 	void EntityClassEditor::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
 
 		if (!s_EditorEntityClass)
 		{
-			EditorUI::Editor::NewItemScreen("Open Existing Class", s_OnOpenClass, "Create New Class", s_OnCreateClass);
-			EditorUI::Editor::GenericPopup(s_CreateClassPopupSpec);
-			EditorUI::Editor::SelectOption(s_OpenClassPopupSpec);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Class", s_OnOpenClass, "Create New Class", s_OnCreateClass);
+			EditorUI::EditorUIService::GenericPopup(s_CreateClassPopupSpec);
+			EditorUI::EditorUIService::SelectOption(s_OpenClassPopupSpec);
 		}
 		else
 		{
-			EditorUI::Editor::SelectorHeader(s_MainHeader);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::Editor::GenericPopup(s_DeleteEntityClassWarning);
-			EditorUI::Editor::GenericPopup(s_CloseEntityClassWarning);
-			EditorUI::Editor::Table(s_FieldsTable);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
+			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);
+			EditorUI::EditorUIService::Table(s_FieldsTable);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::Editor::CollapsingHeader(s_StaticFunctionHeaderSpec);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::CollapsingHeader(s_StaticFunctionHeaderSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			if (s_StaticFunctionHeaderSpec.Expanded)
 			{
-				EditorUI::Editor::SelectOption(s_SelectOnPhysicsCollisionStartSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionStartSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnPhysicsCollisionEndSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionEndSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnCreateSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnCreateSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnUpdateSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnUpdateSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			}
 
-			EditorUI::Editor::Table(s_AllScriptsTableSpec);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Table(s_AllScriptsTableSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::Editor::SelectOption(s_AddFieldPopup);
-			EditorUI::Editor::GenericPopup(s_EditFieldPopup);
+			EditorUI::EditorUIService::SelectOption(s_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(s_EditFieldPopup);
 		}
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool EntityClassEditor::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

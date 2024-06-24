@@ -79,9 +79,9 @@ namespace Kargono::EditorUI
 	}
 
 	//==============================
-	// Editor Class
+	// EditorUI Service Class
 	//==============================
-	class Editor
+	class EditorUIService
 	{
 	public:
 		//==============================
@@ -228,7 +228,7 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void Editor::GenericPopup(GenericPopupSpec& spec);
+		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
 	};
 
 	enum CheckboxFlags
@@ -253,7 +253,7 @@ namespace Kargono::EditorUI
 		bool Editing {false};
 		WidgetID WidgetID;
 	private:
-		friend void Editor::Checkbox(CheckboxSpec& spec);
+		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
 	};
 
 	struct RadioSelectorSpec
@@ -273,7 +273,7 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void Editor::RadioSelector(RadioSelectorSpec& spec);
+		friend void EditorUIService::RadioSelector(RadioSelectorSpec& spec);
 	};
 
 	enum TextInputFlags
@@ -298,7 +298,7 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void Editor::TextInputPopup(TextInputSpec& spec);
+		friend void EditorUIService::TextInputPopup(TextInputSpec& spec);
 	};
 
 	enum CollapsingHeaderFlags
@@ -340,7 +340,7 @@ namespace Kargono::EditorUI
 		WidgetID WidgetID;
 		SelectionList SelectionList{};
 	private:
-		friend void Editor::CollapsingHeader(CollapsingHeaderSpec& spec);
+		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};
 
 	struct SelectorHeaderSpec
@@ -374,7 +374,7 @@ namespace Kargono::EditorUI
 		SelectionList SelectionsList{};
 		WidgetID WidgetID;
 	private:
-		friend void Editor::SelectorHeader(SelectorHeaderSpec& spec);
+		friend void EditorUIService::SelectorHeader(SelectorHeaderSpec& spec);
 	};
 
 	enum TableFlags
@@ -444,7 +444,7 @@ namespace Kargono::EditorUI
 		std::vector<TableEntry> TableValues{};
 		SelectionList EditTableSelectionList{};
 	private:
-		friend void Editor::Table(TableSpec& spec);
+		friend void EditorUIService::Table(TableSpec& spec);
 	};
 
 	struct OptionEntry
@@ -515,7 +515,7 @@ namespace Kargono::EditorUI
 		OptionEntry CachedSelection {};
 		OptionList CachedSearchResults{};
 	private:
-		friend void Editor::SelectOption(SelectOptionSpec&);
+		friend void EditorUIService::SelectOption(SelectOptionSpec&);
 	};
 
 	struct EditVariableSpec
@@ -538,6 +538,6 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void Editor::EditVariable(EditVariableSpec&);
+		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
 }

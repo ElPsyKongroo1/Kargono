@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/UniformBuffer.h"
 
 #include "API/RenderingAPI/OpenGLUniformBuffer.h"

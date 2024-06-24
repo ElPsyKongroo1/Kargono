@@ -60,30 +60,30 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 		int32_t windowIteration{ 1 };
-		int32_t& windowToDelete = RuntimeUI::Runtime::GetWindowToDelete();
-		int32_t& widgetToDelete = RuntimeUI::Runtime::GetWidgetToDelete();
-		int32_t& windowsToAddWidget = RuntimeUI::Runtime::GetWindowsToAddWidget();
-		RuntimeUI::WidgetTypes& widgetTypeToAdd = RuntimeUI::Runtime::GetWidgetTypeToAdd();
-		uint32_t& windowToAdd = RuntimeUI::Runtime::GetWindowToAdd();
-		int32_t& selectedWindow = RuntimeUI::Runtime::GetSelectedWindow();
-		int32_t& selectedWidget = RuntimeUI::Runtime::GetSelectedWidget();
+		int32_t& windowToDelete = RuntimeUI::RuntimeService::GetWindowToDelete();
+		int32_t& widgetToDelete = RuntimeUI::RuntimeService::GetWidgetToDelete();
+		int32_t& windowsToAddWidget = RuntimeUI::RuntimeService::GetWindowsToAddWidget();
+		RuntimeUI::WidgetTypes& widgetTypeToAdd = RuntimeUI::RuntimeService::GetWidgetTypeToAdd();
+		uint32_t& windowToAdd = RuntimeUI::RuntimeService::GetWindowToAdd();
+		int32_t& selectedWindow = RuntimeUI::RuntimeService::GetSelectedWindow();
+		int32_t& selectedWidget = RuntimeUI::RuntimeService::GetSelectedWidget();
 
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
 
-		Assets::AssetHandle currentUIHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
+		Assets::AssetHandle currentUIHandle = RuntimeUI::RuntimeService::GetCurrentUIHandle();
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(currentUIHandle) ? Assets::AssetManager::GetUIObjectLocation(currentUIHandle).string().c_str() : "None"))
 		{
 			if (ImGui::Selectable("None"))
 			{
-				RuntimeUI::Runtime::ClearUIEngine();
+				RuntimeUI::RuntimeService::ClearUIEngine();
 			}
 			for (auto& [uuid, asset] : Assets::AssetManager::GetUIObjectRegistry())
 			{
 				if (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))
 				{
-					RuntimeUI::Runtime::ClearUIEngine();
+					RuntimeUI::RuntimeService::ClearUIEngine();
 
-					RuntimeUI::Runtime::LoadUIObject(Assets::AssetManager::GetUIObject(uuid), uuid);
+					RuntimeUI::RuntimeService::LoadUIObject(Assets::AssetManager::GetUIObject(uuid), uuid);
 				}
 			}
 			ImGui::EndCombo();
@@ -93,9 +93,9 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Save Current User Interface"))
 		{
-			if (RuntimeUI::Runtime::SaveCurrentUIIntoUIObject())
+			if (RuntimeUI::RuntimeService::SaveCurrentUIIntoUIObject())
 			{
-				Assets::AssetManager::SaveUIObject(RuntimeUI::Runtime::GetCurrentUIHandle(), RuntimeUI::Runtime::GetCurrentUIObject());
+				Assets::AssetManager::SaveUIObject(RuntimeUI::RuntimeService::GetCurrentUIHandle(), RuntimeUI::RuntimeService::GetCurrentUIObject());
 			}
 		}
 		ImGui::SameLine();
@@ -112,32 +112,32 @@ namespace Kargono::Panels
 			ImGui::InputText("New User Interface Name", buffer, sizeof(buffer));
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
-				RuntimeUI::Runtime::ClearUIEngine();
+				RuntimeUI::RuntimeService::ClearUIEngine();
 
 				Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewUIObject(std::string(buffer));
-				RuntimeUI::Runtime::LoadUIObject(Assets::AssetManager::GetUIObject(newHandle), newHandle);
+				RuntimeUI::RuntimeService::LoadUIObject(Assets::AssetManager::GetUIObject(newHandle), newHandle);
 
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		if (!RuntimeUI::Runtime::GetCurrentUIObject())
+		if (!RuntimeUI::RuntimeService::GetCurrentUIObject())
 		{
-			EditorUI::Editor::EndWindow();
+			EditorUI::EditorUIService::EndWindow();
 			return;
 		}
 
-		if (ImGui::ColorEdit4("Select Color", glm::value_ptr(RuntimeUI::Runtime::GetSelectColor())))
+		if (ImGui::ColorEdit4("Select Color", glm::value_ptr(RuntimeUI::RuntimeService::GetSelectColor())))
 		{
-			RuntimeUI::Runtime::SetSelectedWidgetColor(RuntimeUI::Runtime::GetSelectColor());
+			RuntimeUI::RuntimeService::SetSelectedWidgetColor(RuntimeUI::RuntimeService::GetSelectColor());
 		}
 
-		if (ImGui::BeginCombo(("OnMove##" + std::to_string(selectedWidget)).c_str(), RuntimeUI::Runtime::GetFunctionOnMove().empty() ? "None" : RuntimeUI::Runtime::GetFunctionOnMove().c_str()))
+		if (ImGui::BeginCombo(("OnMove##" + std::to_string(selectedWidget)).c_str(), RuntimeUI::RuntimeService::GetFunctionOnMove().empty() ? "None" : RuntimeUI::RuntimeService::GetFunctionOnMove().c_str()))
 		{
 			if (ImGui::Selectable("None"))
 			{
-				RuntimeUI::Runtime::SetFunctionOnMove({});
+				RuntimeUI::RuntimeService::SetFunctionOnMove({});
 			}
 
 			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
@@ -146,7 +146,7 @@ namespace Kargono::Panels
 
 				if (ImGui::Selectable(name.c_str()))
 				{
-					RuntimeUI::Runtime::SetFunctionOnMove(name);
+					RuntimeUI::RuntimeService::SetFunctionOnMove(name);
 				}
 			}
 
@@ -158,7 +158,7 @@ namespace Kargono::Panels
 		{
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			for (auto& window : RuntimeUI::Runtime::GetAllWindows())
+			for (auto& window : RuntimeUI::RuntimeService::GetAllWindows())
 			{
 				ImGui::AlignTextToFramePadding();
 				ImGuiTreeNodeFlags windowFlags = ((selectedWindow == windowIteration && selectedWidget == -1) ? ImGuiTreeNodeFlags_Selected : 0) |
@@ -240,7 +240,7 @@ namespace Kargono::Panels
 			{
 				if (selectedWidget != -1)
 				{
-					auto& widget = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1).Widgets.at(selectedWidget - 1);
+					auto& widget = RuntimeUI::RuntimeService::GetAllWindows().at(selectedWindow - 1).Widgets.at(selectedWidget - 1);
 					char buffer[256] = {};
 					strncpy_s(buffer, widget->Tag.c_str(), sizeof(buffer));
 					ImGui::Text(widget->Tag.c_str());
@@ -291,7 +291,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					auto& window = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1);
+					auto& window = RuntimeUI::RuntimeService::GetAllWindows().at(selectedWindow - 1);
 					char buffer[256] = {};
 					strncpy_s(buffer, window.Tag.c_str(), sizeof(buffer));
 					ImGui::Text(window.Tag.c_str());
@@ -359,11 +359,11 @@ namespace Kargono::Panels
 			ImGui::EndTable();
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 
 		if (windowToDelete != -1)
 		{
-			RuntimeUI::Runtime::DeleteWindow(static_cast<uint32_t>(windowToDelete - 1));
+			RuntimeUI::RuntimeService::DeleteWindow(static_cast<uint32_t>(windowToDelete - 1));
 			windowToDelete = -1;
 
 			selectedWindow = -1;
@@ -372,7 +372,7 @@ namespace Kargono::Panels
 
 		if (widgetToDelete != -1)
 		{
-			auto& window = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1);
+			auto& window = RuntimeUI::RuntimeService::GetAllWindows().at(selectedWindow - 1);
 			window.DeleteWidget(widgetToDelete - 1);
 
 			widgetToDelete = -1;
@@ -382,12 +382,12 @@ namespace Kargono::Panels
 
 		if (windowsToAddWidget != -1)
 		{
-			auto& windows = RuntimeUI::Runtime::GetAllWindows();
+			auto& windows = RuntimeUI::RuntimeService::GetAllWindows();
 			switch (widgetTypeToAdd)
 			{
 			case RuntimeUI::WidgetTypes::TextWidget:
 			{
-				RuntimeUI::Runtime::GetAllWindows().at(windowsToAddWidget - 1).AddTextWidget(CreateRef<RuntimeUI::TextWidget>());
+				RuntimeUI::RuntimeService::GetAllWindows().at(windowsToAddWidget - 1).AddTextWidget(CreateRef<RuntimeUI::TextWidget>());
 				break;
 			}
 			default:
@@ -405,7 +405,7 @@ namespace Kargono::Panels
 			RuntimeUI::Window window1 {};
 			window1.Size = Math::vec2(0.4f, 0.4f);
 			window1.ScreenPosition = Math::vec3(0.3f, 0.3f, 0.0f);
-			RuntimeUI::Runtime::AddWindow(window1);
+			RuntimeUI::RuntimeService::AddWindow(window1);
 			windowToAdd = 0;
 		}
 	}

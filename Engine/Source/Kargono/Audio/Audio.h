@@ -25,7 +25,7 @@ namespace Kargono::Assets { class AssetManager; }
 //		in the editor.
 namespace Kargono::Audio
 {
-	class AudioEngine;
+	class AudioService;
 	class AudioBuffer;
 
 	//==============================
@@ -106,7 +106,7 @@ namespace Kargono::Audio
 		// This ID stores a reference to the OpenAL buffer that this class represents.
 		uint32_t m_BufferID {0};
 
-		friend Audio::AudioEngine;
+		friend Audio::AudioService;
 		friend Assets::AssetManager;
 	};
 
@@ -140,14 +140,14 @@ namespace Kargono::Audio
 		uint32_t m_SourceID = 0;
 	};
 	//============================================================
-	// Audio Context Class
+	// Audio Service Class
 	//============================================================
 	// This class represents the underlying context and lifecycle of the
 	//		audio engine. Starting and closing the audio engine is tied
 	//		to this class's lifetime. Most other actions involving audio
 	//		are taken through this class including playing audio and
 	//		stopping audio.
-	class AudioEngine
+	class AudioService
 	{
 	public:
 		//==============================
@@ -199,7 +199,7 @@ namespace Kargono::Audio
 		//==============================
 		// This is just the default constructor. The audio engine is a singleton
 		//		that is static for the program.
-		AudioEngine() = default;
+		AudioService() = default;
 	private:
 		// This name currently only exists for debugging purposes. It could be used
 		//		for switching audio devices in future iterations.
@@ -225,6 +225,6 @@ namespace Kargono::Audio
 		// This is the actual AudioEngine which is staticly created in the AudioEngine.cpp file
 		//		and is active through the lifetime of the application. Init() and Terminate()
 		//		dictate if OpenAL is active.
-		static AudioEngine* s_AudioContext;
+		static AudioService* s_AudioContext;
 	};
 }

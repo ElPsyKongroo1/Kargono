@@ -107,7 +107,7 @@ namespace Kargono::Panels
 		};
 		s_CreateGameStatePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_SelectGameStateNameSpec);
+			EditorUI::EditorUIService::TextInputPopup(s_SelectGameStateNameSpec);
 		};
 	}
 
@@ -123,7 +123,7 @@ namespace Kargono::Panels
 		};
 		s_DeleteGameStateWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this game state object?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this game state object?");
 		};
 
 		s_CloseGameStateWarning.Label = "Close Game State";
@@ -134,7 +134,7 @@ namespace Kargono::Panels
 		};
 		s_CloseGameStateWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to close this game state object without saving?");
+			EditorUI::EditorUIService::Text("Are you sure you want to close this game state object without saving?");
 		};
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
@@ -323,9 +323,9 @@ namespace Kargono::Panels
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditFieldName);
-			EditorUI::Editor::SelectOption(s_EditFieldType);
-			EditorUI::Editor::EditVariable(s_EditFieldValue);
+			EditorUI::EditorUIService::TextInputPopup(s_EditFieldName);
+			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
+			EditorUI::EditorUIService::EditVariable(s_EditFieldValue);
 		};
 		
 	}
@@ -345,25 +345,25 @@ namespace Kargono::Panels
 	void GameStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowGameStateEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowGameStateEditor);
 
 		if (!m_EditorGameState)
 		{
-			EditorUI::Editor::NewItemScreen("Open Existing Game State", s_OnOpenGameState, "Create New Game State", s_OnCreateGameState);
-			EditorUI::Editor::GenericPopup(s_CreateGameStatePopupSpec);
-			EditorUI::Editor::SelectOption(s_OpenGameStatePopupSpec);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", s_OnOpenGameState, "Create New Game State", s_OnCreateGameState);
+			EditorUI::EditorUIService::GenericPopup(s_CreateGameStatePopupSpec);
+			EditorUI::EditorUIService::SelectOption(s_OpenGameStatePopupSpec);
 		}
 		else
 		{
-			EditorUI::Editor::SelectorHeader(s_MainHeader);
-			EditorUI::Editor::GenericPopup(s_DeleteGameStateWarning);
-			EditorUI::Editor::GenericPopup(s_CloseGameStateWarning);
-			EditorUI::Editor::Table(s_FieldsTable);
-			EditorUI::Editor::SelectOption(s_AddFieldPopup);
-			EditorUI::Editor::GenericPopup(s_EditFieldPopup);
+			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::GenericPopup(s_DeleteGameStateWarning);
+			EditorUI::EditorUIService::GenericPopup(s_CloseGameStateWarning);
+			EditorUI::EditorUIService::Table(s_FieldsTable);
+			EditorUI::EditorUIService::SelectOption(s_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(s_EditFieldPopup);
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool GameStatePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

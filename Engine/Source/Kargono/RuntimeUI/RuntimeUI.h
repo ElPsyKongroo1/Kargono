@@ -92,7 +92,7 @@ namespace Kargono::RuntimeUI
 		Math::vec2 TextAbsoluteDimensions {};
 		Math::vec4 TextColor{0.5f};
 		bool TextCentered = true;
-		friend class Runtime;
+		friend class RuntimeService;
 	};
 
 	class ButtonWidget : public Widget
@@ -204,7 +204,7 @@ namespace Kargono::RuntimeUI
 	};
 
 
-	class Runtime
+	class RuntimeService
 	{
 	public:
 		static void Init();
@@ -260,7 +260,7 @@ namespace Kargono::RuntimeUI
 		Assets::AssetHandle m_FontHandle {0};
 		Math::vec4 m_SelectColor {1.0f};
 
-		static Runtime s_Engine;
+		static RuntimeService s_Engine;
 
 		friend class TextWidget;
 

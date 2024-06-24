@@ -13,20 +13,20 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
-		case Panels::BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
-		case Panels::BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
-		case Panels::BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
-		case Panels::BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
-		case Panels::BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
-		case Panels::BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
-		case Panels::BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
-		case Panels::BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
-		case Panels::BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
-		case Panels::BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
-		case Panels::BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
+		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_DirectoryIcon; }
+		case Panels::BrowserFileType::Image: { return EditorUI::EditorUIService::s_ImageIcon; }
+		case Panels::BrowserFileType::Audio: { return EditorUI::EditorUIService::s_AudioIcon; }
+		case Panels::BrowserFileType::Font: { return EditorUI::EditorUIService::s_FontIcon; }
+		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_UserInterfaceIcon; }
+		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_BinaryIcon; }
+		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_RegistryIcon; }
+		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_SceneIcon; }
+		case Panels::BrowserFileType::ScriptProject: { return EditorUI::EditorUIService::s_ScriptProjectIcon; }
+		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_InputIcon; }
+		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_GenericFileIcon; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::Editor::s_GenericFileIcon;
+		return EditorUI::EditorUIService::s_GenericFileIcon;
 	}
 
 	static Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
@@ -111,7 +111,7 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
 		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
@@ -131,7 +131,7 @@ namespace Kargono::Panels
 		}
 
 
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::Editor::s_BackIcon : EditorUI::Editor::s_BackInactiveIcon)->GetRendererID(),
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::EditorUIService::s_BackIcon : EditorUI::EditorUIService::s_BackInactiveIcon)->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (backActive)
@@ -151,7 +151,7 @@ namespace Kargono::Panels
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::Editor::s_ForwardIcon : EditorUI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::EditorUIService::s_ForwardIcon : EditorUI::EditorUIService::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 			{
@@ -205,7 +205,7 @@ namespace Kargono::Panels
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(EditorUI::Editor::s_PlexBold);
+		ImGui::PushFont(EditorUI::EditorUIService::s_PlexBold);
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
 			ImGui::SameLine();
@@ -319,7 +319,7 @@ namespace Kargono::Panels
 						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
-							RuntimeUI::Runtime::SetFont(font, currentHandle);
+							RuntimeUI::RuntimeService::SetFont(font, currentHandle);
 						}
 
 						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
@@ -456,7 +456,7 @@ namespace Kargono::Panels
 		ImGui::Columns(1);
 		
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
