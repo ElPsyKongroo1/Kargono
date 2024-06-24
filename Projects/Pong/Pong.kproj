@@ -16,6 +16,6 @@ Project:
   OnConnectionTerminated: 4342390925410131221
   OnUpdateSessionUserSlot: 3176244785148247992
   OnStartSession: 1819971799574496652
-  OnSessionReadyCheckConfirmFunction: OnSessionReadyCheckConfirm
-  OnReceiveSignalFunction: OnReceiveSignal
+  OnSessionReadyCheckConfirm: 18418190839039201319
+  OnReceiveSignal: 11068697129652250038
   AppIsNetworked: true

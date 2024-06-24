@@ -248,33 +248,33 @@ namespace Kargono::Script
 		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiLocation);
 		if (uiReference)
 		{
-			RuntimeUI::RuntimeService::LoadUIObject(uiReference, handle);
+			RuntimeUI::RuntimeUIService::LoadUIObject(uiReference, handle);
 		}
 	}
 
 	static void UserInterface_MoveRight()
 	{
-		RuntimeUI::RuntimeService::MoveRight();
+		RuntimeUI::RuntimeUIService::MoveRight();
 	}
 
 	static void UserInterface_MoveLeft()
 	{
-		RuntimeUI::RuntimeService::MoveLeft();
+		RuntimeUI::RuntimeUIService::MoveLeft();
 	}
 
 	static void UserInterface_MoveUp()
 	{
-		RuntimeUI::RuntimeService::MoveUp();
+		RuntimeUI::RuntimeUIService::MoveUp();
 	}
 
 	static void UserInterface_MoveDown()
 	{
-		RuntimeUI::RuntimeService::MoveDown();
+		RuntimeUI::RuntimeUIService::MoveDown();
 	}
 
 	static void UserInterface_OnPress()
 	{
-		RuntimeUI::RuntimeService::OnPress();
+		RuntimeUI::RuntimeUIService::OnPress();
 	}
 
 	static void UserInterface_SetWidgetText(MonoString* windowTag, MonoString* widgetTag, MonoString* newText )
@@ -282,14 +282,14 @@ namespace Kargono::Script
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
 		const std::string text = std::string(mono_string_to_utf8(newText));
-		RuntimeUI::RuntimeService::SetWidgetText(window, widget, text);
+		RuntimeUI::RuntimeUIService::SetWidgetText(window, widget, text);
 	}
 
 	static void UserInterface_SetSelectedWidget(MonoString* windowTag, MonoString* widgetTag)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::RuntimeService::SetSelectedWidget(window, widget);
+		RuntimeUI::RuntimeUIService::SetSelectedWidget(window, widget);
 	}
 	
 
@@ -297,28 +297,28 @@ namespace Kargono::Script
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::RuntimeService::SetWidgetTextColor(window, widget, *color);
+		RuntimeUI::RuntimeUIService::SetWidgetTextColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetBackgroundColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::RuntimeService::SetWidgetBackgroundColor(window, widget, *color);
+		RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetSelectable(MonoString* windowTag, MonoString* widgetTag, bool selectable)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::RuntimeService::SetWidgetSelectable(window, widget, selectable);
+		RuntimeUI::RuntimeUIService::SetWidgetSelectable(window, widget, selectable);
 	}
 
 	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		
-		RuntimeUI::RuntimeService::SetDisplayWindow(window, display);
+		RuntimeUI::RuntimeUIService::SetDisplayWindow(window, display);
 	}
 
 	static void InputMode_LoadInputMode(MonoString* inputModeLocation)
@@ -334,7 +334,7 @@ namespace Kargono::Script
 		{
 			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
 			{
-				Input::InputModeEngine::SetActiveInputMode(s_InputRef, s_InputHandle);
+				Input::InputModeService::SetActiveInputMode(s_InputRef, s_InputHandle);
 			});
 			
 		}
@@ -465,7 +465,7 @@ namespace Kargono::Script
 
 	static bool InputMode_IsKeySlotDown(uint16_t keySlot)
 	{
-		return Input::InputModeEngine::IsActiveKeyboardSlotPressed(keySlot);
+		return Input::InputModeService::IsActiveKeyboardSlotPressed(keySlot);
 	}
 
 	

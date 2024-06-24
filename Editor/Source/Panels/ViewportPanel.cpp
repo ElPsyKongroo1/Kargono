@@ -88,13 +88,13 @@ namespace Kargono::Panels
 
 				if (mainCamera)
 				{
-					RuntimeUI::RuntimeService::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+					RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 				}
 			}
 			else
 			{
 				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-				RuntimeUI::RuntimeService::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+				RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 			}
 
 		}

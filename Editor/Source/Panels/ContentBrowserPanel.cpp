@@ -319,7 +319,7 @@ namespace Kargono::Panels
 						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
-							RuntimeUI::RuntimeService::SetFont(font, currentHandle);
+							RuntimeUI::RuntimeUIService::SetFont(font, currentHandle);
 						}
 
 						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
