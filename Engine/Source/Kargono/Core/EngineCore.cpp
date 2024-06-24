@@ -5,7 +5,7 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
@@ -50,8 +50,8 @@ namespace Kargono
 		}
 
 		Script::ScriptEngine::Shutdown();
-		Scripting::ScriptCore::Terminate();
-		Audio::AudioEngine::Terminate();
+		Scripting::ScriptService::Terminate();
+		Audio::AudioService::Terminate();
 		// TODO: Add Renderer Shutdown!
 
 		KG_VERIFY(!m_CurrentApp, "Close App");
@@ -171,7 +171,7 @@ namespace Kargono
 		}
 
 		m_Minimized = false;
-		Rendering::RenderingEngine::OnWindowResize(e.GetWidth(), e.GetHeight());
+		Rendering::RenderingService::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}

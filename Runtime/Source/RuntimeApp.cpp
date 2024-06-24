@@ -20,8 +20,8 @@ namespace Kargono
 	void RuntimeApp::OnAttach()
 	{
 		Script::ScriptEngine::Init();
-		Audio::AudioEngine::Init();
-		Scenes::SceneEngine::Init();
+		Audio::AudioService::Init();
+		Scenes::SceneService::Init();
 
 		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 
@@ -46,10 +46,10 @@ namespace Kargono
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
 
-		Rendering::RenderingEngine::Init();
-		Rendering::RenderingEngine::SetLineWidth(4.0f);
+		Rendering::RenderingService::Init();
+		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::Text::Init();
-		RuntimeUI::Runtime::Init();
+		RuntimeUI::RuntimeService::Init();
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -73,7 +73,7 @@ namespace Kargono
 	{
 		
 		// Render
-		Rendering::RenderingEngine::ResetStats();
+		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
@@ -84,7 +84,7 @@ namespace Kargono
 
 		if (mainCamera)
 		{
-			RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
+			RuntimeUI::RuntimeService::PushRenderData(glm::inverse(cameraTransform), 
 				EngineCore::GetCurrentEngineCore().GetWindow().GetWidth(), EngineCore::GetCurrentEngineCore().GetWindow().GetHeight());
 		}
 	}

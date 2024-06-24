@@ -19,7 +19,7 @@ namespace Kargono
 
 	void ServerApp::OnAttach()
 	{
-		Scenes::SceneEngine::Init();
+		Scenes::SceneService::Init();
 		if (!OpenProject())
 		{
 			EngineCore::GetCurrentEngineCore().Close();

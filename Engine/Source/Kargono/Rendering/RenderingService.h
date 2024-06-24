@@ -9,7 +9,7 @@
 
 namespace Kargono::Rendering
 {
-	class RenderingEngine
+	class RenderingService
 	{
 	public:
 		//============================================================

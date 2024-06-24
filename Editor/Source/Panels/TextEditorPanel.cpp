@@ -122,11 +122,11 @@ namespace Kargono::Panels
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowTextEditor, flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowTextEditor, flags);
 
 		if (s_AllDocuments.size() == 0)
 		{
-			EditorUI::Editor::NewItemScreen("Open Existing File", s_OnOpenFile, "Create New File", s_OnCreateFile);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing File", s_OnOpenFile, "Create New File", s_OnCreateFile);
 		}
 		else
 		{
@@ -157,15 +157,15 @@ namespace Kargono::Panels
 				}
 				ImGui::EndMenuBar();
 			}
-			EditorUI::Editor::GenericPopup(s_DeleteWarningSpec);
-			EditorUI::Editor::GenericPopup(s_DiscardChangesWarningSpec);
+			EditorUI::EditorUIService::GenericPopup(s_DeleteWarningSpec);
+			EditorUI::EditorUIService::GenericPopup(s_DiscardChangesWarningSpec);
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };
 			
 			if (s_TextEditor.IsTextChanged())
 			{
-				std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+				std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 				std::string comparedWindow = m_EditorWindowName;
 				Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 				activeDocument.TextBuffer = s_TextEditor.GetText();
@@ -177,7 +177,7 @@ namespace Kargono::Panels
 				bool setColorBlue = false;
 				if (document.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::Editor::s_PearlBlue);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_PearlBlue);
 					setColorBlue = true;
 				}
 				// Handle case 
@@ -245,7 +245,7 @@ namespace Kargono::Panels
 			
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -277,9 +277,9 @@ namespace Kargono::Panels
 				s_EditorApp->m_ShowTextEditor = true;
 			}
 
-			if (EditorUI::Editor::GetFocusedWindowName() != m_PanelName)
+			if (EditorUI::EditorUIService::GetFocusedWindowName() != m_PanelName)
 			{
-				EditorUI::Editor::SetFocusedWindow(m_PanelName);
+				EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 			}
 
 			for (auto& document : s_AllDocuments)

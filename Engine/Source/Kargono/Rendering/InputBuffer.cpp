@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Rendering/InputBuffer.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 
 #include "API/RenderingAPI/OpenGLBuffer.h"
 

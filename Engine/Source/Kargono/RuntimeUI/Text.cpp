@@ -2,7 +2,7 @@
 
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Scenes/Components.h"
 #include "Kargono/Rendering/Shader.h"
@@ -278,7 +278,7 @@ namespace Kargono::RuntimeUI
 
 			s_TextInputSpec.ShapeComponent->Vertices = s_Vertices;
 
-			Rendering::RenderingEngine::SubmitDataToRenderer(s_TextInputSpec);
+			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
 
 			// TODO: Add Kerning back! Info on Kerning is here: https://freetype.org/freetype2/docs/glyphs/glyphs-4.html
 			//double advance = 0;

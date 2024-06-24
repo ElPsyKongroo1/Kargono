@@ -22,7 +22,7 @@ namespace Kargono::Scripting
 	//==============================
 	// Script Core Class // TODO RENAME TO SCRIPTENGINE after removing mono!
 	//==============================
-	class ScriptCore
+	class ScriptService
 	{
 	public:
 		//==============================

@@ -78,55 +78,55 @@ namespace Kargono::Panels
 	void InputModePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowInputModeEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowInputModeEditor);
 
 		if (!m_EditorInputMode)
 		{
 			// Opening/Null State Screen
-			EditorUI::Editor::NewItemScreen("Open Existing Input Mode", OnOpenInputMode, "Create New InputMode", OnCreateInputMode);
-			EditorUI::Editor::GenericPopup(s_CreateInputModePopupSpec);
-			EditorUI::Editor::SelectOption(s_OpenInputModePopupSpec);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Mode", OnOpenInputMode, "Create New InputMode", OnCreateInputMode);
+			EditorUI::EditorUIService::GenericPopup(s_CreateInputModePopupSpec);
+			EditorUI::EditorUIService::SelectOption(s_OpenInputModePopupSpec);
 		}
 		else
 		{
 			// Header
-			EditorUI::Editor::SelectorHeader(s_MainHeader);
-			EditorUI::Editor::GenericPopup(s_DeleteInputModeWarning);
-			EditorUI::Editor::GenericPopup(s_CloseInputModeWarning);
+			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::GenericPopup(s_DeleteInputModeWarning);
+			EditorUI::EditorUIService::GenericPopup(s_CloseInputModeWarning);
 
 			// Main Content
-			EditorUI::Editor::BeginTabBar("InputModePanelTabBar");
+			EditorUI::EditorUIService::BeginTabBar("InputModePanelTabBar");
 			// Keyboard Panel
-			if (EditorUI::Editor::BeginTabItem("Keyboard"))
+			if (EditorUI::EditorUIService::BeginTabItem("Keyboard"))
 			{
 				// On Update
-				EditorUI::Editor::Table(s_KeyboardOnUpdateTable);
-				EditorUI::Editor::GenericPopup(s_KeyboardOnUpdateAddSlot);
-				EditorUI::Editor::GenericPopup(s_KeyboardOnUpdateEditSlot);
+				EditorUI::EditorUIService::Table(s_KeyboardOnUpdateTable);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardOnUpdateAddSlot);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardOnUpdateEditSlot);
 
 				// On Key Pressed
-				EditorUI::Editor::Table(s_KeyboardOnKeyPressedTable);
-				EditorUI::Editor::GenericPopup(s_KeyboardOnKeyPressedAddSlot);
-				EditorUI::Editor::GenericPopup(s_KeyboardOnKeyPressedEditSlot);
+				EditorUI::EditorUIService::Table(s_KeyboardOnKeyPressedTable);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardOnKeyPressedAddSlot);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardOnKeyPressedEditSlot);
 
 				// Keyboard Polling
-				EditorUI::Editor::Table(s_KeyboardPollingTable);
-				EditorUI::Editor::GenericPopup(s_KeyboardPollingAddSlot);
-				EditorUI::Editor::GenericPopup(s_KeyboardPollingEditSlot);
+				EditorUI::EditorUIService::Table(s_KeyboardPollingTable);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardPollingAddSlot);
+				EditorUI::EditorUIService::GenericPopup(s_KeyboardPollingEditSlot);
 
-				EditorUI::Editor::EndTabItem();
+				EditorUI::EditorUIService::EndTabItem();
 			}
 			// Mouse Panel
-			if (EditorUI::Editor::BeginTabItem("Mouse"))
+			if (EditorUI::EditorUIService::BeginTabItem("Mouse"))
 			{
-				EditorUI::Editor::Text("Unimplemented Yet????");
-				EditorUI::Editor::EndTabItem();
+				EditorUI::EditorUIService::Text("Unimplemented Yet????");
+				EditorUI::EditorUIService::EndTabItem();
 			}
-			EditorUI::Editor::EndTabBar();
+			EditorUI::EditorUIService::EndTabBar();
 			
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool InputModePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -201,7 +201,7 @@ namespace Kargono::Panels
 		};
 		s_CreateInputModePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_SelectInputModeNameSpec);
+			EditorUI::EditorUIService::TextInputPopup(s_SelectInputModeNameSpec);
 		};
 	}
 
@@ -217,7 +217,7 @@ namespace Kargono::Panels
 		};
 		s_DeleteInputModeWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this input mode object?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this input mode object?");
 		};
 
 		s_CloseInputModeWarning.Label = "Close Input Mode";
@@ -228,7 +228,7 @@ namespace Kargono::Panels
 		};
 		s_CloseInputModeWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to close this input mode object without saving?");
+			EditorUI::EditorUIService::Text("Are you sure you want to close this input mode object without saving?");
 		};
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
@@ -323,8 +323,8 @@ namespace Kargono::Panels
 		};
 		s_KeyboardOnUpdateAddSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateAddKeyCode);
-			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateAddFunction);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnUpdateAddKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnUpdateAddFunction);
 		};
 
 		s_KeyboardOnUpdateAddSlot.ConfirmAction = [&]()
@@ -405,8 +405,8 @@ namespace Kargono::Panels
 		};
 		s_KeyboardOnUpdateEditSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateEditKeyCode);
-			EditorUI::Editor::SelectOption(s_KeyboardOnUpdateEditFunction);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnUpdateEditKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnUpdateEditFunction);
 		};
 		s_KeyboardOnUpdateEditSlot.DeleteAction = [&]()
 		{
@@ -541,8 +541,8 @@ namespace Kargono::Panels
 		};
 		s_KeyboardOnKeyPressedAddSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedAddKeyCode);
-			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedAddFunction);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnKeyPressedAddKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnKeyPressedAddFunction);
 		};
 
 		s_KeyboardOnKeyPressedAddSlot.ConfirmAction = [&]()
@@ -623,8 +623,8 @@ namespace Kargono::Panels
 		};
 		s_KeyboardOnKeyPressedEditSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedEditKeyCode);
-			EditorUI::Editor::SelectOption(s_KeyboardOnKeyPressedEditFunction);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnKeyPressedEditKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardOnKeyPressedEditFunction);
 		};
 		s_KeyboardOnKeyPressedEditSlot.DeleteAction = [&]()
 		{
@@ -734,7 +734,7 @@ namespace Kargono::Panels
 		};
 		s_KeyboardPollingAddSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardPollingAddKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardPollingAddKeyCode);
 		};
 
 		s_KeyboardPollingAddSlot.ConfirmAction = [&]()
@@ -767,7 +767,7 @@ namespace Kargono::Panels
 		};
 		s_KeyboardPollingEditSlot.PopupContents = [&]()
 		{
-			EditorUI::Editor::SelectOption(s_KeyboardPollingEditKeyCode);
+			EditorUI::EditorUIService::SelectOption(s_KeyboardPollingEditKeyCode);
 		};
 
 		s_KeyboardPollingEditSlot.DeleteAction = [&]()

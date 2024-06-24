@@ -7,7 +7,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Audio/Audio.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Math/Math.h"
@@ -218,7 +218,7 @@ namespace Kargono::Script
 		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audio);
 		if (audioBuffer)
 		{
-			Audio::AudioEngine::PlaySound(audioBuffer);
+			Audio::AudioService::PlaySound(audioBuffer);
 		}
 	}
 
@@ -228,7 +228,7 @@ namespace Kargono::Script
 		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audio);
 		if (audioBuffer)
 		{
-			Audio::AudioEngine::PlayStereoSound(audioBuffer);
+			Audio::AudioService::PlayStereoSound(audioBuffer);
 		}
 	}
 
@@ -248,33 +248,33 @@ namespace Kargono::Script
 		auto [handle, uiReference] = Assets::AssetManager::GetUIObject(uiLocation);
 		if (uiReference)
 		{
-			RuntimeUI::Runtime::LoadUIObject(uiReference, handle);
+			RuntimeUI::RuntimeService::LoadUIObject(uiReference, handle);
 		}
 	}
 
 	static void UserInterface_MoveRight()
 	{
-		RuntimeUI::Runtime::MoveRight();
+		RuntimeUI::RuntimeService::MoveRight();
 	}
 
 	static void UserInterface_MoveLeft()
 	{
-		RuntimeUI::Runtime::MoveLeft();
+		RuntimeUI::RuntimeService::MoveLeft();
 	}
 
 	static void UserInterface_MoveUp()
 	{
-		RuntimeUI::Runtime::MoveUp();
+		RuntimeUI::RuntimeService::MoveUp();
 	}
 
 	static void UserInterface_MoveDown()
 	{
-		RuntimeUI::Runtime::MoveDown();
+		RuntimeUI::RuntimeService::MoveDown();
 	}
 
 	static void UserInterface_OnPress()
 	{
-		RuntimeUI::Runtime::OnPress();
+		RuntimeUI::RuntimeService::OnPress();
 	}
 
 	static void UserInterface_SetWidgetText(MonoString* windowTag, MonoString* widgetTag, MonoString* newText )
@@ -282,14 +282,14 @@ namespace Kargono::Script
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
 		const std::string text = std::string(mono_string_to_utf8(newText));
-		RuntimeUI::Runtime::SetWidgetText(window, widget, text);
+		RuntimeUI::RuntimeService::SetWidgetText(window, widget, text);
 	}
 
 	static void UserInterface_SetSelectedWidget(MonoString* windowTag, MonoString* widgetTag)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::Runtime::SetSelectedWidget(window, widget);
+		RuntimeUI::RuntimeService::SetSelectedWidget(window, widget);
 	}
 	
 
@@ -297,28 +297,28 @@ namespace Kargono::Script
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::Runtime::SetWidgetTextColor(window, widget, *color);
+		RuntimeUI::RuntimeService::SetWidgetTextColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetBackgroundColor(MonoString* windowTag, MonoString* widgetTag, Math::vec4* color)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::Runtime::SetWidgetBackgroundColor(window, widget, *color);
+		RuntimeUI::RuntimeService::SetWidgetBackgroundColor(window, widget, *color);
 	}
 
 	static void UserInterface_SetWidgetSelectable(MonoString* windowTag, MonoString* widgetTag, bool selectable)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		const std::string widget = std::string(mono_string_to_utf8(widgetTag));
-		RuntimeUI::Runtime::SetWidgetSelectable(window, widget, selectable);
+		RuntimeUI::RuntimeService::SetWidgetSelectable(window, widget, selectable);
 	}
 
 	static void UserInterface_SetDisplayWindow(MonoString* windowTag, bool display)
 	{
 		const std::string window = std::string(mono_string_to_utf8(windowTag));
 		
-		RuntimeUI::Runtime::SetDisplayWindow(window, display);
+		RuntimeUI::RuntimeService::SetDisplayWindow(window, display);
 	}
 
 	static void InputMode_LoadInputMode(MonoString* inputModeLocation)
@@ -430,7 +430,7 @@ namespace Kargono::Script
 
 		if (!entity.HasComponent<Scenes::AudioComponent>()) { return; }
 		auto& audioComponent = entity.GetComponent<Scenes::AudioComponent>();
-		Audio::AudioEngine::PlaySound(audioComponent.Audio);
+		Audio::AudioService::PlaySound(audioComponent.Audio);
 	}
 
 	static void AudioComponent_PlayAudioByName(UUID entityID, MonoString* audioTag)
@@ -445,7 +445,7 @@ namespace Kargono::Script
 		{
 			if (entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.contains(aTag))
 			{
-				Audio::AudioEngine::PlaySound(entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.at(aTag).Audio);
+				Audio::AudioService::PlaySound(entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents.at(aTag).Audio);
 				return;
 			}
 		}
@@ -453,7 +453,7 @@ namespace Kargono::Script
 		auto& audioComponent = entity.GetComponent<Scenes::AudioComponent>();
 		if (audioComponent.Name == aTag)
 		{
-			Audio::AudioEngine::PlaySound(audioComponent.Audio);
+			Audio::AudioService::PlaySound(audioComponent.Audio);
 		}
 		
 	}

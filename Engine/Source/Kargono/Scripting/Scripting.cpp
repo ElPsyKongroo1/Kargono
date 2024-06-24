@@ -8,8 +8,8 @@
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Audio/AudioEngine.h"
-#include "Kargono/RuntimeUI/Runtime.h"
+#include "Kargono/Audio/Audio.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
@@ -30,13 +30,13 @@ namespace Kargono::Scripting
 
 namespace Kargono::Scripting
 {
-	void ScriptCore::Init()
+	void ScriptService::Init()
 	{
 		s_ScriptingData = new ScriptingData();
 		KG_VERIFY(s_ScriptingData, "Scripting System Init");
 	}
 
-	void ScriptCore::Terminate()
+	void ScriptService::Terminate()
 	{
 		if (!s_ScriptingData) { return; }
 
@@ -51,7 +51,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(!s_ScriptingData, "Close Scripting System")
 	}
 
-	void ScriptCore::LoadActiveScriptModule()
+	void ScriptService::LoadActiveScriptModule()
 	{
 		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
 		
@@ -103,7 +103,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting DLL Opened");
 
 	}
-	void ScriptCore::CloseActiveScriptModule()
+	void ScriptService::CloseActiveScriptModule()
 	{
 		if (!s_ScriptingData)
 		{
@@ -132,7 +132,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(!s_ScriptingData->DLLInstance, "Close Scripting DLL");
 	}
 
-	void ScriptCore::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
+	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
 		if (!s_ScriptingData || !s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
 		{
@@ -320,13 +320,13 @@ namespace Kargono::Scripting
 
 	void ScriptModuleBuilder::CreateScriptModule(bool addDebugSymbols)
 	{
-		ScriptCore::CloseActiveScriptModule();
+		ScriptService::CloseActiveScriptModule();
 
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
 		CompileModuleCode(addDebugSymbols);
 
-		ScriptCore::LoadActiveScriptModule();
+		ScriptService::LoadActiveScriptModule();
 		Assets::AssetManager::DeserializeScriptRegistry();
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
@@ -568,23 +568,23 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
 		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
-		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioEngine::PlaySoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioEngine::PlayStereoSoundFromName,VoidString) 
+		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
+		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeEngine::SetActiveInputModeByName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::Runtime::LoadUserInterfaceFromName,VoidString) 
+		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeService::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
-		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::Runtime::SetDisplayWindow,VoidStringBool) 
+		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeService::SetDisplayWindow,VoidStringBool) 
 		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameState::SetActiveGameStateField, VoidStringVoidPtr) 
-		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::Runtime::SetWidgetText,VoidStringStringString) 
-		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::Runtime::SetSelectedWidget,VoidStringString) 
-		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::Runtime::SetWidgetTextColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::Runtime::SetWidgetBackgroundColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::Runtime::SetWidgetSelectable,VoidStringStringBool) 
+		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeService::SetWidgetText,VoidStringStringString) 
+		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeService::SetSelectedWidget,VoidStringString) 
+		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeService::SetWidgetTextColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeService::SetWidgetBackgroundColor,VoidStringStringVec4) 
+		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeService::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneEngine::TransformComponent_GetTranslation, Vec3UInt64)
-		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneEngine::SetEntityFieldByName, VoidUInt64StringVoidPtr)
+		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponent_GetTranslation, Vec3UInt64)
+		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
 	}
 }
 

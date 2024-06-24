@@ -5,7 +5,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
 #include "Kargono/Core/EngineCore.h"
-#include "Kargono/EditorUI/Editor.h"
+#include "Kargono/EditorUI/EditorUI.h"
 
 #include "API/Platform/GlfwAPI.h"
 
@@ -64,7 +64,7 @@ namespace Kargono::Rendering
 	{
 		if (Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt))
 		{
-			EditorUI::Editor::SetDisableLeftClick(true);
+			EditorUI::EditorUIService::SetDisableLeftClick(true);
 		}
 
 		switch (m_MovementType)

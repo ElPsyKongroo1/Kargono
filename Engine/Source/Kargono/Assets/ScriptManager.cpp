@@ -506,7 +506,7 @@ namespace Kargono::Assets
 		newScript->m_FuncType = metadata.FunctionType;
 		newScript->m_ScriptType = metadata.ScriptType;
 		newScript->m_SectionLabel = metadata.SectionLabel;
-		Scripting::ScriptCore::LoadScriptFunction(newScript, metadata.FunctionType);
+		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
 
 		return newScript;
 	}

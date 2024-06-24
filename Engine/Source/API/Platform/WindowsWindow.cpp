@@ -3,7 +3,7 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Projects/Project.h"
 
 #include "API/Platform/WindowsWindow.h"

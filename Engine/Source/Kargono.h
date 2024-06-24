@@ -9,7 +9,7 @@
 #include "Kargono/Assets/AssetManager.h"
 
 //-----------------Audio-----------------//
-#include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Audio/Audio.h"
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
@@ -42,7 +42,7 @@
 #include "Kargono/Projects/Project.h"
 
 //-----------------Rendering-----------------//
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/InputBuffer.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/Shape.h"
@@ -64,11 +64,11 @@
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//
-#include "Kargono/RuntimeUI/Runtime.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/RuntimeUI/Text.h"
 
 //-----------------Editor-UserInterface-----------------//
-#include "Kargono/EditorUI/Editor.h"
+#include "Kargono/EditorUI/EditorUI.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utility/Time.h"

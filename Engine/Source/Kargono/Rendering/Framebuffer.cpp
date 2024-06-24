@@ -2,7 +2,7 @@
 
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Rendering/RendererAPI.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 
 #include "API/RenderingAPI/OpenGLFramebuffer.h"
 
