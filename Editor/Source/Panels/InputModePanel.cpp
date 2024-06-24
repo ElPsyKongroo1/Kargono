@@ -293,7 +293,7 @@ namespace Kargono::Panels
 				else
 				{
 					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
-					std::string displayValue {script->m_SectionLabel + ":" + script->m_ScriptName };
+					std::string displayValue {Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName };
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						displayValue,
@@ -372,15 +372,17 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_KeyboardOnUpdateAddFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) + 
+						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
 					}
-					s_KeyboardOnUpdateAddFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
+						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 			}
 		};
@@ -460,15 +462,17 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_KeyboardOnUpdateEditFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
 					}
-					s_KeyboardOnUpdateEditFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 			}
 		};
@@ -511,7 +515,7 @@ namespace Kargono::Panels
 				else
 				{
 					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
-					std::string displayValue {script->m_SectionLabel + ":" + script->m_ScriptName };
+					std::string displayValue {Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + ":" + script->m_ScriptName };
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						displayValue,
@@ -590,15 +594,17 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_KeyboardOnKeyPressedAddFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnKeyPressedAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) 
+						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
 					}
-					s_KeyboardOnKeyPressedAddFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnKeyPressedAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
+						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 			}
 		};
@@ -678,15 +684,17 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_KeyboardOnKeyPressedEditFunction.AddToOptions("Class::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
+						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global)
+				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
 					}
-					s_KeyboardOnKeyPressedEditFunction.AddToOptions("Global::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
+						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 			}
 		};

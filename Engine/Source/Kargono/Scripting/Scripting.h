@@ -20,7 +20,7 @@ namespace Kargono::Scripting
 {
 	class Script;
 	//==============================
-	// Script Core Class // TODO RENAME TO SCRIPTENGINE after removing mono!
+	// Script Service Class 
 	//==============================
 	class ScriptService
 	{
@@ -41,6 +41,16 @@ namespace Kargono::Scripting
 		// Manage Individual Scripts
 		//==============================
 		static void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		static std::vector<Ref<Script>>& GetAllEngineScripts()
+		{
+			return s_AllEngineScripts;
+		}
+	private:
+		static std::vector<Ref<Script>> s_AllEngineScripts;
 	private:
 		friend Assets::AssetManager;
 	};

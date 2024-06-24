@@ -1,7 +1,37 @@
 Registry: UserInterface
 Assets:
-  - AssetHandle: 488828647253671310
+  - AssetHandle: 6141088209929652030
     MetaData:
-      CheckSum: f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b
-      IntermediateLocation: Input/asdf.kginput
+      CheckSum: 1093115897879aa3ad9511a1dc2850929cfb60ba45ec741605f69f5d20203472
+      IntermediateLocation: Input/Runtime.kginput
+      AssetType: InputMode
+  - AssetHandle: 6646695206662535356
+    MetaData:
+      CheckSum: 636d4cbcdd1be3086ae229604a4281ee80ac80127ff3b5401bd171c5f33cda41
+      IntermediateLocation: Input/Pre_Start.kginput
+      AssetType: InputMode
+  - AssetHandle: 15180498886148191770
+    MetaData:
+      CheckSum: d87d72dd54743bbf9454776bdc7f8c33981d0646dfa567a727a17a577aa13909
+      IntermediateLocation: Input/MainMenu.kginput
+      AssetType: InputMode
+  - AssetHandle: 11366918542566920871
+    MetaData:
+      CheckSum: dc8652de77e4f1a257d741d919309974b6caf759527cb337f2d5bc36b28792e5
+      IntermediateLocation: Input/Online_Player2_Runtime.kginput
+      AssetType: InputMode
+  - AssetHandle: 7202480273432023967
+    MetaData:
+      CheckSum: 70367fb9c8177ad2f20083ede6d19295f4c8b77345afb8c8cb3dc1c3f32f8ea8
+      IntermediateLocation: Input/Online_Lobby_Input.kginput
+      AssetType: InputMode
+  - AssetHandle: 7279032077281871616
+    MetaData:
+      CheckSum: a99b296d3fc7e35998b6f2c1a7fc42c39967b44d9a56baedc3eda067da5020fb
+      IntermediateLocation: Input/Online_Player1_Runtime.kginput
+      AssetType: InputMode
+  - AssetHandle: 7394775504069824075
+    MetaData:
+      CheckSum: e9547ae32d715fb76f84b3a549f291c005ef5423455b98b01596a00dd6542f16
+      IntermediateLocation: Input/Online_Pre_Start.kginput
       AssetType: InputMode
