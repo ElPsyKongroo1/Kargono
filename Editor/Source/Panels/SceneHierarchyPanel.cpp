@@ -148,7 +148,7 @@ namespace Kargono::Panels
 		};
 		s_EditClassFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::EditVariable(s_EditFieldValue);
+			EditorUI::EditorUIService::EditVariable(s_EditFieldValue);
 		};
 		s_EditClassFieldPopup.ConfirmAction = [&]()
 		{
@@ -199,7 +199,7 @@ namespace Kargono::Panels
 	void SceneHierarchyPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
 		if (Scenes::Scene::GetActiveScene())
 		{
@@ -224,15 +224,15 @@ namespace Kargono::Panels
 			}
 
 		}
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 
-		EditorUI::Editor::StartWindow("Properties");
+		EditorUI::EditorUIService::StartWindow("Properties");
 		if (*Scenes::Scene::GetActiveScene()->GetSelectedEntity())
 		{
 			DrawComponents(*Scenes::Scene::GetActiveScene()->GetSelectedEntity());
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool SceneHierarchyPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -511,9 +511,9 @@ namespace Kargono::Panels
 			{
 				component.Primary = value;
 			};
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::Editor::Checkbox(s_PrimaryCameraCheckboxSpec);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Checkbox(s_PrimaryCameraCheckboxSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 
 			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
@@ -557,14 +557,14 @@ namespace Kargono::Panels
 		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 		{
 			Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
-			EditorUI::Editor::CollapsingHeader(s_ClassInstanceHeader);
+			EditorUI::EditorUIService::CollapsingHeader(s_ClassInstanceHeader);
 			if (s_ClassInstanceHeader.Expanded)
 			{
-				EditorUI::Editor::SelectOption(s_SelectClassOption);
+				EditorUI::EditorUIService::SelectOption(s_SelectClassOption);
 				if (component.ClassHandle != Assets::EmptyHandle)
 				{
-					EditorUI::Editor::Table(s_InstanceFieldsTable);
-					EditorUI::Editor::GenericPopup(s_EditClassFieldPopup);
+					EditorUI::EditorUIService::Table(s_InstanceFieldsTable);
+					EditorUI::EditorUIService::GenericPopup(s_EditClassFieldPopup);
 				}
 			}
 		}
@@ -952,7 +952,7 @@ namespace Kargono::Panels
 			auto AddTextureSection = [&]()
 			{
 				s_ShapeAddTextureCheckboxSpec.ToggleBoolean = component.ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
-				EditorUI::Editor::Checkbox(s_ShapeAddTextureCheckboxSpec);
+				EditorUI::EditorUIService::Checkbox(s_ShapeAddTextureCheckboxSpec);
 				s_ShapeAddTextureCheckboxSpec.ConfirmAction = [&](bool value)
 				{
 					value ? component.ShaderSpecification.TextureInput = Rendering::TextureInputType::ColorTexture :
@@ -1023,7 +1023,7 @@ namespace Kargono::Panels
 					}
 				};
 				s_ShapeAddCircleSpec.ToggleBoolean = component.ShaderSpecification.AddCircleShape;
-				EditorUI::Editor::Checkbox(s_ShapeAddCircleSpec);
+				EditorUI::EditorUIService::Checkbox(s_ShapeAddCircleSpec);
 				if (component.ShaderSpecification.AddCircleShape)
 				{
 					float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
@@ -1042,7 +1042,7 @@ namespace Kargono::Panels
 					updateComponent();
 				};
 				s_ShapeAddProjectionSpec.ToggleBoolean = component.ShaderSpecification.AddProjectionMatrix;
-				EditorUI::Editor::Checkbox(s_ShapeAddProjectionSpec);
+				EditorUI::EditorUIService::Checkbox(s_ShapeAddProjectionSpec);
 			};
 
 			auto AddEntityIDSection = [&]()
@@ -1053,7 +1053,7 @@ namespace Kargono::Panels
 					updateComponent();
 				};
 				s_ShapeAddEntityIDSpec.ToggleBoolean = component.ShaderSpecification.AddEntityID;
-				EditorUI::Editor::Checkbox(s_ShapeAddEntityIDSpec);
+				EditorUI::EditorUIService::Checkbox(s_ShapeAddEntityIDSpec);
 			};
 			
 
@@ -1144,7 +1144,7 @@ namespace Kargono::Panels
 				component.FixedRotation = value;
 			};
 			s_RigidBodyFixedRotSpec.ToggleBoolean = component.FixedRotation;
-			EditorUI::Editor::Checkbox(s_RigidBodyFixedRotSpec);
+			EditorUI::EditorUIService::Checkbox(s_RigidBodyFixedRotSpec);
 		});
 
 		DrawComponent<Scenes::BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)

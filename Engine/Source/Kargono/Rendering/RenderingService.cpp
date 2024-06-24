@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Rendering/UniformBuffer.h"
@@ -17,7 +17,7 @@ namespace Kargono::Rendering
 
 		float LineWidth = 2.0f;
 
-		RenderingEngine::Statistics Stats;
+		RenderingService::Statistics Stats;
 
 		struct CameraData
 		{
@@ -37,61 +37,61 @@ namespace Kargono::Rendering
 
 
 
-	void RenderingEngine::OnWindowResize(uint32_t width, uint32_t height)
+	void RenderingService::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RendererAPI::SetViewport(0, 0, width, height);
 	}
 
-	void RenderingEngine::Init()
+	void RenderingService::Init()
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "No valid project is active while trying to initialize shaders!");
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		KG_VERIFY(s_Data.CameraUniformBuffer, "Renderer Init")
 	}
-	void RenderingEngine::Shutdown()
+	void RenderingService::Shutdown()
 	{
 	}
-	void RenderingEngine::BeginScene(const Camera& camera, const Math::mat4& transform)
+	void RenderingService::BeginScene(const Camera& camera, const Math::mat4& transform)
 	{
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * transform;
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
-	void RenderingEngine::BeginScene(const EditorCamera& camera)
+	void RenderingService::BeginScene(const EditorCamera& camera)
 	{
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
-	void RenderingEngine::BeginScene(const Math::mat4 projection)
+	void RenderingService::BeginScene(const Math::mat4 projection)
 	{
 		s_Data.CameraBuffer.ViewProjection = projection;
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
-	void RenderingEngine::EndScene()
+	void RenderingService::EndScene()
 	{
 		FlushBuffers();
 	}
 
-	float RenderingEngine::GetLineWidth()
+	float RenderingService::GetLineWidth()
 	{
 		return s_Data.LineWidth;
 	}
-	void RenderingEngine::SetLineWidth(float width)
+	void RenderingService::SetLineWidth(float width)
 	{
 		s_Data.LineWidth = width;
 	}
 
-	void RenderingEngine::ResetStats()
+	void RenderingService::ResetStats()
 	{
 		memset(&s_Data.Stats, 0, sizeof(Statistics));
 	}
-	RenderingEngine::Statistics RenderingEngine::GetStats()
+	RenderingService::Statistics RenderingService::GetStats()
 	{
 		return s_Data.Stats;
 	}
 
-	void RenderingEngine::FillTextureIndex(RendererInputSpec& inputSpec)
+	void RenderingService::FillTextureIndex(RendererInputSpec& inputSpec)
 	{
 		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
 		KG_ASSERT(inputSpec.ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
@@ -122,19 +122,19 @@ namespace Kargono::Rendering
 		Shader::SetDataAtInputLocation<float>(textureIndex, "a_TexIndex", inputSpec.Buffer, inputSpec.Shader);
 	}
 
-	void RenderingEngine::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec2& coordinates  = inputSpec.ShapeComponent->TextureCoordinates->at(iteration);
 		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, "a_TexCoord", inputSpec.Buffer, inputSpec.Shader);
 	}
 
-	void RenderingEngine::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration) * 2.0f;
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_LocalPosition", inputSpec.Buffer, inputSpec.Shader);
 	}
 
-	void RenderingEngine::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
 		Math::vec3 worldPosition = inputSpec.TransformMatrix * Math::vec4(localPosition, 1.0f);
@@ -142,21 +142,21 @@ namespace Kargono::Rendering
 	}
 
 
-	void RenderingEngine::FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
 
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
 	}
 
-	void RenderingEngine::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		auto& colorVector = inputSpec.ShapeComponent->VertexColors;
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
 		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), "a_Color", inputSpec.Buffer, inputSpec.Shader);
 	}
 
-	void RenderingEngine::FillIndicesData(RendererInputSpec& inputSpec)
+	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
 	{
 		// Upload Indices
 		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
@@ -167,7 +167,7 @@ namespace Kargono::Rendering
 		}
 	}
 
-	void RenderingEngine::SubmitDataToRenderer(RendererInputSpec& inputSpec)
+	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
 	{
 		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == RenderingType::None) { return; }
 
@@ -224,31 +224,31 @@ namespace Kargono::Rendering
 		
 	}
 
-	void RenderingEngine::FillTextureUniform(Ref<DrawCallBuffer> buffer)
+	void RenderingService::FillTextureUniform(Ref<DrawCallBuffer> buffer)
 	{
 		for (uint32_t i = 0; i < buffer->Textures.size(); i++) { buffer->Textures[i]->Bind(i); }
 	}
 
-	void RenderingEngine::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
+	void RenderingService::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::DrawIndexed(buffer->Shader->GetVertexArray(), buffer->IndexBuffer.data(), static_cast<uint32_t>(buffer->IndexBuffer.size()));
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void RenderingEngine::DrawBufferLine(Ref<DrawCallBuffer> buffer)
+	void RenderingService::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetLineWidth(s_Data.LineWidth);
 		RendererAPI::DrawLines(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void RenderingEngine::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
+	void RenderingService::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::DrawTriangles(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void RenderingEngine::FlushBuffers()
+	void RenderingService::FlushBuffers()
 	{
 		auto& allBuffers = s_Data.DrawCalls;
 

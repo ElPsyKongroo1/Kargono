@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Audio/Audio.h"
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Assets/AssetManager.h"
 
@@ -8,7 +8,7 @@
 
 namespace Kargono::Audio
 {
-	AudioEngine* AudioEngine::s_AudioContext = new AudioEngine();
+	AudioService* AudioService::s_AudioContext = new AudioService();
 	static AudioSourceSpecification s_DefaultSourceSpec =
 	{
 		{},
@@ -49,7 +49,7 @@ namespace Kargono::Audio
 		CallAndCheckALError(alDeleteBuffers(1, &(m_BufferID)));
 	}
 
-	void AudioEngine::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
+	void AudioService::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
 	{
 		static ALfloat forwardAndUpVectors[] =
 		{
@@ -68,7 +68,7 @@ namespace Kargono::Audio
 		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 		CallAndCheckALError(alSourcePlay(sourceID));
 	}
-	void AudioEngine::PlayStereoSoundFromName(const std::string& audioName)
+	void AudioService::PlayStereoSoundFromName(const std::string& audioName)
 	{
 		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
 		if (audioBuffer)
@@ -76,7 +76,7 @@ namespace Kargono::Audio
 			PlayStereoSound(audioBuffer);
 		}
 	}
-	void AudioEngine::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
+	void AudioService::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
 	{
 		auto audioSource = s_AudioContext->m_AudioSourceQueue.front();
 		uint32_t sourceID = audioSource->GetSourceID();
@@ -106,21 +106,21 @@ namespace Kargono::Audio
 		
 	}
 
-	void AudioEngine::PlaySound(Ref<AudioBuffer> audioBuffer)
+	void AudioService::PlaySound(Ref<AudioBuffer> audioBuffer)
 	{
 		s_DefaultSourceSpec.CurrentBuffer = audioBuffer;
 		PlaySound(s_DefaultSourceSpec);
 	}
 
-	void AudioEngine::PlaySoundFromName(const std::string& audioName)
+	void AudioService::PlaySoundFromName(const std::string& audioName)
 	{
 		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
 		if (audioBuffer)
 		{
-			Audio::AudioEngine::PlaySound(audioBuffer);
+			Audio::AudioService::PlaySound(audioBuffer);
 		}
 	}
-	void AudioEngine::StopAllAudio()
+	void AudioService::StopAllAudio()
 	{
 		for (uint32_t iterator{0}; iterator < s_AudioContext->m_AudioSourceQueue.size(); iterator++)
 		{
@@ -132,7 +132,7 @@ namespace Kargono::Audio
 
 		CallAndCheckALError(alSourceStop(s_AudioContext->m_StereoMusicSource->GetSourceID()));
 	}
-	void AudioEngine::Init()
+	void AudioService::Init()
 	{
 		// Find default audio device
 		s_AudioContext->m_CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
@@ -166,7 +166,7 @@ namespace Kargono::Audio
 		KG_VERIFY(s_AudioContext, "Audio Engine Init");
 	}
 
-	void AudioEngine::Terminate()
+	void AudioService::Terminate()
 	{
 		s_DefaultSourceSpec.CurrentBuffer.reset();
 		s_AudioContext->m_StereoMusicSource.reset();

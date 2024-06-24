@@ -4,7 +4,7 @@
 #include "Kargono/Scenes/Components.h"
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Rendering/Shader.h"
@@ -327,7 +327,7 @@ namespace Kargono::Scenes
 	}
 	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transform)
 	{
-		Rendering::RenderingEngine::BeginScene(camera, transform);
+		Rendering::RenderingService::BeginScene(camera, transform);
 		// Draw Shapes
 		{
 			auto view = m_Registry.view<TransformComponent, ShapeComponent>();
@@ -348,11 +348,11 @@ namespace Kargono::Scenes
 					PerObjectSceneFunction(inputSpec);
 				}
 
-				Rendering::RenderingEngine::SubmitDataToRenderer(inputSpec);
+				Rendering::RenderingService::SubmitDataToRenderer(inputSpec);
 			}
 		}
 
-		Rendering::RenderingEngine::EndScene();
+		Rendering::RenderingService::EndScene();
 
 	}
 	void Scene::OnUpdatePhysics(Timestep ts)
@@ -393,18 +393,18 @@ namespace Kargono::Scenes
 	{
 		
 	}
-	void SceneEngine::Init()
+	void SceneService::Init()
 	{
 		RegisterHasComponent(AllComponents{});
 	}
-	Math::vec3 SceneEngine::TransformComponent_GetTranslation(UUID entityID)
+	Math::vec3 SceneService::TransformComponent_GetTranslation(UUID entityID)
 	{
 		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
 		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 
 		return entity.GetComponent<Scenes::TransformComponent>().Translation;
 	}
-	void SceneEngine::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
+	void SceneService::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
 	{
 		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
 		Scenes::Entity entity = scene->GetEntityByUUID(entityID);

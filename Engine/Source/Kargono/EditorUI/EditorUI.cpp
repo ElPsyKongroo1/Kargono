@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/EditorUI/Editor.h"
+#include "Kargono/EditorUI/EditorUI.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
@@ -14,64 +14,64 @@
 
 namespace Kargono::EditorUI
 {
-	ImFont* Editor::s_AntaLarge{ nullptr };
-	ImFont* Editor::s_AntaRegular{ nullptr };
-	ImFont* Editor::s_AntaSmall{ nullptr };
-	ImFont* Editor::s_PlexBold{ nullptr };
-	ImFont* Editor::s_PlexRegular{ nullptr };
-	ImFont* Editor::s_OpenSansRegular{ nullptr };
-	ImFont* Editor::s_OpenSansBold{ nullptr };
-	ImFont* Editor::s_RobotoRegular{ nullptr };
-	ImFont* Editor::s_RobotoMono{ nullptr };
-	ImFont* Editor::s_AnonymousRegular{ nullptr };
+	ImFont* EditorUIService::s_AntaLarge{ nullptr };
+	ImFont* EditorUIService::s_AntaRegular{ nullptr };
+	ImFont* EditorUIService::s_AntaSmall{ nullptr };
+	ImFont* EditorUIService::s_PlexBold{ nullptr };
+	ImFont* EditorUIService::s_PlexRegular{ nullptr };
+	ImFont* EditorUIService::s_OpenSansRegular{ nullptr };
+	ImFont* EditorUIService::s_OpenSansBold{ nullptr };
+	ImFont* EditorUIService::s_RobotoRegular{ nullptr };
+	ImFont* EditorUIService::s_RobotoMono{ nullptr };
+	ImFont* EditorUIService::s_AnonymousRegular{ nullptr };
 
-	Ref<Rendering::Texture2D> Editor::s_IconPlay{};
-	Ref<Rendering::Texture2D> Editor::s_IconPause{};
-	Ref<Rendering::Texture2D> Editor::s_IconStop{};
-	Ref<Rendering::Texture2D> Editor::s_IconStep{};
-	Ref<Rendering::Texture2D> Editor::s_IconSimulate{};
-	Ref<Rendering::Texture2D> Editor::s_IconAddItem{};
-	Ref<Rendering::Texture2D> Editor::s_IconDisplay{};
-	Ref<Rendering::Texture2D> Editor::s_IconDisplayActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconCamera{};
-	Ref<Rendering::Texture2D> Editor::s_IconCameraActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconPlayActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconStopActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconPauseActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconStepActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconSimulateActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconSettings{};
-	Ref<Rendering::Texture2D> Editor::s_IconDelete{};
-	Ref<Rendering::Texture2D> Editor::s_IconDeleteActive{};
-	Ref<Rendering::Texture2D> Editor::s_IconEdit{};
-	Ref<Rendering::Texture2D> Editor::s_IconEdit_Active{};
-	Ref<Rendering::Texture2D> Editor::s_IconCancel{};
-	Ref<Rendering::Texture2D> Editor::s_IconConfirm{};
-	Ref<Rendering::Texture2D> Editor::s_IconSearch{};
-	Ref<Rendering::Texture2D> Editor::s_IconCheckbox_Empty_Disabled{};
-	Ref<Rendering::Texture2D> Editor::s_IconCheckbox_Check_Disabled{};
-	Ref<Rendering::Texture2D> Editor::s_IconCheckbox_Empty_Enabled{};
-	Ref<Rendering::Texture2D> Editor::s_IconCheckbox_Check_Enabled{};
-	Ref<Rendering::Texture2D> Editor::s_IconOptions{};
-	Ref<Rendering::Texture2D> Editor::s_IconDown{};
-	Ref<Rendering::Texture2D> Editor::s_IconRight{};
-	Ref<Rendering::Texture2D> Editor::s_IconDash{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconPlay{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconPause{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconStop{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconStep{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulate{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconAddItem{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplay{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplayActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCamera{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCameraActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconPlayActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconStopActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconPauseActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconStepActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulateActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconSettings{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDelete{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDeleteActive{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconEdit{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconEdit_Active{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCancel{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconConfirm{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconSearch{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Empty_Disabled{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Check_Disabled{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Empty_Enabled{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Check_Enabled{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconOptions{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDown{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconRight{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconDash{};
 
-	Ref<Rendering::Texture2D> Editor::s_DirectoryIcon{};
-	Ref<Rendering::Texture2D> Editor::s_GenericFileIcon{};
-	Ref<Rendering::Texture2D> Editor::s_BackIcon{};
-	Ref<Rendering::Texture2D> Editor::s_BackInactiveIcon{};
-	Ref<Rendering::Texture2D> Editor::s_ForwardIcon{};
-	Ref<Rendering::Texture2D> Editor::s_ForwardInactiveIcon{};
-	Ref<Rendering::Texture2D> Editor::s_AudioIcon{};
-	Ref<Rendering::Texture2D> Editor::s_ImageIcon{};
-	Ref<Rendering::Texture2D> Editor::s_BinaryIcon{};
-	Ref<Rendering::Texture2D> Editor::s_SceneIcon{};
-	Ref<Rendering::Texture2D> Editor::s_RegistryIcon{};
-	Ref<Rendering::Texture2D> Editor::s_ScriptProjectIcon{};
-	Ref<Rendering::Texture2D> Editor::s_UserInterfaceIcon{};
-	Ref<Rendering::Texture2D> Editor::s_FontIcon{};
-	Ref<Rendering::Texture2D> Editor::s_InputIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_DirectoryIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_GenericFileIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_BackIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_BackInactiveIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_ForwardIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_ForwardInactiveIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_AudioIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_ImageIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_BinaryIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_SceneIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_RegistryIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_ScriptProjectIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_UserInterfaceIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_FontIcon{};
+	Ref<Rendering::Texture2D> EditorUIService::s_InputIcon{};
 
 	void SetDarkThemeColors()
 	{
@@ -85,13 +85,13 @@ namespace Kargono::EditorUI
 
 		// Buttons
 		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_ButtonHovered] = Editor::s_LightPurple_Thin;
+		colors[ImGuiCol_ButtonHovered] = EditorUIService::s_LightPurple_Thin;
 		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 		// Frame BG
-		colors[ImGuiCol_FrameBg] = Editor::s_PureEmpty;
-		colors[ImGuiCol_FrameBgHovered] = Editor::s_PureEmpty;
-		colors[ImGuiCol_FrameBgActive] = Editor::s_PureEmpty;
+		colors[ImGuiCol_FrameBg] = EditorUIService::s_PureEmpty;
+		colors[ImGuiCol_FrameBgHovered] = EditorUIService::s_PureEmpty;
+		colors[ImGuiCol_FrameBgActive] = EditorUIService::s_PureEmpty;
 
 		// Tabs
 		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
@@ -112,16 +112,16 @@ namespace Kargono::EditorUI
 
 	static void InitializeTableResources()
 	{
-		s_TableEditButton = Editor::s_SmallEditButton;
+		s_TableEditButton = EditorUIService::s_SmallEditButton;
 		s_TableEditButton.YPosition = -5.5f;
 
-		s_TableLinkButton = Editor::s_SmallLinkButton;
+		s_TableLinkButton = EditorUIService::s_SmallLinkButton;
 		s_TableLinkButton.YPosition = -5.5f;
 
-		s_TableExpandButton = Editor::s_SmallExpandButton;
+		s_TableExpandButton = EditorUIService::s_SmallExpandButton;
 	}
 
-	void Editor::Init()
+	void EditorUIService::Init()
 	{
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -219,8 +219,8 @@ namespace Kargono::EditorUI
 				390.0f,
 				0.0f,
 				13.0f,
-				EditorUI::Editor::s_IconEdit_Active,
-				EditorUI::Editor::s_IconEdit,
+				EditorUI::EditorUIService::s_IconEdit_Active,
+				EditorUI::EditorUIService::s_IconEdit,
 				"Cancel Editing",
 				"Edit",
 				PositionType::Absolute
@@ -230,8 +230,8 @@ namespace Kargono::EditorUI
 				-1.2f,
 				4.0f,
 				14.0f,
-				EditorUI::Editor::s_IconDown,
-				EditorUI::Editor::s_IconRight,
+				EditorUI::EditorUIService::s_IconDown,
+				EditorUI::EditorUIService::s_IconRight,
 				"Collapse",
 				"Expand",
 				PositionType::Inline
@@ -241,8 +241,8 @@ namespace Kargono::EditorUI
 				386.0f,
 				1.0f,
 				19.0f,
-				EditorUI::Editor::s_IconOptions,
-				EditorUI::Editor::s_IconOptions,
+				EditorUI::EditorUIService::s_IconOptions,
+				EditorUI::EditorUIService::s_IconOptions,
 				"Options",
 				"Options",
 				PositionType::Absolute
@@ -252,8 +252,8 @@ namespace Kargono::EditorUI
 				0.0,
 				0.0f,
 				14.0f,
-				EditorUI::Editor::s_IconCheckbox_Check_Enabled,
-				EditorUI::Editor::s_IconCheckbox_Empty_Enabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Check_Enabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Empty_Enabled,
 				"Uncheck",
 				"Check",
 				PositionType::Inline
@@ -263,8 +263,8 @@ namespace Kargono::EditorUI
 				390.0,
 				0.0f,
 				14.0f,
-				EditorUI::Editor::s_ForwardInactiveIcon,
-				EditorUI::Editor::s_ForwardInactiveIcon,
+				EditorUI::EditorUIService::s_ForwardInactiveIcon,
+				EditorUI::EditorUIService::s_ForwardInactiveIcon,
 				"Open",
 				"Open",
 				PositionType::Absolute
@@ -274,8 +274,8 @@ namespace Kargono::EditorUI
 				-112.0f,
 				-0.6f,
 				28.0f,
-				EditorUI::Editor::s_IconDeleteActive,
-				EditorUI::Editor::s_IconDeleteActive,
+				EditorUI::EditorUIService::s_IconDeleteActive,
+				EditorUI::EditorUIService::s_IconDeleteActive,
 				"Delete",
 				"Delete",
 				PositionType::Relative
@@ -285,8 +285,8 @@ namespace Kargono::EditorUI
 				-75.0f,
 				-0.6f,
 				28.0f,
-				EditorUI::Editor::s_IconCancel,
-				EditorUI::Editor::s_IconCancel,
+				EditorUI::EditorUIService::s_IconCancel,
+				EditorUI::EditorUIService::s_IconCancel,
 				"Cancel",
 				"Cancel",
 				PositionType::Relative
@@ -296,8 +296,8 @@ namespace Kargono::EditorUI
 				-38.0f,
 				-0.6f,
 				28.0f,
-				EditorUI::Editor::s_IconConfirm,
-				EditorUI::Editor::s_IconConfirm,
+				EditorUI::EditorUIService::s_IconConfirm,
+				EditorUI::EditorUIService::s_IconConfirm,
 				"Confirm",
 				"Confirm",
 				PositionType::Relative
@@ -307,8 +307,8 @@ namespace Kargono::EditorUI
 				-112.0f,
 				-0.6f,
 				28.0f,
-				EditorUI::Editor::s_IconSearch,
-				EditorUI::Editor::s_IconSearch,
+				EditorUI::EditorUIService::s_IconSearch,
+				EditorUI::EditorUIService::s_IconSearch,
 				"Cancel Search",
 				"Search",
 				PositionType::Relative
@@ -321,7 +321,7 @@ namespace Kargono::EditorUI
 		KG_VERIFY(s_Running && ImGui::GetCurrentContext(), "Editor UI Initiated")
 	}
 
-	void Editor::Terminate()
+	void EditorUIService::Terminate()
 	{
 		if (s_Running)
 		{
@@ -333,7 +333,7 @@ namespace Kargono::EditorUI
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
 
-	void Editor::StartRendering()
+	void EditorUIService::StartRendering()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -341,7 +341,7 @@ namespace Kargono::EditorUI
 		ImGuizmo::BeginFrame();
 	}
 
-	void Editor::EndRendering()
+	void EditorUIService::EndRendering()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		EngineCore& app = EngineCore::GetCurrentEngineCore();
@@ -363,22 +363,22 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::StartWindow(const std::string& label, bool* closeWindow, int32_t flags)
+	void EditorUIService::StartWindow(const std::string& label, bool* closeWindow, int32_t flags)
 	{
 		ImGui::Begin(label.c_str(), closeWindow, flags);
 	}
 
-	void Editor::EndWindow()
+	void EditorUIService::EndWindow()
 	{
 		ImGui::End();
 	}
 
-	uint32_t Editor::GetActiveWidgetID()
+	uint32_t EditorUIService::GetActiveWidgetID()
 	{
 		return GImGui->ActiveId;
 	}
 
-	std::string Editor::GetFocusedWindowName()
+	std::string EditorUIService::GetFocusedWindowName()
 	{
 		if (GImGui->NavWindow)
 		{
@@ -387,17 +387,17 @@ namespace Kargono::EditorUI
 		return {};
 	}
 
-	void Editor::SetFocusedWindow(const std::string& windowName)
+	void EditorUIService::SetFocusedWindow(const std::string& windowName)
 	{
 		ImGui::SetWindowFocus(windowName.c_str());
 	}
 
-	void Editor::ClearWindowFocus()
+	void EditorUIService::ClearWindowFocus()
 	{
 		ImGui::FocusWindow(NULL);
 	}
 
-	void Editor::HighlightFocusedWindow()
+	void EditorUIService::HighlightFocusedWindow()
 	{
 		ImGuiWindow* window = GImGui->NavWindow;
 		if (window)
@@ -409,17 +409,17 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::SetDisableLeftClick(bool option)
+	void EditorUIService::SetDisableLeftClick(bool option)
 	{
 		s_DisableLeftClick = option;
 	}
 
-	void Editor::BlockMouseEvents(bool block)
+	void EditorUIService::BlockMouseEvents(bool block)
 	{
 		s_BlockMouseEvents = block;
 	}
 
-	void Editor::OnEvent(Events::Event& e)
+	void EditorUIService::OnEvent(Events::Event& e)
 	{
 		KG_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
@@ -435,19 +435,19 @@ namespace Kargono::EditorUI
 		return ++count;
 	}
 
-	void Editor::Spacing(float space)
+	void EditorUIService::Spacing(float space)
 	{
 		ImGui::Dummy(ImVec2(0.0f, space));
 	}
 
-	void Editor::TitleText(const std::string& text)
+	void EditorUIService::TitleText(const std::string& text)
 	{
-		ImGui::PushFont(EditorUI::Editor::s_PlexBold);
+		ImGui::PushFont(EditorUI::EditorUIService::s_PlexBold);
 		ImGui::TextColored(s_PearlBlue, text.c_str());
 		ImGui::PopFont();
 	}
 
-	void Editor::Spacing(SpacingAmount space)
+	void EditorUIService::Spacing(SpacingAmount space)
 	{
 		switch (space)
 		{
@@ -475,7 +475,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::Separator()
+	void EditorUIService::Separator()
 	{
 		ImGui::Separator();
 	}
@@ -507,8 +507,8 @@ namespace Kargono::EditorUI
 		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
 
 		ImGui::Image((ImTextureID)(uint64_t)image->GetRendererID(), ImVec2(size, size),
-			ImVec2{ 0, 1 }, ImVec2(1, 0), Editor::s_PureWhite,
-			Editor::s_PureEmpty);
+			ImVec2{ 0, 1 }, ImVec2(1, 0), EditorUIService::s_PureWhite,
+			EditorUIService::s_PureEmpty);
 	}
 
 	static float SmallButtonAbsoluteLocation(uint32_t slot)
@@ -542,18 +542,18 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + spec.YPosition);
-		ImGui::PushStyleColor(ImGuiCol_Button, Editor::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 		if (spec.Disabled)
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, Editor::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
 		}
 		Ref<Rendering::Texture2D> iconChoice = active ? spec.ActiveIcon : spec.InactiveIcon;
 		if (ImGui::ImageButtonEx(widgetID,
 			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
 			ImVec2(spec.IconSize, spec.IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			Editor::s_PureEmpty,
-			EditorUI::Editor::s_PureWhite, 0))
+			EditorUIService::s_PureEmpty,
+			EditorUI::EditorUIService::s_PureWhite, 0))
 		{
 			onPress();
 		}
@@ -562,7 +562,7 @@ namespace Kargono::EditorUI
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, active ? spec.ActiveTooltip.c_str() : spec.InactiveTooltip.c_str());
+			ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, active ? spec.ActiveTooltip.c_str() : spec.InactiveTooltip.c_str());
 			ImGui::EndTooltip();
 		}
 	}
@@ -602,11 +602,11 @@ namespace Kargono::EditorUI
 		if (text.size() > maxTextSize)
 		{
 			std::string outputText = text.substr(0, maxTextSize - 2) + "..";
-			ImGui::TextColored(EditorUI::Editor::s_PureWhite, outputText.c_str());
+			ImGui::TextColored(EditorUI::EditorUIService::s_PureWhite, outputText.c_str());
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, text.c_str());
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, text.c_str());
 				ImGui::EndTooltip();
 			}
 		}
@@ -616,7 +616,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::GenericPopup(GenericPopupSpec& spec)
+	void EditorUIService::GenericPopup(GenericPopupSpec& spec)
 	{
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
@@ -637,9 +637,9 @@ namespace Kargono::EditorUI
 		ImGui::SetNextWindowSize(ImVec2(spec.PopupWidth, 0.0f));
 		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
 		{
-			EditorUI::Editor::TitleText(spec.Label);
+			EditorUI::EditorUIService::TitleText(spec.Label);
 
-			ImGui::PushFont(EditorUI::Editor::s_AntaRegular);
+			ImGui::PushFont(EditorUI::EditorUIService::s_AntaRegular);
 			if (spec.DeleteAction)
 			{
 				// Optional Delete Tool Bar Button
@@ -681,9 +681,9 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
+	void EditorUIService::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
 	{
-		ImGui::PushFont(EditorUI::Editor::s_AntaLarge);
+		ImGui::PushFont(EditorUI::EditorUIService::s_AntaLarge);
 		ImVec2 screenDimensions = ImGui::GetContentRegionAvail();
 		ImVec2 originalLocation = ImGui::GetCursorScreenPos();
 		if (screenDimensions.x > 700.0f)
@@ -710,7 +710,7 @@ namespace Kargono::EditorUI
 			{
 				onPress1();
 			}
-			Editor::Spacing(SpacingAmount::Small);
+			EditorUIService::Spacing(SpacingAmount::Small);
 			ImGui::SetCursorScreenPos(ImVec2(screenLocation.x, ImGui::GetCursorScreenPos().y));
 			if (ImGui::Button(label2.c_str(), ImVec2(screenDimensions.x / buttonDimensions.x, screenDimensions.y / buttonDimensions.y)))
 			{
@@ -721,7 +721,7 @@ namespace Kargono::EditorUI
 	}
 
 
-	void Editor::SelectOption(SelectOptionSpec& spec)
+	void EditorUIService::SelectOption(SelectOptionSpec& spec)
 	{
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
@@ -763,7 +763,7 @@ namespace Kargono::EditorUI
 				}
 				spec.CachedSelection = spec.CurrentOption;
 			},
-			Editor::s_SmallEditButton);
+			EditorUIService::s_SmallEditButton);
 
 		}
 		
@@ -773,9 +773,9 @@ namespace Kargono::EditorUI
 		{
 			static char searchBuffer[256];
 
-			EditorUI::Editor::TitleText(spec.Label);
+			EditorUI::EditorUIService::TitleText(spec.Label);
 
-			ImGui::PushFont(EditorUI::Editor::s_AntaRegular);
+			ImGui::PushFont(EditorUI::EditorUIService::s_AntaRegular);
 			if (spec.Searching)
 			{
 				ImGui::SameLine(ImGui::GetWindowWidth() - 124.0f - 200.0f);
@@ -868,7 +868,7 @@ namespace Kargono::EditorUI
 					}
 					iteration++;
 				}
-				Editor::Spacing(SpacingAmount::Medium);
+				EditorUIService::Spacing(SpacingAmount::Medium);
 			}
 
 			ImGui::PopFont();
@@ -876,7 +876,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::EditVariable(EditVariableSpec& spec)
+	void EditorUIService::EditVariable(EditVariableSpec& spec)
 	{
 		// Local Variables
 		uint32_t widgetCount{ 0 };
@@ -970,7 +970,7 @@ namespace Kargono::EditorUI
 		
 	}
 
-	void Editor::Checkbox(CheckboxSpec& spec)
+	void EditorUIService::Checkbox(CheckboxSpec& spec)
 	{
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
@@ -990,8 +990,8 @@ namespace Kargono::EditorUI
 
 		if (spec.Editing)
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Editor::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Button, Editor::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.ToggleBoolean)
@@ -1008,8 +1008,8 @@ namespace Kargono::EditorUI
 		else
 		{
 			CreateImage(spec.ToggleBoolean ?
-				EditorUI::Editor::s_IconCheckbox_Check_Disabled :
-				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled :
+				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
 				14);
 		}
 
@@ -1018,11 +1018,11 @@ namespace Kargono::EditorUI
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
-		Editor::s_SmallEditButton,
+		EditorUIService::s_SmallEditButton,
 		spec.Editing);
 	}
 
-	void Editor::RadioSelector(RadioSelectorSpec& spec)
+	void EditorUIService::RadioSelector(RadioSelectorSpec& spec)
 	{
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
@@ -1073,16 +1073,16 @@ namespace Kargono::EditorUI
 			TruncateText(spec.FirstOptionLabel, 12);
 			ImGui::SameLine();
 			CreateImage(spec.SelectedOption == 0 ? 
-				EditorUI::Editor::s_IconCheckbox_Check_Disabled : 
-				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled : 
+				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
 				14);
 
 			ImGui::SameLine(300.0f);
 			TruncateText(spec.SecondOptionLabel, 12);
 			ImGui::SameLine();
 			CreateImage(spec.SelectedOption == 1 ?
-				EditorUI::Editor::s_IconCheckbox_Check_Disabled :
-				EditorUI::Editor::s_IconCheckbox_Empty_Disabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled :
+				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
 				14);
 		}
 
@@ -1091,11 +1091,11 @@ namespace Kargono::EditorUI
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
-		Editor::s_SmallEditButton,
+		EditorUIService::s_SmallEditButton,
 		spec.Editing);
 	}
 
-	void Editor::Table(TableSpec& spec)
+	void EditorUIService::Table(TableSpec& spec)
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
@@ -1107,7 +1107,7 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
-			ImGui::PushFont(Editor::s_AntaLarge);
+			ImGui::PushFont(EditorUIService::s_AntaLarge);
 		}
 		TruncateText(spec.Label, 40);
 
@@ -1206,11 +1206,11 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::SelectorHeader(SelectorHeaderSpec& spec)
+	void EditorUIService::SelectorHeader(SelectorHeaderSpec& spec)
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
-		ImGui::PushFont(Editor::s_AntaLarge);
-		ImGui::TextColored(spec.EditColorActive ? Editor::s_PearlBlue : Editor::s_PureWhite , spec.Label.c_str());
+		ImGui::PushFont(EditorUIService::s_AntaLarge);
+		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_PearlBlue : EditorUIService::s_PureWhite , spec.Label.c_str());
 		ImGui::PopFont();
 
 		ImGui::SameLine();
@@ -1230,15 +1230,15 @@ namespace Kargono::EditorUI
 			}
 			ImGui::EndPopup();
 		}
-		EditorUI::Editor::Spacing(0.2f);
-		EditorUI::Editor::Separator();
+		EditorUI::EditorUIService::Spacing(0.2f);
+		EditorUI::EditorUIService::Separator();
 	}
 
-	void Editor::CollapsingHeader(CollapsingHeaderSpec& spec)
+	void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec)
 	{
 		uint32_t widgetCount{ 0 };
 		std::string id = "##" + std::to_string(spec.WidgetID);
-		ImGui::PushFont(Editor::s_AntaLarge);
+		ImGui::PushFont(EditorUIService::s_AntaLarge);
 		ImGui::Text(spec.Label.c_str());
 		ImGui::PopFont();
 		ImGui::SameLine();
@@ -1280,7 +1280,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void Editor::LabeledText(const std::string& label, const std::string& text)
+	void EditorUIService::LabeledText(const std::string& label, const std::string& text)
 	{
 		// Display Menu Item
 		TruncateText(label, 23);
@@ -1289,11 +1289,11 @@ namespace Kargono::EditorUI
 		WriteMultilineText(text, 200.0f, 23);
 		ImGui::PopStyleColor();
 	}
-	void Editor::Text(const std::string& Text)
+	void EditorUIService::Text(const std::string& Text)
 	{
 		ImGui::Text(Text.c_str());
 	}
-	void Editor::TextInputPopup(TextInputSpec& spec)
+	void EditorUIService::TextInputPopup(TextInputSpec& spec)
 	{
 		// Local Variables
 		static char stringBuffer[256];
@@ -1325,15 +1325,15 @@ namespace Kargono::EditorUI
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				memcpy_s(stringBuffer, sizeof(stringBuffer), spec.CurrentOption.data(), spec.CurrentOption.size());
 			},
-			Editor::s_SmallEditButton);
+			EditorUIService::s_SmallEditButton);
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
 		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
 		{
-			EditorUI::Editor::TitleText(popUpLabel);
+			EditorUI::EditorUIService::TitleText(popUpLabel);
 
-			ImGui::PushFont(EditorUI::Editor::s_AntaRegular);
+			ImGui::PushFont(EditorUI::EditorUIService::s_AntaRegular);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
@@ -1362,19 +1362,19 @@ namespace Kargono::EditorUI
 			ImGui::EndPopup();
 		}
 	}
-	void Editor::BeginTabBar(const std::string& title)
+	void EditorUIService::BeginTabBar(const std::string& title)
 	{
 		ImGui::BeginTabBar(title.c_str());
 	}
-	void Editor::EndTabBar()
+	void EditorUIService::EndTabBar()
 	{
 		ImGui::EndTabBar();
 	}
-	bool Editor::BeginTabItem(const std::string& title)
+	bool EditorUIService::BeginTabItem(const std::string& title)
 	{
 		return ImGui::BeginTabItem(title.c_str());
 	}
-	void Editor::EndTabItem()
+	void EditorUIService::EndTabItem()
 	{
 		ImGui::EndTabItem();
 	}

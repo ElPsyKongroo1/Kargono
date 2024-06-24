@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Rendering/VertexArray.h"
-#include "Kargono/Rendering/RenderingEngine.h"
+#include "Kargono/Rendering/RenderingService.h"
 
 #include "API/RenderingAPI/OpenGLVertexArray.h"
 

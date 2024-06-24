@@ -18,9 +18,9 @@ namespace Kargono
 	void EditorApp::OnAttach()
 	{
 		Script::ScriptEngine::Init();
-		Scripting::ScriptCore::Init();
-		Audio::AudioEngine::Init();
-		Scenes::SceneEngine::Init();
+		Scripting::ScriptService::Init();
+		Audio::AudioService::Init();
+		Scenes::SceneService::Init();
 
 		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
 
@@ -33,7 +33,7 @@ namespace Kargono
 			EngineCore::GetCurrentEngineCore().Close();
 			return;
 		}
-		EditorUI::Editor::Init();
+		EditorUI::EditorUIService::Init();
 
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
@@ -48,10 +48,10 @@ namespace Kargono
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
-		Rendering::RenderingEngine::Init();
-		Rendering::RenderingEngine::SetLineWidth(1.0f);
+		Rendering::RenderingService::Init();
+		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::Text::Init();
-		RuntimeUI::Runtime::Init();
+		RuntimeUI::RuntimeService::Init();
 
 		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		
@@ -80,7 +80,7 @@ namespace Kargono
 			}
 		}
 
-		EditorUI::Editor::Terminate();
+		EditorUI::EditorUIService::Terminate();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -100,7 +100,7 @@ namespace Kargono
 	void EditorApp::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartRendering();
+		EditorUI::EditorUIService::StartRendering();
 
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
@@ -139,7 +139,7 @@ namespace Kargono
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		EditorUI::Editor::StartWindow("DockSpace", &dockspaceOpen, window_flags);
+		EditorUI::EditorUIService::StartWindow("DockSpace", &dockspaceOpen, window_flags);
 		if (!opt_padding)
 			ImGui::PopStyleVar();
 
@@ -173,7 +173,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Reload Script Module"))
 				{
-					Scripting::ScriptCore::LoadActiveScriptModule();
+					Scripting::ScriptService::LoadActiveScriptModule();
 				}
 				if (ImGui::MenuItem("Rebuild Script Module"))
 				{
@@ -238,8 +238,8 @@ namespace Kargono
 		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
 		{
 			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-			EditorUI::Editor::EndWindow();
-			EditorUI::Editor::EndRendering();
+			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIService::EndRendering();
 			return;
 		}
 
@@ -259,22 +259,22 @@ namespace Kargono
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 
-		EditorUI::Editor::HighlightFocusedWindow();
+		EditorUI::EditorUIService::HighlightFocusedWindow();
 
-		EditorUI::Editor::EndRendering();
+		EditorUI::EditorUIService::EndRendering();
 	}
 
 
 	void EditorApp::OnEvent(Events::Event& event)
 	{
-		EditorUI::Editor::OnEvent(event);
+		EditorUI::EditorUIService::OnEvent(event);
 		if (event.Handled)
 		{
 			return;
 		}
-		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			m_ViewportPanel->OnEvent(event);
@@ -333,7 +333,7 @@ namespace Kargono
 	{
 		if (event.IsRepeat()) { return false; }
 
-		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (m_PanelToKeyboardInput.contains(focusedWindow))
 		{
 			if (m_PanelToKeyboardInput.at(focusedWindow)(event))
@@ -396,7 +396,7 @@ namespace Kargono
 			}
 			case Key::Delete:
 			{
-			if (EditorUI::Editor::GetActiveWidgetID() == 0)
+			if (EditorUI::EditorUIService::GetActiveWidgetID() == 0)
 			{
 				Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
@@ -574,7 +574,7 @@ namespace Kargono
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
 
-			Scripting::ScriptCore::LoadActiveScriptModule();
+			Scripting::ScriptService::LoadActiveScriptModule();
 
 			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
 			else { Script::ScriptEngine::InitialAssemblyLoad(); }
@@ -680,12 +680,12 @@ namespace Kargono
 	void EditorApp::OnPlay()
 	{
 		// Cache Current UIObject/InputMode in editor
-		if (!RuntimeUI::Runtime::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
+		if (!RuntimeUI::RuntimeService::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
 		else
 		{
-			RuntimeUI::Runtime::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = RuntimeUI::Runtime::GetCurrentUIObject();
-			m_EditorUIObjectHandle = RuntimeUI::Runtime::GetCurrentUIHandle();
+			RuntimeUI::RuntimeService::SaveCurrentUIIntoUIObject();
+			m_EditorUIObject = RuntimeUI::RuntimeService::GetCurrentUIObject();
+			m_EditorUIObjectHandle = RuntimeUI::RuntimeService::GetCurrentUIHandle();
 		}
 
 		if (!Input::InputModeEngine::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
@@ -727,7 +727,7 @@ namespace Kargono
 
 		AppTickEngine::LoadProjectGenerators();
 		EngineCore::GetCurrentEngineCore().SetAppStartTime();
-		EditorUI::Editor::SetFocusedWindow(m_ViewportPanel->m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
 	void EditorApp::OnSimulate()
@@ -749,16 +749,16 @@ namespace Kargono
 
 		Scenes::Scene::GetActiveScene()->DestroyAllEntities();
 		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		Audio::AudioEngine::StopAllAudio();
+		Audio::AudioService::StopAllAudio();
 
 		// Clear UIObjects during runtime.
 		if (m_EditorUIObject)
 		{
-			RuntimeUI::Runtime::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::RuntimeService::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
 		}
 		else
 		{
-			RuntimeUI::Runtime::ClearUIEngine();
+			RuntimeUI::RuntimeService::ClearUIEngine();
 		}
 
 		// Clear InputModes during runtime.

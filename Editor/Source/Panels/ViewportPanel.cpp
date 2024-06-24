@@ -29,14 +29,14 @@ namespace Kargono::Panels
 		}
 
 		// Reset Framebuffer
-		Rendering::RenderingEngine::ResetStats();
+		Rendering::RenderingService::ResetStats();
 		m_ViewportFramebuffer->Bind();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
-		std::string focusedWindow = EditorUI::Editor::GetFocusedWindowName();
+		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		// Update Scene
 		switch (s_EditorApp->m_SceneState)
 		{
@@ -87,13 +87,13 @@ namespace Kargono::Panels
 
 				if (mainCamera)
 				{
-					RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+					RuntimeUI::RuntimeService::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 				}
 			}
 			else
 			{
 				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-				RuntimeUI::Runtime::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+				RuntimeUI::RuntimeService::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
 			}
 
 		}
@@ -117,7 +117,7 @@ namespace Kargono::Panels
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
 		window_flags |= ImGuiWindowFlags_NoDecoration;
 
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
 		ImGui::PopStyleVar();
 		auto viewportOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
@@ -218,7 +218,7 @@ namespace Kargono::Panels
 		constexpr float iconSize{ 36.0f };
 		constexpr ImVec4 topBarBackgroundColor{0.0f, 0.0f, 0.0f, 0.93f};
 
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::Editor::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
 		// {0.2f, 0.2f, 0.2f, 0.63f} // OLD BACKGROUND COLOR
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 windowPos = ImGui::GetWindowPos();
@@ -255,12 +255,12 @@ namespace Kargono::Panels
 			// Play/Stop Button
 			if (!hasSimulateButton)
 			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
 			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) - 77.0f, 4));
-			icon = hasPlayButton ? EditorUI::Editor::s_IconPlayActive : EditorUI::Editor::s_IconStopActive;
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::Editor::s_IconPlay)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlayActive : EditorUI::EditorUIService::s_IconStopActive;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
 				&& toolbarEnabled)
 			{
 				if (hasSimulateButton)
@@ -282,7 +282,7 @@ namespace Kargono::Panels
 				if (hasSimulateButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, hasPlayButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasPlayButton ?
 						"Run Application" : "Stop Application");
 					ImGui::EndTooltip();
 				}
@@ -295,12 +295,12 @@ namespace Kargono::Panels
 			// Simulate/Stop Simulate
 			if (!hasPlayButton)
 			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasSimulateButton ? EditorUI::Editor::s_IconSimulateActive : EditorUI::Editor::s_IconStopActive;
+			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulateActive : EditorUI::EditorUIService::s_IconStopActive;
 			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) - 37.0f, 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::Editor::s_IconSimulate)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
 				&& toolbarEnabled)
 			{
 				if (hasPlayButton)
@@ -321,7 +321,7 @@ namespace Kargono::Panels
 				if (hasPlayButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, hasSimulateButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasSimulateButton ?
 						"Simulate Physics" : "Stop Physics Simulation");
 					ImGui::EndTooltip();
 				}
@@ -334,10 +334,10 @@ namespace Kargono::Panels
 			// Pause Icon
 			if (!hasPauseButton)
 			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasPauseButton ? EditorUI::Editor::s_IconPauseActive: EditorUI::Editor::s_IconPause;
+			icon = hasPauseButton ? EditorUI::EditorUIService::s_IconPauseActive: EditorUI::EditorUIService::s_IconPause;
 			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) + 3.0f, 4));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
 				&& toolbarEnabled)
@@ -353,7 +353,7 @@ namespace Kargono::Panels
 				if (hasPauseButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -364,10 +364,10 @@ namespace Kargono::Panels
 			// Step Icon
 			if (!hasStepButton)
 			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::Editor::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::Editor::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasStepButton ? EditorUI::Editor::s_IconStepActive : EditorUI::Editor::s_IconStep;
+			icon = hasStepButton ? EditorUI::EditorUIService::s_IconStepActive : EditorUI::EditorUIService::s_IconStep;
 			ImGui::SetCursorPos(ImVec2((windowSize.x / 2) + 43.0f, 4));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
 				&& toolbarEnabled)
@@ -383,7 +383,7 @@ namespace Kargono::Panels
 				if (hasStepButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Step Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Step Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -393,13 +393,13 @@ namespace Kargono::Panels
 			}
 
 			// Camera Options Button
-			icon = EditorUI::Editor::s_IconCameraActive;
+			icon = EditorUI::EditorUIService::s_IconCameraActive;
 			ImGui::SetCursorPos(ImVec2(windowSize.x - 163, 7));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(16, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::Editor::s_PureEmpty,
-				EditorUI::Editor::s_PureWhite))
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_PureWhite))
 			{
 				ImGui::OpenPopup("Toggle Viewport Camera Options");
 			}
@@ -407,7 +407,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Camera Movement Types");
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Movement Types");
 				ImGui::EndTooltip();
 			}
 
@@ -436,18 +436,18 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Camera Speed");
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Speed");
 				ImGui::EndTooltip();
 			}
 
 			// Viewport Display Options Button
-			icon = EditorUI::Editor::s_IconDisplayActive;
+			icon = EditorUI::EditorUIService::s_IconDisplayActive;
 			ImGui::SetCursorPos(ImVec2(windowSize.x - 75, 4));
 			if (ImGui::ImageButton("Display Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::Editor::s_PureEmpty,
-				EditorUI::Editor::s_PureWhite))
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_PureWhite))
 			{
 				ImGui::OpenPopup("Toggle Display Options");
 			}
@@ -455,7 +455,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::Editor::s_PearlBlue, "Display Options");
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Display Options");
 				ImGui::EndTooltip();
 			}
 
@@ -482,14 +482,14 @@ namespace Kargono::Panels
 		}
 
 		// Toggle Top Bar Button
-		icon = toolbarEnabled ? EditorUI::Editor::s_IconCheckbox_Check_Enabled :
-		EditorUI::Editor::s_IconCheckbox_Empty_Disabled;
+		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Check_Enabled :
+		EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled;
 		ImGui::SetCursorPos(ImVec2(windowSize.x - 25, 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::Editor::s_PureEmpty,
-			EditorUI::Editor::s_PureWhite))
+			EditorUI::EditorUIService::s_PureEmpty,
+			EditorUI::EditorUIService::s_PureWhite))
 		{
 			Utility::Operations::ToggleBoolean(toolbarEnabled);
 		}
@@ -497,13 +497,13 @@ namespace Kargono::Panels
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::Editor::s_PearlBlue, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
 			ImGui::EndTooltip();
 		}
 
 		ImGui::PopStyleColor();
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	void ViewportPanel::OnEvent(Events::Event& event)
 	{
@@ -737,11 +737,11 @@ namespace Kargono::Panels
 		{
 			Scenes::Entity camera = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
-			Rendering::RenderingEngine::BeginScene(camera.GetComponent<Scenes::CameraComponent>().Camera, glm::inverse(camera.GetComponent<Scenes::TransformComponent>().GetTransform()));
+			Rendering::RenderingService::BeginScene(camera.GetComponent<Scenes::CameraComponent>().Camera, glm::inverse(camera.GetComponent<Scenes::TransformComponent>().GetTransform()));
 		}
 		else
 		{
-			Rendering::RenderingEngine::BeginScene(m_EditorCamera);
+			Rendering::RenderingService::BeginScene(m_EditorCamera);
 		}
 
 		if (s_EditorApp->m_ShowPhysicsColliders)
@@ -761,7 +761,7 @@ namespace Kargono::Panels
 						* glm::scale(Math::mat4(1.0f), scale);
 
 					s_CircleInputSpec.TransformMatrix = transform;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_CircleInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_CircleInputSpec);
 				}
 			}
 			// Box Colliders
@@ -790,22 +790,22 @@ namespace Kargono::Panels
 					s_OutputVector->push_back(lineVertices[0]);
 					s_OutputVector->push_back(lineVertices[1]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[1]);
 					s_OutputVector->push_back(lineVertices[2]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[2]);
 					s_OutputVector->push_back(lineVertices[3]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[3]);
 					s_OutputVector->push_back(lineVertices[0]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 			}
 		}
@@ -831,7 +831,7 @@ namespace Kargono::Panels
 					s_OutputVector->push_back(lineVertices[indices.x]);
 					s_OutputVector->push_back(lineVertices[indices.y]);
 					s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-					Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
 				if (selectedEntity.HasComponent<Scenes::CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
@@ -841,7 +841,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		Rendering::RenderingEngine::EndScene();
+		Rendering::RenderingService::EndScene();
 	}
 
 	void ViewportPanel::DrawFrustrum(Scenes::Entity& entity)
@@ -881,7 +881,7 @@ namespace Kargono::Panels
 			s_OutputVector->push_back(lineVertices[indices.x]);
 			s_OutputVector->push_back(lineVertices[indices.y]);
 			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Rendering::RenderingEngine::SubmitDataToRenderer(s_LineInputSpec);
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			iteration++;
 		}
 

@@ -23,7 +23,7 @@ namespace Kargono::Scenes
 	class Entity;
 	struct ShaderSpecification;
 
-	class SceneEngine
+	class SceneService
 	{
 	public:
 		static void Init();

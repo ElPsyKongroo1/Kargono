@@ -16,7 +16,7 @@ namespace Kargono::Panels
 	void StatisticsPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
@@ -30,7 +30,7 @@ namespace Kargono::Panels
 
 		ImGui::Text("Renderer");
 		ImGui::Separator();
-		auto stats = Rendering::RenderingEngine::GetStats();
+		auto stats = Rendering::RenderingService::GetStats();
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::NewLine();
 
@@ -47,7 +47,7 @@ namespace Kargono::Panels
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool StatisticsPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

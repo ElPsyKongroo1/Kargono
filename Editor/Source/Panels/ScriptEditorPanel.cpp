@@ -94,10 +94,10 @@ namespace Kargono::Panels
 		};
 		s_CreateScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_CreateScriptName);
-			EditorUI::Editor::SelectOption(s_CreateScriptFuncType);
-			EditorUI::Editor::RadioSelector(s_CreateScriptType);
-			EditorUI::Editor::SelectOption(s_CreateScriptSectionLabel);
+			EditorUI::EditorUIService::TextInputPopup(s_CreateScriptName);
+			EditorUI::EditorUIService::SelectOption(s_CreateScriptFuncType);
+			EditorUI::EditorUIService::RadioSelector(s_CreateScriptType);
+			EditorUI::EditorUIService::SelectOption(s_CreateScriptSectionLabel);
 		};
 		s_CreateScriptPopup.ConfirmAction = [&]()
 		{
@@ -295,11 +295,11 @@ namespace Kargono::Panels
 		};
 		s_EditScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
+			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
 			//EditorUI::Editor::TextInputPopup(s_EditScriptName);
-			EditorUI::Editor::SelectOption(s_EditScriptFuncType);
-			EditorUI::Editor::RadioSelector(s_EditScriptType);
-			EditorUI::Editor::SelectOption(s_EditScriptSectionLabel);
+			EditorUI::EditorUIService::SelectOption(s_EditScriptFuncType);
+			EditorUI::EditorUIService::RadioSelector(s_EditScriptType);
+			EditorUI::EditorUIService::SelectOption(s_EditScriptSectionLabel);
 		};
 		s_EditScriptPopup.DeleteAction = [&]()
 		{
@@ -321,7 +321,7 @@ namespace Kargono::Panels
 		s_DeleteScriptWarning.Label = "Delete Script";
 		s_DeleteScriptWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this script?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
 		};
 		s_DeleteScriptWarning.ConfirmAction = [&]()
 		{
@@ -354,9 +354,9 @@ namespace Kargono::Panels
 		s_EditScriptFuncTypeWarning.Label = "Edit Script";
 		s_EditScriptFuncTypeWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Changing the function type can cause the existing function code to not compile.");
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::Editor::Text("Are you sure you want to modify the function type?");
+			EditorUI::EditorUIService::Text("Changing the function type can cause the existing function code to not compile.");
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Text("Are you sure you want to modify the function type?");
 		};
 		s_EditScriptFuncTypeWarning.ConfirmAction = [&]()
 		{
@@ -528,7 +528,7 @@ namespace Kargono::Panels
 		};
 		s_EditGroupLabelPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditGroupLabelText);
+			EditorUI::EditorUIService::TextInputPopup(s_EditGroupLabelText);
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
@@ -542,23 +542,23 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
 
-		EditorUI::Editor::Table(s_AllScriptsTable);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Table(s_AllScriptsTable);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-		EditorUI::Editor::Table(s_GroupLabelsTable);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Table(s_GroupLabelsTable);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Popups
-		EditorUI::Editor::GenericPopup(s_CreateScriptPopup);
-		EditorUI::Editor::GenericPopup(s_EditScriptPopup);
-		EditorUI::Editor::GenericPopup(s_DeleteScriptWarning);
-		EditorUI::Editor::GenericPopup(s_EditScriptFuncTypeWarning);
-		EditorUI::Editor::TextInputPopup(s_CreateGroupLabelPopup);
-		EditorUI::Editor::GenericPopup(s_EditGroupLabelPopup);
+		EditorUI::EditorUIService::GenericPopup(s_CreateScriptPopup);
+		EditorUI::EditorUIService::GenericPopup(s_EditScriptPopup);
+		EditorUI::EditorUIService::GenericPopup(s_DeleteScriptWarning);
+		EditorUI::EditorUIService::GenericPopup(s_EditScriptFuncTypeWarning);
+		EditorUI::EditorUIService::TextInputPopup(s_CreateGroupLabelPopup);
+		EditorUI::EditorUIService::GenericPopup(s_EditGroupLabelPopup);
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

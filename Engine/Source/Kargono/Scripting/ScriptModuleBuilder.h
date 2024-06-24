@@ -21,6 +21,6 @@ namespace Kargono::Scripting
 		static void CompileModuleCode(bool addDebugSymbols);
 		static void AttachEngineFunctionsToModule();
 	public:
-		friend ScriptCore;
+		friend ScriptService;
 	};
 }

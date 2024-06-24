@@ -7,7 +7,7 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Rendering/InputBuffer.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Audio/AudioEngine.h"
+#include "Kargono/Audio/Audio.h"
 #include "Kargono/Events/NetworkingEvent.h"
 
 #include <functional>
@@ -113,7 +113,7 @@ namespace Kargono
 		// Engine State Data
 		Scope<Window> m_Window;
 		Application* m_CurrentApp{ nullptr };
-		Audio::AudioEngine* m_AudioContext = nullptr;
+		Audio::AudioService* m_AudioContext = nullptr;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		double m_AppStartTime = 0.0f;
