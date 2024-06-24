@@ -18,6 +18,20 @@
 #include "API/Platform/WindowsBackendAPI.h"
 #endif
 
+namespace Kargono::Utility
+{
+	// Pseudo-Random Number Generation for GenerateEngineScripts Func
+	static constexpr uint64_t s_Seed { 0xc3bc4ead8efa4c3a };
+	static uint64_t s_State {s_Seed};
+	static constexpr uint64_t s_Multiplier {6364136223846793005ULL};
+	static constexpr uint64_t s_Modulus { std::numeric_limits<uint64_t>::max() };
+	static uint64_t GeneratePseudoRandomNumber()
+	{
+		s_State = (s_State * s_Multiplier) % s_Modulus;
+		return s_State;
+	}
+}
+
 namespace Kargono::Scripting
 {
 	struct ScriptingData
@@ -30,9 +44,55 @@ namespace Kargono::Scripting
 
 namespace Kargono::Scripting
 {
+	std::vector<Ref<Script>> ScriptService::s_AllEngineScripts {};
+
+	static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
+	{
+		Utility::s_State = Utility::s_Seed;
+		engineScripts.clear();
+		// RuntimeUI
+		Ref<Script> RuntimeUI_MoveUp = CreateRef<Script>();
+		RuntimeUI_MoveUp->m_ScriptName = "MoveUp";
+		RuntimeUI_MoveUp->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveUp->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveUp);
+		engineScripts.push_back(RuntimeUI_MoveUp);
+
+		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
+		RuntimeUI_MoveDown->m_ScriptName = "MoveDown";
+		RuntimeUI_MoveDown->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveDown->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveDown);
+		engineScripts.push_back(RuntimeUI_MoveDown);
+
+		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
+		RuntimeUI_MoveLeft->m_ScriptName = "MoveLeft";
+		RuntimeUI_MoveLeft->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveLeft->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeService::MoveLeft);
+		engineScripts.push_back(RuntimeUI_MoveLeft);
+
+		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
+		RuntimeUI_MoveRight->m_ScriptName = "MoveRight";
+		RuntimeUI_MoveRight->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveRight->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>();
+		
+		engineScripts.push_back(RuntimeUI_MoveRight);
+	}
+
 	void ScriptService::Init()
 	{
 		s_ScriptingData = new ScriptingData();
+		GenerateEngineScripts(s_AllEngineScripts);
 		KG_VERIFY(s_ScriptingData, "Scripting System Init");
 	}
 

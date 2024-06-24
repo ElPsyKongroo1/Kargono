@@ -325,6 +325,7 @@ namespace Kargono
 		KG_PROFILE_FUNCTION()
 		
 		Script::ScriptEngine::OnKeyPressed(event);
+		Scenes::Scene::GetActiveScene()->OnKeyPressed(event);
 		
 		return false;
 	}

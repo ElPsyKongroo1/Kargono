@@ -64,6 +64,7 @@ namespace Kargono::Panels
 			{
 				// Update Scripts
 				Script::ScriptEngine::OnUpdate(ts);
+				Scenes::Scene::GetActiveScene()->OnUpdateInputMode(ts);
 				Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
 				Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 			}

@@ -53,6 +53,10 @@ namespace Kargono::Panels
 			s_AllScriptsTable.ClearTable();
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
+				if (script->m_ScriptType == Scripting::ScriptType::Engine)
+				{
+					continue;
+				}
 				std::string scriptType = script->m_ScriptType == Scripting::ScriptType::Class ? "Class" : "Global";
 				std::string label = scriptType + std::string("::") + script->m_SectionLabel;
 				auto onEdit = [&](EditorUI::TableEntry& entry)
