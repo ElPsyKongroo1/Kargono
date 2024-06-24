@@ -15,3 +15,6 @@ OnKeyPressed:
   - BindingType: KeyboardAction
     ScriptHandle: 1108782715341511642
     KeyBinding: 262
+  - BindingType: KeyboardAction
+    ScriptHandle: 11837168018541382482
+    KeyBinding: 257

@@ -107,6 +107,16 @@ namespace Kargono
 		m_EventQueue.emplace_back(e);
 	}
 
+	void EngineCore::CloseApplication()
+	{
+		s_CurrentEngineCore->SubmitToMainThread([&]()
+		{
+			Events::ApplicationCloseEvent event {};
+			Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
+			eventCallback(event);
+		});
+	}
+
 	void EngineCore::OnSkipUpdate(Events::SkipUpdateEvent event)
 	{
 		m_Accumulator -= event.GetSkipCount() * k_ConstantFrameTime;

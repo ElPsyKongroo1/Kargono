@@ -132,21 +132,30 @@ namespace Kargono::Panels
 		{
 			RuntimeUI::RuntimeService::SetSelectedWidgetColor(RuntimeUI::RuntimeService::GetSelectColor());
 		}
-
-		if (ImGui::BeginCombo(("OnMove##" + std::to_string(selectedWidget)).c_str(), RuntimeUI::RuntimeService::GetFunctionOnMove().empty() ? "None" : RuntimeUI::RuntimeService::GetFunctionOnMove().c_str()))
+		std::string initialName {"None"};
+		if (RuntimeUI::RuntimeService::GetOnMove())
+		{
+			Ref<Scripting::Script> script = RuntimeUI::RuntimeService::GetOnMove();
+			initialName = Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+		}
+		if (ImGui::BeginCombo(("OnMove##" + std::to_string(selectedWidget)).c_str(), RuntimeUI::RuntimeService::GetOnMoveHandle() == Assets::EmptyHandle ? "None" : initialName.c_str()))
 		{
 			if (ImGui::Selectable("None"))
 			{
-				RuntimeUI::RuntimeService::SetFunctionOnMove({});
+				RuntimeUI::RuntimeService::SetOnMove(Assets::EmptyHandle, nullptr);
 			}
 
-			for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script.NumParameters > 0) { continue; }
-
-				if (ImGui::Selectable(name.c_str()))
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
-					RuntimeUI::RuntimeService::SetFunctionOnMove(name);
+					continue;
+				}
+				std::string outputName = Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+
+				if (ImGui::Selectable(outputName.c_str()))
+				{
+					RuntimeUI::RuntimeService::SetOnMove(handle, script);
 				}
 			}
 
@@ -267,21 +276,35 @@ namespace Kargono::Panels
 					if (ImGui::ColorEdit4(("Background Color##" + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget->DefaultBackgroundColor)))
 					{
 						widget->ActiveBackgroundColor = widget->DefaultBackgroundColor;
+
 					}
-					if (ImGui::BeginCombo(("OnPress##" + std::to_string(selectedWidget)).c_str(), widget->FunctionPointers.OnPress.empty() ? "None" : widget->FunctionPointers.OnPress.c_str()))
+					initialName = "None";
+					if (widget->FunctionPointers.OnPress)
+					{
+						Ref<Scripting::Script> script = widget->FunctionPointers.OnPress;
+						initialName = Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+					}
+					if (ImGui::BeginCombo(("OnPress##" + std::to_string(selectedWidget)).c_str(), widget->FunctionPointers.OnPressHandle == Assets::EmptyHandle ? "None" : initialName.c_str()))
 					{
 						if (ImGui::Selectable("None"))
 						{
-							widget->FunctionPointers.OnPress = {};
+							widget->FunctionPointers.OnPress = nullptr;
+							widget->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
 						}
 
-						for (auto& [name, script] : Script::ScriptEngine::GetCustomCallMap())
+						for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 						{
-							if (script.NumParameters > 0) { continue; }
-
-							if (ImGui::Selectable(name.c_str()))
+							if (script->m_FuncType != WrappedFuncType::Void_None)
 							{
-								widget->FunctionPointers.OnPress = name;
+								continue;
+							}
+
+							std::string outputName = Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+
+							if (ImGui::Selectable(outputName.c_str()))
+							{
+								widget->FunctionPointers.OnPress = script;
+								widget->FunctionPointers.OnPressHandle = handle;
 							}
 						}
 

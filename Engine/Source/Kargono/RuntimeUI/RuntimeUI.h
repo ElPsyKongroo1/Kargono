@@ -11,6 +11,9 @@
 #include <unordered_map>
 #include <functional>
 
+#include "Kargono/Script/ScriptEngine.h"
+#include "Kargono/Scripting/Scripting.h"
+
 
 namespace Kargono::RuntimeUI
 {
@@ -19,12 +22,14 @@ namespace Kargono::RuntimeUI
 	//============================
 	struct WidgetCallbacks
 	{
-		std::string OnPress {};
+		Assets::AssetHandle OnPressHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> OnPress { nullptr };
 	};
 
 	struct UICallbacks
 	{
-		std::string OnMove {};
+		Assets::AssetHandle OnMoveHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> OnMove { nullptr };
 	};
 
 	//============================
@@ -234,8 +239,9 @@ namespace Kargono::RuntimeUI
 
 		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
 
-		static void SetFunctionOnMove(const std::string& function);
-		static std::string GetFunctionOnMove();
+		static void SetOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		static Ref<Scripting::Script> GetOnMove();
+		static Assets::AssetHandle GetOnMoveHandle();
 
 		static void SetDisplayWindow(const std::string& windowTag, bool display);
 

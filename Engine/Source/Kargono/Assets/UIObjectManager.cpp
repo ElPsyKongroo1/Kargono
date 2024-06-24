@@ -109,7 +109,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "SelectColor" << YAML::Value << uiObject->m_SelectColor;
 
 		// Function Pointers
-		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << uiObject->m_FunctionPointers.OnMove;
+		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)uiObject->m_FunctionPointers.OnMoveHandle;
 		// Font
 		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(uiObject->m_FontHandle);
 		// Windows
@@ -161,7 +161,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "DirectionPointerLeft" << YAML::Value << widget->DirectionPointer.Left;
 				out << YAML::Key << "DirectionPointerRight" << YAML::Value << widget->DirectionPointer.Right;
 
-				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << widget->FunctionPointers.OnPress;
+				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)widget->FunctionPointers.OnPressHandle;
 				switch (widget->WidgetType)
 				{
 				case RuntimeUI::WidgetTypes::TextWidget:
@@ -237,7 +237,22 @@ namespace Kargono::Assets
 		// Get SelectColor
 		uiObject->m_SelectColor = data["SelectColor"].as<Math::vec4>();
 		// Function Pointers
-		uiObject->m_FunctionPointers.OnMove = data["FunctionPointerOnMove"].as<std::string>();
+		uiObject->m_FunctionPointers.OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
+		if (uiObject->m_FunctionPointers.OnMoveHandle == Assets::EmptyHandle)
+		{
+			uiObject->m_FunctionPointers.OnMove = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onMoveScript = Assets::AssetManager::GetScript(uiObject->m_FunctionPointers.OnMoveHandle);
+			if (!onMoveScript)
+			{
+				KG_ERROR("Unable to locate OnMove Script!");
+				return false;
+			}
+			uiObject->m_FunctionPointers.OnMove = onMoveScript;
+		}
+		
 		// Get Font
 		uiObject->m_FontHandle = data["Font"].as<uint64_t>();
 		uiObject->m_Font = AssetManager::GetFont(uiObject->m_FontHandle);
@@ -313,7 +328,21 @@ namespace Kargono::Assets
 						newWidget->DirectionPointer.Left = widget["DirectionPointerLeft"].as<int32_t>();
 						newWidget->DirectionPointer.Right = widget["DirectionPointerRight"].as<int32_t>();
 
-						newWidget->FunctionPointers.OnPress = widget["FunctionPointerOnPress"].as<std::string>();
+						newWidget->FunctionPointers.OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
+						if (newWidget->FunctionPointers.OnPressHandle == Assets::EmptyHandle)
+						{
+							newWidget->FunctionPointers.OnPress = nullptr;
+						}
+						else
+						{
+							Ref<Scripting::Script> onPressScript = Assets::AssetManager::GetScript(newWidget->FunctionPointers.OnPressHandle);
+							if (!onPressScript)
+							{
+								KG_ERROR("Unable to locate OnPress Script!");
+								return false;
+							}
+							newWidget->FunctionPointers.OnPress = onPressScript;
+						}
 
 						newWidgetsList.push_back(newWidget);
 
