@@ -5,16 +5,13 @@ void StartGame()
 	SetDisplayWindow("online_lobby", false);
 	SetDisplayWindow("base_window", true);
 	uint64_t player1 = FindEntityHandleByName("Player1");
-	Log(std::to_string(player1));
-	//player1.m_Transform.Translation = player1.InitialPosition;
+	TransformComponent_SetTranslation(player1, *(Math::vec3*)GetEntityFieldByName(player1, "InitialPosition"));
 	
 	uint64_t player2 = FindEntityHandleByName("Player2");
-	Log(std::to_string(player2));
-	//player2.m_Transform.Translation = player2.InitialPosition;
+	TransformComponent_SetTranslation(player2, *(Math::vec3*)GetEntityFieldByName(player2, "InitialPosition"));
 	
 	uint64_t ball = FindEntityHandleByName("Ball");
-	Log(std::to_string(ball));
-	//ball.m_Transform.Translation = ball.InitialPosition;
+	TransformComponent_SetTranslation(ball, *(Math::vec3*)GetEntityFieldByName(ball, "InitialPosition"));
 
 	//Random rnd = new Random();
 	//Int32 directionChoice = rnd.Next(2);
@@ -30,6 +27,11 @@ void StartGame()
 	//}
 	//ball.m_Rigidbody.LinearVelocity = velocity * ball.Speed;
 }
+
+
+
+
+
 
 
 

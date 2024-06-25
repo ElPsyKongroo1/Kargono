@@ -136,6 +136,7 @@ namespace Kargono::Panels
 	void InputModePanel::InitializeOpeningScreen()
 	{
 		s_OpenInputModePopupSpec.Label = "Open Input Mode";
+		s_OpenInputModePopupSpec.LineCount = 2;
 		s_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		s_OpenInputModePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_OpenInputModePopupSpec.PopupAction = [&]()
