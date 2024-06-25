@@ -104,6 +104,15 @@ namespace Kargono::Scripting
 		EngineCore_CloseApplication->m_SectionLabel = "EngineCore";
 		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineCore::CloseApplication);
 		engineScripts.push_back(EngineCore_CloseApplication);
+
+		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
+		Client_SessionReadyCheck->m_ScriptName = "SessionReadyCheck";
+		Client_SessionReadyCheck->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
+		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
+		Client_SessionReadyCheck->m_SectionLabel = "Client";
+		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::Client::SessionReadyCheck);
+		engineScripts.push_back(Client_SessionReadyCheck);
 	}
 
 	void ScriptService::Init()
