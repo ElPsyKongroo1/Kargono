@@ -3,4 +3,9 @@ KeyboardPolling:
 OnUpdate:
   []
 OnKeyPressed:
-  []
+  - BindingType: KeyboardAction
+    ScriptHandle: 4174533717311968573
+    KeyBinding: 32
+  - BindingType: KeyboardAction
+    ScriptHandle: 14683932765512752045
+    KeyBinding: 256

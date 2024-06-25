@@ -388,8 +388,35 @@ namespace Kargono::Scenes
 				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
 				{
 					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					KG_ASSERT(keyboardBinding->GetScript());
 					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
-					((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+					if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
+					{
+						((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+					}
+					else
+					{
+						((WrappedVoidFloat*)keyboardBinding->GetScript()->m_Function.get())->m_Value(ts);
+					}
+				}
+				else
+				{
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					Ref<Scripting::Script> script = keyboardBinding->GetScript();
+					KG_ASSERT(script);
+					KG_ASSERT(s_ActiveScene->m_ScriptClassToEntityList.contains(keyboardBinding->GetScript()->m_SectionLabel));
+					for (auto entity : s_ActiveScene->m_ScriptClassToEntityList.at(keyboardBinding->GetScript()->m_SectionLabel))
+					{
+						if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_UInt64)
+						{
+							((WrappedVoidUInt64*)keyboardBinding->GetScript()->m_Function.get())->m_Value(entity);
+						}
+						else
+						{
+							((WrappedVoidUInt64Float*)keyboardBinding->GetScript()->m_Function.get())->m_Value(entity, ts);
+						}
+					}
 				}
 			}
 		}
