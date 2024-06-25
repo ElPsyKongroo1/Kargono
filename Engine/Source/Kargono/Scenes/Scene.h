@@ -29,7 +29,9 @@ namespace Kargono::Scenes
 		static void Init();
 	public:
 		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
+		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
 		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
+		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
 	};
 
 	//============================================================

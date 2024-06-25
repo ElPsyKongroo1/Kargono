@@ -393,6 +393,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+	DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
@@ -445,12 +446,12 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
 		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
-
 		// Add Script Function Declarations
 		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
 		{
@@ -507,6 +508,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(GetEntityFieldByName, void*, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
@@ -555,6 +558,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SendAllEntityLocation)
+		AddEngineFunctionToCPPFileEnd(TransformComponent_SetTranslation)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, const std::string&)
 		outputStream << "{\n";
@@ -575,6 +579,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetEntityFieldByName)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(GetEntityFieldByName)
 		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
@@ -657,6 +665,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidStringStringString) 
 		ImportInsertFunction(VoidStringStringVec4) 
 		ImportInsertFunction(VoidUInt64StringVoidPtr)
+		ImportInsertFunction(VoidPtrUInt64String)
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(UInt16None)
@@ -682,9 +691,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::Scene::FindEntityHandleByName, UInt64String)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
-
-
+		AddEngineFunctionPointerToDll(GetEntityFieldByName, Scenes::SceneService::GetEntityFieldByName, VoidPtrUInt64String)
 	}
 }
-
