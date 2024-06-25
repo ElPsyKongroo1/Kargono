@@ -126,27 +126,85 @@ namespace Kargono
 
 	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
-		Script::ScriptEngine::OnPhysicsCollision(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+			}
+		}
+
+		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+			}
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+			}
+		}
+
+		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+			}
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Script::ScriptEngine::OnKeyPressed(event);
+		Scenes::Scene::GetActiveScene()->OnKeyPressed(event);
 		return false;
 	}
 
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
-		// Update Scripts
-		Script::ScriptEngine::OnUpdate(ts);
-
+		// Update
 		Scenes::Scene::GetActiveScene()->OnUpdateInputMode(ts);
 		Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
 		Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
@@ -235,15 +293,21 @@ namespace Kargono
 
 	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		uint16_t signal = event.GetSignal();
-		void* param = &signal;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnReceiveSignal();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+		}
 		return false;
 	}
 
