@@ -420,22 +420,30 @@ namespace Kargono
 	{
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
-			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputPolling::IsKeyPressed(Key::LeftAlt) && *Scenes::Scene::GetActiveScene()->GetHoveredEntity())
+			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputPolling::IsKeyPressed(Key::LeftAlt))
 			{
-				m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::Scene::GetActiveScene()->GetHoveredEntity());
-				// Algorithm to enable double clicking for an entity!
-				static float previousTime{ 0.0f };
-				static Scenes::Entity previousEntity {};
-				float currentTime = Utility::Time::GetTime();
-				if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::Scene::GetActiveScene()->GetHoveredEntity() == previousEntity)
+				if (*Scenes::Scene::GetActiveScene()->GetHoveredEntity())
 				{
-					auto& transformComponent = Scenes::Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
-					m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
-					m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-					m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+					m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::Scene::GetActiveScene()->GetHoveredEntity());
+					// Algorithm to enable double clicking for an entity!
+					static float previousTime{ 0.0f };
+					static Scenes::Entity previousEntity{};
+					float currentTime = Utility::Time::GetTime();
+					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::Scene::GetActiveScene()->GetHoveredEntity() == previousEntity)
+					{
+						auto& transformComponent = Scenes::Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
+						m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
+						m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+						m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+					}
+					previousTime = currentTime;
+					previousEntity = *Scenes::Scene::GetActiveScene()->GetHoveredEntity();
 				}
-				previousTime = currentTime;
-				previousEntity = *Scenes::Scene::GetActiveScene()->GetHoveredEntity();
+				else
+				{
+					m_SceneHierarchyPanel->SetSelectedEntity({});
+				}
+				
 
 			}
 		}
