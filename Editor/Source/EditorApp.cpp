@@ -323,8 +323,7 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
-		
-		Script::ScriptEngine::OnKeyPressed(event);
+
 		Scenes::Scene::GetActiveScene()->OnKeyPressed(event);
 		
 		return false;
