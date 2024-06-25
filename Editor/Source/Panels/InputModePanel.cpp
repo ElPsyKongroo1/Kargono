@@ -368,7 +368,7 @@ namespace Kargono::Panels
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64 && script->m_FuncType != WrappedFuncType::Void_UInt64Float)
 					{
 						continue;
 					}
@@ -377,7 +377,7 @@ namespace Kargono::Panels
 				}
 				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_None)
+					if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 					{
 						continue;
 					}
@@ -458,7 +458,7 @@ namespace Kargono::Panels
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64 && script->m_FuncType != WrappedFuncType::Void_UInt64Float)
 					{
 						continue;
 					}
@@ -467,7 +467,7 @@ namespace Kargono::Panels
 				}
 				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_None)
+					if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 					{
 						continue;
 					}

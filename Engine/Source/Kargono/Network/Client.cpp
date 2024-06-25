@@ -381,6 +381,14 @@ namespace Kargono::Network
 		}
 	}
 
+	void Client::SessionReadyCheck()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SessionReadyCheck>());
+		}
+	}
+
 	void Client::RequestUserCount()
 	{
 		if (GetActiveClient())

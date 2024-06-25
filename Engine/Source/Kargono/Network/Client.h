@@ -65,6 +65,7 @@ namespace Kargono::Network
 		static uint16_t GetActiveSessionSlot();
 		static void SendAllEntityLocation(UUID entityID, Math::vec3 location);
 		static void EnableReadyCheck();
+		static void SessionReadyCheck();
 		static void RequestUserCount();
 		static Ref<Network::Client> GetActiveClient() { return s_Client; }
 		static void SetActiveClient(Ref<Network::Client> newClient) { s_Client = newClient; }
