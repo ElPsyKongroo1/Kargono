@@ -231,7 +231,7 @@ namespace Kargono::Scenes
 		return newEntity;
 	}
 
-	Entity Scene::FindEntityByName(std::string_view name)
+	Entity Scene::FindEntityByName(const std::string& name)
 	{
 		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
@@ -240,6 +240,24 @@ namespace Kargono::Scenes
 			if (tc.Tag == name) { return Entity{ entity, this }; }
 		}
 		return {};
+	}
+
+	Assets::AssetHandle Scene::FindEntityHandleByName(const std::string& name)
+	{
+		for (auto& [handle, enttID] : s_ActiveScene->m_EntityMap)
+		{
+			Entity entity{ enttID, s_ActiveScene.get()};
+			if (entity.HasComponent<TagComponent>())
+			{
+				TagComponent& tagComponent = entity.GetComponent<TagComponent>();
+				if (tagComponent.Tag == name)
+				{
+					return handle;
+				}
+			}
+		}
+		KG_WARN("Could not locate entity by name!");
+		return Assets::EmptyHandle;
 	}
 
 	Entity Scene::GetEntityByUUID(UUID uuid)
@@ -456,7 +474,7 @@ namespace Kargono::Scenes
 	{
 		RegisterHasComponent(AllComponents{});
 	}
-	Math::vec3 SceneService::TransformComponent_GetTranslation(UUID entityID)
+	Math::vec3 SceneService::TransformComponentGetTranslation(UUID entityID)
 	{
 		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
 		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
