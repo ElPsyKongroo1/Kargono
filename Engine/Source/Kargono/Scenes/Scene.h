@@ -28,7 +28,7 @@ namespace Kargono::Scenes
 	public:
 		static void Init();
 	public:
-		static Math::vec3 TransformComponent_GetTranslation(UUID entityID);
+		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
 	};
 
@@ -137,7 +137,8 @@ namespace Kargono::Scenes
 		// Query Entity Functions
 		//====================
 		// These functions query the current map of entities
-		Entity FindEntityByName(std::string_view name);
+		Entity FindEntityByName(const std::string& name);
+		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
 		bool CheckEntityExists(entt::entity entity);

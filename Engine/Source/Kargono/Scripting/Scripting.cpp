@@ -396,6 +396,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
+	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 
 	// Engine Functions that need to be defined only in this file
@@ -447,6 +448,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
+		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 
 		// Add Script Function Declarations
@@ -499,6 +501,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
@@ -509,7 +512,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetEntityFieldByName, void, uint64_t, const std::string&, void*)
-
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
 		outputStream << "{\n";
@@ -565,6 +567,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(Vec3UInt64, Math::vec3, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TransformComponent_GetTranslation)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(UInt64String, uint64_t, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(FindEntityHandleByName)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		outputStream << "{\n";
@@ -654,6 +660,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(UInt16None)
+		ImportInsertFunction(UInt64String)
 		ImportInsertFunction(Vec3UInt64)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
 		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
@@ -672,9 +679,12 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::Scene::FindEntityHandleByName, UInt64String)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponent_GetTranslation, Vec3UInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
 		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
+
+
 	}
 }
 
