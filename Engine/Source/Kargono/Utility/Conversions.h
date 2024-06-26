@@ -78,6 +78,15 @@ namespace Kargono::Utility
 			KG_ERROR("Conversion from string to bool failed");
 			return false;
 		}
+		//==============================
+		// Convert RValue -> LValue
+		// (Here is a link that explains rvalues and lvalues if needed: https://www.geeksforgeeks.org/lvalues-references-and-rvalues-references-in-c-with-examples/ )
+		//==============================
+		template<typename T>
+		T& RValueToLValue(T&& value) 
+		{
+			return value;
+		}
 	};
 }
 

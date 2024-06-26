@@ -5,7 +5,7 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Network/Common.h"
 #include "Kargono/Core/EngineCore.h"
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 
 namespace Kargono::Network
 {
@@ -84,7 +84,7 @@ namespace Kargono::Network
 			// Start Context Thread
 			thrContext = std::thread([this]() { m_context.run(); });
 
-			AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
+			Utility::AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
 			{
 				Client::GetActiveClient()->SubmitToFunctionQueue([&]()
 				{

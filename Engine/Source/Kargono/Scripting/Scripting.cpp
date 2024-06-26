@@ -432,6 +432,8 @@ namespace Kargono::Scripting
 		outputStream << "#include <string>\n";
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
+		outputStream << "#include \"" << "Kargono/Utility/Random.h" << "\"\n"; // Include Random Library
+		outputStream << "#include \"" << "Kargono/Utility/Conversions.h" << "\"\n"; // Include Conversions Library
 		outputStream << "namespace Kargono\n";
 		outputStream << "{" << "\n";
 		outputStream << "extern \"C\"" << "\n";
@@ -616,6 +618,7 @@ namespace Kargono::Scripting
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
 		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
+		std::filesystem::path randomPath { Projects::Project::GetAssetDirectory() / "../../../Engine/Source/Kargono/Utility/Random.cpp" };
 
 		std::stringstream outputStream {};
 		// Access visual studio toolset console
@@ -627,16 +630,21 @@ namespace Kargono::Scripting
 		outputStream << "/MDd "; // Specify Runtime Library
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
+		outputStream << "/I../Dependencies/spdlog "; // Include spdlog
 		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
-		outputStream << "/DKARGONO_EXPORTS "; // Define Macros/Defines
+		outputStream << "/DKARGONO_EXPORTS "; // Define Macros for Exporting DLL Functions
+#ifdef KG_PLATFORM_WINDOWS
+		outputStream << "/DKG_PLATFORM_WINDOWS "; // Define Macro for specifying operating system
+#endif
 
 		if (addDebugSymbols)
 		{
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
 		outputStream << "/Fo" << binaryPath.string() << ' '; // Define Intermediate Location
-		outputStream << sourcePath.string() << " "; // Add File(s) to compile
+		outputStream << sourcePath.string() << " "; // Compile scripting source file (ExportBody.cpp)
+		outputStream << randomPath.string()  << " "; // Additionally compile Kargono/Utility/Random.cpp from the Engine
 
 		outputStream << " && "; // Combine commands
 		// Start Linking Stage

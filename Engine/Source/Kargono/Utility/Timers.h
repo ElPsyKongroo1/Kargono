@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
@@ -13,7 +12,7 @@
 #include <atomic>
 
 
-namespace Kargono
+namespace Kargono::Utility
 {
 	class ScopedTimer
 	{
