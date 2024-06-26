@@ -22,6 +22,20 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+		KG_TRACE_CRITICAL(Utility::RandomService::GenerateRandomNumber(2, 200));
+
 		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();

@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/EngineCore.h"
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
@@ -17,7 +17,7 @@
 		Kargono::EngineCore* core = Kargono::InitEngineAndCreateApp({ argc, argv });
 		KG_VERIFY(core, "Engine Core Initialization");
 		core->Run();
-		Kargono::AsyncBusyTimer::CloseAllTimers();
+		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
 		delete core;
 		core = nullptr;
 		KG_VERIFY(!core, "Core Closed");

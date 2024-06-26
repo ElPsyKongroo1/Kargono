@@ -7,7 +7,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Profiler.h"
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Scenes/Scene.h"
@@ -188,7 +188,7 @@ namespace Kargono
 
 	bool EngineCore::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
-		AsyncBusyTimer::CleanUpClosedTimers();
+		Utility::AsyncBusyTimer::CleanUpClosedTimers();
 		return false;
 	}
 
