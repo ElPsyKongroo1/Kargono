@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 
-namespace Kargono
+namespace Kargono::Utility
 {
 	std::vector<Ref<AsyncBusyTimer>> AsyncBusyTimer::s_AllTimers {};
 	std::mutex AsyncBusyTimer::s_BusyTimerMutex {};
