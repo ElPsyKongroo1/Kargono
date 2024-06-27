@@ -30,6 +30,7 @@ namespace Kargono::Scenes
 	public:
 		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
+		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
 		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
 	};

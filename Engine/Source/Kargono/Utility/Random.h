@@ -10,10 +10,9 @@ namespace Kargono::Utility
 		//==============================
 		// Service API
 		//==============================
-		template <typename T>
-		static T GenerateRandomNumber(T lowerBound, T upperBound)
+		static int32_t GenerateRandomNumber(int32_t lowerBound, int32_t upperBound)
 		{
-			return std::uniform_int_distribution<T>{lowerBound, upperBound}(randomGenerator);
+			return std::uniform_int_distribution<int32_t>{lowerBound, upperBound}(randomGenerator);
 		}
 	private:
 		//==============================

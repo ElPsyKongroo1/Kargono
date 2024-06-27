@@ -33,8 +33,6 @@ namespace Kargono
 
 #ifdef KG_DEBUG
 	#define KG_ENABLE_ASSERTS
-#else
-#define KG_DEBUGBREAK()
 #endif
 
 #define KG_EXPAND_MACRO(x) x
