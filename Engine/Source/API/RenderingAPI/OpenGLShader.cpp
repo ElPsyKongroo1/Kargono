@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 #include "Kargono/Utility/FileSystem.h"
 
 #include "API/RenderingAPI/OpenGLShader.h"
