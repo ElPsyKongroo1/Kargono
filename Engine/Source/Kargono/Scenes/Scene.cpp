@@ -179,22 +179,19 @@ namespace Kargono::Scenes
 			}
 		}
 
-		// Instantiate all script entities
-		auto view = GetAllEntitiesWith<ScriptComponent>();
+		// Insert entities with ClassInstanceComponents into m_ScriptClassToEntityList map
+		auto view = GetAllEntitiesWith<ClassInstanceComponent>();
 		for (auto e : view)
 		{
 			Entity entity = { e, this };
-			const auto& scriptComponent = entity.GetComponent<ScriptComponent>();
-			if (Script::ScriptEngine::EntityClassExists(scriptComponent.ClassName))
+			const auto& classInstanceComp = entity.GetComponent<ClassInstanceComponent>();
+			KG_ASSERT(classInstanceComp.ClassReference);
+			if (!m_ScriptClassToEntityList.contains(classInstanceComp.ClassReference->GetName()))
 			{
-				if (!m_ScriptClassToEntityList.contains(scriptComponent.ClassName))
-				{
-					m_ScriptClassToEntityList.insert({ scriptComponent.ClassName, {} });
-				}
-
-				m_ScriptClassToEntityList.at(scriptComponent.ClassName).push_back(entity.GetUUID());
+				m_ScriptClassToEntityList.insert({ classInstanceComp.ClassReference->GetName(), {}});
 			}
 
+			m_ScriptClassToEntityList.at(classInstanceComp.ClassReference->GetName()).push_back(entity.GetUUID());
 		}
 	}
 
@@ -497,6 +494,17 @@ namespace Kargono::Scenes
 			b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
 			body->SetTransform({ newTranslation.x, newTranslation.y }, body->GetAngle());
 		}
+	}
+	void SceneService::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
+	{
+		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
+		KG_ASSERT(scene);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity);
+		KG_ASSERT(entity.HasComponent<Rigidbody2DComponent>());
+		auto& rigidBody2DComp = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
+		body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
 	}
 	void SceneService::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
 	{

@@ -12,21 +12,24 @@ void StartGame()
 	
 	uint64_t ball = FindEntityHandleByName("Ball");
 	TransformComponent_SetTranslation(ball, *(Math::vec3*)GetEntityFieldByName(ball, "InitialPosition"));
+	
+	int32_t directionChoice = GenerateRandomNumber(0, 1);
+	Math::vec2 velocity = {0.0f, 0.0f};
 
-	//Random rnd = new Random();
-	//Int32 directionChoice = rnd.Next(2);
-	//Vector2 velocity = Vector2.Zero;
-
-	//if (directionChoice == 0)
-	//{
-	//	velocity.X = -1.0f;
-	//}
-	//else
-	//{
-	//	velocity.X = 1.0f;
-	//}
-	//ball.m_Rigidbody.LinearVelocity = velocity * ball.Speed;
+	if (directionChoice == 0)
+	{
+		velocity.x = -1.0f;
+	}
+	else
+	{
+		velocity.x = 1.0f;
+	}
+	
+	Rigidbody2DComponent_SetLinearVelocity(ball, velocity * *(float*)GetEntityFieldByName(ball, "Speed"));
 }
+
+
+
 
 
 

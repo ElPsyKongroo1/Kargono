@@ -41,8 +41,8 @@ namespace Kargono
 #endif
 
 #ifdef KG_ENABLE_VERIFY
-// Verify: Used to ensure systems are working correctly
-#define KG_VERIFY(predicate, ...) \
+	// Verify: Used to ensure systems are working correctly
+	#define KG_VERIFY(predicate, ...) \
 	if (predicate) { SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), "[Verified] " __VA_ARGS__); } \
 	else { SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), "[Failed to Verify] " __VA_ARGS__); KG_DEBUGBREAK(); }
 #endif
