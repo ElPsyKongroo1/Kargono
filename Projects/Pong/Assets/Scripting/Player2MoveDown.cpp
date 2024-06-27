@@ -4,13 +4,20 @@ void Player2MoveDown(uint64_t entity,float timeStep)
 	bool upperLimit = translation.y >= 11.15;
 	bool lowerLimit = translation.y <= -11.15;
 
-	//float speed = Input.IsKeyDown(KeyCode.RightShift) ? Speed * SpeedUpFactor : Speed;
-	//Vector3 velocity = Vector3.Zero;
+	float speed = IsKeyPressed(Key::RightShift) ? *(float*)GetEntityFieldByName(entity, "Speed") * *(float*)GetEntityFieldByName(entity, "SpeedUpFactor") : *(float*)GetEntityFieldByName(entity, "Speed");
+	Math::vec3 velocity = {0.0f, 0.0f, 0.0f};
 
-	//if (!lowerLimit) { velocity.Y = -1.0f; }
+	if (!lowerLimit) 
+	{
+		velocity.y = -1.0f; 
+	}
 
-	//velocity *= speed * ts;
-	//Translation += velocity;
+	velocity *= speed * timeStep;
+	TransformComponent_SetTranslation(entity, TransformComponent_GetTranslation(entity) + velocity);
 }
+
+
+
+
 
 

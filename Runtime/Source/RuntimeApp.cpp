@@ -143,18 +143,18 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
 		{
 			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
 			}
 		}
 		return false;
