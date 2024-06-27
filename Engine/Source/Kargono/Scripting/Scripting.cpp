@@ -11,6 +11,7 @@
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputPolling.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Random.h"
@@ -387,6 +388,7 @@ namespace Kargono::Scripting
 	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the scripting dll)
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
+	DefineInsertFunction(VoidUInt16, void, uint16_t)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
@@ -398,10 +400,13 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
+	DefineInsertFunction(BoolUInt16, bool, uint16_t)
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
 	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
+	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
+	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
 
 	// Engine Functions that need to be defined only in this file
 	static void Log(const std::string& info)
@@ -434,7 +439,10 @@ namespace Kargono::Scripting
 		outputStream << "#include <functional>\n";
 		outputStream << "#include <string>\n";
 		outputStream << "#include <sstream>\n";
+		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
+		outputStream << "#include \"" << "Kargono/Core/KeyCodes.h" << "\"\n"; // Include KeyCodes
+		outputStream << "#include \"" << "Kargono/Core/MouseCodes.h" << "\"\n"; // Include MouseCodes
 
 		// Conversion Function from RValueToLValue
 		outputStream << "template<typename T>\n";
@@ -450,6 +458,7 @@ namespace Kargono::Scripting
 
 		AddImportFunctionToHeaderFile(VoidNone, void) 
 		AddImportFunctionToHeaderFile(VoidString, void, const std::string&) 
+		AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t) 
 		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) 
 		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) 
 		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) 
@@ -461,10 +470,13 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
+		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
+		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
+		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
 		// Add Script Function Declarations
 		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
 		{
@@ -500,7 +512,6 @@ namespace Kargono::Scripting
 	{
 		std::stringstream outputStream {};
 		outputStream << "#include \"ExportHeader.h\"\n";
-		outputStream << "#include <iostream>\n";
 		outputStream << "namespace Kargono\n";
 		outputStream << "{\n";
 
@@ -509,12 +520,16 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
 		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(Log, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomNumber, int32_t, int32_t, int32_t)
@@ -530,12 +545,17 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetEntityFieldByName, void, uint64_t, const std::string&, void*)
+
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(EnableReadyCheck)
 		AddEngineFunctionToCPPFileEnd(RequestUserCount)
-		outputStream << "}\n"; 
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16, void, uint16_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(SignalAll)
+		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidString, void, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Log)
@@ -591,6 +611,10 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TransformComponent_GetTranslation)
 		outputStream << "}\n";
+		AddImportFunctionToCPPFile(Vec2UInt64, Math::vec2, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_GetLinearVelocity)
+		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt64String, uint64_t, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(FindEntityHandleByName)
@@ -607,6 +631,14 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GenerateRandomNumber)
 		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolUInt16, bool, uint16_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(IsKeyPressed)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
+		outputStream << "}\n";	
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
@@ -680,6 +712,7 @@ namespace Kargono::Scripting
 	void ScriptModuleBuilder::AttachEngineFunctionsToModule()
 	{
 		ImportInsertFunction(VoidNone)
+		ImportInsertFunction(VoidUInt16) 
 		ImportInsertFunction(VoidString) 
 		ImportInsertFunction(VoidStringBool) 
 		ImportInsertFunction(VoidStringVoidPtr) 
@@ -692,16 +725,23 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(VoidUInt64Vec2)
 		ImportInsertFunction(BoolUInt64String)
+		ImportInsertFunction(BoolUInt16)
 		ImportInsertFunction(UInt16None)
 		ImportInsertFunction(UInt64String)
 		ImportInsertFunction(Int32Int32Int32)
+		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
+		ImportInsertFunction(StringUInt64)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone) 
+		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(SignalAll, Network::Client::SignalAll, VoidUInt16)
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName,VoidString) 
+		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputPolling::IsKeyPressed,BoolUInt16) 
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow,VoidStringBool) 
@@ -712,14 +752,14 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
 		AddEngineFunctionPointerToDll(GetEntityFieldByName, Scenes::SceneService::GetEntityFieldByName, VoidPtrUInt64String)
 		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::Scene::FindEntityHandleByName, UInt64String)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
 		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
+		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
+		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
 	}
 }

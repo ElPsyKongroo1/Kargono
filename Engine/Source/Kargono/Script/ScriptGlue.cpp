@@ -111,7 +111,7 @@ namespace Kargono::Script
 		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity)
 
-			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+		auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		*outLinearVelocity = Math::vec2(linearVelocity.x, linearVelocity.y);

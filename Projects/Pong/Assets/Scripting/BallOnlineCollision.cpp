@@ -1,5 +1,122 @@
-bool BallOnlineCollision(uint64_t a,uint16_t b,uint64_t c)
+bool BallOnlineCollision(uint64_t entity,uint16_t userSlot,uint64_t otherEntity)
 {
-	return false;
+	bool collisionHandled = false;
+	std::string otherEntityTag = TagComponent_GetTag(otherEntity);
+	
+	if (otherEntityTag == "Left Wall")
+	{
+		if (userSlot == 0)
+		{
+			SetEntityFieldByName(entity, "PlayerTwoScore", (void*)&RValueToLValue(*(uint32_t*)GetEntityFieldByName(entity, "PlayerTwoScore") + 1));
+			SetWidgetText("base_window", "score_player_2", std::to_string(*(uint32_t*)GetEntityFieldByName(entity, "PlayerTwoScore")));
+			Rigidbody2DComponent_SetLinearVelocity(entity, {0.0f, 0.0f});
+			PlaySoundFromName("Audio/lose_sound.wav");
+			SetDisplayWindow("pre_game_warning", true);
+			LoadInputModeByName("Input/Online_Pre_Start.kginput");
+			SignalAll(1);
+			EnableReadyCheck();
+			collisionHandled = true;
+		}
+		else if (userSlot == 1)
+		{
+			Rigidbody2DComponent_SetLinearVelocity(entity, {0.0f, 0.0f});
+		}
+		
+	}
+	else if (otherEntityTag == "Right Wall")
+	{
+		if (userSlot == 1)
+		{
+			SetEntityFieldByName(entity, "PlayerOneScore", (void*)&RValueToLValue(*(uint32_t*)GetEntityFieldByName(entity, "PlayerOneScore") + 1));
+			SetWidgetText("base_window", "score_player_1", std::to_string(*(uint32_t*)GetEntityFieldByName(entity, "PlayerOneScore")));
+			Rigidbody2DComponent_SetLinearVelocity(entity, {0.0f, 0.0f});
+			PlaySoundFromName("Audio/lose_sound.wav");
+			SetDisplayWindow("pre_game_warning", true);
+			LoadInputModeByName("Input/Online_Pre_Start.kginput");
+			SignalAll(1);
+			EnableReadyCheck();
+			collisionHandled = true;
+		}
+		else if (userSlot == 0)
+		{
+			Rigidbody2DComponent_SetLinearVelocity(entity, {0.0f, 0.0f});
+		}
+		
+	}
+	else if (otherEntityTag == "Top Wall" || otherEntityTag == "Bottom Wall")
+	{
+		Math::vec2 horizontalDirection;
+		Math::vec2 currentVelocity = Rigidbody2DComponent_GetLinearVelocity(entity);
+		if (currentVelocity.x > 0)
+		{
+			horizontalDirection = {1.0f, 0.0f};
+		}
+		else
+		{
+			horizontalDirection =  {-1.0f, 0.0f};
+		}
+		currentVelocity = glm::normalize(glm::normalize(currentVelocity) + (horizontalDirection * 0.1f)) * *(float*)GetEntityFieldByName(entity, "Speed");
+		Rigidbody2DComponent_SetLinearVelocity(entity, currentVelocity);
+		PlaySoundFromName("Audio/pop-sound.wav");
+		collisionHandled = true;
+	}
+	
+	else if (otherEntityTag == "Player1")
+	{
+		if (userSlot == 0)
+		{
+			if (IsKeyPressed(Key::W))
+			{
+				float deflectionFactor = IsKeyPressed(Key::LeftShift) ? 0.55f : 0.33f;
+				Math::vec2 up = {0.0f, 1.0f};
+				Math::vec2 currentVelocity = Rigidbody2DComponent_GetLinearVelocity(entity);
+				currentVelocity = glm::normalize(glm::normalize(currentVelocity) + (up * deflectionFactor)) * *(float*)GetEntityFieldByName(entity, "Speed");
+				Rigidbody2DComponent_SetLinearVelocity(entity, currentVelocity);
+			}
+			if (IsKeyPressed(Key::A))
+			{
+				float deflectionFactor = IsKeyPressed(Key::LeftShift) ? 0.55f : 0.33f;
+				Math::vec2 up = {0.0f, -1.0f};
+				Math::vec2 currentVelocity = Rigidbody2DComponent_GetLinearVelocity(entity);
+				currentVelocity = glm::normalize(glm::normalize(currentVelocity) + (up * deflectionFactor)) * *(float*)GetEntityFieldByName(entity, "Speed");
+				Rigidbody2DComponent_SetLinearVelocity(entity, currentVelocity);
+			}
+		}
+		PlaySoundFromName("Audio/pop-sound.wav");
+		collisionHandled = true;
+	}
+	else if (otherEntityTag == "Player2")
+	{
+		if (userSlot == 1)
+		{
+			if (IsKeyPressed(Key::O))
+			{
+				float deflectionFactor = IsKeyPressed(Key::RightShift) ? 0.55f : 0.33f;
+				Math::vec2 up = {0.0f, 1.0f};
+				Math::vec2 currentVelocity = Rigidbody2DComponent_GetLinearVelocity(entity);
+				currentVelocity = glm::normalize(glm::normalize(currentVelocity) + (up * deflectionFactor)) * *(float*)GetEntityFieldByName(entity, "Speed");
+				Rigidbody2DComponent_SetLinearVelocity(entity, currentVelocity);
+			}
+			if (IsKeyPressed(Key::Semicolon))
+			{
+				float deflectionFactor = IsKeyPressed(Key::RightShift) ? 0.55f : 0.33f;
+				Math::vec2 up = {0.0f, -1.0f};
+				Math::vec2 currentVelocity = Rigidbody2DComponent_GetLinearVelocity(entity);
+				currentVelocity = glm::normalize(glm::normalize(currentVelocity) + (up * deflectionFactor)) * *(float*)GetEntityFieldByName(entity, "Speed");
+				Rigidbody2DComponent_SetLinearVelocity(entity, currentVelocity);
+			}
+		}
+		
+		PlaySoundFromName("Audio/pop-sound.wav");
+		collisionHandled = true;
+	}
+	
+	return collisionHandled;
 }
+
+
+
+
+
+
 

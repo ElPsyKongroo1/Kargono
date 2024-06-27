@@ -10,8 +10,8 @@ FieldTypes:
     Type: UInteger32
   - Name: InitialPosition
     Type: Vector3
-OnPhysicsCollisionStart: 0
-OnPhysicsCollisionEnd: 0
+OnPhysicsCollisionStart: 12876544886975453239
+OnPhysicsCollisionEnd: 7325163182931923051
 OnCreate: 209298783402426078
 OnUpdate: 0
 AllScripts:
