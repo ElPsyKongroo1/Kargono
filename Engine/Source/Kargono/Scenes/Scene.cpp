@@ -495,6 +495,17 @@ namespace Kargono::Scenes
 			body->SetTransform({ newTranslation.x, newTranslation.y }, body->GetAngle());
 		}
 	}
+	const std::string& SceneService::TagComponentGetTag(UUID entityID)
+	{
+		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
+		KG_ASSERT(scene);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity);
+		KG_ASSERT(entity.HasComponent<TagComponent>());
+		auto& tagComponent = entity.GetComponent<TagComponent>();
+		return tagComponent.Tag;
+		//return mono_string_new(ScriptEngine::GetAppDomain(), tagComponent.Tag.c_str());
+	}
 	void SceneService::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
 	{
 		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
@@ -505,6 +516,18 @@ namespace Kargono::Scenes
 		auto& rigidBody2DComp = entity.GetComponent<Rigidbody2DComponent>();
 		b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
 		body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
+	}
+	Math::vec2 SceneService::Rigidbody2DComponent_GetLinearVelocity(UUID entityID)
+	{
+		Scenes::Scene* scene = Scenes::Scene::GetActiveScene().get();
+		KG_ASSERT(scene);
+		Scenes::Entity entity = scene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity);
+		KG_ASSERT(entity.HasComponent<Rigidbody2DComponent>());
+		auto& rigidBody2DComp = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
+		const b2Vec2& linearVelocity = body->GetLinearVelocity();
+		return Math::vec2(linearVelocity.x, linearVelocity.y);
 	}
 	void SceneService::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
 	{
@@ -520,7 +543,7 @@ namespace Kargono::Scenes
 
 		ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
 		KG_ASSERT(comp.ClassHandle != Assets::EmptyHandle);
-		Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+		Ref<EntityClass> entityClass = comp.ClassReference;
 		KG_ASSERT(entityClass);
 		int32_t fieldLocation = entityClass->GetFieldLocation(fieldName);
 		KG_ASSERT(fieldLocation != -1);
@@ -543,7 +566,7 @@ namespace Kargono::Scenes
 
 		ClassInstanceComponent& comp = entity.GetComponent<ClassInstanceComponent>();
 		KG_ASSERT(comp.ClassHandle != Assets::EmptyHandle);
-		Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+		Ref<EntityClass> entityClass = comp.ClassReference;
 		KG_ASSERT(entityClass);
 		int32_t fieldLocation = entityClass->GetFieldLocation(fieldName);
 		KG_ASSERT(fieldLocation != -1);

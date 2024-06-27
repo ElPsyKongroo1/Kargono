@@ -67,6 +67,7 @@ namespace Kargono::Network
 		static void EnableReadyCheck();
 		static void SessionReadyCheck();
 		static void RequestUserCount();
+		static void SignalAll(uint16_t signal);
 		static Ref<Network::Client> GetActiveClient() { return s_Client; }
 		static void SetActiveClient(Ref<Network::Client> newClient) { s_Client = newClient; }
 

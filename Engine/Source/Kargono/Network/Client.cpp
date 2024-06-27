@@ -397,6 +397,14 @@ namespace Kargono::Network
 		}
 	}
 
+	void Client::SignalAll(uint16_t signal)
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SignalAll>(signal));
+		}
+	}
+
 	void Client::StopClient()
 	{
 		m_Quit = true;
