@@ -468,8 +468,6 @@ namespace Kargono::Script
 		return Input::InputModeService::IsActiveKeyboardSlotPressed(keySlot);
 	}
 
-	
-
 	template<typename ... Component>
 	static void RegisterComponent()
 	{
