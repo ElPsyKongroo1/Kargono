@@ -213,65 +213,6 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::ScriptComponent>())
-		{
-			auto& scriptComponent = entity.GetComponent<Scenes::ScriptComponent>();
-
-			out << YAML::Key << "ScriptComponent";
-			out << YAML::BeginMap; // Component Map
-			out << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName;
-
-
-			// Fields
-			Ref<Script::ScriptClass> entityClass = Script::ScriptEngine::GetEntityClass(scriptComponent.ClassName);
-			const auto& fields = entityClass->GetFields();
-			if (fields.size() > 0)
-			{
-				out << YAML::Key << "ScriptFields" << YAML::Value;
-				auto& entityFields = Script::ScriptEngine::GetScriptFieldMap(entity);
-				out << YAML::BeginSeq;
-				for (const auto& [name, field] : fields)
-				{
-
-					if (!entityFields.contains(name)) { continue; }
-
-					out << YAML::BeginMap; // Script Fields
-					out << YAML::Key << "Name" << YAML::Value << name;
-					out << YAML::Key << "Type" << YAML::Value << Utility::ScriptFieldTypeToString(field.Type);
-					out << YAML::Key << "Data" << YAML::Value;
-
-					Script::ScriptFieldInstance& scriptField = entityFields.at(name);
-
-					switch (field.Type)
-					{
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Float, float);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Double, double);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Bool, bool);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Char, char);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Byte, int8_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Short, int16_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Int, int32_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Long, int64_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::UByte, uint8_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::UShort, uint16_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::UInt, uint32_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::ULong, uint64_t);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Vector2, Math::vec2);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Vector3, Math::vec3);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Vector4, Math::vec4);
-						WRITE_SCRIPT_FIELD(Script::ScriptFieldType::Entity, uint64_t);
-
-					}
-
-					out << YAML::EndMap; // Script Fields
-				}
-				out << YAML::EndSeq;
-			}
-
-
-			out << YAML::EndMap; // Component Map
-		}
-
 
 		out << YAML::EndMap; // Entity
 		return true;
@@ -541,60 +482,6 @@ namespace Kargono::Assets
 						newComponent.AudioHandle = audioComp["AudioHandle"].as<uint64_t>();
 						newComponent.Audio = AssetManager::GetAudio(newComponent.AudioHandle);
 						multiAudioComp.AudioComponents.insert({ newComponent.Name, newComponent });
-					}
-				}
-
-				auto scriptComponent = entity["ScriptComponent"];
-				if (scriptComponent)
-				{
-					auto& sc = deserializedEntity.AddComponent<Scenes::ScriptComponent>();
-					sc.ClassName = scriptComponent["ClassName"].as<std::string>();
-
-					auto scriptFields = scriptComponent["ScriptFields"];
-					if (scriptFields)
-					{
-
-						Ref<Script::ScriptClass> entityClass = Script::ScriptEngine::GetEntityClass(sc.ClassName);
-						if (entityClass)
-						{
-							KG_ASSERT(entityClass);
-							const auto& fields = entityClass->GetFields();
-
-							auto& entityFields = Script::ScriptEngine::GetScriptFieldMap(deserializedEntity);
-
-							for (auto scriptField : scriptFields)
-							{
-								std::string name = scriptField["Name"].as<std::string>();
-								std::string typeString = scriptField["Type"].as<std::string>();
-								Script::ScriptFieldType type = Utility::ScriptFieldTypeFromString(typeString);
-
-								Script::ScriptFieldInstance& fieldInstance = entityFields[name];
-								// TODO(): Turn into Log Message
-								KG_ASSERT(fields.contains(name))
-									if (!fields.contains(name)) { continue; }
-								fieldInstance.Field = fields.at(name);
-
-								switch (type)
-								{
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Float, float);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Double, double);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Bool, bool);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Char, char);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Byte, int8_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Short, int16_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Int, int32_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Long, int64_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::UByte, uint8_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::UShort, uint16_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::UInt, uint32_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::ULong, uint64_t);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Vector2, Math::vec2);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Vector3, Math::vec3);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Vector4, Math::vec4);
-									READ_SCRIPT_FIELD(Script::ScriptFieldType::Entity, UUID);
-								}
-							}
-						}
 					}
 				}
 
