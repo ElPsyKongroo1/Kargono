@@ -25,6 +25,8 @@ bin-int/**
 **.vcxproj.filters
 **.vcxproj.user
 **.csproj
+**/Makefile
+
 
 # Specific Directories from Root
 /Binary/**
@@ -50,3 +52,5 @@ bin-int/**
 /Projects/Pong/Assets/Scripting/Binary/ExportBody.ilk
 /Projects/Pong/Assets/Scripting/Binary/ExportBody.lib
 /Projects/Pong/Assets/Scripting/Binary/ExportBody.obj
+Dependencies/msdf_atlas_gen/Makefile
+Dependencies/msdf_atlas_gen/msdfgen/freetype/Makefile

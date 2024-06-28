@@ -29,7 +29,7 @@ namespace Kargono
 			if (other)
 			{
 				Buffer result(other.Size);
-				memcpy_s(result.Data, other.Size, other.Data, other.Size);
+				memcpy(result.Data, other.Data, other.Size);
 				return result;
 			}
 			return {};
