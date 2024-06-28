@@ -127,7 +127,7 @@
        systemversion "latest"
        defines
        {
-	  "KG_PLATFORM_LINUX"
+	        "KG_PLATFORM_LINUX"
        }
     filter "configurations:Debug"
         defines "KG_DEBUG"
