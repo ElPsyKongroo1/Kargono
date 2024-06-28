@@ -42,5 +42,5 @@ jobs:
     - name: RunTesting
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        cd Binary/Debug-windows-x86_64/Testing
+        cd Binary/${{matrix.build-configuration}}-windows-x86_64/Testing
         ./Testing.exe
