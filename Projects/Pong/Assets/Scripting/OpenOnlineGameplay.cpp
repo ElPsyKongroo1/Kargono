@@ -1,5 +1,4 @@
 void OpenOnlineGameplay()
 {
-	Log("Running OpenOnlineGameplay!");
+	RequestJoinSession();
 }
-

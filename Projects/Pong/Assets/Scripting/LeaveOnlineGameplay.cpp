@@ -1,3 +1,5 @@
 void LeaveOnlineGameplay()
 {
+	LeaveCurrentSession();
+	OpenMainMenu();
 }
