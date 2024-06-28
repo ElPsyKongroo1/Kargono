@@ -4,11 +4,17 @@
 #include "Kargono/Math/Math.h"
 
 
-namespace Kargono
+namespace Kargono::Input
 {
+	//==============================
+	// Input Polling Class
+	//==============================
 	class InputPolling
 	{
 	public:
+		//==============================
+		// Poll Input from Platform Dependent Code
+		//==============================
 		static bool IsKeyPressed(KeyCode key);
 		static bool IsMouseButtonPressed(MouseCode button);
 		static Math::vec2 GetMousePosition();

@@ -19,12 +19,12 @@ namespace Kargono
 
 	void RuntimeApp::OnAttach()
 	{
-		Script::ScriptEngine::Init();
-		Audio::AudioEngine::Init();
+		Audio::AudioService::Init();
+		Scenes::SceneService::Init();
 
 		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
 
-		Scene::SetActiveScene(CreateRef<Scene>());
+		Scenes::Scene::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 		#if KG_EXPORT == 0
 		if (!OpenProject())
 		{
@@ -45,10 +45,10 @@ namespace Kargono
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
 
-		Renderer::Init();
-		Renderer::SetLineWidth(4.0f);
+		Rendering::RenderingService::Init();
+		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::Text::Init();
-		RuntimeUI::Runtime::Init();
+		RuntimeUI::RuntimeUIService::Init();
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -57,11 +57,11 @@ namespace Kargono
 	void RuntimeApp::OnDetach()
 	{
 		
-		auto view = Scene::GetActiveScene()->GetAllEntitiesWith<AudioComponent>();
+		auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::AudioComponent>();
 		for (auto& entity : view)
 		{
-			Entity e = { entity, Scene::GetActiveScene().get() };
-			auto& audioComponent = e.GetComponent<AudioComponent>();
+			Scenes::Entity e = { entity, Scenes::Scene::GetActiveScene().get() };
+			auto& audioComponent = e.GetComponent<Scenes::AudioComponent>();
 			audioComponent.Audio.reset();
 		}
 		OnStop();
@@ -72,18 +72,18 @@ namespace Kargono
 	{
 		
 		// Render
-		Renderer::ResetStats();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		RenderCommand::Clear();
+		Rendering::RenderingService::ResetStats();
+		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RendererAPI::Clear();
 
 		OnUpdateRuntime(ts);
-		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
-			RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), 
+			RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
 				EngineCore::GetCurrentEngineCore().GetWindow().GetWidth(), EngineCore::GetCurrentEngineCore().GetWindow().GetHeight());
 		}
 	}
@@ -119,44 +119,104 @@ namespace Kargono
 	{
 		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportWidth(event.GetWidth());
 		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportHeight(event.GetHeight());
-		Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		Scenes::Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
 
 	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
-		Script::ScriptEngine::OnPhysicsCollision(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+			}
+		}
+
+		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+			}
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Script::ScriptEngine::OnPhysicsCollisionEnd(event);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		UUID entityOneID = event.GetEntityOne();
+		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		UUID entityTwoID = event.GetEntityTwo();
+		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+
+		KG_ASSERT(entityOne);
+		KG_ASSERT(entityTwo);
+
+		bool collisionHandled = false;
+		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+			}
+		}
+
+		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
+			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			if (scriptHandle != Assets::EmptyHandle)
+			{
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+			}
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Script::ScriptEngine::OnKeyPressed(event);
+		Scenes::Scene::GetActiveScene()->OnKeyPressed(event);
 		return false;
 	}
 
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
-		// Update Scripts
-		Script::ScriptEngine::OnUpdate(ts);
-
-		Scene::GetActiveScene()->OnUpdatePhysics(ts);
+		// Update
+		Scenes::Scene::GetActiveScene()->OnUpdateInputMode(ts);
+		Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
+		Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
 
 		// Render 2D
-		Entity cameraEntity = Scene::GetActiveScene()->GetPrimaryCameraEntity();
-		Camera* mainCamera = &cameraEntity.GetComponent<CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 
@@ -232,15 +292,21 @@ namespace Kargono
 
 	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnSessionReadyCheckConfirm();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+		}
 		return false;
 	}
 
 	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		uint16_t signal = event.GetSignal();
-		void* param = &signal;
-		Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &param);
+		Assets::AssetHandle scriptHandle = Projects::Project::GetProjectOnReceiveSignal();
+		if (scriptHandle != Assets::EmptyHandle)
+		{
+			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+		}
 		return false;
 	}
 
@@ -263,7 +329,7 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())
+			if (!EngineCore::GetActiveWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
 				WindowProps projectProps =
@@ -273,19 +339,17 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.y)
 				};
 				#if KG_EXPORT == 0
-				EngineCore::GetCurrentEngineCore().GetWindow().Init(projectProps);
+				EngineCore::GetActiveWindow().Init(projectProps);
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif
-				RenderCommand::Init();
+				Rendering::RendererAPI::Init();
 			}
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 
-			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
-			else { Script::ScriptEngine::InitialAssemblyLoad(); }
-			if (Scene::GetActiveScene())
+			if (Scenes::Scene::GetActiveScene())
 			{
-				Scene::GetActiveScene()->DestroyAllEntities();
+				Scenes::Scene::GetActiveScene()->DestroyAllEntities();
 			}
 			Assets::AssetManager::ClearAll();
 			Assets::AssetManager::DeserializeAll();
@@ -297,15 +361,15 @@ namespace Kargono
 
 	void RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)
 	{
-		Ref<Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
-		if (!newScene) { newScene = CreateRef<Scene>(); }
-		Scene::SetActiveScene(newScene);
+		Ref<Scenes::Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
+		Scenes::Scene::SetActiveScene(newScene, sceneHandle);
 	}
 
 
 	void RuntimeApp::OnPlay()
 	{
-		Scene::GetActiveScene()->OnRuntimeStart();
+		Scenes::Scene::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();
 		if (scriptHandle != 0)
 		{
@@ -320,8 +384,8 @@ namespace Kargono
 
 	void RuntimeApp::OnStop()
 	{
-		Scene::GetActiveScene()->OnRuntimeStop();
-		Scene::GetActiveScene()->DestroyAllEntities();
+		Scenes::Scene::GetActiveScene()->OnRuntimeStop();
+		Scenes::Scene::GetActiveScene()->DestroyAllEntities();
 		if (Projects::Project::GetAppIsNetworked())
 		{
 			Network::Client::GetActiveClient()->StopClient();

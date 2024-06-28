@@ -11,7 +11,7 @@
 namespace Kargono::Assets
 {
 	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_TextureRegistry {};
-	std::unordered_map<AssetHandle, Ref<Texture2D>> AssetManager::s_Textures {};
+	std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> AssetManager::s_Textures {};
 
 	void AssetManager::DeserializeTextureRegistry()
 	{
@@ -281,18 +281,18 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
-	Ref<Texture2D> AssetManager::InstantiateTextureIntoMemory(Assets::Asset& asset)
+	Ref<Rendering::Texture2D> AssetManager::InstantiateTextureIntoMemory(Assets::Asset& asset)
 	{
 		Assets::TextureMetaData metadata = *static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
 		currentResource = Utility::FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<Texture2D> newTexture = Texture2D::Create(currentResource, metadata);
+		Ref<Rendering::Texture2D> newTexture = Rendering::Texture2D::Create(currentResource, metadata);
 
 		currentResource.Release();
 		return newTexture;
 	}
 
-	Ref<Texture2D> AssetManager::GetTexture(const AssetHandle& handle)
+	Ref<Rendering::Texture2D> AssetManager::GetTexture(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving texture!");
 
@@ -302,7 +302,7 @@ namespace Kargono::Assets
 		{
 			auto asset = s_TextureRegistry[handle];
 
-			Ref<Texture2D> newTexture = InstantiateTextureIntoMemory(asset);
+			Ref<Rendering::Texture2D> newTexture = InstantiateTextureIntoMemory(asset);
 			s_Textures.insert({ asset.Handle, newTexture });
 			return newTexture;
 		}

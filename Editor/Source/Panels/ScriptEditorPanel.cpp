@@ -4,9 +4,10 @@
 
 #include "Kargono.h"
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp { nullptr };
 
 	// Script Table (Create)
 	static EditorUI::TableSpec s_AllScriptsTable {};
@@ -52,6 +53,10 @@ namespace Kargono
 			s_AllScriptsTable.ClearTable();
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
+				if (script->m_ScriptType == Scripting::ScriptType::Engine)
+				{
+					continue;
+				}
 				std::string scriptType = script->m_ScriptType == Scripting::ScriptType::Class ? "Class" : "Global";
 				std::string label = scriptType + std::string("::") + script->m_SectionLabel;
 				auto onEdit = [&](EditorUI::TableEntry& entry)
@@ -84,7 +89,7 @@ namespace Kargono
 
 		s_CreateScriptPopup.Label = "Create New Script";
 		s_CreateScriptPopup.PopupWidth = 420.0f;
-		s_CreateScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_CreateScriptPopup.PopupAction = [&]()
 		{
 			s_CreateScriptName.CurrentOption = "Empty";
 			s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
@@ -93,10 +98,10 @@ namespace Kargono
 		};
 		s_CreateScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_CreateScriptName);
-			EditorUI::Editor::SelectOption(s_CreateScriptFuncType);
-			EditorUI::Editor::RadioSelector(s_CreateScriptType);
-			EditorUI::Editor::SelectOption(s_CreateScriptSectionLabel);
+			EditorUI::EditorUIService::TextInputPopup(s_CreateScriptName);
+			EditorUI::EditorUIService::SelectOption(s_CreateScriptFuncType);
+			EditorUI::EditorUIService::RadioSelector(s_CreateScriptType);
+			EditorUI::EditorUIService::SelectOption(s_CreateScriptSectionLabel);
 		};
 		s_CreateScriptPopup.ConfirmAction = [&]()
 		{
@@ -104,7 +109,7 @@ namespace Kargono
 			spec.Name = s_CreateScriptName.CurrentOption;
 			spec.Type = s_CreateScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_CreateScriptSectionLabel.CurrentOption.Label;
-			spec.FunctionType = Utility::StringToWrappedFuncType(s_CreateScriptFuncType.CurrentOption.Label);
+			spec.FunctionType = (WrappedFuncType)(uint64_t)s_CreateScriptFuncType.CurrentOption.Handle;
 			auto [handle, successful] = Assets::AssetManager::CreateNewScript(spec);
 			if (!successful)
 			{
@@ -131,12 +136,44 @@ namespace Kargono
 
 		s_CreateScriptFuncType.Label = "Function Type";
 		s_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-		s_CreateScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_CreateScriptFuncType.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			for (auto func : s_AllWrappedFuncs)
+			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), Assets::EmptyHandle);
+				s_CreateScriptFuncType.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					// Check if function's first parameter is a UInt64
+					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
+
+					if (match)
+					{
+						// Display the function without the first parameter, since it is used as the entity number in the func
+						// Replace with _None, if only one parameter is present
+						std::string funcDisplayName;
+						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_None");
+						}
+						else
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_");
+						}
+
+						s_CreateScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+					}
+
+				}
+			}
+			else
+			{
+				s_CreateScriptFuncType.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					s_CreateScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+				}
 			}
 		};
 
@@ -146,9 +183,10 @@ namespace Kargono
 		s_CreateScriptType.SecondOptionLabel = "Global";
 		s_CreateScriptType.SelectAction = [&](uint16_t option)
 		{
+			// If we set the option to 'Class', try to get the first entity class option
 			if (option == 0)
 			{
-				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
+				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
 				{
 					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
 					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
@@ -158,30 +196,33 @@ namespace Kargono
 			{
 				s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			s_CreateScriptSectionLabel.PopupAction(s_CreateScriptSectionLabel);
+			s_CreateScriptSectionLabel.PopupAction();
+
+			// Reset Func Type to prevent incorrect types
+			s_CreateScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		s_CreateScriptSectionLabel.Label = "Group";
 		s_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
-		s_CreateScriptSectionLabel.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_CreateScriptSectionLabel.PopupAction = [&]()
 		{
 			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_CreateScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
+					s_CreateScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				s_CreateScriptSectionLabel.ClearOptions();
+				s_CreateScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
 				{
-					spec.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
+					s_CreateScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
 			}
 		};
@@ -200,7 +241,7 @@ namespace Kargono
 			spec.Name = s_EditScriptName.CurrentOption;
 			spec.Type = s_EditScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_EditScriptSectionLabel.CurrentOption.Label;
-			spec.FunctionType = Utility::StringToWrappedFuncType(s_EditScriptFuncType.CurrentOption.Label);
+			spec.FunctionType = (WrappedFuncType)(uint64_t)s_EditScriptFuncType.CurrentOption.Handle;
 			auto successful = Assets::AssetManager::UpdateScript(s_ActiveScriptHandle, spec);
 			if (!successful)
 			{
@@ -224,22 +265,45 @@ namespace Kargono
 
 		s_EditScriptPopup.Label = "Edit New Script";
 		s_EditScriptPopup.PopupWidth = 420.0f;
-		s_EditScriptPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditScriptPopup.PopupAction = [&]()
 		{
 			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
-			s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(
-				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType);
 			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
 				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
 			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
+
+			if (s_EditScriptType.SelectedOption == 0)
+			{
+				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				std::string funcDisplayName;
+
+				if (Utility::WrappedFuncTypeToParameterTypes(currentFuncType).size() == 1)
+				{
+					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
+						"_UInt64", "_None");
+				}
+				else
+				{
+					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
+						"_UInt64", "_");
+				}
+				s_EditScriptFuncType.CurrentOption = { funcDisplayName,
+					(uint64_t)currentFuncType };
+			}
+			else
+			{
+				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				s_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
+					(uint64_t)currentFuncType };
+			}
 		};
 		s_EditScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
+			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
 			//EditorUI::Editor::TextInputPopup(s_EditScriptName);
-			EditorUI::Editor::SelectOption(s_EditScriptFuncType);
-			EditorUI::Editor::RadioSelector(s_EditScriptType);
-			EditorUI::Editor::SelectOption(s_EditScriptSectionLabel);
+			EditorUI::EditorUIService::SelectOption(s_EditScriptFuncType);
+			EditorUI::EditorUIService::RadioSelector(s_EditScriptType);
+			EditorUI::EditorUIService::SelectOption(s_EditScriptSectionLabel);
 		};
 		s_EditScriptPopup.DeleteAction = [&]()
 		{
@@ -261,7 +325,7 @@ namespace Kargono
 		s_DeleteScriptWarning.Label = "Delete Script";
 		s_DeleteScriptWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this script?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
 		};
 		s_DeleteScriptWarning.ConfirmAction = [&]()
 		{
@@ -294,9 +358,9 @@ namespace Kargono
 		s_EditScriptFuncTypeWarning.Label = "Edit Script";
 		s_EditScriptFuncTypeWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Changing the function type can cause the existing function code to not compile.");
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::Editor::Text("Are you sure you want to modify the function type?");
+			EditorUI::EditorUIService::Text("Changing the function type can cause the existing function code to not compile.");
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Text("Are you sure you want to modify the function type?");
 		};
 		s_EditScriptFuncTypeWarning.ConfirmAction = [&]()
 		{
@@ -308,13 +372,44 @@ namespace Kargono
 
 		s_EditScriptFuncType.Label = "Function Type";
 		s_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-		s_EditScriptFuncType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditScriptFuncType.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			for (auto func : s_AllWrappedFuncs)
+			if (s_EditScriptType.SelectedOption == 0)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func),
-					Assets::EmptyHandle);
+				s_EditScriptFuncType.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					// Check if function's first parameter is a UInt64
+					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
+
+					if (match)
+					{
+						// Display the function without the first parameter, since it is used as the entity number in the func
+						// Replace with _None, if only one parameter is present
+						std::string funcDisplayName;
+						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_None");
+						}
+						else
+						{
+							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
+								"_UInt64", "_");
+						}
+
+						s_EditScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
+					}
+
+				}
+			}
+			else
+			{
+				s_EditScriptFuncType.ClearOptions();
+				for (auto func : s_AllWrappedFuncs)
+				{
+					s_EditScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
+				}
 			}
 		};
 
@@ -336,30 +431,32 @@ namespace Kargono
 			{
 				s_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			s_EditScriptSectionLabel.PopupAction(s_EditScriptSectionLabel);
+			s_EditScriptSectionLabel.PopupAction();
+			// Reset Func Type to prevent issues with cache
+			s_EditScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		s_EditScriptSectionLabel.Label = "Group";
 		s_EditScriptSectionLabel.CurrentOption = {"None", Assets::EmptyHandle};
-		s_EditScriptSectionLabel.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditScriptSectionLabel.PopupAction = [&]()
 		{
 			if (s_EditScriptType.SelectedOption == 0)
 			{
-				spec.ClearOptions();
+				s_EditScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					spec.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
+					s_EditScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
 				}
 			}
 			else
 			{
-				spec.ClearOptions();
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				s_EditScriptSectionLabel.ClearOptions();
+				s_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
 				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
 				{
-					spec.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
+					s_EditScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
 				
 			}
@@ -404,7 +501,7 @@ namespace Kargono
 
 		s_EditGroupLabelPopup.Label = "Edit Group Label";
 		s_EditGroupLabelPopup.PopupWidth = 420.0f;
-		s_EditGroupLabelPopup.PopupAction = [](EditorUI::GenericPopupSpec& spec)
+		s_EditGroupLabelPopup.PopupAction = []()
 		{
 			s_EditGroupLabelText.CurrentOption = s_ActiveLabel;
 		};
@@ -435,7 +532,7 @@ namespace Kargono
 		};
 		s_EditGroupLabelPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditGroupLabelText);
+			EditorUI::EditorUIService::TextInputPopup(s_EditGroupLabelText);
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
@@ -449,23 +546,23 @@ namespace Kargono
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
 
-		EditorUI::Editor::Table(s_AllScriptsTable);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Table(s_AllScriptsTable);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-		EditorUI::Editor::Table(s_GroupLabelsTable);
-		EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::Table(s_GroupLabelsTable);
+		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Popups
-		EditorUI::Editor::GenericPopup(s_CreateScriptPopup);
-		EditorUI::Editor::GenericPopup(s_EditScriptPopup);
-		EditorUI::Editor::GenericPopup(s_DeleteScriptWarning);
-		EditorUI::Editor::GenericPopup(s_EditScriptFuncTypeWarning);
-		EditorUI::Editor::TextInputPopup(s_CreateGroupLabelPopup);
-		EditorUI::Editor::GenericPopup(s_EditGroupLabelPopup);
+		EditorUI::EditorUIService::GenericPopup(s_CreateScriptPopup);
+		EditorUI::EditorUIService::GenericPopup(s_EditScriptPopup);
+		EditorUI::EditorUIService::GenericPopup(s_DeleteScriptWarning);
+		EditorUI::EditorUIService::GenericPopup(s_EditScriptFuncTypeWarning);
+		EditorUI::EditorUIService::TextInputPopup(s_CreateGroupLabelPopup);
+		EditorUI::EditorUIService::GenericPopup(s_EditGroupLabelPopup);
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

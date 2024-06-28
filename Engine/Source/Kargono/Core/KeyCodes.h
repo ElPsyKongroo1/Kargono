@@ -3,10 +3,16 @@
 #include <string>
 #include <array>
 
-namespace Kargono { using KeyCode = uint16_t; }
+namespace Kargono
+{
+	using KeyCode = uint16_t;
+}
 
 namespace Kargono::Key
 {
+	//==============================
+	// Key Code Definition (Keyboard)
+	//==============================
 	enum : KeyCode
 	{
 		// From glfw3.h
@@ -131,7 +137,9 @@ namespace Kargono::Key
 		RightSuper = 347,
 		Menu = 348
 	};
-
+	//==============================
+	// Array for Listing KeyCodes
+	//==============================
 	inline std::array<uint16_t, 120> s_AllKeyCodes
 	{
 		32, 39, 44, 45, 46, 47, 48,
@@ -156,7 +164,9 @@ namespace Kargono::Key
 
 namespace Kargono::Utility
 {
-
+	//==============================
+	// Conversion KeyCode <-> String
+	//==============================
 	inline std::string KeyCodeToString(KeyCode key)
 	{
 		switch (key)

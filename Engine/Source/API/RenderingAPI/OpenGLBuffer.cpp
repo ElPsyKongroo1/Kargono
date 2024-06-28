@@ -2,9 +2,11 @@
 
 #include "API/RenderingAPI/OpenGLBuffer.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
-namespace API::OpenGL
+#ifdef KG_RENDERER_OPENGL
+
+namespace API::RenderingAPI
 {
 	//============================================================
 	// Vertex Buffer
@@ -71,3 +73,5 @@ namespace API::OpenGL
 	}
 
 }
+
+#endif

@@ -20,6 +20,8 @@ The Editor only supports Windows. I do not have plans for supporting Linux or Ma
 - Inside the Applications virtual directory, set either the Editor, Runtime, or Server as the default startup project.
 - Build and Run!
 
+# [Documentation](https://elpsykongroo1.github.io/Kargono/)
+Documentation for getting started using the engine and internal descriptions of engine features. Documentation is not fully ready yet, but take a look if you want...
 # Games
 ## Games in Progress
 - Pong Clone
@@ -57,8 +59,6 @@ Hash Library used for hashing assets for verification in the AssetManager and us
 Immediate Mode Graphical User Interface library for creating GUIs in C++. Used for EditorUI.
 ## ImGuizmo ([Docs](https://github.com/CedricGuillemet/ImGuizmo))
 Tool produces a Guizmo that is usable in the Editor for modifying transforms and other applications.
-## Mono ([Docs](https://www.mono-project.com/docs/about-mono/languages/cplusplus/))
-Current system that allows engine to interact with C# Scripts.
 ## MSDF-Gen ([Docs](https://github.com/Chlumsky/msdfgen))
 Generate msdf fonts for use in RuntimeUI
 ## MSDF Atlas Gen ([Docs](https://github.com/Chlumsky/msdf-atlas-gen))

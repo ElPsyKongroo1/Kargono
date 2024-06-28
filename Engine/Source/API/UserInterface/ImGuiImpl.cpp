@@ -1,5 +1,8 @@
 #include "kgpch.h"
 
+//==============================
+// Dependency Implementation
+//==============================
 #pragma warning(disable : 4996) // KG_WARNING_DISABLE 
 //#define _CRT_SECURE_NO_WARNINGS
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD

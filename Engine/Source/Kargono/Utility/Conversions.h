@@ -9,9 +9,15 @@
 
 namespace Kargono::Utility
 {
+	//==============================
+	// Convert Types Class
+	//==============================
 	class Conversions
 	{
 	public:
+		//==============================
+		// Convert Buffer -> Variable (Ex: uint64_t, float, and int)
+		//==============================
 		template<typename T>
 		static bool CharBufferToVariable(Buffer buffer, T& variable)
 		{
@@ -56,7 +62,9 @@ namespace Kargono::Utility
 			return true; 
 
 		}
-
+		//==============================
+		// Convert String -> Bool
+		//==============================
 		static bool StringToBool(const std::string& value)
 		{
 			if (value == "True")
@@ -69,6 +77,15 @@ namespace Kargono::Utility
 			}
 			KG_ERROR("Conversion from string to bool failed");
 			return false;
+		}
+		//==============================
+		// Convert RValue -> LValue
+		// (Here is a link that explains rvalues and lvalues if needed: https://www.geeksforgeeks.org/lvalues-references-and-rvalues-references-in-c-with-examples/ )
+		//==============================
+		template<typename T>
+		T& RValueToLValue(T&& value) 
+		{
+			return value;
 		}
 	};
 }

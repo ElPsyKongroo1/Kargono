@@ -2,7 +2,7 @@
 
 #include "Kargono.h"
 
-namespace Kargono
+namespace Kargono::Panels
 {
 	class SceneHierarchyPanel
 	{
@@ -12,11 +12,11 @@ namespace Kargono
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
-		void SetSelectedEntity(Entity entity);
+		void SetSelectedEntity(Scenes::Entity entity);
 		void RefreshWidgetData();
 	private:
-		void DrawEntityNode(Entity entity);
-		void DrawComponents(Entity entity);
+		void DrawEntityNode(Scenes::Entity entity);
+		void DrawComponents(Scenes::Entity entity);
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);

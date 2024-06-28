@@ -1,9 +1,11 @@
 #include "kgpch.h"
 
 #include "API/RenderingAPI/OpenGLUniformBuffer.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
 
-namespace API::OpenGL
+#ifdef KG_RENDERER_OPENGL
+
+namespace API::RenderingAPI
 {
 
 	OpenGLUniformBuffer::OpenGLUniformBuffer(uint32_t size, uint32_t binding)
@@ -28,3 +30,5 @@ namespace API::OpenGL
 	}
 
 }
+
+#endif

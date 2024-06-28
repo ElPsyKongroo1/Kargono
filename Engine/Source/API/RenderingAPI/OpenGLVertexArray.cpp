@@ -2,32 +2,34 @@
 
 #include "API/RenderingAPI/OpenGLVertexArray.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
+
+#ifdef KG_RENDERER_OPENGL
 
 namespace API::Utility
 {
-	static GLenum ShaderDataTypeToOpenGLBaseType(Kargono::InputDataType type)
+	static GLenum ShaderDataTypeToOpenGLBaseType(Kargono::Rendering::InputDataType type)
 	{
 		switch (type)
 		{
-		case Kargono::InputDataType::Float:	return GL_FLOAT;
-		case Kargono::InputDataType::Float2:	return GL_FLOAT;
-		case Kargono::InputDataType::Float3:	return GL_FLOAT;
-		case Kargono::InputDataType::Float4:	return GL_FLOAT;
-		case Kargono::InputDataType::Mat3:		return GL_FLOAT;
-		case Kargono::InputDataType::Mat4:		return GL_FLOAT;
-		case Kargono::InputDataType::Int:		return GL_INT;
-		case Kargono::InputDataType::Int2:		return GL_INT;
-		case Kargono::InputDataType::Int3:		return GL_INT;
-		case Kargono::InputDataType::Int4:		return GL_INT;
-		case Kargono::InputDataType::Bool:		return GL_BOOL;
+		case Kargono::Rendering::InputDataType::Float:	return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Float2:	return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Float3:	return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Float4:	return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Mat3:		return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Mat4:		return GL_FLOAT;
+		case Kargono::Rendering::InputDataType::Int:		return GL_INT;
+		case Kargono::Rendering::InputDataType::Int2:		return GL_INT;
+		case Kargono::Rendering::InputDataType::Int3:		return GL_INT;
+		case Kargono::Rendering::InputDataType::Int4:		return GL_INT;
+		case Kargono::Rendering::InputDataType::Bool:		return GL_BOOL;
 		}
 		KG_ERROR("Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
 		return -1;
 	}
 }
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
@@ -45,7 +47,7 @@ namespace API::OpenGL
 	{
 		glBindVertexArray(0);
 	}
-	void OpenGLVertexArray::AddVertexBuffer(const Kargono::Ref<Kargono::VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(const Kargono::Ref<Kargono::Rendering::VertexBuffer>& vertexBuffer)
 	{
 		KG_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
@@ -60,10 +62,10 @@ namespace API::OpenGL
 			//		A switch is used since different functions are needed for different data types
 			switch (element.Type)
 			{
-			case Kargono::InputDataType::Float:
-			case Kargono::InputDataType::Float2:
-			case Kargono::InputDataType::Float3:
-			case Kargono::InputDataType::Float4:
+			case Kargono::Rendering::InputDataType::Float:
+			case Kargono::Rendering::InputDataType::Float2:
+			case Kargono::Rendering::InputDataType::Float3:
+			case Kargono::Rendering::InputDataType::Float4:
 			{
 				glEnableVertexAttribArray(m_VertexBufferIndex);
 				glVertexAttribPointer(m_VertexBufferIndex,
@@ -75,11 +77,11 @@ namespace API::OpenGL
 				m_VertexBufferIndex++;
 				break;
 			}
-			case Kargono::InputDataType::Int:
-			case Kargono::InputDataType::Int2:
-			case Kargono::InputDataType::Int3:
-			case Kargono::InputDataType::Int4:
-			case Kargono::InputDataType::Bool:
+			case Kargono::Rendering::InputDataType::Int:
+			case Kargono::Rendering::InputDataType::Int2:
+			case Kargono::Rendering::InputDataType::Int3:
+			case Kargono::Rendering::InputDataType::Int4:
+			case Kargono::Rendering::InputDataType::Bool:
 			{
 				glEnableVertexAttribArray(m_VertexBufferIndex);
 				glVertexAttribIPointer(m_VertexBufferIndex,
@@ -90,8 +92,8 @@ namespace API::OpenGL
 				m_VertexBufferIndex++;
 				break;
 			}
-			case Kargono::InputDataType::Mat3:
-			case Kargono::InputDataType::Mat4:
+			case Kargono::Rendering::InputDataType::Mat3:
+			case Kargono::Rendering::InputDataType::Mat4:
 			{
 				uint8_t count = element.GetComponentCount();
 				for (uint8_t i = 0; i < count; i++)
@@ -117,10 +119,12 @@ namespace API::OpenGL
 		m_VertexBuffers.push_back(vertexBuffer);
 
 	}
-	void OpenGLVertexArray::SetIndexBuffer(const Kargono::Ref<Kargono::IndexBuffer>& indexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(const Kargono::Ref<Kargono::Rendering::IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
 	}
 }
+
+#endif

@@ -33,7 +33,6 @@ group "Dependencies"
 group ""
 
 group "Engine"
-    include "ScriptEngine" 
     include "Engine"
 group ""
 
@@ -42,3 +41,5 @@ group "Applications"
     include "Runtime"
     include "Server"
 group ""
+group "Tools"
+    include "Testing"

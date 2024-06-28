@@ -3,22 +3,22 @@
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Scene/Scene.h"
-#include "Kargono/Scene/Entity.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Scenes/Entity.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
 namespace Kargono::Utility
 {
-	static void TransferClassInstanceFieldData(Ref<Kargono::Scene> scene, Ref<Kargono::EntityClass> entityClass, Assets::AssetHandle entityHandle,
+	static void TransferClassInstanceFieldData(Ref<Scenes::Scene> scene, Ref<Scenes::EntityClass> entityClass, Assets::AssetHandle entityHandle,
 		const std::unordered_map<uint32_t, uint32_t>& transferMap)
 	{
 		if (scene)
 		{
-			for (auto entity : scene->GetAllEntitiesWith<ClassInstanceComponent>())
+			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
 			{
-				Kargono::Entity currentEntity { entity, scene.get() };
-				ClassInstanceComponent& component = currentEntity.GetComponent<ClassInstanceComponent>();
+				Scenes::Entity currentEntity { entity, scene.get() };
+				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{
 					component.ClassReference = entityClass;
@@ -40,14 +40,14 @@ namespace Kargono::Utility
 		}
 	}
 
-	static void ClearClassReferenceFromScene(Ref<Kargono::Scene> scene,Ref<Kargono::EntityClass> entityClass, Assets::AssetHandle entityHandle)
+	static void ClearClassReferenceFromScene(Ref<Scenes::Scene> scene,Ref<Scenes::EntityClass> entityClass, Assets::AssetHandle entityHandle)
 	{
 		if (scene)
 		{
-			for (auto entity : scene->GetAllEntitiesWith<ClassInstanceComponent>())
+			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
 			{
-				Kargono::Entity currentEntity { entity, scene.get() };
-				ClassInstanceComponent& component = currentEntity.GetComponent<ClassInstanceComponent>();
+				Scenes::Entity currentEntity { entity, scene.get() };
+				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{
 					component.ClassHandle = Assets::EmptyHandle;
@@ -162,7 +162,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	void AssetManager::SerializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath)
+	void AssetManager::SerializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -232,7 +232,7 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::DeserializeEntityClass(Ref<Kargono::EntityClass> EntityClass, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
 		try
@@ -270,7 +270,7 @@ namespace Kargono::Assets
 
 		// Get Function Slots
 		{
-			EntityScripts& scripts = EntityClass->m_Scripts;
+			Scenes::EntityScripts& scripts = EntityClass->m_Scripts;
 			scripts.OnPhysicsCollisionStartHandle =
 				static_cast<Assets::AssetHandle>(data["OnPhysicsCollisionStart"].as<uint64_t>());
 			if (scripts.OnPhysicsCollisionStartHandle != Assets::EmptyHandle)
@@ -355,7 +355,7 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref<Kargono::EntityClass> entityClass, Ref<Kargono::Scene> editorScene)
+	void AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref<Scenes::EntityClass> entityClass, Ref<Scenes::Scene> editorScene)
 	{
 		if (!s_EntityClassRegistry.contains(entityClassHandle))
 		{
@@ -363,8 +363,8 @@ namespace Kargono::Assets
 			return;
 		}
 		// Store Field Location for Processing ClassInstanceComponent Data
-		std::vector<ClassField> oldFields = GetEntityClass(entityClassHandle)->GetFields();
-		std::vector<ClassField> newFields = entityClass->GetFields();
+		std::vector<Scenes::ClassField> oldFields = GetEntityClass(entityClassHandle)->GetFields();
+		std::vector<Scenes::ClassField> newFields = entityClass->GetFields();
 
 		Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];
 		SerializeEntityClass(entityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
@@ -388,8 +388,8 @@ namespace Kargono::Assets
 		}
 
 		// Update Active Scene
-		Ref<Kargono::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
-		Ref<Kargono::Scene> activeScene = Scene::GetActiveScene();
+		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
 
 		Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);
 		// Update Editor Scene if applicable
@@ -400,7 +400,7 @@ namespace Kargono::Assets
 
 		for (auto& [handle, asset] : s_SceneRegistry)
 		{
-			const Ref<Kargono::Scene> scene = GetScene(handle);
+			const Ref<Scenes::Scene> scene = GetScene(handle);
 			if (!scene)
 			{
 				KG_WARN("Unable to load scene in SaveEntityClass");
@@ -413,7 +413,7 @@ namespace Kargono::Assets
 		
 	}
 
-	void AssetManager::DeleteEntityClass(AssetHandle handle, Ref<Kargono::Scene> editorScene)
+	void AssetManager::DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene)
 	{
 		if (!s_EntityClassRegistry.contains(handle))
 		{
@@ -422,8 +422,8 @@ namespace Kargono::Assets
 		}
 
 		// Remove entity class references from all scenes
-		Ref<Kargono::EntityClass> newEntityClass = GetEntityClass(handle);
-		Ref<Kargono::Scene> activeScene = Scene::GetActiveScene();
+		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(handle);
+		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
 
 		// Update Active Scene if applicable
 		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);
@@ -435,7 +435,7 @@ namespace Kargono::Assets
 		// Update all scenes in scene registry
 		for (auto& [handle, asset] : s_SceneRegistry)
 		{
-			const Ref<Kargono::Scene> scene = GetScene(handle);
+			const Ref<Scenes::Scene> scene = GetScene(handle);
 			if (!scene)
 			{
 				KG_WARN("Unable to load scene in SaveEntityClass");
@@ -465,7 +465,7 @@ namespace Kargono::Assets
 		return s_EntityClassRegistry[handle].Data.IntermediateLocation;
 	}
 
-	Ref<Kargono::EntityClass> AssetManager::GetEntityClass(const AssetHandle& handle)
+	Ref<Scenes::EntityClass> AssetManager::GetEntityClass(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving EntityClass!");
 
@@ -478,7 +478,7 @@ namespace Kargono::Assets
 		KG_WARN("No EntityClass is associated with provided handle!");
 		return nullptr;
 	}
-	std::tuple<AssetHandle, Ref<Kargono::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
+	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
@@ -502,9 +502,9 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetEntityClass(newHandle));
 	}
 
-	Ref<Kargono::EntityClass> AssetManager::InstantiateEntityClass(const Assets::Asset& EntityClassAsset)
+	Ref<Scenes::EntityClass> AssetManager::InstantiateEntityClass(const Assets::Asset& EntityClassAsset)
 	{
-		Ref<Kargono::EntityClass> newEntityClass = CreateRef<Kargono::EntityClass>();
+		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
 		DeserializeEntityClass(newEntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
 		return newEntityClass;
 	}
@@ -518,7 +518,7 @@ namespace Kargono::Assets
 	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
 	{
 		// Create Temporary EntityClass
-		Ref<Kargono::EntityClass> temporaryEntityClass = CreateRef<Kargono::EntityClass>();
+		Ref<Scenes::EntityClass> temporaryEntityClass = CreateRef<Scenes::EntityClass>();
 		temporaryEntityClass->SetName(EntityClassName);
 
 		// Save Binary Intermediate into File

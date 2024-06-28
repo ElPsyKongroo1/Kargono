@@ -1,0 +1,4 @@
+F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\Intermediates\Dist\ScriptEngine.csproj.AssemblyReference.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\Intermediates\Dist\ScriptEngine.csproj.CoreCompileInputs.cache
+F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\Intermediates\Dist\ScriptEngine.dll
+F:\Charles_Files\Personal_Projects\Personal_Games\Editor\Resources\Scripts\ScriptEngine.dll

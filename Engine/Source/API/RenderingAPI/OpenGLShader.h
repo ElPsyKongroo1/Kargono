@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/Math/Math.h"
 
-namespace API::OpenGL
+#ifdef KG_RENDERER_OPENGL
+
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL Shader Class
@@ -13,7 +15,7 @@ namespace API::OpenGL
 	//		These binaries are used to instantiate the OpenGL shader program and this class holds a
 	//		reference to the OpenGL program with m_RendererID. Modifications to OpenGL uniforms are
 	//		available here as well.
-	class OpenGLShader : public Kargono::Shader
+	class OpenGLShader : public Kargono::Rendering::Shader
 	{
 	public:
 		//==============================
@@ -21,7 +23,7 @@ namespace API::OpenGL
 		//==============================
 		// This constructor simply calls CreateProgram since most of the source code processing is done in the
 		//		AssetManager. The CreateProgram call instantiates the shader program in OpenGL.
-		OpenGLShader(const std::string& name, const std::unordered_map<Kargono::GLenum, std::vector<uint32_t>>& shaderBinaries);
+		OpenGLShader(const std::string& name, const std::unordered_map<Kargono::Rendering::GLenum, std::vector<uint32_t>>& shaderBinaries);
 		// This destructor simply deletes the shader program in OpenGL
 		virtual ~OpenGLShader();
 
@@ -58,7 +60,7 @@ namespace API::OpenGL
 		//		and links them together into a shader program. After the vertex and fragment shaders
 		//		are linked they can be cleared. The shader program represents the active shader
 		//		that exists in OpenGL and is identified by m_RendererID.
-		void CreateProgram(const std::unordered_map<Kargono::GLenum, std::vector<uint32_t>>& openGLSPIRV);
+		void CreateProgram(const std::unordered_map<Kargono::Rendering::GLenum, std::vector<uint32_t>>& openGLSPIRV);
 	private:
 		// m_RendererID represents the OpenGL shader program associated with this object. Any OpenGL calls
 		//		will use this ID
@@ -68,3 +70,5 @@ namespace API::OpenGL
 	};
 
 }
+
+#endif

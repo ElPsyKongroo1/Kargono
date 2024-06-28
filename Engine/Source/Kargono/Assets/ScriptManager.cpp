@@ -92,8 +92,34 @@ namespace Kargono::Assets
 				s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
 
 				s_Scripts.insert({ newAsset.Handle, InstantiateScriptIntoMemory(newAsset) });
-
 			}
+		}
+
+		// Load in Engine Scripts
+		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
+		{
+			Assets::Asset newAsset{};
+			newAsset.Handle = script->m_ID;
+
+			newAsset.Data.CheckSum = "";
+			newAsset.Data.IntermediateLocation = "";
+			newAsset.Data.Type = AssetType::Script;
+
+			// Insert ScriptMetaData
+			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+
+			std::string Name{};
+			std::vector<WrappedVarType> Parameters{};
+
+			ScriptMetaData->Name = script->m_ScriptName;
+			ScriptMetaData->SectionLabel = script->m_SectionLabel;
+			ScriptMetaData->ScriptType = script->m_ScriptType;
+			ScriptMetaData->FunctionType = script->m_FuncType;
+			newAsset.Data.SpecificFileData = ScriptMetaData;
+
+			// Insert Engine Script into registry/in-memory
+			s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
+			s_Scripts.insert({ newAsset.Handle, script });
 		}
 	}
 
@@ -121,6 +147,10 @@ namespace Kargono::Assets
 		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
+			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->ScriptType == Scripting::ScriptType::Engine)
+			{
+				continue;
+			}
 			out << YAML::BeginMap; // Asset Map
 			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
 
@@ -210,7 +240,7 @@ namespace Kargono::Assets
 		// If script is associated with a class, add script to class's scripts
 		if (spec.Type == Scripting::ScriptType::Class)
 		{
-			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 			if (!entityClass)
 			{
 				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
@@ -249,7 +279,7 @@ namespace Kargono::Assets
 
 		// Check if an original entity class needs to be updated
 		AssetHandle classHandle{ 0 };
-		Ref<Kargono::EntityClass> entityClass {nullptr};
+		Ref<Scenes::EntityClass> entityClass {nullptr};
 		if (spec.Type == Scripting::ScriptType::Class)
 		{
 			for (auto& [handle, asset] : s_EntityClassRegistry)
@@ -284,7 +314,7 @@ namespace Kargono::Assets
 
 			// Build Regular Expression
 			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->FunctionType))};
-			std::string functionName { std::string("KG_FUNC_") + std::string(scriptHandle)};
+			std::string functionName { metadata->Name };
 			std::stringstream parameters {};
 			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->FunctionType))
 			{
@@ -302,12 +332,12 @@ namespace Kargono::Assets
 			uint64_t count = Utility::Regex::GetMatchCount(scriptFile, matchingExpression);
 			if (count == 0)
 			{
-				KG_WARN("Unable to locate function signature when replacing function type in script manager");
+				KG_ERROR("Unable to locate function signature when replacing function type in script manager");
 				return false;
 			}
 			if (count > 1)
 			{
-				KG_WARN("Too many matches for function signature when replacing function type in script manager");
+				KG_ERROR("Too many matches for function signature when replacing function type in script manager");
 				return false;
 			}
 		}
@@ -318,7 +348,7 @@ namespace Kargono::Assets
 			// Erase Script inside original entity class
 			for (auto& [classHandle, asset] : s_EntityClassRegistry)
 			{
-				Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+				Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 				if (!entityClass)
 				{
 					continue;
@@ -382,7 +412,7 @@ namespace Kargono::Assets
 		// Delete Handle inside associated class
 		for (auto& [classHandle, asset] : s_EntityClassRegistry)
 		{
-			Ref<Kargono::EntityClass> entityClass = GetEntityClass(classHandle);
+			Ref<Scenes::EntityClass> entityClass = GetEntityClass(classHandle);
 			if (!entityClass)
 			{
 				continue;
@@ -506,7 +536,7 @@ namespace Kargono::Assets
 		newScript->m_FuncType = metadata.FunctionType;
 		newScript->m_ScriptType = metadata.ScriptType;
 		newScript->m_SectionLabel = metadata.SectionLabel;
-		Scripting::ScriptCore::LoadScriptFunction(newScript, metadata.FunctionType);
+		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
 
 		return newScript;
 	}

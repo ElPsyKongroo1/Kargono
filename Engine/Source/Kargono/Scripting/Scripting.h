@@ -6,7 +6,6 @@
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Scripting/ScriptingResources.h"
-#include "Kargono/Script/ScriptEngine.h"
 
 #include <filesystem>
 #include <functional>
@@ -19,19 +18,44 @@ namespace Kargono::Assets { class AssetManager; }
 namespace Kargono::Scripting
 {
 	class Script;
-
-	class ScriptCore
+	//==============================
+	// Script Service Class 
+	//==============================
+	class ScriptService
 	{
 	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
 		static void Init();
 		static void Terminate();
 	public:
-		static void OpenDll();
-		static void CloseDll();
-		
+		//==============================
+		// Manage Active Script Module
+		//==============================
+		static void LoadActiveScriptModule();
+		static void CloseActiveScriptModule();
+	private:
+		//==============================
+		// Manage Individual Scripts
+		//==============================
 		static void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
-	};
 
+		//==============================
+		// Getters/Setters
+		//==============================
+		static std::vector<Ref<Script>>& GetAllEngineScripts()
+		{
+			return s_AllEngineScripts;
+		}
+	private:
+		static std::vector<Ref<Script>> s_AllEngineScripts;
+	private:
+		friend Assets::AssetManager;
+	};
+	//==============================
+	// Script Class
+	//==============================
 	class Script
 	{
 	public:
@@ -48,6 +72,9 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
+	//==============================
+	// Utility for Creating Function Definition/Signatures
+	//==============================
 	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name)
 	{
 		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
@@ -77,6 +104,45 @@ namespace Kargono::Utility
 		outputStream << GenerateFunctionSignature(funcType, name);
 		outputStream << '\n';
 		outputStream << "{" << "\n";
+		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+		if (returnType != WrappedVarType::Void)
+		{
+			outputStream << "\treturn ";
+			switch (returnType)
+			{
+				case WrappedVarType::Bool:
+				{
+					outputStream << "false\n";
+					break;
+				}
+				case WrappedVarType::String:
+				{
+					outputStream << "\"\"\n";
+					break;
+				}
+				case WrappedVarType::Vector3:
+				{
+					outputStream << "Math::vec3(0.0f, 0.0f, 0.0f)\n";
+					break;
+				}
+				case WrappedVarType::Float:
+				case WrappedVarType::UInteger16:
+				case WrappedVarType::UInteger32:
+				case WrappedVarType::Integer32:
+				case WrappedVarType::UInteger64:
+				{
+					outputStream << "0\n";
+					break;
+				}
+				case WrappedVarType::Void:
+				case WrappedVarType::None:
+				default:
+				{
+					KG_ERROR("Unsupported return type provided {}", Utility::WrappedVarTypeToString(returnType));
+					break;
+				}
+			}
+		}
 		outputStream << "}" << "\n";
 
 		return outputStream.str();

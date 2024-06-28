@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Kargono/Renderer/Framebuffer.h"
+#include "Kargono/Rendering/Framebuffer.h"
 
-namespace API::OpenGL
+#ifdef KG_RENDERER_OPENGL
+
+namespace API::RenderingAPI
 {
 	//============================================================
 	// OpenGL FrameBuffer Class
@@ -12,7 +14,7 @@ namespace API::OpenGL
 	//		This data can include color buffers (RGBA), depth buffers (Variable Size, typically 24bytes),
 	//		a stencil buffers(1 Byte), and others... An single framebuffer can hold multiple
 	//		datasets(colorbuffers, depthbuffers, etc...).
-	class OpenGLFramebuffer : public Kargono::Framebuffer
+	class OpenGLFramebuffer : public Kargono::Rendering::Framebuffer
 	{
 	public:
 		//==============================
@@ -21,7 +23,7 @@ namespace API::OpenGL
 		// This constructor stores the provided spec, sorts the FramebufferAttachments
 		//		into the locally held m_ColorAttachment and m_DepthAttachment, and
 		//		calls the invalidate function to instantiate the framebuffer in OpenGL.
-		OpenGLFramebuffer(const Kargono::FramebufferSpecification& spec);
+		OpenGLFramebuffer(const Kargono::Rendering::FramebufferSpecification& spec);
 		// This destructor clears the framebuffer from the OpenGL context. This includes
 		//		clearing the Framebuffer itself and clearing the color/depth buffers.
 		virtual ~OpenGLFramebuffer();
@@ -63,7 +65,7 @@ namespace API::OpenGL
 			KG_ASSERT(index < m_ColorAttachmentIDs.size(), "Invalid attempted access");
 			return m_ColorAttachmentIDs[index];
 		}
-		virtual const Kargono::FramebufferSpecification& GetSpecification() const override { return m_Specification; }
+		virtual const Kargono::Rendering::FramebufferSpecification& GetSpecification() const override { return m_Specification; }
 
 	private:
 		//==============================
@@ -72,17 +74,17 @@ namespace API::OpenGL
 		// Invalidate is a function that gets called by many other public functions in this class.
 		//		It takes the current m_Specification, m_ColorAttachmentSpecifications, and
 		//		m_DepthAttachmentSpecification to generate the actual OpenGL color attachments, OpenGL depth attachment,
-		//		and the final OpenGL Framebuffer. This function is fairly long, but managable. Take a look at it yourself.
+		//		and the final OpenGL Framebuffer. This function is fairly long, but manageable. Take a look at it yourself.
 		void Invalidate();
 	private:
 		// m_RendererID represents the framebuffer instance in OpenGL.
 		uint32_t m_RendererID = 0;
 		// This specification describes the framebuffer attachments, width, height, multisample, etc...
-		Kargono::FramebufferSpecification m_Specification;
+		Kargono::Rendering::FramebufferSpecification m_Specification;
 		// Color Specification that is obtained from m_Specification during object construction
-		std::vector<Kargono::FramebufferDataSpecification> m_ColorAttachmentSpecifications;
+		std::vector<Kargono::Rendering::FramebufferDataSpecification> m_ColorAttachmentSpecifications;
 		// Depth specification that is obtained from m_Specification during object construction
-		Kargono::FramebufferDataSpecification m_DepthAttachmentSpecification = Kargono::FramebufferDataFormat::None;
+		Kargono::Rendering::FramebufferDataSpecification m_DepthAttachmentSpecification = Kargono::Rendering::FramebufferDataFormat::None;
 		// The next two variables hold references to the OpenGL context(s) of the color attachments and
 		//		the depth buffer.
 		std::vector<uint32_t> m_ColorAttachmentIDs; 
@@ -90,3 +92,5 @@ namespace API::OpenGL
 		
 	};
 }
+
+#endif

@@ -3,12 +3,14 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/MouseEvent.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Projects/Project.h"
 
 #include "API/Platform/WindowsWindow.h"
 #include "API/ImageProcessing/stbAPI.h"
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
+
+#ifdef KG_PLATFORM_WINDOWS
 
 namespace API::Utility
 {
@@ -18,7 +20,7 @@ namespace API::Utility
 	}
 }
 
-namespace API::Windows
+namespace API::Platform
 {
 	static uint8_t s_GLFWWindowCount = 0;
 
@@ -66,11 +68,8 @@ namespace API::Windows
 		glfwSetErrorCallback(Utility::GLFWErrorCallback);
 
 		// Create New Window Through GLFW
-		#if defined(KG_DEBUG)
-		if (Kargono::Renderer::GetAPI() == Kargono::RenderAPI::OpenGL)
-		{
-			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		}
+		#if defined(KG_DEBUG) && defined(KG_RENDERER_OPENGL)
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		#endif
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
@@ -95,7 +94,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Resize Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				data.Width = width;
 				data.Height = height;
@@ -107,7 +106,7 @@ namespace API::Windows
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
 			{
 				KG_PROFILE_FUNCTION("GLFW Close Event");
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::WindowCloseEvent event;
 				data.EventCallback(event);
 			});
@@ -116,7 +115,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Keyboard Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 				switch (action)
 				{
 					case GLFW_PRESS:
@@ -144,7 +143,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Typing Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::KeyTypedEvent event(keycode);
 				data.EventCallback(event);
 
@@ -154,7 +153,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				switch (action)
 					{
@@ -177,7 +176,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Scroll Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseScrolledEvent event((float)xOffset, (float)yOffset);
 				data.EventCallback(event);
@@ -186,7 +185,7 @@ namespace API::Windows
 			{
 				KG_PROFILE_FUNCTION("GLFW Move Cursor Event");
 
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseMovedEvent event((float)xPos, (float)yPos);
 				data.EventCallback(event);
@@ -306,3 +305,5 @@ namespace API::Windows
 		}
 	}
 }
+
+#endif

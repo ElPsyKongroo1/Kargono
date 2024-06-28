@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Renderer/Shader.h"
+#include "Kargono/Rendering/Shader.h"
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Scripting/ScriptingResources.h"
@@ -13,7 +13,9 @@
 
 namespace Kargono::Assets
 {
-
+	//==============================
+	// Core Assets Types
+	//==============================
 	// An AssetHandle is a unique identifier for an Asset.
 	using AssetHandle = Kargono::UUID;
 
@@ -110,9 +112,9 @@ namespace Kargono::Assets
 	//		and holds the format of per vertex input. Ex: vec3(vertex position), vec3(world position), vec4(color), etc...
 	struct ShaderMetaData
 	{
-		ShaderSpecification ShaderSpec{};
-		UniformBufferList UniformList{};
-		InputBufferLayout InputLayout{};
+		Rendering::ShaderSpecification ShaderSpec{};
+		Rendering::UniformBufferList UniformList{};
+		Rendering::InputBufferLayout InputLayout{};
 	};
 
 	//==============================

@@ -4,10 +4,11 @@
 #include "EditorApp.h"
 #include "EntityClassEditor.h"
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp { nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp { nullptr };
-	static Ref<EntityClass> s_EditorEntityClass { nullptr };
+	static Ref<Scenes::EntityClass> s_EditorEntityClass { nullptr };
 	static Assets::AssetHandle s_EditorEntityClassHandle { Assets::EmptyHandle };
 
 	static std::string s_CurrentField {};
@@ -42,7 +43,7 @@ namespace Kargono
 	{
 		s_OnOpenClass = [&]()
 		{
-			s_OpenClassPopupSpec.StartPopup = true;
+			s_OpenClassPopupSpec.PopupActive = true;
 		};
 
 		s_OnCreateClass = [&]()
@@ -74,15 +75,15 @@ namespace Kargono
 		s_OpenClassPopupSpec.Label = "Open Class";
 		s_OpenClassPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_OpenClassPopupSpec.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_OpenClassPopupSpec.PopupAction = [&]()
 		{
-			spec.GetAllOptions().clear();
-			spec.CurrentOption = { "None", Assets::EmptyHandle };
+			s_OpenClassPopupSpec.GetAllOptions().clear();
+			s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_OpenClassPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
-				spec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenClassPopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 		};
 
@@ -139,7 +140,7 @@ namespace Kargono
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_SelectClassNameSpec);
+			EditorUI::EditorUIService::TextInputPopup(s_SelectClassNameSpec);
 		};
 	}
 
@@ -156,7 +157,7 @@ namespace Kargono
 		};
 		s_DeleteEntityClassWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to delete this entity class object?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this entity class object?");
 		};
 
 		s_CloseEntityClassWarning.Label = "Close Entity Class";
@@ -167,7 +168,7 @@ namespace Kargono
 		};
 		s_CloseEntityClassWarning.PopupContents = [&]()
 		{
-			EditorUI::Editor::Text("Are you sure you want to close this entity class object without saving?");
+			EditorUI::EditorUIService::Text("Are you sure you want to close this entity class object without saving?");
 		};
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
@@ -217,20 +218,20 @@ namespace Kargono
 		s_FieldsTable.Column2Title = "Field Type";
 		s_FieldsTable.AddToSelectionList("Add New Field", [&]()
 			{
-				s_AddFieldPopup.StartPopup = true;
+				s_AddFieldPopup.PopupActive = true;
 			});
 
 		s_AddFieldPopup.Label = "Add New Field";
 		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
 		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
 		s_AddFieldPopup.LineCount = 2;
-		s_AddFieldPopup.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_AddFieldPopup.PopupAction = [&]()
 		{
-			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_AddFieldPopup.ClearOptions();
+			s_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				s_AddFieldPopup.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		s_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -260,12 +261,12 @@ namespace Kargono
 		s_EditFieldType.Label = "Field Type";
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
 		s_EditFieldType.LineCount = 2;
-		s_EditFieldType.PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		s_EditFieldType.PopupAction = [&]()
 		{
-			spec.ClearOptions();
+			s_EditFieldType.ClearOptions();
 			for (auto& type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				s_EditFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		s_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -285,7 +286,7 @@ namespace Kargono
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupWidth = 420.0f;
-		s_EditFieldPopup.PopupAction = [&](EditorUI::GenericPopupSpec& spec)
+		s_EditFieldPopup.PopupAction = [&]()
 		{
 			WrappedVarType fieldType = s_EditorEntityClass->GetField(s_CurrentField);
 
@@ -312,8 +313,8 @@ namespace Kargono
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::Editor::TextInputPopup(s_EditFieldName);
-			EditorUI::Editor::SelectOption(s_EditFieldType);
+			EditorUI::EditorUIService::TextInputPopup(s_EditFieldName);
+			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 		};
 
 		// Static Function Section
@@ -325,20 +326,20 @@ namespace Kargono
 		s_SelectOnPhysicsCollisionStartSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionStartSpec.LineCount = 3;
 		s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnPhysicsCollisionStartSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnPhysicsCollisionStartSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnPhysicsCollisionStartSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnPhysicsCollisionStartSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_FuncType == WrappedFuncType::Bool_UInt64)
+				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnPhysicsCollisionStartSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			const Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -369,20 +370,20 @@ namespace Kargono
 		s_SelectOnPhysicsCollisionEndSpec.LineCount = 3;
 		s_SelectOnPhysicsCollisionEndSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnPhysicsCollisionEndSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnPhysicsCollisionEndSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnPhysicsCollisionEndSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnPhysicsCollisionEndSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_FuncType == WrappedFuncType::Bool_UInt64)
+				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnPhysicsCollisionEndSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -413,20 +414,20 @@ namespace Kargono
 		s_SelectOnCreateSpec.LineCount = 3;
 		s_SelectOnCreateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnCreateSpec.CurrentOption = { "None", Assets::EmptyHandle};
-		s_SelectOnCreateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnCreateSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnCreateSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnCreateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_FuncType == WrappedFuncType::Void_None)
+				if (script->m_FuncType == WrappedFuncType::Void_UInt64)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnCreateSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnCreateHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnCreateSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -457,20 +458,20 @@ namespace Kargono
 		s_SelectOnUpdateSpec.LineCount = 3;
 		s_SelectOnUpdateSpec.Flags |= EditorUI::SelectOption_Indented;
 		s_SelectOnUpdateSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_SelectOnUpdateSpec.PopupAction = [](EditorUI::SelectOptionSpec& spec)
+		s_SelectOnUpdateSpec.PopupAction = []()
 		{
-			spec.GetAllOptions().clear();
+			s_SelectOnUpdateSpec.GetAllOptions().clear();
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_SelectOnUpdateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 			{
-				if (script->m_FuncType == WrappedFuncType::Void_Float)
+				if (script->m_FuncType == WrappedFuncType::Void_UInt64Float)
 				{
-					spec.AddToOptions("All Options", script->m_ScriptName, handle);
+					s_SelectOnUpdateSpec.AddToOptions("All Options", script->m_ScriptName, handle);
 				}
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnUpdateHandle;
-			spec.CurrentOption = { handle ?
+			s_SelectOnUpdateSpec.CurrentOption = { handle ?
 				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
@@ -552,47 +553,47 @@ namespace Kargono
 	void EntityClassEditor::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
 
 		if (!s_EditorEntityClass)
 		{
-			EditorUI::Editor::NewItemScreen("Open Existing Class", s_OnOpenClass, "Create New Class", s_OnCreateClass);
-			EditorUI::Editor::GenericPopup(s_CreateClassPopupSpec);
-			EditorUI::Editor::SelectOption(s_OpenClassPopupSpec);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Class", s_OnOpenClass, "Create New Class", s_OnCreateClass);
+			EditorUI::EditorUIService::GenericPopup(s_CreateClassPopupSpec);
+			EditorUI::EditorUIService::SelectOption(s_OpenClassPopupSpec);
 		}
 		else
 		{
-			EditorUI::Editor::SelectorHeader(s_MainHeader);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::Editor::GenericPopup(s_DeleteEntityClassWarning);
-			EditorUI::Editor::GenericPopup(s_CloseEntityClassWarning);
-			EditorUI::Editor::Table(s_FieldsTable);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
+			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);
+			EditorUI::EditorUIService::Table(s_FieldsTable);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::Editor::CollapsingHeader(s_StaticFunctionHeaderSpec);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::CollapsingHeader(s_StaticFunctionHeaderSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			if (s_StaticFunctionHeaderSpec.Expanded)
 			{
-				EditorUI::Editor::SelectOption(s_SelectOnPhysicsCollisionStartSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionStartSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnPhysicsCollisionEndSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionEndSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnCreateSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnCreateSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-				EditorUI::Editor::SelectOption(s_SelectOnUpdateSpec);
-				EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+				EditorUI::EditorUIService::SelectOption(s_SelectOnUpdateSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			}
 
-			EditorUI::Editor::Table(s_AllScriptsTableSpec);
-			EditorUI::Editor::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIService::Table(s_AllScriptsTableSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::Editor::SelectOption(s_AddFieldPopup);
-			EditorUI::Editor::GenericPopup(s_EditFieldPopup);
+			EditorUI::EditorUIService::SelectOption(s_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(s_EditFieldPopup);
 		}
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool EntityClassEditor::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -605,7 +606,7 @@ namespace Kargono
 			return;
 		}
 
-		Ref<Kargono::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
+		Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
 		if (!entityClass)
 		{
 			KG_WARN("Invalid entity class pointer returned when attempting to refresh entity scripts");

@@ -1,6 +1,7 @@
 #include "kgpch.h"
-
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
+
 #include "API/Logger/SpdlogBackend.h"
 
 namespace Kargono
@@ -10,11 +11,19 @@ namespace Kargono
 	void Log::Init ()
 	{
 		std::vector<spdlog::sink_ptr> logSinks;
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Log/Kargono.log", true));
-
-		logSinks[0]->set_pattern("%^[%r] [%s:%#]: %v%$");
-		logSinks[1]->set_pattern("[%r] | [%s] | [%#] | [%!] | [%n] | [%v]");
+		if (s_TestingActive)
+		{
+			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Log/Testing.log", true));
+			logSinks[0]->set_pattern("[%r] | [%s] | [%#] | [%!] | [%n] | [%v]");
+		}
+		else
+		{
+			logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Log/Kargono.log", true));
+			logSinks[0]->set_pattern("%^[%r] [%s:%#]: %v%$");
+			logSinks[1]->set_pattern("[%r] | [%s] | [%#] | [%!] | [%n] | [%v]");
+		}
+		
 
 		s_CoreLogger = std::make_shared<spdlog::logger>("ENGINE", begin(logSinks), end(logSinks));
 		spdlog::register_logger(s_CoreLogger);

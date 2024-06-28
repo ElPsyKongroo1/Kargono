@@ -2,7 +2,6 @@
 #include "Kargono.h"
 
 #include "Panels/SceneHierarchyPanel.h"
-#include "Panels/InputEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
@@ -13,12 +12,14 @@
 #include "Panels/ScriptEditorPanel.h"
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
+#include "Panels/InputModePanel.h"
 
 #include <filesystem>
 #include <thread>
 #include <unordered_map>
 #include <string>
 #include <functional>
+
 
 namespace Kargono
 {
@@ -143,7 +144,7 @@ namespace Kargono
 		void OpenScene(Assets::AssetHandle newScene);
 		void SaveScene();
 		// This function is called by SaveSceneAs() to actually serialize the scene.
-		void SerializeScene(Ref<Scene> scene);
+		void SerializeScene(Ref<Scenes::Scene> scene);
 
 		//=========================
 		// Scene State Transitions
@@ -169,11 +170,11 @@ namespace Kargono
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowUserInterfaceEditor = false;
-		bool m_ShowInputEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
+		bool m_ShowInputModeEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -181,14 +182,14 @@ namespace Kargono
 		bool m_RuntimeFullscreen = false;
 		bool m_ShowUserInterface = true;
 		// Editor Scenes
-		Ref<Scene> m_EditorScene;
+		Ref<Scenes::Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
 		Ref<RuntimeUI::UIObject> m_EditorUIObject = nullptr;
 		Assets::AssetHandle m_EditorUIObjectHandle{0};
-		Ref<InputMode> m_EditorInputMode = nullptr;
+		Ref<Input::InputMode> m_EditorInputMode = nullptr;
 		Assets::AssetHandle m_EditorInputModeHandle{0};
 
 		// Stepping Fields
@@ -199,31 +200,31 @@ namespace Kargono
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
 	public:
 		// Panels
-		Scope<SceneHierarchyPanel> m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel>  m_ContentBrowserPanel;
-		Scope<LogPanel>  m_LogPanel;
-		Scope<InputEditorPanel>  m_InputEditorPanel;
-		Scope<StatisticsPanel>  m_StatisticsPanel;
-		Scope<ProjectPanel>  m_ProjectPanel;
-		Scope<UIEditorPanel>  m_UIEditorPanel;
-		Scope<ViewportPanel>  m_ViewportPanel;
-		Scope<ScriptEditorPanel>  m_ScriptEditorPanel;
-		Scope<EntityClassEditor>  m_EntityClassEditor;
-		Scope<TextEditorPanel>  m_TextEditorPanel;
-		Scope<GameStatePanel>  m_GameStatePanel;
+		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
+		Scope<Panels::LogPanel>  m_LogPanel;
+		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
+		Scope<Panels::ProjectPanel>  m_ProjectPanel;
+		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
+		Scope<Panels::ViewportPanel>  m_ViewportPanel;
+		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
+		Scope<Panels::EntityClassEditor>  m_EntityClassEditor;
+		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
+		Scope<Panels::GameStatePanel>  m_GameStatePanel;
+		Scope<Panels::InputModePanel>  m_InputModePanel;
 	private:
-		friend ViewportPanel;
-		friend SceneHierarchyPanel;
-		friend ContentBrowserPanel;
-		friend LogPanel;
-		friend StatisticsPanel;
-		friend ProjectPanel;
-		friend UIEditorPanel;
-		friend InputEditorPanel;
-		friend ScriptEditorPanel;
-		friend EntityClassEditor;
-		friend TextEditorPanel;
-		friend GameStatePanel;
+		friend Panels::ViewportPanel;
+		friend Panels::SceneHierarchyPanel;
+		friend Panels::ContentBrowserPanel;
+		friend Panels::LogPanel;
+		friend Panels::StatisticsPanel;
+		friend Panels::ProjectPanel;
+		friend Panels::UIEditorPanel;
+		friend Panels::ScriptEditorPanel;
+		friend Panels::EntityClassEditor;
+		friend Panels::TextEditorPanel;
+		friend Panels::GameStatePanel;
+		friend Panels::InputModePanel;
 
 	};
 

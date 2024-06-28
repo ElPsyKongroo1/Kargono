@@ -1,9 +1,9 @@
-project "Engine"
+ project "Engine"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
-    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099" }
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
 
     targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
@@ -28,6 +28,8 @@ project "Engine"
         "%{wks.location}/Dependencies/hash_library/crc32.h",
         "%{wks.location}/Dependencies/optick/src/**.cpp",
         "%{wks.location}/Dependencies/optick/src/**.h",
+        "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.cpp",
+        "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.h",
         "Source/API/**.h",
         "Source/API/**.cpp"
     }
@@ -47,8 +49,8 @@ project "Engine"
     {
         "_CRT_SECURE_NO_WARNINGS",
 		"GLFW_INCLUDE_NONE",
+        "KG_RENDERER_OPENGL",
         "KG_EXPORT=0"
-        
     }
     includedirs 
     {
@@ -62,7 +64,6 @@ project "Engine"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
         --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
@@ -73,7 +74,8 @@ project "Engine"
         "%{IncludeDir.msdf_atlas_gen}",
         "%{IncludeDir.msdfgen}",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.asio}",
+        "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
     libdirs
@@ -89,10 +91,7 @@ project "Engine"
         "imGui",
         "dwmapi.lib",
         "yaml-cpp",
-        "msdf-atlas-gen",
-        "%{Library.mono}",
-        --"%{Library.free_type}",
-        "ScriptEngine"
+        "msdf-atlas-gen"
     }
 
     filter "files:../Dependencies/ImGuizmo/**.cpp"
@@ -103,10 +102,15 @@ project "Engine"
 
     filter "files:../Dependencies/optick/src/**.cpp"
         flags{ "NoPCH" }
+    filter "files:../Dependencies/ImGuiColorTextEdit/**.cpp"
+        flags{ "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"
-
+		buildoptions 
+		{
+		"/wd4996" 
+		}
         defines 
         {
             "KG_PLATFORM_WINDOWS"

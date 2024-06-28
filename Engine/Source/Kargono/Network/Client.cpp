@@ -3,7 +3,7 @@
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 
 namespace Kargono::Network
 {
@@ -270,7 +270,7 @@ namespace Kargono::Network
 			{
 				float waitTime{};
 				msg >> waitTime;
-				Timers::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+				Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Note Starting Update
 					Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::StartSession>());
@@ -286,7 +286,7 @@ namespace Kargono::Network
 			{
 				float waitTime{};
 				msg >> waitTime;
-				Timers::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+				Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Open Gameplay
 					EngineCore::GetCurrentEngineCore().EngineCore::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
@@ -365,6 +365,22 @@ namespace Kargono::Network
 		return std::numeric_limits<uint16_t>::max();
 	}
 
+	void Client::SendAllEntityLocation(UUID entityID, Math::vec3 location)
+	{
+		if (Network::Client::GetActiveClient())
+		{
+			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
+		}
+	}
+
+	void Client::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
+		}
+	}
+
 	void Client::EnableReadyCheck()
 	{
 		if (GetActiveClient())
@@ -373,11 +389,43 @@ namespace Kargono::Network
 		}
 	}
 
+	void Client::SessionReadyCheck()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SessionReadyCheck>());
+		}
+	}
+
 	void Client::RequestUserCount()
 	{
 		if (GetActiveClient())
 		{
 			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestUserCount>());
+		}
+	}
+
+	void Client::RequestJoinSession()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestJoinSession>());
+		}
+	}
+
+	void Client::LeaveCurrentSession()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::LeaveCurrentSession>());
+		}
+	}
+
+	void Client::SignalAll(uint16_t signal)
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SignalAll>(signal));
 		}
 	}
 

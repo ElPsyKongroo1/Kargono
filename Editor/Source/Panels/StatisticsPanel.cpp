@@ -3,10 +3,10 @@
 #include "EditorApp.h"
 #include "Kargono.h"
 
-namespace Kargono
-{
-	static EditorApp* s_EditorApp { nullptr };
+static Kargono::EditorApp* s_EditorApp { nullptr };
 
+namespace Kargono::Panels
+{
 	StatisticsPanel::StatisticsPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -16,21 +16,21 @@ namespace Kargono
 	void StatisticsPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
 		std::string name = "None";
-		if (*Scene::GetActiveScene()->GetHoveredEntity())
+		if (*Scenes::Scene::GetActiveScene()->GetHoveredEntity())
 		{
-			name = Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<TagComponent>().Tag;
+			name = Scenes::Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TagComponent>().Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();
 
 		ImGui::Text("Renderer");
 		ImGui::Separator();
-		auto stats = Renderer::GetStats();
+		auto stats = Rendering::RenderingService::GetStats();
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::NewLine();
 
@@ -38,7 +38,7 @@ namespace Kargono
 		ImGui::Separator();
 		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
 		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(EngineCore::GetCurrentEngineCore().GetUpdateCount()));
-		if (Scene::GetActiveScene()->IsRunning())
+		if (Scenes::Scene::GetActiveScene()->IsRunning())
 		{
 			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - EngineCore::GetCurrentEngineCore().GetAppStartTime())).c_str());
 		}
@@ -47,7 +47,7 @@ namespace Kargono
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 	}
 	bool StatisticsPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

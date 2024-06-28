@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 
-namespace Kargono
+namespace Kargono::Panels
 {
 	class TextEditorPanel
 	{
@@ -17,5 +17,6 @@ namespace Kargono
 		void OpenFile(const std::filesystem::path& path);
 	private:
 		std::string m_PanelName{ "Text Editor" };
+		std::string m_EditorWindowName { "TextEditorChild" };
 	};
 }

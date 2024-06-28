@@ -318,6 +318,9 @@ namespace Kargono
 	class WrappedVoidNone : public WrappedFunction
 	{
 	public:
+		WrappedVoidNone() = default;
+		WrappedVoidNone(std::function<void()> value) : m_Value {value} {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_None; }
 	public:
 		std::function<void()> m_Value{};
@@ -325,6 +328,9 @@ namespace Kargono
 
 	class WrappedVoidString : public WrappedFunction
 	{
+	public:
+		WrappedVoidString() = default;
+		WrappedVoidString(std::function<void(const std::string&)> value) : m_Value{ value } {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_String; }
 	public:
@@ -334,6 +340,9 @@ namespace Kargono
 	class WrappedVoidFloat : public WrappedFunction
 	{
 	public:
+		WrappedVoidFloat() = default;
+		WrappedVoidFloat(std::function<void(float)> value) : m_Value(value) {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_Float; }
 	public:
 		std::function<void(float)> m_Value{};
@@ -341,6 +350,9 @@ namespace Kargono
 
 	class WrappedVoidUInt16 : public WrappedFunction
 	{
+	public:
+		WrappedVoidUInt16() = default;
+		WrappedVoidUInt16(std::function<void(uint16_t)> value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt16; }
 	public:
@@ -350,6 +362,9 @@ namespace Kargono
 	class WrappedVoidUInt32 : public WrappedFunction
 	{
 	public:
+		WrappedVoidUInt32() = default;
+		WrappedVoidUInt32(std::function<void(uint32_t)> value) : m_Value(value) {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt32; }
 	public:
 		std::function<void(uint32_t)> m_Value{};
@@ -357,6 +372,9 @@ namespace Kargono
 
 	class WrappedVoidUInt64 : public WrappedFunction
 	{
+	public:
+		WrappedVoidUInt64() = default;
+		WrappedVoidUInt64(std::function<void(uint64_t)> value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt64; }
 	public:
@@ -366,6 +384,9 @@ namespace Kargono
 	class WrappedVoidUInt64Float : public WrappedFunction
 	{
 	public:
+		WrappedVoidUInt64Float() = default;
+		WrappedVoidUInt64Float(std::function<void(uint64_t, float)> value) : m_Value(value) {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt64Float; }
 	public:
 		std::function<void(uint64_t, float)> m_Value{};
@@ -373,6 +394,9 @@ namespace Kargono
 
 	class WrappedBoolNone : public WrappedFunction
 	{
+	public:
+		WrappedBoolNone() = default;
+		WrappedBoolNone(std::function<bool()> value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_None; }
 	public:
@@ -382,6 +406,9 @@ namespace Kargono
 	class WrappedBoolUInt64 : public WrappedFunction
 	{
 	public:
+		WrappedBoolUInt64() = default;
+		WrappedBoolUInt64(std::function<bool(uint64_t)> value) : m_Value(value) {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_UInt64; }
 	public:
 		std::function<bool(uint64_t)> m_Value{};
@@ -389,6 +416,9 @@ namespace Kargono
 
 	class WrappedBoolUInt64UInt64 : public WrappedFunction
 	{
+	public:
+		WrappedBoolUInt64UInt64() = default;
+		WrappedBoolUInt64UInt64(std::function<bool(uint64_t, uint64_t)> value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_UInt64UInt64; }
 	public:
@@ -398,12 +428,13 @@ namespace Kargono
 	class WrappedBoolUInt64UInt16UInt64 : public WrappedFunction
 	{
 	public:
+		WrappedBoolUInt64UInt16UInt64() = default;
+		WrappedBoolUInt64UInt16UInt64(std::function<bool(uint64_t, uint16_t, uint64_t)> value) : m_Value(value) {}
+	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_UInt64UInt16UInt64; }
 	public:
 		std::function<bool(uint64_t, uint16_t, uint64_t)> m_Value{};
 	};
-
-	
 
 	namespace Utility
 	{

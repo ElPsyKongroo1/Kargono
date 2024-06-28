@@ -5,12 +5,18 @@
 
 namespace Kargono::Utility
 {
+	//==============================
+	// Regular Expressions Class
+	//==============================
 	// Good Agnostic Regex Grammar Video: https://www.youtube.com/watch?v=sa-TUpSx1JA
 	// Regular Expressions in C++: https://en.cppreference.com/w/cpp/regex
 	// Grammar Reference: https://learn.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp?view=msvc-170#grammarsummary
 	class Regex
 	{
 	public:
+		//==============================
+		// Info About Regex Query
+		//==============================
 		static uint64_t GetMatchCount(const std::string& inputText, const std::string& regexExpression, bool caseSensitive = true)
 		{
 			std::regex_constants::syntax_option_type flags {};
@@ -33,6 +39,9 @@ namespace Kargono::Utility
 			std::regex regex {regexExpression, flags};
 			return std::regex_search(inputText, regex);
 		}
+		//==============================
+		// Modify String with Regex
+		//==============================
 		static std::string ReplaceMatches(const std::string& inputText, const std::string& regexExpression, const std::string& replacementText)
 		{
 			return std::regex_replace(inputText, std::regex(regexExpression), replacementText);

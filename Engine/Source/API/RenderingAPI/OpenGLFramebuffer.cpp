@@ -2,7 +2,9 @@
 
 #include "API/RenderingAPI/OpenGLFramebuffer.h"
 
-#include "API/Windowing/gladAPI.h"
+#include "API/Platform/gladAPI.h"
+
+#ifdef KG_RENDERER_OPENGL
 
 namespace API::Utility
 {
@@ -63,23 +65,23 @@ namespace API::Utility
 		glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
 	}
 
-	static bool IsDepthFormat(Kargono::FramebufferDataFormat format)
+	static bool IsDepthFormat(Kargono::Rendering::FramebufferDataFormat format)
 	{
 		switch (format)
 		{
-		case Kargono::FramebufferDataFormat::DEPTH24STENCIL8: return true;
+		case Kargono::Rendering::FramebufferDataFormat::DEPTH24STENCIL8: return true;
 		default: break;
 		}
 
 		return false;
 	}
 
-	static GLenum KargonoTextureFormatToGL(Kargono::FramebufferDataFormat format)
+	static GLenum KargonoTextureFormatToGL(Kargono::Rendering::FramebufferDataFormat format)
 	{
 		switch (format)
 		{
-		case Kargono::FramebufferDataFormat::RGBA8: return		GL_RGBA8;
-		case Kargono::FramebufferDataFormat::RED_INTEGER: return	GL_RED_INTEGER;
+		case Kargono::Rendering::FramebufferDataFormat::RGBA8: return		GL_RGBA8;
+		case Kargono::Rendering::FramebufferDataFormat::RED_INTEGER: return	GL_RED_INTEGER;
 		}
 
 		KG_ERROR("Invalid framebuffertextureformat in KargonoTextureFormatToGL")
@@ -87,11 +89,11 @@ namespace API::Utility
 	}
 }
 
-namespace API::OpenGL
+namespace API::RenderingAPI
 {
 	static const uint32_t s_MaxFramebufferSize = 8192;
 
-	OpenGLFramebuffer::OpenGLFramebuffer(const Kargono::FramebufferSpecification& spec)
+	OpenGLFramebuffer::OpenGLFramebuffer(const Kargono::Rendering::FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
 		// For Loop organizes specifications into color or depth attachments that are held
@@ -148,11 +150,11 @@ namespace API::OpenGL
 				Utility::BindTexture(multisample, m_ColorAttachmentIDs[i]);
 				switch (m_ColorAttachmentSpecifications[i].DataFormat)
 				{
-				case Kargono::FramebufferDataFormat::RGBA8:
+				case Kargono::Rendering::FramebufferDataFormat::RGBA8:
 					Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_RGBA8, GL_RGBA,
 					                          m_Specification.Width, m_Specification.Height, static_cast<int>(i));
 					break;
-				case Kargono::FramebufferDataFormat::RED_INTEGER:
+				case Kargono::Rendering::FramebufferDataFormat::RED_INTEGER:
 					Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER,
 						m_Specification.Width, m_Specification.Height, static_cast<int>(i));
 					break;
@@ -160,13 +162,13 @@ namespace API::OpenGL
 			}
 		}
 		// Generate Depth Attachments if specified
-		if (m_DepthAttachmentSpecification.DataFormat != Kargono::FramebufferDataFormat::None)
+		if (m_DepthAttachmentSpecification.DataFormat != Kargono::Rendering::FramebufferDataFormat::None)
 		{
 			Utility::CreateTextures(multisample, &m_DepthAttachmentID, 1);
 			Utility::BindTexture(multisample, m_DepthAttachmentID);
 			switch (m_DepthAttachmentSpecification.DataFormat)
 			{
-			case Kargono::FramebufferDataFormat::DEPTH24STENCIL8:
+			case Kargono::Rendering::FramebufferDataFormat::DEPTH24STENCIL8:
 				Utility::AttachDepthTexture(m_DepthAttachmentID, m_Specification.Samples,
 					GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT,
 					m_Specification.Width, m_Specification.Height);
@@ -221,7 +223,7 @@ namespace API::OpenGL
 	int32_t OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int32_t x, int32_t y)
 	{
 		KG_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!");
-		KG_ASSERT(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == Kargono::FramebufferDataFormat::RED_INTEGER, "Attempt to use ReadPixel on a buffer that is not RED_INTEGER");
+		KG_ASSERT(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == Kargono::Rendering::FramebufferDataFormat::RED_INTEGER, "Attempt to use ReadPixel on a buffer that is not RED_INTEGER");
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
@@ -237,3 +239,5 @@ namespace API::OpenGL
 			Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &value);
 	}
 }
+
+#endif

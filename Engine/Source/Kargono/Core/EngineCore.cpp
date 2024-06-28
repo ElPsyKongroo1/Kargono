@@ -3,15 +3,13 @@
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Utility/Time.h"
-#include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Renderer/RenderCommand.h"
-#include "Kargono/Renderer/Renderer.h"
+#include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Profiler.h"
-#include "Kargono/Core/Timers.h"
+#include "Kargono/Utility/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Scene/Entity.h"
-#include "Kargono/Scene/Scene.h"
+#include "Kargono/Scenes/Entity.h"
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scripting/Scripting.h"
@@ -50,9 +48,8 @@ namespace Kargono
 			m_CurrentApp = nullptr;
 		}
 
-		Script::ScriptEngine::Shutdown();
-		Scripting::ScriptCore::Terminate();
-		Audio::AudioEngine::Terminate();
+		Scripting::ScriptService::Terminate();
+		Audio::AudioService::Terminate();
 		// TODO: Add Renderer Shutdown!
 
 		KG_VERIFY(!m_CurrentApp, "Close App");
@@ -106,6 +103,16 @@ namespace Kargono
 		std::scoped_lock<std::mutex> lock(m_EventQueueMutex);
 
 		m_EventQueue.emplace_back(e);
+	}
+
+	void EngineCore::CloseApplication()
+	{
+		s_CurrentEngineCore->SubmitToMainThread([&]()
+		{
+			Events::ApplicationCloseEvent event {};
+			Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
+			eventCallback(event);
+		});
 	}
 
 	void EngineCore::OnSkipUpdate(Events::SkipUpdateEvent event)
@@ -172,14 +179,14 @@ namespace Kargono
 		}
 
 		m_Minimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		Rendering::RenderingService::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}
 
 	bool EngineCore::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
-		Timers::AsyncBusyTimer::CleanUpClosedTimers();
+		Utility::AsyncBusyTimer::CleanUpClosedTimers();
 		return false;
 	}
 
@@ -207,16 +214,16 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
 		if (!scene) { return false; }
-		Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
-		entity.GetComponent<TransformComponent>().Translation = translation;
+		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Rigidbody2DComponent>())
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
@@ -225,17 +232,17 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
 		if (!scene) { return false; }
-		Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
-		entity.GetComponent<TransformComponent>().Translation = translation;
+		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Rigidbody2DComponent>())
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));

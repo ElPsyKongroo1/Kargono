@@ -1,16 +1,18 @@
 #pragma once
 
-#include "Kargono\Renderer\InputBuffer.h"
+#include "Kargono/Rendering/InputBuffer.h"
 
-namespace API::OpenGL
+#ifdef KG_RENDERER_OPENGL
+
+namespace API::RenderingAPI
 {
-	//============================================================
+	//=============================
 	// OpenGL VertexBuffer Class
-	//============================================================
+	//=============================
 	// This class is the OpenGL Implementation of a Vertex Buffer in the Core Code.
 	//		A VertexBuffer holds data specific to a particular vertex such as
 	//		model location, vertex color, texture location, etc...
-	class OpenGLVertexBuffer : public Kargono::VertexBuffer
+	class OpenGLVertexBuffer : public Kargono::Rendering::VertexBuffer
 	{
 	public:
 		//=============================
@@ -36,13 +38,13 @@ namespace API::OpenGL
 		//==============================
 		// Update OpenGL Context
 		//==============================
-		// This function allows new vertices to be pushed into the OpenGL vertex buffer.
+		// This function allows new vertices to be added into the OpenGL vertex buffer.
 		virtual void SetData(const void* data, uint32_t size) override;
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual const Kargono::InputBufferLayout& GetLayout() const override { return m_Layout; }
-		virtual void SetLayout(const Kargono::InputBufferLayout& layout) override { m_Layout = layout; }
+		virtual const Kargono::Rendering::InputBufferLayout& GetLayout() const override { return m_Layout; }
+		virtual void SetLayout(const Kargono::Rendering::InputBufferLayout& layout) override { m_Layout = layout; }
 	private:
 		// RendererID holds the numerical reference to the underlying OpenGL VertexBuffer
 		//		Ex. A renderer ID of three would represent the third vertex buffer created
@@ -52,19 +54,19 @@ namespace API::OpenGL
 		//		Ex: vec3, vec2, float, vec3, mat4 is a sample pattern
 		//		that can represent concepts such as the vertex's world position,
 		//		color, and transform.
-		Kargono::InputBufferLayout m_Layout;
+		Kargono::Rendering::InputBufferLayout m_Layout;
 	};
 
-	//============================================================
-	// OpenGL IndexBuffer Class
-	//============================================================
+	//=============================
+	// OpenGL IndexBuffer Class	
+	//=============================
 	// This class is the OpenGL Implementation of an Index Buffer in the Core Code.
 	//		The index buffer represents the ordered pattern of vertices that get displayed.
 	//		Example. An object can have the vertices 0, 1, 2, 3, 4, 5.
 	//		An index buffer could hold the numbers 2, 3, 1. The numbers in the index buffer
 	//		represent OpenGL drawing a triangle starting at vertex 2, that going to vertex 3,
 	//		and ending on vertex 1.
-	class OpenGLIndexBuffer : public Kargono::IndexBuffer
+	class OpenGLIndexBuffer : public Kargono::Rendering::IndexBuffer
 	{
 	public:
 		//==============================
@@ -96,3 +98,4 @@ namespace API::OpenGL
 	};
 }
 
+#endif

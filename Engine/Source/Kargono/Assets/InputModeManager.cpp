@@ -101,7 +101,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	void AssetManager::SerializeInputMode(Ref<Kargono::InputMode> inputMode, const std::filesystem::path& filepath)
+	void AssetManager::SerializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -110,40 +110,41 @@ namespace Kargono::Assets
 			// Keyboard Polling
 			out << YAML::Key << "KeyboardPolling" << YAML::Value;
 			out << YAML::BeginSeq; // Start of KeyboardPolling Seq
-
-			for (auto& [slot, keyCode] : inputMode->m_KeyboardPolling)
+			uint32_t iteration{ 0 };
+			for (auto keyCode : inputMode->m_KeyboardPolling)
 			{
 				out << YAML::BeginMap; // Start Polling Combo
 
-				out << YAML::Key << "Slot" << YAML::Value << slot;
+				out << YAML::Key << "Slot" << YAML::Value << iteration;
 				out << YAML::Key << "KeyCode" << YAML::Value << keyCode;
 
 				out << YAML::EndMap; // End Polling Combo
+				iteration++;
 			}
 			out << YAML::EndSeq; // End of KeyboardPolling Seq
 		}
 
 		{
-			// CustomCalls OnUpdate
-			out << YAML::Key << "CustomCallsOnUpdate" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnUpdate Seq
+			// OnUpdate
+			out << YAML::Key << "OnUpdate" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnUpdate Seq
 
-			for (auto& inputBinding : inputMode->m_CustomCallsOnUpdateBindings)
+			for (auto& inputBinding : inputMode->m_OnUpdateBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
 				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-				out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
 
 				switch (inputBinding->GetActionType())
 				{
-				case InputMode::KeyboardAction:
+				case Input::InputActionTypes::KeyboardAction:
 				{
-					InputMode::KeyboardActionBinding* keyboardBinding = (InputMode::KeyboardActionBinding*)inputBinding.get();
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
 					break;
 				}
-				case InputMode::None:
+				case Input::InputActionTypes::None:
 				default:
 				{
 					KG_ERROR("Invalid InputMode provided to InputMode serialization");
@@ -153,76 +154,30 @@ namespace Kargono::Assets
 
 				out << YAML::EndMap; // InputActionBinding End
 			}
-			out << YAML::EndSeq; // End of CustomCalls OnUpdate Seq
+			out << YAML::EndSeq; // End of OnUpdate Seq
 		}
 
 		{
-			// ScriptClass OnUpdate
-			out << YAML::Key << "ScriptClassOnUpdate" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnUpdate Seq
+			// OnKeyPressed
+			out << YAML::Key << "OnKeyPressed" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnKeyPressed Seq
 
-			for (auto& [className, bindingList] : inputMode->m_ScriptClassOnUpdateBindings)
-			{
-				out << YAML::BeginMap; // Binding List Start
-
-				out << YAML::Key << "ClassName" << YAML::Value << className;
-
-				out << YAML::Key << "AllBindings" << YAML::Value;
-				out << YAML::BeginSeq; // Start of All Bindings Seq
-
-				for (auto& inputBinding : bindingList)
-				{
-					out << YAML::BeginMap; // InputActionBinding Start
-					out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-					out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
-
-					switch (inputBinding->GetActionType())
-					{
-					case InputMode::KeyboardAction:
-					{
-						InputMode::KeyboardActionBinding* keyboardBinding = (InputMode::KeyboardActionBinding*)inputBinding.get();
-						out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
-						break;
-					}
-					case InputMode::None:
-					default:
-					{
-						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
-						break;
-					}
-					}
-					out << YAML::EndMap; // InputActionBinding End
-				}
-
-				out << YAML::EndSeq; // End of All Bindings Seq
-
-
-				out << YAML::EndMap; // Binding List End
-			}
-			out << YAML::EndSeq; // End of CustomCalls OnUpdate Seq
-		}
-
-		{
-			// CustomCalls OnKeyPressed
-			out << YAML::Key << "CustomCallsOnKeyPressed" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnKeyPressed Seq
-
-			for (auto& inputBinding : inputMode->m_CustomCallsOnKeyPressedBindings)
+			for (auto& inputBinding : inputMode->m_OnKeyPressedBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
 				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-				out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
 
 				switch (inputBinding->GetActionType())
 				{
-				case InputMode::KeyboardAction:
+				case Input::InputActionTypes::KeyboardAction:
 				{
-					InputMode::KeyboardActionBinding* keyboardBinding = (InputMode::KeyboardActionBinding*)inputBinding.get();
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
 					break;
 				}
-				case InputMode::None:
+				case Input::InputActionTypes::None:
 				default:
 				{
 					KG_ASSERT("Invalid InputMode provided to InputMode serialization");
@@ -232,55 +187,8 @@ namespace Kargono::Assets
 
 				out << YAML::EndMap; // InputActionBinding End
 			}
-			out << YAML::EndSeq; // End of CustomCalls OnKeyPressed Seq
+			out << YAML::EndSeq; // End of OnKeyPressed Seq
 		}
-
-		{
-			// ScriptClass OnKeyPressed
-			out << YAML::Key << "ScriptClassOnKeyPressed" << YAML::Value;
-			out << YAML::BeginSeq; // Start of CustomCalls OnKeyPressed Seq
-
-			for (auto& [className, bindingList] : inputMode->m_ScriptClassOnKeyPressedBindings)
-			{
-				out << YAML::BeginMap; // Binding List Start
-
-				out << YAML::Key << "ClassName" << YAML::Value << className;
-
-				out << YAML::Key << "AllBindings" << YAML::Value;
-				out << YAML::BeginSeq; // Start of All Bindings Seq
-
-				for (auto& inputBinding : bindingList)
-				{
-					out << YAML::BeginMap; // InputActionBinding Start
-					out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
-					out << YAML::Key << "FunctionBinding" << YAML::Value << inputBinding->GetFunctionBinding();
-
-					switch (inputBinding->GetActionType())
-					{
-					case InputMode::KeyboardAction:
-					{
-						InputMode::KeyboardActionBinding* keyboardBinding = (InputMode::KeyboardActionBinding*)inputBinding.get();
-						out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
-						break;
-					}
-					case InputMode::None:
-					default:
-					{
-						KG_ASSERT("Invalid InputMode provided to InputMode serialization");
-						break;
-					}
-					}
-					out << YAML::EndMap; // InputActionBinding End
-				}
-
-				out << YAML::EndSeq; // End of All Bindings Seq
-
-
-				out << YAML::EndMap; // Binding List End
-			}
-			out << YAML::EndSeq; // End of CustomCalls OnKeyPressed Seq
-		}
-
 
 		out << YAML::EndMap; // Start of File Map
 
@@ -312,7 +220,7 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::DeserializeInputMode(Ref<Kargono::InputMode> inputMode, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
 		try
@@ -329,7 +237,6 @@ namespace Kargono::Assets
 
 		// Get Keyboard Polling!
 		{
-
 			auto keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
@@ -338,30 +245,70 @@ namespace Kargono::Assets
 				{
 					uint16_t slot = (uint16_t)binding["Slot"].as<uint32_t>();
 					uint16_t keyCode = (uint16_t)binding["KeyCode"].as<uint32_t>();
-					keyboardPollingNew.insert({ slot, keyCode });
+					keyboardPollingNew.push_back(keyCode);
 				}
 			}
 		}
 
-		// CustomCalls OnUpdate
+		// OnUpdate
 		{
-			auto customOnUpdate = data["CustomCallsOnUpdate"];
-			if (customOnUpdate)
+			auto onUpdate = data["OnUpdate"];
+			if (onUpdate)
 			{
-				auto& customOnUpdateNew = inputMode->m_CustomCallsOnUpdateBindings;
-				for (auto binding : customOnUpdate)
+				auto& onUpdateNew = inputMode->m_OnUpdateBindings;
+				for (auto binding : onUpdate)
 				{
-					InputMode::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-					Ref<InputMode::InputActionBinding> newActionBinding = nullptr;
+					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
+					Ref<Input::InputActionBinding> newActionBinding = nullptr;
 					switch (bindingType)
 					{
-					case InputMode::KeyboardAction:
+					case Input::InputActionTypes::KeyboardAction:
 					{
-						newActionBinding = CreateRef<InputMode::KeyboardActionBinding>();
-						((InputMode::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
+						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
+						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
 						break;
 					}
-					case InputMode::None:
+					case Input::InputActionTypes::None:
+					default:
+					{
+						KG_ERROR("Invalid bindingType while deserializing InputMode");
+						break;
+					}
+					}
+					Assets::AssetHandle handle = binding["ScriptHandle"].as<uint64_t>();
+					if (handle == Assets::EmptyHandle)
+					{
+						newActionBinding->SetScript(nullptr, Assets::EmptyHandle);
+					}
+					else
+					{
+						newActionBinding->SetScript(handle);
+					}
+					onUpdateNew.push_back(newActionBinding);
+				}
+			}
+		}
+
+
+		// OnKeyPressed
+		{
+			auto onKeyPressed = data["OnKeyPressed"];
+			if (onKeyPressed)
+			{
+				auto& onKeyPressedNew = inputMode->m_OnKeyPressedBindings;
+				for (auto binding : onKeyPressed)
+				{
+					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
+					Ref<Input::InputActionBinding> newActionBinding = nullptr;
+					switch (bindingType)
+					{
+					case Input::InputActionTypes::KeyboardAction:
+					{
+						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
+						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
+						break;
+					}
+					case Input::InputActionTypes::None:
 					default:
 					{
 						KG_ERROR("Invalid bindingType while deserializing InputMode");
@@ -369,128 +316,8 @@ namespace Kargono::Assets
 					}
 					}
 
-					newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-					customOnUpdateNew.push_back(newActionBinding);
-				}
-			}
-		}
-
-		// ScriptClass OnUpdate
-		{
-			auto classOnUpdate = data["ScriptClassOnUpdate"];
-			if (classOnUpdate)
-			{
-				auto& classOnUpdateNew = inputMode->m_ScriptClassOnUpdateBindings;
-				for (auto classDescription : classOnUpdate)
-				{
-					std::string className = classDescription["ClassName"].as<std::string>();
-
-					auto allBindings = classDescription["AllBindings"];
-
-					classOnUpdateNew.insert({ className, {} });
-					if (allBindings)
-					{
-						for (auto binding : allBindings)
-						{
-							InputMode::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-							Ref<InputMode::InputActionBinding> newActionBinding = nullptr;
-							switch (bindingType)
-							{
-							case InputMode::KeyboardAction:
-							{
-								newActionBinding = CreateRef<InputMode::KeyboardActionBinding>();
-								((InputMode::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
-								break;
-							}
-							case InputMode::None:
-							default:
-							{
-								KG_ERROR("Invalid bindingType while deserializing InputMode");
-								break;
-							}
-							}
-
-							newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-
-							classOnUpdateNew.at(className).push_back(newActionBinding);
-						}
-					}
-				}
-			}
-		}
-
-		// CustomCalls OnKeyPressed
-		{
-			auto customOnKeyPressed = data["CustomCallsOnKeyPressed"];
-			if (customOnKeyPressed)
-			{
-				auto& customOnKeyPressedNew = inputMode->m_CustomCallsOnKeyPressedBindings;
-				for (auto binding : customOnKeyPressed)
-				{
-					InputMode::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-					Ref<InputMode::InputActionBinding> newActionBinding = nullptr;
-					switch (bindingType)
-					{
-					case InputMode::KeyboardAction:
-					{
-						newActionBinding = CreateRef<InputMode::KeyboardActionBinding>();
-						((InputMode::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
-						break;
-					}
-					case InputMode::None:
-					default:
-					{
-						KG_ERROR("Invalid bindingType while deserializing InputMode");
-						break;
-					}
-					}
-
-					newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-					customOnKeyPressedNew.push_back(newActionBinding);
-				}
-			}
-		}
-
-		// ScriptClass OnKeyPressed
-		{
-			auto classOnKeyPressed = data["ScriptClassOnKeyPressed"];
-			if (classOnKeyPressed)
-			{
-				auto& classOnKeyPressedNew = inputMode->m_ScriptClassOnKeyPressedBindings;
-				for (auto classDescription : classOnKeyPressed)
-				{
-					std::string className = classDescription["ClassName"].as<std::string>();
-
-					auto allBindings = classDescription["AllBindings"];
-
-					classOnKeyPressedNew.insert({ className, {} });
-					if (allBindings)
-					{
-						for (auto binding : allBindings)
-						{
-							InputMode::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-							Ref<InputMode::InputActionBinding> newActionBinding = nullptr;
-							switch (bindingType)
-							{
-							case InputMode::KeyboardAction:
-							{
-								newActionBinding = CreateRef<InputMode::KeyboardActionBinding>();
-								((InputMode::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
-								break;
-							}
-							case InputMode::None:
-							default:
-							{
-								KG_ERROR("Invalid bindingType while deserializing InputMode");
-								break;
-							}
-							}
-
-							newActionBinding->SetFunctionBinding(binding["FunctionBinding"].as<std::string>());
-
-							classOnKeyPressedNew.at(className).push_back(newActionBinding);
-						}
-					}
+					newActionBinding->SetScript(binding["ScriptHandle"].as<uint64_t>());
+					onKeyPressedNew.push_back(newActionBinding);
 				}
 			}
 		}
@@ -536,7 +363,7 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveInputMode(AssetHandle inputModeHandle, Ref<Kargono::InputMode> inputMode)
+	void AssetManager::SaveInputMode(AssetHandle inputModeHandle, Ref<Input::InputMode> inputMode)
 	{
 		if (!s_InputModeRegistry.contains(inputModeHandle))
 		{
@@ -545,6 +372,22 @@ namespace Kargono::Assets
 		}
 		Assets::Asset inputModeAsset = s_InputModeRegistry[inputModeHandle];
 		SerializeInputMode(inputMode, (Projects::Project::GetAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
+	}
+
+	void AssetManager::DeleteInputMode(AssetHandle handle)
+	{
+		if (!s_InputModeRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete input mode in AssetManager");
+			return;
+		}
+
+		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+			s_InputModeRegistry.at(handle).Data.IntermediateLocation);
+
+		s_InputModeRegistry.erase(handle);
+
+		SerializeInputModeRegistry();
 	}
 
 	std::filesystem::path AssetManager::GetInputModeLocation(const AssetHandle& handle)
@@ -557,7 +400,7 @@ namespace Kargono::Assets
 		return s_InputModeRegistry[handle].Data.IntermediateLocation;
 	}
 
-	Ref<Kargono::InputMode> AssetManager::GetInputMode(const AssetHandle& handle)
+	Ref<Input::InputMode> AssetManager::GetInputMode(const AssetHandle& handle)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving inputMode!");
 
@@ -570,7 +413,7 @@ namespace Kargono::Assets
 		KG_ERROR("No inputMode is associated with provided handle!");
 		return nullptr;
 	}
-	std::tuple<AssetHandle, Ref<Kargono::InputMode>> AssetManager::GetInputMode(const std::filesystem::path& filepath)
+	std::tuple<AssetHandle, Ref<Input::InputMode>> AssetManager::GetInputMode(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
 
@@ -594,9 +437,9 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetInputMode(newHandle));
 	}
 
-	Ref<Kargono::InputMode> AssetManager::InstantiateInputMode(const Assets::Asset& inputModeAsset)
+	Ref<Input::InputMode> AssetManager::InstantiateInputMode(const Assets::Asset& inputModeAsset)
 	{
-		Ref<Kargono::InputMode> newInputMode = CreateRef<Kargono::InputMode>();
+		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
 		DeserializeInputMode(newInputMode, (Projects::Project::GetAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
 		return newInputMode;
 	}
@@ -610,7 +453,7 @@ namespace Kargono::Assets
 	void AssetManager::CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset)
 	{
 		// Create Temporary InputMode
-		Ref<Kargono::InputMode> temporaryInputMode = CreateRef<Kargono::InputMode>();
+		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
 
 		// Save Binary Intermediate into File
 		std::string inputModePath = "Input/" + inputModeName + ".kginput";

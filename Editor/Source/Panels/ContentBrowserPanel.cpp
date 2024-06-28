@@ -9,73 +9,72 @@
 
 namespace Kargono::Utility
 {
-	static Ref<Texture2D> BrowserFileTypeToIcon(BrowserFileType type)
+	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(Panels::BrowserFileType type)
 	{
 		switch (type)
 		{
-		case BrowserFileType::Directory: { return EditorUI::Editor::s_DirectoryIcon; }
-		case BrowserFileType::Image: { return EditorUI::Editor::s_ImageIcon; }
-		case BrowserFileType::Audio: { return EditorUI::Editor::s_AudioIcon; }
-		case BrowserFileType::Font: { return EditorUI::Editor::s_FontIcon; }
-		case BrowserFileType::UserInterface: { return EditorUI::Editor::s_UserInterfaceIcon; }
-
-		case BrowserFileType::Binary: { return EditorUI::Editor::s_BinaryIcon; }
-		case BrowserFileType::Registry: { return EditorUI::Editor::s_RegistryIcon; }
-		case BrowserFileType::Scene: { return EditorUI::Editor::s_SceneIcon; }
-		case BrowserFileType::ScriptProject: { return EditorUI::Editor::s_ScriptProjectIcon; }
-		case BrowserFileType::Input: { return EditorUI::Editor::s_InputIcon; }
-
-		case BrowserFileType::None: { return EditorUI::Editor::s_GenericFileIcon; }
+		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_DirectoryIcon; }
+		case Panels::BrowserFileType::Image: { return EditorUI::EditorUIService::s_ImageIcon; }
+		case Panels::BrowserFileType::Audio: { return EditorUI::EditorUIService::s_AudioIcon; }
+		case Panels::BrowserFileType::Font: { return EditorUI::EditorUIService::s_FontIcon; }
+		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_UserInterfaceIcon; }
+		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_BinaryIcon; }
+		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_RegistryIcon; }
+		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_SceneIcon; }
+		case Panels::BrowserFileType::ScriptProject: { return EditorUI::EditorUIService::s_ScriptProjectIcon; }
+		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_InputIcon; }
+		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_GenericFileIcon; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::Editor::s_GenericFileIcon;
+		return EditorUI::EditorUIService::s_GenericFileIcon;
 	}
 
-	static BrowserFileType DetermineFileType(const std::filesystem::directory_entry& entry)
+	static Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
 	{
-		if (entry.is_directory()) { return BrowserFileType::Directory; }
-		if (!entry.path().has_extension()) { return BrowserFileType::None; }
-		auto extension = entry.path().extension();
-		if (extension == ".jpg" || extension == ".png") { return BrowserFileType::Image; }
-		if (extension == ".wav" || extension == ".mp3") { return BrowserFileType::Audio; }
-		if (extension == ".kgreg") { return BrowserFileType::Registry; }
-		if (extension == ".kgui") { return BrowserFileType::UserInterface; }
-		if (extension == ".ttf") { return BrowserFileType::Font; }
-		if (extension == ".kgscene") { return BrowserFileType::Scene; }
-		if (extension == ".csproj") { return BrowserFileType::ScriptProject; }
-		if (extension == ".kginput") { return BrowserFileType::Input; }
+		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
+		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
+		auto extension = entry.extension();
+		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
+		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
+		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
+		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
+		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
+		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
+		if (extension == ".csproj") { return Panels::BrowserFileType::ScriptProject; }
+		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
 		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
 			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
-			return BrowserFileType::Binary;
+			return Panels::BrowserFileType::Binary;
 		}
-		return BrowserFileType::None;
+		return Panels::BrowserFileType::None;
 	}
 
-	static std::string BrowserFileTypeToPayloadString(BrowserFileType type)
+	static std::string BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
 	{
 		switch (type)
 		{
-		case BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
-		case BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
-		case BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
-		case BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
-		case BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
-		case BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
+		case Panels::BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
+		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
+		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
+		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
+		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
+		case Panels::BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
 		return "CONTENT_BROWSER_ITEM";
 	}
 }
 
-namespace Kargono
+static Kargono::EditorApp* s_EditorApp{ nullptr };
+
+namespace Kargono::Panels
 {
-	static EditorApp* s_EditorApp{ nullptr };
-	static std::vector<std::filesystem::directory_entry> s_CachedDirectoryEntries {};
+	static std::vector<std::filesystem::path> s_CachedDirectoryEntries {};
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
@@ -87,10 +86,15 @@ namespace Kargono
 
 	void ContentBrowserPanel::UpdateCurrentDirectory(const std::filesystem::path& newPath)
 	{
-		API::FileWatch::EndWatch(m_CurrentDirectory);
-		m_CurrentDirectory = newPath;
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
-		RefreshCachedDirectoryEntries();
+		static std::filesystem::path currentPath;
+		currentPath = newPath;
+		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		{
+			API::FileWatch::EndWatch(m_CurrentDirectory);
+			m_CurrentDirectory = currentPath;
+			API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+			RefreshCachedDirectoryEntries();
+		});
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
@@ -107,7 +111,7 @@ namespace Kargono
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::Editor::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
 		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
@@ -127,7 +131,7 @@ namespace Kargono
 		}
 
 
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::Editor::s_BackIcon : EditorUI::Editor::s_BackInactiveIcon)->GetRendererID(),
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::EditorUIService::s_BackIcon : EditorUI::EditorUIService::s_BackInactiveIcon)->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (backActive)
@@ -147,7 +151,7 @@ namespace Kargono
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::Editor::s_ForwardIcon : EditorUI::Editor::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::EditorUIService::s_ForwardIcon : EditorUI::EditorUIService::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
 			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
 			{
@@ -190,16 +194,6 @@ namespace Kargono
 			ImGui::EndDragDropTarget();
 		}
 
-		//if (ImGui::BeginPopup("Options"))
-		//{
-		//	ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		//	ImGui::SliderFloat("Padding", &padding, 0, 32);
-		//	ImGui::EndPopup();
-		//}
-		//// Main window
-		//if (ImGui::Button("Options", { 70, 28 }))
-		//	ImGui::OpenPopup("Options");
-
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
 
 		std::vector<std::string> tokenizedDirectoryPath{};
@@ -211,7 +205,7 @@ namespace Kargono
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(EditorUI::Editor::s_PlexBold);
+		ImGui::PushFont(EditorUI::EditorUIService::s_PlexBold);
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
 			ImGui::SameLine();
@@ -227,19 +221,17 @@ namespace Kargono
 		ImGui::Separator();
 
 		ImGui::Columns(columnCount, 0, false);
-
 		for (auto& directoryEntry: s_CachedDirectoryEntries)
 		{
-			const auto& path = directoryEntry.path();
-			std::string filenameString = path.filename().string();
+			std::string filenameString = directoryEntry.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
+			Ref<Rendering::Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 			if (ImGui::BeginDragDropSource())
 			{
-				std::filesystem::path relativePath(path);
+				std::filesystem::path relativePath(directoryEntry);
 				const wchar_t* itemPath = relativePath.c_str();
 				ImGui::SetDragDropPayload(Utility::BrowserFileTypeToPayloadString(fileType).c_str(),
 					itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
@@ -264,7 +256,7 @@ namespace Kargono
 						{
 							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 							std::filesystem::path payloadPath(payloadPathPointer);
-							Utility::FileSystem::MoveFileToDirectory(payloadPath, path);
+							Utility::FileSystem::MoveFileToDirectory(payloadPath, directoryEntry);
 							break;
 						}
 					}
@@ -273,12 +265,12 @@ namespace Kargono
 			}
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				if (directoryEntry.is_directory())
+				if ( std::filesystem::is_directory(directoryEntry))
 				{
-					UpdateCurrentDirectory(m_CurrentDirectory / path.filename());
-					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+					UpdateCurrentDirectory(m_CurrentDirectory / directoryEntry.filename());
+					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), s_LongestRecentPath))
 					{
-						s_LongestRecentPath = m_CurrentDirectory;
+						s_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
 					}
 				}
 			}
@@ -299,7 +291,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open File In Text Editor"))
 					{
-						s_EditorApp->m_TextEditorPanel->OpenFile(path);
+						s_EditorApp->m_TextEditorPanel->OpenFile(directoryEntry);
 					}
 				}
 
@@ -307,7 +299,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open Scripting Project"))
 					{
-						Utility::OSCommands::OpenScriptProject(path);
+						Utility::OSCommands::OpenScriptProject(directoryEntry);
 					}
 				}
 
@@ -315,7 +307,7 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Open Scene"))
 					{
-						EditorApp::GetCurrentApp()->OpenScene(path);
+						EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
 					}
 				}
 
@@ -323,14 +315,14 @@ namespace Kargono
 				{
 					if (ImGui::Selectable("Use Font In Current User Interface"))
 					{
-						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(path);
+						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(directoryEntry);
 						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
 						if (font)
 						{
-							RuntimeUI::Runtime::SetFont(font, currentHandle);
+							RuntimeUI::RuntimeUIService::SetFont(font, currentHandle);
 						}
 
-						else { KG_WARN("Could not load font {0}", path.filename().string()); }
+						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
 					}
 				}
 
@@ -374,12 +366,12 @@ namespace Kargono
 			if (ImGui::BeginPopupModal("Delete File", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::Text("Are you sure you want to delete this file?\n");
-				ImGui::Text("%s", path.string().c_str());
+				ImGui::Text("%s", directoryEntry.string().c_str());
 				ImGui::Separator();
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					Utility::FileSystem::DeleteSelectedFile(path);
+					Utility::FileSystem::DeleteSelectedFile(directoryEntry);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -391,12 +383,12 @@ namespace Kargono
 			if (ImGui::BeginPopupModal("Delete Directory", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				ImGui::Text("Are you sure you want to delete this directory?\n");
-				ImGui::Text("%s", path.string().c_str());
+				ImGui::Text("%s", directoryEntry.string().c_str());
 				ImGui::Separator();
 
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					Utility::FileSystem::DeleteSelectedDirectory(path);
+					Utility::FileSystem::DeleteSelectedDirectory(directoryEntry);
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -409,11 +401,11 @@ namespace Kargono
 			if (openRenamePopup) { ImGui::OpenPopup("NewFileName"); }
 			if (ImGui::BeginPopup("NewFileName"))
 			{
-				strcpy_s(buffer, path.filename().string().c_str());
+				strcpy_s(buffer, directoryEntry.filename().string().c_str());
 				ImGui::InputText("New File Name", buffer, sizeof(buffer));
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
 				{
-					Utility::FileSystem::RenameFile(path, std::string(buffer));
+					Utility::FileSystem::RenameFile(directoryEntry, std::string(buffer));
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndPopup();
@@ -464,7 +456,7 @@ namespace Kargono
 		ImGui::Columns(1);
 		
 
-		EditorUI::Editor::EndWindow();
+		EditorUI::EditorUIService::EndWindow();
 
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -476,7 +468,7 @@ namespace Kargono
 		s_CachedDirectoryEntries.clear();
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			s_CachedDirectoryEntries.push_back(directoryEntry);
+			s_CachedDirectoryEntries.push_back(directoryEntry.path());
 		}
 	}
 }

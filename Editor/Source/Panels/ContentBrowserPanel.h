@@ -5,10 +5,8 @@
 #include <filesystem>
 #include <string>
 
-namespace Kargono
+namespace Kargono::Panels
 {
-	class Texture2D;
-
 	enum class BrowserFileType
 	{
 		None = 0, Directory = 1, Image = 2, Audio = 3,

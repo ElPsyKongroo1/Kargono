@@ -2,7 +2,7 @@ project "Editor"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
-    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099" }
+    linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
     targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
 
@@ -26,7 +26,8 @@ project "Editor"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.asio}",
+        "%{IncludeDir.ImGuiColorTextEdit}",
 
     }
 
@@ -43,13 +44,17 @@ project "Editor"
 
     defines 
     {
-        "KG_EDITOR"
+        "KG_EDITOR",
+		"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
         
         systemversion "latest"
-
+		buildoptions 
+		{
+		"/wd4996" 
+		}
         defines 
         {
             "KG_PLATFORM_WINDOWS"

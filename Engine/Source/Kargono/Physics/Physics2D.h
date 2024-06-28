@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Scene/Components.h"
+#include "Kargono/Scenes/Components.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"
@@ -8,7 +8,7 @@
 
 #include "API/Physics/Box2DAPI.h"
 
-namespace Kargono { class Scene; }
+namespace Kargono::Scenes { class Scene; }
 
 //============================================================
 // Physics Namespace
@@ -81,7 +81,7 @@ namespace Kargono::Physics
 		//		its callback function, and create the physics world
 		//		2. Find all entities in the active scene and register their
 		//		default settings and their box/circle colliders.
-		Physics2DWorld(Scene* scene, const Math::vec2& gravity);
+		Physics2DWorld(Scenes::Scene* scene, const Math::vec2& gravity);
 		// This destructor simply removes the current reference to the
 		//		underlying physics world in m_PhysicsWorld
 		~Physics2DWorld();
@@ -103,7 +103,7 @@ namespace Kargono::Physics
 		Scope<b2World> m_PhysicsWorld = nullptr;
 		// This is a pointer to the active scene for use in the constructor and OnUpdate
 		//		functions.
-		Scene* m_Scene = nullptr;
+		Scenes::Scene* m_Scene = nullptr;
 		// This contact listener moves physics collision events into the event pipeline
 		//		for further processing.
 		Scope<ContactListener> m_ContactListener = nullptr;
