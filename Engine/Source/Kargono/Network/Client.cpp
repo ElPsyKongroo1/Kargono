@@ -373,6 +373,14 @@ namespace Kargono::Network
 		}
 	}
 
+	void Client::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
+		}
+	}
+
 	void Client::EnableReadyCheck()
 	{
 		if (GetActiveClient())
@@ -394,6 +402,22 @@ namespace Kargono::Network
 		if (GetActiveClient())
 		{
 			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestUserCount>());
+		}
+	}
+
+	void Client::RequestJoinSession()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestJoinSession>());
+		}
+	}
+
+	void Client::LeaveCurrentSession()
+	{
+		if (GetActiveClient())
+		{
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::LeaveCurrentSession>());
 		}
 	}
 
