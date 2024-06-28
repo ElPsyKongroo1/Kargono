@@ -109,6 +109,16 @@ namespace Kargono::Scenes
 
 			s_GameState->SetField(fieldName, value);
 		}
+		static void* GetActiveGameStateField(const std::string& fieldName)
+		{
+			if (!s_GameState)
+			{
+				KG_WARN("Attempt to set a field on active game state that is inactive");
+				return nullptr;
+			}
+
+			return s_GameState->GetField(fieldName)->GetValue();
+		}
 	public:
 		static Ref<GameState> s_GameState;
 		static Assets::AssetHandle s_GameStateHandle;
