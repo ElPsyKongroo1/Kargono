@@ -3,7 +3,6 @@
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Utility/Time.h"
-#include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Profiler.h"
@@ -49,7 +48,6 @@ namespace Kargono
 			m_CurrentApp = nullptr;
 		}
 
-		Script::ScriptEngine::Shutdown();
 		Scripting::ScriptService::Terminate();
 		Audio::AudioService::Terminate();
 		// TODO: Add Renderer Shutdown!
@@ -216,7 +214,7 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
 		if (!scene) { return false; }
 		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
@@ -234,7 +232,7 @@ namespace Kargono
 
 	bool EngineCore::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Scenes::Scene* scene = Script::ScriptEngine::GetSceneContext();
+		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
 		if (!scene) { return false; }
 		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }

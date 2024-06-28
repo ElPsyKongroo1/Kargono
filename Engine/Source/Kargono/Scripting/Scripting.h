@@ -6,7 +6,6 @@
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Scripting/ScriptingResources.h"
-#include "Kargono/Script/ScriptEngine.h"
 
 #include <filesystem>
 #include <functional>

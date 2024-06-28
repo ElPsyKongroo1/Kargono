@@ -8,7 +8,6 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Scenes/Components.h"
-#include "Kargono/Script/ScriptEngine.h"
 
 namespace Kargono::RuntimeUI
 {

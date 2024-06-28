@@ -5,7 +5,6 @@
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Core/EngineCore.h"
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Rendering/Shader.h"
@@ -162,8 +161,6 @@ namespace Kargono::Scenes
 		// Physics
 		m_PhysicsWorld = CreateScope<Physics::Physics2DWorld>(this, m_PhysicsSpecification.Gravity);
 
-		// Scripts
-		Script::ScriptEngine::OnRuntimeStart(this);
 		// Invoke OnCreate
 		auto classInstanceView = GetAllEntitiesWith<ClassInstanceComponent>();
 		for (auto e : classInstanceView)
@@ -202,7 +199,6 @@ namespace Kargono::Scenes
 		m_PhysicsWorld = nullptr;
 
 		// Script
-		Script::ScriptEngine::OnRuntimeStop();
 		m_ScriptClassToEntityList.clear();
 	}
 

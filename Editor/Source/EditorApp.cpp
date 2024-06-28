@@ -17,7 +17,6 @@ namespace Kargono
 
 	void EditorApp::OnAttach()
 	{
-		Script::ScriptEngine::Init();
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
@@ -385,12 +384,6 @@ namespace Kargono
 			// Gizmos
 			case Key::R:
 			{
-				if (control)
-				{
-					if (m_SceneState != SceneState::Edit) { OnStop(); }
-					Script::ScriptEngine::ReloadAssembly();
-				}
-
 				if (!ImGuizmo::IsUsing()) { m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::SCALE; }
 				break;
 			}
@@ -650,8 +643,6 @@ namespace Kargono
 
 			Scripting::ScriptService::LoadActiveScriptModule();
 
-			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
-			else { Script::ScriptEngine::InitialAssemblyLoad(); }
 			if (m_EditorScene)
 			{
 				auto view = m_EditorScene->GetAllEntitiesWith<Scenes::AudioComponent>();
