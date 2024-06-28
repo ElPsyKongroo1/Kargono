@@ -20,7 +20,9 @@ jobs:
   build:
     runs-on: [Windows, self-hosted]
     strategy:
-      build-configuration: [Debug, Release, Dist]
+      fail-fast: false
+      matrix:
+        build-configuration: [Debug, Release, Dist]
     steps:
     - uses: actions/checkout@v4
 
