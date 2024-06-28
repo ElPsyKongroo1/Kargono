@@ -19,7 +19,6 @@ namespace Kargono
 
 	void RuntimeApp::OnAttach()
 	{
-		Script::ScriptEngine::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
@@ -348,8 +347,6 @@ namespace Kargono
 			}
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
 
-			if (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }
-			else { Script::ScriptEngine::InitialAssemblyLoad(); }
 			if (Scenes::Scene::GetActiveScene())
 			{
 				Scenes::Scene::GetActiveScene()->DestroyAllEntities();
