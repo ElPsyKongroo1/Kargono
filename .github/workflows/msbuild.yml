@@ -7,7 +7,8 @@ name: MSBuild
 
 on:
   push:
-    branches: [ "Stable-Branch", "Development-Branch" ]
+    branches: [ "**" ]  # Match all branches
+    branches-ignore: [ "gh-pages" ]  # Ignore specific branch
 
 env:
   # Path to the solution file relative to the root of the project.
