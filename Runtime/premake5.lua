@@ -58,7 +58,12 @@ project "Runtime"
         {
             "KG_PLATFORM_WINDOWS"
         }
-
+    filter "system:linux"
+        systemversion "latest"
+	defines
+	{
+            "KG_PLATFORM_LINUX"
+	}
     filter "configurations:Debug"
         kind "ConsoleApp"
         links 

@@ -123,6 +123,12 @@
             "%{Library.WinVersion}",
             "%{Library.BCrypt}"
         }
+    filter "system:linux"
+       systemversion "latest"
+       defines
+       {
+	  "KG_PLATFORM_LINUX"
+       }
     filter "configurations:Debug"
         defines "KG_DEBUG"
         runtime "Debug"
