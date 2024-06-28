@@ -35,9 +35,9 @@ namespace Kargono
 	#define KG_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK();
 
 	// Used for Debugging
-	#define KG_TRACE(...)		
-	#define KG_TRACE2(...)		
-	#define KG_TRACE3(...)		
+	#define KG_TRACE_INFO(...)		
+	#define KG_TRACE_CRITICAL(...)		
+	#define KG_TRACE_ERROR(...)		
 #endif
 
 #ifdef KG_ENABLE_VERIFY
