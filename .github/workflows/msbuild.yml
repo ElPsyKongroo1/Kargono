@@ -7,7 +7,7 @@ name: MSBuild
 
 on:
   push:
-    branches: [ "Stable-Branch", "Development-Branch" ]
+    branches: [ "**" ]  # Match all branches
 
 env:
   # Path to the solution file relative to the root of the project.
