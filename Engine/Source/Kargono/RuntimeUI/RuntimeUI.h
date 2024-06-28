@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <functional>
 
-#include "Kargono/Script/ScriptEngine.h"
 #include "Kargono/Scripting/Scripting.h"
 
 

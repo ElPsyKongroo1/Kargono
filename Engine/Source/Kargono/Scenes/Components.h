@@ -109,14 +109,6 @@ namespace Kargono::Scenes
 		MultiAudioComponent(const MultiAudioComponent&) = default;
 	};
 
-	struct ScriptComponent
-	{
-		std::string ClassName;
-
-		ScriptComponent() = default;
-		ScriptComponent(const ScriptComponent&) = default;
-	};
-
 	// Physics
 	struct Rigidbody2DComponent
 	{
@@ -272,7 +264,7 @@ namespace Kargono::Scenes
 	{
 	};
 
-	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent, ScriptComponent,
+	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }

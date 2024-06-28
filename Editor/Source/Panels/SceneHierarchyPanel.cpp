@@ -480,7 +480,6 @@ namespace Kargono::Panels
 
 			DisplayAddComponentEntry<Scenes::ClassInstanceComponent>("Class Instance");
 			DisplayAddComponentEntry<Scenes::CameraComponent>("Camera");
-			DisplayAddComponentEntry<Scenes::ScriptComponent>("Script");
 			DisplayAddComponentEntry<Scenes::ShapeComponent>("Shape");
 			DisplayAddComponentEntry<Scenes::AudioComponent>("Audio");
 			DisplayAddComponentEntry<Scenes::Rigidbody2DComponent>("Rigidbody 2D");
@@ -568,108 +567,6 @@ namespace Kargono::Panels
 				}
 			}
 		}
-
-		DrawComponent<Scenes::ScriptComponent>("Script", entity, [entity, this](auto& component) mutable
-		{
-			// Load in all entity class names
-			auto entityClasses = Script::ScriptEngine::GetEntityClasses();
-			std::string currentScript{"None"};
-			bool scriptClassExists;
-			if (scriptClassExists = entityClasses.contains(component.ClassName)){ currentScript = component.ClassName; }
-			if (ImGui::BeginCombo("Entity Scripts", currentScript.c_str()))
-			{
-				if (ImGui::Selectable("None"))
-				{
-					component.ClassName = "";
-					ImGui::SetItemDefaultFocus();
-					scriptClassExists = false;
-				}
-				for (auto& [className, classReference] : entityClasses)
-				{
-					if (ImGui::Selectable(className.c_str()))
-					{
-						component.ClassName = className;
-						scriptClassExists = true;
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-			//const bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
-
-			//static char buffer[64];
-			//strcpy_s(buffer, component.ClassName.c_str());
-
-			//UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
-
-			/*if (ImGui::InputText("Class", buffer, sizeof(buffer)))
-			{
-				component.ClassName = buffer;
-				return;
-			}*/
-
-
-			// Fields
-			bool sceneRunning = Scenes::Scene::GetActiveScene()->IsRunning();
-			if (sceneRunning)
-			{
-				Ref<Script::ScriptClassEntityInstance> scriptInstance = Script::ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-				if (scriptInstance)
-				{
-					const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-					for (const auto& [name, field] : fields)
-					{
-						if (field.Type == Script::ScriptFieldType::Float)
-						{
-							float data = scriptInstance->GetFieldValue<float>(name);
-							if (ImGui::DragFloat(name.c_str(), &data))
-							{
-								scriptInstance->SetFieldValue(name, data);
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				if (scriptClassExists)
-				{
-					Ref<Script::ScriptClass> entityClass = Script::ScriptEngine::GetEntityClass(component.ClassName);
-					const auto& fields = entityClass->GetFields();
-
-					auto& entityFields = Script::ScriptEngine::GetScriptFieldMap(entity);
-					for (const auto& [name, field] : fields)
-					{
-						// Field has been set in editor
-						if (entityFields.find(name) != entityFields.end())
-						{
-							Script::ScriptFieldInstance& scriptField = entityFields.at(name);
-							// Display control to set it maybe
-							if (field.Type == Script::ScriptFieldType::Float)
-							{
-								float data = scriptField.GetValue<float>();
-								if (ImGui::DragFloat(name.c_str(), &data)){scriptField.SetValue<float>(data);}
-							}
-						}
-						else
-						{
-							// Display control to set it maybe
-							if (field.Type == Script::ScriptFieldType::Float)
-							{
-								float data = 0.0f;
-								if (ImGui::DragFloat(name.c_str(), &data))
-								{
-									Script::ScriptFieldInstance& fieldInstance = entityFields[name];
-									fieldInstance.Field = field;
-									fieldInstance.SetValue(data);
-								}
-							}
-						}
-					}
-				}
-			}
-
-		});
 
 		DrawComponent<Scenes::AudioComponent>("Audio", entity, [&](auto& component)
 		{

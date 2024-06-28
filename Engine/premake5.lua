@@ -64,7 +64,6 @@
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
-        "%{IncludeDir.mono}",
         "%{IncludeDir.yaml_cpp}",
         --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
@@ -92,10 +91,7 @@
         "imGui",
         "dwmapi.lib",
         "yaml-cpp",
-        "msdf-atlas-gen",
-        "%{Library.mono}",
-        --"%{Library.free_type}",
-        "ScriptEngine"
+        "msdf-atlas-gen"
     }
 
     filter "files:../Dependencies/ImGuizmo/**.cpp"

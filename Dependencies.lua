@@ -18,7 +18,6 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/Dependencies/ImGuizmo"
 --IncludeDir["free_type"] = "%{wks.location}/Dependencies/free_type/include"
 IncludeDir["hash_library"] = "%{wks.location}/Dependencies/hash_library"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
-IncludeDir["mono"] = "%{wks.location}/Dependencies/mono/include"
 IncludeDir["OpenALSoft"] = "%{wks.location}/Dependencies/OpenAL/include"
 IncludeDir["msdfgen"] = "%{wks.location}/Dependencies/msdf_atlas_gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Dependencies/msdf_atlas_gen"
@@ -33,11 +32,9 @@ IncludeDir["ImGuiColorTextEdit"] = "%{wks.location}/Dependencies/ImGuiColorTextE
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
-LibraryDir["mono"] = "%{wks.location}/Dependencies/mono/lib/%{cfg.buildcfg}"
 
 -- Library Locations: Points to a specific library file for Linker to link to final .exe
 Library = {}
-Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
 Library["OpenALSoft_Debug"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/OpenAL32.lib"
 Library["OpenALSoft_Release"] = "%{wks.location}/Dependencies/OpenAL/lib/release/OpenAL32.lib"
 Library["OpenALSoft_Dist"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/OpenAL32.lib"

@@ -33,7 +33,6 @@ group "Dependencies"
 group ""
 
 group "Engine"
-    include "ScriptEngine" 
     include "Engine"
 group ""
 
