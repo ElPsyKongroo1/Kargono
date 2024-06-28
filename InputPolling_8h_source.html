@@ -89,32 +89,50 @@ $(document).ready(function(){initNavTree('InputPolling_8h_source.html',''); init
 <div class="title">InputPolling.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/KeyCodes.h&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/MouseCodes.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
+<a href="InputPolling_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="KeyCodes_8h.html">Kargono/Core/KeyCodes.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="MouseCodes_8h.html">Kargono/Core/MouseCodes.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Input.html">Kargono::Input</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classKargono_1_1InputPolling.html">    9</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1InputPolling.html">InputPolling</a></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> IsKeyPressed(KeyCode key);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> IsMouseButtonPressed(MouseCode button);</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">static</span> Math::vec2 GetMousePosition();</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> GetMouseX();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> GetMouseY();</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    };</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1InputPolling_html"><div class="ttname"><a href="classKargono_1_1InputPolling.html">Kargono::InputPolling</a></div><div class="ttdef"><b>Definition:</b> <a href="InputPolling_8h_source.html#l00009">InputPolling.h:10</a></div></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// Input Polling Class</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html">   12</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Input_1_1InputPolling.html">InputPolling</a></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">// Poll Input from Platform Dependent Code</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html#adb32195c2b6a9920cc22f9e21554b7bd">   18</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Input_1_1InputPolling.html#adb32195c2b6a9920cc22f9e21554b7bd">IsKeyPressed</a>(<a class="code" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a> key);</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html#ae06f766430de86ea7c09ddc53241c18e">   19</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Input_1_1InputPolling.html#ae06f766430de86ea7c09ddc53241c18e">IsMouseButtonPressed</a>(<a class="code" href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">MouseCode</a> button);</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html#a3826fe40bddb27c9bf782433038d02ae">   20</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="classKargono_1_1Input_1_1InputPolling.html#a3826fe40bddb27c9bf782433038d02ae">GetMousePosition</a>();</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html#a241075a42036780439c60a99f3d80c5d">   21</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1Input_1_1InputPolling.html#a241075a42036780439c60a99f3d80c5d">GetMouseX</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classKargono_1_1Input_1_1InputPolling.html#a8a53c7ac1a1cd7b37cd917e6dacd2459">   22</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1Input_1_1InputPolling.html#a8a53c7ac1a1cd7b37cd917e6dacd2459">GetMouseY</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    };</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;}</div>
+<div class="ttc" id="aKeyCodes_8h_html"><div class="ttname"><a href="KeyCodes_8h.html">KeyCodes.h</a></div></div>
+<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
+<div class="ttc" id="aMouseCodes_8h_html"><div class="ttname"><a href="MouseCodes_8h.html">MouseCodes.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html">Kargono::Input::InputPolling</a></div><div class="ttdef"><b>Definition:</b> <a href="InputPolling_8h_source.html#l00012">InputPolling.h:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html_a241075a42036780439c60a99f3d80c5d"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html#a241075a42036780439c60a99f3d80c5d">Kargono::Input::InputPolling::GetMouseX</a></div><div class="ttdeci">static float GetMouseX()</div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html_a3826fe40bddb27c9bf782433038d02ae"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html#a3826fe40bddb27c9bf782433038d02ae">Kargono::Input::InputPolling::GetMousePosition</a></div><div class="ttdeci">static Math::vec2 GetMousePosition()</div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html_a8a53c7ac1a1cd7b37cd917e6dacd2459"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html#a8a53c7ac1a1cd7b37cd917e6dacd2459">Kargono::Input::InputPolling::GetMouseY</a></div><div class="ttdeci">static float GetMouseY()</div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html_adb32195c2b6a9920cc22f9e21554b7bd"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html#adb32195c2b6a9920cc22f9e21554b7bd">Kargono::Input::InputPolling::IsKeyPressed</a></div><div class="ttdeci">static bool IsKeyPressed(KeyCode key)</div></div>
+<div class="ttc" id="aclassKargono_1_1Input_1_1InputPolling_html_ae06f766430de86ea7c09ddc53241c18e"><div class="ttname"><a href="classKargono_1_1Input_1_1InputPolling.html#ae06f766430de86ea7c09ddc53241c18e">Kargono::Input::InputPolling::IsMouseButtonPressed</a></div><div class="ttdeci">static bool IsMouseButtonPressed(MouseCode button)</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Input_html"><div class="ttname"><a href="namespaceKargono_1_1Input.html">Kargono::Input</a></div><div class="ttdef"><b>Definition:</b> <a href="InputMode_8cpp_source.html#l00009">InputMode.cpp:10</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00013">MathAliases.h:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a38c4cd764f4138362cbb432cf30c9f48"><div class="ttname"><a href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">Kargono::MouseCode</a></div><div class="ttdeci">uint16_t MouseCode</div><div class="ttdef"><b>Definition:</b> <a href="MouseCodes_8h_source.html#l00006">MouseCodes.h:6</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a5d9d8bc09d8eadf807acc6aec40f3a3b"><div class="ttname"><a href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">Kargono::KeyCode</a></div><div class="ttdeci">uint16_t KeyCode</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00008">KeyCodes.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_2d6aa8fa27d464a08329f948660a472d.html">Input</a></li><li class="navelem"><b>InputPolling.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_2d6aa8fa27d464a08329f948660a472d.html">Input</a></li><li class="navelem"><a class="el" href="InputPolling_8h.html">InputPolling.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

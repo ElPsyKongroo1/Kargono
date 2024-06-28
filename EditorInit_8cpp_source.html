@@ -89,14 +89,14 @@ $(document).ready(function(){initNavTree('EditorInit_8cpp_source.html',''); init
 <div class="title">EditorInit.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EntryPoint.h&quot;</span></div>
+<a href="EditorInit_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EntryPoint_8h.html">Kargono/Core/EntryPoint.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;EditorApp.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorApp_8h.html">EditorApp.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    EngineCore* InitEngineAndCreateApp(CommandLineArgs args)</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    EngineCore* <a class="code" href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">InitEngineAndCreateApp</a>(CommandLineArgs args)</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        AppSpec spec;</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        spec.Name = <span class="stringliteral">&quot;Kargono Editor&quot;</span>;</div>
@@ -105,18 +105,24 @@ $(document).ready(function(){initNavTree('EditorInit_8cpp_source.html',''); init
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        spec.Width = 1600;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        spec.Height = 900;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        Application* editorApp = <span class="keyword">new</span> EditorApp();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Application</a>* editorApp = <span class="keyword">new</span> EditorApp();</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        KG_VERIFY(editorApp, <span class="stringliteral">&quot;Editor App Init&quot;</span>);</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>(spec, editorApp);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    }</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html"><div class="ttname"><a href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00046">EngineCore.h:47</a></div></div>
+<div class="ttc" id="aEditorApp_8h_html"><div class="ttname"><a href="EditorApp_8h.html">EditorApp.h</a></div></div>
+<div class="ttc" id="aEntryPoint_8h_html"><div class="ttname"><a href="EntryPoint_8h.html">EntryPoint.h</a></div></div>
+<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineCore_html"><div class="ttname"><a href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00051">EngineCore.h:52</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Events_html_ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Kargono::Events::Application</a></div><div class="ttdeci">@ Application</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00060">Event.h:60</a></div></div>
+<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a45923d73887d88bd86f612361e918d0b"><div class="ttname"><a href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">EngineCore * InitEngineAndCreateApp(CommandLineArgs args)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeInit_8cpp_source.html#l00014">RuntimeInit.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><b>EditorInit.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="EditorInit_8cpp.html">EditorInit.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

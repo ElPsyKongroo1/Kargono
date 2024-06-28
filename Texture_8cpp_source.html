@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Kargono: Engine/Source/Kargono/Renderer/Texture.cpp Source File</title>
+<title>Kargono: Engine/Source/Kargono/Rendering/Texture.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,39 +89,59 @@ $(document).ready(function(){initNavTree('Texture_8cpp_source.html',''); initRes
 <div class="title">Texture.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="Texture_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Renderer.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Texture.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RenderingService_8h.html">Kargono/Rendering/RenderingService.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Texture_8h.html">Kargono/Rendering/Texture.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;API/RenderingAPI/OpenGLTexture.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OpenGLTexture_8h.html">API/RenderingAPI/OpenGLTexture.h</a>&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    Ref&lt;Texture2D&gt; Texture2D::Create(<span class="keyword">const</span> TextureSpecification&amp; spec)</div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">   10</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Texture2D&gt;</a> <a class="code" href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">Texture2D::Create</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Rendering_1_1TextureSpecification.html">TextureSpecification</a>&amp; spec)</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(spec);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    }</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    Ref&lt;Texture2D&gt; Texture2D::Create(uint32_t rendererID, uint32_t width, uint32_t height)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(rendererID, width, height);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    }</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    Ref&lt;Texture2D&gt; Texture2D::Create(Buffer buffer, <span class="keyword">const</span> Assets::TextureMetaData&amp; metadata)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(buffer, metadata);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(spec);</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    }</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Texture2D.html#a12005f8edc0475f0cd856c9b7de643f8">   16</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Texture2D&gt;</a> <a class="code" href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">Texture2D::Create</a>(uint32_t rendererID, uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(rendererID, width, height);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    Ref&lt;Kargono::Texture2D&gt; Texture2D::CreateEditorTexture(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Texture2D.html#ac077fda291ad1575d090ccf013e2aa0d">   22</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Texture2D&gt;</a> <a class="code" href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">Texture2D::Create</a>(<a class="code" href="structKargono_1_1Buffer.html">Buffer</a> buffer, <span class="keyword">const</span> <a class="code" href="structKargono_1_1Assets_1_1TextureMetaData.html">Assets::TextureMetaData</a>&amp; metadata)</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        KG_ASSERT(path.is_absolute(), <span class="stringliteral">&quot;Path provided to texture create function is not an absolute path!&quot;</span>)</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            return CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(path.<span class="keywordtype">string</span>());</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    }</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(buffer, metadata);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Texture2D.html#a3c3bf4fd7739ce1e30dd6836246e684c">   28</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Texture2D&gt;</a> <a class="code" href="classKargono_1_1Rendering_1_1Texture2D.html#a3c3bf4fd7739ce1e30dd6836246e684c">Texture2D::CreateEditorTexture</a>(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(path.is_absolute(), <span class="stringliteral">&quot;Path provided to texture create function is not an absolute path!&quot;</span>)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">return</span> CreateRef&lt;API::RenderingAPI::OpenGLTexture2D&gt;(path.string());</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
+<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
+<div class="ttc" id="aOpenGLTexture_8h_html"><div class="ttname"><a href="OpenGLTexture_8h.html">OpenGLTexture.h</a></div></div>
+<div class="ttc" id="aRenderingService_8h_html"><div class="ttname"><a href="RenderingService_8h.html">RenderingService.h</a></div></div>
+<div class="ttc" id="aTexture_8h_html"><div class="ttname"><a href="Texture_8h.html">Texture.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Texture2D_html_a3c3bf4fd7739ce1e30dd6836246e684c"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Texture2D.html#a3c3bf4fd7739ce1e30dd6836246e684c">Kargono::Rendering::Texture2D::CreateEditorTexture</a></div><div class="ttdeci">static Ref&lt; Texture2D &gt; CreateEditorTexture(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="Texture_8cpp_source.html#l00028">Texture.cpp:28</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Texture2D_html_a77377de1b106ba59376dc8c62938086a"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">Kargono::Rendering::Texture2D::Create</a></div><div class="ttdeci">static Ref&lt; Texture2D &gt; Create(const TextureSpecification &amp;spec)</div><div class="ttdef"><b>Definition:</b> <a href="Texture_8cpp_source.html#l00010">Texture.cpp:10</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8h_source.html#l00016">EditorUI.h:16</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
+<div class="ttc" id="astructKargono_1_1Assets_1_1TextureMetaData_html"><div class="ttname"><a href="structKargono_1_1Assets_1_1TextureMetaData.html">Kargono::Assets::TextureMetaData</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00086">Asset.h:87</a></div></div>
+<div class="ttc" id="astructKargono_1_1Buffer_html"><div class="ttname"><a href="structKargono_1_1Buffer.html">Kargono::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="Buffer_8h_source.html#l00012">Buffer.h:13</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1TextureSpecification_html"><div class="ttname"><a href="structKargono_1_1Rendering_1_1TextureSpecification.html">Kargono::Rendering::TextureSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Texture_8h_source.html#l00023">Texture.h:24</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Texture.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_8d85c20224a44fa307f1309d7dd5ba3e.html">Rendering</a></li><li class="navelem"><a class="el" href="Texture_8cpp.html">Texture.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

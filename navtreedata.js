@@ -25,28 +25,57 @@
 var NAVTREE =
 [
   [ "Kargono", "index.html", [
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Typedefs", "namespacemembers_type.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
+      ] ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ]
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Variables", "functions_vars.html", "functions_vars" ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
+      ] ]
     ] ],
     [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ]
+      [ "File List", "files.html", "files_dup" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Macros", "globals_defs.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"AppTick_8cpp_source.html",
-"classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html#a6200f5f224044744e3c14581340e49f0",
-"classKargono_1_1Events_1_1DenyJoinSession.html#a5b47edd5b76f460084268f17519b7d7c",
-"classKargono_1_1InputBufferLayout.html#afe7e7c7c67c16bbb39e4e6441f04f0ec",
-"classKargono_1_1RendererAPI.html#aa58f286831f40ea3e2142e661d1adaa0",
-"classKargono_1_1Timers_1_1AsyncBusyTimer.html#a29384c1745da935cfa8e02047b6f532c",
-"dir_d4e03ddb03f1b2d03471e1e593b2d88e.html",
-"structKargono_1_1EditorUI_1_1TableSpec.html#ab5038a28040eb52273f46dc9c02e90ad",
-"structKargono_1_1ShapeComponent.html#a673583b33a3beb92db84b9dfc4e391cb"
+"AppTick_8cpp.html",
+"Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a506ae7683b97bf907a249be202eaa6e9",
+"Project_8cpp_source.html",
+"UUID_8cpp.html",
+"classKargono_1_1Events_1_1KeyTypedEvent.html#a9352630eaaf4ba5c205c0dd5b0a411d5",
+"classKargono_1_1Network_1_1Connection.html#a5e452a856d0701aeef609d0b47be34e4",
+"classKargono_1_1Rendering_1_1EditorCamera.html#af8ede864c8152bf40406a947e4a8ff3c",
+"classKargono_1_1Scenes_1_1SceneCamera.html#a2b7dabe643c03fc76a12bd381006fb29",
+"dir_9579d1ecb2c7bf48cbe1049c41745cb4.html",
+"namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a1419ca18aafb4da5671c1debddbc682f",
+"namespaceKargono_1_1Utility.html#af83eaa3a8a238a032d6887e753219ec8",
+"structKargono_1_1Network_1_1Message.html",
+"structKargono_1_1Scenes_1_1Rigidbody2DComponent.html#a3c6d94bd9fa54ad105edf7c7c8298ded"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

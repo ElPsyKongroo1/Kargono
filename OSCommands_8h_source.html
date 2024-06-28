@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('OSCommands_8h_source.html',''); initRe
 <div class="title">OSCommands.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="OSCommands_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//============================================================</span></div>
@@ -100,7 +100,7 @@ $(document).ready(function(){initNavTree('OSCommands_8h_source.html',''); initRe
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">//      conversion functions that allow other functionality to work.</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//      This namespace also holds certain operating system dependent</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">//      commands such as opening a file explorer or dialog.</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>Kargono::Utility</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">// Operating System Commands Class</span></div>
@@ -113,23 +113,27 @@ $(document).ready(function(){initNavTree('OSCommands_8h_source.html',''); initRe
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#if KG_EXPORT == 0</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// This function opens a file explorer window at the provided absolute</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">//      path. This is operating system dependent and only works on windows.</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> OpenFileExplorer(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">   25</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">OpenFileExplorer</a>(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="comment">// This function opens the scripting engine that the provided path describes.</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">//      This scripting engine is a .csproj file that opens the Visual Studio</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">//      project.</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> OpenScriptProject(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1OSCommands.html#a718972291dc333ee2517fba0cfaeb9bb">   29</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1OSCommands.html#a718972291dc333ee2517fba0cfaeb9bb">OpenScriptProject</a>(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">// This function opens the profiler associated with this engine (optick).</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> OpenProfiler();</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1OSCommands.html#a8c30f22814efecdda7814ae3509d51bb">   31</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1OSCommands.html#a8c30f22814efecdda7814ae3509d51bb">OpenProfiler</a>();</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    };</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html">Kargono::Utility::OSCommands</a></div><div class="ttdef"><b>Definition:</b> <a href="OSCommands_8h_source.html#l00019">OSCommands.h:20</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_a718972291dc333ee2517fba0cfaeb9bb"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#a718972291dc333ee2517fba0cfaeb9bb">Kargono::Utility::OSCommands::OpenScriptProject</a></div><div class="ttdeci">static void OpenScriptProject(const std::filesystem::path &amp;path)</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_a8c30f22814efecdda7814ae3509d51bb"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#a8c30f22814efecdda7814ae3509d51bb">Kargono::Utility::OSCommands::OpenProfiler</a></div><div class="ttdeci">static void OpenProfiler()</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_ab222bbaf462da0a2d46f45bf5bef363e"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">Kargono::Utility::OSCommands::OpenFileExplorer</a></div><div class="ttdeci">static void OpenFileExplorer(const std::filesystem::path &amp;path)</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><b>OSCommands.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><a class="el" href="OSCommands_8h.html">OSCommands.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

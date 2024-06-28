@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Kargono: Engine/Source/Kargono/Renderer/Shape.cpp Source File</title>
+<title>Kargono: Engine/Source/Kargono/Rendering/Shape.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,14 +89,14 @@ $(document).ready(function(){initNavTree('Shape_8cpp_source.html',''); initResiz
 <div class="title">Shape.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="Shape_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Shape.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Shape_8h.html">Kargono/Rendering/Shape.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    Shape Shape::s_None {};</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    Shape Shape::s_Quad</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    Shape <a class="code" href="classKargono_1_1Rendering_1_1Shape.html#a0295e338c15ff48c6d9eafd8e011f973">Shape::s_None</a> {};</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    Shape <a class="code" href="classKargono_1_1Rendering_1_1Shape.html#ab5868f32f76ef25782cb57f93b787974">Shape::s_Quad</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <span class="stringliteral">&quot;Quad&quot;</span>,</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        {</div>
@@ -115,12 +115,12 @@ $(document).ready(function(){initNavTree('Shape_8cpp_source.html',''); initResiz
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            0, 1, 2, 0, 3, 2</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        },</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        {}, {},</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        RenderingType::DrawIndex,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        ShapeTypes::Quad,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <a class="code" href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3ae9017664588010860a92ceb5f8fcb824">ShapeTypes::Quad</a>,</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        {}</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    };</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    Shape Shape::s_Cube</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    Shape <a class="code" href="classKargono_1_1Rendering_1_1Shape.html#aeed525191faece14157f9ace8dda84df">Shape::s_Cube</a></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="stringliteral">&quot;Cube&quot;</span>,</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        {</div>
@@ -250,11 +250,11 @@ $(document).ready(function(){initNavTree('Shape_8cpp_source.html',''); initResiz
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            {1.0f, 1.0f},</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            {0.0f, 1.0f}</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        },</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            RenderingType::DrawIndex,</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            ShapeTypes::Cube,</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>,</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <a class="code" href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3aa296104f0c61a9cf39f4824d05315e12">ShapeTypes::Cube</a>,</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        {<span class="stringliteral">&quot;AddTexture&quot;</span>, <span class="stringliteral">&quot;AddCircleShape&quot;</span>}</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    };</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    Shape Shape::s_Pyramid</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    Shape <a class="code" href="classKargono_1_1Rendering_1_1Shape.html#af7bc50c1af5888184ff88c12328807ef">Shape::s_Pyramid</a></div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    {</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="stringliteral">&quot;Pyramid&quot;</span>,</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        {</div>
@@ -324,17 +324,28 @@ $(document).ready(function(){initNavTree('Shape_8cpp_source.html',''); initResiz
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            {0.0f, 1.0f}</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        },</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            RenderingType::DrawIndex,</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            ShapeTypes::Pyramid,</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>,</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <a class="code" href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3a5e5b0d93bab61584149905b5e5dc71a0">ShapeTypes::Pyramid</a>,</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        { <span class="stringliteral">&quot;AddTexture&quot;</span>, <span class="stringliteral">&quot;AddCircleShape&quot;</span> }</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    };</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;}</div>
+<div class="ttc" id="aShape_8h_html"><div class="ttname"><a href="Shape_8h.html">Shape.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shape_html_a0295e338c15ff48c6d9eafd8e011f973"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shape.html#a0295e338c15ff48c6d9eafd8e011f973">Kargono::Rendering::Shape::s_None</a></div><div class="ttdeci">static Shape s_None</div><div class="ttdef"><b>Definition:</b> <a href="Shape_8h_source.html#l00063">Shape.h:63</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shape_html_ab5868f32f76ef25782cb57f93b787974"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shape.html#ab5868f32f76ef25782cb57f93b787974">Kargono::Rendering::Shape::s_Quad</a></div><div class="ttdeci">static Shape s_Quad</div><div class="ttdef"><b>Definition:</b> <a href="Shape_8h_source.html#l00061">Shape.h:61</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shape_html_aeed525191faece14157f9ace8dda84df"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shape.html#aeed525191faece14157f9ace8dda84df">Kargono::Rendering::Shape::s_Cube</a></div><div class="ttdeci">static Shape s_Cube</div><div class="ttdef"><b>Definition:</b> <a href="Shape_8h_source.html#l00062">Shape.h:62</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shape_html_af7bc50c1af5888184ff88c12328807ef"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shape.html#af7bc50c1af5888184ff88c12328807ef">Kargono::Rendering::Shape::s_Pyramid</a></div><div class="ttdeci">static Shape s_Pyramid</div><div class="ttdef"><b>Definition:</b> <a href="Shape_8h_source.html#l00060">Shape.h:60</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8h_source.html#l00016">EditorUI.h:16</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a8e0db4e612e69c4428fd8f2e0fd1b5b3a5e5b0d93bab61584149905b5e5dc71a0"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3a5e5b0d93bab61584149905b5e5dc71a0">Kargono::Rendering::ShapeTypes::Pyramid</a></div><div class="ttdeci">@ Pyramid</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a8e0db4e612e69c4428fd8f2e0fd1b5b3aa296104f0c61a9cf39f4824d05315e12"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3aa296104f0c61a9cf39f4824d05315e12">Kargono::Rendering::ShapeTypes::Cube</a></div><div class="ttdeci">@ Cube</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a8e0db4e612e69c4428fd8f2e0fd1b5b3ae9017664588010860a92ceb5f8fcb824"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a8e0db4e612e69c4428fd8f2e0fd1b5b3ae9017664588010860a92ceb5f8fcb824">Kargono::Rendering::ShapeTypes::Quad</a></div><div class="ttdeci">@ Quad</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">Kargono::Rendering::RenderingType::DrawIndex</a></div><div class="ttdeci">@ DrawIndex</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Shape.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_8d85c20224a44fa307f1309d7dd5ba3e.html">Rendering</a></li><li class="navelem"><a class="el" href="Shape_8cpp.html">Shape.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

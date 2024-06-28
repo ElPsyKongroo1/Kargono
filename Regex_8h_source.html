@@ -89,54 +89,68 @@ $(document).ready(function(){initNavTree('Regex_8h_source.html',''); initResizab
 <div class="title">Regex.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="Regex_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;regex&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>Kargono::Utility</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// Good Agnostic Regex Grammar Video: https://www.youtube.com/watch?v=sa-TUpSx1JA</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">// Regular Expressions in C++: https://en.cppreference.com/w/cpp/regex</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// Grammar Reference: https://learn.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp?view=msvc-170#grammarsummary</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Regex.html">   11</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Utility_1_1Regex.html">Regex</a></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">static</span> uint64_t GetMatchCount(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keywordtype">bool</span> caseSensitive = <span class="keyword">true</span>)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            std::regex_constants::syntax_option_type flags {};</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="keywordflow">if</span> (!caseSensitive)</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                flags |= std::regex_constants::icase;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            }</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            std::regex regex {regexExpression, flags};</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            std::sregex_iterator begin(inputText.begin(), inputText.end(), regex);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            std::sregex_iterator end = std::sregex_iterator();</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            <span class="keywordflow">return</span> std::distance(begin, end);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        }</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> GetMatchSuccess(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keywordtype">bool</span> caseSensitive = <span class="keyword">true</span>)</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            std::regex_constants::syntax_option_type flags {};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordflow">if</span> (!caseSensitive)</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                flags |= std::regex_constants::icase;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            std::regex regex {regexExpression, flags};</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            <span class="keywordflow">return</span> std::regex_search(inputText, regex);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">static</span> std::string ReplaceMatches(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keyword">const</span> std::string&amp; replacementText)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">return</span> std::regex_replace(inputText, std::regex(regexExpression), replacementText);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    };</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1Utility_1_1Regex_html"><div class="ttname"><a href="classKargono_1_1Utility_1_1Regex.html">Kargono::Utility::Regex</a></div><div class="ttdef"><b>Definition:</b> <a href="Regex_8h_source.html#l00011">Regex.h:12</a></div></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">// Regular Expressions Class</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">// Good Agnostic Regex Grammar Video: https://www.youtube.com/watch?v=sa-TUpSx1JA</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">// Regular Expressions in C++: https://en.cppreference.com/w/cpp/regex</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">// Grammar Reference: https://learn.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp?view=msvc-170#grammarsummary</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Regex.html">   14</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Utility_1_1Regex.html">Regex</a></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// Info About Regex Query</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Regex.html#afbc6d9db87550aa1a3120e71dace1126">   20</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> <a class="code" href="classKargono_1_1Utility_1_1Regex.html#afbc6d9db87550aa1a3120e71dace1126">GetMatchCount</a>(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keywordtype">bool</span> caseSensitive = <span class="keyword">true</span>)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            std::regex_constants::syntax_option_type flags {};</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <span class="keywordflow">if</span> (!caseSensitive)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                flags |= std::regex_constants::icase;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            }</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            std::regex regex {regexExpression, flags};</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            std::sregex_iterator begin(inputText.begin(), inputText.end(), regex);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            std::sregex_iterator end = std::sregex_iterator();</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <span class="keywordflow">return</span> std::distance(begin, end);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        }</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Regex.html#a07caea73c8a9001c3a9ad91ae60eed6a">   32</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Utility_1_1Regex.html#a07caea73c8a9001c3a9ad91ae60eed6a">GetMatchSuccess</a>(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keywordtype">bool</span> caseSensitive = <span class="keyword">true</span>)</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            std::regex_constants::syntax_option_type flags {};</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">if</span> (!caseSensitive)</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                flags |= std::regex_constants::icase;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            std::regex regex {regexExpression, flags};</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keywordflow">return</span> std::regex_search(inputText, regex);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">// Modify String with Regex</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Regex.html#a4919d8d5f039faa528abc72583a520fd">   45</a></span>&#160;        <span class="keyword">static</span> std::string <a class="code" href="classKargono_1_1Utility_1_1Regex.html#a4919d8d5f039faa528abc72583a520fd">ReplaceMatches</a>(<span class="keyword">const</span> std::string&amp; inputText, <span class="keyword">const</span> std::string&amp; regexExpression, <span class="keyword">const</span> std::string&amp; replacementText)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">return</span> std::regex_replace(inputText, std::regex(regexExpression), replacementText);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    };</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;}</div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Regex_html"><div class="ttname"><a href="classKargono_1_1Utility_1_1Regex.html">Kargono::Utility::Regex</a></div><div class="ttdef"><b>Definition:</b> <a href="Regex_8h_source.html#l00014">Regex.h:15</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Regex_html_a07caea73c8a9001c3a9ad91ae60eed6a"><div class="ttname"><a href="classKargono_1_1Utility_1_1Regex.html#a07caea73c8a9001c3a9ad91ae60eed6a">Kargono::Utility::Regex::GetMatchSuccess</a></div><div class="ttdeci">static bool GetMatchSuccess(const std::string &amp;inputText, const std::string &amp;regexExpression, bool caseSensitive=true)</div><div class="ttdef"><b>Definition:</b> <a href="Regex_8h_source.html#l00032">Regex.h:32</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Regex_html_a4919d8d5f039faa528abc72583a520fd"><div class="ttname"><a href="classKargono_1_1Utility_1_1Regex.html#a4919d8d5f039faa528abc72583a520fd">Kargono::Utility::Regex::ReplaceMatches</a></div><div class="ttdeci">static std::string ReplaceMatches(const std::string &amp;inputText, const std::string &amp;regexExpression, const std::string &amp;replacementText)</div><div class="ttdef"><b>Definition:</b> <a href="Regex_8h_source.html#l00045">Regex.h:45</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Regex_html_afbc6d9db87550aa1a3120e71dace1126"><div class="ttname"><a href="classKargono_1_1Utility_1_1Regex.html#afbc6d9db87550aa1a3120e71dace1126">Kargono::Utility::Regex::GetMatchCount</a></div><div class="ttdeci">static uint64_t GetMatchCount(const std::string &amp;inputText, const std::string &amp;regexExpression, bool caseSensitive=true)</div><div class="ttdef"><b>Definition:</b> <a href="Regex_8h_source.html#l00020">Regex.h:20</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00398">Scripting.cpp:398</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><b>Regex.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><a class="el" href="Regex_8h.html">Regex.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

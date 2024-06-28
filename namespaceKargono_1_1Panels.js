@@ -1,0 +1,31 @@
+var namespaceKargono_1_1Panels =
+[
+    [ "ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
+    [ "EntityClassEditor", "classKargono_1_1Panels_1_1EntityClassEditor.html", "classKargono_1_1Panels_1_1EntityClassEditor" ],
+    [ "GameStatePanel", "classKargono_1_1Panels_1_1GameStatePanel.html", "classKargono_1_1Panels_1_1GameStatePanel" ],
+    [ "InputModePanel", "classKargono_1_1Panels_1_1InputModePanel.html", "classKargono_1_1Panels_1_1InputModePanel" ],
+    [ "ImGuiLog", "structKargono_1_1Panels_1_1ImGuiLog.html", "structKargono_1_1Panels_1_1ImGuiLog" ],
+    [ "LogPanel", "classKargono_1_1Panels_1_1LogPanel.html", "classKargono_1_1Panels_1_1LogPanel" ],
+    [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ],
+    [ "SceneHierarchyPanel", "classKargono_1_1Panels_1_1SceneHierarchyPanel.html", "classKargono_1_1Panels_1_1SceneHierarchyPanel" ],
+    [ "ScriptEditorPanel", "classKargono_1_1Panels_1_1ScriptEditorPanel.html", "classKargono_1_1Panels_1_1ScriptEditorPanel" ],
+    [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ],
+    [ "TextEditorPanel", "classKargono_1_1Panels_1_1TextEditorPanel.html", "classKargono_1_1Panels_1_1TextEditorPanel" ],
+    [ "UIEditorPanel", "classKargono_1_1Panels_1_1UIEditorPanel.html", "classKargono_1_1Panels_1_1UIEditorPanel" ],
+    [ "ViewportPanel", "classKargono_1_1Panels_1_1ViewportPanel.html", "classKargono_1_1Panels_1_1ViewportPanel" ],
+    [ "BrowserFileType", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723b", [
+      [ "None", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "Directory", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bae73cda510e8bb947f7e61089e5581494", null ],
+      [ "Image", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723babe53a0541a6d36f6ecb879fa2c584b08", null ],
+      [ "Audio", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bab22f0418e8ac915eb66f829d262d14a2", null ],
+      [ "Binary", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba6ce976e8f061b2b5cfe4d0c50c3405dd", null ],
+      [ "Registry", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba4e1ab36884b253ce24768da1c4080a14", null ],
+      [ "Scene", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba9ead0d38e06ec253ca0ecbf6ea56e59b", null ],
+      [ "ScriptProject", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bab65217de37f8a832d7094e89e1bc4fd4", null ],
+      [ "Font", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba194f5394ae2e9c74dc3c441b92862d1d", null ],
+      [ "UserInterface", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bada57625b9f374c1b06313cdd6279de7a", null ],
+      [ "Input", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba324118a6721dd6b8a9b9f4e327df2bf5", null ]
+    ] ],
+    [ "OnFileWatchUpdate", "namespaceKargono_1_1Panels.html#a89c553f73028a13941a53f18949d5dab", null ],
+    [ "InitializeStaticResources", "namespaceKargono_1_1Panels.html#a05e2c64c8471484cbc150d4a5aa33195", null ]
+];

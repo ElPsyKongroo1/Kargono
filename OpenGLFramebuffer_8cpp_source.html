@@ -89,252 +89,269 @@ $(document).ready(function(){initNavTree('OpenGLFramebuffer_8cpp_source.html',''
 <div class="title">OpenGLFramebuffer.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="OpenGLFramebuffer_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;API/RenderingAPI/OpenGLFramebuffer.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OpenGLFramebuffer_8h.html">API/RenderingAPI/OpenGLFramebuffer.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;API/Platform/gladAPI.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="gladAPI_8h.html">API/Platform/gladAPI.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>API::Utility</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">static</span> GLenum TextureTarget(<span class="keywordtype">bool</span> multisampled)</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="keywordflow">return</span> multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    }</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> CreateTextures(<span class="keywordtype">bool</span> multisampled, uint32_t* outID, uint32_t count)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        glCreateTextures(TextureTarget(multisampled), count, outID);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    }</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> BindTexture(<span class="keywordtype">bool</span> multisampled, uint32_t <span class="keywordtype">id</span>)</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        glBindTexture(TextureTarget(multisampled), <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    }</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> AttachColorTexture(uint32_t <span class="keywordtype">id</span>, <span class="keywordtype">int</span> samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, <span class="keywordtype">int</span> index)</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keywordtype">bool</span> multisampled = samples &gt; 1;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordflow">if</span> (multisampled)</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        }</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), <span class="keywordtype">id</span>, 0);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> AttachDepthTexture(uint32_t <span class="keywordtype">id</span>, <span class="keywordtype">int</span> samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">bool</span> multisampled = samples &gt; 1;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordflow">if</span> (multisampled)</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), <span class="keywordtype">id</span>, 0);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">bool</span> IsDepthFormat(Kargono::FramebufferDataFormat format)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">switch</span> (format)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::DEPTH24STENCIL8: <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordflow">default</span>: <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">static</span> GLenum KargonoTextureFormatToGL(Kargono::FramebufferDataFormat format)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">switch</span> (format)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::RGBA8: <span class="keywordflow">return</span>      GL_RGBA8;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::RED_INTEGER: <span class="keywordflow">return</span>    GL_RED_INTEGER;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        KG_ERROR(<span class="stringliteral">&quot;Invalid framebuffertextureformat in KargonoTextureFormatToGL&quot;</span>)</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            return 0;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;namespace API::RenderingAPI</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;{</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t s_MaxFramebufferSize = 8192;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    OpenGLFramebuffer::OpenGLFramebuffer(<span class="keyword">const</span> <a class="code" href="structKargono_1_1FramebufferSpecification.html">Kargono::FramebufferSpecification</a>&amp; spec)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        : m_Specification(spec)</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="comment">// For Loop organizes specifications into color or depth attachments that are held</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">//      locally</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> spec : m_Specification.Attachments.Attachments)</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">if</span> (!Utility::IsDepthFormat(spec.DataFormat))</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                m_ColorAttachmentSpecifications.emplace_back(spec);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                m_DepthAttachmentSpecification = spec;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        }</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="comment">// Call Invalidate to instantiate framebuffer with provided spec</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        Invalidate();</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    OpenGLFramebuffer::~OpenGLFramebuffer()</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        glDeleteFramebuffers(1, &amp;m_RendererID);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        glDeleteTextures(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), m_ColorAttachmentIDs.data());</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        glDeleteTextures(1, &amp;m_DepthAttachmentID);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Invalidate()</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="comment">// Clear previous framebuffer if one already exists for this object.</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordflow">if</span> (m_RendererID)</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            glDeleteFramebuffers(1, &amp;m_RendererID);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            glDeleteTextures(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), m_ColorAttachmentIDs.data());</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            glDeleteTextures(1, &amp;m_DepthAttachmentID);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            m_ColorAttachmentIDs.clear();</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            m_DepthAttachmentID = 0;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        }</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="comment">// Instantiate FrameBuffer in OpenGL and Bind It</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        glCreateFramebuffers(1, &amp;m_RendererID);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordtype">bool</span> multisample = m_Specification.Samples &gt; 1;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>API::Utility</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">static</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> TextureTarget(<span class="keywordtype">bool</span> multisampled)</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordflow">return</span> multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    }</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> CreateTextures(<span class="keywordtype">bool</span> multisampled, uint32_t* outID, uint32_t count)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        glCreateTextures(TextureTarget(multisampled), count, outID);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    }</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> BindTexture(<span class="keywordtype">bool</span> multisampled, uint32_t <span class="keywordtype">id</span>)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        glBindTexture(TextureTarget(multisampled), <span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    }</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> AttachColorTexture(uint32_t <span class="keywordtype">id</span>, <span class="keywordtype">int</span> samples, <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> internalFormat, <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> format, uint32_t width, uint32_t height, <span class="keywordtype">int</span> index)</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">bool</span> multisampled = samples &gt; 1;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">if</span> (multisampled)</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), <span class="keywordtype">id</span>, 0);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> AttachDepthTexture(uint32_t <span class="keywordtype">id</span>, <span class="keywordtype">int</span> samples, <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> format, <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> attachmentType, uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordtype">bool</span> multisampled = samples &gt; 1;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">if</span> (multisampled)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), <span class="keywordtype">id</span>, 0);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">bool</span> IsDepthFormat(<a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31">Kargono::Rendering::FramebufferDataFormat</a> format)</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">switch</span> (format)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a7ca3e26e4e5c35e4408bd49c1e32e9a3">Kargono::Rendering::FramebufferDataFormat::DEPTH24STENCIL8</a>: <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordflow">default</span>: <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">static</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> KargonoTextureFormatToGL(<a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31">Kargono::Rendering::FramebufferDataFormat</a> format)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">switch</span> (format)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31ab4b279046a02077466fa26cabb00c642">Kargono::Rendering::FramebufferDataFormat::RGBA8</a>: <span class="keywordflow">return</span>       GL_RGBA8;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a2849effb989cbdcfb4b9eb143fd826aa">Kargono::Rendering::FramebufferDataFormat::RED_INTEGER</a>: <span class="keywordflow">return</span> GL_RED_INTEGER;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Invalid framebuffertextureformat in KargonoTextureFormatToGL&quot;</span>)</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            return 0;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;namespace <a class="code" href="namespaceAPI.html">API</a>::RenderingAPI</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t s_MaxFramebufferSize = 8192;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    OpenGLFramebuffer::OpenGLFramebuffer(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Rendering_1_1FramebufferSpecification.html">Kargono::Rendering::FramebufferSpecification</a>&amp; spec)</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        : m_Specification(spec)</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="comment">// For Loop organizes specifications into color or depth attachments that are held</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="comment">//      locally</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> spec : m_Specification.Attachments.Attachments)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">if</span> (!Utility::IsDepthFormat(spec.DataFormat))</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                m_ColorAttachmentSpecifications.emplace_back(spec);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                m_DepthAttachmentSpecification = spec;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            }</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="comment">// Call Invalidate to instantiate framebuffer with provided spec</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        Invalidate();</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    OpenGLFramebuffer::~OpenGLFramebuffer()</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        glDeleteFramebuffers(1, &amp;m_RendererID);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        glDeleteTextures(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), m_ColorAttachmentIDs.data());</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        glDeleteTextures(1, &amp;m_DepthAttachmentID);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Invalidate()</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="comment">// Clear previous framebuffer if one already exists for this object.</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (m_RendererID)</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        {</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            glDeleteFramebuffers(1, &amp;m_RendererID);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            glDeleteTextures(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), m_ColorAttachmentIDs.data());</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            glDeleteTextures(1, &amp;m_DepthAttachmentID);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            m_ColorAttachmentIDs.clear();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            m_DepthAttachmentID = 0;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="comment">// Instantiate FrameBuffer in OpenGL and Bind It</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        glCreateFramebuffers(1, &amp;m_RendererID);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="comment">// Generate Color Attachments if specified</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="comment">// Attachments</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keywordflow">if</span> (m_ColorAttachmentSpecifications.size())</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            m_ColorAttachmentIDs.resize(m_ColorAttachmentSpecifications.size());</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            Utility::CreateTextures(multisample, m_ColorAttachmentIDs.data(), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()));</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; m_ColorAttachmentIDs.size(); i++)</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                Utility::BindTexture(multisample, m_ColorAttachmentIDs[i]);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                <span class="keywordflow">switch</span> (m_ColorAttachmentSpecifications[i].DataFormat)</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::RGBA8:</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                    Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_RGBA8, GL_RGBA,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                                              m_Specification.Width, m_Specification.Height, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(i));</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::RED_INTEGER:</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER,</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                        m_Specification.Width, m_Specification.Height, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(i));</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                }</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            }</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        }</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="comment">// Generate Depth Attachments if specified</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">if</span> (m_DepthAttachmentSpecification.DataFormat != Kargono::FramebufferDataFormat::None)</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            Utility::CreateTextures(multisample, &amp;m_DepthAttachmentID, 1);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            Utility::BindTexture(multisample, m_DepthAttachmentID);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <span class="keywordflow">switch</span> (m_DepthAttachmentSpecification.DataFormat)</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <span class="keywordflow">case</span> Kargono::FramebufferDataFormat::DEPTH24STENCIL8:</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                Utility::AttachDepthTexture(m_DepthAttachmentID, m_Specification.Samples,</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                    GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT,</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                    m_Specification.Width, m_Specification.Height);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            }</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        }</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="comment">// This section specifies the buffers to be drawn to during a render pass.</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="keywordflow">if</span> (m_ColorAttachmentIDs.size() &gt; 1)</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        {</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            KG_ASSERT(m_ColorAttachmentIDs.size() &lt;= 4, <span class="stringliteral">&quot;Core error, we only support a maximum of 4 color attachments currently&quot;</span>);</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            GLenum buffers[4] = {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            };</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            glDrawBuffers(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), buffers);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        }</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (m_ColorAttachmentIDs.empty())</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            <span class="comment">// Only depth-pass</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            glDrawBuffer(GL_NONE);</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        }</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="comment">// Final check to ensure framebuffer is created successfully</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        KG_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, <span class="stringliteral">&quot;Framebuffer is incomplete&quot;</span>);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, 0);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordtype">bool</span> multisample = m_Specification.Samples &gt; 1;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="comment">// Generate Color Attachments if specified</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="comment">// Attachments</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">if</span> (m_ColorAttachmentSpecifications.size())</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            m_ColorAttachmentIDs.resize(m_ColorAttachmentSpecifications.size());</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            Utility::CreateTextures(multisample, m_ColorAttachmentIDs.data(), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()));</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; m_ColorAttachmentIDs.size(); i++)</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            {</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                Utility::BindTexture(multisample, m_ColorAttachmentIDs[i]);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="keywordflow">switch</span> (m_ColorAttachmentSpecifications[i].DataFormat)</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31ab4b279046a02077466fa26cabb00c642">Kargono::Rendering::FramebufferDataFormat::RGBA8</a>:</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_RGBA8, GL_RGBA,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                                              m_Specification.Width, m_Specification.Height, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(i));</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a2849effb989cbdcfb4b9eb143fd826aa">Kargono::Rendering::FramebufferDataFormat::RED_INTEGER</a>:</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                    Utility::AttachColorTexture(m_ColorAttachmentIDs[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER,</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                        m_Specification.Width, m_Specification.Height, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(i));</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="comment">// Generate Depth Attachments if specified</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keywordflow">if</span> (m_DepthAttachmentSpecification.DataFormat != <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a6adf97f83acf6453d4a6a4b1070f3754">Kargono::Rendering::FramebufferDataFormat::None</a>)</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            Utility::CreateTextures(multisample, &amp;m_DepthAttachmentID, 1);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            Utility::BindTexture(multisample, m_DepthAttachmentID);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <span class="keywordflow">switch</span> (m_DepthAttachmentSpecification.DataFormat)</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a7ca3e26e4e5c35e4408bd49c1e32e9a3">Kargono::Rendering::FramebufferDataFormat::DEPTH24STENCIL8</a>:</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                Utility::AttachDepthTexture(m_DepthAttachmentID, m_Specification.Samples,</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                    GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT,</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                    m_Specification.Width, m_Specification.Height);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            }</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        }</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="comment">// This section specifies the buffers to be drawn to during a render pass.</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <span class="keywordflow">if</span> (m_ColorAttachmentIDs.size() &gt; 1)</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        {</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(m_ColorAttachmentIDs.size() &lt;= 4, <span class="stringliteral">&quot;Core error, we only support a maximum of 4 color attachments currently&quot;</span>);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a> buffers[4] = {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            };</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            glDrawBuffers(<span class="keyword">static_cast&lt;</span>GLsizei<span class="keyword">&gt;</span>(m_ColorAttachmentIDs.size()), buffers);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        }</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (m_ColorAttachmentIDs.empty())</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            <span class="comment">// Only depth-pass</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            glDrawBuffer(GL_NONE);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="comment">// Final check to ensure framebuffer is created successfully</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, <span class="stringliteral">&quot;Framebuffer is incomplete&quot;</span>);</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    }</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Bind()</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        glViewport(0, 0, m_Specification.Width, m_Specification.Height);</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    }</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Unbind()</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, 0);</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    }</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordflow">if</span> (width == 0 || height == 0 || width &gt; s_MaxFramebufferSize || height &gt; s_MaxFramebufferSize)</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            KG_WARN(<span class="stringliteral">&quot;Attempted to resize framebuffer to {0}, {1}&quot;</span>, width, height);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        }</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        m_Specification.Width = width;</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        m_Specification.Height = height;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        Invalidate();</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    int32_t OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int32_t x, int32_t y)</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    {</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        KG_ASSERT(attachmentIndex &lt; m_ColorAttachmentIDs.size(), <span class="stringliteral">&quot;Color attachment selection is out of bounds!&quot;</span>);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        KG_ASSERT(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == Kargono::FramebufferDataFormat::RED_INTEGER, <span class="stringliteral">&quot;Attempt to use ReadPixel on a buffer that is not RED_INTEGER&quot;</span>);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keywordtype">int</span> pixelData;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &amp;pixelData);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keywordflow">return</span> pixelData;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, <span class="keywordtype">int</span> value)</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    {</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        KG_ASSERT(attachmentIndex &lt; m_ColorAttachmentIDs.size(), <span class="stringliteral">&quot;Color attachment selection is out of bounds!&quot;</span>)</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        auto&amp; spec = m_ColorAttachmentSpecifications[attachmentIndex];</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, 0);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    }</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Bind()</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    {</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        glViewport(0, 0, m_Specification.Width, m_Specification.Height);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    }</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Unbind()</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        glBindFramebuffer(GL_FRAMEBUFFER, 0);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    }</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    {</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <span class="keywordflow">if</span> (width == 0 || height == 0 || width &gt; s_MaxFramebufferSize || height &gt; s_MaxFramebufferSize)</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Attempted to resize framebuffer to {0}, {1}&quot;</span>, width, height);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        }</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        m_Specification.Width = width;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        m_Specification.Height = height;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        Invalidate();</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    int32_t OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int32_t x, int32_t y)</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(attachmentIndex &lt; m_ColorAttachmentIDs.size(), <span class="stringliteral">&quot;Color attachment selection is out of bounds!&quot;</span>);</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(m_ColorAttachmentSpecifications.at(attachmentIndex).DataFormat == <a class="code" href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a2849effb989cbdcfb4b9eb143fd826aa">Kargono::Rendering::FramebufferDataFormat::RED_INTEGER</a>, <span class="stringliteral">&quot;Attempt to use ReadPixel on a buffer that is not RED_INTEGER&quot;</span>);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keywordtype">int</span> pixelData;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &amp;pixelData);</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">return</span> pixelData;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordtype">void</span> OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, <span class="keywordtype">int</span> value)</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(attachmentIndex &lt; m_ColorAttachmentIDs.size(), <span class="stringliteral">&quot;Color attachment selection is out of bounds!&quot;</span>)</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0,</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &amp;value);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    }</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;}</div>
-<div class="ttc" id="astructKargono_1_1FramebufferSpecification_html"><div class="ttname"><a href="structKargono_1_1FramebufferSpecification.html">Kargono::FramebufferSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00040">Framebuffer.h:41</a></div></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        auto&amp; spec = m_ColorAttachmentSpecifications[attachmentIndex];</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0,</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &amp;value);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;}</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
+<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
+<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00033">Log.h:33</a></div></div>
+<div class="ttc" id="aOpenGLFramebuffer_8h_html"><div class="ttname"><a href="OpenGLFramebuffer_8h.html">OpenGLFramebuffer.h</a></div></div>
+<div class="ttc" id="agladAPI_8h_html"><div class="ttname"><a href="gladAPI_8h.html">gladAPI.h</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceAPI_html"><div class="ttname"><a href="namespaceAPI.html">API</a></div><div class="ttdef"><b>Definition:</b> <a href="FileWatchAPI_8cpp_source.html#l00004">FileWatchAPI.cpp:5</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a3081aaa3e7c4b72155cbd4c2d56b8656"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">Kargono::Rendering::GLenum</a></div><div class="ttdeci">unsigned int GLenum</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00026">Shader.h:26</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a50ccbfd89075033a1cb2d05deef6dc31"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31">Kargono::Rendering::FramebufferDataFormat</a></div><div class="ttdeci">FramebufferDataFormat</div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00007">Framebuffer.h:8</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a50ccbfd89075033a1cb2d05deef6dc31a2849effb989cbdcfb4b9eb143fd826aa"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a2849effb989cbdcfb4b9eb143fd826aa">Kargono::Rendering::FramebufferDataFormat::RED_INTEGER</a></div><div class="ttdeci">@ RED_INTEGER</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a50ccbfd89075033a1cb2d05deef6dc31a6adf97f83acf6453d4a6a4b1070f3754"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a6adf97f83acf6453d4a6a4b1070f3754">Kargono::Rendering::FramebufferDataFormat::None</a></div><div class="ttdeci">@ None</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a50ccbfd89075033a1cb2d05deef6dc31a7ca3e26e4e5c35e4408bd49c1e32e9a3"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a7ca3e26e4e5c35e4408bd49c1e32e9a3">Kargono::Rendering::FramebufferDataFormat::DEPTH24STENCIL8</a></div><div class="ttdeci">@ DEPTH24STENCIL8</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a50ccbfd89075033a1cb2d05deef6dc31ab4b279046a02077466fa26cabb00c642"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31ab4b279046a02077466fa26cabb00c642">Kargono::Rendering::FramebufferDataFormat::RGBA8</a></div><div class="ttdeci">@ RGBA8</div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1FramebufferSpecification_html"><div class="ttname"><a href="structKargono_1_1Rendering_1_1FramebufferSpecification.html">Kargono::Rendering::FramebufferSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Framebuffer_8h_source.html#l00040">Framebuffer.h:41</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><b>OpenGLFramebuffer.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><a class="el" href="OpenGLFramebuffer_8cpp.html">OpenGLFramebuffer.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

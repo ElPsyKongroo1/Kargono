@@ -1,22 +1,7 @@
 var annotated_dup =
 [
-    [ "API", null, [
-      [ "Platform", null, [
-        [ "WindowsWindow", "classAPI_1_1Platform_1_1WindowsWindow.html", "classAPI_1_1Platform_1_1WindowsWindow" ]
-      ] ],
-      [ "RenderingAPI", null, [
-        [ "OpenGLVertexBuffer", "classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html", "classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer" ],
-        [ "OpenGLIndexBuffer", "classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html", "classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer" ],
-        [ "OpenGLFramebuffer", "classAPI_1_1RenderingAPI_1_1OpenGLFramebuffer.html", "classAPI_1_1RenderingAPI_1_1OpenGLFramebuffer" ],
-        [ "OpenGLRendererAPI", "classAPI_1_1RenderingAPI_1_1OpenGLRendererAPI.html", "classAPI_1_1RenderingAPI_1_1OpenGLRendererAPI" ],
-        [ "OpenGLShader", "classAPI_1_1RenderingAPI_1_1OpenGLShader.html", "classAPI_1_1RenderingAPI_1_1OpenGLShader" ],
-        [ "OpenGLTexture2D", "classAPI_1_1RenderingAPI_1_1OpenGLTexture2D.html", "classAPI_1_1RenderingAPI_1_1OpenGLTexture2D" ],
-        [ "OpenGLUniformBuffer", "classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html", "classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer" ],
-        [ "OpenGLVertexArray", "classAPI_1_1RenderingAPI_1_1OpenGLVertexArray.html", "classAPI_1_1RenderingAPI_1_1OpenGLVertexArray" ]
-      ] ]
-    ] ],
-    [ "Kargono", null, [
-      [ "Assets", null, [
+    [ "Kargono", "namespaceKargono.html", [
+      [ "Assets", "namespaceKargono_1_1Assets.html", [
         [ "Metadata", "structKargono_1_1Assets_1_1Metadata.html", "structKargono_1_1Assets_1_1Metadata" ],
         [ "TextureMetaData", "structKargono_1_1Assets_1_1TextureMetaData.html", "structKargono_1_1Assets_1_1TextureMetaData" ],
         [ "AudioMetaData", "structKargono_1_1Assets_1_1AudioMetaData.html", "structKargono_1_1Assets_1_1AudioMetaData" ],
@@ -31,17 +16,17 @@ var annotated_dup =
         [ "Asset", "structKargono_1_1Assets_1_1Asset.html", "structKargono_1_1Assets_1_1Asset" ],
         [ "AssetManager", "classKargono_1_1Assets_1_1AssetManager.html", "classKargono_1_1Assets_1_1AssetManager" ]
       ] ],
-      [ "Audio", null, [
+      [ "Audio", "namespaceKargono_1_1Audio.html", [
         [ "AudioSourceSpecification", "structKargono_1_1Audio_1_1AudioSourceSpecification.html", "structKargono_1_1Audio_1_1AudioSourceSpecification" ],
         [ "AudioListenerSpecification", "structKargono_1_1Audio_1_1AudioListenerSpecification.html", "structKargono_1_1Audio_1_1AudioListenerSpecification" ],
         [ "AudioListener", "classKargono_1_1Audio_1_1AudioListener.html", "classKargono_1_1Audio_1_1AudioListener" ],
         [ "AudioBuffer", "classKargono_1_1Audio_1_1AudioBuffer.html", "classKargono_1_1Audio_1_1AudioBuffer" ],
         [ "AudioSource", "classKargono_1_1Audio_1_1AudioSource.html", "classKargono_1_1Audio_1_1AudioSource" ],
-        [ "AudioEngine", "classKargono_1_1Audio_1_1AudioEngine.html", "classKargono_1_1Audio_1_1AudioEngine" ]
+        [ "AudioService", "classKargono_1_1Audio_1_1AudioService.html", "classKargono_1_1Audio_1_1AudioService" ]
       ] ],
-      [ "EditorUI", null, [
+      [ "EditorUI", "namespaceKargono_1_1EditorUI.html", [
         [ "InlineButtonSpec", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html", "structKargono_1_1EditorUI_1_1InlineButtonSpec" ],
-        [ "Editor", "classKargono_1_1EditorUI_1_1Editor.html", null ],
+        [ "EditorUIService", "classKargono_1_1EditorUI_1_1EditorUIService.html", null ],
         [ "GenericPopupSpec", "structKargono_1_1EditorUI_1_1GenericPopupSpec.html", "structKargono_1_1EditorUI_1_1GenericPopupSpec" ],
         [ "CheckboxSpec", "structKargono_1_1EditorUI_1_1CheckboxSpec.html", "structKargono_1_1EditorUI_1_1CheckboxSpec" ],
         [ "RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html", "structKargono_1_1EditorUI_1_1RadioSelectorSpec" ],
@@ -54,7 +39,7 @@ var annotated_dup =
         [ "SelectOptionSpec", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html", "structKargono_1_1EditorUI_1_1SelectOptionSpec" ],
         [ "EditVariableSpec", "structKargono_1_1EditorUI_1_1EditVariableSpec.html", "structKargono_1_1EditorUI_1_1EditVariableSpec" ]
       ] ],
-      [ "Events", null, [
+      [ "Events", "namespaceKargono_1_1Events.html", [
         [ "WindowResizeEvent", "classKargono_1_1Events_1_1WindowResizeEvent.html", "classKargono_1_1Events_1_1WindowResizeEvent" ],
         [ "WindowCloseEvent", "classKargono_1_1Events_1_1WindowCloseEvent.html", "classKargono_1_1Events_1_1WindowCloseEvent" ],
         [ "ApplicationCloseEvent", "classKargono_1_1Events_1_1ApplicationCloseEvent.html", "classKargono_1_1Events_1_1ApplicationCloseEvent" ],
@@ -98,7 +83,14 @@ var annotated_dup =
         [ "UpdateEntityPhysics", "classKargono_1_1Events_1_1UpdateEntityPhysics.html", "classKargono_1_1Events_1_1UpdateEntityPhysics" ],
         [ "DenyJoinSession", "classKargono_1_1Events_1_1DenyJoinSession.html", "classKargono_1_1Events_1_1DenyJoinSession" ]
       ] ],
-      [ "Network", null, [
+      [ "Input", "namespaceKargono_1_1Input.html", [
+        [ "InputActionBinding", "classKargono_1_1Input_1_1InputActionBinding.html", "classKargono_1_1Input_1_1InputActionBinding" ],
+        [ "KeyboardActionBinding", "classKargono_1_1Input_1_1KeyboardActionBinding.html", "classKargono_1_1Input_1_1KeyboardActionBinding" ],
+        [ "InputMode", "classKargono_1_1Input_1_1InputMode.html", "classKargono_1_1Input_1_1InputMode" ],
+        [ "InputModeService", "classKargono_1_1Input_1_1InputModeService.html", null ],
+        [ "InputPolling", "classKargono_1_1Input_1_1InputPolling.html", null ]
+      ] ],
+      [ "Network", "namespaceKargono_1_1Network.html", [
         [ "Client", "classKargono_1_1Network_1_1Client.html", "classKargono_1_1Network_1_1Client" ],
         [ "ClientInterface", "classKargono_1_1Network_1_1ClientInterface.html", "classKargono_1_1Network_1_1ClientInterface" ],
         [ "Connection", "classKargono_1_1Network_1_1Connection.html", "classKargono_1_1Network_1_1Connection" ],
@@ -117,16 +109,58 @@ var annotated_dup =
         [ "UDPServer", "classKargono_1_1Network_1_1UDPServer.html", "classKargono_1_1Network_1_1UDPServer" ],
         [ "UDPService", "classKargono_1_1Network_1_1UDPService.html", "classKargono_1_1Network_1_1UDPService" ]
       ] ],
-      [ "Physics", null, [
+      [ "Panels", "namespaceKargono_1_1Panels.html", [
+        [ "ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
+        [ "EntityClassEditor", "classKargono_1_1Panels_1_1EntityClassEditor.html", "classKargono_1_1Panels_1_1EntityClassEditor" ],
+        [ "GameStatePanel", "classKargono_1_1Panels_1_1GameStatePanel.html", "classKargono_1_1Panels_1_1GameStatePanel" ],
+        [ "InputModePanel", "classKargono_1_1Panels_1_1InputModePanel.html", "classKargono_1_1Panels_1_1InputModePanel" ],
+        [ "ImGuiLog", "structKargono_1_1Panels_1_1ImGuiLog.html", "structKargono_1_1Panels_1_1ImGuiLog" ],
+        [ "LogPanel", "classKargono_1_1Panels_1_1LogPanel.html", "classKargono_1_1Panels_1_1LogPanel" ],
+        [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ],
+        [ "SceneHierarchyPanel", "classKargono_1_1Panels_1_1SceneHierarchyPanel.html", "classKargono_1_1Panels_1_1SceneHierarchyPanel" ],
+        [ "ScriptEditorPanel", "classKargono_1_1Panels_1_1ScriptEditorPanel.html", "classKargono_1_1Panels_1_1ScriptEditorPanel" ],
+        [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ],
+        [ "TextEditorPanel", "classKargono_1_1Panels_1_1TextEditorPanel.html", "classKargono_1_1Panels_1_1TextEditorPanel" ],
+        [ "UIEditorPanel", "classKargono_1_1Panels_1_1UIEditorPanel.html", "classKargono_1_1Panels_1_1UIEditorPanel" ],
+        [ "ViewportPanel", "classKargono_1_1Panels_1_1ViewportPanel.html", "classKargono_1_1Panels_1_1ViewportPanel" ]
+      ] ],
+      [ "Physics", "namespaceKargono_1_1Physics.html", [
         [ "ContactListener", "classKargono_1_1Physics_1_1ContactListener.html", "classKargono_1_1Physics_1_1ContactListener" ],
         [ "PhysicsSpecification", "structKargono_1_1Physics_1_1PhysicsSpecification.html", "structKargono_1_1Physics_1_1PhysicsSpecification" ],
         [ "Physics2DWorld", "classKargono_1_1Physics_1_1Physics2DWorld.html", "classKargono_1_1Physics_1_1Physics2DWorld" ]
       ] ],
-      [ "Projects", null, [
+      [ "Projects", "namespaceKargono_1_1Projects.html", [
         [ "ProjectConfig", "structKargono_1_1Projects_1_1ProjectConfig.html", "structKargono_1_1Projects_1_1ProjectConfig" ],
         [ "Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ]
       ] ],
-      [ "RuntimeUI", null, [
+      [ "Rendering", "namespaceKargono_1_1Rendering.html", [
+        [ "Camera", "classKargono_1_1Rendering_1_1Camera.html", "classKargono_1_1Rendering_1_1Camera" ],
+        [ "EditorCamera", "classKargono_1_1Rendering_1_1EditorCamera.html", "classKargono_1_1Rendering_1_1EditorCamera" ],
+        [ "FramebufferDataSpecification", "structKargono_1_1Rendering_1_1FramebufferDataSpecification.html", "structKargono_1_1Rendering_1_1FramebufferDataSpecification" ],
+        [ "FramebufferAttachmentSpecification", "structKargono_1_1Rendering_1_1FramebufferAttachmentSpecification.html", "structKargono_1_1Rendering_1_1FramebufferAttachmentSpecification" ],
+        [ "FramebufferSpecification", "structKargono_1_1Rendering_1_1FramebufferSpecification.html", "structKargono_1_1Rendering_1_1FramebufferSpecification" ],
+        [ "Framebuffer", "classKargono_1_1Rendering_1_1Framebuffer.html", "classKargono_1_1Rendering_1_1Framebuffer" ],
+        [ "InputBufferElement", "structKargono_1_1Rendering_1_1InputBufferElement.html", "structKargono_1_1Rendering_1_1InputBufferElement" ],
+        [ "InputBufferLayout", "classKargono_1_1Rendering_1_1InputBufferLayout.html", "classKargono_1_1Rendering_1_1InputBufferLayout" ],
+        [ "VertexBuffer", "classKargono_1_1Rendering_1_1VertexBuffer.html", "classKargono_1_1Rendering_1_1VertexBuffer" ],
+        [ "IndexBuffer", "classKargono_1_1Rendering_1_1IndexBuffer.html", "classKargono_1_1Rendering_1_1IndexBuffer" ],
+        [ "RendererAPI", "classKargono_1_1Rendering_1_1RendererAPI.html", null ],
+        [ "RenderingService", "classKargono_1_1Rendering_1_1RenderingService.html", "classKargono_1_1Rendering_1_1RenderingService" ],
+        [ "DrawCallBuffer", "structKargono_1_1Rendering_1_1DrawCallBuffer.html", "structKargono_1_1Rendering_1_1DrawCallBuffer" ],
+        [ "RendererInputSpec", "structKargono_1_1Rendering_1_1RendererInputSpec.html", "structKargono_1_1Rendering_1_1RendererInputSpec" ],
+        [ "ShaderSpecification", "structKargono_1_1Rendering_1_1ShaderSpecification.html", "structKargono_1_1Rendering_1_1ShaderSpecification" ],
+        [ "Shader", "classKargono_1_1Rendering_1_1Shader.html", "classKargono_1_1Rendering_1_1Shader" ],
+        [ "ShaderBuilder", "classKargono_1_1Rendering_1_1ShaderBuilder.html", null ],
+        [ "Shape", "classKargono_1_1Rendering_1_1Shape.html", "classKargono_1_1Rendering_1_1Shape" ],
+        [ "TextureSpecification", "structKargono_1_1Rendering_1_1TextureSpecification.html", "structKargono_1_1Rendering_1_1TextureSpecification" ],
+        [ "Texture", "classKargono_1_1Rendering_1_1Texture.html", "classKargono_1_1Rendering_1_1Texture" ],
+        [ "Texture2D", "classKargono_1_1Rendering_1_1Texture2D.html", null ],
+        [ "UniformElement", "structKargono_1_1Rendering_1_1UniformElement.html", "structKargono_1_1Rendering_1_1UniformElement" ],
+        [ "UniformBufferList", "classKargono_1_1Rendering_1_1UniformBufferList.html", "classKargono_1_1Rendering_1_1UniformBufferList" ],
+        [ "UniformBuffer", "classKargono_1_1Rendering_1_1UniformBuffer.html", "classKargono_1_1Rendering_1_1UniformBuffer" ],
+        [ "VertexArray", "classKargono_1_1Rendering_1_1VertexArray.html", "classKargono_1_1Rendering_1_1VertexArray" ]
+      ] ],
+      [ "RuntimeUI", "namespaceKargono_1_1RuntimeUI.html", [
         [ "WidgetCallbacks", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks" ],
         [ "UICallbacks", "structKargono_1_1RuntimeUI_1_1UICallbacks.html", "structKargono_1_1RuntimeUI_1_1UICallbacks" ],
         [ "DirectionPointers", "structKargono_1_1RuntimeUI_1_1DirectionPointers.html", "structKargono_1_1RuntimeUI_1_1DirectionPointers" ],
@@ -138,43 +172,56 @@ var annotated_dup =
         [ "PopupWidget", "classKargono_1_1RuntimeUI_1_1PopupWidget.html", "classKargono_1_1RuntimeUI_1_1PopupWidget" ],
         [ "Window", "structKargono_1_1RuntimeUI_1_1Window.html", "structKargono_1_1RuntimeUI_1_1Window" ],
         [ "UIObject", "structKargono_1_1RuntimeUI_1_1UIObject.html", "structKargono_1_1RuntimeUI_1_1UIObject" ],
-        [ "Runtime", "classKargono_1_1RuntimeUI_1_1Runtime.html", "classKargono_1_1RuntimeUI_1_1Runtime" ],
+        [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1RuntimeUIService.html", "classKargono_1_1RuntimeUI_1_1RuntimeUIService" ],
         [ "Text", "classKargono_1_1RuntimeUI_1_1Text.html", null ],
         [ "Character", "structKargono_1_1RuntimeUI_1_1Character.html", "structKargono_1_1RuntimeUI_1_1Character" ],
         [ "Font", "classKargono_1_1RuntimeUI_1_1Font.html", "classKargono_1_1RuntimeUI_1_1Font" ]
       ] ],
-      [ "Script", null, [
-        [ "ScriptField", "structKargono_1_1Script_1_1ScriptField.html", "structKargono_1_1Script_1_1ScriptField" ],
-        [ "ScriptFieldInstance", "structKargono_1_1Script_1_1ScriptFieldInstance.html", "structKargono_1_1Script_1_1ScriptFieldInstance" ],
-        [ "ScriptEngine", "classKargono_1_1Script_1_1ScriptEngine.html", "classKargono_1_1Script_1_1ScriptEngine" ],
-        [ "ScriptMethod", "structKargono_1_1Script_1_1ScriptMethod.html", "structKargono_1_1Script_1_1ScriptMethod" ],
-        [ "ScriptClass", "classKargono_1_1Script_1_1ScriptClass.html", "classKargono_1_1Script_1_1ScriptClass" ],
-        [ "ScriptClassCustomCallInstance", "classKargono_1_1Script_1_1ScriptClassCustomCallInstance.html", "classKargono_1_1Script_1_1ScriptClassCustomCallInstance" ],
-        [ "ScriptClassEntityInstance", "classKargono_1_1Script_1_1ScriptClassEntityInstance.html", "classKargono_1_1Script_1_1ScriptClassEntityInstance" ],
-        [ "ScriptGlue", "classKargono_1_1Script_1_1ScriptGlue.html", null ]
+      [ "Scenes", "namespaceKargono_1_1Scenes.html", [
+        [ "IDComponent", "structKargono_1_1Scenes_1_1IDComponent.html", "structKargono_1_1Scenes_1_1IDComponent" ],
+        [ "TagComponent", "structKargono_1_1Scenes_1_1TagComponent.html", "structKargono_1_1Scenes_1_1TagComponent" ],
+        [ "TransformComponent", "structKargono_1_1Scenes_1_1TransformComponent.html", "structKargono_1_1Scenes_1_1TransformComponent" ],
+        [ "CameraComponent", "structKargono_1_1Scenes_1_1CameraComponent.html", "structKargono_1_1Scenes_1_1CameraComponent" ],
+        [ "NetworkComponent", "structKargono_1_1Scenes_1_1NetworkComponent.html", "structKargono_1_1Scenes_1_1NetworkComponent" ],
+        [ "AudioComponent", "structKargono_1_1Scenes_1_1AudioComponent.html", "structKargono_1_1Scenes_1_1AudioComponent" ],
+        [ "MultiAudioComponent", "structKargono_1_1Scenes_1_1MultiAudioComponent.html", "structKargono_1_1Scenes_1_1MultiAudioComponent" ],
+        [ "Rigidbody2DComponent", "structKargono_1_1Scenes_1_1Rigidbody2DComponent.html", "structKargono_1_1Scenes_1_1Rigidbody2DComponent" ],
+        [ "BoxCollider2DComponent", "structKargono_1_1Scenes_1_1BoxCollider2DComponent.html", "structKargono_1_1Scenes_1_1BoxCollider2DComponent" ],
+        [ "ClassInstanceComponent", "structKargono_1_1Scenes_1_1ClassInstanceComponent.html", "structKargono_1_1Scenes_1_1ClassInstanceComponent" ],
+        [ "CircleCollider2DComponent", "structKargono_1_1Scenes_1_1CircleCollider2DComponent.html", "structKargono_1_1Scenes_1_1CircleCollider2DComponent" ],
+        [ "ShapeComponent", "structKargono_1_1Scenes_1_1ShapeComponent.html", "structKargono_1_1Scenes_1_1ShapeComponent" ],
+        [ "ComponentGroup", "structKargono_1_1Scenes_1_1ComponentGroup.html", null ],
+        [ "Entity", "classKargono_1_1Scenes_1_1Entity.html", "classKargono_1_1Scenes_1_1Entity" ],
+        [ "EntityScripts", "structKargono_1_1Scenes_1_1EntityScripts.html", "structKargono_1_1Scenes_1_1EntityScripts" ],
+        [ "ClassField", "structKargono_1_1Scenes_1_1ClassField.html", "structKargono_1_1Scenes_1_1ClassField" ],
+        [ "EntityClass", "classKargono_1_1Scenes_1_1EntityClass.html", "classKargono_1_1Scenes_1_1EntityClass" ],
+        [ "GameState", "classKargono_1_1Scenes_1_1GameState.html", "classKargono_1_1Scenes_1_1GameState" ],
+        [ "SceneService", "classKargono_1_1Scenes_1_1SceneService.html", null ],
+        [ "Scene", "classKargono_1_1Scenes_1_1Scene.html", "classKargono_1_1Scenes_1_1Scene" ],
+        [ "SceneCamera", "classKargono_1_1Scenes_1_1SceneCamera.html", "classKargono_1_1Scenes_1_1SceneCamera" ]
       ] ],
-      [ "Scripting", null, [
-        [ "ScriptCore", "classKargono_1_1Scripting_1_1ScriptCore.html", null ],
+      [ "Scripting", "namespaceKargono_1_1Scripting.html", [
+        [ "ScriptService", "classKargono_1_1Scripting_1_1ScriptService.html", null ],
         [ "Script", "classKargono_1_1Scripting_1_1Script.html", "classKargono_1_1Scripting_1_1Script" ],
-        [ "ScriptModuleBuilder", "classKargono_1_1Scripting_1_1ScriptModuleBuilder.html", null ]
+        [ "ScriptModuleBuilder", "classKargono_1_1Scripting_1_1ScriptModuleBuilder.html", "classKargono_1_1Scripting_1_1ScriptModuleBuilder" ]
       ] ],
-      [ "Timers", null, [
-        [ "ScopedTimer", "classKargono_1_1Timers_1_1ScopedTimer.html", "classKargono_1_1Timers_1_1ScopedTimer" ],
-        [ "AsyncBusyTimer", "classKargono_1_1Timers_1_1AsyncBusyTimer.html", "classKargono_1_1Timers_1_1AsyncBusyTimer" ]
-      ] ],
-      [ "Utility", null, [
-        [ "Conversions", "classKargono_1_1Utility_1_1Conversions.html", null ],
+      [ "Utility", "namespaceKargono_1_1Utility.html", [
+        [ "Conversions", "classKargono_1_1Utility_1_1Conversions.html", "classKargono_1_1Utility_1_1Conversions" ],
         [ "FileDialogs", "classKargono_1_1Utility_1_1FileDialogs.html", null ],
-        [ "FileSystem", "classKargono_1_1Utility_1_1FileSystem.html", "classKargono_1_1Utility_1_1FileSystem" ],
+        [ "FileSystem", "classKargono_1_1Utility_1_1FileSystem.html", null ],
         [ "Operations", "classKargono_1_1Utility_1_1Operations.html", null ],
         [ "OSCommands", "classKargono_1_1Utility_1_1OSCommands.html", null ],
+        [ "RandomService", "classKargono_1_1Utility_1_1RandomService.html", null ],
         [ "Regex", "classKargono_1_1Utility_1_1Regex.html", null ],
-        [ "Time", "classKargono_1_1Utility_1_1Time.html", null ]
+        [ "Time", "classKargono_1_1Utility_1_1Time.html", null ],
+        [ "ScopedTimer", "classKargono_1_1Utility_1_1ScopedTimer.html", "classKargono_1_1Utility_1_1ScopedTimer" ],
+        [ "AsyncBusyTimer", "classKargono_1_1Utility_1_1AsyncBusyTimer.html", "classKargono_1_1Utility_1_1AsyncBusyTimer" ]
       ] ],
       [ "RuntimeApp", "classKargono_1_1RuntimeApp.html", "classKargono_1_1RuntimeApp" ],
       [ "Application", "classKargono_1_1Application.html", "classKargono_1_1Application" ],
       [ "AppTickGenerator", "structKargono_1_1AppTickGenerator.html", "structKargono_1_1AppTickGenerator" ],
       [ "AppTickEngine", "classKargono_1_1AppTickEngine.html", null ],
+      [ "TestingException", "classKargono_1_1TestingException.html", "classKargono_1_1TestingException" ],
       [ "Buffer", "structKargono_1_1Buffer.html", "structKargono_1_1Buffer" ],
       [ "ScopedBuffer", "structKargono_1_1ScopedBuffer.html", "structKargono_1_1ScopedBuffer" ],
       [ "CommandLineArgs", "structKargono_1_1CommandLineArgs.html", "structKargono_1_1CommandLineArgs" ],
@@ -206,75 +253,13 @@ var annotated_dup =
       [ "WrappedBoolUInt64", "classKargono_1_1WrappedBoolUInt64.html", "classKargono_1_1WrappedBoolUInt64" ],
       [ "WrappedBoolUInt64UInt64", "classKargono_1_1WrappedBoolUInt64UInt64.html", "classKargono_1_1WrappedBoolUInt64UInt64" ],
       [ "WrappedBoolUInt64UInt16UInt64", "classKargono_1_1WrappedBoolUInt64UInt16UInt64.html", "classKargono_1_1WrappedBoolUInt64UInt16UInt64" ],
-      [ "InputMode", "classKargono_1_1InputMode.html", "classKargono_1_1InputMode" ],
-      [ "InputPolling", "classKargono_1_1InputPolling.html", null ],
-      [ "Camera", "classKargono_1_1Camera.html", "classKargono_1_1Camera" ],
-      [ "EditorCamera", "classKargono_1_1EditorCamera.html", "classKargono_1_1EditorCamera" ],
-      [ "FramebufferDataSpecification", "structKargono_1_1FramebufferDataSpecification.html", "structKargono_1_1FramebufferDataSpecification" ],
-      [ "FramebufferAttachmentSpecification", "structKargono_1_1FramebufferAttachmentSpecification.html", "structKargono_1_1FramebufferAttachmentSpecification" ],
-      [ "FramebufferSpecification", "structKargono_1_1FramebufferSpecification.html", "structKargono_1_1FramebufferSpecification" ],
-      [ "Framebuffer", "classKargono_1_1Framebuffer.html", "classKargono_1_1Framebuffer" ],
-      [ "InputBufferElement", "structKargono_1_1InputBufferElement.html", "structKargono_1_1InputBufferElement" ],
-      [ "InputBufferLayout", "classKargono_1_1InputBufferLayout.html", "classKargono_1_1InputBufferLayout" ],
-      [ "VertexBuffer", "classKargono_1_1VertexBuffer.html", "classKargono_1_1VertexBuffer" ],
-      [ "IndexBuffer", "classKargono_1_1IndexBuffer.html", "classKargono_1_1IndexBuffer" ],
-      [ "RenderCommand", "classKargono_1_1RenderCommand.html", null ],
-      [ "Renderer", "classKargono_1_1Renderer.html", "classKargono_1_1Renderer" ],
-      [ "RendererAPI", "classKargono_1_1RendererAPI.html", "classKargono_1_1RendererAPI" ],
-      [ "DrawCallBuffer", "structKargono_1_1DrawCallBuffer.html", "structKargono_1_1DrawCallBuffer" ],
-      [ "RendererInputSpec", "structKargono_1_1RendererInputSpec.html", "structKargono_1_1RendererInputSpec" ],
-      [ "ShaderSpecification", "structKargono_1_1ShaderSpecification.html", "structKargono_1_1ShaderSpecification" ],
-      [ "Shader", "classKargono_1_1Shader.html", "classKargono_1_1Shader" ],
-      [ "ShaderBuilder", "classKargono_1_1ShaderBuilder.html", null ],
-      [ "Shape", "classKargono_1_1Shape.html", "classKargono_1_1Shape" ],
-      [ "TextureSpecification", "structKargono_1_1TextureSpecification.html", "structKargono_1_1TextureSpecification" ],
-      [ "Texture", "classKargono_1_1Texture.html", "classKargono_1_1Texture" ],
-      [ "Texture2D", "classKargono_1_1Texture2D.html", null ],
-      [ "UniformElement", "structKargono_1_1UniformElement.html", "structKargono_1_1UniformElement" ],
-      [ "UniformBufferList", "classKargono_1_1UniformBufferList.html", "classKargono_1_1UniformBufferList" ],
-      [ "UniformBuffer", "classKargono_1_1UniformBuffer.html", "classKargono_1_1UniformBuffer" ],
-      [ "VertexArray", "classKargono_1_1VertexArray.html", "classKargono_1_1VertexArray" ],
-      [ "IDComponent", "structKargono_1_1IDComponent.html", "structKargono_1_1IDComponent" ],
-      [ "TagComponent", "structKargono_1_1TagComponent.html", "structKargono_1_1TagComponent" ],
-      [ "TransformComponent", "structKargono_1_1TransformComponent.html", "structKargono_1_1TransformComponent" ],
-      [ "CameraComponent", "structKargono_1_1CameraComponent.html", "structKargono_1_1CameraComponent" ],
-      [ "NetworkComponent", "structKargono_1_1NetworkComponent.html", "structKargono_1_1NetworkComponent" ],
-      [ "AudioComponent", "structKargono_1_1AudioComponent.html", "structKargono_1_1AudioComponent" ],
-      [ "MultiAudioComponent", "structKargono_1_1MultiAudioComponent.html", "structKargono_1_1MultiAudioComponent" ],
-      [ "ScriptComponent", "structKargono_1_1ScriptComponent.html", "structKargono_1_1ScriptComponent" ],
-      [ "Rigidbody2DComponent", "structKargono_1_1Rigidbody2DComponent.html", "structKargono_1_1Rigidbody2DComponent" ],
-      [ "BoxCollider2DComponent", "structKargono_1_1BoxCollider2DComponent.html", "structKargono_1_1BoxCollider2DComponent" ],
-      [ "ClassInstanceComponent", "structKargono_1_1ClassInstanceComponent.html", "structKargono_1_1ClassInstanceComponent" ],
-      [ "CircleCollider2DComponent", "structKargono_1_1CircleCollider2DComponent.html", "structKargono_1_1CircleCollider2DComponent" ],
-      [ "ShapeComponent", "structKargono_1_1ShapeComponent.html", "structKargono_1_1ShapeComponent" ],
-      [ "ComponentGroup", "structKargono_1_1ComponentGroup.html", null ],
-      [ "Entity", "classKargono_1_1Entity.html", "classKargono_1_1Entity" ],
-      [ "EntityScripts", "structKargono_1_1EntityScripts.html", "structKargono_1_1EntityScripts" ],
-      [ "ClassField", "structKargono_1_1ClassField.html", "structKargono_1_1ClassField" ],
-      [ "EntityClass", "classKargono_1_1EntityClass.html", "classKargono_1_1EntityClass" ],
-      [ "GameState", "classKargono_1_1GameState.html", "classKargono_1_1GameState" ],
-      [ "Scene", "classKargono_1_1Scene.html", "classKargono_1_1Scene" ],
-      [ "SceneCamera", "classKargono_1_1SceneCamera.html", "classKargono_1_1SceneCamera" ],
       [ "ServerApp", "classKargono_1_1ServerApp.html", "classKargono_1_1ServerApp" ],
-      [ "EditorApp", "classKargono_1_1EditorApp.html", "classKargono_1_1EditorApp" ],
-      [ "ContentBrowserPanel", "classKargono_1_1ContentBrowserPanel.html", "classKargono_1_1ContentBrowserPanel" ],
-      [ "EntityClassEditor", "classKargono_1_1EntityClassEditor.html", "classKargono_1_1EntityClassEditor" ],
-      [ "GameStatePanel", "classKargono_1_1GameStatePanel.html", "classKargono_1_1GameStatePanel" ],
-      [ "InputEditorPanel", "classKargono_1_1InputEditorPanel.html", "classKargono_1_1InputEditorPanel" ],
-      [ "ImGuiLog", "structKargono_1_1ImGuiLog.html", "structKargono_1_1ImGuiLog" ],
-      [ "LogPanel", "classKargono_1_1LogPanel.html", "classKargono_1_1LogPanel" ],
-      [ "ProjectPanel", "classKargono_1_1ProjectPanel.html", "classKargono_1_1ProjectPanel" ],
-      [ "SceneHierarchyPanel", "classKargono_1_1SceneHierarchyPanel.html", "classKargono_1_1SceneHierarchyPanel" ],
-      [ "ScriptEditorPanel", "classKargono_1_1ScriptEditorPanel.html", "classKargono_1_1ScriptEditorPanel" ],
-      [ "StatisticsPanel", "classKargono_1_1StatisticsPanel.html", "classKargono_1_1StatisticsPanel" ],
-      [ "TextEditorPanel", "classKargono_1_1TextEditorPanel.html", "classKargono_1_1TextEditorPanel" ],
-      [ "UIEditorPanel", "classKargono_1_1UIEditorPanel.html", "classKargono_1_1UIEditorPanel" ],
-      [ "ViewportPanel", "classKargono_1_1ViewportPanel.html", "classKargono_1_1ViewportPanel" ]
+      [ "EditorApp", "classKargono_1_1EditorApp.html", "classKargono_1_1EditorApp" ]
     ] ],
-    [ "std", null, [
+    [ "std", "namespacestd.html", [
       [ "hash< Kargono::UUID >", "structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html", "structstd_1_1hash_3_01Kargono_1_1UUID_01_4" ]
     ] ],
-    [ "YAML", null, [
+    [ "YAML", "namespaceYAML.html", [
       [ "convert< Kargono::Math::vec2 >", "structYAML_1_1convert_3_01Kargono_1_1Math_1_1vec2_01_4.html", null ],
       [ "convert< Kargono::Math::vec3 >", "structYAML_1_1convert_3_01Kargono_1_1Math_1_1vec3_01_4.html", null ],
       [ "convert< Kargono::Math::vec4 >", "structYAML_1_1convert_3_01Kargono_1_1Math_1_1vec4_01_4.html", null ],

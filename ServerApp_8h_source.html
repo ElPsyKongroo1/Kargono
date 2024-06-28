@@ -89,13 +89,13 @@ $(document).ready(function(){initNavTree('ServerApp_8h_source.html',''); initRes
 <div class="title">ServerApp.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="ServerApp_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">//============================================================</span></div>
@@ -109,33 +109,41 @@ $(document).ready(function(){initNavTree('ServerApp_8h_source.html',''); initRes
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// Constructor/Destructor</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//==========================</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="classKargono_1_1ServerApp.html">ServerApp</a>();</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classKargono_1_1ServerApp.html">ServerApp</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="classKargono_1_1ServerApp.html#ad97be0a0d11f959f588556ff5ede458a">ServerApp</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classKargono_1_1ServerApp.html#a99c189c676fc3e44ef3566d3e535bd45">   22</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1ServerApp.html#a99c189c676fc3e44ef3566d3e535bd45">~ServerApp</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//==========================</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">//==========================</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnAttach() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ServerApp.html#a057c564ae024efa5eb8165c739445a0d">OnAttach</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">bool</span> OpenProject();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1ServerApp.html#ae2afb21fed7520cd2eafc0f68045a126">OpenProject</a>();</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordtype">void</span> OpenProject(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ServerApp.html#ae2afb21fed7520cd2eafc0f68045a126">OpenProject</a>(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnDetach() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ServerApp.html#a7342174a71f01410682c15333424788b">OnDetach</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnUpdate(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1ServerApp.html#ac7a4cda058892749cb4a32cf1155418f">OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    };</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00008">Application.h:9</a></div></div>
+<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00011">Application.h:12</a></div></div>
 <div class="ttc" id="aclassKargono_1_1ServerApp_html"><div class="ttname"><a href="classKargono_1_1ServerApp.html">Kargono::ServerApp</a></div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8h_source.html#l00014">ServerApp.h:15</a></div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_a057c564ae024efa5eb8165c739445a0d"><div class="ttname"><a href="classKargono_1_1ServerApp.html#a057c564ae024efa5eb8165c739445a0d">Kargono::ServerApp::OnAttach</a></div><div class="ttdeci">virtual void OnAttach() override</div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8cpp_source.html#l00020">ServerApp.cpp:20</a></div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_a7342174a71f01410682c15333424788b"><div class="ttname"><a href="classKargono_1_1ServerApp.html#a7342174a71f01410682c15333424788b">Kargono::ServerApp::OnDetach</a></div><div class="ttdeci">virtual void OnDetach() override</div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8cpp_source.html#l00055">ServerApp.cpp:55</a></div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_a99c189c676fc3e44ef3566d3e535bd45"><div class="ttname"><a href="classKargono_1_1ServerApp.html#a99c189c676fc3e44ef3566d3e535bd45">Kargono::ServerApp::~ServerApp</a></div><div class="ttdeci">virtual ~ServerApp()=default</div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_ac7a4cda058892749cb4a32cf1155418f"><div class="ttname"><a href="classKargono_1_1ServerApp.html#ac7a4cda058892749cb4a32cf1155418f">Kargono::ServerApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8cpp_source.html#l00059">ServerApp.cpp:59</a></div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_ad97be0a0d11f959f588556ff5ede458a"><div class="ttname"><a href="classKargono_1_1ServerApp.html#ad97be0a0d11f959f588556ff5ede458a">Kargono::ServerApp::ServerApp</a></div><div class="ttdeci">ServerApp()</div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8cpp_source.html#l00015">ServerApp.cpp:15</a></div></div>
+<div class="ttc" id="aclassKargono_1_1ServerApp_html_ae2afb21fed7520cd2eafc0f68045a126"><div class="ttname"><a href="classKargono_1_1ServerApp.html#ae2afb21fed7520cd2eafc0f68045a126">Kargono::ServerApp::OpenProject</a></div><div class="ttdeci">bool OpenProject()</div><div class="ttdef"><b>Definition:</b> <a href="ServerApp_8cpp_source.html#l00035">ServerApp.cpp:35</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00005">Timestep.h:6</a></div></div>
+<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_1a445cb237d74f7a5f8d11ec3b0585cc.html">Server</a></li><li class="navelem"><a class="el" href="dir_87f4eac325c7e36fc3e7e5307403b95e.html">Source</a></li><li class="navelem"><b>ServerApp.h</b></li>
+    <li class="navelem"><a class="el" href="dir_1a445cb237d74f7a5f8d11ec3b0585cc.html">Server</a></li><li class="navelem"><a class="el" href="dir_87f4eac325c7e36fc3e7e5307403b95e.html">Source</a></li><li class="navelem"><a class="el" href="ServerApp_8h.html">ServerApp.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

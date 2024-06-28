@@ -89,115 +89,117 @@ $(document).ready(function(){initNavTree('OpenGLBuffer_8h_source.html',''); init
 <div class="title">OpenGLBuffer.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="OpenGLBuffer_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/InputBuffer.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="InputBuffer_8h.html">Kargono/Rendering/InputBuffer.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>API::RenderingAPI</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// OpenGL VertexBuffer Class</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// This class is the OpenGL Implementation of a Vertex Buffer in the Core Code.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">//      A VertexBuffer holds data specific to a particular vertex such as</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">//      model location, vertex color, texture location, etc...</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">   13</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">OpenGLVertexBuffer</a> : <span class="keyword">public</span> <a class="code" href="classKargono_1_1VertexBuffer.html">Kargono::VertexBuffer</a></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">//=============================</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>API::RenderingAPI</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//=============================</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// OpenGL VertexBuffer Class</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">//=============================</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">// This class is the OpenGL Implementation of a Vertex Buffer in the Core Code.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">//      A VertexBuffer holds data specific to a particular vertex such as</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">//      model location, vertex color, texture location, etc...</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">class </span>OpenGLVertexBuffer : <span class="keyword">public</span> <a class="code" href="classKargono_1_1Rendering_1_1VertexBuffer.html">Kargono::Rendering::VertexBuffer</a></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">//=============================</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">// Constructors instantiate the Vertex Buffer in OpenGL and bind</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">//      it to the currently bound VAO (Vertex Array Object).</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//      This constructor assumes you are going to re-write to</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">//      this data continuously. This is how the current renderer</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//      uses the dynamic shader pipeline!</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">OpenGLVertexBuffer</a>(uint32_t size);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">// This constructor assumes you are setting the data once, and using it repeatedly</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">OpenGLVertexBuffer</a>(<span class="keywordtype">float</span>* vertices, uint32_t size);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// Destructor removes buffer from OpenGL Context</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">OpenGLVertexBuffer</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// Binding Functionality</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">//=============================</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">// Constructors instantiate the Vertex Buffer in OpenGL and bind</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">//      it to the currently bound VAO (Vertex Array Object).</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//      This constructor assumes you are going to re-write to</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">//      this data continuously. This is how the current renderer</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">//      uses the dynamic shader pipeline!</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        OpenGLVertexBuffer(uint32_t size);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// This constructor assumes you are setting the data once, and using it repeatedly</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        OpenGLVertexBuffer(<span class="keywordtype">float</span>* vertices, uint32_t size);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">// Destructor removes buffer from OpenGL Context</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">virtual</span> ~OpenGLVertexBuffer() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Allows Vertex Buffers to be bound to various VAO&#39;s or for other debugging uses</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Bind() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Unbind() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">// Update OpenGL Context</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Binding Functionality</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">// Allows Vertex Buffers to be bound to various VAO&#39;s or for other debugging uses</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Bind() <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Unbind() <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// This function allows new vertices to be pushed into the OpenGL vertex buffer.</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetData(<span class="keyword">const</span> <span class="keywordtype">void</span>* data, uint32_t size) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// Getters/Setters</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// Update OpenGL Context</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// This function allows new vertices to be added into the OpenGL vertex buffer.</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetData(<span class="keyword">const</span> <span class="keywordtype">void</span>* data, uint32_t size) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">virtual</span> <span class="keyword">const</span> <a class="code" href="classKargono_1_1InputBufferLayout.html">Kargono::InputBufferLayout</a>&amp; GetLayout()<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> m_Layout; }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetLayout(<span class="keyword">const</span> <a class="code" href="classKargono_1_1InputBufferLayout.html">Kargono::InputBufferLayout</a>&amp; layout)<span class="keyword"> override </span>{ m_Layout = layout; }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// RendererID holds the numerical reference to the underlying OpenGL VertexBuffer</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="comment">//      Ex. A renderer ID of three would represent the third vertex buffer created</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">//      in the open GL context. </span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        uint32_t m_RendererID;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">// Layout dictates the pattern of data inside the buffer</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="comment">//      Ex: vec3, vec2, float, vec3, mat4 is a sample pattern</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">//      that can represent concepts such as the vertex&#39;s world position,</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">//      color, and transform.</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <a class="code" href="classKargono_1_1InputBufferLayout.html">Kargono::InputBufferLayout</a> m_Layout;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    };</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">// OpenGL IndexBuffer Class</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// This class is the OpenGL Implementation of an Index Buffer in the Core Code.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">//      The index buffer represents the ordered pattern of vertices that get displayed.</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">//      Example. An object can have the vertices 0, 1, 2, 3, 4, 5.</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">//      An index buffer could hold the numbers 2, 3, 1. The numbers in the index buffer</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">//      represent OpenGL drawing a triangle starting at vertex 2, that going to vertex 3,</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">//      and ending on vertex 1.</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html">   67</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html">OpenGLIndexBuffer</a> : <span class="keyword">public</span> <a class="code" href="classKargono_1_1IndexBuffer.html">Kargono::IndexBuffer</a></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">// Getters/Setters</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keyword">virtual</span> <span class="keyword">const</span> <a class="code" href="classKargono_1_1Rendering_1_1InputBufferLayout.html">Kargono::Rendering::InputBufferLayout</a>&amp; GetLayout()<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> m_Layout; }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetLayout(<span class="keyword">const</span> <a class="code" href="classKargono_1_1Rendering_1_1InputBufferLayout.html">Kargono::Rendering::InputBufferLayout</a>&amp; layout)<span class="keyword"> override </span>{ m_Layout = layout; }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">// RendererID holds the numerical reference to the underlying OpenGL VertexBuffer</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">//      Ex. A renderer ID of three would represent the third vertex buffer created</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">//      in the open GL context. </span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        uint32_t m_RendererID;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// Layout dictates the pattern of data inside the buffer</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">//      Ex: vec3, vec2, float, vec3, mat4 is a sample pattern</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="comment">//      that can represent concepts such as the vertex&#39;s world position,</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="comment">//      color, and transform.</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1InputBufferLayout.html">Kargono::Rendering::InputBufferLayout</a> m_Layout;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    };</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">//=============================</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// OpenGL IndexBuffer Class </span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">//=============================</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">// This class is the OpenGL Implementation of an Index Buffer in the Core Code.</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">//      The index buffer represents the ordered pattern of vertices that get displayed.</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">//      Example. An object can have the vertices 0, 1, 2, 3, 4, 5.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">//      An index buffer could hold the numbers 2, 3, 1. The numbers in the index buffer</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">//      represent OpenGL drawing a triangle starting at vertex 2, that going to vertex 3,</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">//      and ending on vertex 1.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">class </span>OpenGLIndexBuffer : <span class="keyword">public</span> <a class="code" href="classKargono_1_1Rendering_1_1IndexBuffer.html">Kargono::Rendering::IndexBuffer</a></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">// Constructors instantiate the Index Buffer in OpenGL and bind</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">// it to the currently bound VAO (Vertex Array Object)</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html">OpenGLIndexBuffer</a>(uint32_t* indices, uint32_t count);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="comment">// Destructor removes buffer from OpenGL Context</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html">OpenGLIndexBuffer</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="comment">// Binding Functionality</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// Constructors instantiate the Index Buffer in OpenGL and bind</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="comment">// it to the currently bound VAO (Vertex Array Object)</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        OpenGLIndexBuffer(uint32_t* indices, uint32_t count);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">// Destructor removes buffer from OpenGL Context</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keyword">virtual</span> ~OpenGLIndexBuffer() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// Allows Index Buffers to be bound to various VAO&#39;s or for other debugging uses</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Bind() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Unbind() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">// Get the number of indices</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// Binding Functionality</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="comment">// Allows Index Buffers to be bound to various VAO&#39;s or for other debugging uses</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Bind() <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> Unbind() <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keyword">virtual</span> uint32_t GetCount()<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> m_Count; }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="comment">// RendererID holds the numerical reference to the underlying OpenGL IndexBuffer</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="comment">//      Ex. A renderer ID of three would represent the third index buffer created</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">//      in the open GL context. </span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        uint32_t m_RendererID;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="comment">// m_Count represents the size of the index buffer. (Number of Indices not memory)</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        uint32_t m_Count;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    };</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="ttc" id="aclassAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer_html"><div class="ttname"><a href="classAPI_1_1RenderingAPI_1_1OpenGLIndexBuffer.html">API::RenderingAPI::OpenGLIndexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenGLBuffer_8h_source.html#l00067">OpenGLBuffer.h:68</a></div></div>
-<div class="ttc" id="aclassAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer_html"><div class="ttname"><a href="classAPI_1_1RenderingAPI_1_1OpenGLVertexBuffer.html">API::RenderingAPI::OpenGLVertexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenGLBuffer_8h_source.html#l00013">OpenGLBuffer.h:14</a></div></div>
-<div class="ttc" id="aclassKargono_1_1IndexBuffer_html"><div class="ttname"><a href="classKargono_1_1IndexBuffer.html">Kargono::IndexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00200">InputBuffer.h:201</a></div></div>
-<div class="ttc" id="aclassKargono_1_1InputBufferLayout_html"><div class="ttname"><a href="classKargono_1_1InputBufferLayout.html">Kargono::InputBufferLayout</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00121">InputBuffer.h:122</a></div></div>
-<div class="ttc" id="aclassKargono_1_1VertexBuffer_html"><div class="ttname"><a href="classKargono_1_1VertexBuffer.html">Kargono::VertexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00182">InputBuffer.h:183</a></div></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">// Get the number of indices</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keyword">virtual</span> uint32_t GetCount()<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> m_Count; }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">// RendererID holds the numerical reference to the underlying OpenGL IndexBuffer</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="comment">//      Ex. A renderer ID of three would represent the third index buffer created</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="comment">//      in the open GL context. </span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        uint32_t m_RendererID;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="comment">// m_Count represents the size of the index buffer. (Number of Indices not memory)</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        uint32_t m_Count;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    };</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aInputBuffer_8h_html"><div class="ttname"><a href="InputBuffer_8h.html">InputBuffer.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1IndexBuffer_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1IndexBuffer.html">Kargono::Rendering::IndexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00200">InputBuffer.h:201</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1InputBufferLayout_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1InputBufferLayout.html">Kargono::Rendering::InputBufferLayout</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00121">InputBuffer.h:122</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1VertexBuffer_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1VertexBuffer.html">Kargono::Rendering::VertexBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00182">InputBuffer.h:183</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><b>OpenGLBuffer.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><a class="el" href="OpenGLBuffer_8h.html">OpenGLBuffer.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -1,7 +1,7 @@
 var structKargono_1_1EditorUI_1_1RadioSelectorSpec =
 [
     [ "RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#aa558c70df0cf73c727019498c80c420a", null ],
-    [ "Editor::RadioSelector", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a649f30ea9fa5e93fdd9881bfd2197cc8", null ],
+    [ "EditorUIService::RadioSelector", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a6153eb049234889adc6b35c525d31d5e", null ],
     [ "Label", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a7023c199c7e6b17eb417b12e7f81713b", null ],
     [ "SelectedOption", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a0ccc045cbbd278ac99d891ed74465337", null ],
     [ "FirstOptionLabel", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a0c54c86cc1988d94715ca508d43c5584", null ],

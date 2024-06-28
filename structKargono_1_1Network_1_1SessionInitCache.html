@@ -92,31 +92,97 @@ $(document).ready(function(){initNavTree('structKargono_1_1Network_1_1SessionIni
 <div class="title">Kargono::Network::SessionInitCache Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="Session_8h_source.html">Session.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aa2183d65384b06fbb77186ff726881c6"><td class="memItemLeft" align="right" valign="top"><a id="aa2183d65384b06fbb77186ff726881c6"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>MaxSyncPings</b> = 10</td></tr>
+<tr class="memitem:aa2183d65384b06fbb77186ff726881c6"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html#aa2183d65384b06fbb77186ff726881c6">MaxSyncPings</a> = 10</td></tr>
 <tr class="separator:aa2183d65384b06fbb77186ff726881c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46edb45385c6b46f94b1b99272e2ce00"><td class="memItemLeft" align="right" valign="top"><a id="a46edb45385c6b46f94b1b99272e2ce00"></a>
-std::unordered_map&lt; uint32_t, std::vector&lt; float &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LatencyCache</b> {}</td></tr>
+<tr class="memitem:a46edb45385c6b46f94b1b99272e2ce00"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint32_t, std::vector&lt; float &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html#a46edb45385c6b46f94b1b99272e2ce00">LatencyCache</a> {}</td></tr>
 <tr class="separator:a46edb45385c6b46f94b1b99272e2ce00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7f8e1cfd9361f8f6b63ddcd7a23e6a0"><td class="memItemLeft" align="right" valign="top"><a id="ae7f8e1cfd9361f8f6b63ddcd7a23e6a0"></a>
-std::unordered_map&lt; uint32_t, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LatencyCacheFilled</b> {}</td></tr>
+<tr class="memitem:ae7f8e1cfd9361f8f6b63ddcd7a23e6a0"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint32_t, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html#ae7f8e1cfd9361f8f6b63ddcd7a23e6a0">LatencyCacheFilled</a> {}</td></tr>
 <tr class="separator:ae7f8e1cfd9361f8f6b63ddcd7a23e6a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac814479d55f8d590d28faa2066d79d11"><td class="memItemLeft" align="right" valign="top"><a id="ac814479d55f8d590d28faa2066d79d11"></a>
-std::unordered_map&lt; uint32_t, std::chrono::time_point&lt; std::chrono::high_resolution_clock &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>RecentTimePoints</b> {}</td></tr>
+<tr class="memitem:ac814479d55f8d590d28faa2066d79d11"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; uint32_t, std::chrono::time_point&lt; std::chrono::high_resolution_clock &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html#ac814479d55f8d590d28faa2066d79d11">RecentTimePoints</a> {}</td></tr>
 <tr class="separator:ac814479d55f8d590d28faa2066d79d11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Session_8h_source.html#l00017">17</a> of file <a class="el" href="Session_8h_source.html">Session.h</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="aa2183d65384b06fbb77186ff726881c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2183d65384b06fbb77186ff726881c6">&#9670;&nbsp;</a></span>MaxSyncPings</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t Kargono::Network::SessionInitCache::MaxSyncPings = 10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Session_8h_source.html#l00019">19</a> of file <a class="el" href="Session_8h_source.html">Session.h</a>.</p>
+
+</div>
+</div>
+<a id="a46edb45385c6b46f94b1b99272e2ce00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46edb45385c6b46f94b1b99272e2ce00">&#9670;&nbsp;</a></span>LatencyCache</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;uint32_t, std::vector&lt;float&gt; &gt; Kargono::Network::SessionInitCache::LatencyCache {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Session_8h_source.html#l00020">20</a> of file <a class="el" href="Session_8h_source.html">Session.h</a>.</p>
+
+</div>
+</div>
+<a id="ae7f8e1cfd9361f8f6b63ddcd7a23e6a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7f8e1cfd9361f8f6b63ddcd7a23e6a0">&#9670;&nbsp;</a></span>LatencyCacheFilled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;uint32_t, bool&gt; Kargono::Network::SessionInitCache::LatencyCacheFilled {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Session_8h_source.html#l00021">21</a> of file <a class="el" href="Session_8h_source.html">Session.h</a>.</p>
+
+</div>
+</div>
+<a id="ac814479d55f8d590d28faa2066d79d11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac814479d55f8d590d28faa2066d79d11">&#9670;&nbsp;</a></span>RecentTimePoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;uint32_t, std::chrono::time_point&lt;std::chrono::high_resolution_clock&gt; &gt; Kargono::Network::SessionInitCache::RecentTimePoints {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Session_8h_source.html#l00022">22</a> of file <a class="el" href="Session_8h_source.html">Session.h</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>Engine/Source/Kargono/Network/<a class="el" href="Session_8h_source.html">Session.h</a></li>
+</ul>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>Kargono</b></li><li class="navelem"><b>Network</b></li><li class="navelem"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html">SessionInitCache</a></li>
+    <li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="namespaceKargono_1_1Network.html">Network</a></li><li class="navelem"><a class="el" href="structKargono_1_1Network_1_1SessionInitCache.html">SessionInitCache</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

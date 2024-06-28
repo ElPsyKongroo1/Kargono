@@ -89,35 +89,35 @@ $(document).ready(function(){initNavTree('FileWatchAPI_8cpp_source.html',''); in
 <div class="title">FileWatchAPI.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;FileWatchAPI.h&quot;</span></div>
+<a href="FileWatchAPI_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileWatchAPI_8h.html">FileWatchAPI.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>API::FileWatch</div>
+<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="namespaceAPI.html">    4</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceAPI_1_1FileWatch.html">API::FileWatch</a></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keyword">static</span> std::unordered_map&lt;std::string, filewatch::FileWatch&lt;std::string&gt;*&gt; s_AllFileWatchers {};</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keywordtype">bool</span> StartWatch(<span class="keyword">const</span> std::filesystem::path&amp; path, std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> std::string&amp;, <span class="keyword">const</span> EventType change_type)&gt; func)</div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="namespaceAPI_1_1FileWatch.html#a0d8bee9f05087e4aef94b7c85c2ffb4e">    8</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="namespaceAPI_1_1FileWatch.html#a0d8bee9f05087e4aef94b7c85c2ffb4e">StartWatch</a>(<span class="keyword">const</span> std::filesystem::path&amp; path, std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> std::string&amp;, <span class="keyword">const</span> <a class="code" href="namespaceAPI_1_1FileWatch.html#a08ff2e68d6d4871407ef3003f86b4dcb">EventType</a> change_type)&gt; func)</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <span class="keywordflow">if</span> (s_AllFileWatchers.contains(std::filesystem::absolute(path).string()))</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            KG_WARN(<span class="stringliteral">&quot;Attempt to watch file that is already actively watched&quot;</span>);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Attempt to watch file that is already actively watched&quot;</span>);</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        }</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">auto</span> [iter, success] = s_AllFileWatchers.insert_or_assign(std::filesystem::absolute(path).<span class="keywordtype">string</span>(), <span class="keyword">new</span> filewatch::FileWatch(std::filesystem::absolute(path).<span class="keywordtype">string</span>(), func));</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keywordflow">if</span> (!success)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Unable to insert new filewatcher into map!&quot;</span>);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Unable to insert new filewatcher into map!&quot;</span>);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        }</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    }</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">bool</span> EndWatch(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="namespaceAPI_1_1FileWatch.html#a5a9996dc8282b7d38b5a5a72df1129eb">   25</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="namespaceAPI_1_1FileWatch.html#a5a9996dc8282b7d38b5a5a72df1129eb">EndWatch</a>(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordflow">if</span> (!s_AllFileWatchers.contains(std::filesystem::absolute(path).string()))</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            KG_WARN(<span class="stringliteral">&quot;Attempt to remove filewatch from path that does not exist&quot;</span>);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Attempt to remove filewatch from path that does not exist&quot;</span>);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        }</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
@@ -126,19 +126,27 @@ $(document).ready(function(){initNavTree('FileWatchAPI_8cpp_source.html',''); in
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        }</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        KG_ERROR(<span class="stringliteral">&quot;Unable to remove filewatcher from map!&quot;</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Unable to remove filewatcher from map!&quot;</span>);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="ttc" id="aFileWatchAPI_8h_html"><div class="ttname"><a href="FileWatchAPI_8h.html">FileWatchAPI.h</a></div></div>
+<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
+<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00033">Log.h:33</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceAPI_1_1FileWatch_html"><div class="ttname"><a href="namespaceAPI_1_1FileWatch.html">API::FileWatch</a></div><div class="ttdef"><b>Definition:</b> <a href="FileWatchAPI_8cpp_source.html#l00004">FileWatchAPI.cpp:5</a></div></div>
+<div class="ttc" id="anamespaceAPI_1_1FileWatch_html_a08ff2e68d6d4871407ef3003f86b4dcb"><div class="ttname"><a href="namespaceAPI_1_1FileWatch.html#a08ff2e68d6d4871407ef3003f86b4dcb">API::FileWatch::EventType</a></div><div class="ttdeci">filewatch::Event EventType</div><div class="ttdef"><b>Definition:</b> <a href="FileWatchAPI_8h_source.html#l00013">FileWatchAPI.h:13</a></div></div>
+<div class="ttc" id="anamespaceAPI_1_1FileWatch_html_a0d8bee9f05087e4aef94b7c85c2ffb4e"><div class="ttname"><a href="namespaceAPI_1_1FileWatch.html#a0d8bee9f05087e4aef94b7c85c2ffb4e">API::FileWatch::StartWatch</a></div><div class="ttdeci">bool StartWatch(const std::filesystem::path &amp;path, std::function&lt; void(const std::string &amp;, const EventType change_type)&gt; func)</div><div class="ttdef"><b>Definition:</b> <a href="FileWatchAPI_8cpp_source.html#l00008">FileWatchAPI.cpp:8</a></div></div>
+<div class="ttc" id="anamespaceAPI_1_1FileWatch_html_a5a9996dc8282b7d38b5a5a72df1129eb"><div class="ttname"><a href="namespaceAPI_1_1FileWatch.html#a5a9996dc8282b7d38b5a5a72df1129eb">API::FileWatch::EndWatch</a></div><div class="ttdeci">bool EndWatch(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="FileWatchAPI_8cpp_source.html#l00025">FileWatchAPI.cpp:25</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_916edf8c303717150428e41c9b53926c.html">FileWatch</a></li><li class="navelem"><b>FileWatchAPI.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_916edf8c303717150428e41c9b53926c.html">FileWatch</a></li><li class="navelem"><a class="el" href="FileWatchAPI_8cpp.html">FileWatchAPI.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

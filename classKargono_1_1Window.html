@@ -93,91 +93,702 @@ $(document).ready(function(){initNavTree('classKargono_1_1Window.html',''); init
 <div class="title">Kargono::Window Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="Window_8h_source.html">Window.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a62520eb89b08f4da5874efeba32f2f81"><td class="memItemLeft" align="right" valign="top"><a id="a62520eb89b08f4da5874efeba32f2f81"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdate</b> ()=0</td></tr>
+<tr class="memitem:abeca1e0852f9ea5a372186f83464dc41"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#abeca1e0852f9ea5a372186f83464dc41">~Window</a> ()=default</td></tr>
+<tr class="separator:abeca1e0852f9ea5a372186f83464dc41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62520eb89b08f4da5874efeba32f2f81"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a62520eb89b08f4da5874efeba32f2f81">OnUpdate</a> ()=0</td></tr>
 <tr class="separator:a62520eb89b08f4da5874efeba32f2f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14db445b8e2ee2ef9bc6a456f083f531"><td class="memItemLeft" align="right" valign="top"><a id="a14db445b8e2ee2ef9bc6a456f083f531"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (const std::filesystem::path &amp;logoPath=&quot;Resources/icons/app_logo.png&quot;)=0</td></tr>
+<tr class="memitem:a14db445b8e2ee2ef9bc6a456f083f531"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">Init</a> (const std::filesystem::path &amp;<a class="el" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a>=&quot;Resources/icons/app_logo.png&quot;)=0</td></tr>
 <tr class="separator:a14db445b8e2ee2ef9bc6a456f083f531"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f4f4fa261ed6fccfef13dff583ea268"><td class="memItemLeft" align="right" valign="top"><a id="a8f4f4fa261ed6fccfef13dff583ea268"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (const <a class="el" href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a> &amp;props, const std::filesystem::path &amp;logoPath=&quot;Resources/icons/app_logo.png&quot;)=0</td></tr>
+<tr class="memitem:a8f4f4fa261ed6fccfef13dff583ea268"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a8f4f4fa261ed6fccfef13dff583ea268">Init</a> (const <a class="el" href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a> &amp;props, const std::filesystem::path &amp;<a class="el" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a>=&quot;Resources/icons/app_logo.png&quot;)=0</td></tr>
 <tr class="separator:a8f4f4fa261ed6fccfef13dff583ea268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bdd411044fc48cdb8689073e2c3bb87"><td class="memItemLeft" align="right" valign="top"><a id="a1bdd411044fc48cdb8689073e2c3bb87"></a>
-virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetWidth</b> () const =0</td></tr>
+<tr class="memitem:a1bdd411044fc48cdb8689073e2c3bb87"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a1bdd411044fc48cdb8689073e2c3bb87">GetWidth</a> () const =0</td></tr>
 <tr class="separator:a1bdd411044fc48cdb8689073e2c3bb87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a310cdfdf7e83db26781f23777119e879"><td class="memItemLeft" align="right" valign="top"><a id="a310cdfdf7e83db26781f23777119e879"></a>
-virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetHeight</b> () const =0</td></tr>
+<tr class="memitem:a310cdfdf7e83db26781f23777119e879"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a310cdfdf7e83db26781f23777119e879">GetHeight</a> () const =0</td></tr>
 <tr class="separator:a310cdfdf7e83db26781f23777119e879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0972686e628fcdd23e0d083f9c4d9f7"><td class="memItemLeft" align="right" valign="top"><a id="aa0972686e628fcdd23e0d083f9c4d9f7"></a>
-virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetViewportWidth</b> () const =0</td></tr>
+<tr class="memitem:aa0972686e628fcdd23e0d083f9c4d9f7"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#aa0972686e628fcdd23e0d083f9c4d9f7">GetViewportWidth</a> () const =0</td></tr>
 <tr class="separator:aa0972686e628fcdd23e0d083f9c4d9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2281fb8d178d7f62c2b87ec2195f6736"><td class="memItemLeft" align="right" valign="top"><a id="a2281fb8d178d7f62c2b87ec2195f6736"></a>
-virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetViewportHeight</b> () const =0</td></tr>
+<tr class="memitem:a2281fb8d178d7f62c2b87ec2195f6736"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a2281fb8d178d7f62c2b87ec2195f6736">GetViewportHeight</a> () const =0</td></tr>
 <tr class="separator:a2281fb8d178d7f62c2b87ec2195f6736"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc5536f3ee6b3eb7187c7614a66cea27"><td class="memItemLeft" align="right" valign="top"><a id="acc5536f3ee6b3eb7187c7614a66cea27"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetViewportWidth</b> (uint32_t width)=0</td></tr>
+<tr class="memitem:acc5536f3ee6b3eb7187c7614a66cea27"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">SetViewportWidth</a> (uint32_t width)=0</td></tr>
 <tr class="separator:acc5536f3ee6b3eb7187c7614a66cea27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e5b6107c3e359ae7bad7153f20a3961"><td class="memItemLeft" align="right" valign="top"><a id="a7e5b6107c3e359ae7bad7153f20a3961"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetViewportHeight</b> (uint32_t height)=0</td></tr>
+<tr class="memitem:a7e5b6107c3e359ae7bad7153f20a3961"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">SetViewportHeight</a> (uint32_t height)=0</td></tr>
 <tr class="separator:a7e5b6107c3e359ae7bad7153f20a3961"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab565451020a6d3c90f144dff22bba2e"><td class="memItemLeft" align="right" valign="top"><a id="aab565451020a6d3c90f144dff22bba2e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetEventCallback</b> (const Events::EventCallbackFn &amp;callback)=0</td></tr>
+<tr class="memitem:aab565451020a6d3c90f144dff22bba2e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#aab565451020a6d3c90f144dff22bba2e">SetEventCallback</a> (const <a class="el" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a> &amp;callback)=0</td></tr>
 <tr class="separator:aab565451020a6d3c90f144dff22bba2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0169291a0c0e688d5c233709ea95ccce"><td class="memItemLeft" align="right" valign="top"><a id="a0169291a0c0e688d5c233709ea95ccce"></a>
-virtual Events::EventCallbackFn &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetEventCallback</b> ()=0</td></tr>
+<tr class="memitem:a0169291a0c0e688d5c233709ea95ccce"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">GetEventCallback</a> ()=0</td></tr>
 <tr class="separator:a0169291a0c0e688d5c233709ea95ccce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="memItemLeft" align="right" valign="top"><a id="adbb13b0e0db5a9dd68b918657fa9d8a5"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVSync</b> (bool enabled)=0</td></tr>
+<tr class="memitem:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#adbb13b0e0db5a9dd68b918657fa9d8a5">SetVSync</a> (bool enabled)=0</td></tr>
 <tr class="separator:adbb13b0e0db5a9dd68b918657fa9d8a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1e612778c7af1f430811d8a485e9c63"><td class="memItemLeft" align="right" valign="top"><a id="af1e612778c7af1f430811d8a485e9c63"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsVSync</b> () const =0</td></tr>
+<tr class="memitem:af1e612778c7af1f430811d8a485e9c63"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#af1e612778c7af1f430811d8a485e9c63">IsVSync</a> () const =0</td></tr>
 <tr class="separator:af1e612778c7af1f430811d8a485e9c63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f96a7375dff1946af52d0a21bbd1125"><td class="memItemLeft" align="right" valign="top"><a id="a7f96a7375dff1946af52d0a21bbd1125"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFullscreen</b> (bool enabled)=0</td></tr>
+<tr class="memitem:a7f96a7375dff1946af52d0a21bbd1125"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a7f96a7375dff1946af52d0a21bbd1125">SetFullscreen</a> (bool enabled)=0</td></tr>
 <tr class="separator:a7f96a7375dff1946af52d0a21bbd1125"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07d746c3502ffdaa961ad534cf32ba31"><td class="memItemLeft" align="right" valign="top"><a id="a07d746c3502ffdaa961ad534cf32ba31"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetResizable</b> (bool resizable)=0</td></tr>
+<tr class="memitem:a07d746c3502ffdaa961ad534cf32ba31"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a07d746c3502ffdaa961ad534cf32ba31">SetResizable</a> (bool resizable)=0</td></tr>
 <tr class="separator:a07d746c3502ffdaa961ad534cf32ba31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d3a78da66c429633b4466a4caa87054"><td class="memItemLeft" align="right" valign="top"><a id="a8d3a78da66c429633b4466a4caa87054"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>CenterWindow</b> ()=0</td></tr>
+<tr class="memitem:a8d3a78da66c429633b4466a4caa87054"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a8d3a78da66c429633b4466a4caa87054">CenterWindow</a> ()=0</td></tr>
 <tr class="separator:a8d3a78da66c429633b4466a4caa87054"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52e0c42bbb3dba50fe4ecc27f50762b6"><td class="memItemLeft" align="right" valign="top"><a id="a52e0c42bbb3dba50fe4ecc27f50762b6"></a>
-virtual Math::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>GetMonitorDimensions</b> ()=0</td></tr>
+<tr class="memitem:a52e0c42bbb3dba50fe4ecc27f50762b6"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a52e0c42bbb3dba50fe4ecc27f50762b6">GetMonitorDimensions</a> ()=0</td></tr>
 <tr class="separator:a52e0c42bbb3dba50fe4ecc27f50762b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e156c207a4a09cb516735ebde9417d0"><td class="memItemLeft" align="right" valign="top"><a id="a6e156c207a4a09cb516735ebde9417d0"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ResizeWindow</b> (Math::vec2 newWindowSize)=0</td></tr>
+<tr class="memitem:a6e156c207a4a09cb516735ebde9417d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a6e156c207a4a09cb516735ebde9417d0">ResizeWindow</a> (<a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> newWindowSize)=0</td></tr>
 <tr class="separator:a6e156c207a4a09cb516735ebde9417d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a296122a13295d95dcbe308f965dd7e5f"><td class="memItemLeft" align="right" valign="top"><a id="a296122a13295d95dcbe308f965dd7e5f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ToggleMaximized</b> ()=0</td></tr>
+<tr class="memitem:a296122a13295d95dcbe308f965dd7e5f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a296122a13295d95dcbe308f965dd7e5f">ToggleMaximized</a> ()=0</td></tr>
 <tr class="separator:a296122a13295d95dcbe308f965dd7e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03d98c2800e85a5cf86cd2fbb8bbb02f"><td class="memItemLeft" align="right" valign="top"><a id="a03d98c2800e85a5cf86cd2fbb8bbb02f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVisible</b> (bool visible)=0</td></tr>
+<tr class="memitem:a03d98c2800e85a5cf86cd2fbb8bbb02f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a03d98c2800e85a5cf86cd2fbb8bbb02f">SetVisible</a> (bool visible)=0</td></tr>
 <tr class="separator:a03d98c2800e85a5cf86cd2fbb8bbb02f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4da1d5f1935d65e428f7a742c439a1c"><td class="memItemLeft" align="right" valign="top"><a id="ab4da1d5f1935d65e428f7a742c439a1c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMouseCursorVisible</b> (bool choice)=0</td></tr>
+<tr class="memitem:ab4da1d5f1935d65e428f7a742c439a1c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#ab4da1d5f1935d65e428f7a742c439a1c">SetMouseCursorVisible</a> (bool choice)=0</td></tr>
 <tr class="separator:ab4da1d5f1935d65e428f7a742c439a1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f1c439aaf7de9427af4c86a2cf882fb"><td class="memItemLeft" align="right" valign="top"><a id="a5f1c439aaf7de9427af4c86a2cf882fb"></a>
-virtual void *&#160;</td><td class="memItemRight" valign="bottom"><b>GetNativeWindow</b> () const =0</td></tr>
+<tr class="memitem:a5f1c439aaf7de9427af4c86a2cf882fb"><td class="memItemLeft" align="right" valign="top">virtual void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb">GetNativeWindow</a> () const =0</td></tr>
 <tr class="separator:a5f1c439aaf7de9427af4c86a2cf882fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a76ff6f8d0e0575bd24954a03c8c23015"><td class="memItemLeft" align="right" valign="top"><a id="a76ff6f8d0e0575bd24954a03c8c23015"></a>
-static Scope&lt; <a class="el" href="classKargono_1_1Window.html">Window</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Create</b> (const <a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a> &amp;props=<a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a>())</td></tr>
+<tr class="memitem:a76ff6f8d0e0575bd24954a03c8c23015"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope</a>&lt; <a class="el" href="classKargono_1_1Window.html">Window</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Create</a> (const <a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a> &amp;props=<a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a>())</td></tr>
 <tr class="separator:a76ff6f8d0e0575bd24954a03c8c23015"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="Window_8h_source.html#l00028">28</a> of file <a class="el" href="Window_8h_source.html">Window.h</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="abeca1e0852f9ea5a372186f83464dc41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abeca1e0852f9ea5a372186f83464dc41">&#9670;&nbsp;</a></span>~Window()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual Kargono::Window::~Window </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a62520eb89b08f4da5874efeba32f2f81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62520eb89b08f4da5874efeba32f2f81">&#9670;&nbsp;</a></span>OnUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::OnUpdate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a14db445b8e2ee2ef9bc6a456f083f531"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14db445b8e2ee2ef9bc6a456f083f531">&#9670;&nbsp;</a></span>Init() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::Init </td>
+          <td>(</td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>logoPath</em> = <code>&quot;Resources/icons/app_logo.png&quot;</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8f4f4fa261ed6fccfef13dff583ea268"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f4f4fa261ed6fccfef13dff583ea268">&#9670;&nbsp;</a></span>Init() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::Init </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a> &amp;&#160;</td>
+          <td class="paramname"><em>props</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>logoPath</em> = <code>&quot;Resources/icons/app_logo.png&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1bdd411044fc48cdb8689073e2c3bb87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bdd411044fc48cdb8689073e2c3bb87">&#9670;&nbsp;</a></span>GetWidth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t Kargono::Window::GetWidth </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a310cdfdf7e83db26781f23777119e879"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a310cdfdf7e83db26781f23777119e879">&#9670;&nbsp;</a></span>GetHeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t Kargono::Window::GetHeight </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa0972686e628fcdd23e0d083f9c4d9f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0972686e628fcdd23e0d083f9c4d9f7">&#9670;&nbsp;</a></span>GetViewportWidth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t Kargono::Window::GetViewportWidth </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2281fb8d178d7f62c2b87ec2195f6736"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2281fb8d178d7f62c2b87ec2195f6736">&#9670;&nbsp;</a></span>GetViewportHeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t Kargono::Window::GetViewportHeight </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acc5536f3ee6b3eb7187c7614a66cea27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc5536f3ee6b3eb7187c7614a66cea27">&#9670;&nbsp;</a></span>SetViewportWidth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetViewportWidth </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>width</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7e5b6107c3e359ae7bad7153f20a3961"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e5b6107c3e359ae7bad7153f20a3961">&#9670;&nbsp;</a></span>SetViewportHeight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetViewportHeight </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>height</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aab565451020a6d3c90f144dff22bba2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab565451020a6d3c90f144dff22bba2e">&#9670;&nbsp;</a></span>SetEventCallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetEventCallback </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a> &amp;&#160;</td>
+          <td class="paramname"><em>callback</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0169291a0c0e688d5c233709ea95ccce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0169291a0c0e688d5c233709ea95ccce">&#9670;&nbsp;</a></span>GetEventCallback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a>&amp; Kargono::Window::GetEventCallback </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adbb13b0e0db5a9dd68b918657fa9d8a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbb13b0e0db5a9dd68b918657fa9d8a5">&#9670;&nbsp;</a></span>SetVSync()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetVSync </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af1e612778c7af1f430811d8a485e9c63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1e612778c7af1f430811d8a485e9c63">&#9670;&nbsp;</a></span>IsVSync()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Kargono::Window::IsVSync </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7f96a7375dff1946af52d0a21bbd1125"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f96a7375dff1946af52d0a21bbd1125">&#9670;&nbsp;</a></span>SetFullscreen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetFullscreen </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a07d746c3502ffdaa961ad534cf32ba31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07d746c3502ffdaa961ad534cf32ba31">&#9670;&nbsp;</a></span>SetResizable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetResizable </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>resizable</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8d3a78da66c429633b4466a4caa87054"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d3a78da66c429633b4466a4caa87054">&#9670;&nbsp;</a></span>CenterWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::CenterWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a52e0c42bbb3dba50fe4ecc27f50762b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52e0c42bbb3dba50fe4ecc27f50762b6">&#9670;&nbsp;</a></span>GetMonitorDimensions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> Kargono::Window::GetMonitorDimensions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6e156c207a4a09cb516735ebde9417d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e156c207a4a09cb516735ebde9417d0">&#9670;&nbsp;</a></span>ResizeWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::ResizeWindow </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td>
+          <td class="paramname"><em>newWindowSize</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a296122a13295d95dcbe308f965dd7e5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a296122a13295d95dcbe308f965dd7e5f">&#9670;&nbsp;</a></span>ToggleMaximized()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::ToggleMaximized </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03d98c2800e85a5cf86cd2fbb8bbb02f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03d98c2800e85a5cf86cd2fbb8bbb02f">&#9670;&nbsp;</a></span>SetVisible()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetVisible </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>visible</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab4da1d5f1935d65e428f7a742c439a1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4da1d5f1935d65e428f7a742c439a1c">&#9670;&nbsp;</a></span>SetMouseCursorVisible()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Kargono::Window::SetMouseCursorVisible </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>choice</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5f1c439aaf7de9427af4c86a2cf882fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f1c439aaf7de9427af4c86a2cf882fb">&#9670;&nbsp;</a></span>GetNativeWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void* Kargono::Window::GetNativeWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a76ff6f8d0e0575bd24954a03c8c23015"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76ff6f8d0e0575bd24954a03c8c23015">&#9670;&nbsp;</a></span>Create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a75cefe73507cbf8c678d5e216480039c">Scope</a>&lt; <a class="el" href="classKargono_1_1Window.html">Window</a> &gt; Kargono::Window::Create </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a> &amp;&#160;</td>
+          <td class="paramname"><em>props</em> = <code><a class="el" href="structKargono_1_1WindowProps.html">WindowProps</a>()</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Window_8cpp_source.html#l00011">11</a> of file <a class="el" href="Window_8cpp_source.html">Window.cpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>Engine/Source/Kargono/Core/<a class="el" href="Window_8h_source.html">Window.h</a></li>
+<li>Engine/Source/Kargono/Core/<a class="el" href="Window_8cpp_source.html">Window.cpp</a></li>
+</ul>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>Kargono</b></li><li class="navelem"><a class="el" href="classKargono_1_1Window.html">Window</a></li>
+    <li class="navelem"><a class="el" href="namespaceKargono.html">Kargono</a></li><li class="navelem"><a class="el" href="classKargono_1_1Window.html">Window</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

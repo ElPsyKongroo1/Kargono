@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Kargono: Engine/Source/Kargono/Renderer/Shader.cpp Source File</title>
+<title>Kargono: Engine/Source/Kargono/Rendering/Shader.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,99 +89,132 @@ $(document).ready(function(){initNavTree('Shader_8cpp_source.html',''); initResi
 <div class="title">Shader.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="Shader_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Shader.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/Renderer.h&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/Scene.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Utility/FileSystem.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Shader_8h.html">Kargono/Rendering/Shader.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RenderingService_8h.html">Kargono/Rendering/RenderingService.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scenes/Scene.h</a>&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;API/RenderingAPI/OpenGLShader.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OpenGLShader_8h.html">API/RenderingAPI/OpenGLShader.h</a>&quot;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    Ref&lt;Shader&gt; Shader::Create(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> std::unordered_map&lt;GLenum, std::vector&lt;uint32_t&gt;&gt;&amp; shaderBinaries)</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Shader.html#aac35031d6bc242c4a168783389044764">   12</a></span>&#160;    <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Shader&gt;</a> <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#aac35031d6bc242c4a168783389044764">Shader::Create</a>(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> std::unordered_map&lt;<a class="code" href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">GLenum</a>, std::vector&lt;uint32_t&gt;&gt;&amp; shaderBinaries)</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordflow">return</span>  CreateRef&lt;API::RenderingAPI::OpenGLShader&gt;(name, shaderBinaries);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    }</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> Shader::SetSpecification(<span class="keyword">const</span> ShaderSpecification&amp; shaderSpec)</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        m_ShaderSpecification = shaderSpec;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        FillRenderFunctionList();</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">void</span> Shader::SetInputLayout(<span class="keyword">const</span> InputBufferLayout&amp; shaderInputLayout)</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        m_InputBufferLayout = shaderInputLayout;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        m_VertexArray = VertexArray::Create();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">auto</span> quadVertexBuffer = VertexBuffer::Create(Renderer::s_MaxVertexBufferSize);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        quadVertexBuffer-&gt;SetLayout(m_InputBufferLayout);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        m_VertexArray-&gt;AddVertexBuffer(quadVertexBuffer);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    }</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">return</span>  CreateRef&lt;API::RenderingAPI::OpenGLShader&gt;(name, shaderBinaries);</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    }</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Shader.html#a398ace344ad6e57bc42ae33ba507c77a">   19</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a398ace344ad6e57bc42ae33ba507c77a">Shader::SetSpecification</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html">ShaderSpecification</a>&amp; shaderSpec)</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a> = shaderSpec;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        FillRenderFunctionList();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    }</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1Shader.html#a600b5d1d7c8a8db29acd7747a711dc1a">   25</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a600b5d1d7c8a8db29acd7747a711dc1a">Shader::SetInputLayout</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1Rendering_1_1InputBufferLayout.html">InputBufferLayout</a>&amp; shaderInputLayout)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a44c4e5ff6396c85b45c7feaf35a2a184">m_InputBufferLayout</a> = shaderInputLayout;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        m_VertexArray = <a class="code" href="classKargono_1_1Rendering_1_1VertexArray.html#a55ef1281e05861324d8b6310f8b8a12c">VertexArray::Create</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">auto</span> quadVertexBuffer = <a class="code" href="classKargono_1_1Rendering_1_1VertexBuffer.html#a5c159fc5705c7494cd0b44988b43780f">VertexBuffer::Create</a>(RenderingService::s_MaxVertexBufferSize);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        quadVertexBuffer-&gt;SetLayout(<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a44c4e5ff6396c85b45c7feaf35a2a184">m_InputBufferLayout</a>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        m_VertexArray-&gt;AddVertexBuffer(quadVertexBuffer);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    }</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">void</span> Shader::FillRenderFunctionList()</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.RenderType == RenderingType::DrawLine)</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            m_DrawFunctions.push_back(Renderer::DrawBufferLine);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.RenderType == RenderingType::DrawLine ||</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            m_FillDataPerVertex.push_back(Renderer::FillWorldPositionNoTransform);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            m_FillDataPerVertex.push_back(Renderer::FillWorldPosition);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.AddEntityID)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            m_FillDataInScene.push_back(Scene::FillEntityID);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture ||</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            m_FillDataPerObject.push_back( Renderer::FillTextureIndex);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            m_FillDataPerVertex.push_back(Renderer::FillTextureCoordinate);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            m_SubmitUniforms.push_back(Renderer::FillTextureUniform);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.ColorInput == ColorInputType::VertexColor)</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            m_FillDataPerVertex.push_back(Renderer::FillVertexColor);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.AddCircleShape)</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            m_FillDataPerVertex.push_back(Renderer::FillLocalPosition);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.RenderType == RenderingType::DrawIndex)</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            m_FillDataPerObject.push_back(Renderer::FillIndicesData);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            m_DrawFunctions.push_back(Renderer::DrawBufferIndices);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">if</span> (m_ShaderSpecification.RenderType == RenderingType::DrawTriangle)</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            m_DrawFunctions.push_back(Renderer::DrawBufferTriangles);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        KG_ASSERT(<span class="keyword">sizeof</span>(ShaderSpecification) == <span class="keyword">sizeof</span>(uint8_t) * 20, <span class="stringliteral">&quot;Please Update Render section in Shader Code! It looks like you updated the shaderspecification&quot;</span>);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> Shader::FillRenderFunctionList()</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ae70ea3735081b902800366d51140c383">RenderType</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3affcaa643b493573ec6a0a6afe59c37b8">RenderingType::DrawLine</a>)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            m_DrawFunctions.push_back(RenderingService::DrawBufferLine);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ae70ea3735081b902800366d51140c383">RenderType</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3affcaa643b493573ec6a0a6afe59c37b8">RenderingType::DrawLine</a> ||</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#a4a105d27a4a6edfa6284176ed5aae7ef">TextureInput</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#a296139edaea128699e2a799cbdbb791da3e73310ee12c338ad477262c33cc2ffa">TextureInputType::TextTexture</a>)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            m_FillDataPerVertex.push_back(RenderingService::FillWorldPositionNoTransform);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            m_FillDataPerVertex.push_back(RenderingService::FillWorldPosition);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ad2075ea4154a27b60a9c2ad73d869bfc">AddEntityID</a>)</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            m_FillDataInScene.push_back(<a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a60771b991acfc33a7994c90d990afa9b">Scenes::Scene::FillEntityID</a>);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#a4a105d27a4a6edfa6284176ed5aae7ef">TextureInput</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#a296139edaea128699e2a799cbdbb791da6252d6e0c3eba07a408eadcb15abf8b6">TextureInputType::ColorTexture</a> ||</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#a4a105d27a4a6edfa6284176ed5aae7ef">TextureInput</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#a296139edaea128699e2a799cbdbb791da3e73310ee12c338ad477262c33cc2ffa">TextureInputType::TextTexture</a>)</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            m_FillDataPerObject.push_back( RenderingService::FillTextureIndex);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            m_FillDataPerVertex.push_back(RenderingService::FillTextureCoordinate);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            m_SubmitUniforms.push_back(RenderingService::FillTextureUniform);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ac0a3c4fa387acd35c0c3a2f19b4adcbe">ColorInput</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#a7941cbc8fd7c93c475d08980c8b53212ac25b8613f8d34348272fc9f803018a36">ColorInputType::VertexColor</a>)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            m_FillDataPerVertex.push_back(RenderingService::FillVertexColor);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#afc1a3fcadc03f842319e625f01e4abb0">AddCircleShape</a>)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            m_FillDataPerVertex.push_back(RenderingService::FillLocalPosition);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ae70ea3735081b902800366d51140c383">RenderType</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">RenderingType::DrawIndex</a>)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            m_FillDataPerObject.push_back(RenderingService::FillIndicesData);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            m_DrawFunctions.push_back(RenderingService::DrawBufferIndices);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">m_ShaderSpecification</a>.<a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ae70ea3735081b902800366d51140c383">RenderType</a> == <a class="code" href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3abfd0c2303287d4d14a95f158f2b024ab">RenderingType::DrawTriangle</a>)</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            m_DrawFunctions.push_back(RenderingService::DrawBufferTriangles);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(<span class="keyword">sizeof</span>(ShaderSpecification) == <span class="keyword">sizeof</span>(uint8_t) * 20, <span class="stringliteral">&quot;Please Update Render section in Shader Code! It looks like you updated the shaderspecification&quot;</span>);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
+<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
+<div class="ttc" id="aFileSystem_8h_html"><div class="ttname"><a href="FileSystem_8h.html">FileSystem.h</a></div></div>
+<div class="ttc" id="aOpenGLShader_8h_html"><div class="ttname"><a href="OpenGLShader_8h.html">OpenGLShader.h</a></div></div>
+<div class="ttc" id="aRenderingService_8h_html"><div class="ttname"><a href="RenderingService_8h.html">RenderingService.h</a></div></div>
+<div class="ttc" id="aScene_8h_html"><div class="ttname"><a href="Scene_8h.html">Scene.h</a></div></div>
+<div class="ttc" id="aShader_8h_html"><div class="ttname"><a href="Shader_8h.html">Shader.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1InputBufferLayout_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1InputBufferLayout.html">Kargono::Rendering::InputBufferLayout</a></div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8h_source.html#l00121">InputBuffer.h:122</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shader_html_a398ace344ad6e57bc42ae33ba507c77a"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shader.html#a398ace344ad6e57bc42ae33ba507c77a">Kargono::Rendering::Shader::SetSpecification</a></div><div class="ttdeci">void SetSpecification(const ShaderSpecification &amp;shaderSpec)</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8cpp_source.html#l00019">Shader.cpp:19</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shader_html_a44c4e5ff6396c85b45c7feaf35a2a184"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shader.html#a44c4e5ff6396c85b45c7feaf35a2a184">Kargono::Rendering::Shader::m_InputBufferLayout</a></div><div class="ttdeci">InputBufferLayout m_InputBufferLayout</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00159">Shader.h:159</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shader_html_a600b5d1d7c8a8db29acd7747a711dc1a"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shader.html#a600b5d1d7c8a8db29acd7747a711dc1a">Kargono::Rendering::Shader::SetInputLayout</a></div><div class="ttdeci">void SetInputLayout(const InputBufferLayout &amp;shaderInputLayout)</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8cpp_source.html#l00025">Shader.cpp:25</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shader_html_a676d821e95f4c11b09fac78600283c33"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shader.html#a676d821e95f4c11b09fac78600283c33">Kargono::Rendering::Shader::m_ShaderSpecification</a></div><div class="ttdeci">ShaderSpecification m_ShaderSpecification</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00158">Shader.h:158</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Shader_html_aac35031d6bc242c4a168783389044764"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Shader.html#aac35031d6bc242c4a168783389044764">Kargono::Rendering::Shader::Create</a></div><div class="ttdeci">static Ref&lt; Shader &gt; Create(const std::string &amp;name, const std::unordered_map&lt; GLenum, std::vector&lt; uint32_t &gt;&gt; &amp;shaderBinaries)</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8cpp_source.html#l00012">Shader.cpp:12</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1VertexArray_html_a55ef1281e05861324d8b6310f8b8a12c"><div class="ttname"><a href="classKargono_1_1Rendering_1_1VertexArray.html#a55ef1281e05861324d8b6310f8b8a12c">Kargono::Rendering::VertexArray::Create</a></div><div class="ttdeci">static Ref&lt; VertexArray &gt; Create()</div><div class="ttdef"><b>Definition:</b> <a href="VertexArray_8cpp_source.html#l00011">VertexArray.cpp:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1VertexBuffer_html_a5c159fc5705c7494cd0b44988b43780f"><div class="ttname"><a href="classKargono_1_1Rendering_1_1VertexBuffer.html#a5c159fc5705c7494cd0b44988b43780f">Kargono::Rendering::VertexBuffer::Create</a></div><div class="ttdeci">static Ref&lt; VertexBuffer &gt; Create(uint32_t size)</div><div class="ttdef"><b>Definition:</b> <a href="InputBuffer_8cpp_source.html#l00012">InputBuffer.cpp:12</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1Scene_html_a60771b991acfc33a7994c90d990afa9b"><div class="ttname"><a href="classKargono_1_1Scenes_1_1Scene.html#a60771b991acfc33a7994c90d990afa9b">Kargono::Scenes::Scene::FillEntityID</a></div><div class="ttdeci">static void FillEntityID(Rendering::RendererInputSpec &amp;inputSpec)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00451">Scene.cpp:451</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8h_source.html#l00016">EditorUI.h:16</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a296139edaea128699e2a799cbdbb791da3e73310ee12c338ad477262c33cc2ffa"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a296139edaea128699e2a799cbdbb791da3e73310ee12c338ad477262c33cc2ffa">Kargono::Rendering::TextureInputType::TextTexture</a></div><div class="ttdeci">@ TextTexture</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a296139edaea128699e2a799cbdbb791da6252d6e0c3eba07a408eadcb15abf8b6"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a296139edaea128699e2a799cbdbb791da6252d6e0c3eba07a408eadcb15abf8b6">Kargono::Rendering::TextureInputType::ColorTexture</a></div><div class="ttdeci">@ ColorTexture</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a3081aaa3e7c4b72155cbd4c2d56b8656"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a3081aaa3e7c4b72155cbd4c2d56b8656">Kargono::Rendering::GLenum</a></div><div class="ttdeci">unsigned int GLenum</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00026">Shader.h:26</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_a7941cbc8fd7c93c475d08980c8b53212ac25b8613f8d34348272fc9f803018a36"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#a7941cbc8fd7c93c475d08980c8b53212ac25b8613f8d34348272fc9f803018a36">Kargono::Rendering::ColorInputType::VertexColor</a></div><div class="ttdeci">@ VertexColor</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3a062de145aef8f70d67e192bdede6d6ea">Kargono::Rendering::RenderingType::DrawIndex</a></div><div class="ttdeci">@ DrawIndex</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_ae49bc6b1a8be3de985e6f11a4681eaa3abfd0c2303287d4d14a95f158f2b024ab"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3abfd0c2303287d4d14a95f158f2b024ab">Kargono::Rendering::RenderingType::DrawTriangle</a></div><div class="ttdeci">@ DrawTriangle</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html_ae49bc6b1a8be3de985e6f11a4681eaa3affcaa643b493573ec6a0a6afe59c37b8"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3affcaa643b493573ec6a0a6afe59c37b8">Kargono::Rendering::RenderingType::DrawLine</a></div><div class="ttdeci">@ DrawLine</div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html">Kargono::Rendering::ShaderSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00070">Shader.h:71</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html_a4a105d27a4a6edfa6284176ed5aae7ef"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html#a4a105d27a4a6edfa6284176ed5aae7ef">Kargono::Rendering::ShaderSpecification::TextureInput</a></div><div class="ttdeci">TextureInputType TextureInput</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00076">Shader.h:76</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html_ac0a3c4fa387acd35c0c3a2f19b4adcbe"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ac0a3c4fa387acd35c0c3a2f19b4adcbe">Kargono::Rendering::ShaderSpecification::ColorInput</a></div><div class="ttdeci">ColorInputType ColorInput</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00075">Shader.h:75</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html_ad2075ea4154a27b60a9c2ad73d869bfc"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ad2075ea4154a27b60a9c2ad73d869bfc">Kargono::Rendering::ShaderSpecification::AddEntityID</a></div><div class="ttdeci">bool AddEntityID</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00083">Shader.h:83</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html_ae70ea3735081b902800366d51140c383"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ae70ea3735081b902800366d51140c383">Kargono::Rendering::ShaderSpecification::RenderType</a></div><div class="ttdeci">RenderingType RenderType</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00086">Shader.h:86</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html_afc1a3fcadc03f842319e625f01e4abb0"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html#afc1a3fcadc03f842319e625f01e4abb0">Kargono::Rendering::ShaderSpecification::AddCircleShape</a></div><div class="ttdeci">bool AddCircleShape</div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00079">Shader.h:79</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>Shader.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_8d85c20224a44fa307f1309d7dd5ba3e.html">Rendering</a></li><li class="navelem"><a class="el" href="Shader_8cpp.html">Shader.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

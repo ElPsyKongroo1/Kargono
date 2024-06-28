@@ -89,47 +89,47 @@ $(document).ready(function(){initNavTree('ConnectionToClient_8cpp_source.html','
 <div class="title">ConnectionToClient.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="ConnectionToClient_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/ConnectionToClient.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ConnectionToClient_8h.html">Kargono/Network/ConnectionToClient.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/Client.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;Kargono/Core/EngineCore.h&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/NetworkingEvent.h&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/ClientInterface.h&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Kargono/Network/ServerInterface.h&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;Kargono/Projects/Project.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Client_8h.html">Kargono/Network/Client.h</a>&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="NetworkingEvent_8h.html">Kargono/Events/NetworkingEvent.h</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ClientInterface_8h.html">Kargono/Network/ClientInterface.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ServerInterface_8h.html">Kargono/Network/ServerInterface.h</a>&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Project_8h.html">Kargono/Projects/Project.h</a>&quot;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>Kargono::Network</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Network.html">Kargono::Network</a></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    ConnectionToClient::ConnectionToClient(asio::io_context&amp; asioContext, asio::ip::tcp::socket&amp;&amp; socket, tsqueue&lt;owned_message&gt;&amp; qIn, std::condition_variable&amp; newCV,</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1ConnectionToClient.html#aa2106ad100c0d8e0fb8d9e799e3d0635">   15</a></span>&#160;    <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#aa2106ad100c0d8e0fb8d9e799e3d0635">ConnectionToClient::ConnectionToClient</a>(asio::io_context&amp; asioContext, asio::ip::tcp::socket&amp;&amp; socket, <a class="code" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue&lt;owned_message&gt;</a>&amp; qIn, std::condition_variable&amp; newCV,</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        std::mutex&amp; newMutex)</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        : Connection(asioContext, std::move(socket), qIn, newCV, newMutex)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        : <a class="code" href="classKargono_1_1Network_1_1Connection.html">Connection</a>(asioContext, <a class="code" href="namespacestd.html">std</a>::move(socket), qIn, newCV, newMutex)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">// Construct validation check data</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">// Connection is Server -&gt; Client, construct random data for the client to transform and send back for validation</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        m_nHandshakeOut = uint64_t(std::chrono::system_clock::now().time_since_epoch().count());</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1Connection.html#a9b2ba1328362a559d942c8490f333ac2">m_nHandshakeOut</a> = <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>(std::chrono::system_clock::now().time_since_epoch().count());</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">// Pre-calculate the result for checking when the client responds</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        m_nHandshakeCheck = Scramble(m_nHandshakeOut);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a6099c0ce7dd91f1346a0dae428b90b23">m_nHandshakeCheck</a> = <a class="code" href="classKargono_1_1Network_1_1Connection.html#a2d686dc1a6358c7cabd1d8bb08fce955">Scramble</a>(<a class="code" href="classKargono_1_1Network_1_1Connection.html#a9b2ba1328362a559d942c8490f333ac2">m_nHandshakeOut</a>);</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    }</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">void</span> ConnectionToClient::Connect(uint32_t uid)</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1ConnectionToClient.html#ac406b275ca2a2a618c6037df4e2123ff">   30</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#ac406b275ca2a2a618c6037df4e2123ff">ConnectionToClient::Connect</a>(uint32_t uid)</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keywordflow">if</span> (m_TCPSocket.is_open())</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.is_open())</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            <span class="keywordtype">id</span> = uid;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            m_UDPLocalEndpoint = asio::ip::udp::endpoint(m_TCPSocket.local_endpoint().address(),</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                m_TCPSocket.local_endpoint().port());</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            m_UDPRemoteSendEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                m_TCPSocket.remote_endpoint().port());</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            m_UDPRemoteReceiveEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                m_TCPSocket.remote_endpoint().port());</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Connection.html#abbcc18bb02f4aad535ffc5537f84d928">m_UDPLocalEndpoint</a> = asio::ip::udp::endpoint(<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.local_endpoint().address(),</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                <a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.local_endpoint().port());</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Connection.html#a7423807bba000e9d8997d8339fbc98bb">m_UDPRemoteSendEndpoint</a> = asio::ip::udp::endpoint(<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.remote_endpoint().address(),</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.remote_endpoint().port());</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Connection.html#a5841c789697fdf5b70945034f34f1e58">m_UDPRemoteReceiveEndpoint</a> = asio::ip::udp::endpoint(<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.remote_endpoint().address(),</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                <a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.remote_endpoint().port());</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="comment">// A client has attempted to connect to the server, but we want</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="comment">// the client to first validate itself, so first write out the</span></div>
@@ -143,30 +143,30 @@ $(document).ready(function(){initNavTree('ConnectionToClient_8cpp_source.html','
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> ConnectionToClient::Disconnect()</div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">   55</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">ConnectionToClient::Disconnect</a>()</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordflow">if</span> (IsConnected())</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a4a4f8d4be4b937d7c5f63ef22c8fdc6b">IsConnected</a>())</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            asio::post(m_asioContext, [<span class="keyword">this</span>]()</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            asio::post(<a class="code" href="classKargono_1_1Network_1_1Connection.html#a47cceaa23c9e54d9167acbd3650d4c8b">m_asioContext</a>, [<span class="keyword">this</span>]()</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                    m_TCPSocket.close();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                    WakeUpNetworkThread();</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.close();</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1Connection.html#a559d09fdfa2a22d29a17fc59b3e839bb">WakeUpNetworkThread</a>();</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                    </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                });</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        KG_INFO(<span class="stringliteral">&quot;[SERVER]: Connection has been terminated&quot;</span>);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;[SERVER]: Connection has been terminated&quot;</span>);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> ConnectionToClient::AddToIncomingMessageQueue()</div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="classKargono_1_1Network_1_1ConnectionToClient.html#a23c6243ba35acda550c524597b077e42">   69</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a23c6243ba35acda550c524597b077e42">ConnectionToClient::AddToIncomingMessageQueue</a>()</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        m_qMessagesIn.push_back({ this-&gt;shared_from_this(), m_msgTemporaryIn });</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        WakeUpNetworkThread();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        ReadHeader();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1Connection.html#ac34645b3bd2d144b5acf36c1786dc137">m_qMessagesIn</a>.push_back({ this-&gt;shared_from_this(), <a class="code" href="classKargono_1_1Network_1_1Connection.html#a8e11c428e12e9868588a79b362a7a830">m_msgTemporaryIn</a> });</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1Connection.html#a559d09fdfa2a22d29a17fc59b3e839bb">WakeUpNetworkThread</a>();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="classKargono_1_1Network_1_1Connection.html#a9ee348865d4a7cbc391ac5517133284a">ReadHeader</a>();</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> ConnectionToClient::WriteValidation()</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        asio::async_write(m_TCPSocket, asio::buffer(&amp;m_nHandshakeOut, <span class="keyword">sizeof</span>(uint64_t)),</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        asio::async_write(<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>, asio::buffer(&amp;<a class="code" href="classKargono_1_1Network_1_1Connection.html#a9b2ba1328362a559d942c8490f333ac2">m_nHandshakeOut</a>, <span class="keyword">sizeof</span>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>)),</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            [<span class="keyword">this</span>](std::error_code ec, std::size_t length)</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            {</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="keywordflow">if</span> (!ec)</div>
@@ -174,49 +174,81 @@ $(document).ready(function(){initNavTree('ConnectionToClient_8cpp_source.html','
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    m_TCPSocket.close();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>.close();</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                }</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            });</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> ConnectionToClient::ReadValidation()</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        asio::async_read(m_TCPSocket, asio::buffer(&amp;m_nHandshakeIn, <span class="keyword">sizeof</span>(uint64_t)),</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        asio::async_read(<a class="code" href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">m_TCPSocket</a>, asio::buffer(&amp;<a class="code" href="classKargono_1_1Network_1_1Connection.html#aed3347b058fd58c6d323878934a37df5">m_nHandshakeIn</a>, <span class="keyword">sizeof</span>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>)),</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            [&amp;](std::error_code ec, std::size_t length)</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            {</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                <span class="keywordflow">if</span> (!ec)</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                    <span class="keywordflow">if</span> (m_nHandshakeIn == m_nHandshakeCheck)</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                    <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Network_1_1Connection.html#aed3347b058fd58c6d323878934a37df5">m_nHandshakeIn</a> == <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a6099c0ce7dd91f1346a0dae428b90b23">m_nHandshakeCheck</a>)</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                    {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                        <span class="comment">// Client has provided valid solution, so allow it to connect properly</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                        KG_INFO(<span class="stringliteral">&quot;Client Validation Successful&quot;</span>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Client Validation Successful&quot;</span>);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                        <span class="comment">// TODO: Add post client validation back</span></div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                        <span class="comment">//server-&gt;OnClientValidated(this-&gt;shared_from_this());</span></div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                        <span class="comment">// Sit waiting to receive data now</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                        ReadHeader();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                        <a class="code" href="classKargono_1_1Network_1_1Connection.html#a9ee348865d4a7cbc391ac5517133284a">ReadHeader</a>();</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                    }</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                    <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                    {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                        KG_INFO(<span class="stringliteral">&quot;Client Disconnected (Failed Validation)&quot;</span>);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                        Disconnect();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                        <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Client Disconnected (Failed Validation)&quot;</span>);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                        <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">Disconnect</a>();</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                    }</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                }</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    KG_INFO(<span class="stringliteral">&quot;Client Disconnected (ReadValidation)&quot;</span>);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                    Disconnect();</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                    <a class="code" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Client Disconnected (ReadValidation)&quot;</span>);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                    <a class="code" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">Disconnect</a>();</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                }</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            });</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="ttc" id="aClientInterface_8h_html"><div class="ttname"><a href="ClientInterface_8h.html">ClientInterface.h</a></div></div>
+<div class="ttc" id="aClient_8h_html"><div class="ttname"><a href="Client_8h.html">Client.h</a></div></div>
+<div class="ttc" id="aConnectionToClient_8h_html"><div class="ttname"><a href="ConnectionToClient_8h.html">ConnectionToClient.h</a></div></div>
+<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
+<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
+<div class="ttc" id="aNetworkingEvent_8h_html"><div class="ttname"><a href="NetworkingEvent_8h.html">NetworkingEvent.h</a></div></div>
+<div class="ttc" id="aProject_8h_html"><div class="ttname"><a href="Project_8h.html">Project.h</a></div></div>
+<div class="ttc" id="aServerInterface_8h_html"><div class="ttname"><a href="ServerInterface_8h.html">ServerInterface.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_a23c6243ba35acda550c524597b077e42"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#a23c6243ba35acda550c524597b077e42">Kargono::Network::ConnectionToClient::AddToIncomingMessageQueue</a></div><div class="ttdeci">virtual void AddToIncomingMessageQueue() override</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8cpp_source.html#l00069">ConnectionToClient.cpp:69</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_a4a4f8d4be4b937d7c5f63ef22c8fdc6b"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#a4a4f8d4be4b937d7c5f63ef22c8fdc6b">Kargono::Network::ConnectionToClient::IsConnected</a></div><div class="ttdeci">bool IsConnected() const</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8h_source.html#l00052">ConnectionToClient.h:52</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_a6099c0ce7dd91f1346a0dae428b90b23"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#a6099c0ce7dd91f1346a0dae428b90b23">Kargono::Network::ConnectionToClient::m_nHandshakeCheck</a></div><div class="ttdeci">uint64_t m_nHandshakeCheck</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8h_source.html#l00074">ConnectionToClient.h:74</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_a7273595f5ce518ff9c96cb74904ece41"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">Kargono::Network::ConnectionToClient::Disconnect</a></div><div class="ttdeci">virtual void Disconnect() override</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8cpp_source.html#l00055">ConnectionToClient.cpp:55</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_aa2106ad100c0d8e0fb8d9e799e3d0635"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#aa2106ad100c0d8e0fb8d9e799e3d0635">Kargono::Network::ConnectionToClient::ConnectionToClient</a></div><div class="ttdeci">ConnectionToClient(asio::io_context &amp;asioContext, asio::ip::tcp::socket &amp;&amp;socket, tsqueue&lt; owned_message &gt; &amp;qIn, std::condition_variable &amp;newCV, std::mutex &amp;newMutex)</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8cpp_source.html#l00015">ConnectionToClient.cpp:15</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1ConnectionToClient_html_ac406b275ca2a2a618c6037df4e2123ff"><div class="ttname"><a href="classKargono_1_1Network_1_1ConnectionToClient.html#ac406b275ca2a2a618c6037df4e2123ff">Kargono::Network::ConnectionToClient::Connect</a></div><div class="ttdeci">void Connect(uint32_t uid=0)</div><div class="ttdef"><b>Definition:</b> <a href="ConnectionToClient_8cpp_source.html#l00030">ConnectionToClient.cpp:30</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html">Kargono::Network::Connection</a></div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00017">Connection.h:18</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a2d686dc1a6358c7cabd1d8bb08fce955"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a2d686dc1a6358c7cabd1d8bb08fce955">Kargono::Network::Connection::Scramble</a></div><div class="ttdeci">uint64_t Scramble(uint64_t nInput)</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8cpp_source.html#l00136">Connection.cpp:136</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a47cceaa23c9e54d9167acbd3650d4c8b"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a47cceaa23c9e54d9167acbd3650d4c8b">Kargono::Network::Connection::m_asioContext</a></div><div class="ttdeci">asio::io_context &amp; m_asioContext</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00048">Connection.h:48</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a559d09fdfa2a22d29a17fc59b3e839bb"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a559d09fdfa2a22d29a17fc59b3e839bb">Kargono::Network::Connection::WakeUpNetworkThread</a></div><div class="ttdeci">void WakeUpNetworkThread()</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8cpp_source.html#l00019">Connection.cpp:19</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a5841c789697fdf5b70945034f34f1e58"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a5841c789697fdf5b70945034f34f1e58">Kargono::Network::Connection::m_UDPRemoteReceiveEndpoint</a></div><div class="ttdeci">asio::ip::udp::endpoint m_UDPRemoteReceiveEndpoint</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00061">Connection.h:61</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a7423807bba000e9d8997d8339fbc98bb"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a7423807bba000e9d8997d8339fbc98bb">Kargono::Network::Connection::m_UDPRemoteSendEndpoint</a></div><div class="ttdeci">asio::ip::udp::endpoint m_UDPRemoteSendEndpoint</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00060">Connection.h:60</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a8e11c428e12e9868588a79b362a7a830"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a8e11c428e12e9868588a79b362a7a830">Kargono::Network::Connection::m_msgTemporaryIn</a></div><div class="ttdeci">Message m_msgTemporaryIn</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00063">Connection.h:63</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a9b2ba1328362a559d942c8490f333ac2"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a9b2ba1328362a559d942c8490f333ac2">Kargono::Network::Connection::m_nHandshakeOut</a></div><div class="ttdeci">uint64_t m_nHandshakeOut</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00066">Connection.h:66</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_a9ee348865d4a7cbc391ac5517133284a"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#a9ee348865d4a7cbc391ac5517133284a">Kargono::Network::Connection::ReadHeader</a></div><div class="ttdeci">void ReadHeader()</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8cpp_source.html#l00036">Connection.cpp:36</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_abbcc18bb02f4aad535ffc5537f84d928"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#abbcc18bb02f4aad535ffc5537f84d928">Kargono::Network::Connection::m_UDPLocalEndpoint</a></div><div class="ttdeci">asio::ip::udp::endpoint m_UDPLocalEndpoint</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00059">Connection.h:59</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_ac34645b3bd2d144b5acf36c1786dc137"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#ac34645b3bd2d144b5acf36c1786dc137">Kargono::Network::Connection::m_qMessagesIn</a></div><div class="ttdeci">tsqueue&lt; owned_message &gt; &amp; m_qMessagesIn</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00057">Connection.h:57</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_ae25e96c7fa2aa66ba9244220d5387996"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#ae25e96c7fa2aa66ba9244220d5387996">Kargono::Network::Connection::m_TCPSocket</a></div><div class="ttdeci">asio::ip::tcp::socket m_TCPSocket</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00045">Connection.h:45</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Connection_html_aed3347b058fd58c6d323878934a37df5"><div class="ttname"><a href="classKargono_1_1Network_1_1Connection.html#aed3347b058fd58c6d323878934a37df5">Kargono::Network::Connection::m_nHandshakeIn</a></div><div class="ttdeci">uint64_t m_nHandshakeIn</div><div class="ttdef"><b>Definition:</b> <a href="Connection_8h_source.html#l00067">Connection.h:67</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1tsqueue_html"><div class="ttname"><a href="classKargono_1_1Network_1_1tsqueue.html">Kargono::Network::tsqueue</a></div><div class="ttdef"><b>Definition:</b> <a href="DataStructures_8h_source.html#l00011">DataStructures.h:12</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Network_html"><div class="ttname"><a href="namespaceKargono_1_1Network.html">Kargono::Network</a></div><div class="ttdef"><b>Definition:</b> <a href="Client_8cpp_source.html#l00008">Client.cpp:9</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00398">Scripting.cpp:398</a></div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00021">UUID.h:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_372db1584a37a464aca6076ce7a6b981.html">Network</a></li><li class="navelem"><b>ConnectionToClient.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_372db1584a37a464aca6076ce7a6b981.html">Network</a></li><li class="navelem"><a class="el" href="ConnectionToClient_8cpp.html">ConnectionToClient.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

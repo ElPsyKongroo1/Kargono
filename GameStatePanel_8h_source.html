@@ -89,39 +89,49 @@ $(document).ready(function(){initNavTree('GameStatePanel_8h_source.html',''); in
 <div class="title">GameStatePanel.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Kargono/Assets/Asset.h&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Events/KeyEvent.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/GameState.h&quot;</span></div>
+<a href="GameStatePanel_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Asset_8h.html">Kargono/Assets/Asset.h</a>&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="KeyEvent_8h.html">Kargono/Events/KeyEvent.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GameState_8h.html">Kargono/Scenes/GameState.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Panels.html">Kargono::Panels</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1GameStatePanel.html">   10</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1GameStatePanel.html">GameStatePanel</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1GameStatePanel.html">   10</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html">GameStatePanel</a></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <a class="code" href="classKargono_1_1GameStatePanel.html">GameStatePanel</a>();</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html#a2f59876761a157baaaa6dcdcfb6f3d7c">GameStatePanel</a>();</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordtype">void</span> OnEditorUIRender();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordtype">bool</span> OnKeyPressedEditor(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html#ad82ca3abd514eb26a49c7708feceb8a6">OnEditorUIRender</a>();</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html#ae4a3be10ce468c1c8057e5168ea572d5">OnKeyPressedEditor</a>(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        Ref&lt;GameState&gt; m_EditorGameState {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> m_EditorGameStateHandle {0};</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1GameStatePanel.html#aa4be821ff16e0ba8f92556b3a256046c">   18</a></span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scenes::GameState&gt;</a> <a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html#aa4be821ff16e0ba8f92556b3a256046c">m_EditorGameState</a> {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1GameStatePanel.html#aa1be4dd4630ae6a2247ea99a1eba93a5">   19</a></span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> <a class="code" href="classKargono_1_1Panels_1_1GameStatePanel.html#aa1be4dd4630ae6a2247ea99a1eba93a5">m_EditorGameStateHandle</a> {0};</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        std::string m_PanelName{ <span class="stringliteral">&quot;Game State Editor&quot;</span> };</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    };</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div>
+<div class="ttc" id="aAsset_8h_html"><div class="ttname"><a href="Asset_8h.html">Asset.h</a></div></div>
+<div class="ttc" id="aGameState_8h_html"><div class="ttname"><a href="GameState_8h.html">GameState.h</a></div></div>
+<div class="ttc" id="aKeyEvent_8h_html"><div class="ttname"><a href="KeyEvent_8h.html">KeyEvent.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
-<div class="ttc" id="aclassKargono_1_1GameStatePanel_html"><div class="ttname"><a href="classKargono_1_1GameStatePanel.html">Kargono::GameStatePanel</a></div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8h_source.html#l00010">GameStatePanel.h:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html">Kargono::Panels::GameStatePanel</a></div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8h_source.html#l00010">GameStatePanel.h:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html_a2f59876761a157baaaa6dcdcfb6f3d7c"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html#a2f59876761a157baaaa6dcdcfb6f3d7c">Kargono::Panels::GameStatePanel::GameStatePanel</a></div><div class="ttdeci">GameStatePanel()</div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8cpp_source.html#l00333">GameStatePanel.cpp:333</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html_aa1be4dd4630ae6a2247ea99a1eba93a5"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html#aa1be4dd4630ae6a2247ea99a1eba93a5">Kargono::Panels::GameStatePanel::m_EditorGameStateHandle</a></div><div class="ttdeci">Assets::AssetHandle m_EditorGameStateHandle</div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8h_source.html#l00019">GameStatePanel.h:19</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html_aa4be821ff16e0ba8f92556b3a256046c"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html#aa4be821ff16e0ba8f92556b3a256046c">Kargono::Panels::GameStatePanel::m_EditorGameState</a></div><div class="ttdeci">Ref&lt; Scenes::GameState &gt; m_EditorGameState</div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8h_source.html#l00018">GameStatePanel.h:18</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html_ad82ca3abd514eb26a49c7708feceb8a6"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html#ad82ca3abd514eb26a49c7708feceb8a6">Kargono::Panels::GameStatePanel::OnEditorUIRender</a></div><div class="ttdeci">void OnEditorUIRender()</div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8cpp_source.html#l00345">GameStatePanel.cpp:345</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1GameStatePanel_html_ae4a3be10ce468c1c8057e5168ea572d5"><div class="ttname"><a href="classKargono_1_1Panels_1_1GameStatePanel.html#ae4a3be10ce468c1c8057e5168ea572d5">Kargono::Panels::GameStatePanel::OnKeyPressedEditor</a></div><div class="ttdeci">bool OnKeyPressedEditor(Events::KeyPressedEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="GameStatePanel_8cpp_source.html#l00368">GameStatePanel.cpp:368</a></div></div>
 <div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Panels_html"><div class="ttname"><a href="namespaceKargono_1_1Panels.html">Kargono::Panels</a></div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00075">ContentBrowserPanel.cpp:76</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><b>GameStatePanel.h</b></li>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><a class="el" href="GameStatePanel_8h.html">GameStatePanel.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

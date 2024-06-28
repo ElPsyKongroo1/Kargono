@@ -89,9 +89,9 @@ $(document).ready(function(){initNavTree('FileDialogs_8h_source.html',''); initR
 <div class="title">FileDialogs.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="FileDialogs_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span>Kargono::Utility</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;{</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">//============================================================</span></div>
@@ -103,25 +103,31 @@ $(document).ready(function(){initNavTree('FileDialogs_8h_source.html',''); initR
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1FileDialogs.html">   12</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html">FileDialogs</a></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">// This function opens a file dialog box that requests the user</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">//      to select a file whose extension matches the filter provided</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//      in the parameter. The selected file can be later handled</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">//      in the calling code.</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keyword">static</span> std::filesystem::path OpenFile(<span class="keyword">const</span> <span class="keywordtype">char</span>* filter = <span class="stringliteral">&quot;&quot;</span>, <span class="keyword">const</span> <span class="keywordtype">char</span>* initialDirectory = <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">// This function opens a file dialog box that requests the user</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//      to select a directory and filename to save a file with.</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">//      The selected path is returned to the calling code to</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//      be handled.</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">static</span> std::filesystem::path SaveFile(<span class="keyword">const</span> <span class="keywordtype">char</span>* filter = <span class="stringliteral">&quot;&quot;</span>, <span class="keyword">const</span> <span class="keywordtype">char</span>* initialDirectory = <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    };</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">// Create File Dialog Functions</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// This function opens a file dialog box that requests the user</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//      to select a file whose extension matches the filter provided</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">//      in the parameter. The selected file can be later handled</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//      in the calling code.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">   22</a></span>&#160;        <span class="keyword">static</span> std::filesystem::path <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">OpenFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* filter = <span class="stringliteral">&quot;&quot;</span>, <span class="keyword">const</span> <span class="keywordtype">char</span>* initialDirectory = <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// This function opens a file dialog box that requests the user</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">//      to select a directory and filename to save a file with.</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">//      The selected path is returned to the calling code to</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="comment">//      be handled.</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1FileDialogs.html#a9982e7fbe29d7a4610385da03316817c">   27</a></span>&#160;        <span class="keyword">static</span> std::filesystem::path <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#a9982e7fbe29d7a4610385da03316817c">SaveFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* filter = <span class="stringliteral">&quot;&quot;</span>, <span class="keyword">const</span> <span class="keywordtype">char</span>* initialDirectory = <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    };</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html">Kargono::Utility::FileDialogs</a></div><div class="ttdef"><b>Definition:</b> <a href="FileDialogs_8h_source.html#l00012">FileDialogs.h:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a3b09ec6fd0535fcda6b4d2b8ef755978"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">Kargono::Utility::FileDialogs::OpenFile</a></div><div class="ttdeci">static std::filesystem::path OpenFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a9982e7fbe29d7a4610385da03316817c"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a9982e7fbe29d7a4610385da03316817c">Kargono::Utility::FileDialogs::SaveFile</a></div><div class="ttdeci">static std::filesystem::path SaveFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><b>FileDialogs.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><a class="el" href="FileDialogs_8h.html">FileDialogs.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

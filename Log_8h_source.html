@@ -89,20 +89,20 @@ $(document).ready(function(){initNavTree('Log_8h_source.html',''); initResizable
 <div class="title">Log.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;API/Logger/SpdLogAPI.h&quot;</span></div>
+<a href="Log_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SpdLogAPI_8h.html">API/Logger/SpdLogAPI.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
 <div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html">    6</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Log.html">Log</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Init();</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Init</a>();</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="keyword">static</span> Ref&lt;spdlog::logger&gt;&amp; GetCoreLogger() { <span class="keywordflow">return</span> s_CoreLogger; }</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">   11</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a>&amp; <a class="code" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">GetCoreLogger</a>() { <span class="keywordflow">return</span> s_CoreLogger; }</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">static</span> Ref&lt;spdlog::logger&gt; s_CoreLogger;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a> s_CoreLogger;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    };</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;}</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
@@ -120,31 +120,36 @@ $(document).ready(function(){initNavTree('Log_8h_source.html',''); initResizable
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">    #define KG_TRACE_ERROR(...)     SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK();</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="comment">// Core Log Macros</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">    #define KG_INFO(...)        </span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK();</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">   32</a></span>&#160;<span class="preprocessor">    #define KG_INFO(...)        </span></div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">   33</a></span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">   34</a></span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">   35</a></span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK();</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// Used for Debugging</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">    #define KG_TRACE(...)       </span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">    #define KG_TRACE2(...)      </span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">    #define KG_TRACE3(...)      </span></div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="Log_8h.html#a1a04d44b8154d2378583b5075008e625">   38</a></span>&#160;<span class="preprocessor">    #define KG_TRACE(...)       </span></div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="Log_8h.html#a0461fc63b46b84a39b731a5708ade830">   39</a></span>&#160;<span class="preprocessor">    #define KG_TRACE2(...)      </span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="Log_8h.html#a2a50e69365c46a41545fb96e14410fcf">   40</a></span>&#160;<span class="preprocessor">    #define KG_TRACE3(...)      </span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#ifdef KG_ENABLE_VERIFY</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">// Verify: Used to ensure systems are working correctly</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#define KG_VERIFY(predicate, ...) \</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// Verify: Used to ensure systems are working correctly</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">    #define KG_VERIFY(predicate, ...) \</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">    if (predicate) { SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), &quot;[Verified] &quot;</span> __VA_ARGS__); } \</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    else { SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), &quot;[Failed to Verify] &quot; __VA_ARGS__); KG_DEBUGBREAK(); }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="ttc" id="aSpdLogAPI_8h_html"><div class="ttname"><a href="SpdLogAPI_8h.html">SpdLogAPI.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Log_html"><div class="ttname"><a href="classKargono_1_1Log.html">Kargono::Log</a></div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00006">Log.h:7</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00011">Log.cpp:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_af72965b9102a8a18051aaf08797be610"><div class="ttname"><a href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a></div><div class="ttdeci">static Ref&lt; spdlog::logger &gt; &amp; GetCoreLogger()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00011">Log.h:11</a></div></div>
+<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>Log.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><a class="el" href="Log_8h.html">Log.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

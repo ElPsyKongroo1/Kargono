@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Kargono: Engine/Source/Kargono/Renderer/ShaderBuilder.h Source File</title>
+<title>Kargono: Engine/Source/Kargono/Rendering/ShaderBuilder.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,26 +89,29 @@ $(document).ready(function(){initNavTree('ShaderBuilder_8h_source.html',''); ini
 <div class="title">ShaderBuilder.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;Shader.h&quot;</span></div>
+<a href="ShaderBuilder_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Shader_8h.html">Kargono/Rendering/Shader.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
-<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classKargono_1_1ShaderBuilder.html">    6</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1ShaderBuilder.html">ShaderBuilder</a></div>
+<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="classKargono_1_1Rendering_1_1ShaderBuilder.html">    6</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Rendering_1_1ShaderBuilder.html">ShaderBuilder</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">static</span> std::tuple&lt;ShaderSource, InputBufferLayout, UniformBufferList&gt; BuildShader(<span class="keyword">const</span> <a class="code" href="structKargono_1_1ShaderSpecification.html">ShaderSpecification</a>&amp; shaderSpec);</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="keyword">static</span> std::tuple&lt;ShaderSource, InputBufferLayout, UniformBufferList&gt; <a class="code" href="classKargono_1_1Rendering_1_1ShaderBuilder.html#af73bc1fcc33c372f78949798fb871ee2">BuildShader</a>(<span class="keyword">const</span> <a class="code" href="structKargono_1_1Rendering_1_1ShaderSpecification.html">ShaderSpecification</a>&amp; shaderSpec);</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    };</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1ShaderBuilder_html"><div class="ttname"><a href="classKargono_1_1ShaderBuilder.html">Kargono::ShaderBuilder</a></div><div class="ttdef"><b>Definition:</b> <a href="ShaderBuilder_8h_source.html#l00006">ShaderBuilder.h:7</a></div></div>
-<div class="ttc" id="astructKargono_1_1ShaderSpecification_html"><div class="ttname"><a href="structKargono_1_1ShaderSpecification.html">Kargono::ShaderSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00067">Shader.h:68</a></div></div>
+<div class="ttc" id="aShader_8h_html"><div class="ttname"><a href="Shader_8h.html">Shader.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1ShaderBuilder_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1ShaderBuilder.html">Kargono::Rendering::ShaderBuilder</a></div><div class="ttdef"><b>Definition:</b> <a href="ShaderBuilder_8h_source.html#l00006">ShaderBuilder.h:7</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1ShaderBuilder_html_af73bc1fcc33c372f78949798fb871ee2"><div class="ttname"><a href="classKargono_1_1Rendering_1_1ShaderBuilder.html#af73bc1fcc33c372f78949798fb871ee2">Kargono::Rendering::ShaderBuilder::BuildShader</a></div><div class="ttdeci">static std::tuple&lt; ShaderSource, InputBufferLayout, UniformBufferList &gt; BuildShader(const ShaderSpecification &amp;shaderSpec)</div><div class="ttdef"><b>Definition:</b> <a href="ShaderBuilder_8cpp_source.html#l00541">ShaderBuilder.cpp:541</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8h_source.html#l00016">EditorUI.h:16</a></div></div>
+<div class="ttc" id="astructKargono_1_1Rendering_1_1ShaderSpecification_html"><div class="ttname"><a href="structKargono_1_1Rendering_1_1ShaderSpecification.html">Kargono::Rendering::ShaderSpecification</a></div><div class="ttdef"><b>Definition:</b> <a href="Shader_8h_source.html#l00070">Shader.h:71</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f3770c961286aca35ef473cde18a282d.html">Renderer</a></li><li class="navelem"><b>ShaderBuilder.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_8d85c20224a44fa307f1309d7dd5ba3e.html">Rendering</a></li><li class="navelem"><a class="el" href="ShaderBuilder_8h.html">ShaderBuilder.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

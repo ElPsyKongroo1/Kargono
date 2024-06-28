@@ -89,15 +89,15 @@ $(document).ready(function(){initNavTree('Text_8h_source.html',''); initResizabl
 <div class="title">Text.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="Text_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Kargono { <span class="keyword">class </span>Texture2D; }</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>Kargono::Assets { <span class="keyword">class </span>AssetManager; }</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Assets.html">Kargono::Assets</a> { <span class="keyword">class </span>AssetManager; }</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a> { <span class="keyword">class </span>Texture2D; }</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// UI (User Interface) Namespace</span></div>
@@ -105,92 +105,116 @@ $(document).ready(function(){initNavTree('Text_8h_source.html',''); initResizabl
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// This namespace holds all of the classes that enable the usage of the runtime</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">//      user interface, accessory classes for the Editor user interface, and</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">//      the font class to enable text rendering.</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>Kargono::RuntimeUI</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1RuntimeUI.html">Kargono::RuntimeUI</a></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">class </span>Font;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">class </span><a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea67c8c7d71374f1e4874b123cfbf6ee93">Font</a>;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// Text Engine Class</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">// This class provides static functions to manage the creation of an unmanaged</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">//      font (Editor Font) and initialize the rendering pipeline for all text.</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Text.html">   26</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html">Text</a></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// This function initializes the TextRenderingSpec inside the TextEngine.cpp</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">//      file that enables draw call data for the text to be submitted to the</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//      renderer.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> Init();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">// Create Unmanaged Font</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">// This function allows font to be initialized outside the management of the</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">//      AssetManager. This font will persist inside the application until the</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">//      application is closed. This is primarily useful for editor only assets.</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">static</span> Ref&lt;Font&gt; InstantiateEditorFont(<span class="keyword">const</span> std::filesystem::path&amp; filepath);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    };</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">// MSDFCharacter Struct</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// This struct holds all of the data necessary to render a specific character including</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">//      its image and its dimensions.</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html">   51</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html">Character</a></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// This is the size of the Glyph in pixels (Width/Height).</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        Math::vec2  Size;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        Math::vec2 TexCoordinateMin;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        Math::vec2 TexCoordinateMax;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        Math::vec2 QuadMin;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        Math::vec2 QuadMax;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">float</span> Advance;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Text.html">   27</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html">Text</a></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// This function initializes the TextRenderingSpec inside the TextEngine.cpp</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//      file that enables draw call data for the text to be submitted to the</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">//      renderer.</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html#a6bb816d6e1cfffc4f724dd793d70f792">Init</a>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// Create Unmanaged Font</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// This function allows font to be initialized outside the management of the</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">//      AssetManager. This font will persist inside the application until the</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">//      application is closed. This is primarily useful for editor only assets.</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Font&gt;</a> <a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html#ae9db68ca0a6f10a7eeeae4d90f01139b">InstantiateEditorFont</a>(<span class="keyword">const</span> std::filesystem::path&amp; filepath);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    };</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// MSDFCharacter Struct</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">// This struct holds all of the data necessary to render a specific character including</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">//      its image and its dimensions.</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html">   52</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html">Character</a></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">// This is the size of the Glyph in pixels (Width/Height).</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#ac3a6f93e73802d657d35f61f3a1655b0">   55</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>  <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#ac3a6f93e73802d657d35f61f3a1655b0">Size</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#ab41519811e79f8cec7d30e1c47d9e830">   56</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#ab41519811e79f8cec7d30e1c47d9e830">TexCoordinateMin</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#a9b789c47866ac5493ca2ff93ef342374">   57</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#a9b789c47866ac5493ca2ff93ef342374">TexCoordinateMax</a>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#a3dbbfd11af7134609d028627e2747ed3">   58</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#a3dbbfd11af7134609d028627e2747ed3">QuadMin</a>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#a5311b4605e4cb4d0842a4443debb17f3">   59</a></span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#a5311b4605e4cb4d0842a4443debb17f3">QuadMax</a>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structKargono_1_1RuntimeUI_1_1Character.html#a4dbaa7990fef4a84b80ed50c554985ac">   60</a></span>&#160;        <span class="keywordtype">float</span> <a class="code" href="structKargono_1_1RuntimeUI_1_1Character.html#a4dbaa7990fef4a84b80ed50c554985ac">Advance</a>;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    };</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html">   63</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html">Font</a></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    {</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="comment">// External Functionality</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="comment">// Font API</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordtype">void</span> PushTextData(<span class="keyword">const</span> std::string&amp; <span class="keywordtype">string</span>, Math::vec3 translation, <span class="keyword">const</span> glm::vec4&amp; color, <span class="keywordtype">float</span> scale = 1.0f);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        Math::vec2 CalculateTextSize(<span class="keyword">const</span> std::string&amp; text);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">// Getters/Setters</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        std::unordered_map&lt;unsigned char, Character&gt;&amp; GetCharacters() { <span class="keywordflow">return</span> m_Characters; }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">float</span> GetLineHeight()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_LineHeight; }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">void</span> SetLineHeight(<span class="keywordtype">float</span> height) { m_LineHeight = height; }</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        Ref&lt;Texture2D&gt; m_AtlasTexture = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">float</span> m_LineHeight {0};</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        std::unordered_map&lt;unsigned char, Character&gt; m_Characters{};</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a>;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html">Text</a>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    };</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html#a93e0db0eb6c68a15d07fdc8777052d6d">PushTextData</a>(<span class="keyword">const</span> std::string&amp; <span class="keywordtype">string</span>, <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> translation, <span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">glm::vec4</a>&amp; color, <span class="keywordtype">float</span> scale = 1.0f);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html#a2cbdae1d812306b0846f92ffd599a370">CalculateTextSize</a>(<span class="keyword">const</span> std::string&amp; text);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">// Getters/Setters</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html#a1b6075bd9df2c6ea9e5620a38c1b5d4f">   76</a></span>&#160;        std::unordered_map&lt;unsigned char, Character&gt;&amp; <a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html#a1b6075bd9df2c6ea9e5620a38c1b5d4f">GetCharacters</a>() { <span class="keywordflow">return</span> m_Characters; }</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html#a61bfa4b38a132cc55b97dd25b504e3bf">   77</a></span>&#160;        <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html#a61bfa4b38a132cc55b97dd25b504e3bf">GetLineHeight</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_LineHeight; }</div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html#a3b6bd98b06f573e1a2a4704aadc44d8b">   78</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeUI_1_1Font.html#a3b6bd98b06f573e1a2a4704aadc44d8b">SetLineHeight</a>(<span class="keywordtype">float</span> height) { m_LineHeight = height; }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// Internal Fields</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Rendering::Texture2D&gt;</a> m_AtlasTexture = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">float</span> m_LineHeight {0};</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        std::unordered_map&lt;unsigned char, Character&gt; m_Characters{};</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html#a93a4681dfdc6917d50d61ef8c5254626">   88</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1Assets_1_1AssetManager.html">Assets::AssetManager</a>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeUI_1_1Font.html#aee0ad1dafe471596e6d25530d9fbaf0c">   89</a></span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html">Text</a>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    };</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}</div>
+<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html">Kargono::Assets::AssetManager</a></div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00042">AssetManager.h:43</a></div></div>
 <div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html">Kargono::RuntimeUI::Font</a></div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00063">Text.h:64</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Text_html"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Text.html">Kargono::RuntimeUI::Text</a></div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00026">Text.h:27</a></div></div>
-<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html">Kargono::RuntimeUI::Character</a></div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00051">Text.h:52</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html_a1b6075bd9df2c6ea9e5620a38c1b5d4f"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html#a1b6075bd9df2c6ea9e5620a38c1b5d4f">Kargono::RuntimeUI::Font::GetCharacters</a></div><div class="ttdeci">std::unordered_map&lt; unsigned char, Character &gt; &amp; GetCharacters()</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00076">Text.h:76</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html_a2cbdae1d812306b0846f92ffd599a370"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html#a2cbdae1d812306b0846f92ffd599a370">Kargono::RuntimeUI::Font::CalculateTextSize</a></div><div class="ttdeci">Math::vec2 CalculateTextSize(const std::string &amp;text)</div><div class="ttdef"><b>Definition:</b> <a href="Text_8cpp_source.html#l00295">Text.cpp:295</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html_a3b6bd98b06f573e1a2a4704aadc44d8b"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html#a3b6bd98b06f573e1a2a4704aadc44d8b">Kargono::RuntimeUI::Font::SetLineHeight</a></div><div class="ttdeci">void SetLineHeight(float height)</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00078">Text.h:78</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html_a61bfa4b38a132cc55b97dd25b504e3bf"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html#a61bfa4b38a132cc55b97dd25b504e3bf">Kargono::RuntimeUI::Font::GetLineHeight</a></div><div class="ttdeci">float GetLineHeight() const</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00077">Text.h:77</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Font_html_a93e0db0eb6c68a15d07fdc8777052d6d"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Font.html#a93e0db0eb6c68a15d07fdc8777052d6d">Kargono::RuntimeUI::Font::PushTextData</a></div><div class="ttdeci">void PushTextData(const std::string &amp;string, Math::vec3 translation, const glm::vec4 &amp;color, float scale=1.0f)</div><div class="ttdef"><b>Definition:</b> <a href="Text_8cpp_source.html#l00201">Text.cpp:201</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Text_html"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Text.html">Kargono::RuntimeUI::Text</a></div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00027">Text.h:28</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Text_html_a6bb816d6e1cfffc4f724dd793d70f792"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Text.html#a6bb816d6e1cfffc4f724dd793d70f792">Kargono::RuntimeUI::Text::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Text_8cpp_source.html#l00050">Text.cpp:50</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Text_html_ae9db68ca0a6f10a7eeeae4d90f01139b"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Text.html#ae9db68ca0a6f10a7eeeae4d90f01139b">Kargono::RuntimeUI::Text::InstantiateEditorFont</a></div><div class="ttdeci">static Ref&lt; Font &gt; InstantiateEditorFont(const std::filesystem::path &amp;filepath)</div><div class="ttdef"><b>Definition:</b> <a href="Text_8cpp_source.html#l00082">Text.cpp:82</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Assets_html"><div class="ttname"><a href="namespaceKargono_1_1Assets.html">Kargono::Assets</a></div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00014">Asset.h:15</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Assets_html_a87d009e5376073cedbbc0c6a82318d5ea67c8c7d71374f1e4874b123cfbf6ee93"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea67c8c7d71374f1e4874b123cfbf6ee93">Kargono::Assets::Font</a></div><div class="ttdeci">@ Font</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00032">Asset.h:32</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a54a9e352ac755822901745e5bad04edb"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a></div><div class="ttdeci">glm::vec4 vec4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00015">MathAliases.h:15</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00013">MathAliases.h:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Rendering_html"><div class="ttname"><a href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8h_source.html#l00016">EditorUI.h:16</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1RuntimeUI_html"><div class="ttname"><a href="namespaceKargono_1_1RuntimeUI.html">Kargono::RuntimeUI</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00012">RuntimeUI.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html">Kargono::RuntimeUI::Character</a></div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00052">Text.h:53</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_a3dbbfd11af7134609d028627e2747ed3"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#a3dbbfd11af7134609d028627e2747ed3">Kargono::RuntimeUI::Character::QuadMin</a></div><div class="ttdeci">Math::vec2 QuadMin</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00058">Text.h:58</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_a4dbaa7990fef4a84b80ed50c554985ac"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#a4dbaa7990fef4a84b80ed50c554985ac">Kargono::RuntimeUI::Character::Advance</a></div><div class="ttdeci">float Advance</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00060">Text.h:60</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_a5311b4605e4cb4d0842a4443debb17f3"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#a5311b4605e4cb4d0842a4443debb17f3">Kargono::RuntimeUI::Character::QuadMax</a></div><div class="ttdeci">Math::vec2 QuadMax</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00059">Text.h:59</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_a9b789c47866ac5493ca2ff93ef342374"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#a9b789c47866ac5493ca2ff93ef342374">Kargono::RuntimeUI::Character::TexCoordinateMax</a></div><div class="ttdeci">Math::vec2 TexCoordinateMax</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00057">Text.h:57</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_ab41519811e79f8cec7d30e1c47d9e830"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#ab41519811e79f8cec7d30e1c47d9e830">Kargono::RuntimeUI::Character::TexCoordinateMin</a></div><div class="ttdeci">Math::vec2 TexCoordinateMin</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00056">Text.h:56</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Character_html_ac3a6f93e73802d657d35f61f3a1655b0"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Character.html#ac3a6f93e73802d657d35f61f3a1655b0">Kargono::RuntimeUI::Character::Size</a></div><div class="ttdeci">Math::vec2 Size</div><div class="ttdef"><b>Definition:</b> <a href="Text_8h_source.html#l00055">Text.h:55</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_98866e7666f6c731c258f80c234d70c0.html">RuntimeUI</a></li><li class="navelem"><b>Text.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_98866e7666f6c731c258f80c234d70c0.html">RuntimeUI</a></li><li class="navelem"><a class="el" href="Text_8h.html">Text.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

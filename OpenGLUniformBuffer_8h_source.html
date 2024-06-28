@@ -89,55 +89,59 @@ $(document).ready(function(){initNavTree('OpenGLUniformBuffer_8h_source.html',''
 <div class="title">OpenGLUniformBuffer.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="OpenGLUniformBuffer_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Renderer/UniformBuffer.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UniformBuffer_8h.html">Kargono/Rendering/UniformBuffer.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>API::RenderingAPI</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// OpenGL Uniform Buffer Class</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#ifdef KG_RENDERER_OPENGL</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>API::RenderingAPI</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//============================================================</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// This class represents a Uniform Buffer inside of OpenGL. The class holds</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">//      a reference to the actual uniform buffer with m_RendererID. A uniform buffer</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">//      simply represents a portion of allocated data (buffer) in the GPU that can</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">//      be accessed by any shader program. This is particularly useful for data that</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">//      does not change per render pass such as the view projection matrix of the current</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">//      camera.</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html">   16</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html">OpenGLUniformBuffer</a> : <span class="keyword">public</span> <a class="code" href="classKargono_1_1UniformBuffer.html">Kargono::UniformBuffer</a></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">// OpenGL Uniform Buffer Class</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">//============================================================</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">// This class represents a Uniform Buffer inside of OpenGL. The class holds</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">//      a reference to the actual uniform buffer with m_RendererID. A uniform buffer</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">//      simply represents a portion of allocated data (buffer) in the GPU that can</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">//      be accessed by any shader program. This is particularly useful for data that</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="comment">//      does not change per render pass such as the view projection matrix of the current</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="comment">//      camera.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">class </span>OpenGLUniformBuffer : <span class="keyword">public</span> <a class="code" href="classKargono_1_1Rendering_1_1UniformBuffer.html">Kargono::Rendering::UniformBuffer</a></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">// This constructor creates the uniform buffer, creates the storage for the buffer in OpenGL,</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//      and binds the buffer to a specific slot that is accessible on the GPU.</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html">OpenGLUniformBuffer</a>(uint32_t size, uint32_t binding);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">// This constructor simply deletes the current buffer associated with m_RendererID in OpenGL</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html">OpenGLUniformBuffer</a>();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">// Update OpenGL Context</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">// Constructors and Destructors</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">// This constructor creates the uniform buffer, creates the storage for the buffer in OpenGL,</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">//      and binds the buffer to a specific slot that is accessible on the GPU.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        OpenGLUniformBuffer(uint32_t size, uint32_t binding);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// This constructor simply deletes the current buffer associated with m_RendererID in OpenGL</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keyword">virtual</span> ~OpenGLUniformBuffer();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// This function allows the caller to Set the data inside the uniform buffer either entirely or</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">//      only a specific section. Ex: An offset of 0 and a size that contains the entire buffer</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">//      will fill the entire buffer. An offset of 1 and a size of a float will only fill the float</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//      at the location of 1 in the buffer</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetData(<span class="keyword">const</span> <span class="keywordtype">void</span>* data, uint32_t size, uint32_t offset = 0) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">// m_RendererID represents the OpenGL uniform buffer associated with this object. Any OpenGL calls</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">//      will use this ID.</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        uint32_t m_RendererID = 0;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    };</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
-<div class="ttc" id="aclassAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer_html"><div class="ttname"><a href="classAPI_1_1RenderingAPI_1_1OpenGLUniformBuffer.html">API::RenderingAPI::OpenGLUniformBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenGLUniformBuffer_8h_source.html#l00016">OpenGLUniformBuffer.h:17</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UniformBuffer_html"><div class="ttname"><a href="classKargono_1_1UniformBuffer.html">Kargono::UniformBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8h_source.html#l00077">UniformBuffer.h:78</a></div></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// Update OpenGL Context</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// This function allows the caller to Set the data inside the uniform buffer either entirely or</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//      only a specific section. Ex: An offset of 0 and a size that contains the entire buffer</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">//      will fill the entire buffer. An offset of 1 and a size of a float will only fill the float</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="comment">//      at the location of 1 in the buffer</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetData(<span class="keyword">const</span> <span class="keywordtype">void</span>* data, uint32_t size, uint32_t offset = 0) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// m_RendererID represents the OpenGL uniform buffer associated with this object. Any OpenGL calls</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">//      will use this ID.</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        uint32_t m_RendererID = 0;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    };</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aUniformBuffer_8h_html"><div class="ttname"><a href="UniformBuffer_8h.html">UniformBuffer.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1UniformBuffer_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1UniformBuffer.html">Kargono::Rendering::UniformBuffer</a></div><div class="ttdef"><b>Definition:</b> <a href="UniformBuffer_8h_source.html#l00077">UniformBuffer.h:78</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><b>OpenGLUniformBuffer.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_8a1811a0d63d7bb5dbe1590bc458337a.html">API</a></li><li class="navelem"><a class="el" href="dir_4e7b393ce2875a4809abba297a543785.html">RenderingAPI</a></li><li class="navelem"><a class="el" href="OpenGLUniformBuffer_8h.html">OpenGLUniformBuffer.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -4,7 +4,7 @@ var classKargono_1_1RuntimeUI_1_1TextWidget =
     [ "~TextWidget", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a4c7f5dfea8530f207ecdd6b16dda3eb5", null ],
     [ "PushRenderData", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a1bd0d41991116591148056789faf151d", null ],
     [ "SetText", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a866a3f971254d07cccd7d5d0b3e0d8e3", null ],
-    [ "Runtime", "classKargono_1_1RuntimeUI_1_1TextWidget.html#af3d14e26ba8af9e6cc5a32aad8446de7", null ],
+    [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1TextWidget.html#aeba14d711b387aceeced5194058d1571", null ],
     [ "Text", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a5b8a95b7215cd90017f37a5fa63792cf", null ],
     [ "TextSize", "classKargono_1_1RuntimeUI_1_1TextWidget.html#ad051d953c452f5801d388243a67ff2dc", null ],
     [ "TextAbsoluteDimensions", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a1a77e641efbab30167ba60074ba6a56e", null ],

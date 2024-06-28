@@ -89,23 +89,23 @@ $(document).ready(function(){initNavTree('Math_8cpp_source.html',''); initResiza
 <div class="title">Math.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="Math_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Math/Math.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Math_8h.html">Kargono/Math/Math.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;API/Math/glmBackendAPI.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="glmBackendAPI_8h.html">API/Math/glmBackendAPI.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono::Math</div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="namespaceKargono_1_1Math.html">    7</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Math.html">Kargono::Math</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">bool</span> DecomposeTransform(<span class="keyword">const</span> glm::mat4&amp; transform, glm::vec3&amp; translation, glm::vec3&amp; rotation, glm::vec3&amp; scale)</div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="namespaceKargono_1_1Math.html#a364f2181d7cb4ce6814c47c13b965bc6">   10</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="namespaceKargono_1_1Math.html#a364f2181d7cb4ce6814c47c13b965bc6">DecomposeTransform</a>(<span class="keyword">const</span> <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">glm::mat4</a>&amp; transform, <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">glm::vec3</a>&amp; translation, <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">glm::vec3</a>&amp; rotation, <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">glm::vec3</a>&amp; scale)</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="comment">// From glm::decompose in matrix_decompose.inl</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">using namespace </span>glm;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">using</span> T = float;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">using</span> <a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a> = float;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        mat4 LocalMatrix(transform);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">mat4</a> LocalMatrix(transform);</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">// Normalize the matrix.</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">if</span> (epsilonEqual(LocalMatrix[3][3], <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()))</div>
@@ -113,20 +113,20 @@ $(document).ready(function(){initNavTree('Math_8cpp_source.html',''); initResiza
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// First, isolate perspective.  This is the messiest.</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keywordflow">if</span> (</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            epsilonNotEqual(LocalMatrix[0][3], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()) ||</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            epsilonNotEqual(LocalMatrix[1][3], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()) ||</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            epsilonNotEqual(LocalMatrix[2][3], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()))</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            epsilonNotEqual(LocalMatrix[0][3], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()) ||</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            epsilonNotEqual(LocalMatrix[1][3], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()) ||</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            epsilonNotEqual(LocalMatrix[2][3], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(0), epsilon&lt;T&gt;()))</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="comment">// Clear the perspective partition</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            LocalMatrix[3][3] = <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(1);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(0);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            LocalMatrix[3][3] = <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(1);</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">// Next take care of translation (easy).</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        translation = vec3(LocalMatrix[3]);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        LocalMatrix[3] = vec4(0, 0, 0, LocalMatrix[3].w);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        translation = <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">vec3</a>(LocalMatrix[3]);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        LocalMatrix[3] = <a class="code" href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">vec4</a>(0, 0, 0, LocalMatrix[3].w);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        vec3 Row[3];</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">vec3</a> Row[3];</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">// Now get scale and shear.</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">for</span> (length_t i = 0; i &lt; 3; ++i)</div>
@@ -135,11 +135,11 @@ $(document).ready(function(){initNavTree('Math_8cpp_source.html',''); initResiza
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">// Compute X scale factor and normalize first row.</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        scale.x = length(Row[0]);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        Row[0] = detail::scale(Row[0], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(1));</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        Row[0] = detail::scale(Row[0], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(1));</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        scale.y = length(Row[1]);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        Row[1] = detail::scale(Row[1], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(1));</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        Row[1] = detail::scale(Row[1], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(1));</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        scale.z = length(Row[2]);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        Row[2] = detail::scale(Row[2], <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(1));</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        Row[2] = detail::scale(Row[2], <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(1));</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// At this point, the matrix (in rows[]) is orthonormal.</span></div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">// Check for a coordinate system flip.  If the determinant</span></div>
@@ -150,8 +150,8 @@ $(document).ready(function(){initNavTree('Math_8cpp_source.html',''); initResiza
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">for</span> (length_t i = 0; i &lt; 3; i++)</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            {</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                scale[i] *= <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(-1);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                Row[i] *= <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(-1);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                scale[i] *= <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(-1);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                Row[i] *= <span class="keyword">static_cast&lt;</span><a class="code" href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">T</a><span class="keyword">&gt;</span>(-1);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif</span></div>
@@ -171,12 +171,21 @@ $(document).ready(function(){initNavTree('Math_8cpp_source.html',''); initResiza
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
+<div class="ttc" id="aMath_8h_html"><div class="ttname"><a href="Math_8h.html">Math.h</a></div></div>
+<div class="ttc" id="aglmBackendAPI_8h_html"><div class="ttname"><a href="glmBackendAPI_8h.html">glmBackendAPI.h</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Key_html_a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694"><div class="ttname"><a href="namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aa21268efc2c2d6ee7edbfbacd4791694">Kargono::Key::T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition:</b> <a href="KeyCodes_8h_source.html#l00056">KeyCodes.h:56</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html"><div class="ttname"><a href="namespaceKargono_1_1Math.html">Kargono::Math</a></div><div class="ttdef"><b>Definition:</b> <a href="Math_8cpp_source.html#l00007">Math.cpp:8</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a364f2181d7cb4ce6814c47c13b965bc6"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a364f2181d7cb4ce6814c47c13b965bc6">Kargono::Math::DecomposeTransform</a></div><div class="ttdeci">bool DecomposeTransform(const glm::mat4 &amp;transform, glm::vec3 &amp;translation, glm::vec3 &amp;rotation, glm::vec3 &amp;scale)</div><div class="ttdef"><b>Definition:</b> <a href="Math_8cpp_source.html#l00010">Math.cpp:10</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a54a9e352ac755822901745e5bad04edb"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a54a9e352ac755822901745e5bad04edb">Kargono::Math::vec4</a></div><div class="ttdeci">glm::vec4 vec4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00015">MathAliases.h:15</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a73e119d2bf751b0cc19c088bd07a90f1"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Kargono::Math::mat4</a></div><div class="ttdeci">glm::mat4 mat4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00027">MathAliases.h:27</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f04f3d3167cd0692771f35ce169a47c7.html">Math</a></li><li class="navelem"><b>Math.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_f04f3d3167cd0692771f35ce169a47c7.html">Math</a></li><li class="navelem"><a class="el" href="Math_8cpp.html">Math.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

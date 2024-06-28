@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Kargono: Engine/Source/Kargono/Scene/GameState.cpp Source File</title>
+<title>Kargono: Engine/Source/Kargono/Scenes/GameState.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,21 +89,27 @@ $(document).ready(function(){initNavTree('GameState_8cpp_source.html',''); initR
 <div class="title">GameState.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
+<a href="GameState_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Kargono/Scene/GameState.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GameState_8h.html">Kargono/Scenes/GameState.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Scenes.html">Kargono::Scenes</a></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    Ref&lt;GameState&gt; GameState::s_GameState { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    Assets::AssetHandle GameState::s_GameStateHandle {0};</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    Ref&lt;GameState&gt; <a class="code" href="classKargono_1_1Scenes_1_1GameState.html#ac5ef3076a9d3553b8dd78195f82d7fda">GameState::s_GameState</a> { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> <a class="code" href="classKargono_1_1Scenes_1_1GameState.html#a411f08cacfa43e05899fc8c06280011f">GameState::s_GameStateHandle</a> {0};</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;}</div>
+<div class="ttc" id="aGameState_8h_html"><div class="ttname"><a href="GameState_8h.html">GameState.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1GameState_html_a411f08cacfa43e05899fc8c06280011f"><div class="ttname"><a href="classKargono_1_1Scenes_1_1GameState.html#a411f08cacfa43e05899fc8c06280011f">Kargono::Scenes::GameState::s_GameStateHandle</a></div><div class="ttdeci">static Assets::AssetHandle s_GameStateHandle</div><div class="ttdef"><b>Definition:</b> <a href="GameState_8h_source.html#l00124">GameState.h:124</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1GameState_html_ac5ef3076a9d3553b8dd78195f82d7fda"><div class="ttname"><a href="classKargono_1_1Scenes_1_1GameState.html#ac5ef3076a9d3553b8dd78195f82d7fda">Kargono::Scenes::GameState::s_GameState</a></div><div class="ttdeci">static Ref&lt; GameState &gt; s_GameState</div><div class="ttdef"><b>Definition:</b> <a href="GameState_8h_source.html#l00123">GameState.h:123</a></div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Assets_html_af3b6830c6804fbd8dbea92b8ef79d3a5"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a></div><div class="ttdeci">Kargono::UUID AssetHandle</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00020">Asset.h:20</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scenes_html"><div class="ttname"><a href="namespaceKargono_1_1Scenes.html">Kargono::Scenes</a></div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00023">AssetManager.h:23</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e70a2e04f9954ad5324341a8dcda6587.html">Scene</a></li><li class="navelem"><b>GameState.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_e8593fc791605bf23663857ff3581147.html">Scenes</a></li><li class="navelem"><a class="el" href="GameState_8cpp.html">GameState.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

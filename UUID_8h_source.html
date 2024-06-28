@@ -89,44 +89,50 @@ $(document).ready(function(){initNavTree('UUID_8h_source.html',''); initResizabl
 <div class="title">UUID.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="UUID_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="classKargono_1_1UUID.html">    7</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1UUID.html">UUID</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    {</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">UUID</a>();</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">UUID</a>(uint64_t uuid);</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">UUID</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">UUID</a>&amp;) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <a class="code" href="classKargono_1_1UUID.html#acf748dab88425714f42551901f9da6ef">UUID</a>();</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <a class="code" href="classKargono_1_1UUID.html#acf748dab88425714f42551901f9da6ef">UUID</a>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> uuid);</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1UUID.html#aaf2ce2c913470f2eb23cbcac26ee289a">   12</a></span>&#160;        <a class="code" href="classKargono_1_1UUID.html#aaf2ce2c913470f2eb23cbcac26ee289a">UUID</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">UUID</a>&amp;) = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">operator</span> uint64_t()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_UUID; }</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">operator</span> std::string()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::to_string(m_UUID); }</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classKargono_1_1UUID.html#ae5731c6e343d6f9bbb690467fa7e9cfc">   14</a></span>&#160;        <span class="keyword">operator</span> <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_UUID; }</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classKargono_1_1UUID.html#a0f99774f23795ad832602cea587d0b1a">   15</a></span>&#160;        <span class="keyword">operator</span> std::string()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::to_string(m_UUID); }</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        uint64_t m_UUID;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> m_UUID;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    };</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span>std</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="namespacestd.html">   21</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacestd.html">std</a></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">template</span>&lt;&gt;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html">   24</a></span>&#160;    <span class="keyword">struct </span>hash&lt;Kargono::UUID&gt;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html">   24</a></span>&#160;    <span class="keyword">struct </span>hash&lt;<a class="code" href="namespaceKargono.html">Kargono</a>::UUID&gt;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        std::size_t operator()(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">Kargono::UUID</a>&amp; uuid)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html#a3b5dec80264549e24c5ce6684382b6f8">   26</a></span>&#160;        std::size_t <a class="code" href="structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html#a3b5dec80264549e24c5ce6684382b6f8">operator()</a>(<span class="keyword">const</span> <a class="code" href="classKargono_1_1UUID.html">Kargono::UUID</a>&amp; uuid)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">        </span>{</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordflow">return</span> (uint64_t)uuid;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordflow">return</span> (<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>)uuid;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    };</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
 <div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
+<div class="ttc" id="aclassKargono_1_1UUID_html_aaf2ce2c913470f2eb23cbcac26ee289a"><div class="ttname"><a href="classKargono_1_1UUID.html#aaf2ce2c913470f2eb23cbcac26ee289a">Kargono::UUID::UUID</a></div><div class="ttdeci">UUID(const UUID &amp;)=default</div></div>
+<div class="ttc" id="aclassKargono_1_1UUID_html_acf748dab88425714f42551901f9da6ef"><div class="ttname"><a href="classKargono_1_1UUID.html#acf748dab88425714f42551901f9da6ef">Kargono::UUID::UUID</a></div><div class="ttdeci">UUID()</div><div class="ttdef"><b>Definition:</b> <a href="UUID_8cpp_source.html#l00011">UUID.cpp:11</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00398">Scripting.cpp:398</a></div></div>
+<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00021">UUID.h:22</a></div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01Kargono_1_1UUID_01_4_html_a3b5dec80264549e24c5ce6684382b6f8"><div class="ttname"><a href="structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html#a3b5dec80264549e24c5ce6684382b6f8">std::hash&lt; Kargono::UUID &gt;::operator()</a></div><div class="ttdeci">std::size_t operator()(const Kargono::UUID &amp;uuid) const</div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00026">UUID.h:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><b>UUID.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_55dff011b17a48042a5c043300c85edd.html">Core</a></li><li class="navelem"><a class="el" href="UUID_8h.html">UUID.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

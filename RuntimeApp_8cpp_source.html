@@ -89,42 +89,42 @@ $(document).ready(function(){initNavTree('RuntimeApp_8cpp_source.html',''); init
 <div class="title">RuntimeApp.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;kgpch.h&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;RuntimeApp.h&quot;</span></div>
+<a href="RuntimeApp_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="RuntimeApp_8h.html">RuntimeApp.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>Kargono</div>
+<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="namespaceKargono.html">    6</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// Final Export Values</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//const std::filesystem::path runtimePath = &quot;../Projects/Pong/Pong.kproj&quot;;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">//const std::filesystem::path logoPath = &quot;../Projects/Pong/pong_logo.png&quot;;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">const</span> std::filesystem::path runtimePath = <span class="stringliteral">&quot;./Pong/Pong.kproj&quot;</span>;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keyword">const</span> std::filesystem::path logoPath = <span class="stringliteral">&quot;./Pong/pong_logo.png&quot;</span>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="namespaceKargono.html#a80964a16c9b9f51360e21aeac205e7f1">   12</a></span>&#160;    <span class="keyword">const</span> std::filesystem::path <a class="code" href="namespaceKargono.html#a80964a16c9b9f51360e21aeac205e7f1">runtimePath</a> = <span class="stringliteral">&quot;./Pong/Pong.kproj&quot;</span>;</div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">   13</a></span>&#160;    <span class="keyword">const</span> std::filesystem::path <a class="code" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a> = <span class="stringliteral">&quot;./Pong/pong_logo.png&quot;</span>;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    RuntimeApp::RuntimeApp()</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        : Application(<span class="stringliteral">&quot;RuntimeLayer&quot;</span>)</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">   15</a></span>&#160;    <a class="code" href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">RuntimeApp::RuntimeApp</a>()</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        : <a class="code" href="classKargono_1_1Application.html">Application</a>(<span class="stringliteral">&quot;RuntimeLayer&quot;</span>)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    }</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnAttach()</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#a17be3fa28d979cf6bbc853f4d892374c">   20</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a17be3fa28d979cf6bbc853f4d892374c">RuntimeApp::OnAttach</a>()</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        Script::ScriptEngine::Init();</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        Audio::AudioEngine::Init();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <a class="code" href="classKargono_1_1Audio_1_1AudioService.html#af3da960ad2a7267ca8804e1c0884cf0d">Audio::AudioService::Init</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1SceneService.html#a1cc40d1b90ef3a3aa13d2ba928fb0e57">Scenes::SceneService::Init</a>();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">auto</span>&amp; currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">auto</span>&amp; currentWindow = <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>();</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        Scene::SetActiveScene(CreateRef&lt;Scene&gt;());</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a6e34e50808e9efd0e506101ed3e9b10c">Scenes::Scene::SetActiveScene</a>(CreateRef&lt;Scenes::Scene&gt;(), Assets::EmptyHandle);</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">        #if KG_EXPORT == 0</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">if</span> (!OpenProject())</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            EngineCore::GetCurrentEngineCore().Close();</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Close</a>();</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        }</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">        #else</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        OpenProject(runtimePath);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">if</span> (!Projects::Project::GetActive())</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        OpenProject(<a class="code" href="namespaceKargono.html#a80964a16c9b9f51360e21aeac205e7f1">runtimePath</a>);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Projects::Project::GetActive</a>())</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        {</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            Application::GetCurrentApp().Close();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">return</span>;</div>
@@ -132,303 +132,460 @@ $(document).ready(function(){initNavTree('RuntimeApp_8cpp_source.html',''); init
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">        #endif</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        Projects::Project::GetIsFullscreen() ? currentWindow.SetFullscreen(<span class="keyword">true</span>) : currentWindow.SetFullscreen(<span class="keyword">false</span>);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classKargono_1_1Projects_1_1Project.html#a3ab4ca2b8a39d0e1ae5461a165c8c70f">Projects::Project::GetIsFullscreen</a>() ? currentWindow.SetFullscreen(<span class="keyword">true</span>) : currentWindow.SetFullscreen(<span class="keyword">false</span>);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        currentWindow.ResizeWindow(<a class="code" href="namespaceKargono_1_1Utility.html#ac3d88fa43ef1c6e55c8e1e2383856bda">Utility::ScreenResolutionToVec2</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#ab95a30dcf092f6d79a0ce54d0e7fb69d">Projects::Project::GetTargetResolution</a>()));</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        currentWindow.SetResizable(<span class="keyword">false</span>);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        Renderer::Init();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        Renderer::SetLineWidth(4.0f);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        RuntimeUI::Text::Init();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        RuntimeUI::Runtime::Init();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1RenderingService.html#ad266e0bd933a44655bfaf55ec2b42814">Rendering::RenderingService::Init</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1RenderingService.html#aef32bf8cbb593547e40796510adbc46d">Rendering::RenderingService::SetLineWidth</a>(4.0f);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="classKargono_1_1RuntimeUI_1_1Text.html#a6bb816d6e1cfffc4f724dd793d70f792">RuntimeUI::Text::Init</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a2b7652d6f38b453c3e82c1aa422007de">RuntimeUI::RuntimeUIService::Init</a>();</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        OnPlay();</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        currentWindow.SetVisible(<span class="keyword">true</span>);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnDetach()</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#a7ff7fd8fb61826ba4b198a2310202654">   57</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a7ff7fd8fb61826ba4b198a2310202654">RuntimeApp::OnDetach</a>()</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    {</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">auto</span> view = Scene::GetActiveScene()-&gt;GetAllEntitiesWith&lt;AudioComponent&gt;();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">auto</span> view = <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;GetAllEntitiesWith&lt;<a class="code" href="structKargono_1_1Scenes_1_1AudioComponent.html">Scenes::AudioComponent</a>&gt;();</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; entity : view)</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            Entity e = { entity, Scene::GetActiveScene().get() };</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">auto</span>&amp; audioComponent = e.GetComponent&lt;AudioComponent&gt;();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            audioComponent.Audio.reset();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <a class="code" href="classKargono_1_1Scenes_1_1Entity.html">Scenes::Entity</a> e = { entity, <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>().get() };</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">auto</span>&amp; audioComponent = e.<a class="code" href="classKargono_1_1Scenes_1_1Entity.html#a8dd0ffb67a5b8106ec9ea118e8f4f098">GetComponent</a>&lt;<a class="code" href="structKargono_1_1Scenes_1_1AudioComponent.html">Scenes::AudioComponent</a>&gt;();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            audioComponent.<a class="code" href="structKargono_1_1Scenes_1_1AudioComponent.html#ab765eb8c6b83fb0ba62b37680c202789">Audio</a>.reset();</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        OnStop();</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnUpdate(Timestep ts)</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">   71</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">RuntimeApp::OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts)</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    {</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">// Render</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        Renderer::ResetStats();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        RenderCommand::Clear();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1RenderingService.html#a76269e381e055c5c769cc608d3074b45">Rendering::RenderingService::ResetStats</a>();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1RendererAPI.html#af57586318351ba745234e6add34be8ba">Rendering::RendererAPI::SetClearColor</a>({ 0.1f, 0.1f, 0.1f, 1.0f });</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1RendererAPI.html#a4e1dc3172bd263c50d6a46e9e560b1a6">Rendering::RendererAPI::Clear</a>();</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        OnUpdateRuntime(ts);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        Entity cameraEntity = Scene::GetActiveScene()-&gt;GetPrimaryCameraEntity();</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        Camera* mainCamera = &amp;cameraEntity.GetComponent&lt;CameraComponent&gt;().Camera;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        Math::mat4 cameraTransform = cameraEntity.GetComponent&lt;TransformComponent&gt;().GetTransform();</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Entity.html">Scenes::Entity</a> cameraEntity = <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;GetPrimaryCameraEntity();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="classKargono_1_1Rendering_1_1Camera.html">Rendering::Camera</a>* mainCamera = &amp;cameraEntity.<a class="code" href="classKargono_1_1Scenes_1_1Entity.html#a8dd0ffb67a5b8106ec9ea118e8f4f098">GetComponent</a>&lt;<a class="code" href="structKargono_1_1Scenes_1_1CameraComponent.html">Scenes::CameraComponent</a>&gt;().Camera;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> cameraTransform = cameraEntity.<a class="code" href="classKargono_1_1Scenes_1_1Entity.html#a8dd0ffb67a5b8106ec9ea118e8f4f098">GetComponent</a>&lt;<a class="code" href="structKargono_1_1Scenes_1_1TransformComponent.html">Scenes::TransformComponent</a>&gt;().GetTransform();</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">if</span> (mainCamera)</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            RuntimeUI::Runtime::PushRenderData(glm::inverse(cameraTransform), </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                EngineCore::GetCurrentEngineCore().GetWindow().GetWidth(), EngineCore::GetCurrentEngineCore().GetWindow().GetHeight());</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#afa7e1da2342484a02a6d70590e355b2a">RuntimeUI::RuntimeUIService::PushRenderData</a>(glm::inverse(cameraTransform), </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().GetWindow().GetWidth(), <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().GetWindow().GetHeight());</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnEvent(Events::Event&amp; event)</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">   91</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">RuntimeApp::OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; event)</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        Events::EventDispatcher dispatcher(event);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        dispatcher.Dispatch&lt;Events::KeyPressedEvent&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnKeyPressed));</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        dispatcher.Dispatch&lt;Events::PhysicsCollisionEvent&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollision));</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        dispatcher.Dispatch&lt;Events::PhysicsCollisionEnd&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollisionEnd));</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        dispatcher.Dispatch&lt;Events::WindowResizeEvent&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnWindowResize));</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        dispatcher.Dispatch&lt;Events::ApplicationCloseEvent&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnApplicationClose));</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        dispatcher.Dispatch&lt;Events::UpdateOnlineUsers&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateUserCount));</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        dispatcher.Dispatch&lt;Events::ApproveJoinSession&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnApproveJoinSession));</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        dispatcher.Dispatch&lt;Events::UserLeftSession&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnUserLeftSession));</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        dispatcher.Dispatch&lt;Events::CurrentSessionInit&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnCurrentSessionInit));</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        dispatcher.Dispatch&lt;Events::ConnectionTerminated&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnConnectionTerminated));</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        dispatcher.Dispatch&lt;Events::UpdateSessionUserSlot&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateSessionUserSlot));</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        dispatcher.Dispatch&lt;Events::StartSession&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnStartSession));</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        dispatcher.Dispatch&lt;Events::SessionReadyCheckConfirm&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnSessionReadyCheckConfirm));</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        dispatcher.Dispatch&lt;Events::ReceiveSignal&gt;(KG_BIND_CLASS_FN(RuntimeApp::OnReceiveSignal));</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html">Events::EventDispatcher</a> dispatcher(event);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnKeyPressed));</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnPhysicsCollision));</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnPhysicsCollisionEnd));</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Events::WindowResizeEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnWindowResize));</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Events::ApplicationCloseEvent</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnApplicationClose));</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1UpdateOnlineUsers.html">Events::UpdateOnlineUsers</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnUpdateUserCount));</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1ApproveJoinSession.html">Events::ApproveJoinSession</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnApproveJoinSession));</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1UserLeftSession.html">Events::UserLeftSession</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnUserLeftSession));</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1CurrentSessionInit.html">Events::CurrentSessionInit</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnCurrentSessionInit));</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1ConnectionTerminated.html">Events::ConnectionTerminated</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnConnectionTerminated));</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1UpdateSessionUserSlot.html">Events::UpdateSessionUserSlot</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnUpdateSessionUserSlot));</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1StartSession.html">Events::StartSession</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnStartSession));</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1SessionReadyCheckConfirm.html">Events::SessionReadyCheckConfirm</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnSessionReadyCheckConfirm));</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        dispatcher.<a class="code" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Dispatch</a>&lt;<a class="code" href="classKargono_1_1Events_1_1ReceiveSignal.html">Events::ReceiveSignal</a>&gt;(<a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(RuntimeApp::OnReceiveSignal));</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnApplicationClose(<a class="code" href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Events::ApplicationCloseEvent</a> event)</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        Events::WindowCloseEvent windowEvent {};</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <a class="code" href="classKargono_1_1Events_1_1WindowCloseEvent.html">Events::WindowCloseEvent</a> windowEvent {};</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <a class="code" href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Events::EventCallbackFn</a> eventCallback = <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">GetEventCallback</a>();</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        eventCallback(windowEvent);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    }</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    {</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        EngineCore::GetCurrentEngineCore().GetWindow().SetViewportWidth(event.GetWidth());</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        EngineCore::GetCurrentEngineCore().GetWindow().SetViewportHeight(event.GetHeight());</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        Scene::GetActiveScene()-&gt;OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">SetViewportWidth</a>(event.GetWidth());</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().<a class="code" href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">GetWindow</a>().<a class="code" href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">SetViewportHeight</a>(event.GetHeight());</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        Script::ScriptEngine::OnPhysicsCollision(event);</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    }</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    {</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        Script::ScriptEngine::OnPhysicsCollisionEnd(event);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        Script::ScriptEngine::OnKeyPressed(event);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    }</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnUpdateRuntime(Timestep ts)</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="comment">// Update Scripts</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        Script::ScriptEngine::OnUpdate(ts);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        Ref&lt;Scenes::Scene&gt; activeScene = <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        UUID entityOneID = <span class="keyword">event</span>.GetEntityOne();</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        Scenes::Entity entityOne = activeScene-&gt;GetEntityByUUID(entityOneID);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        UUID entityTwoID = <span class="keyword">event</span>.GetEntityTwo();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        Scenes::Entity entityTwo = activeScene-&gt;GetEntityByUUID(entityTwoID);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(entityOne);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(entityTwo);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordtype">bool</span> collisionHandled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">if</span> (entityOne.HasComponent&lt;Scenes::ClassInstanceComponent&gt;())</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            Scenes::ClassInstanceComponent&amp; component = entityOne.GetComponent&lt;Scenes::ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionStartHandle;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583">Scripting::Script</a>* script = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionStart;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                collisionHandled = ((WrappedBoolUInt64UInt64*)script-&gt;m_Function.get())-&gt;m_Value(entityOneID, entityTwoID);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        }</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        Scene::GetActiveScene()-&gt;OnUpdatePhysics(ts);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        <span class="comment">// Render 2D</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        Entity cameraEntity = Scene::GetActiveScene()-&gt;GetPrimaryCameraEntity();</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        Camera* mainCamera = &amp;cameraEntity.GetComponent&lt;CameraComponent&gt;().Camera;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        Math::mat4 cameraTransform = cameraEntity.GetComponent&lt;TransformComponent&gt;().GetTransform();</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordflow">if</span> (mainCamera)</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            <span class="comment">// Transform Matrix needs to be inversed so that final view is from the perspective of the camera</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            Scene::GetActiveScene()-&gt;RenderScene(*mainCamera, glm::inverse(cameraTransform));</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        }</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    }</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateUserCount();</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        {</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            ((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserCount());</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        }</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">if</span> (!collisionHandled &amp;&amp; entityTwo.HasComponent&lt;Scenes::ClassInstanceComponent&gt;())</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        {</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            Scenes::ClassInstanceComponent&amp; component = entityTwo.GetComponent&lt;Scenes::ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionStartHandle;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583">Scripting::Script</a>* script = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionStart;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                collisionHandled = ((WrappedBoolUInt64UInt64*)script-&gt;m_Function.get())-&gt;m_Value(entityTwoID, entityOneID);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        Ref&lt;Scenes::Scene&gt; activeScene = <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>();</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        UUID entityOneID = <span class="keyword">event</span>.GetEntityOne();</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        Scenes::Entity entityOne = activeScene-&gt;GetEntityByUUID(entityOneID);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        UUID entityTwoID = <span class="keyword">event</span>.GetEntityTwo();</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        Scenes::Entity entityTwo = activeScene-&gt;GetEntityByUUID(entityTwoID);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(entityOne);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(entityTwo);</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnApproveJoinSession();</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;            ((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        }</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    }</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    {</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnUpdateSessionUserSlot();</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            ((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        }</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    }</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnUserLeftSession();</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        {</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            ((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        }</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    }</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    {</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnCurrentSessionInit();</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            ((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnConnectionTerminated();</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        <span class="keywordtype">bool</span> collisionHandled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordflow">if</span> (entityOne.HasComponent&lt;Scenes::ClassInstanceComponent&gt;())</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            Scenes::ClassInstanceComponent&amp; component = entityOne.GetComponent&lt;Scenes::ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionEndHandle;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583">Scripting::Script</a>* script = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionEnd;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            {</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                collisionHandled = ((WrappedBoolUInt64UInt64*)script-&gt;m_Function.get())-&gt;m_Value(entityOne, entityTwo);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            }</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keywordflow">if</span> (!collisionHandled &amp;&amp; entityOne.HasComponent&lt;Scenes::ClassInstanceComponent&gt;())</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            Scenes::ClassInstanceComponent&amp; component = entityTwo.GetComponent&lt;Scenes::ClassInstanceComponent&gt;();</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionEndHandle;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583">Scripting::Script</a>* script = component.ClassReference-&gt;GetScripts().OnPhysicsCollisionEnd;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            {</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                collisionHandled = ((WrappedBoolUInt64UInt64*)script-&gt;m_Function.get())-&gt;m_Value(entityTwo, entityOne);</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        }</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    {</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnKeyPressed(event);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    }</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnUpdateRuntime(Timestep ts)</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    {</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="comment">// Update</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnUpdateInputMode(ts);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnUpdateEntities(ts);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnUpdatePhysics(ts);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        <span class="comment">// Render 2D</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        Scenes::Entity cameraEntity = <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;GetPrimaryCameraEntity();</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        Rendering::Camera* mainCamera = &amp;cameraEntity.GetComponent&lt;Scenes::CameraComponent&gt;().Camera;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <a class="code" href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Math::mat4</a> cameraTransform = cameraEntity.GetComponent&lt;Scenes::TransformComponent&gt;().GetTransform();</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordflow">if</span> (mainCamera)</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            ((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            <span class="comment">// Transform Matrix needs to be inversed so that final view is from the perspective of the camera</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;RenderScene(*mainCamera, glm::inverse(cameraTransform));</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        }</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnStartSession(Events::StartSession event)</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    {</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnStartSession();</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a32c1fce2c2ffc3a4cd45a9c1e21c44ff">Projects::Project::GetOnUpdateUserCount</a>();</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        {</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            ((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            ((WrappedVoidUInt32*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserCount());</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        }</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    }</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnSessionReadyCheckConfirm());</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    }</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    {</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        uint16_t signal = <span class="keyword">event</span>.GetSignal();</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keywordtype">void</span>* param = &amp;signal;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        Script::ScriptEngine::RunCustomCallsFunction(Projects::Project::GetProjectOnReceiveSignal(), &amp;param);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    }</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OpenProject()</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    {</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / <span class="stringliteral">&quot;Projects&quot;</span>;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="keywordflow">if</span> (!std::filesystem::exists(initialDirectory))</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        {</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            initialDirectory = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        std::filesystem::path filepath = Utility::FileDialogs::OpenFile(<span class="stringliteral">&quot;Kargono Project (*.kproj)\0*.kproj\0&quot;</span>, initialDirectory.string().c_str());</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keywordflow">if</span> (filepath.empty()) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        OpenProject(filepath);</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    }</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OpenProject(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">if</span> (Assets::AssetManager::OpenProject(path))</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">if</span> (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            {</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                WindowProps projectProps =</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                {</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                    Projects::Project::GetProjectName(),</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                    <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(screenSize.x),</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                    <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(screenSize.y)</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                };</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="preprocessor">                #if KG_EXPORT == 0</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                EngineCore::GetCurrentEngineCore().GetWindow().Init(projectProps);</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="preprocessor">                #else</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="preprocessor">                #endif</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                RenderCommand::Init();</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            }</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordflow">if</span> (Script::ScriptEngine::AppDomainExists()){ Script::ScriptEngine::ReloadAssembly(); }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            <span class="keywordflow">else</span> { Script::ScriptEngine::InitialAssemblyLoad(); }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            <span class="keywordflow">if</span> (Scene::GetActiveScene())</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            {</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                Scene::GetActiveScene()-&gt;DestroyAllEntities();</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            Assets::AssetManager::ClearAll();</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            Assets::AssetManager::DeserializeAll();</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            OpenScene(startSceneHandle);</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    {</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        Ref&lt;Scene&gt; newScene = Assets::AssetManager::GetScene(sceneHandle);</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        <span class="keywordflow">if</span> (!newScene) { newScene = CreateRef&lt;Scene&gt;(); }</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        Scene::SetActiveScene(newScene);</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    }</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnPlay()</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        Scene::GetActiveScene()-&gt;OnRuntimeStart();</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        Assets::AssetHandle scriptHandle = Projects::Project::GetOnRuntimeStart();</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        {</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            ((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        }</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">if</span> (Projects::Project::GetAppIsNetworked())</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;            Network::Client::SetActiveClient(CreateRef&lt;Network::Client&gt;());</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            Network::Client::SetActiveNetworkThread(CreateRef&lt;std::thread&gt;(&amp;Network::Client::RunClient, Network::Client::GetActiveClient().get()));</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnStop()</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    {</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        Scene::GetActiveScene()-&gt;OnRuntimeStop();</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        Scene::GetActiveScene()-&gt;DestroyAllEntities();</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">if</span> (Projects::Project::GetAppIsNetworked())</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        {</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;            Network::Client::GetActiveClient()-&gt;StopClient();</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            Network::Client::GetActiveNetworkThread()-&gt;join();</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            Network::Client::GetActiveNetworkThread().reset();</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            Network::Client::GetActiveClient().reset();</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        }</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;}</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a16616f7ceecd6564cc76435dfe266b49">Projects::Project::GetOnApproveJoinSession</a>();</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            ((WrappedVoidUInt16*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        }</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#ae8d07465283f31105009f9d9e3aa31b9">Projects::Project::GetOnUpdateSessionUserSlot</a>();</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            ((WrappedVoidUInt16*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        }</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    {</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a19fda113c998b81c95b9775d063fe25e">Projects::Project::GetOnUserLeftSession</a>();</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            ((WrappedVoidUInt16*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetUserSlot());</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        }</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a9610ba6676eac5d206e4dbee937a58ea">Projects::Project::GetOnCurrentSessionInit</a>();</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        {</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            ((WrappedVoidNone*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    {</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#afa4011057aef4812728a0d3a368d54e5">Projects::Project::GetOnConnectionTerminated</a>();</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            ((WrappedVoidNone*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnStartSession(Events::StartSession event)</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a26efad23471d8ca4f977b0d9cb63e3d1">Projects::Project::GetOnStartSession</a>();</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            ((WrappedVoidNone*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    {</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a726fc4c401f397f756045123c526c81f">Projects::Project::GetProjectOnSessionReadyCheckConfirm</a>();</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        {</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            ((WrappedVoidNone*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    {</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#abd4c3b3a056117505073e38c98e886f3">Projects::Project::GetProjectOnReceiveSignal</a>();</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != Assets::EmptyHandle)</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        {</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            ((WrappedVoidUInt16*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value(event.GetSignal());</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    }</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">bool</span> RuntimeApp::OpenProject()</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    {</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / <span class="stringliteral">&quot;Projects&quot;</span>;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <span class="keywordflow">if</span> (!std::filesystem::exists(initialDirectory))</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            initialDirectory = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        std::filesystem::path filepath = <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">Utility::FileDialogs::OpenFile</a>(<span class="stringliteral">&quot;Kargono Project (*.kproj)\0*.kproj\0&quot;</span>, initialDirectory.string().c_str());</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="keywordflow">if</span> (filepath.empty()) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        OpenProject(filepath);</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OpenProject(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    {</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#afc8e1c16c3e6454ff665d5c1aee9edd0">Assets::AssetManager::OpenProject</a>(path))</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        {</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">EngineCore::GetActiveWindow</a>().GetNativeWindow())</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            {</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> screenSize = <a class="code" href="namespaceKargono_1_1Utility.html#ac3d88fa43ef1c6e55c8e1e2383856bda">Utility::ScreenResolutionToVec2</a>(<a class="code" href="classKargono_1_1Projects_1_1Project.html#ab95a30dcf092f6d79a0ce54d0e7fb69d">Projects::Project::GetTargetResolution</a>());</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                WindowProps projectProps =</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                    <a class="code" href="classKargono_1_1Projects_1_1Project.html#a96050709afd81a98bf23e20156d34bf2">Projects::Project::GetProjectName</a>(),</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                    <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(screenSize.x),</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                    <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(screenSize.y)</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                };</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="preprocessor">                #if KG_EXPORT == 0</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                <a class="code" href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">EngineCore::GetActiveWindow</a>().<a class="code" href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">Init</a>(projectProps);</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="preprocessor">                #else</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                Application::GetCurrentApp().GetWindow().Init(projectProps, <a class="code" href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">logoPath</a>);</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="preprocessor">                #endif</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                <a class="code" href="classKargono_1_1Rendering_1_1RendererAPI.html#a7ba0e32b78a38e1b094a5bd0a1df01e8">Rendering::RendererAPI::Init</a>();</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;            }</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;            <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> startSceneHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#abd7651211a2486ee3400d07e0ab4728c">Projects::Project::GetStartSceneHandle</a>();</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>())</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            {</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;DestroyAllEntities();</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;            }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;            <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a4a83086f785589f7e99059cd1b78f283">Assets::AssetManager::ClearAll</a>();</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;            <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a8882a3765f855799ce55e9d557998506">Assets::AssetManager::DeserializeAll</a>();</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;            OpenScene(startSceneHandle);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        }</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    }</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OpenScene(<a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> sceneHandle)</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    {</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        Ref&lt;Scenes::Scene&gt; newScene = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#adf39294585e4a370fe45f126b745ab77">Assets::AssetManager::GetScene</a>(sceneHandle);</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">if</span> (!newScene) { newScene = CreateRef&lt;Scenes::Scene&gt;(); }</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a6e34e50808e9efd0e506101ed3e9b10c">Scenes::Scene::SetActiveScene</a>(newScene, sceneHandle);</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    }</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnPlay()</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    {</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnRuntimeStart();</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        <a class="code" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> scriptHandle = <a class="code" href="classKargono_1_1Projects_1_1Project.html#a48fe1ce7fb2880b64d361a0aceabab71">Projects::Project::GetOnRuntimeStart</a>();</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        <span class="keywordflow">if</span> (scriptHandle != 0)</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        {</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            ((WrappedVoidNone*)<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Assets::AssetManager::GetScript</a>(scriptHandle)-&gt;m_Function.get())-&gt;m_Value();</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        }</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Projects_1_1Project.html#af4462215f40a33e31783221574879e74">Projects::Project::GetAppIsNetworked</a>())</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        {</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#ab0e8772bccddf99aa1fb2abc2ae14033">Network::Client::SetActiveClient</a>(CreateRef&lt;Network::Client&gt;());</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#a6029332e50c16a9f1f804267ff888edf">Network::Client::SetActiveNetworkThread</a>(CreateRef&lt;std::thread&gt;(&amp;<a class="code" href="classKargono_1_1Network_1_1Client.html#ab9e59ee77e288938d4f11df3b98e38b9">Network::Client::RunClient</a>, <a class="code" href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Network::Client::GetActiveClient</a>().get()));</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;        }</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    }</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordtype">void</span> RuntimeApp::OnStop()</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    {</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;OnRuntimeStop();</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        <a class="code" href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Scenes::Scene::GetActiveScene</a>()-&gt;DestroyAllEntities();</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1Projects_1_1Project.html#af4462215f40a33e31783221574879e74">Projects::Project::GetAppIsNetworked</a>())</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        {</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Network::Client::GetActiveClient</a>()-&gt;StopClient();</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#a09b9bc6d2a60186bc88696f5110a0941">Network::Client::GetActiveNetworkThread</a>()-&gt;join();</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#a09b9bc6d2a60186bc88696f5110a0941">Network::Client::GetActiveNetworkThread</a>().reset();</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            <a class="code" href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Network::Client::GetActiveClient</a>().reset();</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        }</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    }</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160; </div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;}</div>
+<div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
+<div class="ttc" id="aBase_8h_html_a19940f31bcb952846e1bee19e8b79e28"><div class="ttname"><a href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a></div><div class="ttdeci">#define KG_BIND_CLASS_FN(fn)</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00043">Base.h:43</a></div></div>
+<div class="ttc" id="aRuntimeApp_8h_html"><div class="ttname"><a href="RuntimeApp_8h.html">RuntimeApp.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00011">Application.h:12</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a089700a774271f7c0e6f960447b38dbe"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a089700a774271f7c0e6f960447b38dbe">Kargono::Assets::AssetManager::GetScript</a></div><div class="ttdeci">static Ref&lt; Scripting::Script &gt; GetScript(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="ScriptManager_8cpp_source.html#l00544">ScriptManager.cpp:544</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a4a83086f785589f7e99059cd1b78f283"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a4a83086f785589f7e99059cd1b78f283">Kargono::Assets::AssetManager::ClearAll</a></div><div class="ttdeci">static void ClearAll()</div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00897">AssetManager.h:897</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a8882a3765f855799ce55e9d557998506"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a8882a3765f855799ce55e9d557998506">Kargono::Assets::AssetManager::DeserializeAll</a></div><div class="ttdeci">static void DeserializeAll()</div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00867">AssetManager.h:867</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_adf39294585e4a370fe45f126b745ab77"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#adf39294585e4a370fe45f126b745ab77">Kargono::Assets::AssetManager::GetScene</a></div><div class="ttdeci">static Ref&lt; Scenes::Scene &gt; GetScene(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="SceneManager_8cpp_source.html#l00640">SceneManager.cpp:640</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_afc8e1c16c3e6454ff665d5c1aee9edd0"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#afc8e1c16c3e6454ff665d5c1aee9edd0">Kargono::Assets::AssetManager::OpenProject</a></div><div class="ttdeci">static Ref&lt; Projects::Project &gt; OpenProject(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="ProjectManager_8cpp_source.html#l00052">ProjectManager.cpp:52</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Audio_1_1AudioService_html_af3da960ad2a7267ca8804e1c0884cf0d"><div class="ttname"><a href="classKargono_1_1Audio_1_1AudioService.html#af3da960ad2a7267ca8804e1c0884cf0d">Kargono::Audio::AudioService::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Audio_8cpp_source.html#l00135">Audio.cpp:135</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineCore_html_a090a5bf3d1518005a1bb70caf9668347"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a090a5bf3d1518005a1bb70caf9668347">Kargono::EngineCore::GetActiveWindow</a></div><div class="ttdeci">static Window &amp; GetActiveWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00098">EngineCore.h:98</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineCore_html_a69c53a708f9548488ff4386f28d6293c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a69c53a708f9548488ff4386f28d6293c">Kargono::EngineCore::GetWindow</a></div><div class="ttdeci">Window &amp; GetWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00100">EngineCore.h:100</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineCore_html_a75751283416f7b15610f2d207c13b604"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Kargono::EngineCore::Close</a></div><div class="ttdeci">void Close()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8cpp_source.html#l00084">EngineCore.cpp:84</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineCore_html_a86dc061a48c9b27250aa3a7c9a5b0c8c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">Kargono::EngineCore::GetCurrentEngineCore</a></div><div class="ttdeci">static EngineCore &amp; GetCurrentEngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00097">EngineCore.h:97</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1ApplicationCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Kargono::Events::ApplicationCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00081">ApplicationEvent.h:82</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1ApproveJoinSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApproveJoinSession.html">Kargono::Events::ApproveJoinSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00365">NetworkingEvent.h:366</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1ConnectionTerminated_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ConnectionTerminated.html">Kargono::Events::ConnectionTerminated</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00237">NetworkingEvent.h:238</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1CurrentSessionInit_html"><div class="ttname"><a href="classKargono_1_1Events_1_1CurrentSessionInit.html">Kargono::Events::CurrentSessionInit</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00342">NetworkingEvent.h:343</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1EventDispatcher_html"><div class="ttname"><a href="classKargono_1_1Events_1_1EventDispatcher.html">Kargono::Events::EventDispatcher</a></div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00123">Event.h:124</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1EventDispatcher_html_a6877bed5aaa0bfaf5b7d1b29fa8c3b29"><div class="ttname"><a href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Kargono::Events::EventDispatcher::Dispatch</a></div><div class="ttdeci">bool Dispatch(EventFn&lt; T &gt; func)</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00151">Event.h:151</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1Event_html"><div class="ttname"><a href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00079">Event.h:80</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1PhysicsCollisionEnd_html"><div class="ttname"><a href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Kargono::Events::PhysicsCollisionEnd</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00159">ApplicationEvent.h:160</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1PhysicsCollisionEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Kargono::Events::PhysicsCollisionEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00128">ApplicationEvent.h:129</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1ReceiveSignal_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ReceiveSignal.html">Kargono::Events::ReceiveSignal</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00087">NetworkingEvent.h:88</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1SessionReadyCheckConfirm_html"><div class="ttname"><a href="classKargono_1_1Events_1_1SessionReadyCheckConfirm.html">Kargono::Events::SessionReadyCheckConfirm</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00214">NetworkingEvent.h:215</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1StartSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1StartSession.html">Kargono::Events::StartSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00145">NetworkingEvent.h:146</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1UpdateOnlineUsers_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UpdateOnlineUsers.html">Kargono::Events::UpdateOnlineUsers</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00016">NetworkingEvent.h:17</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1UpdateSessionUserSlot_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UpdateSessionUserSlot.html">Kargono::Events::UpdateSessionUserSlot</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00400">NetworkingEvent.h:401</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1UserLeftSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UserLeftSession.html">Kargono::Events::UserLeftSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00283">NetworkingEvent.h:284</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1WindowCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowCloseEvent.html">Kargono::Events::WindowCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00056">ApplicationEvent.h:57</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1WindowResizeEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00017">ApplicationEvent.h:18</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_a09b9bc6d2a60186bc88696f5110a0941"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#a09b9bc6d2a60186bc88696f5110a0941">Kargono::Network::Client::GetActiveNetworkThread</a></div><div class="ttdeci">static Ref&lt; std::thread &gt; GetActiveNetworkThread()</div><div class="ttdef"><b>Definition:</b> <a href="Client_8h_source.html#l00078">Client.h:78</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_a6029332e50c16a9f1f804267ff888edf"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#a6029332e50c16a9f1f804267ff888edf">Kargono::Network::Client::SetActiveNetworkThread</a></div><div class="ttdeci">static void SetActiveNetworkThread(Ref&lt; std::thread &gt; newThread)</div><div class="ttdef"><b>Definition:</b> <a href="Client_8h_source.html#l00079">Client.h:79</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_a6ba4b622ebfe80a56d2c086b18925489"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#a6ba4b622ebfe80a56d2c086b18925489">Kargono::Network::Client::GetActiveClient</a></div><div class="ttdeci">static Ref&lt; Network::Client &gt; GetActiveClient()</div><div class="ttdef"><b>Definition:</b> <a href="Client_8h_source.html#l00075">Client.h:75</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_ab0e8772bccddf99aa1fb2abc2ae14033"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#ab0e8772bccddf99aa1fb2abc2ae14033">Kargono::Network::Client::SetActiveClient</a></div><div class="ttdeci">static void SetActiveClient(Ref&lt; Network::Client &gt; newClient)</div><div class="ttdef"><b>Definition:</b> <a href="Client_8h_source.html#l00076">Client.h:76</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Network_1_1Client_html_ab9e59ee77e288938d4f11df3b98e38b9"><div class="ttname"><a href="classKargono_1_1Network_1_1Client.html#ab9e59ee77e288938d4f11df3b98e38b9">Kargono::Network::Client::RunClient</a></div><div class="ttdeci">void RunClient()</div><div class="ttdef"><b>Definition:</b> <a href="Client_8cpp_source.html#l00144">Client.cpp:144</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a16616f7ceecd6564cc76435dfe266b49"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a16616f7ceecd6564cc76435dfe266b49">Kargono::Projects::Project::GetOnApproveJoinSession</a></div><div class="ttdeci">static Assets::AssetHandle GetOnApproveJoinSession()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00301">Project.h:301</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a19fda113c998b81c95b9775d063fe25e"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a19fda113c998b81c95b9775d063fe25e">Kargono::Projects::Project::GetOnUserLeftSession</a></div><div class="ttdeci">static Assets::AssetHandle GetOnUserLeftSession()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00313">Project.h:313</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a26efad23471d8ca4f977b0d9cb63e3d1"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a26efad23471d8ca4f977b0d9cb63e3d1">Kargono::Projects::Project::GetOnStartSession</a></div><div class="ttdeci">static Assets::AssetHandle GetOnStartSession()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00362">Project.h:362</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a32c1fce2c2ffc3a4cd45a9c1e21c44ff"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a32c1fce2c2ffc3a4cd45a9c1e21c44ff">Kargono::Projects::Project::GetOnUpdateUserCount</a></div><div class="ttdeci">static Assets::AssetHandle GetOnUpdateUserCount()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00289">Project.h:289</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a3ab4ca2b8a39d0e1ae5461a165c8c70f"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a3ab4ca2b8a39d0e1ae5461a165c8c70f">Kargono::Projects::Project::GetIsFullscreen</a></div><div class="ttdeci">static bool GetIsFullscreen()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00195">Project.h:195</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a48fe1ce7fb2880b64d361a0aceabab71"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a48fe1ce7fb2880b64d361a0aceabab71">Kargono::Projects::Project::GetOnRuntimeStart</a></div><div class="ttdeci">static Assets::AssetHandle GetOnRuntimeStart()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00277">Project.h:277</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a6adbbdcaf7173f0755c03015e7d67e77"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a6adbbdcaf7173f0755c03015e7d67e77">Kargono::Projects::Project::GetActive</a></div><div class="ttdeci">static Ref&lt; Project &gt; GetActive()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00487">Project.h:487</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a726fc4c401f397f756045123c526c81f"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a726fc4c401f397f756045123c526c81f">Kargono::Projects::Project::GetProjectOnSessionReadyCheckConfirm</a></div><div class="ttdeci">static Assets::AssetHandle GetProjectOnSessionReadyCheckConfirm()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00374">Project.h:374</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a96050709afd81a98bf23e20156d34bf2"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a96050709afd81a98bf23e20156d34bf2">Kargono::Projects::Project::GetProjectName</a></div><div class="ttdeci">static std::string GetProjectName()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00232">Project.h:232</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a9610ba6676eac5d206e4dbee937a58ea"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a9610ba6676eac5d206e4dbee937a58ea">Kargono::Projects::Project::GetOnCurrentSessionInit</a></div><div class="ttdeci">static Assets::AssetHandle GetOnCurrentSessionInit()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00325">Project.h:325</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_ab95a30dcf092f6d79a0ce54d0e7fb69d"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#ab95a30dcf092f6d79a0ce54d0e7fb69d">Kargono::Projects::Project::GetTargetResolution</a></div><div class="ttdeci">static ScreenResolutionOptions GetTargetResolution()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00210">Project.h:210</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_abd4c3b3a056117505073e38c98e886f3"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#abd4c3b3a056117505073e38c98e886f3">Kargono::Projects::Project::GetProjectOnReceiveSignal</a></div><div class="ttdeci">static Assets::AssetHandle GetProjectOnReceiveSignal()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00386">Project.h:386</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_abd7651211a2486ee3400d07e0ab4728c"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#abd7651211a2486ee3400d07e0ab4728c">Kargono::Projects::Project::GetStartSceneHandle</a></div><div class="ttdeci">static Assets::AssetHandle GetStartSceneHandle()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00187">Project.h:187</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_ae8d07465283f31105009f9d9e3aa31b9"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#ae8d07465283f31105009f9d9e3aa31b9">Kargono::Projects::Project::GetOnUpdateSessionUserSlot</a></div><div class="ttdeci">static Assets::AssetHandle GetOnUpdateSessionUserSlot()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00350">Project.h:350</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_af4462215f40a33e31783221574879e74"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#af4462215f40a33e31783221574879e74">Kargono::Projects::Project::GetAppIsNetworked</a></div><div class="ttdeci">static bool GetAppIsNetworked()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00252">Project.h:252</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_afa4011057aef4812728a0d3a368d54e5"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#afa4011057aef4812728a0d3a368d54e5">Kargono::Projects::Project::GetOnConnectionTerminated</a></div><div class="ttdeci">static Assets::AssetHandle GetOnConnectionTerminated()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00338">Project.h:338</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1Camera_html"><div class="ttname"><a href="classKargono_1_1Rendering_1_1Camera.html">Kargono::Rendering::Camera</a></div><div class="ttdef"><b>Definition:</b> <a href="Camera_8h_source.html#l00007">Camera.h:8</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RendererAPI_html_a4e1dc3172bd263c50d6a46e9e560b1a6"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RendererAPI.html#a4e1dc3172bd263c50d6a46e9e560b1a6">Kargono::Rendering::RendererAPI::Clear</a></div><div class="ttdeci">static void Clear()</div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RendererAPI_html_a7ba0e32b78a38e1b094a5bd0a1df01e8"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RendererAPI.html#a7ba0e32b78a38e1b094a5bd0a1df01e8">Kargono::Rendering::RendererAPI::Init</a></div><div class="ttdeci">static void Init()</div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RendererAPI_html_af57586318351ba745234e6add34be8ba"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RendererAPI.html#af57586318351ba745234e6add34be8ba">Kargono::Rendering::RendererAPI::SetClearColor</a></div><div class="ttdeci">static void SetClearColor(const Math::vec4 &amp;color)</div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RenderingService_html_a76269e381e055c5c769cc608d3074b45"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RenderingService.html#a76269e381e055c5c769cc608d3074b45">Kargono::Rendering::RenderingService::ResetStats</a></div><div class="ttdeci">static void ResetStats()</div><div class="ttdef"><b>Definition:</b> <a href="RenderingService_8cpp_source.html#l00085">RenderingService.cpp:85</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RenderingService_html_ad266e0bd933a44655bfaf55ec2b42814"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RenderingService.html#ad266e0bd933a44655bfaf55ec2b42814">Kargono::Rendering::RenderingService::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="RenderingService_8cpp_source.html#l00045">RenderingService.cpp:45</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Rendering_1_1RenderingService_html_aef32bf8cbb593547e40796510adbc46d"><div class="ttname"><a href="classKargono_1_1Rendering_1_1RenderingService.html#aef32bf8cbb593547e40796510adbc46d">Kargono::Rendering::RenderingService::SetLineWidth</a></div><div class="ttdeci">static void SetLineWidth(float width)</div><div class="ttdef"><b>Definition:</b> <a href="RenderingService_8cpp_source.html#l00080">RenderingService.cpp:80</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a17be3fa28d979cf6bbc853f4d892374c"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a17be3fa28d979cf6bbc853f4d892374c">Kargono::RuntimeApp::OnAttach</a></div><div class="ttdeci">virtual void OnAttach() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00020">RuntimeApp.cpp:20</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a77f2e035b47670f79de132e6bcfb61ea"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">Kargono::RuntimeApp::RuntimeApp</a></div><div class="ttdeci">RuntimeApp()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00015">RuntimeApp.cpp:15</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a7ff7fd8fb61826ba4b198a2310202654"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a7ff7fd8fb61826ba4b198a2310202654">Kargono::RuntimeApp::OnDetach</a></div><div class="ttdeci">virtual void OnDetach() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00057">RuntimeApp.cpp:57</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a88a789ccd8bc596f2d84ea19d22bf9e4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">Kargono::RuntimeApp::OnEvent</a></div><div class="ttdeci">virtual void OnEvent(Events::Event &amp;event) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00091">RuntimeApp.cpp:91</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_aff0eac6b695374c12ee1fab3aa0187c4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">Kargono::RuntimeApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00071">RuntimeApp.cpp:71</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a2b7652d6f38b453c3e82c1aa422007de"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a2b7652d6f38b453c3e82c1aa422007de">Kargono::RuntimeUI::RuntimeUIService::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00029">RuntimeUI.cpp:29</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_afa7e1da2342484a02a6d70590e355b2a"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#afa7e1da2342484a02a6d70590e355b2a">Kargono::RuntimeUI::RuntimeUIService::PushRenderData</a></div><div class="ttdeci">static void PushRenderData(const Math::mat4 &amp;cameraViewMatrix, uint32_t viewportWidth=0, uint32_t viewportHeight=0)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00157">RuntimeUI.cpp:157</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1Text_html_a6bb816d6e1cfffc4f724dd793d70f792"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1Text.html#a6bb816d6e1cfffc4f724dd793d70f792">Kargono::RuntimeUI::Text::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Text_8cpp_source.html#l00050">Text.cpp:50</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1Entity_html"><div class="ttname"><a href="classKargono_1_1Scenes_1_1Entity.html">Kargono::Scenes::Entity</a></div><div class="ttdef"><b>Definition:</b> <a href="Entity_8h_source.html#l00011">Entity.h:12</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1Entity_html_a8dd0ffb67a5b8106ec9ea118e8f4f098"><div class="ttname"><a href="classKargono_1_1Scenes_1_1Entity.html#a8dd0ffb67a5b8106ec9ea118e8f4f098">Kargono::Scenes::Entity::GetComponent</a></div><div class="ttdeci">T &amp; GetComponent()</div><div class="ttdef"><b>Definition:</b> <a href="Entity_8h_source.html#l00036">Entity.h:36</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1SceneService_html_a1cc40d1b90ef3a3aa13d2ba928fb0e57"><div class="ttname"><a href="classKargono_1_1Scenes_1_1SceneService.html#a1cc40d1b90ef3a3aa13d2ba928fb0e57">Kargono::Scenes::SceneService::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8cpp_source.html#l00466">Scene.cpp:466</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1Scene_html_a2a92daf38b652812afc5b120fa22ff08"><div class="ttname"><a href="classKargono_1_1Scenes_1_1Scene.html#a2a92daf38b652812afc5b120fa22ff08">Kargono::Scenes::Scene::GetActiveScene</a></div><div class="ttdeci">static Ref&lt; Scene &gt; GetActiveScene()</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00174">Scene.h:174</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scenes_1_1Scene_html_a6e34e50808e9efd0e506101ed3e9b10c"><div class="ttname"><a href="classKargono_1_1Scenes_1_1Scene.html#a6e34e50808e9efd0e506101ed3e9b10c">Kargono::Scenes::Scene::SetActiveScene</a></div><div class="ttdeci">static void SetActiveScene(Ref&lt; Scene &gt; newScene, Assets::AssetHandle newHandle)</div><div class="ttdef"><b>Definition:</b> <a href="Scene_8h_source.html#l00179">Scene.h:179</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00005">Timestep.h:6</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a3b09ec6fd0535fcda6b4d2b8ef755978"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">Kargono::Utility::FileDialogs::OpenFile</a></div><div class="ttdeci">static std::filesystem::path OpenFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div></div>
+<div class="ttc" id="aclassKargono_1_1Window_html_a0169291a0c0e688d5c233709ea95ccce"><div class="ttname"><a href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">Kargono::Window::GetEventCallback</a></div><div class="ttdeci">virtual Events::EventCallbackFn &amp; GetEventCallback()=0</div></div>
+<div class="ttc" id="aclassKargono_1_1Window_html_a14db445b8e2ee2ef9bc6a456f083f531"><div class="ttname"><a href="classKargono_1_1Window.html#a14db445b8e2ee2ef9bc6a456f083f531">Kargono::Window::Init</a></div><div class="ttdeci">virtual void Init(const std::filesystem::path &amp;logoPath=&quot;Resources/icons/app_logo.png&quot;)=0</div></div>
+<div class="ttc" id="aclassKargono_1_1Window_html_a7e5b6107c3e359ae7bad7153f20a3961"><div class="ttname"><a href="classKargono_1_1Window.html#a7e5b6107c3e359ae7bad7153f20a3961">Kargono::Window::SetViewportHeight</a></div><div class="ttdeci">virtual void SetViewportHeight(uint32_t height)=0</div></div>
+<div class="ttc" id="aclassKargono_1_1Window_html_acc5536f3ee6b3eb7187c7614a66cea27"><div class="ttname"><a href="classKargono_1_1Window.html#acc5536f3ee6b3eb7187c7614a66cea27">Kargono::Window::SetViewportWidth</a></div><div class="ttdeci">virtual void SetViewportWidth(uint32_t width)=0</div></div>
+<div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Assets_html_a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4eb5a38678fc17c09f039c9fef7f7583">Kargono::Assets::Script</a></div><div class="ttdeci">@ Script</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00036">Asset.h:36</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Assets_html_af3b6830c6804fbd8dbea92b8ef79d3a5"><div class="ttname"><a href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a></div><div class="ttdeci">Kargono::UUID AssetHandle</div><div class="ttdef"><b>Definition:</b> <a href="Asset_8h_source.html#l00020">Asset.h:20</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Events_html_abec2579a8a2c2e2eef75ad7293a5f9b4"><div class="ttname"><a href="namespaceKargono_1_1Events.html#abec2579a8a2c2e2eef75ad7293a5f9b4">Kargono::Events::EventCallbackFn</a></div><div class="ttdeci">std::function&lt; void(Events::Event &amp;)&gt; EventCallbackFn</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00176">Event.h:176</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a73e119d2bf751b0cc19c088bd07a90f1"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a73e119d2bf751b0cc19c088bd07a90f1">Kargono::Math::mat4</a></div><div class="ttdeci">glm::mat4 mat4</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00027">MathAliases.h:27</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00013">MathAliases.h:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html_ac3d88fa43ef1c6e55c8e1e2383856bda"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#ac3d88fa43ef1c6e55c8e1e2383856bda">Kargono::Utility::ScreenResolutionToVec2</a></div><div class="ttdeci">Math::vec2 ScreenResolutionToVec2(Projects::ScreenResolutionOptions option)</div><div class="ttdef"><b>Definition:</b> <a href="Project_8cpp_source.html#l00010">Project.cpp:10</a></div></div>
+<div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a80964a16c9b9f51360e21aeac205e7f1"><div class="ttname"><a href="namespaceKargono.html#a80964a16c9b9f51360e21aeac205e7f1">Kargono::runtimePath</a></div><div class="ttdeci">const std::filesystem::path runtimePath</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00012">RuntimeApp.cpp:12</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ae102309f7ce66cbeaddc85cc7d254b35"><div class="ttname"><a href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">Kargono::logoPath</a></div><div class="ttdeci">const std::filesystem::path logoPath</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00013">RuntimeApp.cpp:13</a></div></div>
+<div class="ttc" id="astructKargono_1_1Scenes_1_1AudioComponent_html"><div class="ttname"><a href="structKargono_1_1Scenes_1_1AudioComponent.html">Kargono::Scenes::AudioComponent</a></div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00094">Components.h:95</a></div></div>
+<div class="ttc" id="astructKargono_1_1Scenes_1_1AudioComponent_html_ab765eb8c6b83fb0ba62b37680c202789"><div class="ttname"><a href="structKargono_1_1Scenes_1_1AudioComponent.html#ab765eb8c6b83fb0ba62b37680c202789">Kargono::Scenes::AudioComponent::Audio</a></div><div class="ttdeci">Ref&lt; Audio::AudioBuffer &gt; Audio</div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00097">Components.h:97</a></div></div>
+<div class="ttc" id="astructKargono_1_1Scenes_1_1CameraComponent_html"><div class="ttname"><a href="structKargono_1_1Scenes_1_1CameraComponent.html">Kargono::Scenes::CameraComponent</a></div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00070">Components.h:71</a></div></div>
+<div class="ttc" id="astructKargono_1_1Scenes_1_1TransformComponent_html"><div class="ttname"><a href="structKargono_1_1Scenes_1_1TransformComponent.html">Kargono::Scenes::TransformComponent</a></div><div class="ttdef"><b>Definition:</b> <a href="Components_8h_source.html#l00039">Components.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_4f6666a8f2ab10bc970eb7559668f031.html">Runtime</a></li><li class="navelem"><a class="el" href="dir_a7e5f4d598a8664b446b442a3b209493.html">Source</a></li><li class="navelem"><b>RuntimeApp.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_4f6666a8f2ab10bc970eb7559668f031.html">Runtime</a></li><li class="navelem"><a class="el" href="dir_a7e5f4d598a8664b446b442a3b209493.html">Source</a></li><li class="navelem"><a class="el" href="RuntimeApp_8cpp.html">RuntimeApp.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -89,21 +89,21 @@ $(document).ready(function(){initNavTree('UIEditorPanel_8cpp_source.html',''); i
 <div class="title">UIEditorPanel.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;Panels/UIEditorPanel.h&quot;</span></div>
+<a href="UIEditorPanel_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="UIEditorPanel_8h.html">Panels/UIEditorPanel.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;EditorApp.h&quot;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorApp_8h.html">EditorApp.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;Kargono.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>Kargono</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">static</span> EditorApp* s_EditorApp { <span class="keyword">nullptr</span> };</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">static</span> <a class="code" href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a>* s_EditorApp { <span class="keyword">nullptr</span> };</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Panels.html">Kargono::Panels</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> DisplayWidgetSpecificInfo(Ref&lt;RuntimeUI::Widget&gt; widget, int32_t selectedWidget)</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordflow">switch</span> (widget-&gt;WidgetType)</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">case</span> RuntimeUI::WidgetTypes::TextWidget:</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa8b07881b1c21472f36221f57e564cad3">RuntimeUI::WidgetTypes::TextWidget</a>:</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        {</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            RuntimeUI::TextWidget* textWidget = (RuntimeUI::TextWidget*)widget.get();</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
@@ -135,46 +135,46 @@ $(document).ready(function(){initNavTree('UIEditorPanel_8cpp_source.html',''); i
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            KG_ERROR(<span class="stringliteral">&quot;Invalid Widget Type Presented!&quot;</span>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Invalid Widget Type Presented!&quot;</span>);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    UIEditorPanel::UIEditorPanel()</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a942d4ab81d1bdb347e671f096d389005">   52</a></span>&#160;    <a class="code" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a942d4ab81d1bdb347e671f096d389005">UIEditorPanel::UIEditorPanel</a>()</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        s_EditorApp = EditorApp::GetCurrentApp();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        s_EditorApp = <a class="code" href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">EditorApp::GetCurrentApp</a>();</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        s_EditorApp-&gt;m_PanelToKeyboardInput.insert_or_assign(m_PanelName,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <a class="code" href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a>(<a class="code" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a46b139a7b541d121767b953d4462895e">UIEditorPanel::OnKeyPressedEditor</a>));</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> UIEditorPanel::OnEditorUIRender()</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a6c5fad23b0326824f857a7d33864e53c">   59</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a6c5fad23b0326824f857a7d33864e53c">UIEditorPanel::OnEditorUIRender</a>()</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        KG_PROFILE_FUNCTION();</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a>();</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        int32_t windowIteration{ 1 };</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        int32_t&amp; windowToDelete = RuntimeUI::Runtime::GetWindowToDelete();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        int32_t&amp; widgetToDelete = RuntimeUI::Runtime::GetWidgetToDelete();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        int32_t&amp; windowsToAddWidget = RuntimeUI::Runtime::GetWindowsToAddWidget();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        RuntimeUI::WidgetTypes&amp; widgetTypeToAdd = RuntimeUI::Runtime::GetWidgetTypeToAdd();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        uint32_t&amp; windowToAdd = RuntimeUI::Runtime::GetWindowToAdd();</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        int32_t&amp; selectedWindow = RuntimeUI::Runtime::GetSelectedWindow();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        int32_t&amp; selectedWidget = RuntimeUI::Runtime::GetSelectedWidget();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        int32_t&amp; windowToDelete = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a4667e6dcca81f3d81aab76d35bf6491a">RuntimeUI::RuntimeUIService::GetWindowToDelete</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        int32_t&amp; widgetToDelete = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a08a227f411aa1a3c01a896731f1a864a">RuntimeUI::RuntimeUIService::GetWidgetToDelete</a>();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        int32_t&amp; windowsToAddWidget = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a4e361fc3c40e496fc3338a17c474aca5">RuntimeUI::RuntimeUIService::GetWindowsToAddWidget</a>();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720f">RuntimeUI::WidgetTypes</a>&amp; widgetTypeToAdd = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ae79f547dc3b9ea4b36352f63830fc0e0">RuntimeUI::RuntimeUIService::GetWidgetTypeToAdd</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        uint32_t&amp; windowToAdd = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a7ad23ba7db5cefd010fc3a501aa84796">RuntimeUI::RuntimeUIService::GetWindowToAdd</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        int32_t&amp; selectedWindow = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a001645f30cb5fdc983d5ee40ab2f1e95">RuntimeUI::RuntimeUIService::GetSelectedWindow</a>();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        int32_t&amp; selectedWidget = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#aaa0dabf6d70f3a30f3e578393a181b46">RuntimeUI::RuntimeUIService::GetSelectedWidget</a>();</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        EditorUI::Editor::StartWindow(m_PanelName, &amp;s_EditorApp-&gt;m_ShowUserInterfaceEditor);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="classKargono_1_1EditorUI_1_1EditorUIService.html#a0e391d84dae75e2563e134b5f057844b">EditorUI::EditorUIService::StartWindow</a>(m_PanelName, &amp;s_EditorApp-&gt;m_ShowUserInterfaceEditor);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        Assets::AssetHandle currentUIHandle = RuntimeUI::Runtime::GetCurrentUIHandle();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginCombo(<span class="stringliteral">&quot;##Select User Interface&quot;</span>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">bool</span><span class="keyword">&gt;</span>(currentUIHandle) ? Assets::AssetManager::GetUIObjectLocation(currentUIHandle).<span class="keywordtype">string</span>().c_str() : <span class="stringliteral">&quot;None&quot;</span>))</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> currentUIHandle = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a2b2700e82bf08c8be6966c6d04302235">RuntimeUI::RuntimeUIService::GetCurrentUIHandle</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginCombo(<span class="stringliteral">&quot;##Select User Interface&quot;</span>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">bool</span><span class="keyword">&gt;</span>(currentUIHandle) ? <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a06e0518913422fb1a8d86f0f9196cd19">Assets::AssetManager::GetUIObjectLocation</a>(currentUIHandle).<span class="keywordtype">string</span>().c_str() : <span class="stringliteral">&quot;None&quot;</span>))</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        {</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                RuntimeUI::Runtime::ClearUIEngine();</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a452675e1d9642659169a5dd3f650877c">RuntimeUI::RuntimeUIService::ClearUIEngine</a>();</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            }</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [uuid, asset] : Assets::AssetManager::GetUIObjectRegistry())</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [uuid, asset] : <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#aff5bbfd76d1d6bb6f93f8c1c0ed0ab6d">Assets::AssetManager::GetUIObjectRegistry</a>())</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            {</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                <span class="keywordflow">if</span> (ImGui::Selectable(asset.Data.IntermediateLocation.string().c_str()))</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                    RuntimeUI::Runtime::ClearUIEngine();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                    <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a452675e1d9642659169a5dd3f650877c">RuntimeUI::RuntimeUIService::ClearUIEngine</a>();</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    RuntimeUI::Runtime::LoadUIObject(Assets::AssetManager::GetUIObject(uuid), uuid);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ac7a7204550b632a50e8161e800765eca">RuntimeUI::RuntimeUIService::LoadUIObject</a>(<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#adb77322699869fb226ba01050154f1bd">Assets::AssetManager::GetUIObject</a>(uuid), uuid);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                }</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            ImGui::EndCombo();</div>
@@ -184,9 +184,9 @@ $(document).ready(function(){initNavTree('UIEditorPanel_8cpp_source.html',''); i
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">if</span> (ImGui::Button(<span class="stringliteral">&quot;Save Current User Interface&quot;</span>))</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">if</span> (RuntimeUI::Runtime::SaveCurrentUIIntoUIObject())</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad4590a6c5de6a907fd09f33153b02a80">RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject</a>())</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                Assets::AssetManager::SaveUIObject(RuntimeUI::Runtime::GetCurrentUIHandle(), RuntimeUI::Runtime::GetCurrentUIObject());</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a465d9298887dcedb88fd02f2fa1f0e8b">Assets::AssetManager::SaveUIObject</a>(<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a2b2700e82bf08c8be6966c6d04302235">RuntimeUI::RuntimeUIService::GetCurrentUIHandle</a>(), <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a9deb485b56a558e84c38f6c12ad5c96c">RuntimeUI::RuntimeUIService::GetCurrentUIObject</a>());</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            }</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        ImGui::SameLine();</div>
@@ -203,314 +203,388 @@ $(document).ready(function(){initNavTree('UIEditorPanel_8cpp_source.html',''); i
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            ImGui::InputText(<span class="stringliteral">&quot;New User Interface Name&quot;</span>, buffer, <span class="keyword">sizeof</span>(buffer));</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keywordflow">if</span> (ImGui::IsWindowFocused() &amp;&amp; ImGui::IsKeyPressed(ImGuiKey_Enter))</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                RuntimeUI::Runtime::ClearUIEngine();</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a452675e1d9642659169a5dd3f650877c">RuntimeUI::RuntimeUIService::ClearUIEngine</a>();</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                Assets::AssetHandle newHandle = Assets::AssetManager::CreateNewUIObject(std::string(buffer));</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                RuntimeUI::Runtime::LoadUIObject(Assets::AssetManager::GetUIObject(newHandle), newHandle);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                <a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> newHandle = <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#ae8297c12cfd9e118b1bfa23d3bfd1fbe">Assets::AssetManager::CreateNewUIObject</a>(std::string(buffer));</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ac7a7204550b632a50e8161e800765eca">RuntimeUI::RuntimeUIService::LoadUIObject</a>(<a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#adb77322699869fb226ba01050154f1bd">Assets::AssetManager::GetUIObject</a>(newHandle), newHandle);</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                ImGui::CloseCurrentPopup();</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            ImGui::EndPopup();</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (!RuntimeUI::Runtime::GetCurrentUIObject())</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a9deb485b56a558e84c38f6c12ad5c96c">RuntimeUI::RuntimeUIService::GetCurrentUIObject</a>())</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            EditorUI::Editor::EndWindow();</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <a class="code" href="classKargono_1_1EditorUI_1_1EditorUIService.html#afe214f877d5acc48b801860bb66fa190">EditorUI::EditorUIService::EndWindow</a>();</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        }</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">if</span> (ImGui::ColorEdit4(<span class="stringliteral">&quot;Select Color&quot;</span>, glm::value_ptr(RuntimeUI::Runtime::GetSelectColor())))</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">if</span> (ImGui::ColorEdit4(<span class="stringliteral">&quot;Select Color&quot;</span>, glm::value_ptr(<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a7a65ab8d4c3834504b52946c5fe67a35">RuntimeUI::RuntimeUIService::GetSelectColor</a>())))</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        {</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            RuntimeUI::Runtime::SetSelectedWidgetColor(RuntimeUI::Runtime::GetSelectColor());</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a1460740505aa76f9d7794e0f7b133189">RuntimeUI::RuntimeUIService::SetSelectedWidgetColor</a>(<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a7a65ab8d4c3834504b52946c5fe67a35">RuntimeUI::RuntimeUIService::GetSelectColor</a>());</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;OnMove##&quot;</span> + std::to_string(selectedWidget)).c_str(), RuntimeUI::Runtime::GetFunctionOnMove().empty() ? <span class="stringliteral">&quot;None&quot;</span> : RuntimeUI::Runtime::GetFunctionOnMove().c_str()))</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        std::string initialName {<span class="stringliteral">&quot;None&quot;</span>};</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a6310a7b4f38c31d33383983dc2e26275">RuntimeUI::RuntimeUIService::GetOnMove</a>())</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        {</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                RuntimeUI::Runtime::SetFunctionOnMove({});</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [name, script] : Script::ScriptEngine::GetCustomCallMap())</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scripting::Script&gt;</a> script = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a6310a7b4f38c31d33383983dc2e26275">RuntimeUI::RuntimeUIService::GetOnMove</a>();</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            initialName = <a class="code" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">Utility::ScriptTypeToString</a>(script-&gt;m_ScriptType) + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_SectionLabel + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_ScriptName;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        }</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;OnMove##&quot;</span> + std::to_string(selectedWidget)).c_str(), <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a186c669515d23ea853f9aaf4f2471704">RuntimeUI::RuntimeUIService::GetOnMoveHandle</a>() == Assets::EmptyHandle ? <span class="stringliteral">&quot;None&quot;</span> : initialName.c_str()))</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        {</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            {</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                <span class="keywordflow">if</span> (script.NumParameters &gt; 0) { <span class="keywordflow">continue</span>; }</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                <span class="keywordflow">if</span> (ImGui::Selectable(name.c_str()))</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                    RuntimeUI::Runtime::SetFunctionOnMove(name);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            }</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            ImGui::EndCombo();</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a77254c9e78183cea49bad543e601b417">RuntimeUI::RuntimeUIService::SetOnMove</a>(Assets::EmptyHandle, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [handle, script] : <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a3438133d3e71f567cd37653d3dd506e4">Assets::AssetManager::GetScriptMap</a>())</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            {</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                <span class="keywordflow">if</span> (script-&gt;m_FuncType != <a class="code" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618ad0421daae2dd6aa8b29f2dccff1931ca">WrappedFuncType::Void_None</a>)</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                {</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                    <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                std::string outputName = <a class="code" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">Utility::ScriptTypeToString</a>(script-&gt;m_ScriptType) + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_SectionLabel + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_ScriptName;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="comment">// Main window</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginTable(<span class="stringliteral">&quot;All Windows&quot;</span>, 2, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV))</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            ImGui::TableNextRow();</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            ImGui::TableSetColumnIndex(0);</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; window : RuntimeUI::Runtime::GetAllWindows())</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            {</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                ImGui::AlignTextToFramePadding();</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                ImGuiTreeNodeFlags windowFlags = ((selectedWindow == windowIteration &amp;&amp; selectedWidget == -1) ? ImGuiTreeNodeFlags_Selected : 0) |</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                <span class="keywordtype">bool</span> node_open = ImGui::TreeNodeEx((<span class="stringliteral">&quot;Window &quot;</span> + std::to_string(windowIteration)).c_str(), windowFlags);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                <span class="keywordflow">if</span> (ImGui::IsItemClicked())</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                    selectedWindow = windowIteration;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                    selectedWidget = -1;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                }</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Right))</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                    ImGui::OpenPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWindow&quot;</span>) + std::to_string(windowIteration)).c_str());</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                }</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                <span class="keywordflow">if</span> (ImGui::BeginPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWindow&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                {</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Add Text Widget##&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                    {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                        windowsToAddWidget = windowIteration;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                        widgetTypeToAdd = RuntimeUI::WidgetTypes::TextWidget;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                    }</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Delete Window##&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                    {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                        windowToDelete = windowIteration;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                    }</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                    ImGui::EndPopup();</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                }</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                <span class="keywordflow">if</span> (node_open)</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                    uint32_t widgetIteration{ 1 };</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; widget : window.Widgets)</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                        ImGuiTreeNodeFlags widgetFlags = ((selectedWidget == widgetIteration) ? ImGuiTreeNodeFlags_Selected : 0) |</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                        <span class="keywordtype">bool</span> widgetOpened = ImGui::TreeNodeEx((<span class="stringliteral">&quot;Widget &quot;</span> + std::to_string(widgetIteration) + std::string(<span class="stringliteral">&quot; ##&quot;</span>) + std::to_string(windowIteration)).c_str(), widgetFlags);</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsItemClicked())</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                            selectedWindow = windowIteration;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                            selectedWidget = widgetIteration;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                        }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Right))</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                        {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                            ImGui::OpenPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWidget&quot;</span>) + std::to_string(widgetIteration)).c_str());</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                        }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                        <span class="keywordflow">if</span> (ImGui::BeginPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWidget&quot;</span>) + std::to_string(widgetIteration)).c_str()))</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                        {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Delete Widget##&quot;</span>) + std::to_string(widgetIteration)).c_str()))</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                            {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                                selectedWindow = windowIteration;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                                widgetToDelete = widgetIteration;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                            }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                            ImGui::EndPopup();</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                        }</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                        <span class="keywordflow">if</span> (widgetOpened) { ImGui::TreePop(); }</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                        widgetIteration++;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                    }</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                    ImGui::TreePop();</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                }</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                windowIteration++;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <span class="keywordflow">if</span> (ImGui::Button(<span class="stringliteral">&quot;Add Window&quot;</span>))</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            {</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                windowToAdd++;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            }</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            ImGui::TableSetColumnIndex(1);</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            <span class="keywordflow">if</span> (selectedWindow != -1)</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            {</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                <span class="keywordflow">if</span> (selectedWidget != -1)</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                    <span class="keyword">auto</span>&amp; widget = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1).Widgets.at(selectedWidget - 1);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                    <span class="keywordtype">char</span> buffer[256] = {};</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                    strncpy_s(buffer, widget-&gt;Tag.c_str(), <span class="keyword">sizeof</span>(buffer));</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                    ImGui::Text(widget-&gt;Tag.c_str());</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                    <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Left))</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                    {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                        ImGui::OpenPopup(<span class="stringliteral">&quot;UpdateWidgetTag&quot;</span>);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                    }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginPopup(<span class="stringliteral">&quot;UpdateWidgetTag&quot;</span>))</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                    {</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                        ImGui::InputText(<span class="stringliteral">&quot;##WidgetTag&quot;</span>, buffer, <span class="keyword">sizeof</span>(buffer));</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsWindowFocused() &amp;&amp; ImGui::IsKeyPressed(ImGuiKey_Enter))</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                        {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                            widget-&gt;Tag = std::string(buffer);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                            ImGui::CloseCurrentPopup();</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                        }</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                        ImGui::EndPopup();</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                    }</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    ImGui::Separator();</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    ImGui::Checkbox((std::string(<span class="stringliteral">&quot;Selectable##&quot;</span>) + std::to_string(selectedWidget)).c_str(), &amp;widget-&gt;Selectable);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Widget Location##&quot;</span>) + std::to_string(selectedWidget)).c_str(),</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                        glm::value_ptr(widget-&gt;WindowPosition), 0.01f, 0.0f, 1.0f);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Widget Size##&quot;</span>) + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget-&gt;Size), 0.01f, 0.0f, 1.0f);</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                    <span class="keywordflow">if</span> (ImGui::ColorEdit4((<span class="stringliteral">&quot;Background Color##&quot;</span> + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget-&gt;DefaultBackgroundColor)))</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                    {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                        widget-&gt;ActiveBackgroundColor = widget-&gt;DefaultBackgroundColor;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                <span class="keywordflow">if</span> (ImGui::Selectable(outputName.c_str()))</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                    <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a77254c9e78183cea49bad543e601b417">RuntimeUI::RuntimeUIService::SetOnMove</a>(handle, script);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            ImGui::EndCombo();</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="comment">// Main window</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="keywordflow">if</span> (ImGui::BeginTable(<span class="stringliteral">&quot;All Windows&quot;</span>, 2, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV))</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            ImGui::TableNextRow();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            ImGui::TableSetColumnIndex(0);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; window : <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>())</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            {</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                ImGui::AlignTextToFramePadding();</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                ImGuiTreeNodeFlags windowFlags = ((selectedWindow == windowIteration &amp;&amp; selectedWidget == -1) ? ImGuiTreeNodeFlags_Selected : 0) |</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                    ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                <span class="keywordtype">bool</span> node_open = ImGui::TreeNodeEx((<span class="stringliteral">&quot;Window &quot;</span> + std::to_string(windowIteration)).c_str(), windowFlags);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                <span class="keywordflow">if</span> (ImGui::IsItemClicked())</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    selectedWindow = windowIteration;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                    selectedWidget = -1;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                }</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Right))</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                    ImGui::OpenPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWindow&quot;</span>) + std::to_string(windowIteration)).c_str());</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                <span class="keywordflow">if</span> (ImGui::BeginPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWindow&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Add Text Widget##&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                    {</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                        windowsToAddWidget = windowIteration;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                        widgetTypeToAdd = <a class="code" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa8b07881b1c21472f36221f57e564cad3">RuntimeUI::WidgetTypes::TextWidget</a>;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                    }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Delete Window##&quot;</span>) + std::to_string(windowIteration)).c_str()))</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                    {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                        windowToDelete = windowIteration;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                    ImGui::EndPopup();</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                <span class="keywordflow">if</span> (node_open)</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                {</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                    uint32_t widgetIteration{ 1 };</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; widget : window.Widgets)</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                    {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                        ImGuiTreeNodeFlags widgetFlags = ((selectedWidget == widgetIteration) ? ImGuiTreeNodeFlags_Selected : 0) |</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                        <span class="keywordtype">bool</span> widgetOpened = ImGui::TreeNodeEx((<span class="stringliteral">&quot;Widget &quot;</span> + std::to_string(widgetIteration) + std::string(<span class="stringliteral">&quot; ##&quot;</span>) + std::to_string(windowIteration)).c_str(), widgetFlags);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsItemClicked())</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                        {</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                            selectedWindow = windowIteration;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                            selectedWidget = widgetIteration;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                        }</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Right))</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                        {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                            ImGui::OpenPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWidget&quot;</span>) + std::to_string(widgetIteration)).c_str());</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                        }</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                        <span class="keywordflow">if</span> (ImGui::BeginPopup((std::string(<span class="stringliteral">&quot;RightClickOptions##UIWidget&quot;</span>) + std::to_string(widgetIteration)).c_str()))</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                        {</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable((std::string(<span class="stringliteral">&quot;Delete Widget##&quot;</span>) + std::to_string(widgetIteration)).c_str()))</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                            {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                                selectedWindow = windowIteration;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                                widgetToDelete = widgetIteration;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                            }</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                            ImGui::EndPopup();</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                        }</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                        <span class="keywordflow">if</span> (widgetOpened) { ImGui::TreePop(); }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                        widgetIteration++;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                    }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                    ImGui::TreePop();</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                }</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                windowIteration++;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keywordflow">if</span> (ImGui::Button(<span class="stringliteral">&quot;Add Window&quot;</span>))</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                windowToAdd++;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            }</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            ImGui::TableSetColumnIndex(1);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            <span class="keywordflow">if</span> (selectedWindow != -1)</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                <span class="keywordflow">if</span> (selectedWidget != -1)</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                {</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                    <span class="keyword">auto</span>&amp; widget = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>().at(selectedWindow - 1).Widgets.at(selectedWidget - 1);</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                    <span class="keywordtype">char</span> buffer[256] = {};</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                    strncpy_s(buffer, widget-&gt;Tag.c_str(), <span class="keyword">sizeof</span>(buffer));</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                    ImGui::Text(widget-&gt;Tag.c_str());</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                    <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Left))</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                    {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                        ImGui::OpenPopup(<span class="stringliteral">&quot;UpdateWidgetTag&quot;</span>);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                    }</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginPopup(<span class="stringliteral">&quot;UpdateWidgetTag&quot;</span>))</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                        ImGui::InputText(<span class="stringliteral">&quot;##WidgetTag&quot;</span>, buffer, <span class="keyword">sizeof</span>(buffer));</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsWindowFocused() &amp;&amp; ImGui::IsKeyPressed(ImGuiKey_Enter))</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                        {</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                            widget-&gt;Tag = std::string(buffer);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                            ImGui::CloseCurrentPopup();</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                        }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                        ImGui::EndPopup();</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                    }</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;OnPress##&quot;</span> + std::to_string(selectedWidget)).c_str(), widget-&gt;FunctionPointers.OnPress.empty() ? <span class="stringliteral">&quot;None&quot;</span> : widget-&gt;FunctionPointers.OnPress.c_str()))</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                    {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                        <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                        {</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                            widget-&gt;FunctionPointers.OnPress = {};</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                        }</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [name, script] : Script::ScriptEngine::GetCustomCallMap())</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                        {</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                            <span class="keywordflow">if</span> (script.NumParameters &gt; 0) { <span class="keywordflow">continue</span>; }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable(name.c_str()))</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                            {</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                                widget-&gt;FunctionPointers.OnPress = name;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                            }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                        }</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                        ImGui::EndCombo();</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                    }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                    DisplayWidgetSpecificInfo(widget, selectedWidget);</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                {</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                    <span class="keyword">auto</span>&amp; window = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                    <span class="keywordtype">char</span> buffer[256] = {};</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                    strncpy_s(buffer, window.Tag.c_str(), <span class="keyword">sizeof</span>(buffer));</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                    ImGui::Text(window.Tag.c_str());</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                    <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Left))</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                    {</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                        ImGui::OpenPopup(<span class="stringliteral">&quot;UpdateWindowTag&quot;</span>);</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                    }</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginPopup(<span class="stringliteral">&quot;UpdateWindowTag&quot;</span>))</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                    {</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                        ImGui::InputText(<span class="stringliteral">&quot;##WindowTag&quot;</span>, buffer, <span class="keyword">sizeof</span>(buffer));</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsWindowFocused() &amp;&amp; ImGui::IsKeyPressed(ImGuiKey_Enter))</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                        {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                            window.Tag = std::string(buffer);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                            ImGui::CloseCurrentPopup();</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                        }</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                        ImGui::EndPopup();</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                    ImGui::Separator();</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                    ImGui::Checkbox((std::string(<span class="stringliteral">&quot;Selectable##&quot;</span>) + std::to_string(selectedWidget)).c_str(), &amp;widget-&gt;Selectable);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Widget Location##&quot;</span>) + std::to_string(selectedWidget)).c_str(),</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                        glm::value_ptr(widget-&gt;WindowPosition), 0.01f, 0.0f, 1.0f);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Widget Size##&quot;</span>) + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget-&gt;Size), 0.01f, 0.0f, 1.0f);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                    <span class="keywordflow">if</span> (ImGui::ColorEdit4((<span class="stringliteral">&quot;Background Color##&quot;</span> + std::to_string(selectedWidget)).c_str(), glm::value_ptr(widget-&gt;DefaultBackgroundColor)))</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                    {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                        widget-&gt;ActiveBackgroundColor = widget-&gt;DefaultBackgroundColor;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                    }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                    initialName = <span class="stringliteral">&quot;None&quot;</span>;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                    <span class="keywordflow">if</span> (widget-&gt;FunctionPointers.OnPress)</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                    {</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                        <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;Scripting::Script&gt;</a> script = widget-&gt;FunctionPointers.OnPress;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                        initialName = <a class="code" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">Utility::ScriptTypeToString</a>(script-&gt;m_ScriptType) + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_SectionLabel + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_ScriptName;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                    }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;OnPress##&quot;</span> + std::to_string(selectedWidget)).c_str(), widget-&gt;FunctionPointers.OnPressHandle == Assets::EmptyHandle ? <span class="stringliteral">&quot;None&quot;</span> : initialName.c_str()))</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                    {</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                        <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                        {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                            widget-&gt;FunctionPointers.OnPress = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                            widget-&gt;FunctionPointers.OnPressHandle = Assets::EmptyHandle;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                        }</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [handle, script] : <a class="code" href="classKargono_1_1Assets_1_1AssetManager.html#a3438133d3e71f567cd37653d3dd506e4">Assets::AssetManager::GetScriptMap</a>())</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                        {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                            <span class="keywordflow">if</span> (script-&gt;m_FuncType != <a class="code" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618ad0421daae2dd6aa8b29f2dccff1931ca">WrappedFuncType::Void_None</a>)</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                            {</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                            }</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                            std::string outputName = <a class="code" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">Utility::ScriptTypeToString</a>(script-&gt;m_ScriptType) + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_SectionLabel + <span class="stringliteral">&quot;::&quot;</span> + script-&gt;m_ScriptName;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable(outputName.c_str()))</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                            {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                                widget-&gt;FunctionPointers.OnPress = script;</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                                widget-&gt;FunctionPointers.OnPressHandle = handle;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                            }</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                        }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                        ImGui::EndCombo();</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                    }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                    ImGui::Separator();</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                    int32_t widgetLocation = -1;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                    <span class="keywordflow">if</span> (window.DefaultActiveWidgetRef)</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                    {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                        <span class="keyword">auto</span> iterator = std::find(window.Widgets.begin(), window.Widgets.end(), window.DefaultActiveWidgetRef);</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                        widgetLocation = <span class="keyword">static_cast&lt;</span>int32_t<span class="keyword">&gt;</span>(iterator - window.Widgets.begin()) + 1;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                    }</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;Default Widget##&quot;</span> + std::to_string(selectedWindow)).c_str(),</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                        widgetLocation == -1 ? <span class="stringliteral">&quot;None&quot;</span> : (std::string(<span class="stringliteral">&quot;Widget &quot;</span>) + std::to_string(widgetLocation)).c_str()))</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                    {</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                        <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                        {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                            window.DefaultActiveWidgetRef = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                        }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                        uint32_t iteration{ 0 };</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; widget : window.Widgets)</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                    DisplayWidgetSpecificInfo(widget, selectedWidget);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                {</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                    <span class="keyword">auto</span>&amp; window = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>().at(selectedWindow - 1);</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                    <span class="keywordtype">char</span> buffer[256] = {};</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                    strncpy_s(buffer, window.Tag.c_str(), <span class="keyword">sizeof</span>(buffer));</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;                    ImGui::Text(window.Tag.c_str());</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                    <span class="keywordflow">if</span> (ImGui::IsItemHovered() &amp;&amp; ImGui::IsMouseClicked(ImGuiMouseButton_Left))</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                    {</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                        ImGui::OpenPopup(<span class="stringliteral">&quot;UpdateWindowTag&quot;</span>);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                    }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginPopup(<span class="stringliteral">&quot;UpdateWindowTag&quot;</span>))</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                    {</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                        ImGui::InputText(<span class="stringliteral">&quot;##WindowTag&quot;</span>, buffer, <span class="keyword">sizeof</span>(buffer));</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                        <span class="keywordflow">if</span> (ImGui::IsWindowFocused() &amp;&amp; ImGui::IsKeyPressed(ImGuiKey_Enter))</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                        {</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable((<span class="stringliteral">&quot;Widget &quot;</span> + std::to_string(iteration + 1) + <span class="stringliteral">&quot; (&quot;</span> + widget-&gt;Tag + <span class="stringliteral">&quot;)&quot;</span>).c_str()))</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                            {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                                window.DefaultActiveWidgetRef = window.Widgets.at(iteration);</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                            }</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                            iteration++;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                        }</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                        ImGui::EndCombo();</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                    }</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                    <span class="keywordtype">bool</span> windowDisplayed = window.GetWindowDisplayed();</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Checkbox((std::string(<span class="stringliteral">&quot;Display Window##&quot;</span>) + std::to_string(selectedWindow)).c_str(), &amp;windowDisplayed))</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                    {</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                        <span class="keywordflow">if</span> (windowDisplayed)</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                        {</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                            window.DisplayWindow();</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                        }</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                        <span class="keywordflow">if</span> (!windowDisplayed)</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                            window.Tag = std::string(buffer);</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                            ImGui::CloseCurrentPopup();</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                        }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                        ImGui::EndPopup();</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                    }</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160; </div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                    ImGui::Separator();</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                    int32_t widgetLocation = -1;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                    <span class="keywordflow">if</span> (window.DefaultActiveWidgetRef)</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                    {</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                        <span class="keyword">auto</span> iterator = std::find(window.Widgets.begin(), window.Widgets.end(), window.DefaultActiveWidgetRef);</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                        widgetLocation = <span class="keyword">static_cast&lt;</span>int32_t<span class="keyword">&gt;</span>(iterator - window.Widgets.begin()) + 1;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                    }</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                    <span class="keywordflow">if</span> (ImGui::BeginCombo((<span class="stringliteral">&quot;Default Widget##&quot;</span> + std::to_string(selectedWindow)).c_str(),</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                        widgetLocation == -1 ? <span class="stringliteral">&quot;None&quot;</span> : (std::string(<span class="stringliteral">&quot;Widget &quot;</span>) + std::to_string(widgetLocation)).c_str()))</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                    {</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                        <span class="keywordflow">if</span> (ImGui::Selectable(<span class="stringliteral">&quot;None&quot;</span>))</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;                        {</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;                            window.HideWindow();</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;                            window.DefaultActiveWidgetRef = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                        }</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                    }</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                    ImGui::DragFloat3((std::string(<span class="stringliteral">&quot;Window Location##&quot;</span>) + std::to_string(selectedWindow)).c_str(), glm::value_ptr(window.ScreenPosition), 0.01f, 0.0f, 1.0f);</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Window Size##&quot;</span>) + std::to_string(selectedWindow)).c_str(), glm::value_ptr(window.Size), 0.01f, 0.0f, 1.0f);</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                    ImGui::ColorEdit4(<span class="stringliteral">&quot;Background Color&quot;</span>, glm::value_ptr(window.BackgroundColor));</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                }</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            }</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            ImGui::EndTable();</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        }</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        EditorUI::Editor::EndWindow();</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                        uint32_t iteration{ 0 };</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; widget : window.Widgets)</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                        {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                            <span class="keywordflow">if</span> (ImGui::Selectable((<span class="stringliteral">&quot;Widget &quot;</span> + std::to_string(iteration + 1) + <span class="stringliteral">&quot; (&quot;</span> + widget-&gt;Tag + <span class="stringliteral">&quot;)&quot;</span>).c_str()))</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                            {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                                window.DefaultActiveWidgetRef = window.Widgets.at(iteration);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                            }</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                            iteration++;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                        }</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                        ImGui::EndCombo();</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                    }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                    <span class="keywordtype">bool</span> windowDisplayed = window.GetWindowDisplayed();</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <span class="keywordflow">if</span> (windowToDelete != -1)</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        {</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;            RuntimeUI::Runtime::DeleteWindow(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(windowToDelete - 1));</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;            windowToDelete = -1;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            selectedWindow = -1;</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;            selectedWidget = -1;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        <span class="keywordflow">if</span> (widgetToDelete != -1)</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        {</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            <span class="keyword">auto</span>&amp; window = RuntimeUI::Runtime::GetAllWindows().at(selectedWindow - 1);</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            window.DeleteWidget(widgetToDelete - 1);</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160; </div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            widgetToDelete = -1;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            selectedWidget = -1;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160; </div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        }</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        <span class="keywordflow">if</span> (windowsToAddWidget != -1)</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        {</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            <span class="keyword">auto</span>&amp; windows = RuntimeUI::Runtime::GetAllWindows();</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            <span class="keywordflow">switch</span> (widgetTypeToAdd)</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            {</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            <span class="keywordflow">case</span> RuntimeUI::WidgetTypes::TextWidget:</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;            {</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;                RuntimeUI::Runtime::GetAllWindows().at(windowsToAddWidget - 1).AddTextWidget(CreateRef&lt;RuntimeUI::TextWidget&gt;());</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            }</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;            <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            {</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;                KG_ERROR(<span class="stringliteral">&quot;Invalid widgetTypeToAdd value&quot;</span>);</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            }</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            }</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            windowsToAddWidget = -1;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        }</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160; </div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        <span class="keywordflow">if</span> (windowToAdd != 0)</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        {</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            RuntimeUI::Window window1 {};</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;            window1.Size = Math::vec2(0.4f, 0.4f);</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            window1.ScreenPosition = Math::vec3(0.3f, 0.3f, 0.0f);</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            RuntimeUI::Runtime::AddWindow(window1);</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;            windowToAdd = 0;</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;        }</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    }</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="keywordtype">bool</span> UIEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    {</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    }</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;}</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                    <span class="keywordflow">if</span> (ImGui::Checkbox((std::string(<span class="stringliteral">&quot;Display Window##&quot;</span>) + std::to_string(selectedWindow)).c_str(), &amp;windowDisplayed))</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                    {</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                        <span class="keywordflow">if</span> (windowDisplayed)</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                        {</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                            window.DisplayWindow();</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                        }</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                        <span class="keywordflow">if</span> (!windowDisplayed)</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;                        {</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                            window.HideWindow();</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;                        }</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;                    }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;                    ImGui::DragFloat3((std::string(<span class="stringliteral">&quot;Window Location##&quot;</span>) + std::to_string(selectedWindow)).c_str(), glm::value_ptr(window.ScreenPosition), 0.01f, 0.0f, 1.0f);</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;                    ImGui::DragFloat2((std::string(<span class="stringliteral">&quot;Window Size##&quot;</span>) + std::to_string(selectedWindow)).c_str(), glm::value_ptr(window.Size), 0.01f, 0.0f, 1.0f);</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                    ImGui::ColorEdit4(<span class="stringliteral">&quot;Background Color&quot;</span>, glm::value_ptr(window.BackgroundColor));</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                }</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160; </div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;            }</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;            ImGui::EndTable();</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        }</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <a class="code" href="classKargono_1_1EditorUI_1_1EditorUIService.html#afe214f877d5acc48b801860bb66fa190">EditorUI::EditorUIService::EndWindow</a>();</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <span class="keywordflow">if</span> (windowToDelete != -1)</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        {</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;            <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad6b092d46454e47006163bb1e9ff081d">RuntimeUI::RuntimeUIService::DeleteWindow</a>(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(windowToDelete - 1));</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;            windowToDelete = -1;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            selectedWindow = -1;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;            selectedWidget = -1;</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        }</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;        <span class="keywordflow">if</span> (widgetToDelete != -1)</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;        {</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            <span class="keyword">auto</span>&amp; window = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>().at(selectedWindow - 1);</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;            window.DeleteWidget(widgetToDelete - 1);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            widgetToDelete = -1;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;            selectedWidget = -1;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        }</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;        <span class="keywordflow">if</span> (windowsToAddWidget != -1)</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        {</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            <span class="keyword">auto</span>&amp; windows = <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>();</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;            <span class="keywordflow">switch</span> (widgetTypeToAdd)</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            {</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            <span class="keywordflow">case</span> <a class="code" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa8b07881b1c21472f36221f57e564cad3">RuntimeUI::WidgetTypes::TextWidget</a>:</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            {</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;                <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">RuntimeUI::RuntimeUIService::GetAllWindows</a>().at(windowsToAddWidget - 1).AddTextWidget(CreateRef&lt;RuntimeUI::TextWidget&gt;());</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;            }</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;            <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;            {</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                <a class="code" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(<span class="stringliteral">&quot;Invalid widgetTypeToAdd value&quot;</span>);</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            }</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            }</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;            windowsToAddWidget = -1;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        }</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        <span class="keywordflow">if</span> (windowToAdd != 0)</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;        {</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;            <a class="code" href="structKargono_1_1RuntimeUI_1_1Window.html">RuntimeUI::Window</a> window1 {};</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;            window1.<a class="code" href="structKargono_1_1RuntimeUI_1_1Window.html#a404e51aa9994463d53c7b5f69cb304c0">Size</a> = <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>(0.4f, 0.4f);</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;            window1.ScreenPosition = <a class="code" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>(0.3f, 0.3f, 0.0f);</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            <a class="code" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ae2d2607d14066b2f004a468e8b915079">RuntimeUI::RuntimeUIService::AddWindow</a>(window1);</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;            windowToAdd = 0;</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        }</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    }</div>
+<div class="line"><a name="l00435"></a><span class="lineno"><a class="line" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a46b139a7b541d121767b953d4462895e">  435</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1Panels_1_1UIEditorPanel.html#a46b139a7b541d121767b953d4462895e">UIEditorPanel::OnKeyPressedEditor</a>(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event)</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    {</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    }</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;}</div>
+<div class="ttc" id="aBase_8h_html_a19940f31bcb952846e1bee19e8b79e28"><div class="ttname"><a href="Base_8h.html#a19940f31bcb952846e1bee19e8b79e28">KG_BIND_CLASS_FN</a></div><div class="ttdeci">#define KG_BIND_CLASS_FN(fn)</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00043">Base.h:43</a></div></div>
+<div class="ttc" id="aEditorApp_8h_html"><div class="ttname"><a href="EditorApp_8h.html">EditorApp.h</a></div></div>
+<div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
+<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
+<div class="ttc" id="aProfiler_8h_html_a26107eeb05909516ba146aa619a01763"><div class="ttname"><a href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a></div><div class="ttdeci">#define KG_PROFILE_FUNCTION(...)</div><div class="ttdef"><b>Definition:</b> <a href="Profiler_8h_source.html#l00018">Profiler.h:18</a></div></div>
+<div class="ttc" id="aUIEditorPanel_8h_html"><div class="ttname"><a href="UIEditorPanel_8h.html">UIEditorPanel.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a06e0518913422fb1a8d86f0f9196cd19"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a06e0518913422fb1a8d86f0f9196cd19">Kargono::Assets::AssetManager::GetUIObjectLocation</a></div><div class="ttdeci">static std::filesystem::path GetUIObjectLocation(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="UIObjectManager_8cpp_source.html#l00410">UIObjectManager.cpp:410</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a3438133d3e71f567cd37653d3dd506e4"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a3438133d3e71f567cd37653d3dd506e4">Kargono::Assets::AssetManager::GetScriptMap</a></div><div class="ttdeci">static std::unordered_map&lt; AssetHandle, Ref&lt; Scripting::Script &gt; &gt; &amp; GetScriptMap()</div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00794">AssetManager.h:794</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_a465d9298887dcedb88fd02f2fa1f0e8b"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#a465d9298887dcedb88fd02f2fa1f0e8b">Kargono::Assets::AssetManager::SaveUIObject</a></div><div class="ttdeci">static void SaveUIObject(AssetHandle uiObjectHandle, Ref&lt; RuntimeUI::UIObject &gt; uiObject)</div><div class="ttdef"><b>Definition:</b> <a href="UIObjectManager_8cpp_source.html#l00399">UIObjectManager.cpp:399</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_adb77322699869fb226ba01050154f1bd"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#adb77322699869fb226ba01050154f1bd">Kargono::Assets::AssetManager::GetUIObject</a></div><div class="ttdeci">static Ref&lt; RuntimeUI::UIObject &gt; GetUIObject(const AssetHandle &amp;handle)</div><div class="ttdef"><b>Definition:</b> <a href="UIObjectManager_8cpp_source.html#l00420">UIObjectManager.cpp:420</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_ae8297c12cfd9e118b1bfa23d3bfd1fbe"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#ae8297c12cfd9e118b1bfa23d3bfd1fbe">Kargono::Assets::AssetManager::CreateNewUIObject</a></div><div class="ttdeci">static AssetHandle CreateNewUIObject(const std::string &amp;uiObjectName)</div><div class="ttdef"><b>Definition:</b> <a href="UIObjectManager_8cpp_source.html#l00362">UIObjectManager.cpp:362</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Assets_1_1AssetManager_html_aff5bbfd76d1d6bb6f93f8c1c0ed0ab6d"><div class="ttname"><a href="classKargono_1_1Assets_1_1AssetManager.html#aff5bbfd76d1d6bb6f93f8c1c0ed0ab6d">Kargono::Assets::AssetManager::GetUIObjectRegistry</a></div><div class="ttdeci">static std::unordered_map&lt; AssetHandle, Assets::Asset &gt; &amp; GetUIObjectRegistry()</div><div class="ttdef"><b>Definition:</b> <a href="AssetManager_8h_source.html#l00452">AssetManager.h:452</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EditorApp_html"><div class="ttname"><a href="classKargono_1_1EditorApp.html">Kargono::EditorApp</a></div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00039">EditorApp.h:40</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EditorApp_html_af96e06aedeb0aa374b03bb2b93070709"><div class="ttname"><a href="classKargono_1_1EditorApp.html#af96e06aedeb0aa374b03bb2b93070709">Kargono::EditorApp::GetCurrentApp</a></div><div class="ttdeci">static EditorApp * GetCurrentApp()</div><div class="ttdef"><b>Definition:</b> <a href="EditorApp_8h_source.html#l00125">EditorApp.h:125</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EditorUI_1_1EditorUIService_html_a0e391d84dae75e2563e134b5f057844b"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1EditorUIService.html#a0e391d84dae75e2563e134b5f057844b">Kargono::EditorUI::EditorUIService::StartWindow</a></div><div class="ttdeci">static void StartWindow(const std::string &amp;label, bool *closeWindow=nullptr, int32_t flags=0)</div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8cpp_source.html#l00366">EditorUI.cpp:366</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EditorUI_1_1EditorUIService_html_afe214f877d5acc48b801860bb66fa190"><div class="ttname"><a href="classKargono_1_1EditorUI_1_1EditorUIService.html#afe214f877d5acc48b801860bb66fa190">Kargono::EditorUI::EditorUIService::EndWindow</a></div><div class="ttdeci">static void EndWindow()</div><div class="ttdef"><b>Definition:</b> <a href="EditorUI_8cpp_source.html#l00371">EditorUI.cpp:371</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1KeyPressedEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1KeyPressedEvent.html">Kargono::Events::KeyPressedEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="KeyEvent_8h_source.html#l00043">KeyEvent.h:44</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1UIEditorPanel_html_a46b139a7b541d121767b953d4462895e"><div class="ttname"><a href="classKargono_1_1Panels_1_1UIEditorPanel.html#a46b139a7b541d121767b953d4462895e">Kargono::Panels::UIEditorPanel::OnKeyPressedEditor</a></div><div class="ttdeci">bool OnKeyPressedEditor(Events::KeyPressedEvent event)</div><div class="ttdef"><b>Definition:</b> <a href="UIEditorPanel_8cpp_source.html#l00435">UIEditorPanel.cpp:435</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1UIEditorPanel_html_a6c5fad23b0326824f857a7d33864e53c"><div class="ttname"><a href="classKargono_1_1Panels_1_1UIEditorPanel.html#a6c5fad23b0326824f857a7d33864e53c">Kargono::Panels::UIEditorPanel::OnEditorUIRender</a></div><div class="ttdeci">void OnEditorUIRender()</div><div class="ttdef"><b>Definition:</b> <a href="UIEditorPanel_8cpp_source.html#l00059">UIEditorPanel.cpp:59</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Panels_1_1UIEditorPanel_html_a942d4ab81d1bdb347e671f096d389005"><div class="ttname"><a href="classKargono_1_1Panels_1_1UIEditorPanel.html#a942d4ab81d1bdb347e671f096d389005">Kargono::Panels::UIEditorPanel::UIEditorPanel</a></div><div class="ttdeci">UIEditorPanel()</div><div class="ttdef"><b>Definition:</b> <a href="UIEditorPanel_8cpp_source.html#l00052">UIEditorPanel.cpp:52</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a001645f30cb5fdc983d5ee40ab2f1e95"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a001645f30cb5fdc983d5ee40ab2f1e95">Kargono::RuntimeUI::RuntimeUIService::GetSelectedWindow</a></div><div class="ttdeci">static int32_t &amp; GetSelectedWindow()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00778">RuntimeUI.cpp:778</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a08a227f411aa1a3c01a896731f1a864a"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a08a227f411aa1a3c01a896731f1a864a">Kargono::RuntimeUI::RuntimeUIService::GetWidgetToDelete</a></div><div class="ttdeci">static int32_t &amp; GetWidgetToDelete()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00758">RuntimeUI.cpp:758</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a1460740505aa76f9d7794e0f7b133189"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a1460740505aa76f9d7794e0f7b133189">Kargono::RuntimeUI::RuntimeUIService::SetSelectedWidgetColor</a></div><div class="ttdeci">static void SetSelectedWidgetColor(const Math::vec4 &amp;color)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00295">RuntimeUI.cpp:295</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a186c669515d23ea853f9aaf4f2471704"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a186c669515d23ea853f9aaf4f2471704">Kargono::RuntimeUI::RuntimeUIService::GetOnMoveHandle</a></div><div class="ttdeci">static Assets::AssetHandle GetOnMoveHandle()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00415">RuntimeUI.cpp:415</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a2b2700e82bf08c8be6966c6d04302235"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a2b2700e82bf08c8be6966c6d04302235">Kargono::RuntimeUI::RuntimeUIService::GetCurrentUIHandle</a></div><div class="ttdeci">static Assets::AssetHandle GetCurrentUIHandle()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00280">RuntimeUI.cpp:280</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a452675e1d9642659169a5dd3f650877c"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a452675e1d9642659169a5dd3f650877c">Kargono::RuntimeUI::RuntimeUIService::ClearUIEngine</a></div><div class="ttdeci">static void ClearUIEngine()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00253">RuntimeUI.cpp:253</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a4667e6dcca81f3d81aab76d35bf6491a"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a4667e6dcca81f3d81aab76d35bf6491a">Kargono::RuntimeUI::RuntimeUIService::GetWindowToDelete</a></div><div class="ttdeci">static int32_t &amp; GetWindowToDelete()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00753">RuntimeUI.cpp:753</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a4e361fc3c40e496fc3338a17c474aca5"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a4e361fc3c40e496fc3338a17c474aca5">Kargono::RuntimeUI::RuntimeUIService::GetWindowsToAddWidget</a></div><div class="ttdeci">static int32_t &amp; GetWindowsToAddWidget()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00763">RuntimeUI.cpp:763</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a6310a7b4f38c31d33383983dc2e26275"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a6310a7b4f38c31d33383983dc2e26275">Kargono::RuntimeUI::RuntimeUIService::GetOnMove</a></div><div class="ttdeci">static Ref&lt; Scripting::Script &gt; GetOnMove()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00410">RuntimeUI.cpp:410</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a77254c9e78183cea49bad543e601b417"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a77254c9e78183cea49bad543e601b417">Kargono::RuntimeUI::RuntimeUIService::SetOnMove</a></div><div class="ttdeci">static void SetOnMove(Assets::AssetHandle functionHandle, Ref&lt; Scripting::Script &gt; function)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00404">RuntimeUI.cpp:404</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a7a65ab8d4c3834504b52946c5fe67a35"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a7a65ab8d4c3834504b52946c5fe67a35">Kargono::RuntimeUI::RuntimeUIService::GetSelectColor</a></div><div class="ttdeci">static Math::vec4 &amp; GetSelectColor()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00788">RuntimeUI.cpp:788</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a7ad23ba7db5cefd010fc3a501aa84796"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a7ad23ba7db5cefd010fc3a501aa84796">Kargono::RuntimeUI::RuntimeUIService::GetWindowToAdd</a></div><div class="ttdeci">static uint32_t &amp; GetWindowToAdd()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00773">RuntimeUI.cpp:773</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_a9deb485b56a558e84c38f6c12ad5c96c"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a9deb485b56a558e84c38f6c12ad5c96c">Kargono::RuntimeUI::RuntimeUIService::GetCurrentUIObject</a></div><div class="ttdeci">static Ref&lt; UIObject &gt; GetCurrentUIObject()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00275">RuntimeUI.cpp:275</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_aaa0dabf6d70f3a30f3e578393a181b46"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#aaa0dabf6d70f3a30f3e578393a181b46">Kargono::RuntimeUI::RuntimeUIService::GetSelectedWidget</a></div><div class="ttdeci">static int32_t &amp; GetSelectedWidget()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00783">RuntimeUI.cpp:783</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ab61f0defccbb64893ab602e6050ab7e9"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab61f0defccbb64893ab602e6050ab7e9">Kargono::RuntimeUI::RuntimeUIService::GetAllWindows</a></div><div class="ttdeci">static std::vector&lt; Window &gt; &amp; GetAllWindows()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00217">RuntimeUI.cpp:217</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ac7a7204550b632a50e8161e800765eca"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ac7a7204550b632a50e8161e800765eca">Kargono::RuntimeUI::RuntimeUIService::LoadUIObject</a></div><div class="ttdeci">static void LoadUIObject(Ref&lt; UIObject &gt; uiObject, Assets::AssetHandle uiHandle)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00060">RuntimeUI.cpp:60</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ad4590a6c5de6a907fd09f33153b02a80"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad4590a6c5de6a907fd09f33153b02a80">Kargono::RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject</a></div><div class="ttdeci">static bool SaveCurrentUIIntoUIObject()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00116">RuntimeUI.cpp:116</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ad6b092d46454e47006163bb1e9ff081d"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad6b092d46454e47006163bb1e9ff081d">Kargono::RuntimeUI::RuntimeUIService::DeleteWindow</a></div><div class="ttdeci">static void DeleteWindow(uint32_t windowLocation)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00148">RuntimeUI.cpp:148</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ae2d2607d14066b2f004a468e8b915079"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ae2d2607d14066b2f004a468e8b915079">Kargono::RuntimeUI::RuntimeUIService::AddWindow</a></div><div class="ttdeci">static void AddWindow(Window &amp;window)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00194">RuntimeUI.cpp:194</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeUI_1_1RuntimeUIService_html_ae79f547dc3b9ea4b36352f63830fc0e0"><div class="ttname"><a href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ae79f547dc3b9ea4b36352f63830fc0e0">Kargono::RuntimeUI::RuntimeUIService::GetWidgetTypeToAdd</a></div><div class="ttdeci">static RuntimeUI::WidgetTypes &amp; GetWidgetTypeToAdd()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8cpp_source.html#l00768">RuntimeUI.cpp:768</a></div></div>
+<div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_a87decc7c23070fc65bf0e32f9ce6b61e"><div class="ttname"><a href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Kargono::Math::vec3</a></div><div class="ttdeci">glm::vec3 vec3</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00014">MathAliases.h:14</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00013">MathAliases.h:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Panels_html"><div class="ttname"><a href="namespaceKargono_1_1Panels.html">Kargono::Panels</a></div><div class="ttdef"><b>Definition:</b> <a href="ContentBrowserPanel_8cpp_source.html#l00075">ContentBrowserPanel.cpp:76</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1RuntimeUI_html_a900087a85fbae11ea45b1b8376fc720f"><div class="ttname"><a href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720f">Kargono::RuntimeUI::WidgetTypes</a></div><div class="ttdeci">WidgetTypes</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8h_source.html#l00037">RuntimeUI.h:38</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1RuntimeUI_html_a900087a85fbae11ea45b1b8376fc720fa8b07881b1c21472f36221f57e564cad3"><div class="ttname"><a href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa8b07881b1c21472f36221f57e564cad3">Kargono::RuntimeUI::WidgetTypes::TextWidget</a></div><div class="ttdeci">@ TextWidget</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html_a43f99269e8338d2856db2ebf747b4cf3"><div class="ttname"><a href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">Kargono::Utility::ScriptTypeToString</a></div><div class="ttdeci">std::string ScriptTypeToString(Scripting::ScriptType type)</div><div class="ttdef"><b>Definition:</b> <a href="ScriptingResources_8h_source.html#l00023">ScriptingResources.h:23</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a76e8dedc812f6822eba89474cf06f618ad0421daae2dd6aa8b29f2dccff1931ca"><div class="ttname"><a href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618ad0421daae2dd6aa8b29f2dccff1931ca">Kargono::WrappedFuncType::Void_None</a></div><div class="ttdeci">@ Void_None</div></div>
+<div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00067">Base.h:67</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Window_html"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8h_source.html#l00154">RuntimeUI.h:155</a></div></div>
+<div class="ttc" id="astructKargono_1_1RuntimeUI_1_1Window_html_a404e51aa9994463d53c7b5f69cb304c0"><div class="ttname"><a href="structKargono_1_1RuntimeUI_1_1Window.html#a404e51aa9994463d53c7b5f69cb304c0">Kargono::RuntimeUI::Window::Size</a></div><div class="ttdeci">Math::vec2 Size</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeUI_8h_source.html#l00172">RuntimeUI.h:172</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><b>UIEditorPanel.cpp</b></li>
+    <li class="navelem"><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html">Editor</a></li><li class="navelem"><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html">Source</a></li><li class="navelem"><a class="el" href="dir_d4e03ddb03f1b2d03471e1e593b2d88e.html">Panels</a></li><li class="navelem"><a class="el" href="UIEditorPanel_8cpp.html">UIEditorPanel.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

@@ -1,6 +1,8 @@
 var dir_2d6aa8fa27d464a08329f948660a472d =
 [
-    [ "InputMode.cpp", "InputMode_8cpp_source.html", null ],
-    [ "InputMode.h", "InputMode_8h_source.html", null ],
-    [ "InputPolling.h", "InputPolling_8h_source.html", null ]
+    [ "InputMode.cpp", "InputMode_8cpp.html", null ],
+    [ "InputMode.h", "InputMode_8h.html", "InputMode_8h" ],
+    [ "InputPolling.h", "InputPolling_8h.html", [
+      [ "InputPolling", "classKargono_1_1Input_1_1InputPolling.html", null ]
+    ] ]
 ];

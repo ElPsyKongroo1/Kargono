@@ -89,10 +89,10 @@ $(document).ready(function(){initNavTree('Time_8h_source.html',''); initResizabl
 <div class="title">Time.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<a href="Time_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>Kargono::Utility</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">//============================================================</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="comment">// Time Class</span></div>
@@ -103,21 +103,36 @@ $(document).ready(function(){initNavTree('Time_8h_source.html',''); initResizabl
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Time.html">   12</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Utility_1_1Time.html">Time</a></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">// This function returns the time since that application has started</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">//      in seconds (Technically, the time since GLFW was initialized).</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> GetTime();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> GetTimeFromMilliseconds(uint64_t initialMilliseconds, uint64_t&amp; hours, uint64_t&amp; minutes, uint64_t&amp; seconds, uint64_t&amp; milliseconds);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keyword">static</span> std::string GetStringFromMilliseconds(uint64_t initialMilliseconds);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">static</span> std::string GetStringFromSeconds(uint64_t initialSeconds);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    };</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">// Get Time from Underlying Platform</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// This function returns the time since that application has started</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//      in seconds (Technically, the time since GLFW was initialized).</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Time.html#a47aabdfee2a10222398aeeba0167fa82">   20</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">float</span> <a class="code" href="classKargono_1_1Utility_1_1Time.html#a47aabdfee2a10222398aeeba0167fa82">GetTime</a>();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="comment">// Convert Milliseconds -&gt; Hours/Minutes/Seconds/Milli</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Time.html#a33ce5b89739da02199771e6cf5186cbe">   24</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1Time.html#a33ce5b89739da02199771e6cf5186cbe">GetTimeFromMilliseconds</a>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> initialMilliseconds, <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>&amp; hours, <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>&amp; minutes, <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>&amp; seconds, <a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a>&amp; milliseconds);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="comment">// ToString Functions</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Time.html#ad979374156c042da22d4fa4a483178b8">   28</a></span>&#160;        <span class="keyword">static</span> std::string <a class="code" href="classKargono_1_1Utility_1_1Time.html#ad979374156c042da22d4fa4a483178b8">GetStringFromMilliseconds</a>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> initialMilliseconds);</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1Time.html#afee356d3763178f9e5c06e07374f8e15">   29</a></span>&#160;        <span class="keyword">static</span> std::string <a class="code" href="classKargono_1_1Utility_1_1Time.html#afee356d3763178f9e5c06e07374f8e15">GetStringFromSeconds</a>(<a class="code" href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">uint64_t</a> initialSeconds);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    };</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html">Kargono::Utility::Time</a></div><div class="ttdef"><b>Definition:</b> <a href="Time_8h_source.html#l00012">Time.h:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_a33ce5b89739da02199771e6cf5186cbe"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#a33ce5b89739da02199771e6cf5186cbe">Kargono::Utility::Time::GetTimeFromMilliseconds</a></div><div class="ttdeci">static void GetTimeFromMilliseconds(uint64_t initialMilliseconds, uint64_t &amp;hours, uint64_t &amp;minutes, uint64_t &amp;seconds, uint64_t &amp;milliseconds)</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_a47aabdfee2a10222398aeeba0167fa82"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#a47aabdfee2a10222398aeeba0167fa82">Kargono::Utility::Time::GetTime</a></div><div class="ttdeci">static float GetTime()</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_ad979374156c042da22d4fa4a483178b8"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#ad979374156c042da22d4fa4a483178b8">Kargono::Utility::Time::GetStringFromMilliseconds</a></div><div class="ttdeci">static std::string GetStringFromMilliseconds(uint64_t initialMilliseconds)</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_afee356d3763178f9e5c06e07374f8e15"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#afee356d3763178f9e5c06e07374f8e15">Kargono::Utility::Time::GetStringFromSeconds</a></div><div class="ttdeci">static std::string GetStringFromSeconds(uint64_t initialSeconds)</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00398">Scripting.cpp:398</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><b>Time.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b6ee6e7e9547e675db4add2e5de97da.html">Engine</a></li><li class="navelem"><a class="el" href="dir_9579d1ecb2c7bf48cbe1049c41745cb4.html">Source</a></li><li class="navelem"><a class="el" href="dir_0b2c81d5dacf85dffa9fbe92a905e40a.html">Kargono</a></li><li class="navelem"><a class="el" href="dir_0451741c93a62944666cecd3ae0c391f.html">Utility</a></li><li class="navelem"><a class="el" href="Time_8h.html">Time.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
