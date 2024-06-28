@@ -19,6 +19,7 @@ namespace Kargono
 
 	void RuntimeApp::OnAttach()
 	{
+		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
@@ -345,7 +346,9 @@ namespace Kargono
 				#endif
 				Rendering::RendererAPI::Init();
 			}
+
 			Assets::AssetHandle startSceneHandle = Projects::Project::GetStartSceneHandle();
+			Scripting::ScriptService::LoadActiveScriptModule();
 
 			if (Scenes::Scene::GetActiveScene())
 			{
