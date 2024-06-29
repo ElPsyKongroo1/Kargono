@@ -141,7 +141,11 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadActiveScriptModule()
 	{
+#ifdef KG_DEBUG
+		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBodyDebug.dll" };
+#else
 		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+#endif
 		
 		// Rebuild shared library if no library exists
 		static bool attemptedToRebuild = false;
@@ -416,13 +420,14 @@ namespace Kargono::Scripting
 		KG_WARN(info);
 	}
 
-	void ScriptModuleBuilder::CreateScriptModule(bool addDebugSymbols)
+	void ScriptModuleBuilder::CreateScriptModule()
 	{
 		ScriptService::CloseActiveScriptModule();
 
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
-		CompileModuleCode(addDebugSymbols);
+		CompileModuleCode(true);
+		CompileModuleCode(false);
 
 		ScriptService::LoadActiveScriptModule();
 		Assets::AssetManager::DeserializeScriptRegistry();
@@ -675,15 +680,22 @@ namespace Kargono::Scripting
 		Utility::FileSystem::WriteFileString(file, outputStream.str());
 	}
 
-	void ScriptModuleBuilder::CompileModuleCode(bool addDebugSymbols)
+	void ScriptModuleBuilder::CompileModuleCode(bool createDebug)
 	{
-		//Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
 		Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
-
-		//std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
 		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };
-		std::filesystem::path binaryFile { binaryPath / "ExportBody.dll" };
-		std::filesystem::path objectPath { binaryPath / "ExportBody.obj" };
+		std::filesystem::path binaryFile;
+		std::filesystem::path objectPath;
+		if (createDebug)
+		{
+			binaryFile = { binaryPath / "ExportBodyDebug.dll" };
+			objectPath = { binaryPath / "ExportBody.obj" };
+		}
+		else
+		{
+			binaryFile = { binaryPath / "ExportBody.dll" };
+			objectPath = { binaryPath / "ExportBody.obj" };
+		}
 
 		UUID pdbID = UUID();
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
@@ -697,14 +709,21 @@ namespace Kargono::Scripting
 		// Cl command for compiling binary code
 		outputStream << "cl "; // Add Command
 		outputStream << "/c "; // Tell cl command to only compile code
-		outputStream << "/MDd "; // Specify Runtime Library
+		if (createDebug)
+		{
+			outputStream << "/MDd "; // Specify Debug Multi-threaded DLL Runtime Library
+		}
+		else
+		{
+			outputStream << "/MD "; // Specify Multi-threaded DLL Runtime Library
+		}
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
 		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros for Exporting DLL Functions
 
-		if (addDebugSymbols)
+		if (createDebug)
 		{
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
@@ -716,7 +735,7 @@ namespace Kargono::Scripting
 		outputStream << "link "; // Start link command
 		outputStream << "/DLL "; // Specify output as a shared library
 		outputStream << "/ignore:4099 "; // Ignores warning about missing pbd files for .obj files (I generate the symbols inside of the .obj file with /Z7 flag) 
-		if (addDebugSymbols)
+		if (createDebug)
 		{
 			outputStream << "/DEBUG "; // Specifies output as debug files
 			outputStream << "/PDB:" << debugSymbolsPath.string() << " "; // Specify .pdb file location/name
