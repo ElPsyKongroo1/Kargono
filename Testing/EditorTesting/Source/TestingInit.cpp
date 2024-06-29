@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
 		std::filesystem::current_path(relative_path);
 		std::cout << "We are in the binary" << std::endl;
 	}
+
+	std::cout << "Current Path is " <<  std::filesystem::current_path().string() << std::endl;
 	
 	Kargono::Log::Init();
 
