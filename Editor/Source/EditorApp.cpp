@@ -27,11 +27,16 @@ namespace Kargono
 		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
 
-		if (!OpenProject())
-		{
-			EngineCore::GetCurrentEngineCore().Close();
-			return;
-		}
+#ifdef KG_TESTING
+		OpenProject("../Projects/Pong/Pong.kproj");
+#else
+	if (!OpenProject())
+	{
+		EngineCore::GetCurrentEngineCore().Close();
+		return;
+	}
+#endif
+		
 		EditorUI::EditorUIService::Init();
 
 		m_LogPanel = CreateScope<Panels::LogPanel>();
