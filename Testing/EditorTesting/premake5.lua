@@ -1,4 +1,4 @@
-project "Testing"
+project "EditorTesting"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -9,7 +9,9 @@ project "Testing"
     files 
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+        "%{wks.location}/Editor/Source/**.cpp",
+        "%{wks.location}/Editor/Source/**.h",
     }
 
     includedirs 
@@ -24,10 +26,11 @@ project "Testing"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
-        "%{wks.location}/Runtime/Source",
+        "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}",
-        "%{IncludeDir.doctest}"
+        "%{IncludeDir.doctest}",
+        "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
     libdirs
@@ -43,7 +46,8 @@ project "Testing"
     defines 
     {
         "KG_EXPORT=0",
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+        "KG_TESTING"
     }
 
     filter "system:windows"

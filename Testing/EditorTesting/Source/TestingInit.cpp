@@ -1,10 +1,15 @@
 #include "Kargono/Core/Base.h"
+#include <filesystem>
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 
 int main(int argc, char** argv) {
 	doctest::Context context;
+	// Enable testing boolean
 	Kargono::s_TestingActive = true;
+	// Change to Editor Working Directory
+	const std::filesystem::path relative_path = "../../Editor";
+	std::filesystem::current_path(relative_path);
 	Kargono::Log::Init();
 
 	// defaults
