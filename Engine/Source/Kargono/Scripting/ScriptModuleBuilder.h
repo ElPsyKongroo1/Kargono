@@ -11,14 +11,14 @@ namespace Kargono::Scripting
 		//==============================
 		// Create Script Module
 		//==============================
-		static void CreateScriptModule(bool addDebugSymbols = true);
+		static void CreateScriptModule();
 	private:
 		//==============================
 		// Internal Functionality to Support Creation
 		//==============================
 		static void CreateModuleHeaderFile();
 		static void CreateModuleCPPFile();
-		static void CompileModuleCode(bool addDebugSymbols);
+		static void CompileModuleCode(bool createDebug);
 		static void AttachEngineFunctionsToModule();
 	public:
 		friend ScriptService;
