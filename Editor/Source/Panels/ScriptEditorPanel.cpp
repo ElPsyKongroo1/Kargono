@@ -25,7 +25,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_EditScriptFuncType{};
 	static EditorUI::RadioSelectorSpec s_EditScriptType{};
 	static EditorUI::SelectOptionSpec s_EditScriptSectionLabel{};
-	static Assets::AssetHandle s_ActiveScriptHandle {};
+	static Assets::AssetHandle s_ActiveScriptHandle {Assets::EmptyHandle};
 
 	// Group Label Table
 	static EditorUI::TableSpec s_GroupLabelsTable {};
