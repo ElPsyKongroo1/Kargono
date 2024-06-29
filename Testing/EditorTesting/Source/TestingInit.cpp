@@ -23,8 +23,9 @@ int main(int argc, char** argv) {
 	}
 
 	std::cout << "Current Path is " <<  std::filesystem::current_path().string() << std::endl;
-	
+	Kargono::s_TestingActive = false;
 	Kargono::Log::Init();
+	Kargono::s_TestingActive = true;
 
 	// defaults
 	//context.addFilter("test-case-exclude", "*math*"); // exclude test cases with "math" in their name
