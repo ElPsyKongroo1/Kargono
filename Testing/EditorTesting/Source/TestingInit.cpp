@@ -8,8 +8,20 @@ int main(int argc, char** argv) {
 	// Enable testing boolean
 	Kargono::s_TestingActive = true;
 	// Change to Editor Working Directory
-	const std::filesystem::path relative_path = "../../Editor";
-	std::filesystem::current_path(relative_path);
+	std::string activeDirectoryName = std::filesystem::current_path().parent_path().filename().string();
+	if (activeDirectoryName == "Testing")
+	{
+		const std::filesystem::path relative_path = "../../Editor";
+		std::filesystem::current_path(relative_path);
+		std::cout << "We are in the local location" << std::endl;
+	}
+	else
+	{
+		const std::filesystem::path relative_path = "../../../Editor";
+		std::filesystem::current_path(relative_path);
+		std::cout << "We are in the binary" << std::endl;
+	}
+	
 	Kargono::Log::Init();
 
 	// defaults
