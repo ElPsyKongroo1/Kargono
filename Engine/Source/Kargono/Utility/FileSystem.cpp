@@ -21,7 +21,7 @@ namespace Kargono::Utility
 		if (!stream)
 		{
 			// Failed to open the file
-			KG_ERROR("Failed to open file in ReadFileBinary!");
+			KG_ERROR("Failed to open file in ReadFileBinary: {}", filepath.string());
 			return {};
 		}
 
