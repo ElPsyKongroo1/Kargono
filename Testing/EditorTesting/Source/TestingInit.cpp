@@ -13,19 +13,14 @@ int main(int argc, char** argv) {
 	{
 		const std::filesystem::path relative_path = "../../Editor";
 		std::filesystem::current_path(relative_path);
-		std::cout << "We are in the local location" << std::endl;
 	}
 	else
 	{
 		const std::filesystem::path relative_path = "../../../Editor";
 		std::filesystem::current_path(relative_path);
-		std::cout << "We are in the binary" << std::endl;
 	}
 
-	std::cout << "Current Path is " <<  std::filesystem::current_path().string() << std::endl;
-	Kargono::s_TestingActive = false;
 	Kargono::Log::Init();
-	Kargono::s_TestingActive = true;
 
 	// defaults
 	//context.addFilter("test-case-exclude", "*math*"); // exclude test cases with "math" in their name
