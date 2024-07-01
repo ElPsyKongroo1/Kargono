@@ -56,14 +56,12 @@ jobs:
       shell: cmd
       run: |
         if exist Runtime/Log/Kargono.log (
-          echo "Here is the log for the TestRuntime Step"
-          type Runtime/Log/Kargono.log
+          echo "Here is the log for the TestRuntime Step" && type Runtime\Log\Kargono.log
         ) else (
           echo "Runtime log file does not exist"
         )
         if exist Editor/Log/Kargono.log (
-          echo "Here is the log for the EditorRuntime Step"
-          type Editor/Log/Kargono.log
+          echo "Here is the log for the EditorRuntime Step" && type Editor\Log\Kargono.log
         ) else (
           echo "Editor log file does not exist"
         )
