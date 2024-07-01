@@ -31,35 +31,27 @@ jobs:
 
     - name: Setup
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        cd BuildScripts
-        ./VS_GenProjects.bat
+      run: ./BuildScripts/VS_GenProjects.bat
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build-configuration}} ${{env.SOLUTION_FILE_PATH}}
     - name: TestRuntime
+      if: always()
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
-      run: |
-        cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
-        ./RuntimeTesting.exe
-    - name: Display TestRuntime Log
-      if: ${{ failure() }}
-      run: |
-        echo "Here is the log for the previous failed run"
-        type Runtime/Log/Kargono.log
-        exit 0
+      run: ./Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting/RuntimeTesting.exe
     - name: TestEditor
+      if: always()
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
+      run: ./Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting/EditorTesting.exe
+    - name: Display Logs
+      if: always()
       run: |
-        cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
-        ./EditorTesting.exe
-    - name: Display TestEditor Log
-      if: ${{ failure() }}
-      run: |
-        echo "Here is the log for the previous failed run"
+        echo "Here is the log for the TestRuntime Step"
+        type Runtime/Log/Kargono.log
+        echo "Here is the log for the EditorRuntime Step"
         type Editor/Log/Kargono.log
         exit 0
