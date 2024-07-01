@@ -38,7 +38,7 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build-configuration}} ${{env.SOLUTION_FILE_PATH}}
     - name: TestRuntime
-      if: {{ always() }}
+      if: ${{ always() }}
       shell: cmd
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
@@ -49,7 +49,7 @@ jobs:
         cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
         ./RuntimeTesting.exe
     - name: TestEditor
-      if: {{ always() }}
+      if: ${{ always() }}
       shell: cmd
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
