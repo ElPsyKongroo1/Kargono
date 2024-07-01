@@ -39,15 +39,27 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build-configuration}} ${{env.SOLUTION_FILE_PATH}}
-    - name: TestEditor
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      timeout-minutes: 1
-      run: |
-        cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
-        ./EditorTesting.exe
     - name: TestRuntime
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
       run: |
         cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
         ./RuntimeTesting.exe
+    - name: Display TestRuntime Log
+      if: ${{ failure() }}
+      run: |
+        echo "Here is the log for the previous failed run"
+        type Runtime/Log/Kargono.log
+        exit 0
+    - name: TestEditor
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      timeout-minutes: 1
+      run: |
+        cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
+        ./EditorTesting.exe
+    - name: Display TestEditor Log
+      if: ${{ failure() }}
+      run: |
+        echo "Here is the log for the previous failed run"
+        type Editor/Log/Kargono.log
+        exit 0
