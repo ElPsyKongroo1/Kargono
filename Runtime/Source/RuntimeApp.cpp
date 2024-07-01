@@ -45,10 +45,11 @@ namespace Kargono
 		}
 		#endif
 		
-
+#ifndef KG_TESTING
 		Projects::Project::GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
 		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution()));
 		currentWindow.SetResizable(false);
+#endif
 
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
