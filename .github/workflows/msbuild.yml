@@ -43,8 +43,8 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
       run: | 
-        if exist Projects/Pong/Assets/Scripting/Binary (
-          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary
+        if exist Projects\Pong\Assets\Scripting\Binary (
+          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         ) 
         Binary\${{matrix.build-configuration}}-windows-x86_64\RuntimeTesting\RuntimeTesting.exe
     - name: TestEditor
@@ -53,8 +53,8 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
       run: | 
-        if exist Projects/Pong/Assets/Scripting/Binary (
-          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary
+        if exist Projects\Pong\Assets\Scripting\Binary (
+          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         ) 
         Binary\${{matrix.build-configuration}}-windows-x86_64\EditorTesting\EditorTesting.exe
     - name: Display Logs
@@ -62,12 +62,12 @@ jobs:
       shell: cmd
       run: |
         if exist Runtime/Log/Kargono.log (
-          echo "Here is the log for the TestRuntime Step" && type Runtime\Log\Kargono.log
+          echo "Here is the log for the TestRuntime Step" && type Runtime\Log\Kargono.log || echo "Failed to write Kargono.log out to the console"
         ) else (
           echo "Runtime log file does not exist"
         )
         if exist Editor/Log/Kargono.log (
-          echo "Here is the log for the EditorRuntime Step" && type Editor\Log\Kargono.log
+          echo "Here is the log for the EditorRuntime Step" && type Editor\Log\Kargono.log || echo "Failed to write Kargono.log out to the console"
         ) else (
           echo "Editor log file does not exist"
         )
