@@ -52,7 +52,8 @@ jobs:
         cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
         ./EditorTesting.exe
     - name: Display Logs
-      if: always()
+      if: ${{ always() }}
+      shell: cmd
       run: |
         if exist Runtime/Log/Kargono.log (
           echo "Here is the log for the TestRuntime Step"
