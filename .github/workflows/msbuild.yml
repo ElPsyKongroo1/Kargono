@@ -43,7 +43,8 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
       run: |
-        Binary\${{matrix.build-configuration}}-windows-x86_64\RuntimeTesting\RuntimeTesting.exe
+        cd Binary\${{matrix.build-configuration}}-windows-x86_64\RuntimeTesting
+        RuntimeTesting.exe
     - name: TestEditor
       if: ${{ always() }}
       shell: cmd
@@ -54,7 +55,8 @@ jobs:
           echo "Removing cached scripting binaries"
           rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         )
-        Binary\${{matrix.build-configuration}}-windows-x86_64\EditorTesting\EditorTesting.exe
+        cd Binary\${{matrix.build-configuration}}-windows-x86_64\EditorTesting
+        EditorTesting.exe
     - name: Display Logs
       if: ${{ always() }}
       shell: cmd
