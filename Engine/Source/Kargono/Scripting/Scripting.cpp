@@ -171,7 +171,7 @@ namespace Kargono::Scripting
 
 		if (s_ScriptingData->DLLInstance)
 		{
-			KG_INFO("Closing existing script dll");
+			KG_INFO("Closing existing script module");
 			CloseActiveScriptModule();
 		}
 
@@ -189,7 +189,7 @@ namespace Kargono::Scripting
 
 		ScriptModuleBuilder::AttachEngineFunctionsToModule();
 
-		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting DLL Opened");
+		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting Module Opened");
 
 	}
 	void ScriptService::CloseActiveScriptModule()
@@ -423,21 +423,47 @@ namespace Kargono::Scripting
 
 	void ScriptModuleBuilder::CreateScriptModule()
 	{
+		// Release active script module so it available to be written to...
+		KG_WARN("Closing active script module...");
 		ScriptService::CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded
 		if (Assets::AssetManager::s_ScriptRegistry.size() == 0)
 		{
+			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetManager::DeserializeScriptRegistry();
 		}
 
+		bool buildSuccessful = true;
+
+		KG_INFO("Creating Script Module CPP Files...");
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
-		CompileModuleCode(true);
-		CompileModuleCode(false);
+		KG_INFO("Clearing previous compilation logs...");
+		Utility::FileSystem::DeleteSelectedFile("Log/ScriptCompilation.log");
+		KG_INFO("Compiling debug script module...");
+		buildSuccessful = CompileModuleCode(true);
+		if (!buildSuccessful)
+		{
+			KG_WARN("Failed to compile debug script module");
+			ScriptService::LoadActiveScriptModule();
+			Assets::AssetManager::DeserializeScriptRegistry();
+			return;
+		}
+		KG_INFO("Compiling release script module...");
+		buildSuccessful = CompileModuleCode(false);
+		if (!buildSuccessful)
+		{
+			KG_WARN("Failed to compile release script module");
+			ScriptService::LoadActiveScriptModule();
+			Assets::AssetManager::DeserializeScriptRegistry();
+			return;
+		}
 
+		KG_INFO("Opening New Scripting Module...");
 		ScriptService::LoadActiveScriptModule();
 		Assets::AssetManager::DeserializeScriptRegistry();
+		KG_INFO("Successfully build and loaded new script module");
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
@@ -687,7 +713,7 @@ namespace Kargono::Scripting
 		Utility::FileSystem::WriteFileString(file, outputStream.str());
 	}
 
-	void ScriptModuleBuilder::CompileModuleCode(bool createDebug)
+	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)
 	{
 		Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
 		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };
@@ -710,8 +736,13 @@ namespace Kargono::Scripting
 		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
+		outputStream << "("; // Parentheses to group all function calls together
 		// Access visual studio toolset console
-		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
+		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"";
+
+		// Start Next Command
+		//outputStream << " > Log\\ScriptCompilation.log 2>&1 "; // Sends error/info to log file
+		outputStream << " && "; // Combine commands
 
 		// Cl command for compiling binary code
 		outputStream << "cl "; // Add Command
@@ -737,7 +768,10 @@ namespace Kargono::Scripting
 		outputStream << "/Fo" << binaryPath.string() << ' '; // Define Intermediate Location
 		outputStream << sourcePath.string() << " "; // Compile scripting source file (ExportBody.cpp)
 
+		// Start Next Command
+		//outputStream << " > Log\\ScriptCompilation.log 2>&1 "; // Sends error/info to log file
 		outputStream << " && "; // Combine commands
+
 		// Start Linking Stage
 		outputStream << "link "; // Start link command
 		outputStream << "/DLL "; // Specify output as a shared library
@@ -749,7 +783,12 @@ namespace Kargono::Scripting
 		}
 		outputStream << "/OUT:" << binaryFile.string() << " "; // Specify output directory
 		outputStream << objectPath.string(); // Object File to Link
-		system(outputStream.str().c_str());
+
+		outputStream << ")"; // Parentheses to group all function calls together
+		outputStream << " >> Log\\ScriptCompilation.log 2>&1 "; // Sends all three calls (open dev console, compiler, and linker) error/info to log file
+
+		// Call Command
+		return (system(outputStream.str().c_str()) != 1);
 	}
 
 
