@@ -41,17 +41,29 @@ jobs:
       if: always()
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
-      run: ./Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting/RuntimeTesting.exe
+      run: | 
+        cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
+        ./RuntimeTesting.exe
     - name: TestEditor
       if: always()
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
-      run: ./Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting/EditorTesting.exe
+      run: | 
+        cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
+        ./EditorTesting.exe
     - name: Display Logs
       if: always()
       run: |
-        echo "Here is the log for the TestRuntime Step"
-        type Runtime/Log/Kargono.log
-        echo "Here is the log for the EditorRuntime Step"
-        type Editor/Log/Kargono.log
+        if exist Runtime/Log/Kargono.log (
+          echo "Here is the log for the TestRuntime Step"
+          type Runtime/Log/Kargono.log
+        ) else (
+          echo "Runtime log file does not exist"
+        )
+        if exist Editor/Log/Kargono.log (
+          echo "Here is the log for the EditorRuntime Step"
+          type Editor/Log/Kargono.log
+        ) else (
+          echo "Editor log file does not exist"
+        )
         exit 0
