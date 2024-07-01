@@ -1,4 +1,4 @@
-project "Editor"
+project "RuntimeTesting"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -9,7 +9,9 @@ project "Editor"
     files 
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+        "%{wks.location}/Runtime/Source/**.cpp",
+        "%{wks.location}/Runtime/Source/**.h",
     }
 
     includedirs 
@@ -27,7 +29,8 @@ project "Editor"
         "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}",
-        "%{IncludeDir.ImGuiColorTextEdit}",
+        "%{IncludeDir.doctest}",
+        "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
     libdirs
@@ -40,11 +43,11 @@ project "Editor"
         "Engine"  
     }
 
-
     defines 
     {
-        "KG_EDITOR",
-		"_CRT_SECURE_NO_WARNINGS"
+        "KG_EXPORT=0",
+		"_CRT_SECURE_NO_WARNINGS",
+        "KG_TESTING"
     }
 
     filter "system:windows"
@@ -87,10 +90,9 @@ project "Editor"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
-        symbols "on"
 
     filter "configurations:Dist"
-        kind "WindowedApp"
+        kind "ConsoleApp"
         links 
         {
             "%{Library.OpenALSoft_Dist}"

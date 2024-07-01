@@ -27,11 +27,15 @@ namespace Kargono
 
 		Scenes::Scene::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 		#if KG_EXPORT == 0
-		if (!OpenProject())
-		{
-			EngineCore::GetCurrentEngineCore().Close();
-			return;
-		}
+			#ifdef KG_TESTING
+					OpenProject("../Projects/Pong/Pong.kproj");
+			#else
+					if (!OpenProject())
+					{
+						EngineCore::GetCurrentEngineCore().Close();
+						return;
+					}
+			#endif
 		#else
 		OpenProject(runtimePath);
 		if (!Projects::Project::GetActive())

@@ -45,3 +45,9 @@ jobs:
       run: |
         cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
         ./EditorTesting.exe
+    - name: TestRuntime
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      timeout-minutes: 1
+      run: |
+        cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
+        ./RuntimeTesting.exe
