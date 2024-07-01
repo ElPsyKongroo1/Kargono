@@ -158,10 +158,7 @@ namespace Kargono::Scripting
 			}
 			KG_WARN("Attempt to open scripting dll, however, none exists. Attempting to create new Shared Lib.");
 			attemptedToRebuild = true;
-			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
-			{
-				ScriptModuleBuilder::CreateScriptModule();
-			});
+			ScriptModuleBuilder::CreateScriptModule();
 			return;
 		}
 		attemptedToRebuild = false;
@@ -226,9 +223,13 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
-		if (!s_ScriptingData || !s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
+		if (!s_ScriptingData)
 		{
 			KG_CRITICAL("Attempt to load a scripting function, however, ScriptEngine is not valid");
+			return;
+		}
+		if (!s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
+		{
 			return;
 		}
 
@@ -423,6 +424,12 @@ namespace Kargono::Scripting
 	void ScriptModuleBuilder::CreateScriptModule()
 	{
 		ScriptService::CloseActiveScriptModule();
+
+		// Load in ScriptRegistry if not already loaded
+		if (Assets::AssetManager::s_ScriptRegistry.size() == 0)
+		{
+			Assets::AssetManager::DeserializeScriptRegistry();
+		}
 
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
