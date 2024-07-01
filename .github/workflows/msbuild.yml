@@ -38,38 +38,40 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{matrix.build-configuration}} ${{env.SOLUTION_FILE_PATH}}
     - name: TestRuntime
-      if: always()
+      if: ${{ always() }}
+      shell: cmd
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
-      run: | 
-        if exist Projects/Pong/Assets/Scripting/Binary 
-        (
-          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary
-        ) 
-        cd Binary/${{matrix.build-configuration}}-windows-x86_64/RuntimeTesting
-        ./RuntimeTesting.exe
+      run: |
+        if exist Projects\Pong\Assets\Scripting\Binary (
+          echo "Removing cached scripting binaries"
+          rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
+        )
+        cd Binary\${{matrix.build-configuration}}-windows-x86_64\RuntimeTesting
+        RuntimeTesting.exe
     - name: TestEditor
-      if: always()
+      if: ${{ always() }}
+      shell: cmd
       working-directory: ${{env.GITHUB_WORKSPACE}}
       timeout-minutes: 1
-      run: | 
-        if exist Projects/Pong/Assets/Scripting/Binary 
-        (
-          echo "Removing cached scripting binaries" && rmdir /s /q Projects\Pong\Assets\Scripting\Binary
-        ) 
-        cd Binary/${{matrix.build-configuration}}-windows-x86_64/EditorTesting
-        ./EditorTesting.exe
+      run: |
+        if exist Projects\Pong\Assets\Scripting\Binary (
+          echo "Removing cached scripting binaries"
+          rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
+        )
+        cd Binary\${{matrix.build-configuration}}-windows-x86_64\EditorTesting
+        EditorTesting.exe
     - name: Display Logs
       if: ${{ always() }}
       shell: cmd
       run: |
         if exist Runtime/Log/Kargono.log (
-          echo "Here is the log for the TestRuntime Step" && type Runtime\Log\Kargono.log
+          echo "Here is the log for the TestRuntime Step" && type Runtime\Log\Kargono.log || echo "Failed to write Kargono.log out to the console"
         ) else (
           echo "Runtime log file does not exist"
         )
         if exist Editor/Log/Kargono.log (
-          echo "Here is the log for the EditorRuntime Step" && type Editor\Log\Kargono.log
+          echo "Here is the log for the EditorRuntime Step" && type Editor\Log\Kargono.log || echo "Failed to write Kargono.log out to the console"
         ) else (
           echo "Editor log file does not exist"
         )
