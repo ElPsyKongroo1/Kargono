@@ -18,7 +18,7 @@ namespace Kargono::Scripting
 		//==============================
 		static void CreateModuleHeaderFile();
 		static void CreateModuleCPPFile();
-		static void CompileModuleCode(bool createDebug);
+		static bool CompileModuleCode(bool createDebug);
 		static void AttachEngineFunctionsToModule();
 	public:
 		friend ScriptService;
