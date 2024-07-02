@@ -33,7 +33,7 @@ namespace Kargono::Panels
 		s_ClassInstanceHeader.Expanded = true;
 		s_ClassInstanceHeader.AddToSelectionList("Remove Component", [&]()
 		{
-			EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+			EngineService::SubmitToMainThread([&]()
 			{
 				Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
 				auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();

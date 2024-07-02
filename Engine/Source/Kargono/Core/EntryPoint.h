@@ -6,7 +6,7 @@
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
 	
-	extern Kargono::EngineCore* Kargono::InitEngineAndCreateApp(CommandLineArgs args);
+	extern Kargono::Engine* Kargono::InitEngineAndCreateApp(CommandLineArguments args);
 	//==============================
 	// General Entry Point
 	//==============================
@@ -14,9 +14,9 @@
 	{
 		Kargono::Log::Init();
 		KG_INFO("Starting Application");
-		Kargono::EngineCore* core = Kargono::InitEngineAndCreateApp({ argc, argv });
+		Kargono::Engine* core = Kargono::InitEngineAndCreateApp({ argc, argv });
 		KG_VERIFY(core, "Engine Core Initialization");
-		core->Run();
+		core->RunOnUpdate();
 		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
 		delete core;
 		core = nullptr;

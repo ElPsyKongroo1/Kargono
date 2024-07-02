@@ -78,7 +78,7 @@ namespace Kargono::Panels
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
-		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		EngineService::SubmitToMainThread([&]()
 		{
 			s_EditorApp->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
 		});
@@ -88,7 +88,7 @@ namespace Kargono::Panels
 	{
 		static std::filesystem::path currentPath;
 		currentPath = newPath;
-		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		EngineService::SubmitToMainThread([&]()
 		{
 			API::FileWatch::EndWatch(m_CurrentDirectory);
 			m_CurrentDirectory = currentPath;

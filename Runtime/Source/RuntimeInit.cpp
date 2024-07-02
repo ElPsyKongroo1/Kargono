@@ -13,18 +13,18 @@ namespace Kargono
 	// This function is defined in the engine in Core/Application.h.
 	//		This function is linked by the linker and provides an external
 	//		method for starting the application.
-	EngineCore* InitEngineAndCreateApp(CommandLineArgs args)
+	Engine* InitEngineAndCreateApp(CommandLineArguments args)
 	{
-		AppSpec spec;
+		EngineSpec spec;
 		spec.Name = "Runtime";
 		spec.CommandLineArgs = args;
 		spec.WorkingDirectory = std::filesystem::current_path();
-		spec.Width = 1600;
-		spec.Height = 900;
+		spec.DefaultWindowWidth = 1600;
+		spec.DefaultWindowHeight = 900;
 
 		Application* runtimeApp = new RuntimeApp();
 		KG_VERIFY(runtimeApp, "Runtime App Init");
-		return new Kargono::EngineCore(spec, runtimeApp);
+		return new Kargono::Engine(spec, runtimeApp);
 	}
 }
 
