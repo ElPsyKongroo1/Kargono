@@ -16,8 +16,13 @@ namespace Kargono::Network
 	{
 	public:
 		Server(uint16_t nPort, bool isLocal = false);
+		virtual ~Server() override = default;
+
+		bool StartServer();
 
 		void RunServer();
+
+		void StopServer();
 
 		void SessionClock();
 

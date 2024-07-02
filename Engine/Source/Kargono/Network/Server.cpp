@@ -13,14 +13,38 @@ namespace Kargono::Network
 	{
 
 	}
+	bool Server::StartServer()
+	{
+		return Start();
+	}
 	void Server::RunServer()
 	{
-		Start();
-
 		while (true)
 		{
 			Update();
 			ProcessEventQueue();
+		}
+	}
+	void Server::StopServer()
+	{
+		for (auto& connection : m_Connections)
+		{
+			if (connection->IsConnected())
+			{
+				connection->Disconnect();
+			}
+		}
+
+		m_Context.stop();
+		if (m_threadContext.joinable())
+			m_threadContext.join();
+
+		for (auto& connection : m_Connections)
+		{
+			if (connection->IsConnected())
+			{
+				connection.reset();
+			}
 		}
 	}
 	void Server::SessionClock()

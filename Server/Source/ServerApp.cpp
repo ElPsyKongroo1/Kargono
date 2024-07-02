@@ -20,16 +20,36 @@ namespace Kargono
 	void ServerApp::OnAttach()
 	{
 		Scenes::SceneService::Init();
+#ifdef KG_TESTING
+		OpenProject("../Projects/Pong/Pong.kproj");
+#else
 		if (!OpenProject())
 		{
+			KG_CRITICAL("Failed to select/open a project");
 			EngineCore::GetCurrentEngineCore().Close();
 			return;
 		}
+#endif
 
 		bool isLocal = Projects::Project::GetServerLocation() == "LocalMachine";
 
 		Network::Server::SetActiveServer(CreateRef<Network::Server>(Projects::Project::GetServerPort(), isLocal));
+
+		if (!Network::Server::GetActiveServer()->StartServer())
+		{
+			KG_CRITICAL("Failed to start server");
+			Network::Server::GetActiveServer()->StopServer();
+			Network::Server::GetActiveServer().reset();
+			EngineCore::GetCurrentEngineCore().Close();
+			return;
+		}
+
+#ifndef KG_TESTING
 		Network::Server::GetActiveServer()->RunServer();
+#endif
+		Network::Server::GetActiveServer()->StopServer();
+		Network::Server::GetActiveServer().reset();
+		Network::Server::GetActiveServer() = nullptr;
 	}
 
 	bool ServerApp::OpenProject()

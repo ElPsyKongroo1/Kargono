@@ -72,6 +72,8 @@ namespace Kargono
 		}
 		OnStop();
 
+		Audio::AudioService::Terminate();
+
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)

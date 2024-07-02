@@ -73,8 +73,6 @@ namespace Kargono::Network
 
 		// Tidy up the context thread
 		if (m_threadContext.joinable()) { m_threadContext.join(); }
-
-		KG_INFO("[SERVER] Stopped!");
 	}
 	void ServerInterface::WaitForClientConnection()
 	{
