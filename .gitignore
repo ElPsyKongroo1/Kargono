@@ -36,6 +36,7 @@ bin-int/**
 /Server/Resources/Scripts/**
 /Kargono.sln.DotSettings.user
 /docs/**
+/.vscode/**
 
 # Specific File Paths
 **/Assets/Scripts/Binaries/**
