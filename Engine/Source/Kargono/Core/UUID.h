@@ -4,16 +4,33 @@
 
 namespace Kargono
 {
+	//==============================
+	// Universal Identifier Class
+	//==============================
 	class UUID
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		UUID();
 		UUID(uint64_t uuid);
 		UUID(const UUID&) = default;
-
-		operator uint64_t() const { return m_UUID; }
-		operator std::string() const { return std::to_string(m_UUID); }
+		//==============================
+		// Getters/Setters
+		//==============================
+		operator uint64_t() const 
+		{ 
+			return m_UUID; 
+		}
+		operator std::string() const 
+		{ 
+			return std::to_string(m_UUID); 
+		}
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		uint64_t m_UUID;
 	};
 }
