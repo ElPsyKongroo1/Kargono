@@ -139,6 +139,36 @@ namespace Kargono::Audio
 		// This ID stores a reference to the OpenAL source that this class represents.
 		uint32_t m_SourceID = 0;
 	};
+
+
+	//==============================
+	// Audio Context Struct
+	//==============================
+	struct AudioContext
+	{
+		// This name currently only exists for debugging purposes. It could be used
+		//		for switching audio devices in future iterations.
+		std::string CurrentDeviceName{};
+		// m_CurrentDeviceID holds a reference to the OpenAL device struct that references
+		//		a physical audio device on your hardware such as a headset.
+		ALCdevice* CurrentDeviceID = nullptr;
+		// m_ContextID holds a reference to the current OpenAL 'world'. This context is
+		//		created around the selected audio device.
+		ALCcontext* ContextID = nullptr;
+		// This default listener is the regular listener for the newly created context.
+		//		This is the listener all audio uses currently.
+		Scope<AudioListener> DefaultListener = nullptr;
+		// This queue holds all of the available audio source other than the stereo source.
+		//		Audio is played by selected the source at the top of the queue, stopping any
+		//		previous audio, playing the new audio, and pushing the source to the back
+		//		of the queue. This allows sources to be cycled continuously.
+		std::queue<Ref<AudioSource>> AudioSourceQueue{};
+		// This is the default stereo source that plays continuous music. It is not interrupted
+		//		by the other sources.
+		Scope<AudioSource> StereoMusicSource = nullptr;
+	};
+
+
 	//============================================================
 	// Audio Service Class
 	//============================================================
@@ -201,30 +231,9 @@ namespace Kargono::Audio
 		//		that is static for the program.
 		AudioService() = default;
 	private:
-		// This name currently only exists for debugging purposes. It could be used
-		//		for switching audio devices in future iterations.
-		std::string m_CurrentDeviceName {};
-		// m_CurrentDeviceID holds a reference to the OpenAL device struct that references
-		//		a physical audio device on your hardware such as a headset.
-		ALCdevice* m_CurrentDeviceID = nullptr;
-		// m_ContextID holds a reference to the current OpenAL 'world'. This context is
-		//		created around the selected audio device.
-		ALCcontext* m_ContextID = nullptr;
-		// This default listener is the regular listener for the newly created context.
-		//		This is the listener all audio uses currently.
-		Scope<AudioListener> m_DefaultListener = nullptr;
-		// This queue holds all of the available audio source other than the stereo source.
-		//		Audio is played by selected the source at the top of the queue, stopping any
-		//		previous audio, playing the new audio, and pushing the source to the back
-		//		of the queue. This allows sources to be cycled continuously.
-		std::queue<Ref<AudioSource>> m_AudioSourceQueue{};
-		// This is the default stereo source that plays continuous music. It is not interrupted
-		//		by the other sources.
-		Scope<AudioSource> m_StereoMusicSource = nullptr;
-	private:
 		// This is the actual AudioEngine which is staticly created in the AudioEngine.cpp file
 		//		and is active through the lifetime of the application. Init() and Terminate()
 		//		dictate if OpenAL is active.
-		static AudioService* s_AudioContext;
+		static AudioContext* s_AudioContext;
 	};
 }

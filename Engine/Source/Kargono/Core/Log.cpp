@@ -32,6 +32,6 @@ namespace Kargono
 
 		spdlog::set_default_logger(s_CoreLogger);
 
-		KG_VERIFY(s_CoreLogger, "Logging System")
+		KG_VERIFY(s_CoreLogger, "Logging System");
 	}
 }

@@ -6,7 +6,6 @@ namespace Kargono { class EditorApp; }
 
 namespace Kargono::Panels
 {
-
 	class ViewportPanel
 	{
 	public:
