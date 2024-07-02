@@ -2,7 +2,7 @@
 
 #include "Kargono/Projects/Project.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Assets/AssetManager.h"
 
 namespace Kargono::Utility

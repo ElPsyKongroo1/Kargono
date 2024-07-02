@@ -1,12 +1,12 @@
 #pragma once
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Utility/Timers.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
 	
-	extern Kargono::Engine* Kargono::InitEngineAndCreateApp(CommandLineArguments args);
+	extern void Kargono::InitEngineAndCreateApp(CommandLineArguments args);
 	//==============================
 	// General Entry Point
 	//==============================
@@ -14,13 +14,11 @@
 	{
 		Kargono::Log::Init();
 		KG_INFO("Starting Application");
-		Kargono::Engine* core = Kargono::InitEngineAndCreateApp({ argc, argv });
-		KG_VERIFY(core, "Engine Core Initialization");
-		core->RunOnUpdate();
+		Kargono::InitEngineAndCreateApp({ argc, argv });
+		Kargono::EngineService::GetActiveEngine().RunOnUpdate();
 		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
-		delete core;
-		core = nullptr;
-		KG_VERIFY(!core, "Core Closed");
+		Kargono::EngineService::Terminate();
+		
 	}
 	//==============================
 	// Main with console

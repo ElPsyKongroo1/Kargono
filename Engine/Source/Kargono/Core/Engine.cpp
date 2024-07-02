@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
+
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Physics/Physics2D.h"
@@ -24,34 +25,6 @@ namespace Kargono
 
 	Engine* EngineService::s_ActiveEngine = nullptr;
 
-	Engine::Engine(const EngineSpec& specification, Application* app)
-		: m_Specification(specification)
-		
-	{
-		// Ensure Application is a Singleton
-		KG_ASSERT(!EngineService::s_ActiveEngine, "Application already exists!")
-		EngineService::s_ActiveEngine = this;
-		m_CurrentApp = app;
-		m_Window = Window::Create(WindowProps(m_Specification.Name, m_Specification.DefaultWindowWidth, m_Specification.DefaultWindowHeight));
-		KG_VERIFY(m_Window, "Window Init");
-		m_Window->SetEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
-		AppTickService::SetAppTickEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
-		app->OnAttach();
-	}
-
-	Engine::~Engine()
-	{
-		if (m_CurrentApp)
-		{
-			m_CurrentApp->OnDetach();
-			delete m_CurrentApp;
-			m_CurrentApp = nullptr;
-		}
-
-		KG_VERIFY(!m_CurrentApp, "Close App");
-		
-	}
-
 	void Engine::OnEvent(Events::Event& e) 
 	{
 		Events::EventDispatcher dispatcher(e);
@@ -74,8 +47,6 @@ namespace Kargono
 			m_CurrentApp->OnEvent(e);
 		}
 	}
-
-	
 
 	void Engine::CloseEngine()
 	{
@@ -165,6 +136,16 @@ namespace Kargono
 		Rendering::RenderingService::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
+	}
+
+	void Engine::RegisterWindowOnEventCallback()
+	{
+		m_Window->SetEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
+	}
+
+	void Engine::RegisterAppTickOnEventCallback()
+	{
+		AppTickService::SetAppTickEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
 	}
 
 	bool Engine::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
@@ -258,12 +239,34 @@ namespace Kargono
 		m_EventQueue.clear();
 	}
 
-	void EngineService::Init()
+	
+	void EngineService::Init(const EngineSpec& specification, Application* app)
 	{
+		// Ensure Engine is a Singleton
+		KG_ASSERT(!s_ActiveEngine, "Application already exists!")
+		s_ActiveEngine = new Engine();
+		s_ActiveEngine->m_Specification = specification;
+		s_ActiveEngine->m_CurrentApp = app;
+		s_ActiveEngine->m_Window = Window::Create(WindowProps(s_ActiveEngine->m_Specification.Name, 
+			s_ActiveEngine->m_Specification.DefaultWindowWidth, 
+			s_ActiveEngine->m_Specification.DefaultWindowHeight));
+		KG_VERIFY(s_ActiveEngine->m_Window, "Window Init");
+		s_ActiveEngine->RegisterWindowOnEventCallback();
+		s_ActiveEngine->RegisterAppTickOnEventCallback();
+		app->OnAttach();
+		KG_VERIFY(s_ActiveEngine, "Engine Initialized");
 	}
 
 	void EngineService::Terminate()
 	{
+		if (s_ActiveEngine->m_CurrentApp)
+		{
+			s_ActiveEngine->m_CurrentApp->OnDetach();
+			delete s_ActiveEngine->m_CurrentApp;
+			s_ActiveEngine->m_CurrentApp = nullptr;
+		}
+
+		KG_VERIFY(!(s_ActiveEngine->m_CurrentApp), "Application Terminated");
 	}
 
 	void EngineService::SubmitToMainThread(const std::function<void()>& function)

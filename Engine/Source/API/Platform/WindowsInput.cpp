@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Input/InputPolling.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Math/Math.h"
 
 #include "API/Platform/GlfwAPI.h"

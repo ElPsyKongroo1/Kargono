@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"

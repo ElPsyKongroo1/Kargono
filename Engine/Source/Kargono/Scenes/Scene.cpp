@@ -5,7 +5,7 @@
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Rendering/Shader.h"
 

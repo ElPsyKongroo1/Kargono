@@ -53,12 +53,12 @@ namespace Kargono
 	//==============================
 	class Engine
 	{
-	public:
+	private:
 		//==============================
 		// Constructor/Destructor
 		//==============================
-		Engine(const EngineSpec& specification, Application* app);
-		~Engine();
+		Engine() = default;
+		~Engine() = default;
 	public:
 		//==============================
 		// LifeCycle Functions
@@ -80,6 +80,9 @@ namespace Kargono
 		{
 			contactListener.SetEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
 		}
+		void RegisterWindowOnEventCallback();
+		void RegisterAppTickOnEventCallback();
+		
 	private:
 		bool OnCleanUpTimers(Events::CleanUpTimersEvent& e);
 		bool OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e);
@@ -136,7 +139,7 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		static void Init();
+		static void Init(const EngineSpec& specification, Application* app);
 		static void Terminate();
 		
 		//==============================
@@ -159,6 +162,6 @@ namespace Kargono
 	};
 
 	// To be defined in client
-	Engine* InitEngineAndCreateApp(CommandLineArguments args);
+	void InitEngineAndCreateApp(CommandLineArguments args);
 }
 

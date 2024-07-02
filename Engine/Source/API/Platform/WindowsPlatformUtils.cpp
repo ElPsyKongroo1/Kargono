@@ -4,7 +4,7 @@
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 
 #include "API/Platform/WindowsBackendAPI.h"
 #include "API/Platform/GlfwBackendAPI.h"

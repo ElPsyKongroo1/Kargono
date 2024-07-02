@@ -4,7 +4,7 @@
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/EditorUI/EditorUI.h"
 
 #include "API/Platform/GlfwAPI.h"

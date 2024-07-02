@@ -2,7 +2,7 @@
 
 #include "Kargono/Scenes/SceneCamera.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 
 namespace Kargono::Scenes
 {

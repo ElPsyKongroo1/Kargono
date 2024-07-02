@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Input/InputPolling.h"
