@@ -85,6 +85,7 @@ namespace Kargono
 		}
 
 		EditorUI::EditorUIService::Terminate();
+		Audio::AudioService::Terminate();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)

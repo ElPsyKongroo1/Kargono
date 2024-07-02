@@ -1,4 +1,4 @@
-project "Server"
+project "ServerTesting"
     language "C++"
     cppdialect "C++20"
     staticruntime "off"
@@ -9,7 +9,9 @@ project "Server"
     files 
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+        "%{wks.location}/Server/Source/**.cpp",
+        "%{wks.location}/Server/Source/**.h",
     }
 
     includedirs 
@@ -24,12 +26,11 @@ project "Server"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
-        "%{wks.location}/Runtime/Source",
+        "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"
-
     }
 
     libdirs
@@ -44,9 +45,9 @@ project "Server"
 
     defines 
     {
-        "KG_RUNTIME",
+        "KG_EXPORT=0",
 		"_CRT_SECURE_NO_WARNINGS",
-        "KG_EXPORT=0"
+        "KG_TESTING"
     }
 
     filter "system:windows"

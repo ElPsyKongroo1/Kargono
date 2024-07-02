@@ -49,7 +49,6 @@ namespace Kargono
 		}
 
 		Scripting::ScriptService::Terminate();
-		Audio::AudioService::Terminate();
 		// TODO: Add Renderer Shutdown!
 
 		KG_VERIFY(!m_CurrentApp, "Close App");
