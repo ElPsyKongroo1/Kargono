@@ -2,7 +2,7 @@
 
 #include "Kargono/Scripting/Scripting.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Scenes/Scene.h"

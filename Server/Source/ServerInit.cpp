@@ -13,7 +13,7 @@ namespace Kargono
 	// This function is defined in the engine in Core/Application.h.
 	//		This function is linked by the linker and provides an external
 	//		method for starting the application.
-	Engine* InitEngineAndCreateApp(CommandLineArguments args)
+	void InitEngineAndCreateApp(CommandLineArguments args)
 	{
 		EngineSpec spec;
 		spec.Name = "Server";
@@ -24,6 +24,6 @@ namespace Kargono
 
 		Application* serverApp = new ServerApp();
 		KG_VERIFY(serverApp, "Server App Init");
-		return new Kargono::Engine(spec, serverApp);
+		EngineService::Init(spec, serverApp);
 	}
 }

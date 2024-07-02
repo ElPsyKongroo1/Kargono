@@ -3,7 +3,7 @@
 #include "Kargono/Input/InputMode.h"
 
 #include "Kargono/Input/InputPolling.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Assets/AssetManager.h"
 
 namespace Kargono::Input

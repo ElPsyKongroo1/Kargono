@@ -7,7 +7,7 @@
 
 namespace Kargono
 {
-	Engine* InitEngineAndCreateApp(CommandLineArguments args)
+	void InitEngineAndCreateApp(CommandLineArguments args)
 	{
 		EngineSpec spec;
 		spec.Name = "Kargono Editor";
@@ -18,6 +18,6 @@ namespace Kargono
 
 		Application* editorApp = new EditorApp();
 		KG_VERIFY(editorApp, "Editor App Init");
-		return new Kargono::Engine(spec, editorApp);
+		EngineService::Init(spec, editorApp);
 	}
 }
