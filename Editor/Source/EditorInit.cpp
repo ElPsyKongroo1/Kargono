@@ -7,17 +7,17 @@
 
 namespace Kargono
 {
-	EngineCore* InitEngineAndCreateApp(CommandLineArgs args)
+	Engine* InitEngineAndCreateApp(CommandLineArguments args)
 	{
-		AppSpec spec;
+		EngineSpec spec;
 		spec.Name = "Kargono Editor";
 		spec.CommandLineArgs = args;
 		spec.WorkingDirectory = std::filesystem::current_path();
-		spec.Width = 1600;
-		spec.Height = 900;
+		spec.DefaultWindowWidth = 1600;
+		spec.DefaultWindowHeight = 900;
 
 		Application* editorApp = new EditorApp();
 		KG_VERIFY(editorApp, "Editor App Init");
-		return new Kargono::EngineCore(spec, editorApp);
+		return new Kargono::Engine(spec, editorApp);
 	}
 }

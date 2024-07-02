@@ -81,20 +81,6 @@ namespace Kargono::Utility
 		return true;
 	}
 
-	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer)
-	{
-		CreateNewDirectory(filepath.parent_path());
-		std::ofstream output_file(filepath, std::ios::binary);
-		if (!output_file)
-		{
-			KG_ERROR("Failed to write binary data to file");
-			return false;
-		}
-
-		output_file.write(buffer.As<const char>(), buffer.Size());
-		return true;
-	}
-
 	bool FileSystem::WriteFileString(const std::filesystem::path& filepath, const std::string& string)
 	{
 		CreateNewDirectory(filepath.parent_path());

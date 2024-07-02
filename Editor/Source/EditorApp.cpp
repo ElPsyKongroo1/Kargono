@@ -32,7 +32,7 @@ namespace Kargono
 #else
 	if (!OpenProject())
 	{
-		EngineCore::GetCurrentEngineCore().Close();
+		EngineService::GetActiveEngine().CloseEngine();
 		return;
 	}
 #endif
@@ -61,7 +61,7 @@ namespace Kargono
 		
 		m_ViewportPanel->InitializeOverlayData();
 
-		EngineCore::GetActiveWindow().SetVisible(true);
+		EngineService::GetActiveWindow().SetVisible(true);
 	}
 
 	void EditorApp::OnDetach()
@@ -86,6 +86,7 @@ namespace Kargono
 
 		EditorUI::EditorUIService::Terminate();
 		Audio::AudioService::Terminate();
+		Scripting::ScriptService::Terminate();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -189,7 +190,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineCore::GetCurrentEngineCore().Close();
+					EngineService::GetActiveEngine().CloseEngine();
 				}
 				ImGui::EndMenu();
 
@@ -375,7 +376,7 @@ namespace Kargono
 			}
 			case Key::F11:
 			{
-				EngineCore::GetActiveWindow().ToggleMaximized();
+				EngineService::GetActiveWindow().ToggleMaximized();
 				break;
 			}
 
@@ -639,10 +640,10 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow())
+			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
 				
-				EngineCore::GetActiveWindow().Init();
+				EngineService::GetActiveWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
 			auto startSceneHandle = Projects::Project::GetStartSceneHandle();
@@ -796,8 +797,8 @@ namespace Kargono
 			Network::Client::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::Client::GetActiveClient().get()));
 		}
 
-		AppTickEngine::LoadProjectGenerators();
-		EngineCore::GetCurrentEngineCore().SetAppStartTime();
+		AppTickService::LoadGeneratorsFromProject();
+		EngineService::GetActiveEngine().SetAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
@@ -854,7 +855,7 @@ namespace Kargono
 			Network::Client::GetActiveClient().reset();
 		}
 
-		AppTickEngine::ClearGenerators();
+		AppTickService::ClearGenerators();
 
 		m_SceneState = SceneState::Edit;
 	}

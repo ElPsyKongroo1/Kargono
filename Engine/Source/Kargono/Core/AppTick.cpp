@@ -1,31 +1,31 @@
 #include "kgpch.h"
 
 #include "Kargono/Core/AppTick.h"
-#include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Time.h"
 
 
 namespace Kargono
 {
-	static std::vector<AppTickGenerator> s_AppTickGenerators {};
-	static Events::EventCallbackFn s_AppTickCallback {};
+	std::vector<AppTickGenerator> AppTickService::s_AppTickGenerators;
+	Events::EventCallbackFn AppTickService::s_AppTickCallback;
 
-	void AppTickEngine::LoadProjectGenerators()
+	void AppTickService::LoadGeneratorsFromProject()
 	{
-		AppTickEngine::ClearGenerators();
+		KG_ASSERT(Projects::Project::GetActive());
+		AppTickService::ClearGenerators();
 		for (auto generatorValue : Projects::Project::GetAppTickGenerators())
 		{
-			AppTickEngine::AddGeneratorUsage(generatorValue);
+			AppTickService::AddNewGenerator(generatorValue);
 		}
 	}
 
-	void AppTickEngine::SetAppTickCallback(const Events::EventCallbackFn& callback)
+	void AppTickService::SetAppTickEventCallback(const Events::EventCallbackFn& callback)
 	{
 		s_AppTickCallback = callback;
 	}
 
-	void AppTickEngine::UpdateGenerators(Timestep ts)
+	void AppTickService::OnUpdate(Timestep ts)
 	{
 		for (auto& generator : s_AppTickGenerators)
 		{
@@ -41,12 +41,12 @@ namespace Kargono
 		}
 	}
 
-	void AppTickEngine::ClearGenerators()
+	void AppTickService::ClearGenerators()
 	{
 		s_AppTickGenerators.clear();
 	}
 
-	void AppTickEngine::ResetAllAccumulators()
+	void AppTickService::ResetAllAccumulators()
 	{
 		for (auto& generator : s_AppTickGenerators)
 		{
@@ -54,7 +54,7 @@ namespace Kargono
 		}
 	}
 
-	void AppTickEngine::AddGeneratorUsage(uint64_t delayMilliseconds)
+	void AppTickService::AddNewGenerator(uint64_t delayMilliseconds)
 	{
 		// Check if a similar generator already exists
 		for (auto& generator : s_AppTickGenerators)
@@ -76,7 +76,7 @@ namespace Kargono
 		s_AppTickGenerators.push_back(newGenerator);
 	}
 
-	void AppTickEngine::RemoveGeneratorUsage(uint64_t delayMilliseconds)
+	void AppTickService::RemoveGenerator(uint64_t delayMilliseconds)
 	{
 		// Decrease usage count if there is a match
 		for (auto& generator : s_AppTickGenerators)

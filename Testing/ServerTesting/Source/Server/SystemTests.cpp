@@ -5,7 +5,7 @@
 
 TEST_CASE("Initialization and Termination")
 {
-	Kargono::EngineCore* core = nullptr;
+	Kargono::Engine* core = nullptr;
 	CHECK_NOTHROW(core = Kargono::InitEngineAndCreateApp({ 0, nullptr }));
 	CHECK_NOTHROW(Kargono::Utility::AsyncBusyTimer::CloseAllTimers());
 	CHECK_NOTHROW(delete core);

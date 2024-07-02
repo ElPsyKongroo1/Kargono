@@ -38,7 +38,7 @@ namespace Kargono::Input
 			return;
 		}
 
-		EngineCore::GetCurrentEngineCore().SubmitToMainThread([&]()
+		EngineService::SubmitToMainThread([&]()
 		{
 			SetActiveInputMode(s_InputRef, s_InputHandle);
 		});

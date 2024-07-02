@@ -23,7 +23,7 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
+		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::Scene::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 		#if KG_EXPORT == 0
@@ -32,7 +32,7 @@ namespace Kargono
 			#else
 					if (!OpenProject())
 					{
-						EngineCore::GetCurrentEngineCore().Close();
+						EngineService::GetActiveEngine().CloseEngine();
 						return;
 					}
 			#endif
@@ -92,7 +92,7 @@ namespace Kargono
 		if (mainCamera)
 		{
 			RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
-				EngineCore::GetCurrentEngineCore().GetWindow().GetWidth(), EngineCore::GetCurrentEngineCore().GetWindow().GetHeight());
+				EngineService::GetActiveWindow().GetWidth(), EngineService::GetActiveWindow().GetHeight());
 		}
 	}
 
@@ -118,15 +118,15 @@ namespace Kargono
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
-		Events::EventCallbackFn eventCallback = EngineCore::GetCurrentEngineCore().GetWindow().GetEventCallback();
+		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
 		eventCallback(windowEvent);
 		return false;
 	}
 
 	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportWidth(event.GetWidth());
-		EngineCore::GetCurrentEngineCore().GetWindow().SetViewportHeight(event.GetHeight());
+		EngineService::GetActiveWindow().SetViewportWidth(event.GetWidth());
+		EngineService::GetActiveWindow().SetViewportHeight(event.GetHeight());
 		Scenes::Scene::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
@@ -337,7 +337,7 @@ namespace Kargono
 	{
 		if (Assets::AssetManager::OpenProject(path))
 		{
-			if (!EngineCore::GetActiveWindow().GetNativeWindow())
+			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::Project::GetTargetResolution());
 				WindowProps projectProps =
@@ -347,7 +347,7 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.y)
 				};
 				#if KG_EXPORT == 0
-				EngineCore::GetActiveWindow().Init(projectProps);
+				EngineService::GetActiveWindow().Init(projectProps);
 				#else
 				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
 				#endif

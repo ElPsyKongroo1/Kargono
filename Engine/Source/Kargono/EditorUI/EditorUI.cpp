@@ -159,61 +159,61 @@ namespace Kargono::EditorUI
 		SetDarkThemeColors();
 
 		// Setup Platform/Renderer backends
-		EngineCore& core = EngineCore::GetCurrentEngineCore();
+		Engine& core = EngineService::GetActiveEngine();
 		GLFWwindow* window = static_cast<GLFWwindow*>(core.GetWindow().GetNativeWindow());
 		KG_ASSERT(window, "No window active when initializing EditorUI");
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 
 		// Set Up Editor Resources
-		s_IconPlay = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/play_icon.png").string());
-		s_IconPause = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/pause_icon.png").string());
-		s_IconSimulate = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/simulate_icon.png").string());
-		s_IconStop = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon.png").string());
-		s_IconStep = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/step_icon.png").string());
-		s_IconAddItem = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/add_item.png").string());
-		s_IconDisplay = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/display_icon.png").string());
-		s_IconDisplayActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/display_icon_active.png").string());
-		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/camera_icon.png").string());
-		s_IconCameraActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/camera_icon_active.png").string());
-		s_IconPlayActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/play_icon_active.png").string());
-		s_IconStopActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/stop_icon_active.png").string());
-		s_IconPauseActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/pause_icon_active.png").string());
-		s_IconStepActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/step_icon_active.png").string());
-		s_IconSimulateActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/simulate_icon_active.png").string());
-		s_IconSettings = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/settings_icon.png").string());
-		s_IconDelete = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/delete_icon.png").string());
-		s_IconDeleteActive = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/delete_active_icon.png").string());
-		s_IconEdit = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/edit_icon.png").string());
-		s_IconEdit_Active = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/edit_active_icon.png").string());
-		s_IconCancel = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/cancel_icon.png").string());
-		s_IconConfirm = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/confirm_icon.png").string());
-		s_IconSearch = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/search_icon.png").string());
-		s_IconOptions = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/options_icon.png").string());
-		s_IconDown = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/down_icon.png").string());
-		s_IconRight = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/right_icon.png").string());
-		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/dash_icon.png").string());
+		s_IconPlay = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/play_icon.png").string());
+		s_IconPause = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/pause_icon.png").string());
+		s_IconSimulate = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/simulate_icon.png").string());
+		s_IconStop = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/stop_icon.png").string());
+		s_IconStep = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/step_icon.png").string());
+		s_IconAddItem = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/add_item.png").string());
+		s_IconDisplay = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/display_icon.png").string());
+		s_IconDisplayActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/display_icon_active.png").string());
+		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/camera_icon.png").string());
+		s_IconCameraActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/camera_icon_active.png").string());
+		s_IconPlayActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/play_icon_active.png").string());
+		s_IconStopActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/stop_icon_active.png").string());
+		s_IconPauseActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/pause_icon_active.png").string());
+		s_IconStepActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/step_icon_active.png").string());
+		s_IconSimulateActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/simulate_icon_active.png").string());
+		s_IconSettings = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/settings_icon.png").string());
+		s_IconDelete = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/delete_icon.png").string());
+		s_IconDeleteActive = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/delete_active_icon.png").string());
+		s_IconEdit = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/edit_icon.png").string());
+		s_IconEdit_Active = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/edit_active_icon.png").string());
+		s_IconCancel = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/cancel_icon.png").string());
+		s_IconConfirm = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/confirm_icon.png").string());
+		s_IconSearch = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/search_icon.png").string());
+		s_IconOptions = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/options_icon.png").string());
+		s_IconDown = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/down_icon.png").string());
+		s_IconRight = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/right_icon.png").string());
+		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/dash_icon.png").string());
 
-		s_IconCheckbox_Empty_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
-		s_IconCheckbox_Check_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
-		s_IconCheckbox_Empty_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_enabled_empty_icon.png").string());
-		s_IconCheckbox_Check_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_enabled_check_icon.png").string());
+		s_IconCheckbox_Empty_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
+		s_IconCheckbox_Check_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
+		s_IconCheckbox_Empty_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_enabled_empty_icon.png").string());
+		s_IconCheckbox_Check_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_enabled_check_icon.png").string());
 
-		s_DirectoryIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/directory_icon.png");
-		s_GenericFileIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/generic_file_icon.png");
-		s_BackIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/back_icon.png");
-		s_BackInactiveIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/back_inactive_icon.png");
-		s_ForwardIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/forward_icon.png");
-		s_ForwardInactiveIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/forward_inactive_icon.png");
-		s_AudioIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/audio_icon.png");
-		s_ImageIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/image_icon.png");
-		s_BinaryIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/binary_icon.png");
-		s_SceneIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/scene_icon.png");
-		s_RegistryIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/registry_icon.png");
-		s_ScriptProjectIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/script_project.png");
-		s_FontIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/font.png");
-		s_UserInterfaceIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/user_interface_icon.png");
-		s_InputIcon = Rendering::Texture2D::CreateEditorTexture(EngineCore::GetCurrentEngineCore().GetWorkingDirectory() / "Resources/icons/content_browser/input_icon.png");
+		s_DirectoryIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/directory_icon.png");
+		s_GenericFileIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/generic_file_icon.png");
+		s_BackIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/back_icon.png");
+		s_BackInactiveIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/back_inactive_icon.png");
+		s_ForwardIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/forward_icon.png");
+		s_ForwardInactiveIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/forward_inactive_icon.png");
+		s_AudioIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/audio_icon.png");
+		s_ImageIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/image_icon.png");
+		s_BinaryIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/binary_icon.png");
+		s_SceneIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/scene_icon.png");
+		s_RegistryIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/registry_icon.png");
+		s_ScriptProjectIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/script_project.png");
+		s_FontIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/font.png");
+		s_UserInterfaceIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/user_interface_icon.png");
+		s_InputIcon = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/content_browser/input_icon.png");
 
 		s_SmallEditButton = {
 				390.0f,
@@ -344,7 +344,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EndRendering()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		EngineCore& app = EngineCore::GetCurrentEngineCore();
+		Engine& app = EngineService::GetActiveEngine();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 		if (s_DisableLeftClick)
 		{

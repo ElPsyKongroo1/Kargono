@@ -23,7 +23,7 @@ namespace Kargono
 	//==============================
 	// Command Line Arguments Struct
 	//==============================
-	struct CommandLineArgs
+	struct CommandLineArguments
 	{
 		int Count = 0;
 		char** Args = nullptr;
@@ -38,30 +38,33 @@ namespace Kargono
 	//==============================
 	// Application Specification Struct
 	//==============================
-	struct AppSpec
+	struct EngineSpec
 	{
 		std::string Name = "Kargono Application";
-		std::filesystem::path WorkingDirectory;
-		CommandLineArgs CommandLineArgs;
-		uint32_t Width, Height;
+		std::filesystem::path WorkingDirectory{};
+		CommandLineArguments CommandLineArgs{};
+		uint32_t DefaultWindowHeight{ 0 };
+		uint32_t DefaultWindowWidth{ 0 };
 	};
+
+	class EngineService;
 	//==============================
-	// Engine Core Struct	
+	// Engine Core Class
 	//==============================
-	class EngineCore
+	class Engine
 	{
 	public:
 		//==============================
 		// Constructor/Destructor
 		//==============================
-		EngineCore(const AppSpec& specification, Application* app);
-		~EngineCore();
+		Engine(const EngineSpec& specification, Application* app);
+		~Engine();
 	public:
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		void Close();
-		void Run();
+		void CloseEngine();
+		void RunOnUpdate();
 	public:
 		//==============================
 		// Event Functions
@@ -75,7 +78,7 @@ namespace Kargono
 		void OnAddExtraUpdate(Events::AddExtraUpdateEvent event);
 		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
 		{
-			contactListener.SetEventCallback(KG_BIND_CLASS_FN(EngineCore::OnEvent));
+			contactListener.SetEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
 		}
 	private:
 		bool OnCleanUpTimers(Events::CleanUpTimersEvent& e);
@@ -86,17 +89,13 @@ namespace Kargono
 		//==============================
 		// Submission API
 		//==============================
-		void SubmitToMainThread(const std::function<void()>& function);
-		void SubmitToEventQueue(Ref<Events::Event> e);
-		static void CloseApplication();
+		static void SubmitApplicationCloseEvent();
 
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		static EngineCore& GetCurrentEngineCore() { return *s_CurrentEngineCore; }
-		static Window& GetActiveWindow() { return *(s_CurrentEngineCore->m_Window); }
-		const AppSpec& GetSpecification() const { return m_Specification; }
+		const EngineSpec& GetSpecification() const { return m_Specification; }
 		Window& GetWindow() { return *m_Window; }
 		const std::filesystem::path& GetWorkingDirectory() const { return m_Specification.WorkingDirectory; }
 		double GetAppStartTime() const { return m_AppStartTime; }
@@ -110,7 +109,7 @@ namespace Kargono
 		void ProcessEventQueue();
 	private:
 		// Initialization Data
-		AppSpec m_Specification;
+		EngineSpec m_Specification;
 		// Engine State Data
 		Scope<Window> m_Window;
 		Application* m_CurrentApp{ nullptr };
@@ -125,13 +124,41 @@ namespace Kargono
 		std::mutex m_MainThreadQueueMutex;
 		std::vector<Ref<Events::Event>> m_EventQueue {};
 		std::mutex m_EventQueueMutex;
-		// Static Resources
-		static EngineCore* s_CurrentEngineCore;
+		
 	private:
+		friend EngineService;
 		friend int ::main(int argc, char** argv);
 	};
 
+	class EngineService
+	{
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		static void Init();
+		static void Terminate();
+		
+		//==============================
+		// Submit to Event/Function Queues
+		//==============================
+		static void SubmitToMainThread(const std::function<void()>& function);
+		static void SubmitToEventQueue(Ref<Events::Event> e);
+		//==============================
+		// Getters/Setters
+		//==============================
+		static Engine& GetActiveEngine() { return *s_ActiveEngine; }
+		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static Engine* s_ActiveEngine;
+	private:
+		friend Engine;
+	};
+
 	// To be defined in client
-	EngineCore* InitEngineAndCreateApp(CommandLineArgs args);
+	Engine* InitEngineAndCreateApp(CommandLineArguments args);
 }
 

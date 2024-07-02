@@ -13,7 +13,9 @@ namespace Kargono
 	{
 		uint8_t* Data = nullptr;
 		uint64_t Size = 0;
-
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		// Does not allocate any heap data
 		Buffer() = default;
 		Buffer(const Buffer&) = default;
@@ -23,7 +25,9 @@ namespace Kargono
 		{
 			Allocate(size);
 		}
-
+		//==============================
+		// Duplicate Buffer
+		//==============================
 		static Buffer Copy(Buffer other)
 		{
 			if (other)
@@ -35,7 +39,9 @@ namespace Kargono
 			return {};
 			
 		}
-
+		//==============================
+		// Manage Heap
+		//==============================
 		void Allocate(uint64_t size)
 		{
 			Release();
@@ -49,27 +55,13 @@ namespace Kargono
 			Data = nullptr;
 			Size = 0;
 		}
-
+		//==============================
+		// Set Data in Buffer
+		//==============================
 		void SetDataToByte(uint8_t byte)
 		{
 			if (Size == 0) { return; }
 			memset(Data, byte, Size);
-		}
-
-		template<typename T>
-		T* As()
-		{
-			return (T*)Data;
-		}
-
-		template<typename T>
-		T* As(std::size_t offsetInBytes)
-		{
-			return (T*)(Data + offsetInBytes);
-		}
-		operator bool() const
-		{
-			return (bool)Data;
 		}
 
 		void SetString(const std::string& string)
@@ -82,54 +74,29 @@ namespace Kargono
 			memcpy(Data, string.data(), string.size());
 		}
 
+		//==============================
+		// Retrieve Data from Buffer
+		//==============================
+		template<typename T>
+		T* As()
+		{
+			return (T*)Data;
+		}
+
+		template<typename T>
+		T* As(std::size_t offsetInBytes)
+		{
+			return (T*)(Data + offsetInBytes);
+		}
+
 		std::string GetString()
 		{
 			return { this->As<char>() };
 		}
-	};
-	//==============================
-	// Scoped Buffer Class
-	//==============================
-	struct ScopedBuffer
-	{
-
-		ScopedBuffer(Buffer buffer)
-			:m_Buffer(buffer)
-		{
-		}
-
-		ScopedBuffer(uint64_t size)
-			: m_Buffer(size)
-		{
-			
-		}
-
-		ScopedBuffer()
-		{
-			
-		}
-
-		~ScopedBuffer()
-		{
-			m_Buffer.Release();
-		}
-
-		uint8_t* Data() { return m_Buffer.Data; }
-		uint64_t Size() { return m_Buffer.Size; }
-		void Allocate(uint64_t size) { m_Buffer.Allocate(size); }
-
-		template<typename T>
-		T* As()
-		{
-			return m_Buffer.As<T>();
-		}
 
 		operator bool() const
 		{
-			return m_Buffer;
+			return (bool)Data;
 		}
-
-	private:
-		Buffer m_Buffer;
 	};
 }

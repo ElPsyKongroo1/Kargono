@@ -19,7 +19,7 @@ namespace Kargono::Panels
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
 		// Adjust Framebuffer Size Based on Viewport
-		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
+		auto& currentWindow = EngineService::GetActiveWindow();
 		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
 			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
@@ -78,7 +78,7 @@ namespace Kargono::Panels
 
 		if (s_EditorApp->m_ShowUserInterface)
 		{
-			auto& currentApplication = EngineCore::GetCurrentEngineCore().GetWindow();
+			auto& currentApplication = EngineService::GetActiveWindow();
 			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
 				Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
@@ -104,14 +104,14 @@ namespace Kargono::Panels
 	{
 		Rendering::FramebufferSpecification fbSpec;
 		fbSpec.Attachments = {Rendering::FramebufferDataFormat::RGBA8, Rendering::FramebufferDataFormat::RED_INTEGER, Rendering::FramebufferDataFormat::Depth };
-		fbSpec.Width = EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
-		fbSpec.Height = EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
+		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
 		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
 	}
 	void ViewportPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		auto& currentWindow = EngineCore::GetCurrentEngineCore().GetWindow();
+		auto& currentWindow = EngineService::GetActiveWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -848,8 +848,8 @@ namespace Kargono::Panels
 	{
 		auto& transform = entity.GetComponent<Scenes::TransformComponent>();
 		auto& camera = entity.GetComponent<Scenes::CameraComponent>();
-		float windowWidth = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetWidth();
-		float windowHeight = (float)EngineCore::GetCurrentEngineCore().GetWindow().GetHeight();
+		float windowWidth = (float)EngineService::GetActiveWindow().GetWidth();
+		float windowHeight = (float)EngineService::GetActiveWindow().GetHeight();
 		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
 		auto cameraProjectionType = camera.Camera.GetProjectionType();
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
