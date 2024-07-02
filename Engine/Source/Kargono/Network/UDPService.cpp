@@ -58,7 +58,11 @@ namespace Kargono::Network
 			{
 				if (ec)
 				{
-					KG_ERROR("Failure to read UDP Message! {}", ec.message());
+					KG_WARN("Failure to read UDP Message! {}", ec.message());
+					if (ec.value() == 995) // Application requests termination
+					{
+						return;
+					}
 					//Disconnect(m_CurrentEndpoint);
 					ReadMessage();
 					return;
@@ -98,7 +102,7 @@ namespace Kargono::Network
 				// If CRC and Header are valid and payload is too big, remove connection.
 				if (payloadSize > k_MaxBufferSize)
 				{
-					KG_ERROR("Payload size of received UDP message is larger than buffer!");
+					KG_WARN("Payload size of received UDP message is larger than buffer!");
 					Disconnect(m_CurrentEndpoint);
 					return;
 				}

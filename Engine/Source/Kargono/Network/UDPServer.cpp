@@ -49,13 +49,13 @@ namespace Kargono::Network
 
 		if (!m_IPAddressToConnection.contains(key))
 		{
-			KG_ERROR("Address does not resolve to a connection pointer in UDPServer Disconnect()");
+			KG_WARN("Address does not resolve to a connection pointer in UDPServer Disconnect()");
 			return;
 		}
 		Ref<ConnectionToClient> connection = m_IPAddressToConnection.at(key);
 		if (!connection)
 		{
-			KG_ERROR("Invalid connection in UDP Disconnect()");
+			KG_WARN("Invalid connection in UDP Disconnect()");
 			return;
 		}
 

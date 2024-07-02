@@ -95,14 +95,14 @@ namespace Kargono::Projects
 
 		// Networking Variables
 
-		std::string ServerIP{};
-		uint16_t ServerPort{};
+		std::string ServerIP{"192.168.1.2"};
+		uint16_t ServerPort{20000};
 		// LocalMachine or Remote are only options currently
 		std::string ServerLocation{"LocalMachine"};
-		uint64_t SecretOne{};
-		uint64_t SecretTwo{};
-		uint64_t SecretThree{};
-		uint64_t SecretFour{};
+		uint64_t SecretOne{1};
+		uint64_t SecretTwo{2};
+		uint64_t SecretThree{3};
+		uint64_t SecretFour{4};
 	};
 
 	//============================================================

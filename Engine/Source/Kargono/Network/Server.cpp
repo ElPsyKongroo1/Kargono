@@ -27,6 +27,12 @@ namespace Kargono::Network
 	}
 	void Server::StopServer()
 	{
+		if (m_UDPServer)
+		{
+			m_UDPServer->Stop();
+			m_UDPServer.reset();
+		}
+
 		for (auto& connection : m_Connections)
 		{
 			if (connection->IsConnected())

@@ -34,12 +34,11 @@ namespace Kargono::Network
 	protected:
 		// Unique udp socket for client or server
 		asio::ip::udp::socket m_Socket;
-		
 
+		asio::ip::udp::endpoint m_CurrentEndpoint;
 		// This context is shared with the whole asio instance
 		asio::io_context& m_AsioContext;
 
-		asio::ip::udp::endpoint m_CurrentEndpoint;
 		Message m_MsgTemporaryIn{};
 
 		uint64_t m_KeepAliveDelay{ 10'000 };
