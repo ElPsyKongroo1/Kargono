@@ -46,7 +46,7 @@ namespace Kargono::Network
 	}
 	ServerInterface::~ServerInterface()
 	{
-		Stop();
+		
 	}
 	bool ServerInterface::Start()
 	{
