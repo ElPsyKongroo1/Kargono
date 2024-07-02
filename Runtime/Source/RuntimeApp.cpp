@@ -32,7 +32,7 @@ namespace Kargono
 			#else
 					if (!OpenProject())
 					{
-						EngineService::GetActiveEngine().CloseEngine();
+						EngineService::EndRun();
 						return;
 					}
 			#endif

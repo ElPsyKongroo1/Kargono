@@ -16,8 +16,6 @@
 #include <filesystem>
 #include <chrono>
 
-int main(int argc, char** argv);
-
 namespace Kargono
 {
 	//==============================
@@ -49,51 +47,16 @@ namespace Kargono
 
 	class EngineService;
 	//==============================
-	// Engine Core Class
+	// Engine Class
 	//==============================
 	class Engine
 	{
-	private:
+	private: // (Singleton)
 		//==============================
 		// Constructor/Destructor
 		//==============================
 		Engine() = default;
 		~Engine() = default;
-	public:
-		//==============================
-		// LifeCycle Functions
-		//==============================
-		void CloseEngine();
-		void RunOnUpdate();
-	public:
-		//==============================
-		// Event Functions
-		//==============================
-		void OnEvent(Events::Event& e);
-		bool OnWindowClose(Events::WindowCloseEvent& e);
-		bool OnWindowResize(Events::WindowResizeEvent& e);
-		bool OnUpdateEntityLocation(Events::UpdateEntityLocation& e);
-		bool OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e);
-		void OnSkipUpdate(Events::SkipUpdateEvent event);
-		void OnAddExtraUpdate(Events::AddExtraUpdateEvent event);
-		void RegisterCollisionEventListener (Physics::ContactListener& contactListener)
-		{
-			contactListener.SetEventCallback(KG_BIND_CLASS_FN(Engine::OnEvent));
-		}
-		void RegisterWindowOnEventCallback();
-		void RegisterAppTickOnEventCallback();
-		
-	private:
-		bool OnCleanUpTimers(Events::CleanUpTimersEvent& e);
-		bool OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e);
-		bool OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e);
-		bool OnAppTickEvent(Events::AppTickEvent& e);
-	public:
-		//==============================
-		// Submission API
-		//==============================
-		static void SubmitApplicationCloseEvent();
-
 	public:
 		//==============================
 		// Getters/Setters
@@ -103,25 +66,23 @@ namespace Kargono
 		const std::filesystem::path& GetWorkingDirectory() const { return m_Specification.WorkingDirectory; }
 		double GetAppStartTime() const { return m_AppStartTime; }
 		uint64_t GetUpdateCount() const { return m_UpdateCount; }
-		void SetAppStartTime();
+		void UpdateAppStartTime();
 
-		//==============================
-		// Internal Functionality
-		//==============================
-		void ExecuteMainThreadQueue();
-		void ProcessEventQueue();
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		// Initialization Data
 		EngineSpec m_Specification;
-		// Engine State Data
-		Scope<Window> m_Window;
+		// Engine Data
+		Scope<Window> m_Window{ nullptr };
 		Application* m_CurrentApp{ nullptr };
-		Audio::AudioService* m_AudioContext = nullptr;
-		bool m_Running = true;
-		bool m_Minimized = false;
+		// Run State Data
+		bool m_Running { true };
+		bool m_Minimized { false };
 		double m_AppStartTime = 0.0f;
 		std::chrono::nanoseconds m_Accumulator{0};
-		std::atomic<uint64_t> m_UpdateCount = 0;
+		std::atomic<uint64_t> m_UpdateCount {0};
 		// Event/Function Queues
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
@@ -130,9 +91,11 @@ namespace Kargono
 		
 	private:
 		friend EngineService;
-		friend int ::main(int argc, char** argv);
 	};
 
+	//==============================
+	// Engine Service Class
+	//==============================
 	class EngineService
 	{
 	public:
@@ -141,17 +104,44 @@ namespace Kargono
 		//==============================
 		static void Init(const EngineSpec& specification, Application* app);
 		static void Terminate();
-		
+
+		static void Run();
+		static void EndRun();
+		//==============================
+		// OnEvent Functions
+		//==============================
+		static void OnEvent(Events::Event& e);
+		static bool OnWindowClose(Events::WindowCloseEvent& e);
+		static bool OnWindowResize(Events::WindowResizeEvent& e);
+		static bool OnUpdateEntityLocation(Events::UpdateEntityLocation& e);
+		static bool OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e);
+		static void OnSkipUpdate(Events::SkipUpdateEvent event);
+		static void OnAddExtraUpdate(Events::AddExtraUpdateEvent event);
+		static bool OnCleanUpTimers(Events::CleanUpTimersEvent& e);
+		static bool OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e);
+		static bool OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e);
+		static bool OnAppTickEvent(Events::AppTickEvent& e);
+
+		//==============================
+		// Register Event Callbacks
+		//==============================
+		static void RegisterWindowOnEventCallback();
+		static void RegisterAppTickOnEventCallback();
+		static void RegisterCollisionEventListener(Physics::ContactListener& contactListener);
 		//==============================
 		// Submit to Event/Function Queues
 		//==============================
 		static void SubmitToMainThread(const std::function<void()>& function);
 		static void SubmitToEventQueue(Ref<Events::Event> e);
+		static void SubmitApplicationCloseEvent();
 		//==============================
 		// Getters/Setters
 		//==============================
 		static Engine& GetActiveEngine() { return *s_ActiveEngine; }
 		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
+	private:
+		static void ExecuteMainThreadQueue();
+		static void ProcessEventQueue();
 	private:
 		//==============================
 		// Internal Fields

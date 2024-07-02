@@ -15,7 +15,7 @@
 		Kargono::Log::Init();
 		KG_INFO("Starting Application");
 		Kargono::InitEngineAndCreateApp({ argc, argv });
-		Kargono::EngineService::GetActiveEngine().RunOnUpdate();
+		Kargono::EngineService::Run();
 		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
 		Kargono::EngineService::Terminate();
 		

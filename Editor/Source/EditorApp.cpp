@@ -32,7 +32,7 @@ namespace Kargono
 #else
 	if (!OpenProject())
 	{
-		EngineService::GetActiveEngine().CloseEngine();
+		EngineService::EndRun();
 		return;
 	}
 #endif
@@ -190,7 +190,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineService::GetActiveEngine().CloseEngine();
+					EngineService::EndRun();
 				}
 				ImGui::EndMenu();
 
@@ -798,7 +798,7 @@ namespace Kargono
 		}
 
 		AppTickService::LoadGeneratorsFromProject();
-		EngineService::GetActiveEngine().SetAppStartTime();
+		EngineService::GetActiveEngine().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
