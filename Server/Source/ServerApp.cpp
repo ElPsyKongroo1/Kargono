@@ -26,7 +26,7 @@ namespace Kargono
 		if (!OpenProject())
 		{
 			KG_CRITICAL("Failed to select/open a project");
-			EngineService::GetActiveEngine().CloseEngine();
+			EngineService::EndRun();
 			return;
 		}
 #endif
@@ -40,7 +40,7 @@ namespace Kargono
 			KG_CRITICAL("Failed to start server");
 			Network::Server::GetActiveServer()->StopServer();
 			Network::Server::GetActiveServer().reset();
-			EngineService::GetActiveEngine().CloseEngine();
+			EngineService::EndRun();
 			return;
 		}
 

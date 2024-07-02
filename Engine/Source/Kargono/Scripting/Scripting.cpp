@@ -104,7 +104,7 @@ namespace Kargono::Scripting
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
 		EngineCore_CloseApplication->m_SectionLabel = "EngineCore";
-		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(Engine::SubmitApplicationCloseEvent);
+		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineService::SubmitApplicationCloseEvent);
 		engineScripts.push_back(EngineCore_CloseApplication);
 
 		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
