@@ -23,6 +23,9 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
+#ifdef KG_TESTING
+		Audio::AudioService::SetMute(true);
+#endif
 		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::Scene::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
