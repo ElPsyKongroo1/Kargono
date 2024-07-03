@@ -51,6 +51,10 @@ namespace Kargono::Audio
 
 	void AudioService::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
 	{
+		if (s_AudioContext->Mute)
+		{
+			return;
+		}
 		static ALfloat forwardAndUpVectors[] =
 		{
 			0, 0, 1,  // Forward Vectors
@@ -78,6 +82,10 @@ namespace Kargono::Audio
 	}
 	void AudioService::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
 	{
+		if (s_AudioContext->Mute)
+		{
+			return;
+		}
 		auto audioSource = s_AudioContext->AudioSourceQueue.front();
 		uint32_t sourceID = audioSource->GetSourceID();
 
@@ -118,6 +126,18 @@ namespace Kargono::Audio
 		if (audioBuffer)
 		{
 			Audio::AudioService::PlaySound(audioBuffer);
+		}
+	}
+	void AudioService::SetMute(bool isMute)
+	{
+		if (isMute)
+		{
+			StopAllAudio();
+			s_AudioContext->Mute = true;
+		}
+		else
+		{
+			s_AudioContext->Mute = false;
 		}
 	}
 	void AudioService::StopAllAudio()

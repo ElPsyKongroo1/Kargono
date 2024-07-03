@@ -166,6 +166,7 @@ namespace Kargono::Audio
 		// This is the default stereo source that plays continuous music. It is not interrupted
 		//		by the other sources.
 		Scope<AudioSource> StereoMusicSource = nullptr;
+		bool Mute = false;
 	};
 
 
@@ -219,6 +220,7 @@ namespace Kargono::Audio
 		//		calls the other PlaySound function with default values btw.
 		static void PlaySound(Ref<AudioBuffer> audioBuffer);
 		static void PlaySoundFromName(const std::string& audioName);
+		static void SetMute(bool isMute);
 		// This function provides a method to stop all audio from playing. This function
 		//		function simply iterates through the audio source queue and stops any
 		//		audio currently playing.
