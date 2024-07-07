@@ -4,7 +4,7 @@ void OnReceiveSignal(uint16_t signalNum)
 	
 	if (signalNum == 1)
 	{
-		uint16_t ball = FindEntityHandleByName("Ball");
+		uint64_t ball = FindEntityHandleByName("Ball");
 		if (userSlot == 0)
 		{
 			SetEntityFieldByName(ball, "PlayerOneScore", (void*)&RValueToLValue(*(uint32_t*)GetEntityFieldByName(ball, "PlayerOneScore") + 1));
@@ -23,7 +23,3 @@ void OnReceiveSignal(uint16_t signalNum)
 	}
 	
 }
-
-
-
-

@@ -14,6 +14,7 @@
 #include "Kargono/Input/InputPolling.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
+#include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Random.h"
 
 #ifdef KG_PLATFORM_WINDOWS
@@ -547,7 +548,11 @@ namespace Kargono::Scripting
 		outputStream << "}" << "\n";
 
 		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
-		Utility::FileSystem::WriteFileString(headerFile, outputStream.str());
+
+		std::string outputString = outputStream.str();
+		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
+
+		Utility::FileSystem::WriteFileString(headerFile, outputString);
 	}
 
 	void ScriptModuleBuilder::CreateModuleCPPFile()
@@ -710,7 +715,10 @@ namespace Kargono::Scripting
 
 		std::filesystem::path file = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
-		Utility::FileSystem::WriteFileString(file, outputStream.str());
+		std::string outputString = outputStream.str();
+		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
+
+		Utility::FileSystem::WriteFileString(file, outputString);
 	}
 
 	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)

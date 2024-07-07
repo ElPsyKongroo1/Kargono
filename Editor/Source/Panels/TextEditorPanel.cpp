@@ -65,6 +65,8 @@ namespace Kargono::Panels
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 
+			Utility::Operations::RemoveCharacterFromString(activeDocument.TextBuffer, '\r');
+
 			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
 			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());

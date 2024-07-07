@@ -40,7 +40,7 @@ namespace Kargono::Network
 			{
 				if (ec)
 				{
-					KG_ERROR("Failure to read Header!");
+					KG_WARN("Failure to read Header!");
 					Disconnect();
 					return;
 				}
@@ -49,7 +49,7 @@ namespace Kargono::Network
 				{
 					if (m_msgTemporaryIn.Header.PayloadSize > k_MaxBufferSize)
 					{
-						KG_ERROR("Payload sent that is too large. Malformed message!");
+						KG_WARN("Payload sent that is too large. Malformed message!");
 						Disconnect();
 						return;
 					}
@@ -69,7 +69,7 @@ namespace Kargono::Network
 			{
 				if (ec)
 				{
-					KG_ERROR("Failure to read body!");
+					KG_WARN("Failure to read body!");
 					Disconnect();
 					return;
 				}
@@ -128,7 +128,7 @@ namespace Kargono::Network
 				}
 				else
 				{
-					KG_ERROR("Failure to write Body!");
+					KG_WARN("Failure to write Body!");
 					Disconnect();
 				}
 			});

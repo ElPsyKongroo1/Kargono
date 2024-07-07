@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <algorithm>
 
 namespace Kargono::Utility
 {
@@ -14,6 +16,11 @@ namespace Kargono::Utility
 		static void ToggleBoolean(bool& boolToToggle)
 		{
 			boolToToggle = !boolToToggle;
+		}
+
+		static void RemoveCharacterFromString(std::string& string, char character)
+		{
+			std::erase(string, character);
 		}
 	};
 }

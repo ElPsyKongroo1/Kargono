@@ -140,6 +140,9 @@ namespace Kargono
 		static Engine& GetActiveEngine() { return *s_ActiveEngine; }
 		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
 	private:
+		//==============================
+		// Internal Functionality
+		//==============================
 		static void ExecuteMainThreadQueue();
 		static void ProcessEventQueue();
 	private:

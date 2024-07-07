@@ -86,11 +86,3 @@ bool BallOfflineCollision(uint64_t entity,uint64_t otherEntity)
 	
 	return collisionHandled;
 }
-
-
-
-
-
-
-
-
