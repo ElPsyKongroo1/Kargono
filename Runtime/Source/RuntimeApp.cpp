@@ -189,7 +189,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
 			}
 		}
 
@@ -200,7 +200,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -388,6 +388,19 @@ namespace Kargono
 		{
 			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
 		}
+
+		// Load Default Game State
+		if (Projects::Project::GetStartGameState() == 0)
+		{
+			Scenes::GameState::s_GameState = nullptr;
+			Scenes::GameState::s_GameStateHandle = 0;
+		}
+		else
+		{
+			Scenes::GameState::s_GameState = Assets::AssetManager::GetGameState(Projects::Project::GetStartGameState());
+			Scenes::GameState::s_GameStateHandle = Projects::Project::GetStartGameState();
+		}
+
 		if (Projects::Project::GetAppIsNetworked())
 		{
 			Network::Client::SetActiveClient(CreateRef<Network::Client>());

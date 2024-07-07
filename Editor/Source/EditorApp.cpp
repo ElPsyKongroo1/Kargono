@@ -506,7 +506,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOne, entityTwo);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
 			}
 		}
 
@@ -517,7 +517,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwo, entityOne);
+				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
 			}
 		}
 		return false;

@@ -342,7 +342,7 @@ namespace Kargono::Network
 			m_OnlySession.SetSessionStartFrame(m_UpdateCount);
 		}
 
-		KG_ERROR("Starting frame is {}", m_OnlySession.GetSessionStartFrame());
+		KG_TRACE_INFO("Starting frame is {}", m_OnlySession.GetSessionStartFrame());
 		return true;
 	}
 }

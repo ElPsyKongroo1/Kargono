@@ -255,9 +255,13 @@ namespace Kargono::Scenes
 
 	Entity Scene::GetEntityByUUID(UUID uuid)
 	{
-		// TODO: Maybe should be an assert
-		if (m_EntityMap.find(uuid) != m_EntityMap.end()) { return { m_EntityMap.at(uuid), this }; }
-		return {};
+		if (!m_EntityMap.contains(uuid))
+		{
+			KG_WARN("Could not find entity by uuid");
+			return {};
+		}
+
+		return { m_EntityMap.at(uuid), this };
 	}
 
 	bool Scene::CheckEntityExists(entt::entity entity)
