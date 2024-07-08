@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/RuntimeUI/Text.h"
 #include "Kargono/Assets/Asset.h"
@@ -11,7 +12,6 @@
 #include <unordered_map>
 #include <functional>
 
-#include "Kargono/Scripting/Scripting.h"
 
 
 namespace Kargono::RuntimeUI

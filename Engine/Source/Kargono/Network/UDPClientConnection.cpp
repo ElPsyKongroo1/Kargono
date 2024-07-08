@@ -1,12 +1,12 @@
 #include "kgpch.h"
 
-#include "Kargono/Network/UDPClient.h"
+#include "Kargono/Network/UDPClientConnection.h"
 
 #include "Kargono/Network/ConnectionToServer.h"
 
 namespace Kargono::Network
 {
-	void Kargono::Network::UDPClient::Disconnect(asio::ip::udp::endpoint key)
+	void Kargono::Network::UDPClientConnection::Disconnect(asio::ip::udp::endpoint key)
 	{
 		if (!m_ActiveConnection)
 		{
@@ -16,9 +16,9 @@ namespace Kargono::Network
 
 		m_ActiveConnection->Disconnect();
 	}
-	void UDPClient::AddToIncomingMessageQueue()
+	void UDPClientConnection::AddToIncomingMessageQueue()
 	{
-		m_qMessagesIn.push_back({ nullptr, m_MsgTemporaryIn });
+		m_qMessagesIn.PushBack({ nullptr, m_MsgTemporaryIn });
 		WakeUpNetworkThread();
 		ReadMessage();
 	}

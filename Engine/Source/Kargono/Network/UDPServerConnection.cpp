@@ -1,12 +1,12 @@
 #include "kgpch.h"
 
-#include "Kargono/Network/UDPServer.h"
+#include "Kargono/Network/UDPServerConnection.h"
 
 #include "Kargono/Network/ConnectionToClient.h"
 
 namespace Kargono::Network
 {
-	void UDPServer::AddToIncomingMessageQueue()
+	void UDPServerConnection::AddToIncomingMessageQueue()
 	{
 		if (!m_IPAddressToConnection.contains(m_CurrentEndpoint))
 		{
@@ -40,11 +40,11 @@ namespace Kargono::Network
 
 		}
 
-		m_qMessagesIn.push_back({ m_IPAddressToConnection.at(m_CurrentEndpoint), m_MsgTemporaryIn });
+		m_qMessagesIn.PushBack({ m_IPAddressToConnection.at(m_CurrentEndpoint), m_MsgTemporaryIn });
 		WakeUpNetworkThread();
 		ReadMessage();
 	}
-	void UDPServer::Disconnect(asio::ip::udp::endpoint key)
+	void UDPServerConnection::Disconnect(asio::ip::udp::endpoint key)
 	{
 
 		if (!m_IPAddressToConnection.contains(key))

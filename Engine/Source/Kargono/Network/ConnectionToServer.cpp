@@ -5,15 +5,14 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Network/ClientInterface.h"
-#include "Kargono/Network/ServerInterface.h"
-#include "Kargono/Network/UDPClient.h"
+#include "Kargono/Network/Server.h"
+#include "Kargono/Network/UDPClientConnection.h"
 #include "Kargono/Projects/Project.h"
 
 
 namespace Kargono::Network
 {
-	ConnectionToServer::ConnectionToServer(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, tsqueue<owned_message>& qIn, std::condition_variable& newCV,
+	ConnectionToServer::ConnectionToServer(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV,
 		std::mutex& newMutex)
 		: Connection(asioContext, std::move(socket), qIn, newCV, newMutex)
 	{
@@ -80,7 +79,7 @@ namespace Kargono::Network
 
 	void ConnectionToServer::AddToIncomingMessageQueue()
 	{
-		m_qMessagesIn.push_back({ nullptr, m_msgTemporaryIn });
+		m_qMessagesIn.PushBack({ nullptr, m_msgTemporaryIn });
 		WakeUpNetworkThread();
 		ReadHeader();
 	}

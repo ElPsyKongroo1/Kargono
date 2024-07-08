@@ -5,14 +5,13 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Network/ClientInterface.h"
-#include "Kargono/Network/ServerInterface.h"
+#include "Kargono/Network/Server.h"
 #include "Kargono/Projects/Project.h"
 
 
 namespace Kargono::Network
 {
-	ConnectionToClient::ConnectionToClient(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, tsqueue<owned_message>& qIn, std::condition_variable& newCV,
+	ConnectionToClient::ConnectionToClient(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV,
 		std::mutex& newMutex)
 		: Connection(asioContext, std::move(socket), qIn, newCV, newMutex)
 	{
@@ -68,7 +67,7 @@ namespace Kargono::Network
 
 	void ConnectionToClient::AddToIncomingMessageQueue()
 	{
-		m_qMessagesIn.push_back({ this->shared_from_this(), m_msgTemporaryIn });
+		m_qMessagesIn.PushBack({ this->shared_from_this(), m_msgTemporaryIn });
 		WakeUpNetworkThread();
 		ReadHeader();
 	}

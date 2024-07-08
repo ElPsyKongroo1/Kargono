@@ -1,21 +1,58 @@
 #pragma once
 
-#include "Kargono/Network/Network.h"
-#include "Kargono/Network/Common.h"
+#include "Kargono/Network/ConnectionToServer.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
+
+#include "API/Network/AsioAPI.h"
 
 #include <string>
 #include <atomic>
 #include <thread>
 #include <limits>
-
+#include <cstdint>
+#include <mutex>
+#include <atomic>
+#include <condition_variable>
 
 namespace Kargono::Network
 {
-	class Client : public Kargono::Network::ClientInterface
+	class Client
 	{
+	public:
+		Client() = default;
+		~Client();
+	public:
+		//==============================
+		// LifeCycle Functions
+		//==============================
+
+		// Connect to server with hostname/ip-address and port
+		bool Connect(const std::string& host, const uint16_t port, bool remote = false);
+
+		// Disconnect from the server
+		void Disconnect();
+
+		// Check if client is actually connected to a server
+		bool IsConnected();
+
+		void Update(size_t nMaxMessages = -1);
+
+		// Send message to server
+		void Send(const Message& msg);
+
+		void SendUDP(Message& msg);
+
+		void Wait();
+
+		void WakeUpNetworkThread();
+	public:
+		//==============================
+		// Getters
+		//==============================
+
+		TSQueue<owned_message>& Incoming() { return m_qMessagesIn; }
 	public:
 		void SendChat(const std::string& text);
 
@@ -55,7 +92,7 @@ namespace Kargono::Network
 
 		void ProcessEventQueue();
 
-		virtual void OnMessage(Kargono::Network::Message& msg) override;
+		void OnMessage(Kargono::Network::Message& msg);
 
 	public:
 		uint16_t GetSessionSlot() const { return m_SessionSlot; }
@@ -80,7 +117,6 @@ namespace Kargono::Network
 
 	private:
 		std::atomic<bool> m_Quit = false;
-		//std::atomic<uint32_t> m_UserCount = 0;
 
 		std::vector<std::function<void()>> m_FunctionQueue;
 		std::mutex m_FunctionQueueMutex;
@@ -92,6 +128,26 @@ namespace Kargono::Network
 	private:
 		static Ref<Network::Client> s_Client;
 		static Ref<std::thread> s_NetworkThread;
+
+	private:
+		// asio context handles the data transfer...
+		asio::io_context m_context;
+		// ... but needs a thread of its own to execute its word commands
+		std::thread thrContext;
+
+		std::atomic<bool> m_UDPConnectionSuccessful;
+
+		// The client has a single instance of a "connection" object, which handles data transfer
+		Ref<ConnectionToServer> m_connection;
+
+		Ref<UDPClientConnection> m_UDPClient {nullptr};
+	private:
+		// This is the thread safe queue of incoming messages from the server
+		TSQueue<owned_message> m_qMessagesIn;
+
+		// Variables for sleeping thread until a notify command is received
+		std::condition_variable m_BlockThreadCV {};
+		std::mutex m_BlockThreadMx {};
 	};
 
 	

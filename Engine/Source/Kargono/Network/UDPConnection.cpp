@@ -1,8 +1,7 @@
 #include "kgpch.h"
 
-#include "Kargono/Network/UDPService.h"
+#include "Kargono/Network/UDPConnection.h"
 
-#include "Kargono/Network/Common.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Network/ConnectionToClient.h"
 
@@ -13,8 +12,8 @@ namespace Kargono::Network
 	std::vector<uint8_t> s_SocketReceiveBuffer {};
 	std::vector<uint8_t> s_SocketSendBuffer {};
 
-	UDPService::UDPService(asio::io_context& asioContext, asio::ip::udp::socket socket, 
-		tsqueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
+	UDPConnection::UDPConnection(asio::io_context& asioContext, asio::ip::udp::socket socket, 
+		TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
 		: m_AsioContext(asioContext), m_Socket(std::move(socket)), m_qMessagesIn(qIn),
 		m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
 	{
@@ -22,18 +21,18 @@ namespace Kargono::Network
 		s_SocketSendBuffer.resize(k_MaxBufferSize);
 	}
 
-	void UDPService::WakeUpNetworkThread()
+	void UDPConnection::WakeUpNetworkThread()
 	{
 		std::unique_lock<std::mutex> lock(m_BlockThreadMx);
 		m_BlockThreadCV.notify_one();
 	}
 
-	void UDPService::Send(const LabeledMessage& msg)
+	void UDPConnection::Send(const LabeledMessage& msg)
 	{
 		asio::post(m_AsioContext, [this, msg]()
 		{
-			bool bWritingMessage = !m_qMessagesOut.empty();
-			m_qMessagesOut.push_back(msg);
+			bool bWritingMessage = !m_qMessagesOut.IsEmpty();
+			m_qMessagesOut.PushBack(msg);
 			if (!bWritingMessage)
 			{
 				WriteMessage();
@@ -41,17 +40,17 @@ namespace Kargono::Network
 		});
 	}
 
-	void UDPService::Start()
+	void UDPConnection::Start()
 	{
 		ReadMessage();
 	}
 
-	void UDPService::Stop()
+	void UDPConnection::Stop()
 	{
 	}
 
 
-	void UDPService::ReadMessage()
+	void UDPConnection::ReadMessage()
 	{
 		m_Socket.async_receive_from(asio::buffer(s_SocketReceiveBuffer.data(), k_MaxBufferSize), m_CurrentEndpoint,
 			[this](std::error_code ec, std::size_t length)
@@ -122,11 +121,11 @@ namespace Kargono::Network
 			});
 	}
 
-	void UDPService::WriteMessage()
+	void UDPConnection::WriteMessage()
 	{
-		uint64_t payloadSize = m_qMessagesOut.front().msg.Header.PayloadSize;
+		uint64_t payloadSize = m_qMessagesOut.GetFront().msg.Header.PayloadSize;
 
-		if (m_qMessagesOut.front().msg.Size() > k_MaxBufferSize)
+		if (m_qMessagesOut.GetFront().msg.Size() > k_MaxBufferSize)
 		{
 			KG_ERROR("Attempt to write UDP message that is large that max buffer size!");
 			Disconnect(m_CurrentEndpoint);
@@ -136,7 +135,7 @@ namespace Kargono::Network
 		// Load Header after CRC location
 		memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t),
 			sizeof(MessageHeader),
-			&m_qMessagesOut.front().msg.Header,
+			&m_qMessagesOut.GetFront().msg.Header,
 			sizeof(MessageHeader));
 
 		// Load Buffer after Header
@@ -144,7 +143,7 @@ namespace Kargono::Network
 		{
 			memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t) + sizeof(MessageHeader),
 				payloadSize,
-				m_qMessagesOut.front().msg.Body.data(),
+				m_qMessagesOut.GetFront().msg.Body.data(),
 				payloadSize);
 		}
 
@@ -157,13 +156,13 @@ namespace Kargono::Network
 		/*KG_TRACE("The local endpoint address/port are {} {} and remote is {} {}", m_Socket.local_endpoint().address().to_string(), m_Socket.local_endpoint().port(),
 			m_qMessagesOut.front().endpoint.address().to_string(), m_qMessagesOut.front().endpoint.port());*/
 
-		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_qMessagesOut.front().endpoint, [this](std::error_code ec, std::size_t length)
+		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_qMessagesOut.GetFront().endpoint, [this](std::error_code ec, std::size_t length)
 		{
 			if (!ec)
 			{
-				m_qMessagesOut.pop_front();
+				m_qMessagesOut.PopFront();
 
-				if (!m_qMessagesOut.empty())
+				if (!m_qMessagesOut.IsEmpty())
 				{
 					WriteMessage();
 				}

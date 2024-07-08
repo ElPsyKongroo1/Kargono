@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Network/DataStructures.h"
+#include "Kargono/Core/DataStructures.h"
 #include "Kargono/Network/Message.h"
 #include "Kargono/Network/Connection.h"
 
@@ -14,12 +14,12 @@
 
 namespace Kargono::Network
 {
-	class UDPService
+	class UDPConnection
 	{
 	public:
-		UDPService(asio::io_context& asioContext, asio::ip::udp::socket socket, tsqueue<owned_message>& qIn,
+		UDPConnection(asio::io_context& asioContext, asio::ip::udp::socket socket, TSQueue<owned_message>& qIn,
 			std::condition_variable& newCV, std::mutex& newMutex);
-		virtual ~UDPService() = default;
+		virtual ~UDPConnection() = default;
 	public:
 		void Start();
 		void Stop();
@@ -45,9 +45,9 @@ namespace Kargono::Network
 
 		// This queue holds all message to be sent to the remote
 		// side of this connection
-		tsqueue<LabeledMessage> m_qMessagesOut;
+		TSQueue<LabeledMessage> m_qMessagesOut;
 
-		tsqueue<owned_message>& m_qMessagesIn;
+		TSQueue<owned_message>& m_qMessagesIn;
 
 		std::condition_variable& m_BlockThreadCV;
 		std::mutex& m_BlockThreadMx;

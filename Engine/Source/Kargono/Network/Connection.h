@@ -1,7 +1,6 @@
 #pragma once
 
-
-#include "Kargono/Network/DataStructures.h"
+#include "Kargono/Core/DataStructures.h"
 #include "Kargono/Network/Message.h"
 #include "Kargono/Network/Connection.h"
 
@@ -17,7 +16,7 @@ namespace Kargono::Network
 	class Connection
 	{
 	public:
-		Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, tsqueue<owned_message>& qIn,
+		Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn,
 		    std::condition_variable& newCV, std::mutex& newMutex);
 		virtual ~Connection() = default;
 
@@ -49,12 +48,12 @@ namespace Kargono::Network
 
 		// This queue holds all message to be sent to the remote
 		// side of this connection
-		tsqueue<Message> m_qMessagesOut;
+		TSQueue<Message> m_qMessagesOut;
 
 		// This queue holds all messages that have been received from
 		// the remote side of this connection. Note it is a reference
 		// as the owner of this connection is expected to provide a queue
-		tsqueue<owned_message>& m_qMessagesIn;
+		TSQueue<owned_message>& m_qMessagesIn;
 
 		asio::ip::udp::endpoint m_UDPLocalEndpoint;
 		asio::ip::udp::endpoint m_UDPRemoteSendEndpoint;

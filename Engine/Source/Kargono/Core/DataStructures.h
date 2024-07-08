@@ -1,40 +1,38 @@
 #pragma once
 
-#include "API/Network/AsioAPI.h"
-
 #include <deque>
 #include <mutex>
 
-namespace Kargono::Network
+namespace Kargono
 {
 	template<typename T>
-	class tsqueue
+	class TSQueue
 	{
 	public:
-		tsqueue() = default;
-		tsqueue(const tsqueue<T>&) = delete;
-		virtual ~tsqueue() { clear(); }
+		TSQueue() = default;
+		TSQueue(const TSQueue<T>&) = delete;
+		virtual ~TSQueue() { Clear(); }
 
 	public:
-		const T& front()
+		const T& GetFront()
 		{
 			std::scoped_lock lock(muxQueue);
 			return deqQueue.front();
 		}
 
-		const T& back()
+		const T& GetBack()
 		{
 			std::scoped_lock lock(muxQueue);
 			return deqQueue.back();
 		}
 
-		void push_front(const T& item)
+		void PushFront(const T& item)
 		{
 			std::scoped_lock lock(muxQueue);
 			deqQueue.emplace_front(std::move(item));
 		}
 
-		void push_back(const T& item)
+		void PushBack(const T& item)
 		{
 			std::scoped_lock lock(muxQueue);
 			deqQueue.emplace_back(std::move(item));
@@ -42,25 +40,19 @@ namespace Kargono::Network
 		}
 
 		// Returns true if Queue has no items
-		bool empty()
+		bool IsEmpty()
 		{
 			std::scoped_lock lock(muxQueue);
 			return deqQueue.empty();
 		}
 
-		size_t count()
-		{
-			std::scoped_lock lock(muxQueue);
-			return deqQueue.PayloadSize();
-		}
-
-		void clear()
+		void Clear()
 		{
 			std::scoped_lock lock(muxQueue);
 			deqQueue.clear();
 		}
 
-		T pop_front()
+		T PopFront()
 		{
 			std::scoped_lock lock(muxQueue);
 			auto item = std::move(deqQueue.front());
@@ -68,7 +60,7 @@ namespace Kargono::Network
 			return item;
 		}
 
-		T pop_back()
+		T PopBack()
 		{
 			std::scoped_lock lock(muxQueue);
 			auto item = std::move(deqQueue.back());
@@ -77,7 +69,7 @@ namespace Kargono::Network
 		}
 
 
-	protected:
+	private:
 		std::mutex muxQueue;
 		std::deque<T> deqQueue;
 
