@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Network/DataStructures.h"
+#include "Kargono/Core/DataStructures.h"
 #include "Kargono/Network/Message.h"
 #include "Kargono/Network/Connection.h"
 
@@ -27,7 +27,7 @@ namespace Kargono::Network
 		//==============================
 
 		ConnectionToClient(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
-			tsqueue<owned_message>& qIn, std::condition_variable& newCV,
+			TSQueue<owned_message>& qIn, std::condition_variable& newCV,
 			std::mutex& newMutex);
 
 		virtual ~ConnectionToClient() override {}

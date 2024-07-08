@@ -35,7 +35,9 @@
 #include "Kargono/Math/Math.h"
 
 //-----------------Network-----------------//
-#include "Kargono/Network/Network.h"
+#include "Kargono/Network/Message.h"
+#include "Kargono/Network/Client.h"
+#include "Kargono/Network/Server.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"

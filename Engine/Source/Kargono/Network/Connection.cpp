@@ -4,7 +4,6 @@
 
 #include "Kargono/Network/Client.h"
 #include "Kargono/Core/Engine.h"
-#include "Kargono/Network/ClientInterface.h"
 #include "Kargono/Projects/Project.h"
 
 namespace Kargono::Network
@@ -12,7 +11,7 @@ namespace Kargono::Network
 	constexpr uint64_t k_MaxBufferSize{ sizeof(uint8_t) * 1024 * 1024 * 10 }; // 5MB
 
 
-	Connection::Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, tsqueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
+	Connection::Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
 		: m_asioContext(asioContext), m_TCPSocket(std::move(socket)), m_qMessagesIn(qIn), m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
 	{
 	}
@@ -25,8 +24,8 @@ namespace Kargono::Network
 	{
 		asio::post(m_asioContext, [this, msg]()
 			{
-				bool bWritingMessage = !m_qMessagesOut.empty();
-				m_qMessagesOut.push_back(msg);
+				bool bWritingMessage = !m_qMessagesOut.IsEmpty();
+				m_qMessagesOut.PushBack(msg);
 				if (!bWritingMessage)
 				{
 					WriteHeader();
@@ -79,14 +78,14 @@ namespace Kargono::Network
 	}
 	void Connection::WriteHeader()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(&m_qMessagesOut.front().Header, sizeof(MessageHeader)),
+		asio::async_write(m_TCPSocket, asio::buffer(&m_qMessagesOut.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (!ec)
 				{
-					if (m_qMessagesOut.front().Body.size() > 0)
+					if (m_qMessagesOut.GetFront().Body.size() > 0)
 					{
-						if (m_qMessagesOut.front().Body.size() > k_MaxBufferSize)
+						if (m_qMessagesOut.GetFront().Body.size() > k_MaxBufferSize)
 						{
 							KG_ERROR("Attempt to send message that is larger than maximum buffer size!");
 							Disconnect();
@@ -97,9 +96,9 @@ namespace Kargono::Network
 					}
 					else
 					{
-						m_qMessagesOut.pop_front();
+						m_qMessagesOut.PopFront();
 
-						if (!m_qMessagesOut.empty())
+						if (!m_qMessagesOut.IsEmpty())
 						{
 							WriteHeader();
 						}
@@ -114,14 +113,14 @@ namespace Kargono::Network
 	}
 	void Connection::WriteBody()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(m_qMessagesOut.front().Body.data(), m_qMessagesOut.front().Body.size()),
+		asio::async_write(m_TCPSocket, asio::buffer(m_qMessagesOut.GetFront().Body.data(), m_qMessagesOut.GetFront().Body.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (!ec)
 				{
-					m_qMessagesOut.pop_front();
+					m_qMessagesOut.PopFront();
 
-					if (!m_qMessagesOut.empty())
+					if (!m_qMessagesOut.IsEmpty())
 					{
 						WriteHeader();
 					}

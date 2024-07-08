@@ -11,6 +11,45 @@
 
 namespace Kargono::Network
 {
+
+	enum class CustomMsgTypes : uint32_t
+	{
+		AcceptConnection = 0,
+		DenyConnection,
+		ServerPing,
+		MessageAll,
+		ServerMessage,
+		ClientChat,
+		ServerChat,
+		KeepAlive,
+		UDPInit,
+
+		RequestUserCount,
+		UpdateUserCount,
+		UpdateSessionUserSlot,
+		LeaveCurrentSession,
+		UserLeftSession,
+
+		// Session Messages
+		RequestJoinSession,
+		ApproveJoinSession,
+		DenyJoinSession,
+		CurrentSessionInit,
+		StartSession,
+		InitSyncPing,
+		SessionReadyCheck,
+		SessionReadyCheckConfirm,
+		EnableReadyCheck,
+
+		// Entity Updates
+		SendAllEntityLocation,
+		UpdateEntityLocation,
+		SendAllEntityPhysics,
+		UpdateEntityPhysics,
+		SignalAll,
+		ReceiveSignal
+	};
+
 	//class Connection;
 	class ConnectionToClient;
 
