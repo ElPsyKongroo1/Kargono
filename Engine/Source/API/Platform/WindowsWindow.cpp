@@ -240,6 +240,12 @@ namespace API::Platform
 	{
 		if (enabled)
 		{
+			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+			if (!monitor)
+			{
+				KG_WARN("No primary monitor is available! Failed to set monitor to fullscreen.");
+				return;
+			}
 			glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
 		}
 		else
@@ -254,12 +260,22 @@ namespace API::Platform
 	void WindowsWindow::CenterWindow()
 	{
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		if (!monitor)
+		{
+			KG_WARN("No primary monitor could be located. Failed to center window.");
+			return;
+		}
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(m_Window, (mode->width - m_Data.Width) / 2, (mode->height - m_Data.Height) / 2);
 	}
 	glm::vec2 WindowsWindow::GetMonitorDimensions()
 	{
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		if (!monitor)
+		{
+			KG_WARN("Could not locate primary monitor! Returning default monitor dimensions.");
+			return glm::vec2(400.0f, 400.0f);
+		}
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		return glm::vec2(static_cast<float>(mode->width), static_cast<float>(mode->height));
 	}
@@ -270,7 +286,10 @@ namespace API::Platform
 		m_Data.Width = static_cast<uint32_t>(newWindowSize.x);
 		m_Data.Height = static_cast<uint32_t>(newWindowSize.y);
 
-		if (!Kargono::Projects::Project::GetIsFullscreen()) { CenterWindow(); }
+		if (!Kargono::Projects::Project::GetIsFullscreen())
+		{
+			CenterWindow();
+		}
 
 		// Event thrown to ensure resize updates viewport
 		Kargono::Events::WindowResizeEvent event(static_cast<uint32_t>(newWindowSize.x), static_cast<uint32_t>(newWindowSize.y));
