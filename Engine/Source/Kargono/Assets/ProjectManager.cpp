@@ -122,7 +122,7 @@ namespace Kargono::Assets
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-
+		KG_INFO("Successfully Serialized Project {}", config.Name);
 		return true;
 	}
 
