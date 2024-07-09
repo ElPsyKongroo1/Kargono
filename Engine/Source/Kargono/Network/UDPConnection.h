@@ -2,7 +2,6 @@
 
 #include "Kargono/Core/DataStructures.h"
 #include "Kargono/Network/Message.h"
-#include "Kargono/Network/Connection.h"
 
 #include "API/Network/AsioAPI.h"
 

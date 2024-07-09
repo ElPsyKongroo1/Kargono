@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/DataStructures.h"
 #include "Kargono/Network/Message.h"
-#include "Kargono/Network/Connection.h"
+#include "Kargono/Network/TCPConnection.h"
 
 #include "API/Network/AsioAPI.h"
 
@@ -13,12 +13,12 @@
 
 namespace Kargono::Network
 {
-	class Connection
+	class TCPConnection
 	{
 	public:
-		Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn,
+		TCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn,
 		    std::condition_variable& newCV, std::mutex& newMutex);
-		virtual ~Connection() = default;
+		virtual ~TCPConnection() = default;
 
 	public:
 		void WakeUpNetworkThread();

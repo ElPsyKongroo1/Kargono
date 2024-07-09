@@ -13,7 +13,7 @@ namespace Kargono::Network
 
 		// Notify Clients that session initialization has started
 		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::CurrentSessionInit);
+		newMessage.Header.ID = static_cast<uint32_t>(MessageType::CurrentSessionInit);
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			connection->Send(newMessage);
@@ -25,7 +25,7 @@ namespace Kargono::Network
 		KG_INFO("[SERVER]: Starting to determine connection latencies");
 
 		// Record Current Time for each connection and send a ping to each client
-		newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::InitSyncPing);
+		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			m_InitCache.LatencyCache.insert({ clientID, {} });
@@ -69,7 +69,7 @@ namespace Kargono::Network
 
 		// If Cache is not filled yet, send another sync ping
 		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::InitSyncPing);
+		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
 		m_InitCache.RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
 		m_ConnectedClients.at(clientID)->Send(newMessage);
 	}
@@ -141,7 +141,7 @@ namespace Kargono::Network
 		// Send start message to each client
 		float waitTime{ 0 };
 		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::StartSession);
+		newMessage.Header.ID = static_cast<uint32_t>(MessageType::StartSession);
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			// Calculate wait time
@@ -186,7 +186,7 @@ namespace Kargono::Network
 			// Send start message to each client
 			float waitTime{ 0 };
 			Kargono::Network::Message newMessage;
-			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::SessionReadyCheckConfirm);
+			newMessage.Header.ID = static_cast<uint32_t>(MessageType::SessionReadyCheckConfirm);
 			for (auto& [clientID, connection] : m_ConnectedClients)
 			{
 				// Calculate wait time
@@ -203,7 +203,7 @@ namespace Kargono::Network
 			m_ReadyCheck.clear();
 		}
 	}
-	uint16_t Session::AddClient(Ref<ConnectionToClient> newClient)
+	uint16_t Session::AddClient(Ref<TCPServerConnection> newClient)
 	{
 		// Session already contains client, this is an error
 		if (m_ConnectedClients.contains(newClient->GetID()))
