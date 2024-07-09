@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Network/Connection.h"
+#include "Kargono/Network/TCPConnection.h"
 
 #include "Kargono/Network/Client.h"
 #include "Kargono/Core/Engine.h"
@@ -11,16 +11,16 @@ namespace Kargono::Network
 	constexpr uint64_t k_MaxBufferSize{ sizeof(uint8_t) * 1024 * 1024 * 10 }; // 5MB
 
 
-	Connection::Connection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
+	TCPConnection::TCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
 		: m_asioContext(asioContext), m_TCPSocket(std::move(socket)), m_qMessagesIn(qIn), m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
 	{
 	}
-	void Connection::WakeUpNetworkThread()
+	void TCPConnection::WakeUpNetworkThread()
 	{
 		std::unique_lock<std::mutex> lock(m_BlockThreadMx);
 		m_BlockThreadCV.notify_one();
 	}
-	void Connection::Send(const Message& msg)
+	void TCPConnection::Send(const Message& msg)
 	{
 		asio::post(m_asioContext, [this, msg]()
 			{
@@ -32,7 +32,7 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void Connection::ReadHeader()
+	void TCPConnection::ReadHeader()
 	{
 		asio::async_read(m_TCPSocket, asio::buffer(&m_msgTemporaryIn.Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
@@ -61,7 +61,7 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void Connection::ReadBody()
+	void TCPConnection::ReadBody()
 	{
 		asio::async_read(m_TCPSocket, asio::buffer(m_msgTemporaryIn.Body.data(), m_msgTemporaryIn.Body.size()),
 			[this](std::error_code ec, std::size_t length)
@@ -76,7 +76,7 @@ namespace Kargono::Network
 				AddToIncomingMessageQueue();
 			});
 	}
-	void Connection::WriteHeader()
+	void TCPConnection::WriteHeader()
 	{
 		asio::async_write(m_TCPSocket, asio::buffer(&m_qMessagesOut.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
@@ -111,7 +111,7 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void Connection::WriteBody()
+	void TCPConnection::WriteBody()
 	{
 		asio::async_write(m_TCPSocket, asio::buffer(m_qMessagesOut.GetFront().Body.data(), m_qMessagesOut.GetFront().Body.size()),
 			[this](std::error_code ec, std::size_t length)
@@ -132,7 +132,7 @@ namespace Kargono::Network
 				}
 			});
 	}
-	uint64_t Connection::Scramble(uint64_t nInput)
+	uint64_t TCPConnection::Scramble(uint64_t nInput)
 	{
 		auto currentProject = Projects::Project::GetActive();
 

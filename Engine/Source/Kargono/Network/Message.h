@@ -12,7 +12,7 @@
 namespace Kargono::Network
 {
 
-	enum class CustomMsgTypes : uint32_t
+	enum class MessageType : uint32_t
 	{
 		AcceptConnection = 0,
 		DenyConnection,
@@ -50,8 +50,7 @@ namespace Kargono::Network
 		ReceiveSignal
 	};
 
-	//class Connection;
-	class ConnectionToClient;
+	class TCPServerConnection;
 
 	//============================================================
 	// Message Struct
@@ -111,7 +110,7 @@ namespace Kargono::Network
 
 	struct owned_message
 	{
-		Ref<ConnectionToClient> remote = nullptr;
+		Ref<TCPServerConnection> remote = nullptr;
 		Message msg;
 
 		//==============================

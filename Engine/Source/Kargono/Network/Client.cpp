@@ -5,11 +5,138 @@
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"
-#include "Kargono/Network/UDPClientConnection.h"
 
 
 namespace Kargono::Network
 {
+
+	void UDPClientConnection::Disconnect(asio::ip::udp::endpoint key)
+	{
+		if (!m_ActiveConnection)
+		{
+			KG_ERROR("Invalid connection in UDP Disconnect()");
+			return;
+		}
+
+		m_ActiveConnection->Disconnect();
+	}
+	void UDPClientConnection::AddToIncomingMessageQueue()
+	{
+		m_qMessagesIn.PushBack({ nullptr, m_MsgTemporaryIn });
+		WakeUpNetworkThread();
+		ReadMessage();
+	}
+
+	TCPClientConnection::TCPClientConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV,
+		std::mutex& newMutex)
+		: TCPConnection(asioContext, std::move(socket), qIn, newCV, newMutex)
+	{
+		// Connection is Client -> Server, so we have nothing to define
+		m_nHandshakeIn = 0;
+		m_nHandshakeOut = 0;
+	}
+	bool TCPClientConnection::Connect(const asio::ip::tcp::resolver::results_type& endpoints)
+	{
+		asio::error_code ec;
+		//asio::connect(m_TCPSocket, endpoints, ec);
+
+		asio::ip::tcp::resolver::iterator iter = endpoints.begin();
+		asio::ip::tcp::resolver::iterator end; // End marker.
+
+		ec.clear();
+		bool connectionSuccessful = false;
+		while (iter != end)
+		{
+			m_TCPSocket.connect(*iter, ec);
+			if (!ec)
+			{
+				connectionSuccessful = true;
+				break;
+			}
+
+			ec.clear();
+			++iter;
+		}
+		if (!connectionSuccessful) { return false; }
+
+		if (!ec)
+		{
+			ReadValidation();
+			m_UDPLocalEndpoint = asio::ip::udp::endpoint(m_TCPSocket.local_endpoint().address(),
+				m_TCPSocket.local_endpoint().port());
+			m_UDPRemoteSendEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),
+				m_TCPSocket.remote_endpoint().port());
+			m_UDPRemoteReceiveEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),
+				m_TCPSocket.remote_endpoint().port());
+			// Connected Successfully
+			return true;
+		}
+
+		// Failed to connect
+		return false;
+
+	}
+	void TCPClientConnection::Disconnect()
+	{
+		if (IsConnected())
+		{
+			asio::post(m_asioContext, [this]()
+				{
+					m_TCPSocket.close();
+				});
+		}
+		KG_INFO("[CLIENT]: Connection has been terminated");
+
+		EngineService::SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
+		Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
+
+	}
+
+	void TCPClientConnection::AddToIncomingMessageQueue()
+	{
+		m_qMessagesIn.PushBack({ nullptr, m_msgTemporaryIn });
+		WakeUpNetworkThread();
+		ReadHeader();
+	}
+
+	void TCPClientConnection::WriteValidation()
+	{
+		asio::async_write(m_TCPSocket, asio::buffer(&m_nHandshakeOut, sizeof(uint64_t)),
+			[this](std::error_code ec, std::size_t length)
+			{
+				if (!ec)
+				{
+					ReadHeader();
+				}
+				else
+				{
+					m_TCPSocket.close();
+				}
+			});
+	}
+	void TCPClientConnection::ReadValidation()
+	{
+		asio::async_read(m_TCPSocket, asio::buffer(&m_nHandshakeIn, sizeof(uint64_t)),
+			[&](std::error_code ec, std::size_t length)
+			{
+				if (!ec)
+				{
+					// Connection is a client, so solve puzzle
+					m_nHandshakeOut = Scramble(m_nHandshakeIn);
+
+					// Write the result
+					WriteValidation();
+				}
+				else
+				{
+					KG_INFO("Client Disconnected (ReadValidation)");
+					Disconnect();
+				}
+			});
+	}
+
+
+
 	Ref<Network::Client> Client::s_Client { nullptr };
 	Ref<std::thread> Client::s_NetworkThread { nullptr };
 
@@ -49,7 +176,7 @@ namespace Kargono::Network
 			asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, std::to_string(port));
 
 			// Create a new connection object
-			m_connection = CreateRef<ConnectionToServer>(
+			m_connection = CreateRef<TCPClientConnection>(
 				m_context,
 				std::move(socket),
 				m_qMessagesIn,
@@ -76,10 +203,10 @@ namespace Kargono::Network
 			serverUDPSocket.open(localEndpoint.protocol());
 			serverUDPSocket.bind(localEndpoint);
 
-			m_UDPClient = CreateRef<UDPClientConnection>(m_context, std::move(serverUDPSocket), m_qMessagesIn,
+			m_UDPClientConnection = CreateRef<UDPClientConnection>(m_context, std::move(serverUDPSocket), m_qMessagesIn,
 				m_BlockThreadCV, m_BlockThreadMx, m_connection);
 
-			m_UDPClient->Start();
+			m_UDPClientConnection->Start();
 
 			// Start Context Thread
 			thrContext = std::thread([this]() { m_context.run(); });
@@ -91,7 +218,7 @@ namespace Kargono::Network
 							KG_TRACE_INFO("Submitted a UDP INIT BITCH");
 							// Do checks for UDP connection
 							Message newMessage{};
-							newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::UDPInit);
+							newMessage.Header.ID = static_cast<uint32_t>(MessageType::UDPInit);
 							SendUDP(newMessage);
 						});
 					WakeUpNetworkThread();
@@ -169,7 +296,7 @@ namespace Kargono::Network
 		{
 			LabeledMessage labeled{ m_connection->GetUDPRemoteSendEndpoint(), msg };
 
-			m_UDPClient->Send(labeled);
+			m_UDPClientConnection->Send(labeled);
 		}
 	}
 
@@ -188,7 +315,7 @@ namespace Kargono::Network
 	void Client::SendChat(const std::string& text)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::ClientChat);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::ClientChat);
 		msg.PushBuffer((void*)text.data(), text.size());
 		Send(msg);
 	}
@@ -214,7 +341,7 @@ namespace Kargono::Network
 	bool Client::OnRequestUserCount(Events::RequestUserCount event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::RequestUserCount);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::RequestUserCount);
 		Send(msg);
 		return true;
 	}
@@ -235,7 +362,7 @@ namespace Kargono::Network
 	bool Client::OnRequestJoinSession(Events::RequestJoinSession event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::RequestJoinSession);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::RequestJoinSession);
 		Send(msg);
 		return true;
 	}
@@ -243,7 +370,7 @@ namespace Kargono::Network
 	bool Client::OnEnableReadyCheck(Events::EnableReadyCheck event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::EnableReadyCheck);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::EnableReadyCheck);
 		Send(msg);
 		return true;
 	}
@@ -251,7 +378,7 @@ namespace Kargono::Network
 	bool Client::OnSessionReadyCheck(Events::SessionReadyCheck event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::SessionReadyCheck);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::SessionReadyCheck);
 		Send(msg);
 		return true;
 	}
@@ -259,7 +386,7 @@ namespace Kargono::Network
 	bool Client::OnSendAllEntityLocation(Events::SendAllEntityLocation event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::SendAllEntityLocation);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::SendAllEntityLocation);
 		msg << event.GetEntityID();
 		Math::vec3 translation = event.GetTranslation();
 		msg << translation.x;
@@ -272,7 +399,7 @@ namespace Kargono::Network
 	bool Client::OnSendAllEntityPhysics(Events::SendAllEntityPhysics event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::SendAllEntityPhysics);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::SendAllEntityPhysics);
 		msg << event.GetEntityID();
 		Math::vec3 translation = event.GetTranslation();
 		Math::vec2 linearVelocity = event.GetLinearVelocity();
@@ -288,7 +415,7 @@ namespace Kargono::Network
 	bool Client::OnSignalAll(Events::SignalAll event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::SignalAll);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::SignalAll);
 		msg << event.GetSignal();
 		Send(msg);
 		return true;
@@ -296,11 +423,11 @@ namespace Kargono::Network
 
 	bool Client::OnAppTickEvent(Events::AppTickEvent event)
 	{
-		if (event.GetDelayMilliseconds() == m_UDPClient->GetKeepAliveDelay())
+		if (event.GetDelayMilliseconds() == m_UDPClientConnection->GetKeepAliveDelay())
 		{
 			KG_TRACE_INFO("Send Keep Alive From Client");
 			Kargono::Network::Message msg;
-			msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::KeepAlive);
+			msg.Header.ID = static_cast<uint32_t>(MessageType::KeepAlive);
 			SendUDP(msg);
 			return true;
 		}
@@ -310,7 +437,7 @@ namespace Kargono::Network
 	bool Client::OnLeaveCurrentSession(Events::LeaveCurrentSession event)
 	{
 		Kargono::Network::Message msg;
-		msg.Header.ID = static_cast<uint32_t>(CustomMsgTypes::LeaveCurrentSession);
+		msg.Header.ID = static_cast<uint32_t>(MessageType::LeaveCurrentSession);
 		Send(msg);
 		m_SessionSlot = std::numeric_limits<uint16_t>::max();
 		return true;
@@ -329,10 +456,10 @@ namespace Kargono::Network
 
 		if (!Connect(currentProject->GetServerIP(), currentProject->GetServerPort(), remoteConnection)) { m_Quit = true; }
 
-		if (m_UDPClient && IsConnected())
+		if (m_UDPClientConnection && IsConnected())
 		{
 			// Start timer for keep alive packets
-			EngineService::SubmitToEventQueue(CreateRef<Events::AddTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
+			EngineService::SubmitToEventQueue(CreateRef<Events::AddTickGeneratorUsage>(m_UDPClientConnection->GetKeepAliveDelay()));
 		}
 
 		while (!m_Quit)
@@ -352,17 +479,17 @@ namespace Kargono::Network
 		}
 		Disconnect();
 
-		if (m_UDPClient)
+		if (m_UDPClientConnection)
 		{
-			EngineService::SubmitToEventQueue(CreateRef<Events::RemoveTickGeneratorUsage>(m_UDPClient->GetKeepAliveDelay()));
+			EngineService::SubmitToEventQueue(CreateRef<Events::RemoveTickGeneratorUsage>(m_UDPClientConnection->GetKeepAliveDelay()));
 		}
 	}
 
 	void Client::OnMessage(Kargono::Network::Message& msg)
 	{
-		switch (static_cast<CustomMsgTypes>(msg.Header.ID))
+		switch (static_cast<MessageType>(msg.Header.ID))
 		{
-		case CustomMsgTypes::AcceptConnection:
+		case MessageType::AcceptConnection:
 		{
 			KG_INFO("[SERVER]: Connection has been accepted!");
 			uint32_t userCount{};
@@ -371,7 +498,7 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::UpdateUserCount:
+		case MessageType::UpdateUserCount:
 		{
 			uint32_t userCount{};
 			msg >> userCount;
@@ -379,7 +506,7 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::ServerChat:
+		case MessageType::ServerChat:
 		{
 			uint32_t clientID{};
 			std::vector<uint8_t> data{};
@@ -392,7 +519,7 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::ApproveJoinSession:
+		case MessageType::ApproveJoinSession:
 		{
 			KG_INFO("[SERVER]: Approved joining session");
 			uint16_t userSlot{};
@@ -402,7 +529,7 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::UpdateSessionUserSlot:
+		case MessageType::UpdateSessionUserSlot:
 		{
 			uint16_t userSlot{};
 			msg >> userSlot;
@@ -411,7 +538,7 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::UserLeftSession:
+		case MessageType::UserLeftSession:
 		{
 			KG_INFO("[SERVER]: A User Left the Current Session");
 			uint16_t userSlot{};
@@ -420,28 +547,28 @@ namespace Kargono::Network
 			break;
 		}
 
-		case CustomMsgTypes::DenyJoinSession:
+		case MessageType::DenyJoinSession:
 		{
 			KG_INFO("[SERVER]: Denied joining session");
 			break;
 		}
 
-		case CustomMsgTypes::CurrentSessionInit:
+		case MessageType::CurrentSessionInit:
 		{
 			KG_INFO("[SERVER]: Active Session is initializing...");
 			EngineService::SubmitToEventQueue(CreateRef<Events::CurrentSessionInit>());
 			break;
 		}
 
-		case CustomMsgTypes::InitSyncPing:
+		case MessageType::InitSyncPing:
 		{
 			Kargono::Network::Message newMessage;
-			newMessage.Header.ID = static_cast<uint32_t>(CustomMsgTypes::InitSyncPing);
+			newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
 				Send(newMessage);
 				break;
 			}
 
-			case CustomMsgTypes::StartSession:
+			case MessageType::StartSession:
 			{
 				float waitTime{};
 				msg >> waitTime;
@@ -457,7 +584,7 @@ namespace Kargono::Network
 				break;
 			}
 
-			case CustomMsgTypes::SessionReadyCheckConfirm:
+			case MessageType::SessionReadyCheckConfirm:
 			{
 				float waitTime{};
 				msg >> waitTime;
@@ -470,7 +597,7 @@ namespace Kargono::Network
 				break;
 			}
 
-			case CustomMsgTypes::UpdateEntityLocation:
+			case MessageType::UpdateEntityLocation:
 			{
 				uint64_t id;
 				float x, y, z;
@@ -484,7 +611,7 @@ namespace Kargono::Network
 				break;
 			}
 
-			case CustomMsgTypes::UpdateEntityPhysics:
+			case MessageType::UpdateEntityPhysics:
 			{
 				uint64_t id;
 				float x, y, z, linx, liny;
@@ -502,7 +629,7 @@ namespace Kargono::Network
 				break;
 			}
 
-			case CustomMsgTypes::ReceiveSignal:
+			case MessageType::ReceiveSignal:
 			{
 				uint16_t signal{};
 				msg >> signal;
@@ -510,12 +637,12 @@ namespace Kargono::Network
 				break;
 			}
 
-			case CustomMsgTypes::KeepAlive:
+			case MessageType::KeepAlive:
 			{
 				break;
 			}
 
-			case CustomMsgTypes::UDPInit:
+			case MessageType::UDPInit:
 			{
 				KG_TRACE_INFO("Received UDP Init Packet");
 				m_UDPConnectionSuccessful = true;
@@ -532,9 +659,9 @@ namespace Kargono::Network
 
 	uint16_t Client::GetActiveSessionSlot()
 	{
-		if (Network::Client::GetActiveClient())
+		if (GetActiveClient())
 		{
-			return Network::Client::GetActiveClient()->GetSessionSlot();
+			return GetActiveClient()->GetSessionSlot();
 		}
 		// Client is unavailable so send error response
 		return std::numeric_limits<uint16_t>::max();
@@ -542,9 +669,9 @@ namespace Kargono::Network
 
 	void Client::SendAllEntityLocation(UUID entityID, Math::vec3 location)
 	{
-		if (Network::Client::GetActiveClient())
+		if (GetActiveClient())
 		{
-			Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
+			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
 		}
 	}
 

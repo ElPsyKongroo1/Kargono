@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Kargono/Network/ConnectionToServer.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Network/UDPConnection.h"
+#include "Kargono/Network/TCPConnection.h"
 #include "Kargono/Core/Base.h"
 
 #include "API/Network/AsioAPI.h"
@@ -16,11 +17,85 @@
 #include <atomic>
 #include <condition_variable>
 
+
 namespace Kargono::Network
 {
+
+	class TCPClientConnection;
+
+	class UDPClientConnection : public std::enable_shared_from_this<UDPClientConnection>, public UDPConnection
+	{
+	public:
+		UDPClientConnection(asio::io_context& asioContext, asio::ip::udp::socket&& socket, TSQueue<owned_message>& qIn,
+			std::condition_variable& newCV, std::mutex& newMutex, Ref<TCPClientConnection> connection)
+			: UDPConnection(asioContext, std::move(socket), qIn, newCV, newMutex), m_ActiveConnection(connection)
+		{
+
+		}
+		virtual ~UDPClientConnection() override = default;
+	public:
+
+		virtual void Disconnect(asio::ip::udp::endpoint key) override;
+
+		virtual void AddToIncomingMessageQueue() override;
+	private:
+		Ref<TCPClientConnection> m_ActiveConnection{ nullptr };
+	};
+
+	//============================================================
+	// TCP Client Connection Class
+	//============================================================
+
+	class TCPClientConnection : public std::enable_shared_from_this<TCPClientConnection>, public TCPConnection
+	{
+	public:
+
+		//==============================
+		// Constructors/Destructors
+		//==============================
+
+		TCPClientConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
+			TSQueue<owned_message>& qIn, std::condition_variable& newCV,
+			std::mutex& newMutex);
+		virtual ~TCPClientConnection() override {}
+
+		//==============================
+		// LifeCycle Functions
+		//==============================
+
+		bool Connect(const asio::ip::tcp::resolver::results_type& endpoints);
+
+		virtual void Disconnect() override;
+
+		bool IsConnected() const { return m_TCPSocket.is_open(); }
+
+	private:
+
+		//==============================
+		// Extra Internal Functionality
+		//==============================
+
+		virtual void AddToIncomingMessageQueue() override;
+
+		//==============================
+		// ASIO ASYNC Functions
+		//==============================
+
+	private:
+		// ASYNC - Used by both client and server to write validation packet
+		void WriteValidation();
+
+		void ReadValidation();
+
+	};
+
+
 	class Client
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		Client() = default;
 		~Client();
 	public:
@@ -47,12 +122,6 @@ namespace Kargono::Network
 		void Wait();
 
 		void WakeUpNetworkThread();
-	public:
-		//==============================
-		// Getters
-		//==============================
-
-		TSQueue<owned_message>& Incoming() { return m_qMessagesIn; }
 	public:
 		void SendChat(const std::string& text);
 
@@ -95,10 +164,9 @@ namespace Kargono::Network
 		void OnMessage(Kargono::Network::Message& msg);
 
 	public:
-		uint16_t GetSessionSlot() const { return m_SessionSlot; }
-		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		void SetSessionStartFrame(uint64_t startFrame) { m_SessionStartFrame = startFrame; }
-
+		//==============================
+		// TODO SOON TO BE SERVICE
+		//==============================
 		static uint16_t GetActiveSessionSlot();
 		static void SendAllEntityLocation(UUID entityID, Math::vec3 location);
 		static void SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity);
@@ -109,12 +177,40 @@ namespace Kargono::Network
 		static void RequestJoinSession();
 		static void LeaveCurrentSession();
 		static void SignalAll(uint16_t signal);
-		static Ref<Network::Client> GetActiveClient() { return s_Client; }
-		static void SetActiveClient(Ref<Network::Client> newClient) { s_Client = newClient; }
 
-		static Ref<std::thread> GetActiveNetworkThread() { return s_NetworkThread; }
-		static void SetActiveNetworkThread(Ref<std::thread> newThread) { s_NetworkThread = newThread; }
+		static Ref<Network::Client> GetActiveClient()
+		{
+			return s_Client;
+		}
+		static void SetActiveClient(Ref<Network::Client> newClient)
+		{
+			s_Client = newClient;
+		}
 
+		static Ref<std::thread> GetActiveNetworkThread()
+		{
+			return s_NetworkThread;
+		}
+		static void SetActiveNetworkThread(Ref<std::thread> newThread)
+		{
+			s_NetworkThread = newThread;
+		}
+		//==============================
+		// Getters/Setters
+		//==============================
+
+		uint16_t GetSessionSlot() const
+		{
+			return m_SessionSlot;
+		}
+		uint64_t GetSessionStartFrame() const
+		{
+			return m_SessionStartFrame;
+		}
+		void SetSessionStartFrame(uint64_t startFrame)
+		{
+			m_SessionStartFrame = startFrame;
+		}
 	private:
 		std::atomic<bool> m_Quit = false;
 
@@ -125,29 +221,28 @@ namespace Kargono::Network
 		std::mutex m_EventQueueMutex {};
 		uint64_t m_SessionStartFrame{ 0 };
 		std::atomic<uint16_t> m_SessionSlot{std::numeric_limits<uint16_t>::max()};
-	private:
-		static Ref<Network::Client> s_Client;
-		static Ref<std::thread> s_NetworkThread;
 
-	private:
-		// asio context handles the data transfer...
+
+		// main asio context
 		asio::io_context m_context;
-		// ... but needs a thread of its own to execute its word commands
+		// asio context thread
 		std::thread thrContext;
 
 		std::atomic<bool> m_UDPConnectionSuccessful;
 
 		// The client has a single instance of a "connection" object, which handles data transfer
-		Ref<ConnectionToServer> m_connection;
+		Ref<TCPClientConnection> m_connection;
 
-		Ref<UDPClientConnection> m_UDPClient {nullptr};
-	private:
+		Ref<UDPClientConnection> m_UDPClientConnection {nullptr};
 		// This is the thread safe queue of incoming messages from the server
 		TSQueue<owned_message> m_qMessagesIn;
 
 		// Variables for sleeping thread until a notify command is received
 		std::condition_variable m_BlockThreadCV {};
 		std::mutex m_BlockThreadMx {};
+
+		static Ref<Network::Client> s_Client;
+		static Ref<std::thread> s_NetworkThread;
 	};
 
 	
