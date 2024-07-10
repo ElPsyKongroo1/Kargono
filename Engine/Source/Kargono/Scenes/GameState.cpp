@@ -4,6 +4,6 @@
 
 namespace Kargono::Scenes
 {
-	Ref<GameState> GameState::s_GameState { nullptr };
-	Assets::AssetHandle GameState::s_GameStateHandle {0};
+	Ref<GameState> GameStateService::s_ActiveGameState { nullptr };
+	Assets::AssetHandle GameStateService::s_ActiveGameStateHandle {0};
 }
