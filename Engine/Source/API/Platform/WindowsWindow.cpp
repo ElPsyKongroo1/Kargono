@@ -286,7 +286,7 @@ namespace API::Platform
 		m_Data.Width = static_cast<uint32_t>(newWindowSize.x);
 		m_Data.Height = static_cast<uint32_t>(newWindowSize.y);
 
-		if (!Kargono::Projects::Project::GetIsFullscreen())
+		if (!Kargono::Projects::ProjectService::GetIsFullscreen())
 		{
 			CenterWindow();
 		}

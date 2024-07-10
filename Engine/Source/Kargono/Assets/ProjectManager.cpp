@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	bool AssetManager::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
+	bool AssetManager::DeserializeServerVariables(Ref<Projects::ProjectService> project, const std::filesystem::path& projectPath)
 	{
 		auto& config = project->m_Config;
 
@@ -44,19 +44,19 @@ namespace Kargono::Assets
 	}
 
 
-	Ref<Projects::Project> AssetManager::NewProject()
+	Ref<Projects::ProjectService> AssetManager::NewProject()
 	{
-		Projects::Project::s_ActiveProject = CreateRef<Projects::Project>();
-		return Projects::Project::s_ActiveProject;
+		Projects::ProjectService::s_ActiveProject = CreateRef<Projects::ProjectService>();
+		return Projects::ProjectService::s_ActiveProject;
 	}
-	Ref<Projects::Project> AssetManager::OpenProject(const std::filesystem::path& path)
+	Ref<Projects::ProjectService> AssetManager::OpenProject(const std::filesystem::path& path)
 	{
-		Ref<Projects::Project> project = CreateRef<Projects::Project>();
+		Ref<Projects::ProjectService> project = CreateRef<Projects::ProjectService>();
 		if (Assets::AssetManager::DeserializeProject(project, path))
 		{
 			project->m_ProjectDirectory = path.parent_path();
-			Projects::Project::s_ActiveProject = project;
-			return Projects::Project::s_ActiveProject;
+			Projects::ProjectService::s_ActiveProject = project;
+			return Projects::ProjectService::s_ActiveProject;
 		}
 
 		return nullptr;
@@ -64,15 +64,15 @@ namespace Kargono::Assets
 	}
 	bool AssetManager::SaveActiveProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::SerializeProject(Projects::Project::s_ActiveProject, path))
+		if (Assets::AssetManager::SerializeProject(Projects::ProjectService::s_ActiveProject, path))
 		{
-			Projects::Project::s_ActiveProject->m_ProjectDirectory = path.parent_path();
+			Projects::ProjectService::s_ActiveProject->m_ProjectDirectory = path.parent_path();
 			return true;
 		}
 		return false;
 	}
 
-	bool AssetManager::SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
+	bool AssetManager::SerializeProject(Ref<Projects::ProjectService> project, const std::filesystem::path& filepath)
 	{
 		const auto& config = project->m_Config;
 		YAML::Emitter out;
@@ -126,7 +126,7 @@ namespace Kargono::Assets
 		return true;
 	}
 
-	bool AssetManager::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeProject(Ref<Projects::ProjectService> project, const std::filesystem::path& filepath)
 	{
 		auto& config = project->m_Config;
 

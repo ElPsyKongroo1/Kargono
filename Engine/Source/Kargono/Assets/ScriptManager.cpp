@@ -18,8 +18,8 @@ namespace Kargono::Assets
 		// Clear current registry and open registry in current project 
 		s_ScriptRegistry.clear();
 		s_Scripts.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& ScriptRegistryLocation = Projects::Project::GetAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
 
 		if (!std::filesystem::exists(ScriptRegistryLocation))
 		{
@@ -125,8 +125,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeScriptRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& ScriptRegistryLocation = Projects::Project::GetAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -305,7 +305,7 @@ namespace Kargono::Assets
 		if (metadata->FunctionType != spec.FunctionType)
 		{
 			// Load file into scriptFile
-			scriptFile = Utility::FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+			scriptFile = Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 			if (scriptFile.empty())
 			{
 				KG_WARN("Attempt to open script file failed");
@@ -376,7 +376,7 @@ namespace Kargono::Assets
 				Utility::GenerateFunctionSignature(spec.FunctionType, spec.Name));
 			
 			// Write back out to file
-			Utility::FileSystem::WriteFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation, output);
+			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation, output);
 		}
 
 		// Update registry metadata
@@ -424,7 +424,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
 			s_ScriptRegistry.at(scriptHandle).Data.IntermediateLocation);
 
 		s_ScriptRegistry.erase(scriptHandle);
@@ -543,7 +543,7 @@ namespace Kargono::Assets
 
 	Ref<Scripting::Script> AssetManager::GetScript(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving Script!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving Script!");
 
 		if (s_Scripts.contains(handle)) { return s_Scripts[handle]; }
 
@@ -562,13 +562,13 @@ namespace Kargono::Assets
 
 	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path ScriptPath = filepath;
 
 		if (filepath.is_absolute())
 		{
-			ScriptPath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			ScriptPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_ScriptRegistry)
@@ -601,7 +601,7 @@ namespace Kargono::Assets
 	{
 		// Create cpp file
 		std::string intermediatePath = "Scripting/" + spec.Name + ".cpp";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 
 		Utility::FileSystem::WriteFileString(intermediateFullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
 

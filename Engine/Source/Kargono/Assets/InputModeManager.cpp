@@ -15,8 +15,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_InputModeRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& inputModeRegistryLocation = Projects::Project::GetAssetDirectory() / "Input/InputRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
 
 		if (!std::filesystem::exists(inputModeRegistryLocation))
 		{
@@ -70,8 +70,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeInputModeRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& inputModeRegistryLocation = Projects::Project::GetAssetDirectory() / "Input/InputRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -371,7 +371,7 @@ namespace Kargono::Assets
 			return;
 		}
 		Assets::Asset inputModeAsset = s_InputModeRegistry[inputModeHandle];
-		SerializeInputMode(inputMode, (Projects::Project::GetAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
+		SerializeInputMode(inputMode, (Projects::ProjectService::GetActiveAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
 	}
 
 	void AssetManager::DeleteInputMode(AssetHandle handle)
@@ -382,7 +382,7 @@ namespace Kargono::Assets
 			return;
 		}
 
-		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
 			s_InputModeRegistry.at(handle).Data.IntermediateLocation);
 
 		s_InputModeRegistry.erase(handle);
@@ -402,7 +402,7 @@ namespace Kargono::Assets
 
 	Ref<Input::InputMode> AssetManager::GetInputMode(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving inputMode!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving inputMode!");
 
 		if (s_InputModeRegistry.contains(handle))
 		{
@@ -415,13 +415,13 @@ namespace Kargono::Assets
 	}
 	std::tuple<AssetHandle, Ref<Input::InputMode>> AssetManager::GetInputMode(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path inputModePath = filepath;
 
 		if (filepath.is_absolute())
 		{
-			inputModePath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			inputModePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_InputModeRegistry)
@@ -440,7 +440,7 @@ namespace Kargono::Assets
 	Ref<Input::InputMode> AssetManager::InstantiateInputMode(const Assets::Asset& inputModeAsset)
 	{
 		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
-		DeserializeInputMode(newInputMode, (Projects::Project::GetAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
+		DeserializeInputMode(newInputMode, (Projects::ProjectService::GetActiveAssetDirectory() / inputModeAsset.Data.IntermediateLocation).string());
 		return newInputMode;
 	}
 
@@ -457,7 +457,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string inputModePath = "Input/" + inputModeName + ".kginput";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / inputModePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / inputModePath;
 		SerializeInputMode(temporaryInputMode, intermediateFullPath.string());
 
 		// Load data into In-Memory Metadata object

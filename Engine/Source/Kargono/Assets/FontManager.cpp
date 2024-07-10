@@ -70,8 +70,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_FontRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& fontRegistryLocation = Projects::Project::GetAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& fontRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
 
 		if (!std::filesystem::exists(fontRegistryLocation))
 		{
@@ -147,8 +147,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeFontRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& fontRegistryLocation = Projects::Project::GetAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& fontRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -248,7 +248,7 @@ namespace Kargono::Assets
 	{
 		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
 		auto& fontCharacters = newFont->GetCharacters();
 
@@ -276,7 +276,7 @@ namespace Kargono::Assets
 
 	Ref<RuntimeUI::Font> AssetManager::GetFont(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving font!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving font!");
 
 		if (s_Fonts.contains(handle)) { return s_Fonts[handle]; }
 
@@ -418,7 +418,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Fonts/Intermediates/" + (std::string)newAsset.Handle + ".kgfont";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Load data into In-Memory Metadata object
@@ -429,7 +429,7 @@ namespace Kargono::Assets
 		metadata->AtlasHeight = static_cast<float>(textureSpec.Height);
 		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
+		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 
 		buffer.Release();

@@ -44,7 +44,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::Init()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "No valid project is active while trying to initialize shaders!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "No valid project is active while trying to initialize shaders!");
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		KG_VERIFY(s_Data.CameraUniformBuffer, "Renderer Init")
 	}

@@ -12,9 +12,9 @@ namespace Kargono
 
 	void AppTickService::LoadGeneratorsFromProject()
 	{
-		KG_ASSERT(Projects::Project::GetActive());
+		KG_ASSERT(Projects::ProjectService::GetActive());
 		AppTickService::ClearGenerators();
-		for (auto generatorValue : Projects::Project::GetAppTickGenerators())
+		for (auto generatorValue : Projects::ProjectService::GetAppTickGenerators())
 		{
 			AppTickService::AddNewGenerator(generatorValue);
 		}

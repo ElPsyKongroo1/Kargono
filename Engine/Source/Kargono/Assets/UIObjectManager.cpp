@@ -15,8 +15,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_UIObjectRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& uiObjectRegistryLocation = Projects::Project::GetAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& uiObjectRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
 
 		if (!std::filesystem::exists(uiObjectRegistryLocation))
 		{
@@ -70,8 +70,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeUIObjectRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& uiObjectRegistryLocation = Projects::Project::GetAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& uiObjectRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UIObjectRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -404,7 +404,7 @@ namespace Kargono::Assets
 			return;
 		}
 		Assets::Asset uiObjectAsset = s_UIObjectRegistry[uiObjectHandle];
-		SerializeUIObject(uiObject, (Projects::Project::GetAssetDirectory() / uiObjectAsset.Data.IntermediateLocation).string());
+		SerializeUIObject(uiObject, (Projects::ProjectService::GetActiveAssetDirectory() / uiObjectAsset.Data.IntermediateLocation).string());
 	}
 
 	std::filesystem::path AssetManager::GetUIObjectLocation(const AssetHandle& handle)
@@ -419,7 +419,7 @@ namespace Kargono::Assets
 
 	Ref<RuntimeUI::UIObject> AssetManager::GetUIObject(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving uiObject!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving uiObject!");
 
 		if (s_UIObjectRegistry.contains(handle))
 		{
@@ -432,12 +432,12 @@ namespace Kargono::Assets
 	}
 	std::tuple<AssetHandle, Ref<RuntimeUI::UIObject>> AssetManager::GetUIObject(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 		std::filesystem::path uiObjectPath = filepath;
 
 		if (filepath.is_absolute())
 		{
-			uiObjectPath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			uiObjectPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_UIObjectRegistry)
@@ -456,7 +456,7 @@ namespace Kargono::Assets
 	Ref<RuntimeUI::UIObject> AssetManager::InstantiateUIObject(const Assets::Asset& uiObjectAsset)
 	{
 		Ref<RuntimeUI::UIObject> newUIObject = CreateRef<RuntimeUI::UIObject>();
-		DeserializeUIObject(newUIObject, (Projects::Project::GetAssetDirectory() / uiObjectAsset.Data.IntermediateLocation).string());
+		DeserializeUIObject(newUIObject, (Projects::ProjectService::GetActiveAssetDirectory() / uiObjectAsset.Data.IntermediateLocation).string());
 		return newUIObject;
 	}
 
@@ -473,7 +473,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string uiObjectPath = "UserInterface/" + uiObjectName + ".kgui";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / uiObjectPath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / uiObjectPath;
 		SerializeUIObject(temporaryUIObject, intermediateFullPath.string());
 
 		// Load data into In-Memory Metadata object

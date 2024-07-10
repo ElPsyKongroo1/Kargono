@@ -68,8 +68,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_EntityClassRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
 
 		if (!std::filesystem::exists(EntityClassRegistryLocation))
 		{
@@ -125,8 +125,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeEntityClassRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& EntityClassRegistryLocation = Projects::Project::GetAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -367,7 +367,7 @@ namespace Kargono::Assets
 		std::vector<Scenes::ClassField> newFields = entityClass->GetFields();
 
 		Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];
-		SerializeEntityClass(entityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+		SerializeEntityClass(entityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
 
 		// Create map that associates old data locations with new data locations for ClassInstanceComponents
 		std::unordered_map<uint32_t, uint32_t> transferFieldDataMap {};
@@ -447,7 +447,7 @@ namespace Kargono::Assets
 		}
 
 
-		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
 			s_EntityClassRegistry.at(handle).Data.IntermediateLocation);
 
 		s_EntityClassRegistry.erase(handle);
@@ -467,7 +467,7 @@ namespace Kargono::Assets
 
 	Ref<Scenes::EntityClass> AssetManager::GetEntityClass(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving EntityClass!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving EntityClass!");
 
 		if (s_EntityClassRegistry.contains(handle))
 		{
@@ -480,13 +480,13 @@ namespace Kargono::Assets
 	}
 	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path EntityClassPath = filepath;
 
 		if (filepath.is_absolute())
 		{
-			EntityClassPath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			EntityClassPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_EntityClassRegistry)
@@ -505,7 +505,7 @@ namespace Kargono::Assets
 	Ref<Scenes::EntityClass> AssetManager::InstantiateEntityClass(const Assets::Asset& EntityClassAsset)
 	{
 		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
-		DeserializeEntityClass(newEntityClass, (Projects::Project::GetAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+		DeserializeEntityClass(newEntityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
 		return newEntityClass;
 	}
 
@@ -523,7 +523,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / EntityClassPath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / EntityClassPath;
 		SerializeEntityClass(temporaryEntityClass, intermediateFullPath.string());
 
 		// Load data into In-Memory Metadata object
