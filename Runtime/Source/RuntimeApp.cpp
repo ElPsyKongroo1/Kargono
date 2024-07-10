@@ -392,13 +392,13 @@ namespace Kargono
 		// Load Default Game State
 		if (Projects::Project::GetStartGameState() == 0)
 		{
-			Scenes::GameState::s_GameState = nullptr;
-			Scenes::GameState::s_GameStateHandle = 0;
+			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameState::s_GameState = Assets::AssetManager::GetGameState(Projects::Project::GetStartGameState());
-			Scenes::GameState::s_GameStateHandle = Projects::Project::GetStartGameState();
+			Scenes::GameStateService::SetActiveGameState(Assets::AssetManager::GetGameState(
+				Projects::Project::GetStartGameState()), 
+				Projects::Project::GetStartGameState());
 		}
 
 		if (Projects::Project::GetAppIsNetworked())

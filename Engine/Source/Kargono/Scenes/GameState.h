@@ -98,33 +98,66 @@ namespace Kargono::Scenes
 		{
 			m_Name = name;
 		}
+	private:
+		std::string m_Name{};
+		std::unordered_map<std::string, Ref<WrappedVariable>> m_Fields {};
+		friend class Assets::AssetManager;
+	};
+
+	class GameStateService
+	{
 	public:
+		//=========================
+		// Active Game State API
+		//=========================
 		static void SetActiveGameStateField(const std::string& fieldName, void* value)
 		{
-			if (!s_GameState)
+			if (!s_ActiveGameState)
 			{
 				KG_WARN("Attempt to set a field on active game state that is inactive");
 				return;
 			}
 
-			s_GameState->SetField(fieldName, value);
+			s_ActiveGameState->SetField(fieldName, value);
 		}
 		static void* GetActiveGameStateField(const std::string& fieldName)
 		{
-			if (!s_GameState)
+			if (!s_ActiveGameState)
 			{
-				KG_WARN("Attempt to set a field on active game state that is inactive");
+				KG_WARN("Attempt to get a field on the active game state that is inactive");
 				return nullptr;
 			}
 
-			return s_GameState->GetField(fieldName)->GetValue();
+			return s_ActiveGameState->GetField(fieldName)->GetValue();
 		}
 	public:
-		static Ref<GameState> s_GameState;
-		static Assets::AssetHandle s_GameStateHandle;
+		//=========================
+		// Getter/Setter
+		//=========================
+		static void ClearActiveGameState()
+		{
+			s_ActiveGameState = nullptr;
+			s_ActiveGameStateHandle = Assets::EmptyHandle;
+		}
+		static void SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle)
+		{
+			s_ActiveGameState = newGameState;
+			s_ActiveGameStateHandle = newHandle;
+		}
+		static Ref<GameState> GetActiveGameState()
+		{
+			return s_ActiveGameState;
+		}
+		static Assets::AssetHandle GetActiveGameStateHandle()
+		{
+			return s_ActiveGameStateHandle;
+		}
+
 	private:
-		std::string m_Name{};
-		std::unordered_map<std::string, Ref<WrappedVariable>> m_Fields {};
-		friend class Assets::AssetManager;
+		//=========================
+		// Internal Fields
+		//=========================
+		static Ref<GameState> s_ActiveGameState;
+		static Assets::AssetHandle s_ActiveGameStateHandle;
 	};
 }
