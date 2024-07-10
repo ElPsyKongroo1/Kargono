@@ -33,13 +33,14 @@ namespace Kargono::Projects
 		MatchDevice											// Automatic
 	};
 	//=========================
-	// Project Configuration Struct
+	// Project Class
 	//=========================
 	// This struct holds the data necessary to describe a project such as its
 	//		Asset Directory, Script Path, Starting Scene, Resolution/Fullscreen
 	//		options, etc... 
-	struct ProjectConfig
+	class Project
 	{
+	private:
 		// Name simply provides a method to identify the project for debugging
 		//		purposes.
 		std::string Name = "Untitled";
@@ -103,6 +104,10 @@ namespace Kargono::Projects
 		uint64_t SecretTwo{2};
 		uint64_t SecretThree{3};
 		uint64_t SecretFour{4};
+
+	private:
+		friend class ProjectService;
+		friend class Assets::AssetManager;
 	};
 
 	//============================================================
@@ -115,7 +120,7 @@ namespace Kargono::Projects
 	//		There can be multiple projects that exist, however, only one project
 	//		can be loaded into the engine at a time. The reference to this single
 	//		project is held in s_ActiveProject.
-	class Project
+	class ProjectService
 	{
 	public:
 
@@ -126,7 +131,7 @@ namespace Kargono::Projects
 		// This function simply returns the project directory
 		//		associated with the currently active project
 		//		in s_ActiveProject.
-		static const std::filesystem::path& GetProjectDirectory()
+		static const std::filesystem::path& GetActiveProjectDirectory()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_ProjectDirectory;
@@ -134,21 +139,21 @@ namespace Kargono::Projects
 		// This function simply returns the absolute path to the
 		//		Asset Directory (Default Directory in the Content Browser)
 		//		associated with the active project in s_ActiveProject.
-		static std::filesystem::path GetAssetDirectory()
+		static std::filesystem::path GetActiveAssetDirectory()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return GetProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
+			return GetActiveProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
 		}
 
 		// This function returns the current StartScenePath associated with the active
 		//		project in s_ActiveProject.
-		static std::filesystem::path GetStartScenePath(bool isAbsolute = true)
+		static std::filesystem::path GetActiveStartScenePath(bool isAbsolute = true)
 		{
 			KG_ASSERT(s_ActiveProject);
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetAssetDirectory() / s_ActiveProject->m_Config.StartScenePath;
+				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.StartScenePath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->m_Config.StartScenePath;
@@ -156,25 +161,25 @@ namespace Kargono::Projects
 
 		// This function returns the current ScriptModulePath associated with the active
 		//		project in s_ActiveProject.
-		static std::filesystem::path GetScriptModulePath(bool isAbsolute = true)
+		static std::filesystem::path GetActiveScriptModulePath(bool isAbsolute = true)
 		{
 			KG_ASSERT(s_ActiveProject);
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetAssetDirectory() / s_ActiveProject->m_Config.ScriptModulePath;
+				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.ScriptModulePath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->m_Config.ScriptModulePath;
 		}
 
-		static std::filesystem::path GetScriptDLLPath(bool absolute = true)
+		static std::filesystem::path GetActiveScriptDLLPath(bool absolute = true)
 		{
 			KG_ASSERT(s_ActiveProject);
 			if (absolute)
 			{
 				// Return Absolute Path
-				return GetAssetDirectory() / s_ActiveProject->m_Config.ScriptDLLPath;
+				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.ScriptDLLPath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->m_Config.ScriptDLLPath;
@@ -184,7 +189,7 @@ namespace Kargono::Projects
 		//		scene associated with the active project, in s_ActiveProject.
 		//		This handle is reflected in the current s_SceneRegistry in
 		//		the AssetManager.
-		static Assets::AssetHandle GetStartSceneHandle()
+		static Assets::AssetHandle GetActiveStartSceneHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_Config.StartSceneHandle;
@@ -484,18 +489,18 @@ namespace Kargono::Projects
 		}
 
 		// This function returns the currently active project held in s_ActiveProject.
-		static Ref<Project> GetActive() { return s_ActiveProject; }
+		static Ref<ProjectService> GetActive() { return s_ActiveProject; }
 
 	private:
 		// This config file holds many details about a project such as the starting scene handle/file location
 		//		 the asset directory, the script project directory, etc...
-		ProjectConfig m_Config;
+		Project m_Config;
 		// m_ProjectDirectory simply holds the path to a project. This is typically provided when a
 		//		project is initially selected from a file dialog.
 		std::filesystem::path m_ProjectDirectory;
 		// m_ActiveProject holds a static reference to the currently active project. Only one project can be
 		//		active at a time and that project is held in this variable.
-		inline static Ref<Project> s_ActiveProject;
+		inline static Ref<ProjectService> s_ActiveProject;
 	public:
 		friend class Assets::AssetManager;
 	};

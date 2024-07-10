@@ -227,8 +227,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_SceneRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& sceneRegistryLocation = Projects::Project::GetAssetDirectory() / "Scenes/SceneRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
 
 		if (!std::filesystem::exists(sceneRegistryLocation))
 		{
@@ -282,8 +282,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeSceneRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& sceneRegistryLocation = Projects::Project::GetAssetDirectory() / "Scenes/SceneRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -634,12 +634,12 @@ namespace Kargono::Assets
 			return;
 		}
 		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
-		SerializeScene(scene, (Projects::Project::GetAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
+		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
 	}
 
 	Ref<Scenes::Scene> AssetManager::GetScene(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving scene!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving scene!");
 
 		if (s_SceneRegistry.contains(handle))
 		{
@@ -652,13 +652,13 @@ namespace Kargono::Assets
 	}
 	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path scenePath {};
 
-		if (Utility::FileSystem::DoesPathContainSubPath(Projects::Project::GetAssetDirectory(), filepath))
+		if (Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), filepath))
 		{
-			scenePath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			scenePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 		else
 		{
@@ -681,7 +681,7 @@ namespace Kargono::Assets
 	Ref<Scenes::Scene> AssetManager::InstantiateScene(const Assets::Asset& sceneAsset)
 	{
 		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
-		DeserializeScene(newScene, (Projects::Project::GetAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
+		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
 		return newScene;
 	}
 
@@ -698,7 +698,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / scenePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
 		SerializeScene(temporaryScene, intermediateFullPath.string());
 
 		// Load data into In-Memory Metadata object

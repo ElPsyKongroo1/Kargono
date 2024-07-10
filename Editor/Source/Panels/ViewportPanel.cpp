@@ -127,7 +127,7 @@ namespace Kargono::Panels
 		m_ViewportHovered = ImGui::IsWindowHovered();
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::Project::GetTargetResolution());
+		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetTargetResolution());
 		if (aspectRatio.x > aspectRatio.y && ((viewportPanelSize.x / aspectRatio.x) * aspectRatio.y) < viewportPanelSize.y)
 		{
 			currentWindow.SetViewportWidth(static_cast<uint32_t>(viewportPanelSize.x));

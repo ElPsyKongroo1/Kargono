@@ -134,7 +134,7 @@ namespace Kargono::Network
 	}
 	uint64_t TCPConnection::Scramble(uint64_t nInput)
 	{
-		auto currentProject = Projects::Project::GetActive();
+		auto currentProject = Projects::ProjectService::GetActive();
 
 		uint64_t out = nInput ^ currentProject->GetSecretOne();
 		out = (out & currentProject->GetSecretTwo()) >> 4 | (out & currentProject->GetSecretThree()) << 4;

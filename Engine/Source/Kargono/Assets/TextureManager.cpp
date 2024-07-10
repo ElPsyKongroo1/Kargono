@@ -17,8 +17,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_TextureRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& textureRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
 
 		if (!std::filesystem::exists(textureRegistryLocation))
 		{
@@ -79,8 +79,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeTextureRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& textureRegistryLocation = Projects::Project::GetAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& textureRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Textures/Intermediates/TextureRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -238,7 +238,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Check that save was successful
@@ -256,7 +256,7 @@ namespace Kargono::Assets
 		metadata->Width = width;
 		metadata->Height = height;
 		metadata->Channels = channels;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
+		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 
 		buffer.Release();
@@ -267,7 +267,7 @@ namespace Kargono::Assets
 	{
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Load data into In-Memory Metadata object
@@ -285,7 +285,7 @@ namespace Kargono::Assets
 	{
 		Assets::TextureMetaData metadata = *static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<Rendering::Texture2D> newTexture = Rendering::Texture2D::Create(currentResource, metadata);
 
 		currentResource.Release();
@@ -294,7 +294,7 @@ namespace Kargono::Assets
 
 	Ref<Rendering::Texture2D> AssetManager::GetTexture(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving texture!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving texture!");
 
 		if (s_Textures.contains(handle)) { return s_Textures[handle]; }
 

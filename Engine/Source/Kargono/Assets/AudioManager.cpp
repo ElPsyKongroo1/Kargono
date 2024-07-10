@@ -18,8 +18,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_AudioRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& audioRegistryLocation = Projects::Project::GetAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& audioRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
 
 		if (!std::filesystem::exists(audioRegistryLocation))
 		{
@@ -79,8 +79,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeAudioRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& audioRegistryLocation = Projects::Project::GetAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& audioRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Audio/Intermediates/AudioRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -169,7 +169,7 @@ namespace Kargono::Assets
 	{
 		Assets::AudioMetaData metadata = *static_cast<Assets::AudioMetaData*>(asset.Data.SpecificFileData.get());
 		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<Audio::AudioBuffer> newAudio = CreateRef<Audio::AudioBuffer>();
 		CallAndCheckALError(alBufferData(newAudio->m_BufferID, metadata.Channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.Data, static_cast<ALsizei>(currentResource.Size), metadata.SampleRate));
 
@@ -179,7 +179,7 @@ namespace Kargono::Assets
 
 	Ref<Audio::AudioBuffer> AssetManager::GetAudio(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving audio!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving audio!");
 
 		if (s_Audio.contains(handle)) { return s_Audio[handle]; }
 
@@ -198,7 +198,7 @@ namespace Kargono::Assets
 
 	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		for (auto& [assetHandle, asset] : s_AudioRegistry)
 		{
@@ -247,7 +247,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string intermediatePath = "Audio/Intermediates/" + (std::string)newAsset.Handle + ".kgaudio";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 		Utility::FileSystem::WriteFileBinary(intermediateFullPath, pcmData);
 
 		// Check that save was successful
@@ -265,7 +265,7 @@ namespace Kargono::Assets
 		metadata->SampleRate = sampleRate;;
 		metadata->TotalPcmFrameCount = totalPcmFrameCount;
 		metadata->TotalSize = totalSize;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filePath);
+		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 		pcmData.Release();
 	}

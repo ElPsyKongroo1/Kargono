@@ -98,7 +98,7 @@ namespace Kargono::Panels
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_BaseDirectory(Projects::Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
+		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
@@ -194,7 +194,7 @@ namespace Kargono::Panels
 			ImGui::EndDragDropTarget();
 		}
 
-		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::Project::GetProjectDirectory(), m_CurrentDirectory);
+		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
 
 		std::vector<std::string> tokenizedDirectoryPath{};
 

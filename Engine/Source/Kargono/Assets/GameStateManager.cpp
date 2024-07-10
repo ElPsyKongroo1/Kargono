@@ -13,8 +13,8 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_GameStateRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& GameStateRegistryLocation = Projects::Project::GetAssetDirectory() / "GameState/GameStateRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& GameStateRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "GameState/GameStateRegistry.kgreg";
 
 		if (!std::filesystem::exists(GameStateRegistryLocation))
 		{
@@ -69,8 +69,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeGameStateRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& GameStateRegistryLocation = Projects::Project::GetAssetDirectory() / "GameState/GameStateRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& GameStateRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "GameState/GameStateRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -240,7 +240,7 @@ namespace Kargono::Assets
 			return;
 		}
 		Assets::Asset GameStateAsset = s_GameStateRegistry[GameStateHandle];
-		SerializeGameState(GameState, (Projects::Project::GetAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
+		SerializeGameState(GameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
 	}
 
 	void AssetManager::DeleteGameState(AssetHandle handle)
@@ -251,7 +251,7 @@ namespace Kargono::Assets
 			return;
 		}
 
-		Utility::FileSystem::DeleteSelectedFile(Projects::Project::GetAssetDirectory() /
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
 			s_GameStateRegistry.at(handle).Data.IntermediateLocation);
 
 		s_GameStateRegistry.erase(handle);
@@ -271,7 +271,7 @@ namespace Kargono::Assets
 
 	Ref<Kargono::Scenes::GameState> AssetManager::GetGameState(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retreiving GameState!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving GameState!");
 
 		if (s_GameStateRegistry.contains(handle))
 		{
@@ -284,13 +284,13 @@ namespace Kargono::Assets
 	}
 	std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> AssetManager::GetGameState(const std::filesystem::path& filepath)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "Attempt to use Project Field without active project!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
 		std::filesystem::path GameStatePath = filepath;
 
 		if (filepath.is_absolute())
 		{
-			GameStatePath = Utility::FileSystem::GetRelativePath(Projects::Project::GetAssetDirectory(), filepath);
+			GameStatePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
 		}
 
 		for (auto& [assetHandle, asset] : s_GameStateRegistry)
@@ -309,7 +309,7 @@ namespace Kargono::Assets
 	Ref<Scenes::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
 	{
 		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
-		DeserializeGameState(newGameState, (Projects::Project::GetAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
+		DeserializeGameState(newGameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
 		return newGameState;
 	}
 
@@ -327,7 +327,7 @@ namespace Kargono::Assets
 
 		// Save Binary Intermediate into File
 		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";
-		std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / GameStatePath;
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
 		SerializeGameState(temporaryGameState, intermediateFullPath.string());
 
 		// Load data into In-Memory Metadata object

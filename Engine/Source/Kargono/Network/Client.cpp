@@ -445,7 +445,7 @@ namespace Kargono::Network
 
 	void Client::RunClient()
 	{
-		auto currentProject = Projects::Project::GetActive();
+		auto currentProject = Projects::ProjectService::GetActive();
 
 		bool remoteConnection = false;
 

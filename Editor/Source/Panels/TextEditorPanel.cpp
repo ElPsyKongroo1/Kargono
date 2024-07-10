@@ -39,7 +39,7 @@ namespace Kargono::Panels
 		s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 		s_OnCreateFile = [&]()
 		{
-			const std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
+			const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 			const std::filesystem::path filepath = Utility::FileDialogs::SaveFile("All Files\0*.*\0", initialDirectory.string().c_str());
 			if (!filepath.empty())
 			{
@@ -57,7 +57,7 @@ namespace Kargono::Panels
 		};
 		s_OnOpenFile = [&]()
 		{
-			const std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
+			const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 			const std::filesystem::path filepath = Utility::FileDialogs::OpenFile("All Files\0*.*\0", initialDirectory.string().c_str());
 			OpenFile(filepath);
 		};

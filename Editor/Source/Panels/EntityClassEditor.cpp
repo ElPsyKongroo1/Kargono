@@ -522,7 +522,7 @@ namespace Kargono::Panels
 							return;
 						}
 						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 					};
 
 					EditorUI::TableEntry newEntry
