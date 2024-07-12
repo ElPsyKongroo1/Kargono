@@ -919,7 +919,7 @@ namespace Kargono::RuntimeUI
 		widgetTranslation.z += 0.001f;
 
 		// Render Text
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetTargetResolution());
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize = (viewportWidth * 0.15f * TextSize) * (resolution.y / resolution.x);
 		//textSize /= RuntimeEngine::s_Engine.m_CurrentFont->GetAverageWidth();
 

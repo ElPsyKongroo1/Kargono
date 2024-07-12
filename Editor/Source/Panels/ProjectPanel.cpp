@@ -52,37 +52,37 @@ namespace Kargono::Panels
 			}
 
 			const Assets::Asset asset = Assets::AssetManager::GetSceneRegistry().at(entry.Handle);
-			Projects::ProjectService::SetStartingScene(entry.Handle, asset.Data.IntermediateLocation);
+			Projects::ProjectService::SetActiveStartingScene(entry.Handle, asset.Data.IntermediateLocation);
 		};
 
 		// Default Full Screen
 		s_DefaultFullscreenSpec.Label = "Default Fullscreen";
 		s_DefaultFullscreenSpec.ConfirmAction = [](bool value)
 		{
-			Projects::ProjectService::SetIsFullscreen(value);
+			Projects::ProjectService::SetActiveIsFullscreen(value);
 		};
 
 		// Set Networking Specification
 		s_ToggleNetworkSpec.Label = "Networking";
 		s_ToggleNetworkSpec.ConfirmAction = [](bool value)
 		{
-			Projects::ProjectService::SetAppIsNetworked(value);
+			Projects::ProjectService::SetActiveAppIsNetworked(value);
 		};
 
 		// Resolution Specification
 		s_SelectResolutionSpec.Label = "Target Resolution";
 		s_SelectResolutionSpec.LineCount = 4;
 		s_SelectResolutionSpec.CurrentOption = {
-			Utility::ScreenResolutionToString(Projects::ProjectService::GetTargetResolution()),
+			Utility::ScreenResolutionToString(Projects::ProjectService::GetActiveTargetResolution()),
 			Assets::EmptyHandle};
 		s_SelectResolutionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			Projects::ProjectService::SetTargetResolution(Utility::StringToScreenResolution(selection.Label));
+			Projects::ProjectService::SetActiveTargetResolution(Utility::StringToScreenResolution(selection.Label));
 		};
 		s_SelectResolutionSpec.PopupAction = [&]()
 		{
 			s_SelectResolutionSpec.CurrentOption = {
-				Utility::ScreenResolutionToString(Projects::ProjectService::GetTargetResolution()),
+				Utility::ScreenResolutionToString(Projects::ProjectService::GetActiveTargetResolution()),
 			Assets::EmptyHandle};
 		};
 		s_SelectResolutionSpec.AddToOptions("Aspect Ratio: 1:1 (Box)", "800x800", Assets::EmptyHandle);
@@ -100,11 +100,11 @@ namespace Kargono::Panels
 		// Select Start Game State
 		s_SelectStartGameStateSpec.Label = "Start Game State";
 		s_SelectStartGameStateSpec.LineCount = 3;
-		if (Projects::ProjectService::GetStartGameState() != 0)
+		if (Projects::ProjectService::GetActiveStartGameState() != 0)
 		{
 			s_SelectStartGameStateSpec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
-			(Projects::ProjectService::GetStartGameState()).Data.IntermediateLocation.string(),
-			Projects::ProjectService::GetStartGameState()};
+			(Projects::ProjectService::GetActiveStartGameState()).Data.IntermediateLocation.string(),
+			Projects::ProjectService::GetActiveStartGameState()};
 		}
 		else
 		{
@@ -119,11 +119,11 @@ namespace Kargono::Panels
 				s_SelectStartGameStateSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 
-			if (Projects::ProjectService::GetStartGameState() != Assets::EmptyHandle)
+			if (Projects::ProjectService::GetActiveStartGameState() != Assets::EmptyHandle)
 			{
 				s_SelectStartGameStateSpec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
-				(Projects::ProjectService::GetStartGameState()).Data.IntermediateLocation.string(),
-				Projects::ProjectService::GetStartGameState() };
+				(Projects::ProjectService::GetActiveStartGameState()).Data.IntermediateLocation.string(),
+				Projects::ProjectService::GetActiveStartGameState() };
 			}
 			else
 			{
@@ -139,16 +139,16 @@ namespace Kargono::Panels
 				KG_WARN("Could not locate starting game state in ProjectPanel");
 				return;
 			}
-			Projects::ProjectService::SetStartGameState(selection.Handle);
-			
+			Projects::ProjectService::SetActiveStartGameState(selection.Handle);
+
 		};
 
 		// Runtime Start Spec
 		s_SelectRuntimeStartSpec.Label = "Runtime Start";
 		s_SelectRuntimeStartSpec.LineCount = 3;
-		s_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetOnRuntimeStart() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnRuntimeStart())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnRuntimeStart()};
+		s_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStart() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnRuntimeStart())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnRuntimeStart()};
 		s_SelectRuntimeStartSpec.PopupAction = []()
 		{
 			s_SelectRuntimeStartSpec.GetAllOptions().clear();
@@ -164,9 +164,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetOnRuntimeStart() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnRuntimeStart())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnRuntimeStart()};
+			s_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStart() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnRuntimeStart())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnRuntimeStart() };
 		};
 		s_SelectRuntimeStartSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -175,15 +175,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find runtime start function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnRuntimeStart(selection.Handle);
+			Projects::ProjectService::SetActiveOnRuntimeStart(selection.Handle);
 		};
 
 		// Update User Count Spec
 		s_SelectUpdateUserCountSpec.Label = "Update User Count";
 		s_SelectUpdateUserCountSpec.LineCount = 3;
-		s_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetOnUpdateUserCount() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUpdateUserCount())->m_ScriptName : "None",
-		Projects::ProjectService::GetOnUpdateUserCount()};
+		s_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCount() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUpdateUserCount())->m_ScriptName : "None",
+		Projects::ProjectService::GetActiveOnUpdateUserCount()};
 		s_SelectUpdateUserCountSpec.PopupAction = []()
 		{
 			s_SelectUpdateUserCountSpec.GetAllOptions().clear();
@@ -199,9 +199,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetOnUpdateUserCount() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUpdateUserCount())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnUpdateUserCount()};
+			s_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCount() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUpdateUserCount())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnUpdateUserCount() };
 		};
 		s_SelectUpdateUserCountSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -210,15 +210,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find on update user count function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnUpdateUserCount(selection.Handle);
+			Projects::ProjectService::SetActiveOnUpdateUserCount(selection.Handle);
 		};
 
 		// Update Approve Join Session
 		s_SelectApproveJoinSessionSpec.Label = "Approve Join Session";
 		s_SelectApproveJoinSessionSpec.LineCount = 3;
-		s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetOnApproveJoinSession() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnApproveJoinSession())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnApproveJoinSession() };
+		s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSession() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnApproveJoinSession())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnApproveJoinSession() };
 		s_SelectApproveJoinSessionSpec.PopupAction = []()
 		{
 			s_SelectApproveJoinSessionSpec.GetAllOptions().clear();
@@ -234,9 +234,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetOnApproveJoinSession() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnApproveJoinSession())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnApproveJoinSession()};
+			s_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSession() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnApproveJoinSession())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnApproveJoinSession() };
 		};
 		s_SelectApproveJoinSessionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -245,15 +245,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find on approve join session function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnApproveJoinSession(selection.Handle);
+			Projects::ProjectService::SetActiveOnApproveJoinSession(selection.Handle);
 		};
 
 		// Update User Left Session
 		s_SelectUserLeftSessionSpec.Label = "User Left Session";
 		s_SelectUserLeftSessionSpec.LineCount = 3;
-		s_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetOnUserLeftSession() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUserLeftSession())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnUserLeftSession() };
+		s_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSession() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUserLeftSession())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnUserLeftSession() };
 		s_SelectUserLeftSessionSpec.PopupAction = [&]()
 		{
 			s_SelectUserLeftSessionSpec.GetAllOptions().clear();
@@ -269,9 +269,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetOnUserLeftSession() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUserLeftSession())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnUserLeftSession()};
+			s_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSession() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUserLeftSession())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnUserLeftSession() };
 		};
 		s_SelectUserLeftSessionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -280,15 +280,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find on user left session function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnUserLeftSession(selection.Handle);
+			Projects::ProjectService::SetActiveOnUserLeftSession(selection.Handle);
 		};
 
 		// Update Start Session
 		s_SelectSessionInitSpec.Label = "Session Initialization";
 		s_SelectSessionInitSpec.LineCount = 3;
-		s_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetOnCurrentSessionInit() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnCurrentSessionInit())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnCurrentSessionInit()};
+		s_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInit() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInit())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnCurrentSessionInit()};
 		s_SelectSessionInitSpec.PopupAction = []()
 		{
 			s_SelectSessionInitSpec.GetAllOptions().clear();
@@ -304,9 +304,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetOnCurrentSessionInit() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnCurrentSessionInit())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnCurrentSessionInit()};
+			s_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInit() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInit())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnCurrentSessionInit() };
 		};
 		s_SelectSessionInitSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -315,15 +315,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find current session function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnCurrentSessionInit(selection.Handle);
+			Projects::ProjectService::SetActiveOnCurrentSessionInit(selection.Handle);
 		};
 
 		// Update Connection Terminated
 		s_SelectConnectionTerminatedSpec.Label = "Connection Terminated";
 		s_SelectConnectionTerminatedSpec.LineCount = 3;
-		s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetOnConnectionTerminated() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnConnectionTerminated())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnConnectionTerminated()};
+		s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminated() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminated())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnConnectionTerminated()};
 		s_SelectConnectionTerminatedSpec.PopupAction = []()
 		{
 			s_SelectConnectionTerminatedSpec.GetAllOptions().clear();
@@ -339,9 +339,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetOnConnectionTerminated() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnConnectionTerminated())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnConnectionTerminated()};
+			s_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminated() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminated())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnConnectionTerminated() };
 		};
 		s_SelectConnectionTerminatedSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -350,15 +350,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find connection terminated function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnConnectionTerminated(selection.Handle);
+			Projects::ProjectService::SetActiveOnConnectionTerminated(selection.Handle);
 		};
 
 		// Update Session User Slot
 		s_SelectUpdateSessionSlotSpec.Label = "Update Session User Slot";
 		s_SelectUpdateSessionSlotSpec.LineCount = 3;
-		s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetOnUpdateSessionUserSlot() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUpdateSessionUserSlot())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnUpdateSessionUserSlot()};
+		s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlot() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUpdateSessionUserSlot())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnUpdateSessionUserSlot()};
 		s_SelectUpdateSessionSlotSpec.PopupAction = []()
 		{
 			s_SelectUpdateSessionSlotSpec.GetAllOptions().clear();
@@ -374,9 +374,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetOnUpdateSessionUserSlot() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnUpdateSessionUserSlot())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnUpdateSessionUserSlot()};
+			s_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlot() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnUpdateSessionUserSlot())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnUpdateSessionUserSlot() };
 		};
 		s_SelectUpdateSessionSlotSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -385,15 +385,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find on update session user slot function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnUpdateSessionUserSlot(selection.Handle);
+			Projects::ProjectService::SetActiveOnUpdateSessionUserSlot(selection.Handle);
 		};
 
 		// Update On Start Session
 		s_SelectStartSessionSpec.Label = "Start Session";
 		s_SelectStartSessionSpec.LineCount = 3;
-		s_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetOnStartSession() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetOnStartSession())->m_ScriptName : "None",
-			Projects::ProjectService::GetOnStartSession()};
+		s_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSession() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnStartSession())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnStartSession() };
 		s_SelectStartSessionSpec.PopupAction = []()
 		{
 			s_SelectStartSessionSpec.GetAllOptions().clear();
@@ -409,9 +409,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetOnStartSession() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetOnStartSession())->m_ScriptName : "None",
-				Projects::ProjectService::GetOnStartSession() };
+			s_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSession() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnStartSession())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnStartSession() };
 		};
 		s_SelectStartSessionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -420,15 +420,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find start session function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetOnStartSession(selection.Handle);
+			Projects::ProjectService::SetActiveOnStartSession(selection.Handle);
 		};
 
 		// Update On Session Ready Check Confirm
 		s_SelectSessionReadyCheckSpec.Label = "Session Ready Check Confirm";
 		s_SelectSessionReadyCheckSpec.LineCount = 3;
-		s_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm())->m_ScriptName : "None",
-			Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm() };
+		s_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm() };
 		s_SelectSessionReadyCheckSpec.PopupAction = []()
 		{
 			s_SelectSessionReadyCheckSpec.GetAllOptions().clear();
@@ -444,9 +444,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm())->m_ScriptName : "None",
-				Projects::ProjectService::GetProjectOnSessionReadyCheckConfirm() };
+			s_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm() };
 		};
 		s_SelectSessionReadyCheckSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -455,15 +455,15 @@ namespace Kargono::Panels
 				KG_WARN("Could not find session ready check function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetProjectOnSessionReadyCheckConfirm(selection.Handle);
+			Projects::ProjectService::SetActiveOnSessionReadyCheckConfirm(selection.Handle);
 		};
 
 		// Update On Receive Signal
 		s_SelectReceiveSignalSpec.Label = "On Receive Signal";
 		s_SelectReceiveSignalSpec.LineCount = 3;
-		s_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetProjectOnReceiveSignal() ?
-			Assets::AssetManager::GetScript(Projects::ProjectService::GetProjectOnReceiveSignal())->m_ScriptName : "None",
-			Projects::ProjectService::GetProjectOnReceiveSignal() };
+		s_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignal() ?
+			Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnReceiveSignal())->m_ScriptName : "None",
+			Projects::ProjectService::GetActiveOnReceiveSignal() };
 		s_SelectReceiveSignalSpec.PopupAction = []()
 		{
 			s_SelectReceiveSignalSpec.GetAllOptions().clear();
@@ -479,9 +479,9 @@ namespace Kargono::Panels
 					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 
-			s_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetProjectOnReceiveSignal() ?
-				Assets::AssetManager::GetScript(Projects::ProjectService::GetProjectOnReceiveSignal())->m_ScriptName : "None",
-				Projects::ProjectService::GetProjectOnReceiveSignal() };
+			s_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignal() ?
+				Assets::AssetManager::GetScript(Projects::ProjectService::GetActiveOnReceiveSignal())->m_ScriptName : "None",
+				Projects::ProjectService::GetActiveOnReceiveSignal() };
 		};
 		s_SelectReceiveSignalSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -490,7 +490,7 @@ namespace Kargono::Panels
 				KG_WARN("Could not find on receive signal function in Project Panel");
 				return;
 			}
-			Projects::ProjectService::SetProjectOnReceiveSignal(selection.Handle);
+			Projects::ProjectService::SetActiveOnReceiveSignal(selection.Handle);
 		};
 
 	}
@@ -507,7 +507,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
 		// Project Name
-		EditorUI::EditorUIService::LabeledText("Project Name", Projects::ProjectService::GetProjectName());
+		EditorUI::EditorUIService::LabeledText("Project Name", Projects::ProjectService::GetActiveProjectName());
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Project Directory
@@ -519,12 +519,12 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Default Fullscreen
-		s_DefaultFullscreenSpec.ToggleBoolean = Projects::ProjectService::GetIsFullscreen();
+		s_DefaultFullscreenSpec.ToggleBoolean = Projects::ProjectService::GetActiveIsFullscreen();
 		EditorUI::EditorUIService::Checkbox(s_DefaultFullscreenSpec);
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Networking Checkbox
-		s_ToggleNetworkSpec.ToggleBoolean = Projects::ProjectService::GetAppIsNetworked();
+		s_ToggleNetworkSpec.ToggleBoolean = Projects::ProjectService::GetActiveAppIsNetworked();
 		EditorUI::EditorUIService::Checkbox(s_ToggleNetworkSpec);
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
@@ -635,7 +635,7 @@ namespace Kargono::Panels
 			ImGui::SameLine();
 			if (ImGui::Button("Submit"))
 			{
-				auto& generators = Projects::ProjectService::GetAppTickGenerators();
+				auto& generators = Projects::ProjectService::GetActiveAppTickGenerators();
 
 				if (newSeconds < 0) { newSeconds = 0; }
 				if (newMinutes < 0) { newMinutes = 0; }
@@ -660,7 +660,7 @@ namespace Kargono::Panels
 			if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
 			ImGui::TableHeadersRow();
 
-			for (auto& generatorValue : Projects::ProjectService::GetAppTickGenerators())
+			for (auto& generatorValue : Projects::ProjectService::GetActiveAppTickGenerators())
 			{
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);
@@ -690,7 +690,7 @@ namespace Kargono::Panels
 		}
 		if (deleteGenerator)
 		{
-			auto& generators = Projects::ProjectService::GetAppTickGenerators();
+			auto& generators = Projects::ProjectService::GetActiveAppTickGenerators();
 			generators.erase(generatorToDelete);
 		}
 

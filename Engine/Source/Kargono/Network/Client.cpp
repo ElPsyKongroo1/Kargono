@@ -445,16 +445,14 @@ namespace Kargono::Network
 
 	void Client::RunClient()
 	{
-		auto currentProject = Projects::ProjectService::GetActive();
-
 		bool remoteConnection = false;
 
-		if (currentProject->GetServerLocation() != "LocalMachine")
+		if (Projects::ProjectService::GetActiveServerLocation() != "LocalMachine")
 		{
 			remoteConnection = true;
 		}
 
-		if (!Connect(currentProject->GetServerIP(), currentProject->GetServerPort(), remoteConnection)) { m_Quit = true; }
+		if (!Connect(Projects::ProjectService::GetActiveServerIP(), Projects::ProjectService::GetActiveServerPort(), remoteConnection)) { m_Quit = true; }
 
 		if (m_UDPClientConnection && IsConnected())
 		{

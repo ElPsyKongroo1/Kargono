@@ -83,6 +83,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Projects
 {
+	Ref<Project> ProjectService::s_ActiveProject { nullptr };
 }
 
 
