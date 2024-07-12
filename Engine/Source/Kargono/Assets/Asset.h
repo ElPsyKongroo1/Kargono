@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Rendering/Shader.h"
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Scripting/ScriptingResources.h"
 

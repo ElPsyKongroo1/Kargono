@@ -4,7 +4,7 @@
 #include "Kargono/Rendering/Texture.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Audio/Audio.h"
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Input/InputMode.h"

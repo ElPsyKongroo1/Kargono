@@ -56,7 +56,7 @@ namespace Kargono
 
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
-		RuntimeUI::Text::Init();
+		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
 
 		OnPlay();

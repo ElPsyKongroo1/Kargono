@@ -54,7 +54,7 @@ namespace Kargono
 
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
-		RuntimeUI::Text::Init();
+		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
 
 		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);

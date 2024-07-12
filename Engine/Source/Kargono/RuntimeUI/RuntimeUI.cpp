@@ -30,7 +30,7 @@ namespace Kargono::RuntimeUI
 	{
 		s_Engine.m_CurrentUI = nullptr;
 		s_Engine.m_CurrentUIHandle = 0;
-		s_DefaultFont = Text::InstantiateEditorFont("Resources/fonts/arial.ttf");
+		s_DefaultFont = FontService::InstantiateEditorFont("Resources/fonts/arial.ttf");
 		s_Engine.m_CurrentFont = s_DefaultFont;
 		s_Engine.m_FontHandle = 0;
 		// Initialize Window Spec Data
