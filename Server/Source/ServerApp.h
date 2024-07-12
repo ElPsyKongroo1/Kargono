@@ -24,15 +24,18 @@ namespace Kargono
 		// LifeCycle Functions
 		//==========================
 
-		virtual void OnAttach() override;
+		virtual void Init() override;
+
+		virtual void Terminate() override;
+
+		virtual void OnUpdate(Timestep ts) override;
+
+		//==========================
+		// Manage Project
+		//==========================
 
 		bool OpenProject();
 
 		void OpenProject(const std::filesystem::path& path);
-
-		virtual void OnDetach() override;
-
-		virtual void OnUpdate(Timestep ts) override;
-
 	};
 }

@@ -40,7 +40,7 @@ namespace Kargono::Panels
 		void OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera);
 
 		// This function initializes the static data used by the OnOverlayRender()
-		//		function below. This function is called in OnAttach().
+		//		function below. This function is called in Init().
 		void InitializeOverlayData();
 	public:
 		Rendering::EditorCamera m_EditorCamera;

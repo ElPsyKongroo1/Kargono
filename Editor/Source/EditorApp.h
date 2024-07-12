@@ -44,7 +44,7 @@ namespace Kargono
 		//=========================
 		// The constructor simply calls the parent constructor and initializes
 		//		the ImGui layer for window use.
-		EditorApp();
+		EditorApp(const std::filesystem::path& projectPath);
 		virtual ~EditorApp() override = default;
 		//=========================
 		// LifeCycle Functions
@@ -55,11 +55,10 @@ namespace Kargono
 		//		default scene resources, initializes editor boolean values,
 		//		requests the user select a project to open, and opens the selected
 		//		project. There are other things this function does, take a look at it.
-		virtual void OnAttach() override;
+		virtual void Init() override;
 		// This function simply closes and cleans up the audio system.
 
-	public:
-		virtual void OnDetach() override;
+		virtual void Terminate() override;
 		// This is a fairly large function and is at the heart of this application.
 		//		This function runs every frame. Here is the current functionality:
 		//		1. Request viewport resize on Scene to ensure in-runtime cameras are
@@ -198,6 +197,9 @@ namespace Kargono
 
 		// Input Maps
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
+
+		// Initialization Fields
+		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
 		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;

@@ -23,13 +23,14 @@ namespace Kargono
 		// Does nothing other than calling parent constructor
 		RuntimeApp();
 		virtual ~RuntimeApp() = default;
+
 		//==========================
 		// LifeCycle Functions
 		//==========================
 		// Starts Audio System and askes the user what project to open(TEMPORARY TODO).
-		virtual void OnAttach() override;
+		virtual void Init() override;
 		// Closes Audio System and calls OnSceneStop()
-		virtual void OnDetach() override;
+		virtual void Terminate() override;
 		// Calls Runtime Update for Physics, Scripting, and Rendering.
 		virtual void OnUpdate(Timestep ts) override;
 		// Currently does nothing!

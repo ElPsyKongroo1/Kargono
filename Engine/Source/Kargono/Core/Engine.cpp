@@ -41,28 +41,44 @@ namespace Kargono
 		s_ActiveEngine->m_Window = Window::Create(WindowProps(s_ActiveEngine->m_Specification.Name, 
 			s_ActiveEngine->m_Specification.DefaultWindowWidth, 
 			s_ActiveEngine->m_Specification.DefaultWindowHeight));
-		KG_VERIFY(s_ActiveEngine->m_Window, "Window Init");
+		KG_VERIFY(s_ActiveEngine->m_Window, "Create Window");
 		RegisterWindowOnEventCallback();
 		RegisterAppTickOnEventCallback();
-		app->OnAttach();
+		app->Init();
 		KG_VERIFY(s_ActiveEngine, "Engine Initialized");
 	}
 
 	void EngineService::Terminate()
 	{
+		if (!s_ActiveEngine)
+		{
+			KG_WARN("Attempt to terminate engine service when s_ActiveEngine is already closed");
+			return;
+		}
+
 		if (s_ActiveEngine->m_CurrentApp)
 		{
-			s_ActiveEngine->m_CurrentApp->OnDetach();
+			s_ActiveEngine->m_CurrentApp->Terminate();
 			delete s_ActiveEngine->m_CurrentApp;
 			s_ActiveEngine->m_CurrentApp = nullptr;
 		}
+		KG_VERIFY(!s_ActiveEngine->m_CurrentApp, "Application Terminated");
 
-		KG_VERIFY(!(s_ActiveEngine->m_CurrentApp), "Application Terminated");
+		delete s_ActiveEngine;
+		s_ActiveEngine = nullptr;
+		KG_VERIFY(!s_ActiveEngine, "Active Engine Terminated");
+		
 	}
 
 	void EngineService::Run()
 	{
 		KG_INFO("Starting Run Function");
+
+		if (!s_ActiveEngine)
+		{
+			return;
+		}
+
 		using namespace std::chrono_literals;
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();

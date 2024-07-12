@@ -9,13 +9,14 @@ namespace Kargono
 
 	EditorApp* EditorApp::s_EditorApp = nullptr;
 
-	EditorApp::EditorApp()
-		: Application("EditorLayer")
+	EditorApp::EditorApp(const std::filesystem::path& projectPath)
+		: Application("EditorLayer"), m_InitProjectPath(projectPath)
 	{
+		KG_ASSERT(!m_InitProjectPath.empty(), "Attempt to open editor without valid project path!");
 		s_EditorApp = this;
 	}
 
-	void EditorApp::OnAttach()
+	void EditorApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
@@ -27,16 +28,8 @@ namespace Kargono
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
 
-#ifdef KG_TESTING
-		OpenProject("../Projects/Pong/Pong.kproj");
-#else
-	if (!OpenProject())
-	{
-		EngineService::EndRun();
-		return;
-	}
-#endif
-		
+		OpenProject(m_InitProjectPath);
+
 		EditorUI::EditorUIService::Init();
 
 		m_LogPanel = CreateScope<Panels::LogPanel>();
@@ -49,6 +42,7 @@ namespace Kargono
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
 		m_InputModePanel = CreateScope<Panels::InputModePanel>();
+		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
@@ -64,7 +58,7 @@ namespace Kargono
 		EngineService::GetActiveWindow().SetVisible(true);
 	}
 
-	void EditorApp::OnDetach()
+	void EditorApp::Terminate()
 	{
 		auto allAudioComponents = m_EditorScene->GetAllEntitiesWith<Scenes::AudioComponent>();
 		for (auto& entity : allAudioComponents)
@@ -102,6 +96,7 @@ namespace Kargono
 	{
 		m_StepFrames = frames;
 	}
+
 
 	void EditorApp::OnEditorUIRender()
 	{
@@ -630,7 +625,10 @@ namespace Kargono
 			initialDirectory = "";
 		}
 		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Project (*.kproj)\0*.kproj\0", initialDirectory.string().c_str());
-		if (filepath.empty()) { return false; }
+		if (filepath.empty())
+		{
+			return false;
+		}
 
 		OpenProject(filepath);
 		return true;
@@ -642,7 +640,6 @@ namespace Kargono
 		{
 			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
-				
 				EngineService::GetActiveWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
@@ -665,8 +662,6 @@ namespace Kargono
 			Assets::AssetManager::DeserializeAll();
 
 			OpenScene(startSceneHandle);
-
-			m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		}
 	}
 

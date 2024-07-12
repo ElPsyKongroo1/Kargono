@@ -121,6 +121,7 @@ namespace Kargono::EditorUI
 		s_TableExpandButton = EditorUIService::s_SmallExpandButton;
 	}
 
+
 	void EditorUIService::Init()
 	{
 		// Setup Dear ImGui context
@@ -330,6 +331,55 @@ namespace Kargono::EditorUI
 			ImGui::DestroyContext();
 			s_Running = false;
 		}
+
+		s_IconPlay.reset();
+		s_IconPause.reset();
+		s_IconStop.reset();
+		s_IconStep.reset();
+		s_IconSimulate.reset();
+		s_IconAddItem.reset();
+		s_IconDisplay.reset();
+		s_IconDisplayActive.reset();
+		s_IconCamera.reset();
+		s_IconCameraActive.reset();
+		s_IconPlayActive.reset();
+		s_IconStopActive.reset();
+		s_IconPauseActive.reset();
+		s_IconStepActive.reset();
+		s_IconSimulateActive.reset();
+		s_IconSettings.reset();
+		s_IconDelete.reset();
+		s_IconDeleteActive.reset();
+		s_IconEdit.reset();
+		s_IconEdit_Active.reset();
+		s_IconCancel.reset();
+		s_IconConfirm.reset();
+		s_IconSearch.reset();
+		s_IconCheckbox_Empty_Disabled.reset();
+		s_IconCheckbox_Check_Disabled.reset();
+		s_IconCheckbox_Empty_Enabled.reset();
+		s_IconCheckbox_Check_Enabled.reset();
+		s_IconOptions.reset();
+		s_IconDown.reset();
+		s_IconRight.reset();
+		s_IconDash.reset();
+
+		s_DirectoryIcon.reset();
+		s_GenericFileIcon.reset();
+		s_BackIcon.reset();
+		s_BackInactiveIcon.reset();
+		s_ForwardIcon.reset();
+		s_ForwardInactiveIcon.reset();
+		s_AudioIcon.reset();
+		s_ImageIcon.reset();
+		s_BinaryIcon.reset();
+		s_SceneIcon.reset();
+		s_RegistryIcon.reset();
+		s_ScriptProjectIcon.reset();
+		s_UserInterfaceIcon.reset();
+		s_FontIcon.reset();
+		s_InputIcon.reset();
+
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
 
@@ -693,12 +743,19 @@ namespace Kargono::EditorUI
 			ImGui::SetCursorScreenPos(screenLocation);
 			if (ImGui::Button(label1.c_str(), ImVec2(screenDimensions.x / buttonDimensions.x, screenDimensions.y / buttonDimensions.y)))
 			{
-				onPress1();
+				if (onPress1)
+				{
+					onPress1();
+				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button(label2.c_str(), ImVec2(screenDimensions.x / buttonDimensions.x, screenDimensions.y / buttonDimensions.y)))
 			{
-				onPress2();
+				if (onPress2)
+				{
+					onPress2();
+				}
+				
 			}
 		}
 		else
