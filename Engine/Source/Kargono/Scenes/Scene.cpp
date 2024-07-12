@@ -6,7 +6,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Rendering/Shader.h"
 
 
@@ -404,7 +404,7 @@ namespace Kargono::Scenes
 				{
 					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 					KG_ASSERT(keyboardBinding->GetScript());
-					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 					if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 					{
 						((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
@@ -417,7 +417,7 @@ namespace Kargono::Scenes
 				else
 				{
 					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 					Ref<Scripting::Script> script = keyboardBinding->GetScript();
 					KG_ASSERT(script);
 					KG_ASSERT(s_ActiveScene->m_ScriptClassToEntityList.contains(keyboardBinding->GetScript()->m_SectionLabel));
@@ -446,7 +446,7 @@ namespace Kargono::Scenes
 				if (inputBinding->GetScript()->m_ScriptType != Scripting::ScriptType::Class)
 				{
 					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-					if (!Input::InputPolling::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+					if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 					((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
 				}
 			}

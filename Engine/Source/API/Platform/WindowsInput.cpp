@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Math/Math.h"
 
@@ -10,20 +10,20 @@
 
 namespace Kargono::Input
 {
-	bool InputPolling::IsKeyPressed(const KeyCode key)
+	bool InputService::IsKeyPressed(const KeyCode key)
 	{
 		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS;
 
 	}
-	bool InputPolling::IsMouseButtonPressed(const MouseCode button)
+	bool InputService::IsMouseButtonPressed(const MouseCode button)
 	{
 		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
-	Math::vec2 InputPolling::GetMousePosition()
+	Math::vec2 InputService::GetMousePosition()
 	{
 		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
 		double xpos;
@@ -32,12 +32,12 @@ namespace Kargono::Input
 
 		return { (float)xpos, (float)ypos };
 	}
-	float InputPolling::GetMouseX()
+	float InputService::GetMouseX()
 	{
 		return GetMousePosition().x;
 	}
 
-	float InputPolling::GetMouseY()
+	float InputService::GetMouseY()
 	{
 		return GetMousePosition().y;
 	}

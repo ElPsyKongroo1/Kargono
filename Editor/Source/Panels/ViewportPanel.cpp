@@ -192,7 +192,7 @@ namespace Kargono::Panels
 				Math::mat4 transform = tc.GetTransform();
 
 				// Snapping
-				bool snap = Input::InputPolling::IsKeyPressed(Key::LeftControl);
+				bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
 				float snapValue = 0.5f;
 				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
 
@@ -514,9 +514,9 @@ namespace Kargono::Panels
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
-		bool shift = Input::InputPolling::IsKeyPressed(Key::LeftShift) || Input::InputPolling::IsKeyPressed(Key::RightShift);
-		bool alt = Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt);
+		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
+		bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
+		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{

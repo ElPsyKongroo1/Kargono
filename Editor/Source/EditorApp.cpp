@@ -348,9 +348,9 @@ namespace Kargono
 			}
 		}
 
-		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
-		bool shift = Input::InputPolling::IsKeyPressed(Key::LeftShift) || Input::InputPolling::IsKeyPressed(Key::RightShift);
-		bool alt = Input::InputPolling::IsKeyPressed(Key::LeftAlt) || Input::InputPolling::IsKeyPressed(Key::RightAlt);
+		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
+		bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
+		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
 		{
@@ -420,7 +420,7 @@ namespace Kargono
 	{
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
-			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputPolling::IsKeyPressed(Key::LeftAlt))
+			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
 				if (*Scenes::Scene::GetActiveScene()->GetHoveredEntity())
 				{

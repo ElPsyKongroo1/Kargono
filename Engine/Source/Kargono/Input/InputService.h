@@ -9,7 +9,7 @@ namespace Kargono::Input
 	//==============================
 	// Input Polling Class
 	//==============================
-	class InputPolling
+	class InputService
 	{
 	public:
 		//==============================

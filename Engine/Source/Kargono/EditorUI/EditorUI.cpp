@@ -4,7 +4,7 @@
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Input/InputMode.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
