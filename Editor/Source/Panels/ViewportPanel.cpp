@@ -63,9 +63,9 @@ namespace Kargono::Panels
 			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
 			{
 				// Update Scripts
-				Scenes::Scene::GetActiveScene()->OnUpdateInputMode(ts);
-				Scenes::Scene::GetActiveScene()->OnUpdateEntities(ts);
-				Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
+				Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
+				Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
+				Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
 			}
 			OnUpdateRuntime(ts);
 			break;
@@ -81,7 +81,7 @@ namespace Kargono::Panels
 			auto& currentApplication = EngineService::GetActiveWindow();
 			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
-				Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+				Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
 				Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
@@ -159,7 +159,7 @@ namespace Kargono::Panels
 		Math::uvec2 viewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
 		if (oldViewportSize != viewportSize)
 		{
-			Scenes::Scene::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
+			Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -174,7 +174,7 @@ namespace Kargono::Panels
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
 			// Gizmos
-			Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (selectedEntity && m_GizmoType != -1)
 			{
 				ImGuizmo::SetOrthographic(false);
@@ -579,29 +579,29 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = 
-				Scenes::Scene::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ? 
-				Scenes::Entity((entt::entity)pixelData, Scenes::Scene::GetActiveScene().get()) : Scenes::Entity();
+			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() =
+				Scenes::SceneService::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ?
+				Scenes::Entity((entt::entity)pixelData, Scenes::SceneService::GetActiveScene().get()) : Scenes::Entity();
 		}
 	}
 
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorCamera& camera)
 	{
-		Scenes::Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::SceneService::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
 
 		// Render 2D
-		Scenes::Entity cameraEntity = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scenes::Scene::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::SceneService::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 
 	}
@@ -612,11 +612,11 @@ namespace Kargono::Panels
 
 		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
 		{
-			Scenes::Scene::GetActiveScene()->OnUpdatePhysics(ts);
+			Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
 		}
 
 		// Render
-		Scenes::Scene::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::SceneService::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	static Rendering::RendererInputSpec s_CircleInputSpec{};
@@ -735,7 +735,7 @@ namespace Kargono::Panels
 	{
 		if (s_EditorApp->m_SceneState == SceneState::Play)
 		{
-			Scenes::Entity camera = Scenes::Scene::GetActiveScene()->GetPrimaryCameraEntity();
+			Scenes::Entity camera = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!camera) { return; }
 			Rendering::RenderingService::BeginScene(camera.GetComponent<Scenes::CameraComponent>().Camera, glm::inverse(camera.GetComponent<Scenes::TransformComponent>().GetTransform()));
 		}
@@ -748,7 +748,7 @@ namespace Kargono::Panels
 		{
 			// Circle Colliders
 			{
-				auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>();
+				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>();
 				for (auto entity : view)
 				{
 					auto [tc, cc2d] = view.get<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>(entity);
@@ -766,7 +766,7 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = Scenes::Scene::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>();
+				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>();
 				for (auto entity : view)
 				{
 					auto [tc, bc2d] = view.get<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>(entity);
@@ -813,7 +813,7 @@ namespace Kargono::Panels
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate || (s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
 		{
 			// Draw selected entity outline 
-			if (Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity()) {
+			if (Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) {
 				Scenes::TransformComponent transform = selectedEntity.GetComponent<Scenes::TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);

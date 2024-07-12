@@ -24,7 +24,7 @@ namespace Kargono
 		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();
-		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
 
 #ifdef KG_TESTING
@@ -330,7 +330,7 @@ namespace Kargono
 	{
 		KG_PROFILE_FUNCTION()
 
-		Scenes::Scene::GetActiveScene()->OnKeyPressed(event);
+		Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
 		
 		return false;
 	}
@@ -398,7 +398,7 @@ namespace Kargono
 			{
 			if (EditorUI::EditorUIService::GetActiveWidgetID() == 0)
 			{
-				Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+				Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);
@@ -422,22 +422,22 @@ namespace Kargono
 		{
 			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				if (*Scenes::Scene::GetActiveScene()->GetHoveredEntity())
+				if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 				{
-					m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::Scene::GetActiveScene()->GetHoveredEntity());
+					m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
 					// Algorithm to enable double clicking for an entity!
 					static float previousTime{ 0.0f };
 					static Scenes::Entity previousEntity{};
 					float currentTime = Utility::Time::GetTime();
-					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::Scene::GetActiveScene()->GetHoveredEntity() == previousEntity)
+					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
 					{
-						auto& transformComponent = Scenes::Scene::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
+						auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
 						m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
 						m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
 						m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
 					}
 					previousTime = currentTime;
-					previousEntity = *Scenes::Scene::GetActiveScene()->GetHoveredEntity();
+					previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
 				}
 				else
 				{
@@ -453,7 +453,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -489,7 +489,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -623,7 +623,7 @@ namespace Kargono
 
 	bool EditorApp::OpenProject()
 	{
-		*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
 		if (!std::filesystem::exists(initialDirectory))
 		{
@@ -687,9 +687,9 @@ namespace Kargono
 		}
 		m_EditorSceneHandle = Assets::AssetManager::CreateNewScene(filepath.stem().string());
 
-		*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
-		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::OpenScene()
@@ -718,7 +718,7 @@ namespace Kargono
 		auto [sceneHandle, newScene] = Assets::AssetManager::GetScene(path);
 
 		m_EditorScene = newScene;
-		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
 
 	}
@@ -734,7 +734,7 @@ namespace Kargono
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
 
 		m_EditorScene = newScene;
-		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
 	}
 
@@ -779,12 +779,12 @@ namespace Kargono
 				Projects::ProjectService::GetActiveStartGameState());
 		}
 
-		*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
 		m_SceneState = SceneState::Play;
-		Scenes::Scene::SetActiveScene(Scenes::Scene::Copy(m_EditorScene), m_EditorSceneHandle);
-		Scenes::Scene::GetActiveScene()->OnRuntimeStart();
+		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
 		if (scriptHandle != 0)
 		{
@@ -804,23 +804,23 @@ namespace Kargono
 
 	void EditorApp::OnSimulate()
 	{
-		*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
-		Scenes::Scene::SetActiveScene(Scenes::Scene::Copy(m_EditorScene), m_EditorSceneHandle);
-		Scenes::Scene::GetActiveScene()->OnSimulationStart();
+		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveScene()->OnSimulationStart();
 	}
 	void EditorApp::OnStop()
 	{
-		*Scenes::Scene::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-		if (m_SceneState == SceneState::Play) { Scenes::Scene::GetActiveScene()->OnRuntimeStop(); }
-		else if (m_SceneState == SceneState::Simulate) { Scenes::Scene::GetActiveScene()->OnSimulationStop(); }
+		if (m_SceneState == SceneState::Play) { Scenes::SceneService::GetActiveScene()->OnRuntimeStop(); }
+		else if (m_SceneState == SceneState::Simulate) { Scenes::SceneService::GetActiveScene()->OnSimulationStop(); }
 
-		Scenes::Scene::GetActiveScene()->DestroyAllEntities();
-		Scenes::Scene::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioService::StopAllAudio();
 
 		// Clear UIObjects during runtime.
@@ -871,7 +871,7 @@ namespace Kargono
 		if (m_SceneState != SceneState::Edit)
 			return;
 
-		Scenes::Entity selectedEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+		Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (selectedEntity)
 		{
 			Scenes::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);

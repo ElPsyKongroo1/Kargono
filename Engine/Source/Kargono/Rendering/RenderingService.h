@@ -54,6 +54,7 @@ namespace Kargono::Rendering
 		//============================================================
 		static void FillTextureIndex(RendererInputSpec& inputSpec);
 		static void FillIndicesData(RendererInputSpec& inputSpec);
+		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
 
 		//============================================================
 		// Per Vertex Function Pointers for Filling Input Data

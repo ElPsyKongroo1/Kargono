@@ -23,20 +23,6 @@ namespace Kargono::Scenes
 	class Entity;
 	struct ShaderSpecification;
 
-	class SceneService
-	{
-	public:
-		static void Init();
-	public:
-		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
-		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
-		static const std::string& TagComponentGetTag(UUID entityID);
-		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
-		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
-		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
-		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
-	};
-
 	//============================================================
 	// Scene Class
 	//============================================================
@@ -89,39 +75,11 @@ namespace Kargono::Scenes
 		bool IsRunning() const { return m_IsRunning; }
 
 	private:
-		// Supporting private functions for LifeCycle Functions
-
 		// This function template optionally runs code that involves
 		//		the current scene and the newly instantiated component.
 		template <typename T>
 		void OnComponentAdded(Entity entity, T& component);
 	public:
-		//====================
-		// Rendering Pipeline Functions
-		//====================
-		// These functions are meant to be called selectively in a for-loop to fill buffer
-		//		data for a current rendering call. These functions are optionally called in
-		//		the RenderScene() function.
-		// Ex: To enable mouse picking, the entityID needs to be submitted to the Shader.
-		//		This data is filled by the FillEntityID() function below. The buffer is
-		//		then sent to the Renderer to continue the process.
-
-		// This function fills the buffer inside inputSpec with the current entityID.
-		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
-
-		//====================
-		// Copy Scene
-		//====================
-		// This function creates a deep copy of a scene. This includes copying the viewport size,
-		//		copying entities into new registry, and copying corresponding components for
-		//		each entity. This function is currently used in the editor
-		//		to provide a temporary scene for the runtime and simulation modes to work.
-		static Ref<Scene> Copy(Ref<Scene> other);
-		// This functino replaces the current scene with the scene in the provided handle.
-		//		The current scene is held in s_ActiveScene btw.
-		static void TransitionScene(Assets::AssetHandle newSceneHandle);
-		static void TransitionScene(Ref<Scene> newScene);
-		static void TransitionSceneFromName(const std::string& sceneName);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
@@ -143,7 +101,6 @@ namespace Kargono::Scenes
 		//====================
 		// These functions query the current map of entities
 		Entity FindEntityByName(const std::string& name);
-		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
 		bool CheckEntityExists(entt::entity entity);
@@ -168,23 +125,14 @@ namespace Kargono::Scenes
 		Physics::PhysicsSpecification& GetPhysicsSpecification() { return m_PhysicsSpecification; }
 		Physics::Physics2DWorld* GetPhysicsWorld() { return m_PhysicsWorld.get(); }
 
-		Entity* GetHoveredEntity() { return m_HoveredEntity; }
-		Entity* GetSelectedEntity() { return m_SelectedEntity; }
-
-		static Ref<Scene> GetActiveScene() { return s_ActiveScene; }
-		static Assets::AssetHandle GetActiveSceneHandle()
+		Entity* GetHoveredEntity()
 		{
-			return s_ActiveSceneHandle;
+			return m_HoveredEntity;
 		}
-		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
+		Entity* GetSelectedEntity()
 		{
-			s_ActiveScene = newScene;
-			s_ActiveSceneHandle = newHandle;
+			return m_SelectedEntity;
 		}
-
-		static bool CheckHasComponent(UUID entityID, const std::string& componentName);
-
-		static std::unordered_map<std::string, std::vector<UUID>>& GetScriptClassToEntityList();
 		// Underlying ECS registry that holds actual entities and their components
 		entt::registry m_Registry;
 	private:
@@ -196,23 +144,78 @@ namespace Kargono::Scenes
 		//		particular script class.
 		std::unordered_map<std::string, std::vector<UUID>> m_ScriptClassToEntityList {};
 
-
 		// Physics World
 		Scope<Physics::Physics2DWorld> m_PhysicsWorld = nullptr;
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
 
 		// Scene State Fields
 		bool m_IsRunning = false;
-		// Currently Hovered Entity
 		Entity* m_HoveredEntity = nullptr;
 		Entity* m_SelectedEntity = nullptr;
 
+	private:
 		// Friend Declarations
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class Assets::AssetManager;
-		// This represents the staticlly defined and managed scene that is currently
-		//		being rendered.
+		friend class SceneService;
+	};
+
+	class SceneService
+	{
+	public:
+		//====================
+		// LifeCycle Functions
+		//====================
+		static void Init();
+	public:
+		//====================
+		// Get Entity Components
+		//====================
+		static bool CheckActiveHasComponent(UUID entityID, const std::string& componentName);
+
+		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
+		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
+		static const std::string& TagComponentGetTag(UUID entityID);
+		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
+		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
+
+		//====================
+		// Manage Entities
+		//====================
+		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
+		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
+		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
+
+		//====================
+		// Manage Scene
+		//====================
+		static void TransitionScene(Assets::AssetHandle newSceneHandle);
+		static void TransitionScene(Ref<Scene> newScene);
+		static void TransitionSceneFromName(const std::string& sceneName);
+		static Ref<Scene> CreateSceneCopy(Ref<Scene> other);
+
+	public:
+		//====================
+		// Getters/Setters
+		//====================
+		static Ref<Scene> GetActiveScene()
+		{
+			return s_ActiveScene;
+		}
+		static Assets::AssetHandle GetActiveSceneHandle()
+		{
+			return s_ActiveSceneHandle;
+		}
+		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
+		{
+			s_ActiveScene = newScene;
+			s_ActiveSceneHandle = newHandle;
+		}
+	private:
+		//====================
+		// Internal Fields
+		//====================
 		static Ref<Scene> s_ActiveScene;
 		static Assets::AssetHandle s_ActiveSceneHandle;
 	};
