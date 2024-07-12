@@ -11,7 +11,7 @@
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Input/InputMode.h"
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
@@ -145,7 +145,7 @@ namespace Kargono::Scripting
 #ifdef KG_DEBUG
 		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBodyDebug.dll" };
 #else
-		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
 #endif
 		
 		// Rebuild shared library if no library exists
@@ -837,7 +837,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName,VoidString) 
-		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputPolling::IsKeyPressed,BoolUInt16) 
+		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputService::IsKeyPressed,BoolUInt16) 
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::LoadUserInterfaceFromName,VoidString) 
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow,VoidStringBool) 

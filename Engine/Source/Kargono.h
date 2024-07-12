@@ -28,7 +28,7 @@
 #include "Kargono/Events/NetworkingEvent.h"
 
 //-----------------Input-----------------//
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Input/InputMode.h"
 
 //-----------------Math-----------------//

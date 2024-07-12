@@ -2,7 +2,7 @@
 
 #include "Kargono/Input/InputMode.h"
 
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Assets/AssetManager.h"
 
@@ -50,7 +50,7 @@ namespace Kargono::Input
 		KG_ASSERT(s_ActiveInputMode);
 		auto& keyboardPolling = s_ActiveInputMode->GetKeyboardPolling();
 		KG_ASSERT(slot < (uint16_t)keyboardPolling.size(), "Invalid range provided to function");
-		return InputPolling::IsKeyPressed(keyboardPolling.at(slot));
+		return InputService::IsKeyPressed(keyboardPolling.at(slot));
 	}
 	std::vector<Ref<InputActionBinding>>& InputModeService::GetActiveOnUpdate()
 	{

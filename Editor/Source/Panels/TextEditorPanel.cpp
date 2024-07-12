@@ -251,7 +251,7 @@ namespace Kargono::Panels
 	}
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
+		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
 
 		switch (event.GetKeyCode())
 		{
