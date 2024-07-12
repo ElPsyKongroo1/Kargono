@@ -128,12 +128,8 @@ namespace Kargono::EditorUI
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		s_OpenSansBold = io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Bold.ttf", 18.0f);
 		s_OpenSansRegular = io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Regular.ttf", 18.0f);
@@ -379,6 +375,20 @@ namespace Kargono::EditorUI
 		s_UserInterfaceIcon.reset();
 		s_FontIcon.reset();
 		s_InputIcon.reset();
+
+		s_SmallEditButton = {};
+		s_SmallExpandButton = {};
+		s_SmallOptionsButton = {};
+		s_SmallCheckboxButton = {};
+		s_SmallLinkButton = {};
+		s_LargeDeleteButton = {};
+		s_LargeCancelButton = {};
+		s_LargeConfirmButton = {};
+		s_LargeSearchButton = {};
+
+		s_TableEditButton = {};
+		s_TableLinkButton = {};
+		s_TableExpandButton = {};
 
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
