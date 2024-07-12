@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
@@ -47,7 +47,7 @@ namespace Kargono::RuntimeUI
 	static Ref<std::vector<Math::vec3>> s_Vertices;
 	static Ref<std::vector<Math::vec2>> s_TexCoordinates;
 
-	void Text::Init()
+	void FontService::Init()
 	{
 		// TODO: Change to Proper Boolean Check
 		if (!s_TextInputSpec.Shader)
@@ -79,7 +79,7 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime Text Engine Init")
 	}
 
-	Ref<Font> Text::InstantiateEditorFont(const std::filesystem::path& filepath)
+	Ref<Font> FontService::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;

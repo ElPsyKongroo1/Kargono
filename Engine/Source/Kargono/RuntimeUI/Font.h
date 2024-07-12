@@ -19,12 +19,12 @@ namespace Kargono::RuntimeUI
 	class Font;
 
 	//============================================================
-	// Text Engine Class
+	// Text Class
 	//============================================================
 	// This class provides static functions to manage the creation of an unmanaged
 	//		font (Editor Font) and initialize the rendering pipeline for all text.
 
-	class Text
+	class FontService
 	{
 	public:
 		//==============================
@@ -86,7 +86,7 @@ namespace Kargono::RuntimeUI
 		std::unordered_map<unsigned char, Character> m_Characters{};
 	private:
 		friend class Assets::AssetManager;
-		friend class Text;
+		friend class FontService;
 	};
 
 

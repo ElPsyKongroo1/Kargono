@@ -3,7 +3,7 @@
 #include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Scripting/Scripting.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 

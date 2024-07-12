@@ -65,7 +65,7 @@
 
 //-----------------Runtime-UserInterface-----------------//
 #include "Kargono/RuntimeUI/RuntimeUI.h"
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
 #include "Kargono/EditorUI/EditorUI.h"
