@@ -389,7 +389,7 @@ namespace Kargono::Assets
 
 		// Update Active Scene
 		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
-		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 
 		Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);
 		// Update Editor Scene if applicable
@@ -423,7 +423,7 @@ namespace Kargono::Assets
 
 		// Remove entity class references from all scenes
 		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(handle);
-		Ref<Scenes::Scene> activeScene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 
 		// Update Active Scene if applicable
 		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);

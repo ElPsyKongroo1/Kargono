@@ -53,7 +53,7 @@ namespace Kargono::Rendering
 
 		if (m_ShaderSpecification.AddEntityID)
 		{
-			m_FillDataInScene.push_back(Scenes::Scene::FillEntityID);
+			m_FillDataInScene.push_back(RenderingService::FillEntityID);
 		}
 		if (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture ||
 			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)

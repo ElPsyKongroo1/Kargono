@@ -35,7 +35,7 @@ namespace Kargono::Panels
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
-				Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 				if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 				{
@@ -59,7 +59,7 @@ namespace Kargono::Panels
 		};
 		s_SelectClassOption.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 
 			if (entry.Handle == Assets::EmptyHandle)
@@ -88,7 +88,7 @@ namespace Kargono::Panels
 		s_InstanceFieldsTable.Expanded = true;
 		s_InstanceFieldsTable.OnRefresh = [&]()
 		{
-			Scenes::Entity entity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 
 			if (!entity || !entity.HasComponent<Scenes::ClassInstanceComponent>())
 			{
@@ -108,7 +108,7 @@ namespace Kargono::Panels
 					[&](EditorUI::TableEntry& optionEntry)
 					{
 						s_CurrentClassField = optionEntry.Label;
-						Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+						Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 						auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 						s_CurrentClassFieldLocation = comp.ClassReference->GetFieldLocation(s_CurrentClassField);
 						if (s_CurrentClassFieldLocation == -1)
@@ -128,7 +128,7 @@ namespace Kargono::Panels
 		s_EditClassFieldPopup.PopupWidth = 420.0f;
 		s_EditClassFieldPopup.PopupAction = [&]()
 		{
-			Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
 
@@ -152,7 +152,7 @@ namespace Kargono::Panels
 		};
 		s_EditClassFieldPopup.ConfirmAction = [&]()
 		{
-			Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+			Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
 			const Ref<WrappedVariable> field = comp.Fields.at(s_CurrentClassFieldLocation);
 			bool success = Utility::FillWrappedVarWithStringBuffer(field, s_EditFieldValue.FieldBuffer);
@@ -201,11 +201,11 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
-		if (Scenes::Scene::GetActiveScene())
+		if (Scenes::SceneService::GetActiveScene())
 		{
-			Scenes::Scene::GetActiveScene()->m_Registry.each([&](auto entityID)
+			Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
 			{
-				Scenes::Entity entity{ entityID, Scenes::Scene::GetActiveScene().get() };
+				Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
 				DrawEntityNode(entity);
 			});
 
@@ -219,7 +219,7 @@ namespace Kargono::Panels
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 			{
-				if (ImGui::MenuItem("Create Empty Entity")) { Scenes::Scene::GetActiveScene()->CreateEntity("Empty Entity"); }
+				if (ImGui::MenuItem("Create Empty Entity")) { Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity"); }
 				ImGui::EndPopup();
 			}
 
@@ -227,9 +227,9 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::EndWindow();
 
 		EditorUI::EditorUIService::StartWindow("Properties");
-		if (*Scenes::Scene::GetActiveScene()->GetSelectedEntity())
+		if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 		{
-			DrawComponents(*Scenes::Scene::GetActiveScene()->GetSelectedEntity());
+			DrawComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
 		}
 
 		EditorUI::EditorUIService::EndWindow();
@@ -240,7 +240,7 @@ namespace Kargono::Panels
 	}
 	void SceneHierarchyPanel::SetSelectedEntity(Scenes::Entity entity)
 	{
-		*Scenes::Scene::GetActiveScene()->GetSelectedEntity() = entity;
+		*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = entity;
 		if (entity)
 		{
 			if (entity.HasComponent<Scenes::ClassInstanceComponent>())
@@ -261,7 +261,7 @@ namespace Kargono::Panels
 	}
 	void SceneHierarchyPanel::RefreshWidgetData()
 	{
-		Scenes::Entity currentEntity = *Scenes::Scene::GetActiveScene()->GetSelectedEntity();
+		Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (!currentEntity)
 		{
 			return;
@@ -283,7 +283,7 @@ namespace Kargono::Panels
 	{
 		auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((*Scenes::Scene::GetActiveScene()->GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
+		ImGuiTreeNodeFlags flags = ((*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
 			ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
@@ -317,10 +317,10 @@ namespace Kargono::Panels
 
 		if (entityDeleted)
 		{
-			Scenes::Scene::GetActiveScene()->DestroyEntity(entity);
-			if (*Scenes::Scene::GetActiveScene()->GetSelectedEntity() == entity)
+			Scenes::SceneService::GetActiveScene()->DestroyEntity(entity);
+			if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entity)
 			{
-				*Scenes::Scene::GetActiveScene()->GetSelectedEntity() = {};
+				*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
 			}
 		}
 	}
@@ -1067,11 +1067,11 @@ namespace Kargono::Panels
 
 	template<typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-		if (!(*Scenes::Scene::GetActiveScene()->GetSelectedEntity()).HasComponent<T>())
+		if (!(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				(*Scenes::Scene::GetActiveScene()->GetSelectedEntity()).AddComponent<T>();
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<T>();
 				ImGui::CloseCurrentPopup();
 			}
 		}

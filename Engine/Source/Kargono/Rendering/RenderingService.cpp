@@ -167,6 +167,11 @@ namespace Kargono::Rendering
 		}
 	}
 
+	void RenderingService::FillEntityID(Rendering::RendererInputSpec& inputSpec)
+	{
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
+	}
+
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
 	{
 		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == RenderingType::None) { return; }

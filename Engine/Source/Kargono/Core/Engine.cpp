@@ -150,7 +150,7 @@ namespace Kargono
 
 	bool EngineService::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
 		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
@@ -168,7 +168,7 @@ namespace Kargono
 
 	bool EngineService::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::Scene::GetActiveScene();
+		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
 		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
