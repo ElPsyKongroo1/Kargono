@@ -7,10 +7,8 @@
 
 namespace Kargono::Assets
 {
-	bool AssetManager::DeserializeServerVariables(Ref<Projects::ProjectService> project, const std::filesystem::path& projectPath)
+	bool AssetManager::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
 	{
-		auto& config = project->m_Config;
-
 		std::filesystem::path filepath = (projectPath.parent_path() / "server_variables.env");
 
 		if (!std::filesystem::exists(filepath))
@@ -32,26 +30,26 @@ namespace Kargono::Assets
 		auto rootNode = data["ServerVariables"];
 		if (!rootNode) { return false; }
 
-		config.ServerIP = rootNode["ServerIP"].as<std::string>();
-		config.ServerPort = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
-		config.ServerLocation = rootNode["ServerLocation"].as<std::string>();
-		config.SecretOne = rootNode["SecretOne"].as<uint64_t>();
-		config.SecretTwo = rootNode["SecretTwo"].as<uint64_t>();
-		config.SecretThree = rootNode["SecretThree"].as<uint64_t>();
-		config.SecretFour = rootNode["SecretFour"].as<uint64_t>();
+		project->ServerIP = rootNode["ServerIP"].as<std::string>();
+		project->ServerPort = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
+		project->ServerLocation = rootNode["ServerLocation"].as<std::string>();
+		project->SecretOne = rootNode["SecretOne"].as<uint64_t>();
+		project->SecretTwo = rootNode["SecretTwo"].as<uint64_t>();
+		project->SecretThree = rootNode["SecretThree"].as<uint64_t>();
+		project->SecretFour = rootNode["SecretFour"].as<uint64_t>();
 
 		return true;
 	}
 
 
-	Ref<Projects::ProjectService> AssetManager::NewProject()
+	Ref<Projects::Project> AssetManager::NewProject()
 	{
-		Projects::ProjectService::s_ActiveProject = CreateRef<Projects::ProjectService>();
+		Projects::ProjectService::s_ActiveProject = CreateRef<Projects::Project>();
 		return Projects::ProjectService::s_ActiveProject;
 	}
-	Ref<Projects::ProjectService> AssetManager::OpenProject(const std::filesystem::path& path)
+	Ref<Projects::Project> AssetManager::OpenProject(const std::filesystem::path& path)
 	{
-		Ref<Projects::ProjectService> project = CreateRef<Projects::ProjectService>();
+		Ref<Projects::Project> project = CreateRef<Projects::Project>();
 		if (Assets::AssetManager::DeserializeProject(project, path))
 		{
 			project->m_ProjectDirectory = path.parent_path();
@@ -72,9 +70,8 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::SerializeProject(Ref<Projects::ProjectService> project, const std::filesystem::path& filepath)
+	bool AssetManager::SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
 	{
-		const auto& config = project->m_Config;
 		YAML::Emitter out;
 
 		{
@@ -82,32 +79,32 @@ namespace Kargono::Assets
 			out << YAML::Key << "Project" << YAML::Value;
 			{
 				out << YAML::BeginMap; // Project
-				out << YAML::Key << "Name" << YAML::Value << config.Name;
-				out << YAML::Key << "StartScene" << YAML::Value << config.StartScenePath.string();
-				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(config.StartSceneHandle);
-				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(config.StartGameState);
-				out << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
-				out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
-				out << YAML::Key << "ScriptDLLPath" << YAML::Value << config.ScriptDLLPath.string();
-				out << YAML::Key << "DefaultFullscreen" << YAML::Value << config.DefaultFullscreen;
-				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(config.TargetResolution);
-				out << YAML::Key << "OnRuntimeStart" << YAML::Value << static_cast<uint64_t>(config.OnRuntimeStart);
-				out << YAML::Key << "OnUpdateUserCount" << YAML::Value << static_cast<uint64_t>(config.OnUpdateUserCount);
-				out << YAML::Key << "OnApproveJoinSession" << YAML::Value << static_cast<uint64_t>(config.OnApproveJoinSession);
-				out << YAML::Key << "OnUserLeftSession" << YAML::Value << static_cast<uint64_t>(config.OnUserLeftSession);
-				out << YAML::Key << "OnCurrentSessionInit" << YAML::Value << static_cast<uint64_t>(config.OnCurrentSessionInit);
-				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(config.OnConnectionTerminated);
-				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(config.OnUpdateSessionUserSlot);
-				out << YAML::Key << "OnStartSession" << YAML::Value << static_cast<uint64_t>(config.OnStartSession);
-				out << YAML::Key << "OnSessionReadyCheckConfirm" << YAML::Value << (uint64_t)config.OnSessionReadyCheckConfirm;
-				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)config.OnReceiveSignal;
-				out << YAML::Key << "AppIsNetworked" << YAML::Value << config.AppIsNetworked;
+				out << YAML::Key << "Name" << YAML::Value << project->Name;
+				out << YAML::Key << "StartScene" << YAML::Value << project->StartScenePath.string();
+				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(project->StartSceneHandle);
+				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(project->StartGameState);
+				out << YAML::Key << "AssetDirectory" << YAML::Value << project->AssetDirectory.string();
+				out << YAML::Key << "ScriptModulePath" << YAML::Value << project->ScriptModulePath.string();
+				out << YAML::Key << "ScriptDLLPath" << YAML::Value << project->ScriptDLLPath.string();
+				out << YAML::Key << "DefaultFullscreen" << YAML::Value << project->DefaultFullscreen;
+				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(project->TargetResolution);
+				out << YAML::Key << "OnRuntimeStart" << YAML::Value << static_cast<uint64_t>(project->OnRuntimeStart);
+				out << YAML::Key << "OnUpdateUserCount" << YAML::Value << static_cast<uint64_t>(project->OnUpdateUserCount);
+				out << YAML::Key << "OnApproveJoinSession" << YAML::Value << static_cast<uint64_t>(project->OnApproveJoinSession);
+				out << YAML::Key << "OnUserLeftSession" << YAML::Value << static_cast<uint64_t>(project->OnUserLeftSession);
+				out << YAML::Key << "OnCurrentSessionInit" << YAML::Value << static_cast<uint64_t>(project->OnCurrentSessionInit);
+				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(project->OnConnectionTerminated);
+				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(project->OnUpdateSessionUserSlot);
+				out << YAML::Key << "OnStartSession" << YAML::Value << static_cast<uint64_t>(project->OnStartSession);
+				out << YAML::Key << "OnSessionReadyCheckConfirm" << YAML::Value << (uint64_t)project->OnSessionReadyCheckConfirm;
+				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)project->OnReceiveSignal;
+				out << YAML::Key << "AppIsNetworked" << YAML::Value << project->AppIsNetworked;
 
-				if (config.AppTickGenerators.size() > 0)
+				if (project->AppTickGenerators.size() > 0)
 				{
 					out << YAML::Key << "AppTickGenerators" << YAML::BeginSeq;
 					// Serialize App Tick Generators
-					for (auto generatorValue : config.AppTickGenerators)
+					for (auto generatorValue : project->AppTickGenerators)
 					{
 						out << YAML::Value << generatorValue;
 					}
@@ -122,13 +119,12 @@ namespace Kargono::Assets
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		KG_INFO("Successfully Serialized Project {}", config.Name);
+		KG_INFO("Successfully Serialized Project {}", project->Name);
 		return true;
 	}
 
-	bool AssetManager::DeserializeProject(Ref<Projects::ProjectService> project, const std::filesystem::path& filepath)
+	bool AssetManager::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
 	{
-		auto& config = project->m_Config;
 
 		YAML::Node data;
 		try
@@ -143,26 +139,26 @@ namespace Kargono::Assets
 		auto projectNode = data["Project"];
 		if (!projectNode) { return false; }
 
-		config.Name = projectNode["Name"].as<std::string>();
-		config.StartScenePath = projectNode["StartScene"].as<std::string>();
-		config.StartSceneHandle = static_cast<AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
-		config.StartGameState = static_cast<AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
-		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
-		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
-		config.ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
-		config.DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
-		config.TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
-		config.OnRuntimeStart = static_cast<AssetHandle>(projectNode["OnRuntimeStart"].as<uint64_t>());
-		config.OnUpdateUserCount = static_cast<AssetHandle>(projectNode["OnUpdateUserCount"].as<uint64_t>());
-		config.OnApproveJoinSession = static_cast<AssetHandle>(projectNode["OnApproveJoinSession"].as<uint64_t>());
-		config.OnUserLeftSession = static_cast<AssetHandle>(projectNode["OnUserLeftSession"].as<uint64_t>());
-		config.OnCurrentSessionInit = static_cast<AssetHandle>(projectNode["OnCurrentSessionInit"].as<uint64_t>());
-		config.OnConnectionTerminated = static_cast<AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());
-		config.OnUpdateSessionUserSlot = static_cast<AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
-		config.OnStartSession = static_cast<AssetHandle>(projectNode["OnStartSession"].as<uint64_t>());
-		config.OnSessionReadyCheckConfirm = static_cast<AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
-		config.OnReceiveSignal = static_cast<AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
-		config.AppIsNetworked = static_cast<AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
+		project->Name = projectNode["Name"].as<std::string>();
+		project->StartScenePath = projectNode["StartScene"].as<std::string>();
+		project->StartSceneHandle = static_cast<AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
+		project->StartGameState = static_cast<AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
+		project->AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
+		project->ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
+		project->ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
+		project->DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
+		project->TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
+		project->OnRuntimeStart = static_cast<AssetHandle>(projectNode["OnRuntimeStart"].as<uint64_t>());
+		project->OnUpdateUserCount = static_cast<AssetHandle>(projectNode["OnUpdateUserCount"].as<uint64_t>());
+		project->OnApproveJoinSession = static_cast<AssetHandle>(projectNode["OnApproveJoinSession"].as<uint64_t>());
+		project->OnUserLeftSession = static_cast<AssetHandle>(projectNode["OnUserLeftSession"].as<uint64_t>());
+		project->OnCurrentSessionInit = static_cast<AssetHandle>(projectNode["OnCurrentSessionInit"].as<uint64_t>());
+		project->OnConnectionTerminated = static_cast<AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());
+		project->OnUpdateSessionUserSlot = static_cast<AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
+		project->OnStartSession = static_cast<AssetHandle>(projectNode["OnStartSession"].as<uint64_t>());
+		project->OnSessionReadyCheckConfirm = static_cast<AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
+		project->OnReceiveSignal = static_cast<AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
+		project->AppIsNetworked = static_cast<AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
 
 		auto tickGenerators = projectNode["AppTickGenerators"];
 
@@ -171,7 +167,7 @@ namespace Kargono::Assets
 			for (auto generator : tickGenerators)
 			{
 				uint64_t value = generator.as<uint64_t>();
-				config.AppTickGenerators.insert(value);
+				project->AppTickGenerators.insert(value);
 			}
 		}
 

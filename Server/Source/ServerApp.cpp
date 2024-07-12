@@ -31,9 +31,9 @@ namespace Kargono
 		}
 #endif
 
-		bool isLocal = Projects::ProjectService::GetServerLocation() == "LocalMachine";
+		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
 
-		Network::Server::SetActiveServer(CreateRef<Network::Server>(Projects::ProjectService::GetServerPort(), isLocal));
+		Network::Server::SetActiveServer(CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort(), isLocal));
 
 		if (!Network::Server::GetActiveServer()->StartServer())
 		{

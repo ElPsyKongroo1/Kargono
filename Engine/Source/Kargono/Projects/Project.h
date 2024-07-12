@@ -41,25 +41,31 @@ namespace Kargono::Projects
 	class Project
 	{
 	private:
+		//=========================
+		// Internal Fields
+		//=========================
+		// m_ProjectDirectory simply holds the path to a project. This is typically provided when a
+		//		project is initially selected from a file dialog.
+		std::filesystem::path m_ProjectDirectory {};
 		// Name simply provides a method to identify the project for debugging
 		//		purposes.
-		std::string Name = "Untitled";
+		std::string Name {"Untitled"};
 		// StartScenePath describes the location of the StartScene relative to
 		//		the current asset directory. This is for debugging and editor
 		//		purposes.
-		std::filesystem::path StartScenePath;
+		std::filesystem::path StartScenePath {};
 		// StartSceneHandle holds the actual reference to the starting scene for the
 		//		project.
 		Assets::AssetHandle StartSceneHandle {0};
 		// AssetDirectory holds a relative path from the project directory to its
 		//		asset directory which is displayed by default in the content browser.
-		std::filesystem::path AssetDirectory;
+		std::filesystem::path AssetDirectory {};
 		// ScriptModulePath describes the path from the asset directory to the script
 		//		.dll that holds the scripts for the project.
-		std::filesystem::path ScriptModulePath;
+		std::filesystem::path ScriptModulePath {};
 		// ScriptDLLPath describes the path from the asset directory to the script
 		//		.dll that holds the scripts for the project.
-		std::filesystem::path ScriptDLLPath;
+		std::filesystem::path ScriptDLLPath {};
 		// DefaultFullscreen describes the preference to start the application in the
 		//		runtime as fullscreen.
 		bool DefaultFullscreen = false;
@@ -92,7 +98,7 @@ namespace Kargono::Projects
 
 		std::unordered_set<uint64_t> AppTickGenerators{};
 
-		bool AppIsNetworked = false;
+		bool AppIsNetworked { false };
 
 		// Networking Variables
 
@@ -125,9 +131,8 @@ namespace Kargono::Projects
 	public:
 
 		//=========================
-		// Getters/Setters
+		// External API
 		//=========================
-
 		// This function simply returns the project directory
 		//		associated with the currently active project
 		//		in s_ActiveProject.
@@ -142,7 +147,7 @@ namespace Kargono::Projects
 		static std::filesystem::path GetActiveAssetDirectory()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return GetActiveProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
+			return GetActiveProjectDirectory() / s_ActiveProject->AssetDirectory;
 		}
 
 		// This function returns the current StartScenePath associated with the active
@@ -153,10 +158,10 @@ namespace Kargono::Projects
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.StartScenePath;
+				return GetActiveAssetDirectory() / s_ActiveProject->StartScenePath;
 			}
 			// Return Relative Path
-			return s_ActiveProject->m_Config.StartScenePath;
+			return s_ActiveProject->StartScenePath;
 		}
 
 		// This function returns the current ScriptModulePath associated with the active
@@ -167,10 +172,10 @@ namespace Kargono::Projects
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.ScriptModulePath;
+				return GetActiveAssetDirectory() / s_ActiveProject->ScriptModulePath;
 			}
 			// Return Relative Path
-			return s_ActiveProject->m_Config.ScriptModulePath;
+			return s_ActiveProject->ScriptModulePath;
 		}
 
 		static std::filesystem::path GetActiveScriptDLLPath(bool absolute = true)
@@ -179,10 +184,10 @@ namespace Kargono::Projects
 			if (absolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->m_Config.ScriptDLLPath;
+				return GetActiveAssetDirectory() / s_ActiveProject->ScriptDLLPath;
 			}
 			// Return Relative Path
-			return s_ActiveProject->m_Config.ScriptDLLPath;
+			return s_ActiveProject->ScriptDLLPath;
 		}
 
 		// This function returns the AssetHandle associated with the starting
@@ -192,315 +197,315 @@ namespace Kargono::Projects
 		static Assets::AssetHandle GetActiveStartSceneHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.StartSceneHandle;
+			return s_ActiveProject->StartSceneHandle;
 		}
 
 		// This functions returns the current s_ActiveProject's DefaultFullscreen
 		//		boolean value.
-		static bool GetIsFullscreen()
+		static bool GetActiveIsFullscreen()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.DefaultFullscreen;
+			return s_ActiveProject->DefaultFullscreen;
 		}
 
 		// This function provides an API to set the fullscreen option on the currently
 		//		active project, s_ActiveProject
-		static void SetIsFullscreen(bool fullscreen)
+		static void SetActiveIsFullscreen(bool fullscreen)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.DefaultFullscreen = fullscreen;
+			s_ActiveProject->DefaultFullscreen = fullscreen;
 		}
 		// This function returns the current target resolution associated with
 		//		the current project in s_ActiveProject.
-		static ScreenResolutionOptions GetTargetResolution()
+		static ScreenResolutionOptions GetActiveTargetResolution()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.TargetResolution;
+			return s_ActiveProject->TargetResolution;
 		}
 		// This function provides an API to set the target resolution on the currently
 		//		active project, s_ActiveProject
-		static void SetTargetResolution(ScreenResolutionOptions option)
+		static void SetActiveTargetResolution(ScreenResolutionOptions option)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.TargetResolution = option;
+			s_ActiveProject->TargetResolution = option;
 		}
 		// This function sets the starting scene of the current project in s_ActiveProject.
-		static void SetStartingScene(Assets::AssetHandle handle, const std::filesystem::path& path)
+		static void SetActiveStartingScene(Assets::AssetHandle handle, const std::filesystem::path& path)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.StartSceneHandle = handle;
-			s_ActiveProject->m_Config.StartScenePath = path;
+			s_ActiveProject->StartSceneHandle = handle;
+			s_ActiveProject->StartScenePath = path;
 		}
 
 		// This function gets the project name associated with the current project in s_ActiveProject.
 		//		This value is mostly for debugging purposes.
-		static std::string GetProjectName()
+		static std::string GetActiveProjectName()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.Name;
+			return s_ActiveProject->Name;
 		}
 
 		// This function allows the project name to be changed in the currently active project in
 		//		s_ActiveProject.
-		static void SetProjectName(const std::string& name)
+		static void SetActiveProjectName(const std::string& name)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.Name = name;
+			s_ActiveProject->Name = name;
 		}
 
-		static std::unordered_set<uint64_t>& GetAppTickGenerators()
+		static std::unordered_set<uint64_t>& GetActiveAppTickGenerators()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.AppTickGenerators;
+			return s_ActiveProject->AppTickGenerators;
 		}
 
-		static bool GetAppIsNetworked()
+		static bool GetActiveAppIsNetworked()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.AppIsNetworked;
+			return s_ActiveProject->AppIsNetworked;
 		}
 
 		
-		static void SetAppIsNetworked(bool isNetworked)
+		static void SetActiveAppIsNetworked(bool isNetworked)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.AppIsNetworked = isNetworked;
+			s_ActiveProject->AppIsNetworked = isNetworked;
 		}
 
-		static Assets::AssetHandle GetStartGameState()
+		static Assets::AssetHandle GetActiveStartGameState()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.StartGameState;
+			return s_ActiveProject->StartGameState;
 		}
 
-		static void SetStartGameState(Assets::AssetHandle id)
+		static void SetActiveStartGameState(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.StartGameState = id;
+			s_ActiveProject->StartGameState = id;
 		}
 
-		static Assets::AssetHandle GetOnRuntimeStart()
+		static Assets::AssetHandle GetActiveOnRuntimeStart()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnRuntimeStart;
+			return s_ActiveProject->OnRuntimeStart;
 		}
 
-		static void SetOnRuntimeStart(Assets::AssetHandle id)
+		static void SetActiveOnRuntimeStart(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnRuntimeStart = id;
+			s_ActiveProject->OnRuntimeStart = id;
 		}
 
-		static Assets::AssetHandle GetOnUpdateUserCount()
+		static Assets::AssetHandle GetActiveOnUpdateUserCount()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUpdateUserCount;
+			return s_ActiveProject->OnUpdateUserCount;
 		}
 
-		static void SetOnUpdateUserCount(Assets::AssetHandle id)
+		static void SetActiveOnUpdateUserCount(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUpdateUserCount = id;
+			s_ActiveProject->OnUpdateUserCount = id;
 		}
 
-		static Assets::AssetHandle GetOnApproveJoinSession()
+		static Assets::AssetHandle GetActiveOnApproveJoinSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnApproveJoinSession;
+			return s_ActiveProject->OnApproveJoinSession;
 		}
 
-		static void SetOnApproveJoinSession(Assets::AssetHandle id)
+		static void SetActiveOnApproveJoinSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnApproveJoinSession = id;
+			s_ActiveProject->OnApproveJoinSession = id;
 		}
 
-		static Assets::AssetHandle GetOnUserLeftSession()
+		static Assets::AssetHandle GetActiveOnUserLeftSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUserLeftSession;
+			return s_ActiveProject->OnUserLeftSession;
 		}
 
-		static void SetOnUserLeftSession(Assets::AssetHandle id)
+		static void SetActiveOnUserLeftSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUserLeftSession = id;
+			s_ActiveProject->OnUserLeftSession = id;
 		}
 
-		static Assets::AssetHandle GetOnCurrentSessionInit()
+		static Assets::AssetHandle GetActiveOnCurrentSessionInit()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnCurrentSessionInit;
+			return s_ActiveProject->OnCurrentSessionInit;
 		}
 
-		static void SetOnCurrentSessionInit(Assets::AssetHandle id)
+		static void SetActiveOnCurrentSessionInit(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnCurrentSessionInit = id;
+			s_ActiveProject->OnCurrentSessionInit = id;
 		}
 		
 
-		static Assets::AssetHandle GetOnConnectionTerminated()
+		static Assets::AssetHandle GetActiveOnConnectionTerminated()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnConnectionTerminated;
+			return s_ActiveProject->OnConnectionTerminated;
 		}
 
-		static void SetOnConnectionTerminated(Assets::AssetHandle id)
+		static void SetActiveOnConnectionTerminated(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnConnectionTerminated = id;
+			s_ActiveProject->OnConnectionTerminated = id;
 		}
 
-		static Assets::AssetHandle GetOnUpdateSessionUserSlot()
+		static Assets::AssetHandle GetActiveOnUpdateSessionUserSlot()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnUpdateSessionUserSlot;
+			return s_ActiveProject->OnUpdateSessionUserSlot;
 		}
 
-		static void SetOnUpdateSessionUserSlot(Assets::AssetHandle id)
+		static void SetActiveOnUpdateSessionUserSlot(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnUpdateSessionUserSlot = id;
+			s_ActiveProject->OnUpdateSessionUserSlot = id;
 		}
 
-		static Assets::AssetHandle GetOnStartSession()
+		static Assets::AssetHandle GetActiveOnStartSession()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnStartSession;
+			return s_ActiveProject->OnStartSession;
 		}
 
-		static void SetOnStartSession(Assets::AssetHandle id)
+		static void SetActiveOnStartSession(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnStartSession = id;
+			s_ActiveProject->OnStartSession = id;
 		}
 
-		static Assets::AssetHandle GetProjectOnSessionReadyCheckConfirm()
+		static Assets::AssetHandle GetActiveOnSessionReadyCheckConfirm()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnSessionReadyCheckConfirm;
+			return s_ActiveProject->OnSessionReadyCheckConfirm;
 		}
 
-		static void SetProjectOnSessionReadyCheckConfirm(Assets::AssetHandle id)
+		static void SetActiveOnSessionReadyCheckConfirm(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnSessionReadyCheckConfirm = id;
+			s_ActiveProject->OnSessionReadyCheckConfirm = id;
 		}
 
-		static Assets::AssetHandle GetProjectOnReceiveSignal()
+		static Assets::AssetHandle GetActiveOnReceiveSignal()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.OnReceiveSignal;
+			return s_ActiveProject->OnReceiveSignal;
 		}
 
-		static void SetProjectOnReceiveSignal(Assets::AssetHandle id)
+		static void SetActiveOnReceiveSignal(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.OnReceiveSignal = id;
+			s_ActiveProject->OnReceiveSignal = id;
 		}
 
-		static std::string GetServerIP()
+		static std::string GetActiveServerIP()
 		{
 			KG_ASSERT(s_ActiveProject);
-			if (s_ActiveProject->m_Config.ServerLocation == "LocalMachine")
+			if (s_ActiveProject->ServerLocation == "LocalMachine")
 			{
 				return "127.0.0.1";
 			}
-			return s_ActiveProject->m_Config.ServerIP;
+			return s_ActiveProject->ServerIP;
 		}
 
-		static void SetServerIP(const std::string& name)
+		static void SetActiveServerIP(const std::string& name)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.ServerIP = name;
+			s_ActiveProject->ServerIP = name;
 		}
 
-		static uint16_t GetServerPort()
+		static uint16_t GetActiveServerPort()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.ServerPort;
+			return s_ActiveProject->ServerPort;
 		}
 
-		static void SetServerPort(uint16_t newPort)
+		static void SetActiveServerPort(uint16_t newPort)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.ServerPort = newPort;
+			s_ActiveProject->ServerPort = newPort;
 		}
 
-		static const std::string& GetServerLocation()
+		static const std::string& GetActiveServerLocation()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.ServerLocation;
+			return s_ActiveProject->ServerLocation;
 		}
 
-		static void SetServerLocation(const std::string& location)
+		static void SetActiveServerLocation(const std::string& location)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.ServerLocation = location;
+			s_ActiveProject->ServerLocation = location;
 		}
 
-		static uint64_t GetSecretOne()
+		static uint64_t GetActiveSecretOne()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.SecretOne;
+			return s_ActiveProject->SecretOne;
 		}
 
-		static void SetSecretOne(uint64_t newSecret)
+		static void SetActiveSecretOne(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.SecretOne = newSecret;
+			s_ActiveProject->SecretOne = newSecret;
 		}
 
-		static uint64_t GetSecretTwo()
+		static uint64_t GetActiveSecretTwo()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.SecretTwo;
+			return s_ActiveProject->SecretTwo;
 		}
 
-		static void SetSecretTwo(uint64_t newSecret)
+		static void SetActiveSecretTwo(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.SecretTwo = newSecret;
+			s_ActiveProject->SecretTwo = newSecret;
 		}
 
-		static uint64_t GetSecretThree()
+		static uint64_t GetActiveSecretThree()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.SecretThree;
+			return s_ActiveProject->SecretThree;
 		}
 
-		static void SetSecretThree(uint64_t newSecret)
+		static void SetActiveSecretThree(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.SecretThree = newSecret;
+			s_ActiveProject->SecretThree = newSecret;
 		}
 
-		static uint64_t GetSecretFour()
+		static uint64_t GetActiveSecretFour()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_Config.SecretFour;
+			return s_ActiveProject->SecretFour;
 		}
 
-		static void SetSecretFour(uint64_t newSecret)
+		static void SetActiveSecretFour(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_Config.SecretFour = newSecret;
+			s_ActiveProject->SecretFour = newSecret;
 		}
 
 		// This function returns the currently active project held in s_ActiveProject.
-		static Ref<ProjectService> GetActive() { return s_ActiveProject; }
+		static Ref<Project> GetActive()
+		{
+			return s_ActiveProject;
+		}
 
 	private:
-		// This config file holds many details about a project such as the starting scene handle/file location
-		//		 the asset directory, the script project directory, etc...
-		Project m_Config;
-		// m_ProjectDirectory simply holds the path to a project. This is typically provided when a
-		//		project is initially selected from a file dialog.
-		std::filesystem::path m_ProjectDirectory;
+		//=========================
+		// Internal Fields
+		//=========================
 		// m_ActiveProject holds a static reference to the currently active project. Only one project can be
 		//		active at a time and that project is held in this variable.
-		inline static Ref<ProjectService> s_ActiveProject;
+		static Ref<Project> s_ActiveProject;
 	public:
 		friend class Assets::AssetManager;
 	};
