@@ -17,7 +17,7 @@ namespace Kargono
 	{
 	}
 
-	void ServerApp::OnAttach()
+	void ServerApp::Init()
 	{
 		Scenes::SceneService::Init();
 #ifdef KG_TESTING
@@ -72,7 +72,7 @@ namespace Kargono
 	}
 
 
-	void ServerApp::OnDetach()
+	void ServerApp::Terminate()
 	{
 	}
 

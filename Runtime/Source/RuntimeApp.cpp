@@ -17,7 +17,7 @@ namespace Kargono
 	{
 	}
 
-	void RuntimeApp::OnAttach()
+	void RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
@@ -63,7 +63,7 @@ namespace Kargono
 		currentWindow.SetVisible(true);
 	}
 
-	void RuntimeApp::OnDetach()
+	void RuntimeApp::Terminate()
 	{
 		
 		auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::AudioComponent>();

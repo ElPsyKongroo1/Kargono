@@ -17,14 +17,20 @@ namespace Kargono
 		//==============================
 		Application(const std::string& name = "Layer");
 		virtual ~Application() = default;
+
+		//==============================
+		// LifeCycle Functions
+		//==============================
+		virtual void Init() {}
+		virtual void Terminate() {}
+
 		//==============================
 		// Event Functions
 		//==============================
-		virtual void OnAttach() {}
-		virtual void OnDetach() {}
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEditorUIRender() {}
 		virtual void OnEvent(Events::Event& event) {}
+
 		//==============================
 		// Getter/Setter
 		//==============================
