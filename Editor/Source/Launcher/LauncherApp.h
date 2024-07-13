@@ -28,7 +28,6 @@ namespace Kargono
 		//=========================
 		void SelectProject();
 
-
 	public:
 		//=========================
 		// Getters/Setters
@@ -36,6 +35,10 @@ namespace Kargono
 		std::filesystem::path GetSelectedProject()
 		{
 			return m_SelectedProject;
+		}
+		void SetSelectedProject(const std::filesystem::path& path)
+		{
+			m_SelectedProject = path;
 		}
 	private:
 		//=========================

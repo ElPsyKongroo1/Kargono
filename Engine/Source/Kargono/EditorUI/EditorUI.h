@@ -17,6 +17,7 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
+	struct ChooseDirectorySpec;
 	//==============================
 	// Widget Forward Declarations
 	//==============================
@@ -125,6 +126,7 @@ namespace Kargono::EditorUI
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
 		static void TextInputPopup(TextInputSpec& spec);
+		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
 		static bool BeginTabItem(const std::string& title);
@@ -292,13 +294,31 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		WidgetFlags Flags{ TextInput_None };
-		std::string CurrentOption;
+		std::string CurrentOption {};
 		std::function<void(const std::string&)> ConfirmAction;
 		bool StartPopup{ false };
 	private:
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::TextInputPopup(TextInputSpec& spec);
+	};
+
+	struct ChooseDirectorySpec
+	{
+	public:
+		ChooseDirectorySpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label;
+		WidgetFlags Flags{ TextInput_None };
+		std::filesystem::path CurrentOption {};
+		std::function<void(const std::string&)> ConfirmAction { nullptr };
+	private:
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec);
 	};
 
 	enum CollapsingHeaderFlags

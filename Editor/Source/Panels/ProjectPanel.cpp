@@ -29,8 +29,9 @@ namespace Kargono::Panels
 		s_SelectStartSceneSpec.Label = "Starting Scene";
 		//s_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
 		s_SelectStartSceneSpec.LineCount = 2;
+		
 		s_SelectStartSceneSpec.CurrentOption = {
-			Projects::ProjectService::GetActiveStartScenePath(false).string(),
+			 Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.IntermediateLocation.string(),
 			Projects::ProjectService::GetActiveStartSceneHandle()};
 		s_SelectStartSceneSpec.PopupAction = []()
 		{
@@ -40,7 +41,7 @@ namespace Kargono::Panels
 				s_SelectStartSceneSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
 			}
 			s_SelectStartSceneSpec.CurrentOption = {
-				Projects::ProjectService::GetActiveStartScenePath(false).string(),
+				Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.IntermediateLocation.string(),
 			Projects::ProjectService::GetActiveStartSceneHandle()};
 		};
 		s_SelectStartSceneSpec.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
@@ -52,7 +53,7 @@ namespace Kargono::Panels
 			}
 
 			const Assets::Asset asset = Assets::AssetManager::GetSceneRegistry().at(entry.Handle);
-			Projects::ProjectService::SetActiveStartingScene(entry.Handle, asset.Data.IntermediateLocation);
+			Projects::ProjectService::SetActiveStartingScene(entry.Handle);
 		};
 
 		// Default Full Screen

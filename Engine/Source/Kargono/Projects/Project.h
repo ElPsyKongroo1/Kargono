@@ -50,10 +50,6 @@ namespace Kargono::Projects
 		// Name simply provides a method to identify the project for debugging
 		//		purposes.
 		std::string Name {"Untitled"};
-		// StartScenePath describes the location of the StartScene relative to
-		//		the current asset directory. This is for debugging and editor
-		//		purposes.
-		std::filesystem::path StartScenePath {};
 		// StartSceneHandle holds the actual reference to the starting scene for the
 		//		project.
 		Assets::AssetHandle StartSceneHandle {0};
@@ -150,20 +146,6 @@ namespace Kargono::Projects
 			return GetActiveProjectDirectory() / s_ActiveProject->AssetDirectory;
 		}
 
-		// This function returns the current StartScenePath associated with the active
-		//		project in s_ActiveProject.
-		static std::filesystem::path GetActiveStartScenePath(bool isAbsolute = true)
-		{
-			KG_ASSERT(s_ActiveProject);
-			if (isAbsolute)
-			{
-				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->StartScenePath;
-			}
-			// Return Relative Path
-			return s_ActiveProject->StartScenePath;
-		}
-
 		// This function returns the current ScriptModulePath associated with the active
 		//		project in s_ActiveProject.
 		static std::filesystem::path GetActiveScriptModulePath(bool isAbsolute = true)
@@ -230,11 +212,10 @@ namespace Kargono::Projects
 			s_ActiveProject->TargetResolution = option;
 		}
 		// This function sets the starting scene of the current project in s_ActiveProject.
-		static void SetActiveStartingScene(Assets::AssetHandle handle, const std::filesystem::path& path)
+		static void SetActiveStartingScene(Assets::AssetHandle handle)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->StartSceneHandle = handle;
-			s_ActiveProject->StartScenePath = path;
 		}
 
 		// This function gets the project name associated with the current project in s_ActiveProject.

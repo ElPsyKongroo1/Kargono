@@ -75,7 +75,7 @@ namespace Kargono::Assets
 
 		if (!std::filesystem::exists(fontRegistryLocation))
 		{
-			KG_ERROR("No .kgregistry file exists in project path!");
+			KG_WARN("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
