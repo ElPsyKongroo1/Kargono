@@ -289,7 +289,7 @@ namespace Kargono::Assets
 			return newFont;
 		}
 
-		KG_ERROR("No font is associated with provided handle!");
+		KG_WARN("No font is associated with provided handle!");
 		return nullptr;
 	}
 

@@ -568,4 +568,9 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	void ScriptEditorPanel::ResetPanelResources()
+	{
+		s_AllScriptsTable.OnRefresh();
+		s_GroupLabelsTable.OnRefresh();
+	}
 }

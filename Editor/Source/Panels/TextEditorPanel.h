@@ -15,6 +15,7 @@ namespace Kargono::Panels
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
 		void OpenFile(const std::filesystem::path& path);
+		void ResetPanelResources();
 	private:
 		std::string m_PanelName{ "Text Editor" };
 		std::string m_EditorWindowName { "TextEditorChild" };

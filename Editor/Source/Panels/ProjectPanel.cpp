@@ -713,4 +713,8 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	void ProjectPanel::ResetPanelResources()
+	{
+		InitializeStaticResources();
+	}
 }

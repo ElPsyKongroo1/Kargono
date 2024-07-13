@@ -14,6 +14,8 @@ namespace Kargono::Panels
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+
+		void ResetPanelResources();
 	public:
 		Ref<Scenes::GameState> m_EditorGameState {nullptr};
 		Assets::AssetHandle m_EditorGameStateHandle {0};

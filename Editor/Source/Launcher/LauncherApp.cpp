@@ -35,7 +35,6 @@ namespace Kargono
 
 		s_CreateProjectLocation.Label = "Project Location";
 		s_CreateProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
-
 	}
 
 	void LauncherApp::Init()

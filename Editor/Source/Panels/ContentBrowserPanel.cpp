@@ -74,7 +74,6 @@ static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Panels
 {
-	static std::vector<std::filesystem::path> s_CachedDirectoryEntries {};
 
 	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
@@ -113,7 +112,6 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
-		static std::filesystem::path s_LongestRecentPath {};
 		static float padding = 25.0f;
 		static float thumbnailSize = 140;
 		float cellSize = thumbnailSize + padding;
@@ -143,7 +141,7 @@ namespace Kargono::Panels
 		{
 			ImGui::PopStyleColor(2);
 		}
-		bool forwardActive = m_CurrentDirectory != s_LongestRecentPath && !s_LongestRecentPath.empty();
+		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
 
 		ImGui::SameLine();
 		if (!forwardActive)
@@ -153,10 +151,10 @@ namespace Kargono::Panels
 		}
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::EditorUIService::s_ForwardIcon : EditorUI::EditorUIService::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
 		{
-			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, s_LongestRecentPath))
+			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
 			{
-				std::filesystem::path currentIterationPath{s_LongestRecentPath};
-				std::filesystem::path recentIterationPath{s_LongestRecentPath};
+				std::filesystem::path currentIterationPath{m_LongestRecentPath};
+				std::filesystem::path recentIterationPath{m_LongestRecentPath};
 				while (currentIterationPath != m_CurrentDirectory)
 				{
 					recentIterationPath = currentIterationPath;
@@ -221,7 +219,7 @@ namespace Kargono::Panels
 		ImGui::Separator();
 
 		ImGui::Columns(columnCount, 0, false);
-		for (auto& directoryEntry: s_CachedDirectoryEntries)
+		for (auto& directoryEntry: m_CachedDirectoryEntries)
 		{
 			std::string filenameString = directoryEntry.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
@@ -268,9 +266,9 @@ namespace Kargono::Panels
 				if ( std::filesystem::is_directory(directoryEntry))
 				{
 					UpdateCurrentDirectory(m_CurrentDirectory / directoryEntry.filename());
-					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), s_LongestRecentPath))
+					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), m_LongestRecentPath))
 					{
-						s_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
+						m_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
 					}
 				}
 			}
@@ -465,10 +463,20 @@ namespace Kargono::Panels
 	}
 	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
 	{
-		s_CachedDirectoryEntries.clear();
+		m_CachedDirectoryEntries.clear();
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			s_CachedDirectoryEntries.push_back(directoryEntry.path());
+			m_CachedDirectoryEntries.push_back(directoryEntry.path());
 		}
+	}
+	void ContentBrowserPanel::ResetPanelResources()
+	{
+		API::FileWatch::EndWatch(m_CurrentDirectory);
+		m_BaseDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		m_CurrentDirectory = m_BaseDirectory;
+		m_LongestRecentPath.clear();
+		m_CachedDirectoryEntries.clear();
+		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		RefreshCachedDirectoryEntries();
 	}
 }

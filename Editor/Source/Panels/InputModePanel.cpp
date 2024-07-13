@@ -133,6 +133,12 @@ namespace Kargono::Panels
 		return false;
 	}
 
+	void InputModePanel::ResetPanelResources()
+	{
+		m_EditorInputMode = nullptr;
+		m_EditorInputModeHandle = Assets::EmptyHandle;
+	}
+
 	void InputModePanel::InitializeOpeningScreen()
 	{
 		s_OpenInputModePopupSpec.Label = "Open Input Mode";

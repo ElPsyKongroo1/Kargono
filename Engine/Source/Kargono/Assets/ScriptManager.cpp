@@ -21,6 +21,33 @@ namespace Kargono::Assets
 		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
 		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
 
+		// Load in Engine Scripts
+		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
+		{
+			Assets::Asset newAsset{};
+			newAsset.Handle = script->m_ID;
+
+			newAsset.Data.CheckSum = "";
+			newAsset.Data.IntermediateLocation = "";
+			newAsset.Data.Type = AssetType::Script;
+
+			// Insert ScriptMetaData
+			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+
+			std::string Name{};
+			std::vector<WrappedVarType> Parameters{};
+
+			ScriptMetaData->Name = script->m_ScriptName;
+			ScriptMetaData->SectionLabel = script->m_SectionLabel;
+			ScriptMetaData->ScriptType = script->m_ScriptType;
+			ScriptMetaData->FunctionType = script->m_FuncType;
+			newAsset.Data.SpecificFileData = ScriptMetaData;
+
+			// Insert Engine Script into registry/in-memory
+			s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
+			s_Scripts.insert({ newAsset.Handle, script });
+		}
+
 		if (!std::filesystem::exists(ScriptRegistryLocation))
 		{
 			KG_WARN("No .kgregistry file exists in project path!");
@@ -93,33 +120,6 @@ namespace Kargono::Assets
 
 				s_Scripts.insert({ newAsset.Handle, InstantiateScriptIntoMemory(newAsset) });
 			}
-		}
-
-		// Load in Engine Scripts
-		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
-		{
-			Assets::Asset newAsset{};
-			newAsset.Handle = script->m_ID;
-
-			newAsset.Data.CheckSum = "";
-			newAsset.Data.IntermediateLocation = "";
-			newAsset.Data.Type = AssetType::Script;
-
-			// Insert ScriptMetaData
-			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
-
-			std::string Name{};
-			std::vector<WrappedVarType> Parameters{};
-
-			ScriptMetaData->Name = script->m_ScriptName;
-			ScriptMetaData->SectionLabel = script->m_SectionLabel;
-			ScriptMetaData->ScriptType = script->m_ScriptType;
-			ScriptMetaData->FunctionType = script->m_FuncType;
-			newAsset.Data.SpecificFileData = ScriptMetaData;
-
-			// Insert Engine Script into registry/in-memory
-			s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
-			s_Scripts.insert({ newAsset.Handle, script });
 		}
 	}
 
