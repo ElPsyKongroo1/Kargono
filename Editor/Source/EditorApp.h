@@ -186,10 +186,10 @@ namespace Kargono
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
-		Ref<RuntimeUI::UIObject> m_EditorUIObject = nullptr;
-		Assets::AssetHandle m_EditorUIObjectHandle{0};
 		Ref<Input::InputMode> m_EditorInputMode = nullptr;
 		Assets::AssetHandle m_EditorInputModeHandle{0};
+		Ref<RuntimeUI::UIObject> m_EditorUIObject = nullptr;
+		Assets::AssetHandle m_EditorUIObjectHandle{0};
 
 		// Stepping Fields
 		bool m_IsPaused = false;

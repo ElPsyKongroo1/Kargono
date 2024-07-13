@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <string>
+#include <vector>
 
 namespace Kargono::Panels
 {
@@ -25,10 +26,14 @@ namespace Kargono::Panels
 	public:
 		void UpdateCurrentDirectory(const std::filesystem::path& newPath);
 		void RefreshCachedDirectoryEntries();
+		void ResetPanelResources();
 	private:
 		std::string m_PanelName{ "Content Browser" };
-		std::filesystem::path m_BaseDirectory;
-		std::filesystem::path m_CurrentDirectory;
+		std::filesystem::path m_BaseDirectory {};
+		std::filesystem::path m_CurrentDirectory {};
+		std::filesystem::path m_LongestRecentPath {};
+		std::vector<std::filesystem::path> m_CachedDirectoryEntries {};
+
 		
 	};
 }

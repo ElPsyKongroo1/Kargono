@@ -24,6 +24,11 @@ namespace API::FileWatch
 
 	bool EndWatch(const std::filesystem::path& path)
 	{
+		if (path.empty())
+		{
+			KG_WARN("Empty path provided to EndWatch");
+			return false;
+		}
 		if (!s_AllFileWatchers.contains(std::filesystem::absolute(path).string()))
 		{
 			KG_WARN("Attempt to remove filewatch from path that does not exist");

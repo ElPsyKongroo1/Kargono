@@ -599,6 +599,11 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	void EntityClassEditor::ResetPanelResources()
+	{
+		s_EditorEntityClass = nullptr;
+		s_EditorEntityClassHandle = Assets::EmptyHandle;
+	}
 	void EntityClassEditor::RefreshEntityScripts(Assets::AssetHandle handle)
 	{
 		if (s_EditorEntityClassHandle != handle)

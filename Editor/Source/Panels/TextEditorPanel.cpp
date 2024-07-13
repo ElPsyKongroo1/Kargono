@@ -26,6 +26,7 @@ namespace Kargono::Panels
 	static std::function<void()> s_OnSaveFile { nullptr };
 	static std::function<void()> s_OnDeleteFile { nullptr };
 	static std::function<void()> s_OnCloseFile { nullptr };
+	static std::function<void()> s_OnCloseAllFiles { nullptr };
 
 	static EditorUI::GenericPopupSpec s_DeleteWarningSpec {};
 	static EditorUI::GenericPopupSpec s_DiscardChangesWarningSpec {};
@@ -98,6 +99,14 @@ namespace Kargono::Panels
 				s_AllDocuments.at(0).SetActive = true;
 			}
 		};
+
+		s_OnCloseAllFiles = [&]()
+		{
+			s_AllDocuments.clear();
+			s_ActiveDocument = 0;
+		};
+
+
 
 		s_DeleteWarningSpec.Label = "Delete File";
 		s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;
@@ -313,5 +322,9 @@ namespace Kargono::Panels
 				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 			}
 		}
+	}
+	void TextEditorPanel::ResetPanelResources()
+	{
+		s_OnCloseAllFiles();
 	}
 }

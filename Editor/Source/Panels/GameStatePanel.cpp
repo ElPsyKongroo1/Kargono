@@ -369,4 +369,9 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	void GameStatePanel::ResetPanelResources()
+	{
+		m_EditorGameState = nullptr;
+		m_EditorGameStateHandle = Assets::EmptyHandle;
+	}
 }

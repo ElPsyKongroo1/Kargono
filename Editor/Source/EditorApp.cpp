@@ -152,7 +152,7 @@ namespace Kargono
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Open Project ...", "Ctrl+O"))
+				if (ImGui::MenuItem("Open Project"))
 				{
 					OpenProject();
 				}
@@ -165,7 +165,7 @@ namespace Kargono
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+				if (ImGui::MenuItem("New Scene"))
 				{
 					NewScene();
 				}
@@ -611,6 +611,7 @@ namespace Kargono
 		return false;
 	}
 
+
 	bool EditorApp::OpenProject()
 	{
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
@@ -626,6 +627,18 @@ namespace Kargono
 		}
 
 		OpenProject(filepath);
+
+		// Reset all resources
+		m_ContentBrowserPanel->ResetPanelResources();
+		m_TextEditorPanel->ResetPanelResources();
+		m_InputModePanel->ResetPanelResources();
+		m_GameStatePanel->ResetPanelResources();
+		m_EntityClassEditor->ResetPanelResources();
+		m_ScriptEditorPanel->ResetPanelResources();
+		m_ProjectPanel->ResetPanelResources();
+		Scenes::GameStateService::ClearActiveGameState();
+		Input::InputModeService::ClearActiveInputMode();
+
 		return true;
 	}
 
