@@ -837,7 +837,7 @@ namespace Kargono::Assets
 	// This function simply instantiates a new project in the s_ActiveProject reference
 	//		since only one project can exist at a time and there is no registry
 	//		for projects.
-	static Ref<Projects::Project> NewProject();
+	static std::filesystem::path CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation);
 
 
 	//==============================

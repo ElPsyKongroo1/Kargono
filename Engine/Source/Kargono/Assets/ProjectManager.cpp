@@ -42,10 +42,46 @@ namespace Kargono::Assets
 	}
 
 
-	Ref<Projects::Project> AssetManager::NewProject()
+	std::filesystem::path AssetManager::CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation)
 	{
-		Projects::ProjectService::s_ActiveProject = CreateRef<Projects::Project>();
-		return Projects::ProjectService::s_ActiveProject;
+
+		Ref<Projects::Project> newProject  = CreateRef<Projects::Project>();
+		newProject->Name = projectName;
+		newProject->m_ProjectDirectory = projectLocation / projectName;
+		newProject->AssetDirectory = "Assets";
+
+		if (exists(newProject->m_ProjectDirectory))
+		{
+			KG_WARN("Attempt to create new project when same named directory already exists");
+			return {};
+		}
+		// Create Project Directory
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory);
+
+		std::filesystem::path projectFileLocation = newProject->m_ProjectDirectory / (projectName + ".kproj");
+		bool success = Assets::AssetManager::SerializeProject(newProject, projectFileLocation);
+		if (!success)
+		{
+			KG_WARN("Failed to serialize project file");
+			Utility::FileSystem::DeleteSelectedDirectory(newProject->m_ProjectDirectory);
+			return {};
+		}
+
+		// Create all asset folders
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory);
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Audio");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "EntityClass");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Fonts");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "GameState");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Input");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Scenes");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Scripting");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Shaders");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Textures");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "UserInterface");
+
+		return projectFileLocation;
+		
 	}
 	Ref<Projects::Project> AssetManager::OpenProject(const std::filesystem::path& path)
 	{
@@ -80,7 +116,6 @@ namespace Kargono::Assets
 			{
 				out << YAML::BeginMap; // Project
 				out << YAML::Key << "Name" << YAML::Value << project->Name;
-				out << YAML::Key << "StartScene" << YAML::Value << project->StartScenePath.string();
 				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(project->StartSceneHandle);
 				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(project->StartGameState);
 				out << YAML::Key << "AssetDirectory" << YAML::Value << project->AssetDirectory.string();
@@ -140,7 +175,6 @@ namespace Kargono::Assets
 		if (!projectNode) { return false; }
 
 		project->Name = projectNode["Name"].as<std::string>();
-		project->StartScenePath = projectNode["StartScene"].as<std::string>();
 		project->StartSceneHandle = static_cast<AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
 		project->StartGameState = static_cast<AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
 		project->AssetDirectory = projectNode["AssetDirectory"].as<std::string>();

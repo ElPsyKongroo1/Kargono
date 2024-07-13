@@ -5,8 +5,44 @@
 
 namespace Kargono
 {
+	static LauncherApp* s_LauncherApp { nullptr };
+
+	// Create Project Panel
+	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
+	static EditorUI::TextInputSpec s_CreateProjectName {};
+	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
+
+	static void InitializeStaticResources()
+	{
+		s_CreateProjectSpec.Label = "Create New Project";
+		s_CreateProjectSpec.PopupWidth = 420.0f;
+		s_CreateProjectSpec.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::TextInputPopup(s_CreateProjectName);
+			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
+		};
+		s_CreateProjectSpec.ConfirmAction = [&]()
+		{
+			s_LauncherApp->SetSelectedProject(Assets::AssetManager::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
+			if (!s_LauncherApp->GetSelectedProject().empty())
+			{
+				EngineService::EndRun();
+			}
+		};
+
+		s_CreateProjectName.Label = "Project Title";
+		s_CreateProjectName.CurrentOption = "NewProject";
+
+		s_CreateProjectLocation.Label = "Project Location";
+		s_CreateProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+
+	}
+
 	void LauncherApp::Init()
 	{
+		s_LauncherApp = this;
+		InitializeStaticResources();
+
 		EngineService::GetActiveWindow().Init();
 
 		EditorUI::EditorUIService::Init();
@@ -47,7 +83,8 @@ namespace Kargono
 		EditorUI::EditorUIService::StartWindow("Launcher Screen", nullptr, window_flags);
 		ImGui::PopStyleVar(3);
 
-		EditorUI::EditorUIService::NewItemScreen("Open Existing Project", [&]()
+		EditorUI::EditorUIService::NewItemScreen(
+			"Open Existing Project", [&]()
 		{
 			SelectProject();
 			if (!m_SelectedProject.empty())
@@ -55,7 +92,12 @@ namespace Kargono
 				EngineService::EndRun();
 			}
 		}, 
-		"Create New Project", nullptr);
+		"Create New Project", [&]()
+		{
+			s_CreateProjectSpec.PopupActive = true;
+		});
+
+		EditorUI::EditorUIService::GenericPopup(s_CreateProjectSpec);
 
 		EditorUI::EditorUIService::EndWindow();
 

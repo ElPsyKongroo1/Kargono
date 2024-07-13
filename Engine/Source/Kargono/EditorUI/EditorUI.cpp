@@ -10,6 +10,7 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
+#include "Kargono/Utility/FileDialogs.h"
 
 
 namespace Kargono::EditorUI
@@ -1428,6 +1429,33 @@ namespace Kargono::EditorUI
 			ImGui::PopFont();
 			ImGui::EndPopup();
 		}
+	}
+	void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec)
+	{
+		// Local Variables
+		uint32_t widgetCount{ 0 };
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		std::string popUpLabel = spec.Label;
+
+		ImGui::TextColored(s_PureWhite, spec.Label.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
+		WriteMultilineText(spec.CurrentOption.string(), 200.0f, 21);
+		ImGui::PopStyleColor();
+
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		{
+			const std::filesystem::path initialDirectory = spec.CurrentOption.empty() ? std::filesystem::current_path() : spec.CurrentOption;
+			std::filesystem::path outputDirectory = Utility::FileDialogs::ChooseDirectory(initialDirectory);
+			if (outputDirectory.empty())
+			{
+				KG_WARN("Empty path returned to ChooseDirectory");
+				return;
+			}
+			spec.CurrentOption = outputDirectory;
+		},
+		EditorUIService::s_SmallEditButton);
+
 	}
 	void EditorUIService::BeginTabBar(const std::string& title)
 	{
