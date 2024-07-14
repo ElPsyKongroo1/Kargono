@@ -216,7 +216,18 @@ namespace Kargono
 					Utility::OSCommands::OpenProfiler();
 				}
 				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
-				ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+				
+				if (ImGui::BeginMenu("ImGui Options"))
+				{
+
+					if (ImGui::MenuItem("Save Config Settings"))
+					{
+						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
+					}
+					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+					ImGui::EndMenu();
+				}
+
 				ImGui::EndMenu();
 			}
 
