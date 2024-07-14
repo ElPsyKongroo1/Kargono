@@ -737,7 +737,10 @@ namespace Kargono::EditorUI
 
 			ImGui::Separator();
 
-			spec.PopupContents();
+			if (spec.PopupContents)
+			{
+				spec.PopupContents();
+			}
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
