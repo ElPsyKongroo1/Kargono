@@ -773,8 +773,8 @@ namespace Kargono::Scripting
 		{
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
-		outputStream << "/Fo" << binaryPath.string() << ' '; // Define Intermediate Location
-		outputStream << sourcePath.string() << " "; // Compile scripting source file (ExportBody.cpp)
+		outputStream << "/Fo" << "\"" << binaryPath.string() << "\"" << ' '; // Define Intermediate Location
+		outputStream << "\"" << sourcePath.string() << "\"" << " "; // Compile scripting source file (ExportBody.cpp)
 
 		// Start Next Command
 		//outputStream << " > Log\\ScriptCompilation.log 2>&1 "; // Sends error/info to log file
@@ -787,13 +787,22 @@ namespace Kargono::Scripting
 		if (createDebug)
 		{
 			outputStream << "/DEBUG "; // Specifies output as debug files
-			outputStream << "/PDB:" << debugSymbolsPath.string() << " "; // Specify .pdb file location/name
+			outputStream << "/PDB:" << "\"" << debugSymbolsPath.string() << "\"" << " "; // Specify .pdb file location/name
 		}
-		outputStream << "/OUT:" << binaryFile.string() << " "; // Specify output directory
-		outputStream << objectPath.string(); // Object File to Link
+		outputStream << "/OUT:" << "\"" << binaryFile.string() << "\"" <<" "; // Specify output directory
+		outputStream << "\"" <<objectPath.string() << "\""; // Object File to Link
 
 		outputStream << ")"; // Parentheses to group all function calls together
-		outputStream << " >> Log\\ScriptCompilation.log 2>&1 "; // Sends all three calls (open dev console, compiler, and linker) error/info to log file
+
+		// Sends all three calls (open dev console, compiler, and linker) error/info to log file
+		if (createDebug)
+		{
+			outputStream << " >> Log\\ScriptCompilationDebug.log 2>&1 ";
+		}
+		else
+		{
+			outputStream << " >> Log\\ScriptCompilation.log 2>&1 "; 
+		}
 
 		// Call Command
 		return (system(outputStream.str().c_str()) != 1);
