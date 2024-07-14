@@ -6,6 +6,21 @@
 
 namespace Kargono
 {
+	static EditorUI::GenericPopupSpec s_ExportProjectSpec {};
+	static EditorUI::ChooseDirectorySpec s_ExportProjectLocation {};
+
+	static void InitializeStaticResources()
+	{
+		s_ExportProjectSpec.Label = "Export Project";
+		s_ExportProjectSpec.PopupWidth = 420.0f;
+		s_ExportProjectSpec.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::ChooseDirectory(s_ExportProjectLocation);
+		};
+
+		s_ExportProjectLocation.Label = "Export Location";
+		s_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+	}
 
 	EditorApp* EditorApp::s_EditorApp = nullptr;
 
@@ -14,6 +29,8 @@ namespace Kargono
 	{
 		KG_ASSERT(!m_InitProjectPath.empty(), "Attempt to open editor without valid project path!");
 		s_EditorApp = this;
+
+		InitializeStaticResources();
 	}
 
 	void EditorApp::Init()
@@ -163,6 +180,11 @@ namespace Kargono
 					SaveProject();
 				}
 
+				if (ImGui::MenuItem("Export Project"))
+				{
+					s_ExportProjectSpec.PopupActive = true;
+				}
+
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("New Scene"))
@@ -269,7 +291,8 @@ namespace Kargono
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
-		
+
+		EditorUI::EditorUIService::GenericPopup(s_ExportProjectSpec);
 
 		EditorUI::EditorUIService::EndWindow();
 
