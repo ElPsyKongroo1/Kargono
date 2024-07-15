@@ -31,7 +31,7 @@ namespace Kargono::Assets
 		Audio = 3,
 		Font = 4,
 		Scene = 5,
-		UIObject = 6,
+		UserInterface = 6,
 		InputMode = 7,
 		Script = 8,
 		GameState = 9,
@@ -155,7 +155,7 @@ namespace Kargono::Assets
 	//==============================
 	// This metadata struct is currently empty but keeps a consistent API when working with assets.
 	//		There may be later additions to this struct.
-	struct UIObjectMetaData
+	struct UserInterfaceMetaData
 	{
 
 	};
@@ -217,7 +217,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::Audio: return "Audio";
 		case Assets::AssetType::Font: return "Font";
 		case Assets::AssetType::Scene: return "Scene";
-		case Assets::AssetType::UIObject: return "UIObject";
+		case Assets::AssetType::UserInterface: return "UserInterface";
 		case Assets::AssetType::InputMode: return "InputMode";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
@@ -235,7 +235,7 @@ namespace Kargono::Utility
 		if (type == "Audio") { return Assets::AssetType::Audio; }
 		if (type == "Font") { return Assets::AssetType::Font; }
 		if (type == "Scene") { return Assets::AssetType::Scene; }
-		if (type == "UIObject") { return Assets::AssetType::UIObject; }
+		if (type == "UserInterface") { return Assets::AssetType::UserInterface; }
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }

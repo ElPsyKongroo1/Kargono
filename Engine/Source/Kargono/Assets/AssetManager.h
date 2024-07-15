@@ -390,85 +390,88 @@ namespace Kargono::Assets
 		static std::unordered_map<AssetHandle, Assets::Asset> s_SceneRegistry;
 
 	//============================================================
-	// UIObject
+	// UserInterface
 	//============================================================
 	public:
 		//==============================
-		// Manage UIObject Registry
+		// Manage UserInterface Registry
 		//==============================
-		// Retrieve the current project's uiObject registry from disk and add to in-memory Registry
-		//		(s_UIObjectRegistry). This involves:
+		// Retrieve the current project's userInterface registry from disk and add to in-memory Registry
+		//		(s_UserInterfaceRegistry). This involves:
 		//		1. Retrieving the registry file from the current project asset directory.
 		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its uiObject specific metadata,
-		//		and instatiate each asset into the s_UIObjectRegistry.
-		static void DeserializeUIObjectRegistry();
-		// Save Current in-memory registry (s_UIObjectRegistry) to disk location specified in
+		//		3. Read each asset, retrieve its metadata, retrieve its userInterface specific metadata,
+		//		and instatiate each asset into the s_UserInterfaceRegistry.
+		static void DeserializeUserInterfaceRegistry();
+		// Save Current in-memory registry (s_UserInterfaceRegistry) to disk location specified in
 		//		current project. This involves:
 		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and UIObject specific metadata into the new yaml file.
+		//		2. Write each asset with its metadata and UserInterface specific metadata into the new yaml file.
 		//		3. Write the file to the output stream.
-		static void SerializeUIObjectRegistry();
-		// This function clears both the s_UIObjectRegistry and s_UIObjects which should also call
-		//		all destructors for in-memory UIObjects.
-		static void ClearUIObjectRegistry();
+		static void SerializeUserInterfaceRegistry();
+		// This function clears both the s_UserInterfaceRegistry and s_UserInterfaces which should also call
+		//		all destructors for in-memory UserInterfaces.
+		static void ClearUserInterfaceRegistry();
 
 		//==============================
-		// Create New UIObject
+		// Create New UserInterface
 		//==============================
 
-		// This function registers a new uiobject with the asset system using the provided filepath.
+		// This function registers a new userInterface with the asset system using the provided filepath.
 		//		This function takes the following steps:
 		//		1. Create a checksum from the raw file provided and determine if the file already
 		//		exists in the registry.
-		//		2. Create the uiobject file on disk.
-		//		3. Register the new file with the in-memory s_UIObjectRegistry and the on disk uiobject
+		//		2. Create the userInterface file on disk.
+		//		3. Register the new file with the in-memory s_UserInterfaceRegistry and the on disk userInterface
 		//		registry
-		//		4. Return the uiobject handle
-		static AssetHandle CreateNewUIObject(const std::string& uiObjectName);
+		//		4. Return the userInterface handle
+		static AssetHandle CreateNewUserInterface(const std::string& userInterfaceName);
 
 		//==============================
-		// Save a UIObject
+		// Save a UserInterface
 		//==============================
-		// Save Current UIObject
-		static void SaveUIObject(AssetHandle uiObjectHandle, Ref<RuntimeUI::UIObject> uiObject);
+		// Save Current UserInterface
+		static void SaveUserInterface(AssetHandle userInterfaceHandle, Ref<RuntimeUI::UserInterface> userInterface);
 
 		//==============================
-		// Load and Retrieve In-Memory UIObject
+		// Load and Retrieve In-Memory UserInterface
 		//==============================
 		// Function to get a texture with a given name
-		static Ref<RuntimeUI::UIObject> GetUIObject(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<RuntimeUI::UIObject>> GetUIObject(const std::filesystem::path& filepath);
+		static Ref<RuntimeUI::UserInterface> GetUserInterface(const AssetHandle& handle);
+		static std::tuple<AssetHandle, Ref<RuntimeUI::UserInterface>> GetUserInterface(const std::filesystem::path& filepath);
 
 		//==============================
 		// Getters/Setters
 		//==============================
 		// Check if name already exists in registry
-		static bool CheckUIObjectExists(const std::string& uiObjectName);
+		static bool CheckUserInterfaceExists(const std::string& userInterfaceName);
 
 		// Returns the relative path from project directory of intermediate file
-		static std::filesystem::path GetUIObjectLocation(const AssetHandle& handle);
+		static std::filesystem::path GetUserInterfaceLocation(const AssetHandle& handle);
 
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetUIObjectRegistry() { return s_UIObjectRegistry; }
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetUserInterfaceRegistry()
+		{
+			return s_UserInterfaceRegistry;
+		}
 	private:
 		//==============================
 		// Internal Functionality
 		//==============================
-		// This function creates a .uiobject file with the specified name and fills the provided asset file
+		// This function creates a .userInterface file with the specified name and fills the provided asset file
 		//		with relevant metadata.
-		static void CreateUIObjectFile(const std::string& uiObjectName, Assets::Asset& newAsset);
-		// Save a single uiObject
-		static void SerializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath);
-		// Load a single uiObject
-		static bool DeserializeUIObject(Ref<RuntimeUI::UIObject> uiObject, const std::filesystem::path& filepath);
-		// Instantiate a new uiObject
-		static Ref<RuntimeUI::UIObject> InstantiateUIObject(const Assets::Asset& uiObjectAsset);
+		static void CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset);
+		// Save a single userInterface
+		static void SerializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath);
+		// Load a single userInterface
+		static bool DeserializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath);
+		// Instantiate a new userInterface
+		static Ref<RuntimeUI::UserInterface> InstantiateUserInterface(const Assets::Asset& userInterfaceAsset);
 	private:
-		// This registry holds a reference to all of the available UIObject in the current project.
+		// This registry holds a reference to all of the available UserInterface in the current project.
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_UIObjectRegistry;
+		static std::unordered_map<AssetHandle, Assets::Asset> s_UserInterfaceRegistry;
 
 	//============================================================
 	// InputMode
@@ -870,7 +873,7 @@ namespace Kargono::Assets
 			DeserializeTextureRegistry();
 			DeserializeAudioRegistry();
 			DeserializeFontRegistry();
-			DeserializeUIObjectRegistry();
+			DeserializeUserInterfaceRegistry();
 			DeserializeInputModeRegistry();
 			DeserializeScriptRegistry();
 			DeserializeGameStateRegistry();
@@ -885,7 +888,7 @@ namespace Kargono::Assets
 			SerializeTextureRegistry();
 			SerializeAudioRegistry();
 			SerializeFontRegistry();
-			SerializeUIObjectRegistry();
+			SerializeUserInterfaceRegistry();
 			SerializeInputModeRegistry();
 			SerializeScriptRegistry();
 			SerializeGameStateRegistry();
@@ -900,7 +903,7 @@ namespace Kargono::Assets
 			ClearShaderRegistry();
 			ClearAudioRegistry();
 			ClearFontRegistry();
-			ClearUIObjectRegistry();
+			ClearUserInterfaceRegistry();
 			ClearInputModeRegistry();
 			ClearScriptRegistry();
 			ClearGameStateRegistry();

@@ -811,13 +811,13 @@ namespace Kargono
 
 	void EditorApp::OnPlay()
 	{
-		// Cache Current UIObject/InputMode in editor
-		if (!RuntimeUI::RuntimeUIService::GetCurrentUIObject()) { m_EditorUIObject = nullptr; }
+		// Cache Current UserInterface/InputMode in editor
+		if (!RuntimeUI::RuntimeUIService::GetActiveUI()) { m_EditorUIObject = nullptr; }
 		else
 		{
 			RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = RuntimeUI::RuntimeUIService::GetCurrentUIObject();
-			m_EditorUIObjectHandle = RuntimeUI::RuntimeUIService::GetCurrentUIHandle();
+			m_EditorUIObject = RuntimeUI::RuntimeUIService::GetActiveUI();
+			m_EditorUIObjectHandle = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
 		}
 
 		if (!Input::InputModeService::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
@@ -886,11 +886,11 @@ namespace Kargono
 		// Clear UIObjects during runtime.
 		if (m_EditorUIObject)
 		{
-			RuntimeUI::RuntimeUIService::LoadUIObject(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUIObject, m_EditorUIObjectHandle);
 		}
 		else
 		{
-			RuntimeUI::RuntimeUIService::ClearUIEngine();
+			RuntimeUI::RuntimeUIService::ClearActiveUI();
 		}
 
 		// Clear InputModes during runtime.

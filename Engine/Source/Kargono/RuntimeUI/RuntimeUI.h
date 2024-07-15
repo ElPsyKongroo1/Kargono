@@ -198,79 +198,88 @@ namespace Kargono::RuntimeUI
 		void DecrementIterators(uint16_t iterator);
 	};
 
-	struct UIObject
+	class UserInterface
 	{
-		std::vector<Window> Windows {};
+	public:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<Window> m_Windows {};
 		Ref<Font> m_Font = nullptr;
 		Math::vec4 m_SelectColor {1.0f};
 		Assets::AssetHandle m_FontHandle {0};
 		UICallbacks m_FunctionPointers{};
+
+		std::vector<Window*> m_DisplayedWindows{};
+		Widget* m_SelectedWidget{ nullptr };
+		Widget* m_HoveredWidget{ nullptr };
+		Window* m_ActiveWindow{ nullptr };
 	};
 
 
 	class RuntimeUIService
 	{
 	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
 		static void Init();
-		static void LoadUIObject(Ref<UIObject> uiObject, Assets::AssetHandle uiHandle);
-		static void LoadUserInterfaceFromName(const std::string& uiName);
 		static void Terminate();
-		static bool SaveCurrentUIIntoUIObject();
-		static void DeleteWindow(uint32_t windowLocation);
-		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
-		static void AddWindow(Window& window); // TODO: Remove this api, it is for testing!
-		static void SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
-		static std::vector<Window>& GetAllWindows();
-		static void RefreshDisplayedWindows();
-		static void ClearUIEngine();
-		static Ref<UIObject> GetCurrentUIObject();
-		static Assets::AssetHandle GetCurrentUIHandle();
-		static void SetCurrentUIObject(Ref<UIObject> newUI);
-		static void SetCurrentUIHandle(Assets::AssetHandle newHandle);
+
+		//==============================
+		// Modify Active UI
+		//==============================
 		static void SetSelectedWidgetColor(const Math::vec4& color);
-		static void SetWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
-
-		static void SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag);
-
+		static void SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
+		static void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		static void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
 		static void SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-
+		static void SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag);
 		static void SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-
 		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
-
-		static void SetOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
-		static Ref<Scripting::Script> GetOnMove();
-		static Assets::AssetHandle GetOnMoveHandle();
-
 		static void SetDisplayWindow(const std::string& windowTag, bool display);
+		static Ref<Scripting::Script> GetActiveOnMove();
+		static Assets::AssetHandle GetActiveOnMoveHandle();
+		static std::vector<Window>& GetActiveWindows();
+		static void AddActiveWindow(Window& window);
+		static void DeleteActiveWindow(uint32_t windowLocation);
 
+		//==============================
+		// Interact With Active UI
+		//==============================
 		static void MoveRight();
 		static void MoveLeft();
 		static void MoveUp();
 		static void MoveDown();
 		static void OnPress();
 	private:
+		//==============================
+		// Internal Functionality
+		//==============================
 		static void CalculateDirections();
-	private:
-		std::vector<Window*> m_DisplayedWindows{};
-		Ref<UIObject> m_CurrentUI{ nullptr };
-		Assets::AssetHandle m_CurrentUIHandle{0};
-		std::vector<Window> m_Windows {};
-		Widget* m_SelectedWidget { nullptr };
-		Widget* m_HoveredWidget { nullptr };
-		Window* m_ActiveWindow { nullptr };
-		UICallbacks m_FunctionPointers{};
 
-		Ref<Font> m_CurrentFont;
-		Assets::AssetHandle m_FontHandle {0};
-		Math::vec4 m_SelectColor {1.0f};
-
-		static RuntimeUIService s_Engine;
-
-		friend class TextWidget;
+		//==============================
+		// Getters/Setters
+		//==============================
+	public:
+		static void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
+		static void SetActiveUIFromName(const std::string& uiName);
+		static Ref<UserInterface> GetActiveUI();
+		static Assets::AssetHandle GetActiveUIHandle();
+		static void ClearActiveUI();
 
 	public:
-		// Editor API
+		//==============================
+		// Other
+		//==============================
+		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
+		static bool SaveCurrentUIIntoUIObject();
+		static void RefreshDisplayedWindows();
+
+	public:
+		//==============================
+		// Editor API TODO REMOVE PLEASE AHHHHHHHHHHHHHHHHHHHHGODDD
+		//==============================
 		static int32_t& GetWindowToDelete();
 		static int32_t& GetWidgetToDelete();
 		static int32_t& GetWindowsToAddWidget();
@@ -279,6 +288,14 @@ namespace Kargono::RuntimeUI
 		static int32_t& GetSelectedWindow();
 		static int32_t& GetSelectedWidget();
 		static Math::vec4& GetSelectColor();
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static Ref<UserInterface> s_ActiveUI;
+		static Assets::AssetHandle s_ActiveUIHandle;
+	private:
+		friend class TextWidget;
 	};
 }
 
@@ -288,17 +305,17 @@ namespace Kargono::Utility
 	{
 		switch (widgetType)
 		{
-		case RuntimeUI::WidgetTypes::TextWidget: return "TextWidget";
-		case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
-		case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
-		case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
-		case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
-		case RuntimeUI::WidgetTypes::None: return "None";
-		default:
-		{
-			KG_ERROR("Invalid Widget Type at WidgetTypeToString");
-			return "None";
-		}
+			case RuntimeUI::WidgetTypes::TextWidget: return "TextWidget";
+			case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
+			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
+			case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
+			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
+			case RuntimeUI::WidgetTypes::None: return "None";
+			default:
+			{
+				KG_ERROR("Invalid Widget Type at WidgetTypeToString");
+				return "None";
+			}
 		}
 	}
 
