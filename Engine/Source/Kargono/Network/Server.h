@@ -180,9 +180,6 @@ namespace Kargono::Network
 
 		// ASYNC - Instruct asio to wait for connection
 		void WaitForClientConnection();
-	public:
-		static Ref<Network::Server> GetActiveServer() { return s_Server; }
-		static void SetActiveServer(Ref<Network::Server> newServer) { s_Server = newServer; }
 	private:
 		// TODO: This is very temporary. Only support one session currently!
 		Session m_OnlySession{};
@@ -213,9 +210,26 @@ namespace Kargono::Network
 		// Variables for sleeping thread until a notify command is received
 		std::condition_variable m_BlockThreadCV {};
 		std::mutex m_BlockThreadMx {};
+	};
 
-
+	class ServerService
+	{
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		static Ref<Network::Server> GetActiveServer()
+		{
+			return s_Server;
+		}
+		static void SetActiveServer(Ref<Network::Server> newServer)
+		{
+			s_Server = newServer;
+		}
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		static Ref<Network::Server> s_Server;
 	};
 }

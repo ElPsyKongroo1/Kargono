@@ -233,7 +233,7 @@ namespace Kargono
 
 	bool EngineService::OnAppTickEvent(Events::AppTickEvent& e)
 	{
-		auto client = Network::Client::GetActiveClient();
+		auto client = Network::ClientService::GetActiveClient();
 		if (client)
 		{
 			client->SubmitToEventQueue(CreateRef<Events::AppTickEvent>(e));

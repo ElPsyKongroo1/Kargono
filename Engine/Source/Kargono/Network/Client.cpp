@@ -88,7 +88,7 @@ namespace Kargono::Network
 		KG_INFO("[CLIENT]: Connection has been terminated");
 
 		EngineService::SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
-		Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
+		ClientService::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
 
 	}
 
@@ -135,10 +135,6 @@ namespace Kargono::Network
 			});
 	}
 
-
-
-	Ref<Network::Client> Client::s_Client { nullptr };
-	Ref<std::thread> Client::s_NetworkThread { nullptr };
 
 	Client::~Client()
 	{
@@ -213,7 +209,7 @@ namespace Kargono::Network
 
 			Utility::AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
 				{
-					Client::GetActiveClient()->SubmitToFunctionQueue([&]()
+					ClientService::GetActiveClient()->SubmitToFunctionQueue([&]()
 						{
 							KG_TRACE_INFO("Submitted a UDP INIT BITCH");
 							// Do checks for UDP connection
@@ -224,7 +220,7 @@ namespace Kargono::Network
 					WakeUpNetworkThread();
 				}, [&]()
 				{
-					Client::GetActiveClient()->SubmitToFunctionQueue([&]()
+					ClientService::GetActiveClient()->SubmitToFunctionQueue([&]()
 						{
 							if (!m_UDPConnectionSuccessful)
 							{
@@ -573,7 +569,7 @@ namespace Kargono::Network
 				Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 				{
 					// Note Starting Update
-					Network::Client::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::StartSession>());
+					Network::ClientService::GetActiveClient()->SubmitToEventQueue(CreateRef<Events::StartSession>());
 
 					// Open Gameplay
 					EngineService::SubmitToEventQueue(CreateRef<Events::StartSession>());
@@ -655,80 +651,6 @@ namespace Kargono::Network
 		}
 	}
 
-	uint16_t Client::GetActiveSessionSlot()
-	{
-		if (GetActiveClient())
-		{
-			return GetActiveClient()->GetSessionSlot();
-		}
-		// Client is unavailable so send error response
-		return std::numeric_limits<uint16_t>::max();
-	}
-
-	void Client::SendAllEntityLocation(UUID entityID, Math::vec3 location)
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
-		}
-	}
-
-	void Client::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
-		}
-	}
-
-	void Client::EnableReadyCheck()
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::EnableReadyCheck>());
-		}
-	}
-
-	void Client::SessionReadyCheck()
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SessionReadyCheck>());
-		}
-	}
-
-	void Client::RequestUserCount()
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestUserCount>());
-		}
-	}
-
-	void Client::RequestJoinSession()
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::RequestJoinSession>());
-		}
-	}
-
-	void Client::LeaveCurrentSession()
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::LeaveCurrentSession>());
-		}
-	}
-
-	void Client::SignalAll(uint16_t signal)
-	{
-		if (GetActiveClient())
-		{
-			GetActiveClient()->SubmitToEventQueue(CreateRef<Events::SignalAll>(signal));
-		}
-	}
-
 	void Client::StopClient()
 	{
 		m_Quit = true;
@@ -772,6 +694,82 @@ namespace Kargono::Network
 			OnEvent(*event);
 		}
 		m_EventQueue.clear();
+	}
+
+	Ref<Network::Client> ClientService::s_Client { nullptr };
+
+	uint16_t ClientService::GetActiveSessionSlot()
+	{
+		if (s_Client)
+		{
+			return s_Client->GetSessionSlot();
+		}
+		// Client is unavailable so send error response
+		return std::numeric_limits<uint16_t>::max();
+	}
+
+	void ClientService::SendAllEntityLocation(UUID entityID, Math::vec3 location)
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
+		}
+	}
+
+	void ClientService::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
+		}
+	}
+
+	void ClientService::EnableReadyCheck()
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::EnableReadyCheck>());
+		}
+	}
+
+	void ClientService::SessionReadyCheck()
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::SessionReadyCheck>());
+		}
+	}
+
+	void ClientService::RequestUserCount()
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::RequestUserCount>());
+		}
+	}
+
+	void ClientService::RequestJoinSession()
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::RequestJoinSession>());
+		}
+	}
+
+	void ClientService::LeaveCurrentSession()
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::LeaveCurrentSession>());
+		}
+	}
+
+	void ClientService::SignalAll(uint16_t signal)
+	{
+		if (s_Client)
+		{
+			s_Client->SubmitToEventQueue(CreateRef<Events::SignalAll>(signal));
+		}
 	}
 }
 
