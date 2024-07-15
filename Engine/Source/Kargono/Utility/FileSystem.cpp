@@ -14,6 +14,26 @@ namespace Kargono::Utility
 		
 		std::filesystem::rename(oldPath, newPath);
 	}
+	bool FileSystem::CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile)
+	{
+		// Check if the sourceFile path exists and is a regular file
+		if (!std::filesystem::exists(sourceFile) || !std::filesystem::is_regular_file(sourceFile)) 
+		{
+			KG_WARN("Failed to copy file. Either could not locate file or file is unfamiliar format!");
+			return false;
+		}
+
+		// Create the destinationFile directory if it does not exist
+		if (!std::filesystem::exists(destinationFile.parent_path())) 
+		{
+			std::filesystem::create_directories(destinationFile.parent_path());
+		}
+
+		// Copy the file to the destinationFile path
+		std::filesystem::copy_file(sourceFile, destinationFile, std::filesystem::copy_options::overwrite_existing);
+
+		return true;
+	}
 	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
 	{
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
@@ -244,6 +264,47 @@ namespace Kargono::Utility
 		{
 			std::filesystem::create_directories(filepath);
 		}
+	}
+
+	bool FileSystem::CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory)
+	{
+		// Check if the source path exists and is a directory
+		if (!std::filesystem::exists(sourceDirectory) || !std::filesystem::is_directory(sourceDirectory)) 
+		{
+			KG_WARN("Failed to copy directory since source directory does not exist or is not a directory");
+			return false;
+		}
+
+		// Create the destination directory if it does not exist
+		if (!std::filesystem::exists(destinationDirectory)) 
+		{
+			std::filesystem::create_directories(destinationDirectory);
+		}
+
+		// Iterate through the source directory
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(sourceDirectory)) 
+		{
+			const auto& path = entry.path();
+			auto relative_path = std::filesystem::relative(path, sourceDirectory);
+			auto destination_path = destinationDirectory / relative_path;
+
+			// Create directory or file
+			if (std::filesystem::is_directory(path)) 
+			{
+				std::filesystem::create_directories(destination_path);
+			}
+			// Copy the file to the destination path
+			else if (std::filesystem::is_regular_file(path)) 
+			{
+				std::filesystem::copy_file(path, destination_path, std::filesystem::copy_options::overwrite_existing);
+			}
+			else 
+			{
+				KG_WARN("Skipping entry that is neither a directory nor a regular file!");
+			}
+		}
+
+		return true;
 	}
 
 }

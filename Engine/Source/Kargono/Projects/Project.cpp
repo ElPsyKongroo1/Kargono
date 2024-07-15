@@ -84,6 +84,37 @@ namespace Kargono::Utility
 namespace Kargono::Projects
 {
 	Ref<Project> ProjectService::s_ActiveProject { nullptr };
+
+	void ProjectService::ExportProject(const std::filesystem::path& exportLocation)
+	{
+		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!")
+
+		std::filesystem::path projectDirectory = exportLocation / s_ActiveProject->Name;
+
+		KG_INFO("Creating {} Project Directory", s_ActiveProject->Name);
+		Utility::FileSystem::CreateNewDirectory(projectDirectory);
+
+		KG_INFO("Copying project files over");
+		bool success = Utility::FileSystem::CopyDirectory(
+			GetActiveProjectDirectory(), 
+			projectDirectory);
+		if (!success)
+		{
+			KG_WARN("Failed to export project due to inability to copy project's directory!");
+			return;
+		}
+
+		KG_INFO("Copying runtime shared libraries");
+		// Copy OpenAL.dll file
+		success = Utility::FileSystem::CopySingleFile(
+			std::filesystem::current_path().parent_path() / "Dependencies/OpenAL/lib/dist/OpenAL32.dll",
+			projectDirectory / "OpenAL32.dll");
+		if (!success)
+		{
+			KG_WARN("Failed to move OpenAL32.dll file into export directory!");
+			return;
+		}
+	}
 }
 
 

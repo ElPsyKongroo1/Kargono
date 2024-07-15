@@ -17,6 +17,10 @@ namespace Kargono
 		{
 			EditorUI::EditorUIService::ChooseDirectory(s_ExportProjectLocation);
 		};
+		s_ExportProjectSpec.ConfirmAction = [&]()
+		{
+			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption);
+		};
 
 		s_ExportProjectLocation.Label = "Export Location";
 		s_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
