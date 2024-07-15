@@ -43,10 +43,12 @@ namespace Kargono::Utility
 		// Manage Files/Directories
 		//==============================
 		static void RenameFile(const std::filesystem::path& oldPath, std::string newName);
+		static bool CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile);
 		static bool DeleteSelectedFile(const std::filesystem::path& filepath);
 		static void DeleteSelectedDirectory(const std::filesystem::path& filepath);
 		static void MoveFileToDirectory(const std::filesystem::path& filepath, const std::filesystem::path& newDirectory);
 		static void CreateNewDirectory(const std::filesystem::path& filepath);
+		static bool CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory);
 
 		//==============================
 		// Management Functions for std::filesystem::path

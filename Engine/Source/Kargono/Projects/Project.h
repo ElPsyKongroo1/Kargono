@@ -125,9 +125,13 @@ namespace Kargono::Projects
 	class ProjectService
 	{
 	public:
-
 		//=========================
 		// External API
+		//=========================
+		static void ExportProject(const std::filesystem::path& exportLocation);
+	public:
+		//=========================
+		// Getters/Setters API
 		//=========================
 		// This function simply returns the project directory
 		//		associated with the currently active project
