@@ -114,7 +114,7 @@ namespace Kargono::Scripting
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
 		Client_SessionReadyCheck->m_SectionLabel = "Client";
-		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::Client::SessionReadyCheck);
+		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::SessionReadyCheck);
 		engineScripts.push_back(Client_SessionReadyCheck);
 	}
 
@@ -834,14 +834,14 @@ namespace Kargono::Scripting
 		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
 		ImportInsertFunction(StringUInt64)
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::Client::LeaveCurrentSession,VoidNone) 
-		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
-		AddEngineFunctionPointerToDll(RequestJoinSession, Network::Client::RequestJoinSession,VoidNone) 
-		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::Client::SendAllEntityPhysics,VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(SignalAll, Network::Client::SignalAll, VoidUInt16)
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession,VoidNone) 
+		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck,VoidNone) 
+		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession,VoidNone) 
+		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics,VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount,VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 

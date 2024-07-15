@@ -169,8 +169,6 @@ namespace Kargono::Network
 			});
 	}
 
-	Ref<Network::Server> Server::s_Server { nullptr };
-
 	Server::Server(uint16_t nPort, bool isLocal)
 		: m_TCPAcceptor(m_Context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), nPort))
 	{
@@ -697,4 +695,6 @@ namespace Kargono::Network
 				WaitForClientConnection();
 			});
 	}
+
+	Ref<Network::Server> ServerService::s_Server { nullptr };
 }

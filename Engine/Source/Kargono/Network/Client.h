@@ -163,38 +163,7 @@ namespace Kargono::Network
 
 		void OnMessage(Kargono::Network::Message& msg);
 
-	public:
-		//==============================
-		// TODO SOON TO BE SERVICE
-		//==============================
-		static uint16_t GetActiveSessionSlot();
-		static void SendAllEntityLocation(UUID entityID, Math::vec3 location);
-		static void SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity);
-
-		static void EnableReadyCheck();
-		static void SessionReadyCheck();
-		static void RequestUserCount();
-		static void RequestJoinSession();
-		static void LeaveCurrentSession();
-		static void SignalAll(uint16_t signal);
-
-		static Ref<Network::Client> GetActiveClient()
-		{
-			return s_Client;
-		}
-		static void SetActiveClient(Ref<Network::Client> newClient)
-		{
-			s_Client = newClient;
-		}
-
-		static Ref<std::thread> GetActiveNetworkThread()
-		{
-			return s_NetworkThread;
-		}
-		static void SetActiveNetworkThread(Ref<std::thread> newThread)
-		{
-			s_NetworkThread = newThread;
-		}
+	
 		//==============================
 		// Getters/Setters
 		//==============================
@@ -240,11 +209,53 @@ namespace Kargono::Network
 		// Variables for sleeping thread until a notify command is received
 		std::condition_variable m_BlockThreadCV {};
 		std::mutex m_BlockThreadMx {};
-
-		static Ref<Network::Client> s_Client;
-		static Ref<std::thread> s_NetworkThread;
+		Ref<std::thread> m_NetworkThread { nullptr };
+	private:
+		friend class ClientService;
 	};
 
+	class ClientService
+	{
+	public:
+		//==============================
+		// External API
+		//==============================
+		static uint16_t GetActiveSessionSlot();
+		static void SendAllEntityLocation(UUID entityID, Math::vec3 location);
+		static void SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity);
+		static void EnableReadyCheck();
+		static void SessionReadyCheck();
+		static void RequestUserCount();
+		static void RequestJoinSession();
+		static void LeaveCurrentSession();
+		static void SignalAll(uint16_t signal);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		static Ref<Network::Client> GetActiveClient()
+		{
+			return s_Client;
+		}
+		static void SetActiveClient(Ref<Network::Client> newClient)
+		{
+			s_Client = newClient;
+		}
+
+		static Ref<std::thread> GetActiveNetworkThread()
+		{
+			return s_Client->m_NetworkThread;
+		}
+		static void SetActiveNetworkThread(Ref<std::thread> newThread)
+		{
+			s_Client->m_NetworkThread = newThread;
+		}
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static Ref<Network::Client> s_Client;
+	};
 	
 }
 
