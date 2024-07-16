@@ -124,7 +124,7 @@ namespace Kargono::Utility
 
 
 
-#if KG_EXPORT == 0
+#ifndef KG_EXPORT
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
 		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
