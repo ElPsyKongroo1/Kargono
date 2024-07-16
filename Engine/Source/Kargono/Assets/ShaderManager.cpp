@@ -34,17 +34,6 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
-	{
-		switch (stage)
-		{
-		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
-		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
-		}
-		KG_ERROR("Invalid Shader Type!");
-		return (shaderc_shader_kind)0;
-	}
-
 	static const char* GLShaderStageToString(GLenum stage)
 	{
 		switch (stage)
@@ -91,6 +80,17 @@ namespace Kargono::Utility
 
 		return shaderSources;
 	}
+#ifndef KG_EXPORT
+	static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
+	{
+		switch (stage)
+		{
+		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
+		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
+		}
+		KG_ERROR("Invalid Shader Type!");
+		return (shaderc_shader_kind)0;
+	}
 
 	static void CompileBinaries(const Assets::AssetHandle& assetHandle, const std::unordered_map<GLenum, std::string>& shaderSources, std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)
 	{
@@ -133,6 +133,7 @@ namespace Kargono::Utility
 			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
 		}
 	}
+#endif
 }
 
 namespace Kargono::Assets
@@ -443,11 +444,16 @@ namespace Kargono::Assets
 	void AssetManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
 		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
 	{
+#ifdef KG_EXPORT
+		KG_ERROR("Attempt to create/compile new shader during runtime!");
+#endif
 		// Create Shader Binary
 		auto shaderSources = Utility::PreProcess(shaderSource);
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+#ifndef KG_EXPORT
 		Utility::CompileBinaries(newAsset.Handle, shaderSources, openGLSPIRV);
+#endif
 
 		// Save binary intermediates for all shader stages!
 		std::string intermediatePath = "Shaders/Intermediates/" + (std::string)newAsset.Handle;
