@@ -307,4 +307,26 @@ namespace Kargono::Utility
 		return true;
 	}
 
+	std::filesystem::path FileSystem::FindFileWithExtension(const std::filesystem::path& directory, const std::string& extension)
+	{
+		// Check if the provided path is a directory
+		if (!std::filesystem::is_directory(directory)) 
+		{
+			KG_WARN("Invalid directory provided!");
+			return {};
+		}
+
+		for (const auto& entry : std::filesystem::directory_iterator(directory)) 
+		{
+			// Check if the current entry is a regular file and has the specified extension
+			if (entry.is_regular_file() && entry.path().extension() == extension) 
+			{
+				return entry.path();
+			}
+		}
+
+		// Return an empty path if no file with the specified extension is found
+		return {};
+	}
+
 }

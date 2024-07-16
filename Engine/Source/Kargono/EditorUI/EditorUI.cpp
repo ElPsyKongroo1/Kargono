@@ -1067,13 +1067,24 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
+
 				if (spec.ToggleBoolean)
 				{
-					spec.ConfirmAction(false);
+					spec.ToggleBoolean = false;
+					if (!spec.ConfirmAction)
+					{
+						return;
+					}
+					spec.ConfirmAction(spec.ToggleBoolean);
 				}
 				else
 				{
-					spec.ConfirmAction(true);
+					spec.ToggleBoolean = true;
+					if (!spec.ConfirmAction)
+					{
+						return;
+					}
+					spec.ConfirmAction(spec.ToggleBoolean);
 				}
 			}, s_SmallCheckboxButton, spec.ToggleBoolean);
 			ImGui::PopStyleColor(2);

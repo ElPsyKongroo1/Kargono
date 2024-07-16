@@ -89,13 +89,14 @@ namespace Kargono::Projects
 {
 	Ref<Project> ProjectService::s_ActiveProject { nullptr };
 
-	void ProjectService::ExportProject(const std::filesystem::path& exportLocation)
+	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
 	{
 		KG_INFO("Beginning export project process");
 
 		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!")
 
 		std::filesystem::path exportDirectory = exportLocation / s_ActiveProject->Name;
+		std::filesystem::path serverExportDirectory = exportLocation / (s_ActiveProject->Name + "Server");
 
 		KG_INFO("Creating {} Project Directory", s_ActiveProject->Name);
 		Utility::FileSystem::CreateNewDirectory(exportDirectory);
@@ -135,20 +136,57 @@ namespace Kargono::Projects
 			return;
 		}
 
+		if (createServer)
+		{
+			KG_INFO("Creating server export directory at {}", serverExportDirectory.string());
+			Utility::FileSystem::CreateNewDirectory(serverExportDirectory);
+			success = Utility::FileSystem::CopyDirectory(exportDirectory, serverExportDirectory);
+			if (!success)
+			{
+				KG_WARN("Failed to copy files from exportDirectory to serverExportDirectory");
+				Utility::FileSystem::DeleteSelectedDirectory(exportDirectory);
+				Utility::FileSystem::DeleteSelectedDirectory(serverExportDirectory);
+				return;
+			}
+		}
+
 		KG_INFO("Building runtime executable");
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildRuntimeExecutable.log");
-		success = BuildRuntimeExecutable(exportDirectory);
+		success = BuildRuntimeExecutable(exportDirectory, false);
 
 		if (!success)
 		{
 			KG_WARN("Failed to build runtime executable into export directory");
 			Utility::FileSystem::DeleteSelectedDirectory(exportDirectory);
+			if (createServer)
+			{
+				Utility::FileSystem::DeleteSelectedDirectory(serverExportDirectory);
+			}
 			return;
 		}
 
+		if (createServer)
+		{
+			KG_INFO("Building server executable");
+			Utility::FileSystem::DeleteSelectedFile("Log/BuildServerExecutable.log");
+			success = BuildRuntimeExecutable(serverExportDirectory, true);
+
+			if (!success)
+			{
+				KG_WARN("Failed to build server executable into export directory");
+				Utility::FileSystem::DeleteSelectedDirectory(exportDirectory);
+				Utility::FileSystem::DeleteSelectedDirectory(serverExportDirectory);
+				return;
+			}
+		}
+
 		KG_INFO("Successfully exported {} project to {}", s_ActiveProject->Name, exportDirectory.string());
+		if (createServer)
+		{
+			KG_INFO("Successfully exported {} project server to {}", s_ActiveProject->Name, serverExportDirectory.string());
+		}
 	}
-	bool ProjectService::BuildRuntimeExecutable(const std::filesystem::path& exportDirectory)
+	bool ProjectService::BuildRuntimeExecutable(const std::filesystem::path& exportDirectory, bool createServer)
 	{
 		KG_ASSERT(s_ActiveProject, "Failed to build runtime executable since no active project exists");
 		std::filesystem::path solutionPath { std::filesystem::current_path().parent_path() / "Kargono.sln" };
@@ -157,7 +195,7 @@ namespace Kargono::Projects
 		// Check if the sourceFile path exists and is a regular file
 		if (!std::filesystem::exists(solutionPath) || !std::filesystem::is_regular_file(solutionPath))
 		{
-			KG_WARN("Failed to build runtime executable. Could not locate/invalid Runtime.vcxproj file");
+			KG_WARN("Failed to build executable. Could not locate/invalid Kargono.sln file");
 			return false;
 		}
 
@@ -175,8 +213,15 @@ namespace Kargono::Projects
 		outputStream << "msbuild "; // Add Command
 
 		outputStream << "\"" << solutionPath.string() << "\" "; // Provide path to solution
+		if (createServer)
+		{
+			outputStream << "-t:Engine\\Engine,Applications\\Server "; // Specify Runtime project to be built
+		}
+		else
+		{
+			outputStream << "-t:Engine\\Engine,Applications\\Runtime "; // Specify Runtime project to be built
+		}
 
-		outputStream << "-t:Engine\\Engine,Applications\\Runtime "; // Specify Runtime project to be built
 		outputStream << "-p:OutDir=" << "\"" << intermediatesPath.string() << "/\" "; // Provide path to place executable
 
 		// Specify the intermediate output directory
@@ -190,7 +235,14 @@ namespace Kargono::Projects
 		outputStream << ")"; // Parentheses to group all function calls together
 
 		// Sends all three calls (open dev console, compiler, and linker) error/info to log file
-		outputStream << " >> Log\\BuildRuntimeExecutable.log 2>&1 ";
+		if (createServer)
+		{
+			outputStream << " >> Log\\BuildServerExecutable.log 2>&1 ";
+		}
+		else
+		{
+			outputStream << " >> Log\\BuildRuntimeExecutable.log 2>&1 ";
+		}
 		
 
 		// Call Command
@@ -203,7 +255,14 @@ namespace Kargono::Projects
 		}
 
 		// Move Executable into main directory
-		success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime.exe", exportDirectory / (s_ActiveProject->Name + ".exe"));
+		if (createServer)
+		{
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server.exe", exportDirectory / (s_ActiveProject->Name + "Server.exe"));
+		}
+		else
+		{
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime.exe", exportDirectory / (s_ActiveProject->Name + ".exe"));
+		}
 
 		if (!success)
 		{

@@ -6,8 +6,7 @@
 namespace Kargono
 {
 	// Final Export Values
-	const std::filesystem::path runtimePath = "./Pong.kproj";
-	const std::filesystem::path logoPath = "./pong_logo.png";
+	const std::filesystem::path logoPath = "./ProjectIcon.png";
 
 	RuntimeApp::RuntimeApp()
 		: Application("RuntimeLayer")
@@ -26,24 +25,35 @@ namespace Kargono
 		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
-		#ifndef KG_EXPORT
-			#ifdef KG_TESTING
-					OpenProject("../Projects/Pong/Pong.kproj");
-			#else
-					if (!OpenProject())
-					{
-						EngineService::EndRun();
-						return;
-					}
-			#endif
-		#else
-		OpenProject(runtimePath);
+
+#ifdef KG_TESTING
+		OpenProject("../Projects/Pong/Pong.kproj");
+#elif defined KG_EXPORT
+		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
+			std::filesystem::current_path(),
+			".kproj");
+		if (pathToProject.empty())
+		{
+			KG_CRITICAL("Could not locate a .kproj file in local directory!");
+			EngineService::EndRun();
+			return;
+		}
+		OpenProject(pathToProject);
 		if (!Projects::ProjectService::GetActive())
+		{
+			KG_CRITICAL("Failed to open project!");
+			EngineService::EndRun();
+			return;
+		}
+#else
+		if (!OpenProject())
 		{
 			EngineService::EndRun();
 			return;
 		}
-		#endif
+#endif
+
+		
 		
 #ifndef KG_TESTING
 		Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
@@ -346,11 +356,14 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
-				#ifndef KG_EXPORT
-				EngineService::GetActiveWindow().Init(projectProps);
-				#else
-				EngineService::GetActiveWindow().Init(projectProps, logoPath);
-				#endif
+				if (std::filesystem::exists(logoPath))
+				{
+					EngineService::GetActiveWindow().Init(projectProps, logoPath);
+				}
+				else
+				{
+					EngineService::GetActiveWindow().Init(projectProps);
+				}
 				Rendering::RendererAPI::Init();
 			}
 
