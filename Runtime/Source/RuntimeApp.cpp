@@ -6,11 +6,8 @@
 namespace Kargono
 {
 	// Final Export Values
-	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
-	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
-
-	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
-	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
+	const std::filesystem::path runtimePath = "./Pong.kproj";
+	const std::filesystem::path logoPath = "./pong_logo.png";
 
 	RuntimeApp::RuntimeApp()
 		: Application("RuntimeLayer")
@@ -29,7 +26,7 @@ namespace Kargono
 		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
-		#if KG_EXPORT == 0
+		#ifndef KG_EXPORT
 			#ifdef KG_TESTING
 					OpenProject("../Projects/Pong/Pong.kproj");
 			#else
@@ -41,9 +38,9 @@ namespace Kargono
 			#endif
 		#else
 		OpenProject(runtimePath);
-		if (!Projects::Project::GetActive())
+		if (!Projects::ProjectService::GetActive())
 		{
-			Application::GetCurrentApp().Close();
+			EngineService::EndRun();
 			return;
 		}
 		#endif
@@ -349,10 +346,10 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
-				#if KG_EXPORT == 0
+				#ifndef KG_EXPORT
 				EngineService::GetActiveWindow().Init(projectProps);
 				#else
-				Application::GetCurrentApp().GetWindow().Init(projectProps, logoPath);
+				EngineService::GetActiveWindow().Init(projectProps, logoPath);
 				#endif
 				Rendering::RendererAPI::Init();
 			}

@@ -10,6 +10,11 @@ workspace "Kargono"
         "Dist"
     }
 
+    defines
+    {
+        "$(ExternalCompilerOptions)"
+    }
+
     -- solution_items
 	-- {
 	-- 	".editorconfig"

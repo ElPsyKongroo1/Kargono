@@ -441,7 +441,7 @@ namespace Kargono::Scripting
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
 		KG_INFO("Clearing previous compilation logs...");
-		Utility::FileSystem::DeleteSelectedFile("Log/ScriptCompilation.log");
+		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibraryDebug.log");
 		KG_INFO("Compiling debug script module...");
 		buildSuccessful = CompileModuleCode(true);
 		if (!buildSuccessful)
@@ -451,6 +451,8 @@ namespace Kargono::Scripting
 			Assets::AssetManager::DeserializeScriptRegistry();
 			return;
 		}
+		KG_INFO("Clearing previous compilation logs...");
+		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibrary.log");
 		KG_INFO("Compiling release script module...");
 		buildSuccessful = CompileModuleCode(false);
 		if (!buildSuccessful)
@@ -797,11 +799,11 @@ namespace Kargono::Scripting
 		// Sends all three calls (open dev console, compiler, and linker) error/info to log file
 		if (createDebug)
 		{
-			outputStream << " >> Log\\ScriptCompilationDebug.log 2>&1 ";
+			outputStream << " >> Log\\BuildScriptLibraryDebug.log 2>&1 ";
 		}
 		else
 		{
-			outputStream << " >> Log\\ScriptCompilation.log 2>&1 "; 
+			outputStream << " >> Log\\BuildScriptLibrary.log 2>&1 "; 
 		}
 
 		// Call Command

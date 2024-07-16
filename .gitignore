@@ -25,6 +25,8 @@ bin-int/**
 **.vcxproj.filters
 **.vcxproj.user
 **.csproj
+**.sln.metaproj
+**.sln.metaproj.tmp
 **/Makefile
 
 

@@ -45,8 +45,7 @@ project "Server"
     defines 
     {
         "KG_RUNTIME",
-		"_CRT_SECURE_NO_WARNINGS",
-        "KG_EXPORT=0"
+		"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
