@@ -4,7 +4,7 @@ project "msdf-atlas-gen"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-    staticruntime "off"
+    staticruntime "on"
 	linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
