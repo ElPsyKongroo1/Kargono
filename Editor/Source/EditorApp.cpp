@@ -8,6 +8,7 @@ namespace Kargono
 {
 	static EditorUI::GenericPopupSpec s_ExportProjectSpec {};
 	static EditorUI::ChooseDirectorySpec s_ExportProjectLocation {};
+	static EditorUI::CheckboxSpec s_ExportProjectServer {};
 
 	static void InitializeStaticResources()
 	{
@@ -16,14 +17,18 @@ namespace Kargono
 		s_ExportProjectSpec.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::ChooseDirectory(s_ExportProjectLocation);
+			EditorUI::EditorUIService::Checkbox(s_ExportProjectServer);
 		};
 		s_ExportProjectSpec.ConfirmAction = [&]()
 		{
-			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption);
+			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption, s_ExportProjectServer.ToggleBoolean);
 		};
 
 		s_ExportProjectLocation.Label = "Export Location";
 		s_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+
+		s_ExportProjectServer.Label = "Export Server";
+		s_ExportProjectServer.ToggleBoolean = true;
 	}
 
 	EditorApp* EditorApp::s_EditorApp = nullptr;

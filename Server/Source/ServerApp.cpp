@@ -5,13 +5,6 @@
 
 namespace Kargono
 {
-	// Final Export Values
-	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
-	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
-
-	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
-	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
-
 	ServerApp::ServerApp()
 		: Application("ServerLayer")
 	{
@@ -21,7 +14,24 @@ namespace Kargono
 	{
 		Scenes::SceneService::Init();
 #ifdef KG_TESTING
-		OpenProject("../Projects/Pong/Pong.kproj");
+	OpenProject("../Projects/Pong/Pong.kproj");
+#elif defined KG_EXPORT
+		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
+			std::filesystem::current_path(),
+			".kproj");
+		if (pathToProject.empty())
+		{
+			KG_CRITICAL("Could not locate a .kproj file in local directory!");
+			EngineService::EndRun();
+			return;
+	}
+		OpenProject(pathToProject);
+		if (!Projects::ProjectService::GetActive())
+		{
+			KG_CRITICAL("Failed to open project!");
+			EngineService::EndRun();
+			return;
+		}
 #else
 		if (!OpenProject())
 		{
@@ -30,6 +40,7 @@ namespace Kargono
 			return;
 		}
 #endif
+
 
 		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
 

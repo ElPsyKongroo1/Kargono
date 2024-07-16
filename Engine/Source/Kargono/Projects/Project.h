@@ -128,12 +128,12 @@ namespace Kargono::Projects
 		//=========================
 		// External API
 		//=========================
-		static void ExportProject(const std::filesystem::path& exportLocation);
+		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
 		//=========================
 		// Internal Functionality
 		//=========================
-		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory);
+		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory, bool createServer);
 	public:
 		//=========================
 		// Getters/Setters API
