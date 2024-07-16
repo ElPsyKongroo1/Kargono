@@ -31,6 +31,7 @@ namespace Kargono::EditorUI
 	struct EditVariableSpec;
 	struct TableSpec;
 	struct InlineButtonSpec;
+	struct EditVec3Spec;
 
 	//==============================
 	// Type Defines
@@ -119,6 +120,9 @@ namespace Kargono::EditorUI
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void Checkbox(CheckboxSpec& spec);
+
+		static void EditVec3(EditVec3Spec& spec);
+
 		static void RadioSelector(RadioSelectorSpec& spec);
 		static void Table(TableSpec& spec);
 		static void SelectorHeader(SelectorHeaderSpec& spec);
@@ -239,6 +243,7 @@ namespace Kargono::EditorUI
 		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
 	};
 
+	
 	struct CheckboxSpec
 	{
 	public:
@@ -256,6 +261,31 @@ namespace Kargono::EditorUI
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
+	};
+
+	enum EditVec3Flags
+	{
+		EditVec3_None = 0,
+		EditVec3_Indented = BIT(0), // Check box aligns to the left
+	};
+
+	struct EditVec3Spec
+	{
+	public:
+		EditVec3Spec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditVec3_None };
+		Math::vec3 CurrentVec3 {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
 	};
 
 	struct RadioSelectorSpec
