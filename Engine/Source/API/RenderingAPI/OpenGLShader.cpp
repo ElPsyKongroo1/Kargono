@@ -5,7 +5,6 @@
 
 #include "API/RenderingAPI/OpenGLShader.h"
 #include "API/Platform/gladAPI.h"
-#include "API/RenderingAPI/VulkanAPI.h"
 
 #ifdef KG_RENDERER_OPENGL
 
