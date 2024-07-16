@@ -1106,6 +1106,101 @@ namespace Kargono::EditorUI
 		spec.Editing);
 	}
 
+	void EditorUIService::EditVec3(EditVec3Spec& spec)
+	{
+		// Local Variables
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+
+
+		static ImVec4 firstColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
+			(float*)&firstColor);
+
+		static ImVec4 secondColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
+			(float*)&secondColor);
+
+		static ImVec4 thirdColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
+			(float*)&thirdColor);
+		if (ImGui::Button("Haha hello"))
+		{
+			KG_INFO("The first color is {} {} {} {}", firstColor.x, firstColor.y, firstColor.z, firstColor.w);
+			KG_INFO("The second color is {} {} {} {}", secondColor.x, secondColor.y, secondColor.z, secondColor.w);
+			KG_INFO("The third color is {} {} {} {}", thirdColor.x, thirdColor.y, thirdColor.z, thirdColor.w);
+		}
+		// Display Item
+		if (spec.Flags & EditVec3_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+		TruncateText(spec.Label, 23);
+		ImGui::SameLine(197.5f);
+		
+		if (spec.Editing)
+		{
+			// x value
+			ImGui::PushStyleColor(ImGuiCol_Text, firstColor);
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.x), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+
+			// y value
+			ImGui::PushStyleColor(ImGuiCol_Text, secondColor);
+			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.y), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+
+			// z value
+			ImGui::PushStyleColor(ImGuiCol_Text, thirdColor);
+			ImGui::SetCursorPos({ 320.0f, yPosition });
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.z), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+
+			
+		}
+		else
+		{
+			// TODO: Draw all three values and make the not-editable!
+		}
+
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		{
+			Utility::Operations::ToggleBoolean(spec.Editing);
+		},
+		EditorUIService::s_SmallEditButton,
+		spec.Editing);
+	}
+
 	void EditorUIService::RadioSelector(RadioSelectorSpec& spec)
 	{
 		// Local Variables

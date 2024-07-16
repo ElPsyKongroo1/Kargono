@@ -17,6 +17,12 @@ namespace Kargono::Panels
 	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
 	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
 
+	// Transform Component
+	static EditorUI::CollapsingHeaderSpec s_TransformHeader{};
+	static EditorUI::EditVec3Spec s_TransformEditTranslation{};
+	static EditorUI::EditVec3Spec s_TransformEditScale{};
+	static EditorUI::EditVec3Spec s_TransformEditRotation{};
+
 	// Class Instance Component
 	static EditorUI::CollapsingHeaderSpec s_ClassInstanceHeader{};
 	static EditorUI::SelectOptionSpec s_SelectClassOption{};
@@ -168,6 +174,66 @@ namespace Kargono::Panels
 
 	}
 
+	static void InitializeTransformComponent()
+	{
+		s_TransformHeader.Label = "Transform";
+		s_TransformHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		s_TransformHeader.Expanded = true;
+		s_TransformHeader.AddToSelectionList("Remove Component", [&]()
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				if (entity.HasComponent<Scenes::TransformComponent>())
+				{
+					entity.RemoveComponent<Scenes::TransformComponent>();
+				}
+			});
+		});
+
+		s_TransformEditTranslation.Label = "Translation";
+		s_TransformEditTranslation.Flags = EditorUI::EditVec3_Indented;
+		s_TransformEditTranslation.ConfirmAction = [&]() 
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::TransformComponent>())
+			{
+				KG_ERROR("Attempt to edit entity transform component when none exists!");
+				return;
+			}
+			auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+			transformComp.Translation = s_TransformEditTranslation.CurrentVec3;
+		};
+		
+		s_TransformEditScale.Label = "Scale";
+		s_TransformEditScale.Flags = EditorUI::EditVec3_Indented;
+		s_TransformEditScale.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::TransformComponent>())
+			{
+				KG_ERROR("Attempt to edit entity transform component when none exists!");
+				return;
+			}
+			auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+			transformComp.Scale = s_TransformEditScale.CurrentVec3;
+		};
+		s_TransformEditRotation.Label = "Rotation";
+		s_TransformEditRotation.Flags = EditorUI::EditVec3_Indented;
+		s_TransformEditRotation.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::TransformComponent>())
+			{
+				KG_ERROR("Attempt to edit entity transform component when none exists!");
+				return;
+			}
+			auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+			transformComp.Rotation = s_TransformEditRotation.CurrentVec3;
+		};
+		
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -193,6 +259,7 @@ namespace Kargono::Panels
 		s_RigidBodyFixedRotSpec.Label = "Use Fixed Rotation";
 
 		InitializeClassInstanceComponent();
+		InitializeTransformComponent();
 
 
 	}
@@ -255,6 +322,14 @@ namespace Kargono::Panels
 					s_SelectClassOption.CurrentOption = { instanceComp.ClassReference->GetName(),instanceComp.ClassHandle };
 				}
 				s_InstanceFieldsTable.OnRefresh();
+			}
+
+			if (entity.HasComponent<Scenes::TransformComponent>())
+			{
+				auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+				s_TransformEditTranslation.CurrentVec3 = transformComp.Translation;
+				s_TransformEditRotation.CurrentVec3 = transformComp.Rotation;
+				s_TransformEditScale.CurrentVec3 = transformComp.Scale;
 			}
 		}
 		
@@ -491,14 +566,18 @@ namespace Kargono::Panels
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<Scenes::TransformComponent>("Transform", entity, [](auto& component)
+		if (entity.HasComponent<Scenes::TransformComponent>())
 		{
-			DrawVec3Control("Translation", component.Translation);
-			Math::vec3 rotation = glm::degrees(component.Rotation);
-			DrawVec3Control("Rotation", rotation);
-			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale, 1.0f);
-		});
+			Scenes::TransformComponent& component = entity.GetComponent<Scenes::TransformComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_TransformHeader);
+			if (s_TransformHeader.Expanded)
+			{
+				EditorUI::EditorUIService::EditVec3(s_TransformEditTranslation);
+				EditorUI::EditorUIService::EditVec3(s_TransformEditScale);
+				EditorUI::EditorUIService::EditVec3(s_TransformEditRotation);
+			}
+			
+		}
 
 		DrawComponent<Scenes::CameraComponent>("Camera", entity, [](auto& component)
 		{
