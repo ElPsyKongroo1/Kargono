@@ -21,7 +21,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_OpenClassPopupSpec {};
 	static EditorUI::TextInputSpec s_SelectClassNameSpec {};
 	// Header
-	static EditorUI::SelectorHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_MainHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteEntityClassWarning {};
 	static EditorUI::GenericPopupSpec s_CloseEntityClassWarning {};
 	// Fields Table
@@ -110,10 +110,6 @@ namespace Kargono::Panels
 
 		s_SelectClassNameSpec.Label = "New Name";
 		s_SelectClassNameSpec.CurrentOption = "Empty";
-		s_SelectClassNameSpec.ConfirmAction = [&](const std::string& option)
-		{
-			s_SelectClassNameSpec.CurrentOption = option;
-		};
 
 		s_CreateClassPopupSpec.Label = "Create Entity Class";
 		s_CreateClassPopupSpec.PopupWidth = 420.0f;
@@ -253,10 +249,6 @@ namespace Kargono::Panels
 
 		s_EditFieldName.Label = "Field Name";
 		s_EditFieldName.CurrentOption = "Empty";
-		s_EditFieldName.ConfirmAction = [&](const std::string& option)
-		{
-			s_EditFieldName.CurrentOption = option;
-		};
 
 		s_EditFieldType.Label = "Field Type";
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
@@ -563,7 +555,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);

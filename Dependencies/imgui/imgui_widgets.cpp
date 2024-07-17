@@ -1392,7 +1392,7 @@ void ImGui::AlignTextToFramePadding()
 }
 
 // Horizontal/vertical separating line
-void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
+void ImGui::SeparatorEx(ImGuiSeparatorFlags flags, ImVec4 color, float thickness)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -1414,7 +1414,7 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
             return;
 
         // Draw
-        window->DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y), ImVec2(bb.Min.x, bb.Max.y), GetColorU32(ImGuiCol_Separator));
+        window->DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y), ImVec2(bb.Min.x, bb.Max.y), ImGui::ColorConvertFloat4ToU32(color), thickness);
         if (g.LogEnabled)
             LogText(" |");
     }
@@ -1448,7 +1448,7 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
         if (item_visible)
         {
             // Draw
-            window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), GetColorU32(ImGuiCol_Separator));
+            window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), ImGui::ColorConvertFloat4ToU32(color), thickness);
             if (g.LogEnabled)
                 LogRenderedText(&bb.Min, "--------------------------------\n");
 
@@ -1461,7 +1461,7 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
     }
 }
 
-void ImGui::Separator()
+void ImGui::Separator(float thickness, ImVec4 color)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -1471,7 +1471,7 @@ void ImGui::Separator()
     // Those flags should eventually be overridable by the user
     ImGuiSeparatorFlags flags = (window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
     flags |= ImGuiSeparatorFlags_SpanAllColumns; // NB: this only applies to legacy Columns() api as they relied on Separator() a lot.
-    SeparatorEx(flags);
+    SeparatorEx(flags, color, thickness);
 }
 
 // Using 'hover_visibility_delay' allows us to hide the highlight and mouse cursor for a short time, which can be convenient to reduce visual noise.
@@ -2399,7 +2399,7 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
-    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
+    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.0f, 0.0f));
 
     if (label_size.x > 0.0f)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);

@@ -10,12 +10,10 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
-	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
+	// Main Header & Tag Component
+	static EditorUI::PanelHeaderSpec s_MainHeader{};
+	static EditorUI::TextInputSpec s_TagEdit{};
+	static EditorUI::SelectOptionSpec s_AddComponent{};
 
 	// Transform Component
 	static EditorUI::CollapsingHeaderSpec s_TransformHeader{};
@@ -32,6 +30,132 @@ namespace Kargono::Panels
 	static EditorUI::GenericPopupSpec s_EditClassFieldPopup{};
 	static EditorUI::EditVariableSpec s_EditFieldValue {};
 
+	// TODO: Unsorted widgets
+	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
+	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
+	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
+
+	static void InitializeMainHeader()
+	{
+		s_MainHeader.Label = "Empty Tag";
+		s_MainHeader.EditColorActive = false;
+		s_MainHeader.AddToSelectionList("Edit Entity Tag", [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (entity && entity.HasComponent<Scenes::TagComponent>())
+			{
+				auto& component = entity.GetComponent<Scenes::TagComponent>();
+				s_TagEdit.CurrentOption = component.Tag;
+				s_TagEdit.StartPopup = true;
+			}
+		});
+		s_MainHeader.AddToSelectionList("Add Component", [&]()
+		{
+			s_AddComponent.PopupActive = true;
+		});
+
+		s_TagEdit.Flags = EditorUI::TextInput_PopupOnly;
+		s_TagEdit.Label = "Edit Tag";
+		s_TagEdit.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (entity && entity.HasComponent<Scenes::TagComponent>())
+			{
+				auto& component = entity.GetComponent<Scenes::TagComponent>();
+				component.Tag = s_TagEdit.CurrentOption;
+				s_MainHeader.Label = "Entity Tag: " + component.Tag;
+			}
+		};
+
+		s_AddComponent.Label = "Add Component";
+		s_AddComponent.Flags = EditorUI::SelectOption_PopupOnly;
+		s_AddComponent.PopupAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			s_AddComponent.ClearOptions();
+			s_AddComponent.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			if (!entity.HasComponent<Scenes::ClassInstanceComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Class Instance", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Camera", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::ShapeComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Shape", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::AudioComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Audio", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::Rigidbody2DComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Rigidbody 2D", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::BoxCollider2DComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Box Collider 2D", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<Scenes::CircleCollider2DComponent>())
+			{
+				s_AddComponent.AddToOptions("New Component", "Circle Collider 2D", Assets::EmptyHandle);
+			}
+
+			s_AddComponent.CurrentOption = { "None", Assets::EmptyHandle };
+		};
+
+		s_AddComponent.ConfirmAction = [&](const EditorUI::OptionEntry& option)
+		{
+			if (option.Label == "None")
+			{
+				return;
+			}
+			if (option.Label == "Class Instance")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::ClassInstanceComponent>();
+				return;
+			}
+			if (option.Label == "Camera")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::CameraComponent>();
+				return;
+			}
+			if (option.Label == "Shape")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::ShapeComponent>();
+				return;
+			}
+			if (option.Label == "Audio")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::AudioComponent>();
+				return;
+			}
+			if (option.Label == "Rigidbody 2D")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::Rigidbody2DComponent>();
+				return;
+			}
+			if (option.Label == "Box Collider 2D")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::BoxCollider2DComponent>();
+				return;
+			}
+			if (option.Label == "Circle Collider 2D")
+			{
+				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::CircleCollider2DComponent>();
+				return;
+			}
+
+			KG_ERROR("Invalid option selected to add as component!");
+			
+		};
+	}
+
 	static void InitializeClassInstanceComponent()
 	{
 		s_ClassInstanceHeader.Label = "Class Instance";
@@ -42,7 +166,6 @@ namespace Kargono::Panels
 			EngineService::SubmitToMainThread([&]()
 			{
 				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-				auto& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
 				if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 				{
 					entity.RemoveComponent<Scenes::ClassInstanceComponent>();
@@ -260,6 +383,7 @@ namespace Kargono::Panels
 
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
+		InitializeMainHeader();
 
 
 	}
@@ -310,6 +434,20 @@ namespace Kargono::Panels
 		*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = entity;
 		if (entity)
 		{
+			if (entity.HasComponent<Scenes::TagComponent>())
+			{
+				auto& tagComp = entity.GetComponent<Scenes::TagComponent>();
+				s_MainHeader.Label = "Entity Tag: " + tagComp.Tag;
+			}
+
+			if (entity.HasComponent<Scenes::TransformComponent>())
+			{
+				auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+				s_TransformEditTranslation.CurrentVec3 = transformComp.Translation;
+				s_TransformEditRotation.CurrentVec3 = transformComp.Rotation;
+				s_TransformEditScale.CurrentVec3 = transformComp.Scale;
+			}
+
 			if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 			{
 				Scenes::ClassInstanceComponent& instanceComp = entity.GetComponent<Scenes::ClassInstanceComponent>();
@@ -324,18 +462,12 @@ namespace Kargono::Panels
 				s_InstanceFieldsTable.OnRefresh();
 			}
 
-			if (entity.HasComponent<Scenes::TransformComponent>())
-			{
-				auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
-				s_TransformEditTranslation.CurrentVec3 = transformComp.Translation;
-				s_TransformEditRotation.CurrentVec3 = transformComp.Rotation;
-				s_TransformEditScale.CurrentVec3 = transformComp.Scale;
-			}
 		}
 		
 	}
 	void SceneHierarchyPanel::RefreshWidgetData()
 	{
+		// TODO: Only refreshes ClassInstanceComponent Currently!!!
 		Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (!currentEntity)
 		{
@@ -400,71 +532,6 @@ namespace Kargono::Panels
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, Math::vec3& values, 
-		float resetValue = 0.0f, float columnWidth = 100.0f)
-	{
-
-		ImGuiIO& io = ImGui::GetIO();
-		auto boldFont = io.Fonts->Fonts[0];
-
-		ImGui::PushID(label.c_str());
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
-
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize)) { values.x = resetValue; }
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize)) { values.y = resetValue; }
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize)) { values.z = resetValue; }
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-
-		
-	}
-
 	template<typename T, typename UIFunction>
 	static void DrawComponent(const std::string& name, Scenes::Entity entity, UIFunction uiFunction)
 	{
@@ -519,52 +586,10 @@ namespace Kargono::Panels
 	{
 		if (entity.HasComponent<Scenes::TagComponent>())
 		{
-			auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
-
-			char buffer[256] = {};
-			strncpy_s(buffer, tag.c_str(), sizeof(buffer));
-			ImGui::SetCursorPosX(30.0f);
-			ImGui::Text(tag.c_str());
-			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-			{
-				ImGui::OpenPopup("UpdateTag");
-			}
-
-			if (ImGui::BeginPopup("UpdateTag"))
-			{
-				ImGui::InputText("##Tag", buffer, sizeof(buffer));
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
-				{
-					tag = std::string(buffer);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
+			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
+			EditorUI::EditorUIService::TextInputPopup(s_TagEdit);
+			EditorUI::EditorUIService::SelectOption(s_AddComponent);
 		}
-
-		ImGui::SameLine(ImGui::GetWindowWidth() - 130);
-		ImGui::PushItemWidth(-1);
-
-		if (ImGui::Button("Add Component"))
-		{
-			ImGui::OpenPopup("AddComponent");
-		}
-
-		if (ImGui::BeginPopup("AddComponent"))
-		{
-
-			DisplayAddComponentEntry<Scenes::ClassInstanceComponent>("Class Instance");
-			DisplayAddComponentEntry<Scenes::CameraComponent>("Camera");
-			DisplayAddComponentEntry<Scenes::ShapeComponent>("Shape");
-			DisplayAddComponentEntry<Scenes::AudioComponent>("Audio");
-			DisplayAddComponentEntry<Scenes::Rigidbody2DComponent>("Rigidbody 2D");
-			DisplayAddComponentEntry<Scenes::BoxCollider2DComponent>("Box Collider 2D");
-			DisplayAddComponentEntry<Scenes::CircleCollider2DComponent>("Circle Collider 2D");
-
-			ImGui::EndPopup();
-		}
-
-		ImGui::PopItemWidth();
 
 		if (entity.HasComponent<Scenes::TransformComponent>())
 		{
@@ -1142,17 +1167,5 @@ namespace Kargono::Panels
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
-	}
-
-	template<typename T>
-	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-		if (!(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).HasComponent<T>())
-		{
-			if (ImGui::MenuItem(entryName.c_str()))
-			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<T>();
-				ImGui::CloseCurrentPopup();
-			}
-		}
 	}
 }

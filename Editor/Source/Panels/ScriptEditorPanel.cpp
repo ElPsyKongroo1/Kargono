@@ -487,10 +487,10 @@ namespace Kargono::Panels
 
 		s_CreateGroupLabelPopup.Label = "Create New Group Label";
 		s_CreateGroupLabelPopup.Flags |= EditorUI::TextInput_PopupOnly;
-		s_CreateGroupLabelPopup.ConfirmAction = [&](const std::string& text)
+		s_CreateGroupLabelPopup.ConfirmAction = [&]()
 		{
 			// Create new group label
-			bool success = Assets::AssetManager::AddScriptSectionLabel(text);
+			bool success = Assets::AssetManager::AddScriptSectionLabel(s_CreateGroupLabelPopup.CurrentOption);
 			if (!success)
 			{
 				KG_WARN("Failed to create group label");
@@ -536,11 +536,7 @@ namespace Kargono::Panels
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
-		s_EditGroupLabelText.Flags = 0;
 		s_EditGroupLabelText.CurrentOption = "Empty";
-		s_EditGroupLabelText.ConfirmAction = [&](const std::string& text)
-		{
-		};
 
 	}
 	void ScriptEditorPanel::OnEditorUIRender()

@@ -24,7 +24,7 @@ namespace Kargono::EditorUI
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct TextInputSpec;
-	struct SelectorHeaderSpec;
+	struct PanelHeaderSpec;
 	struct CheckboxSpec;
 	struct GenericPopupSpec;
 	struct SelectOptionSpec;
@@ -109,7 +109,6 @@ namespace Kargono::EditorUI
 		//==============================
 		static void Spacing(float space);
 		static void Spacing(SpacingAmount space);
-		static void Separator();
 
 		//==============================
 		// Create/Display Widget Functions
@@ -125,7 +124,7 @@ namespace Kargono::EditorUI
 
 		static void RadioSelector(RadioSelectorSpec& spec);
 		static void Table(TableSpec& spec);
-		static void SelectorHeader(SelectorHeaderSpec& spec);
+		static void PanelHeader(PanelHeaderSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
@@ -189,7 +188,11 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
 		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
+		inline static ImVec4 s_PearlBlue_Thin {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f};
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
+		inline static ImVec4 s_LightPurple {0.9226f, 0.4630f, 1.0f, 1.0f};
+		inline static ImVec4 s_LightGreen {0.2879f, 1.0f, 0.39322f, 1.0f};
+
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 	public:
 		//==============================
@@ -325,7 +328,7 @@ namespace Kargono::EditorUI
 		std::string Label;
 		WidgetFlags Flags{ TextInput_None };
 		std::string CurrentOption {};
-		std::function<void(const std::string&)> ConfirmAction;
+		std::function<void()> ConfirmAction;
 		bool StartPopup{ false };
 	private:
 		WidgetID WidgetID;
@@ -393,10 +396,10 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};
 
-	struct SelectorHeaderSpec
+	struct PanelHeaderSpec
 	{
 	public:
-		SelectorHeaderSpec()
+		PanelHeaderSpec()
 		{
 			WidgetID = IncrementWidgetCounter();
 		}
@@ -424,7 +427,7 @@ namespace Kargono::EditorUI
 		SelectionList SelectionsList{};
 		WidgetID WidgetID;
 	private:
-		friend void EditorUIService::SelectorHeader(SelectorHeaderSpec& spec);
+		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
 
 	enum TableFlags
@@ -515,6 +518,7 @@ namespace Kargono::EditorUI
 
 	enum SelectOptionFlags
 	{
+		SelectOption_None = 0,
 		SelectOption_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
 		SelectOption_PopupOnly = BIT(1) // Determines if line of text is generated for options
 	};
@@ -536,7 +540,7 @@ namespace Kargono::EditorUI
 		std::function<void()> PopupAction {nullptr};
 		// Only used if PopupOnly is true
 		bool PopupActive{ false };
-		WidgetFlags Flags{ 0 };
+		WidgetFlags Flags{ SelectOption_None };
 		void ClearOptions()
 		{
 			ActiveOptions.clear();

@@ -16,7 +16,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_OpenGameStatePopupSpec {};
 	// Header
 	static EditorUI::TextInputSpec s_SelectGameStateNameSpec {};
-	static EditorUI::SelectorHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_MainHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteGameStateWarning {};
 	static EditorUI::GenericPopupSpec s_CloseGameStateWarning {};
 	// Main Panel
@@ -77,10 +77,6 @@ namespace Kargono::Panels
 
 		s_SelectGameStateNameSpec.Label = "New Name";
 		s_SelectGameStateNameSpec.CurrentOption = "Empty";
-		s_SelectGameStateNameSpec.ConfirmAction = [&](const std::string& option)
-		{
-			s_SelectGameStateNameSpec.CurrentOption = option;
-		};
 
 		s_CreateGameStatePopupSpec.Label = "Create Game State";
 		s_CreateGameStatePopupSpec.PopupWidth = 420.0f;
@@ -230,10 +226,6 @@ namespace Kargono::Panels
 
 		s_EditFieldName.Label = "Field Name";
 		s_EditFieldName.CurrentOption = "Empty";
-		s_EditFieldName.ConfirmAction = [&](const std::string& option)
-		{
-			s_EditFieldName.CurrentOption = option;
-		};
 
 		s_EditFieldType.Label = "Field Type";
 		s_EditFieldType.Flags |= EditorUI::SelectOption_PopupOnly;
@@ -355,7 +347,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteGameStateWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseGameStateWarning);
 			EditorUI::EditorUIService::Table(s_FieldsTable);

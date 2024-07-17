@@ -538,11 +538,6 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::Separator()
-	{
-		ImGui::Separator();
-	}
-
 	static OptionList GenerateSearchCache(OptionList& originalList, const std::string& searchQuery)
 	{
 		OptionList returnList{};
@@ -1111,25 +1106,6 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
-
-
-		static ImVec4 firstColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
-			(float*)&firstColor);
-
-		static ImVec4 secondColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
-			(float*)&secondColor);
-
-		static ImVec4 thirdColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ImGui::ColorPicker4(("PICKACOLORFAMMMM##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(),
-			(float*)&thirdColor);
-		if (ImGui::Button("Haha hello"))
-		{
-			KG_INFO("The first color is {} {} {} {}", firstColor.x, firstColor.y, firstColor.z, firstColor.w);
-			KG_INFO("The second color is {} {} {} {}", secondColor.x, secondColor.y, secondColor.z, secondColor.w);
-			KG_INFO("The third color is {} {} {} {}", thirdColor.x, thirdColor.y, thirdColor.z, thirdColor.w);
-		}
 		// Display Item
 		if (spec.Flags & EditVec3_Indented)
 		{
@@ -1140,8 +1116,9 @@ namespace Kargono::EditorUI
 		
 		if (spec.Editing)
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, firstColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.x), 0.5f,
@@ -1156,7 +1133,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, secondColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_LightPurple);
 			ImGui::SetCursorPos({ 260.0f, yPosition });
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.y), 0.5f,
@@ -1171,7 +1148,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, thirdColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_LightGreen);
 			ImGui::SetCursorPos({ 320.0f, yPosition });
 			ImGui::SetNextItemWidth(50.0f);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.z), 0.5f,
@@ -1184,12 +1161,18 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
-
+			ImGui::PopStyleVar();
 			
 		}
 		else
 		{
-			// TODO: Draw all three values and make the not-editable!
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetCursorPos({ 197.5f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.x).c_str());
+			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.y).c_str());
+			ImGui::SetCursorPos({ 320.0f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.z).c_str());
 		}
 
 		ImGui::SameLine();
@@ -1385,7 +1368,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::SelectorHeader(SelectorHeaderSpec& spec)
+	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_AntaLarge);
@@ -1409,8 +1392,8 @@ namespace Kargono::EditorUI
 			}
 			ImGui::EndPopup();
 		}
-		EditorUI::EditorUIService::Spacing(0.2f);
-		EditorUI::EditorUIService::Separator();
+		ImGui::Separator(1.0f, s_PearlBlue_Thin);
+		Spacing(0.2f);
 	}
 
 	void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec)
@@ -1529,7 +1512,7 @@ namespace Kargono::EditorUI
 				spec.CurrentOption = std::string(stringBuffer);
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction(stringBuffer);
+					spec.ConfirmAction();
 				}
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				ImGui::CloseCurrentPopup();
