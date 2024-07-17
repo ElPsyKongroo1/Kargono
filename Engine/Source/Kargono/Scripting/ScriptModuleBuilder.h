@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kargono/Scripting/ScriptCompiler.h"
+
 namespace Kargono::Scripting
 {
 	//==============================
@@ -12,6 +14,7 @@ namespace Kargono::Scripting
 		// Create Script Module
 		//==============================
 		static void CreateScriptModule();
+
 	private:
 		//==============================
 		// Internal Functionality to Support Creation
