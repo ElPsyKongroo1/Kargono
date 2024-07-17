@@ -210,6 +210,7 @@ namespace Kargono::Panels
 					tc.Translation = translation;
 					tc.Rotation += deltaRotation;
 					tc.Scale = scale;
+					s_EditorApp->m_SceneHierarchyPanel->RefreshTransformComponent();
 				}
 			}
 		}
@@ -428,7 +429,7 @@ namespace Kargono::Panels
 
 			// Camera Speed
 			ImGui::SetNextItemWidth(30.0f);
-			ImGui::SetCursorPos(ImVec2(windowSize.x - 136, 4));
+			ImGui::SetCursorPos(ImVec2(windowSize.x - 131, 7));
 			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
 				s_EditorApp->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
 				"%.0f", ImGuiSliderFlags_NoInput);

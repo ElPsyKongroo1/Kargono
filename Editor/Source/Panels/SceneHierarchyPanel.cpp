@@ -400,13 +400,6 @@ namespace Kargono::Panels
 				DrawEntityNode(entity);
 			});
 
-			
-
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			{
-				SetSelectedEntity({});
-			}
-
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 			{
@@ -417,7 +410,7 @@ namespace Kargono::Panels
 		}
 		EditorUI::EditorUIService::EndWindow();
 
-		EditorUI::EditorUIService::StartWindow("Properties");
+		EditorUI::EditorUIService::StartWindow("Properties", 0, ImGuiWindowFlags_NoScrollbar);
 		if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 		{
 			DrawComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
@@ -427,7 +420,18 @@ namespace Kargono::Panels
 	}
 	bool SceneHierarchyPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		return false;
+		switch (event.GetKeyCode())
+		{
+			case Key::Escape:
+			{
+				s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+				return true;
+			}
+			default:
+			{
+				return false;
+			}
+		}
 	}
 	void SceneHierarchyPanel::SetSelectedEntity(Scenes::Entity entity)
 	{
@@ -438,14 +442,6 @@ namespace Kargono::Panels
 			{
 				auto& tagComp = entity.GetComponent<Scenes::TagComponent>();
 				s_MainHeader.Label = "Entity Tag: " + tagComp.Tag;
-			}
-
-			if (entity.HasComponent<Scenes::TransformComponent>())
-			{
-				auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
-				s_TransformEditTranslation.CurrentVec3 = transformComp.Translation;
-				s_TransformEditRotation.CurrentVec3 = transformComp.Rotation;
-				s_TransformEditScale.CurrentVec3 = transformComp.Scale;
 			}
 
 			if (entity.HasComponent<Scenes::ClassInstanceComponent>())
@@ -461,8 +457,9 @@ namespace Kargono::Panels
 				}
 				s_InstanceFieldsTable.OnRefresh();
 			}
-
 		}
+
+		RefreshTransformComponent();
 		
 	}
 	void SceneHierarchyPanel::RefreshWidgetData()
@@ -484,6 +481,21 @@ namespace Kargono::Panels
 				s_SelectClassOption.CurrentOption = {"None", Assets::EmptyHandle};
 			}
 			s_InstanceFieldsTable.OnRefresh();
+		}
+	}
+	void SceneHierarchyPanel::RefreshTransformComponent()
+	{
+		Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+		if (!entity)
+		{
+			return;
+		}
+		if (entity.HasComponent<Scenes::TransformComponent>())
+		{
+			auto& transformComp = entity.GetComponent<Scenes::TransformComponent>();
+			s_TransformEditTranslation.CurrentVec3 = transformComp.Translation;
+			s_TransformEditRotation.CurrentVec3 = transformComp.Rotation;
+			s_TransformEditScale.CurrentVec3 = transformComp.Scale;
 		}
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Scenes::Entity entity)
