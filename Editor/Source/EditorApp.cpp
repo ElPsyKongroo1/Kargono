@@ -477,10 +477,6 @@ namespace Kargono
 					previousTime = currentTime;
 					previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
 				}
-				else
-				{
-					m_SceneHierarchyPanel->SetSelectedEntity({});
-				}
 				
 
 			}

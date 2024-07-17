@@ -14,6 +14,7 @@ namespace Kargono::Panels
 	public:
 		void SetSelectedEntity(Scenes::Entity entity);
 		void RefreshWidgetData();
+		void RefreshTransformComponent();
 	private:
 		void DrawEntityNode(Scenes::Entity entity);
 		void DrawComponents(Scenes::Entity entity);
