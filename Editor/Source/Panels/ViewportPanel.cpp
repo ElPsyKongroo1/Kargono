@@ -210,7 +210,6 @@ namespace Kargono::Panels
 					tc.Translation = translation;
 					tc.Rotation += deltaRotation;
 					tc.Scale = scale;
-					s_EditorApp->m_SceneHierarchyPanel->RefreshTransformComponent();
 				}
 			}
 		}

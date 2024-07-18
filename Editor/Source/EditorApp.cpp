@@ -86,24 +86,6 @@ namespace Kargono
 
 	void EditorApp::Terminate()
 	{
-		auto allAudioComponents = m_EditorScene->GetAllEntitiesWith<Scenes::AudioComponent>();
-		for (auto& entity : allAudioComponents)
-		{
-			Scenes::Entity e = { entity, m_EditorScene.get()};
-			auto& audioComponent = e.GetComponent<Scenes::AudioComponent>();
-			audioComponent.Audio.reset();
-		}
-		auto allMultiAudioComponents = m_EditorScene->GetAllEntitiesWith<Scenes::MultiAudioComponent>();
-		for (auto& entity : allMultiAudioComponents)
-		{
-			Scenes::Entity e = { entity, m_EditorScene.get() };
-			auto& multiAudioComponent = e.GetComponent<Scenes::MultiAudioComponent>();
-			for (auto& [key, component] : multiAudioComponent.AudioComponents)
-			{
-				component.Audio.reset();
-			}
-		}
-
 		EditorUI::EditorUIService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
@@ -696,13 +678,6 @@ namespace Kargono
 
 			if (m_EditorScene)
 			{
-				auto view = m_EditorScene->GetAllEntitiesWith<Scenes::AudioComponent>();
-				for (auto& entity : view)
-				{
-					Scenes::Entity e = { entity, m_EditorScene.get() };
-					auto& audioComponent = e.GetComponent<Scenes::AudioComponent>();
-					audioComponent.Audio.reset();
-				}
 				m_EditorScene->DestroyAllEntities();
 			}
 			Assets::AssetManager::ClearAll();

@@ -104,32 +104,6 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::AudioComponent>())
-		{
-			out << YAML::Key << "AudioComponent";
-			out << YAML::BeginMap; // Component Map
-			auto& audioComponent = entity.GetComponent<Scenes::AudioComponent>();
-			out << YAML::Key << "Name" << YAML::Value << audioComponent.Name;
-			out << YAML::Key << "AudioHandle" << YAML::Value << static_cast<uint64_t>(audioComponent.AudioHandle);
-			out << YAML::EndMap; // Component Map
-		}
-
-		if (entity.HasComponent<Scenes::MultiAudioComponent>())
-		{
-			out << YAML::Key << "MultiAudioComponent";
-			out << YAML::BeginSeq; // Component Sequence
-
-			for (auto& [key, audioComp] : entity.GetComponent<Scenes::MultiAudioComponent>().AudioComponents)
-			{
-				out << YAML::BeginMap; // Audio Component Map
-				out << YAML::Key << "Name" << YAML::Value << audioComp.Name;
-				out << YAML::Key << "AudioHandle" << YAML::Value << static_cast<uint64_t>(audioComp.AudioHandle);
-				out << YAML::EndMap; // Audio Component Map
-			}
-
-			out << YAML::EndSeq; // Component Sequence
-		}
-
 		if (entity.HasComponent<Scenes::ShapeComponent>())
 		{
 			out << YAML::Key << "ShapeComponent";
@@ -459,30 +433,6 @@ namespace Kargono::Assets
 					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
-				}
-
-				auto audioComponent = entity["AudioComponent"];
-				if (audioComponent)
-				{
-					auto& audioComp = deserializedEntity.AddComponent<Scenes::AudioComponent>();
-					audioComp.Name = audioComponent["Name"].as<std::string>();
-					audioComp.AudioHandle = audioComponent["AudioHandle"].as<uint64_t>();
-					audioComp.Audio = AssetManager::GetAudio(audioComp.AudioHandle);
-				}
-
-				auto multiAudioComponent = entity["MultiAudioComponent"];
-				if (multiAudioComponent)
-				{
-					auto& multiAudioComp = deserializedEntity.AddComponent<Scenes::MultiAudioComponent>();
-
-					for (auto audioComp : multiAudioComponent)
-					{
-						Scenes::AudioComponent newComponent{};
-						newComponent.Name = audioComp["Name"].as<std::string>();
-						newComponent.AudioHandle = audioComp["AudioHandle"].as<uint64_t>();
-						newComponent.Audio = AssetManager::GetAudio(newComponent.AudioHandle);
-						multiAudioComp.AudioComponents.insert({ newComponent.Name, newComponent });
-					}
 				}
 
 				auto shapeComponent = entity["ShapeComponent"];
