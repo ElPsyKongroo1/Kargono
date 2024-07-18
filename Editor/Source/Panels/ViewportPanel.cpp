@@ -656,16 +656,16 @@ namespace Kargono::Panels
 		{3,7}
 	};
 
-	static Math::vec4 s_FrustrumVertexPositions[8]
+	static Math::vec4 s_DefaultFrustrumVertexPositions[8]
 	{
-		{ -1.0f, -1.0f, 1.0f, 1.0f },		// 0
+		{ -1.0f, -1.0f, 1.0f, 1.0f },			// 0
 			{ 1.0f, -1.0f, 1.0f, 1.0f },		// 1
 			{ 1.0f, 1.0f, 1.0f, 1.0f },		// 2
 			{ -1.0f, 1.0f, 1.0f, 1.0f },		// 3
 		{ -1.0f, -1.0f, -1.0f, 1.0f },		// 4
-			{ 1.0f, -1.0f, -1.0f, 1.0f },	// 5
+			{ 1.0f, -1.0f, -1.0f, 1.0f },		// 5
 			{ 1.0f, 1.0f, -1.0f, 1.0f },		// 6
-		{ -1.0f, 1.0f, -1.0f, 1.0f },		// 7
+		{ -1.0f, 1.0f, -1.0f, 1.0f },			// 7
 	};
 
 	static Math::uvec2 s_FrustrumIndices[16]
@@ -820,11 +820,12 @@ namespace Kargono::Panels
 
 				Math::vec3 lineVertices[8];
 
+				// Create all vertices
 				for (size_t i = 0; i < 8; i++)
 				{
 					lineVertices[i] = transform.GetTransform() * s_CubeVertexPositions[i];
 				}
-
+				// Create and submit lines to renderer
 				for (auto& indices : s_CubeIndices)
 				{
 					s_OutputVector->clear();
@@ -841,35 +842,35 @@ namespace Kargono::Panels
 			}
 		}
 
+		DrawWorldAxis();
+
 		Rendering::RenderingService::EndScene();
 	}
 
 	void ViewportPanel::DrawFrustrum(Scenes::Entity& entity)
 	{
+		Math::vec3 lineVertices[9];
+		static Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
+
+		// Get entity transform and entity camera
 		auto& transform = entity.GetComponent<Scenes::TransformComponent>();
 		auto& camera = entity.GetComponent<Scenes::CameraComponent>();
-		float windowWidth = (float)EngineService::GetActiveWindow().GetWidth();
-		float windowHeight = (float)EngineService::GetActiveWindow().GetHeight();
-		Math::vec4 viewport = { 0.0f, 0.0f, windowWidth, windowHeight };
-		auto cameraProjectionType = camera.Camera.GetProjectionType();
-		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
+		// Submit frustrum cube color to renderer input
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
-		Math::vec3 lineVertices[9];
 
+		// Set lineVertices 0 - 7 with vertices from camera frustum
 		for (size_t i = 0; i < 8; i++)
 		{
-			Math::vec4 vertexPosition = s_FrustrumVertexPositions[i];
-			Math::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_FrustrumVertexPositions[i];
+			Math::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_DefaultFrustrumVertexPositions[i];
 			localSpaceCoordinates = localSpaceCoordinates / localSpaceCoordinates.w; // Perspective Division
 			lineVertices[i] = transform.GetTranslation() * transform.GetRotation() * localSpaceCoordinates;
-
 		}
-
+		// Set lineVertices 8 with the entity location
 		lineVertices[8] = (transform.GetTransform() * Math::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		bool colorChanged = false;
 		uint32_t iteration = 0;
-		for (auto& indices : s_FrustrumIndices)
+		for (auto& index : s_FrustrumIndices)
 		{
 			if (iteration >= 12 && !colorChanged)
 			{
@@ -878,13 +879,52 @@ namespace Kargono::Panels
 				colorChanged = true;
 			}
 			s_OutputVector->clear();
-			s_OutputVector->push_back(lineVertices[indices.x]);
-			s_OutputVector->push_back(lineVertices[indices.y]);
+			s_OutputVector->push_back(lineVertices[index.x]);
+			s_OutputVector->push_back(lineVertices[index.y]);
 			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			iteration++;
 		}
 
+	}
+
+	void ViewportPanel::DrawWorldAxis()
+	{
+		static Math::vec3 lineVertices[6]
+		{
+			{ 1000.0f, 0.0f, 0.0f },
+			{ -1000.0f, 0.0f, 0.0f },
+			{ 0.0f, 1000.0f, 0.0f },
+			{ 0.0f, -1000.0f, 0.0f },
+			{ 0.0f, 0.0f, 1000.0f },
+			{ 0.0f, 0.0f, -1000.0f }
+		};
+		static Math::uvec2 lineIndices[3]
+		{
+			{ 0, 1 },
+			{ 2, 3 },
+			{ 4, 5 }
+		};
+
+		static Math::vec4 colorIndices[3]
+		{
+			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
+			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
+			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen)
+		};
+
+		uint32_t iteration = 0;
+		for (auto& index : lineIndices)
+		{
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[iteration],
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+			s_OutputVector->clear();
+			s_OutputVector->push_back(lineVertices[index.x]);
+			s_OutputVector->push_back(lineVertices[index.y]);
+			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			iteration++;
+		}
 	}
 
 }

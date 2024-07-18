@@ -192,7 +192,6 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
 		inline static ImVec4 s_LightPurple {0.9226f, 0.4630f, 1.0f, 1.0f};
 		inline static ImVec4 s_LightGreen {0.2879f, 1.0f, 0.39322f, 1.0f};
-
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 	public:
 		//==============================
@@ -594,4 +593,15 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
+}
+
+namespace Kargono::Utility
+{
+	//==============================
+	// ImVec4 -> Math::vec4
+	//==============================
+	static Math::vec4 ImVec4ToMathVec4(const ImVec4& color )
+	{
+		return { color.x, color.y, color.z, color.w };
+	}
 }

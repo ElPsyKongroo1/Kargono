@@ -32,6 +32,8 @@
 #include <malloc.h>
 #endif
 
+#include "Kargono/EditorUI/EditorUI.h"
+
 // includes patches for multiview from
 // https://github.com/CedricGuillemet/ImGuizmo/issues/15
 
@@ -684,10 +686,20 @@ namespace ImGuizmo
    static const float planeLimit = 0.2f;
 
    static const vec_t directionUnary[3] = { makeVect(1.f, 0.f, 0.f), makeVect(0.f, 1.f, 0.f), makeVect(0.f, 0.f, 1.f) };
-   static const ImU32 directionColor[3] = { 0xFF715ED8, 0xFF25AA25, 0xFFCC532C };
+   static const ImU32 directionColor[3] =
+   {
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightPurple),
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PearlBlue),
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightGreen)
+   };
 
    // Alpha: 100%: FF, 87%: DE, 70%: B3, 54%: 8A, 50%: 80, 38%: 61, 12%: 1F
-   static const ImU32 planeColor[3] = { 0xFF7A68D8, 0xFF55AB55, 0xFFD96742 };
+   static const ImU32 planeColor[3] =
+   {
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightPurple),
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PearlBlue),
+      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightGreen)
+   };
    static const ImU32 selectionColor = 0xFF20AACC;
    static const ImU32 inactiveColor = 0x99999999;
    static const ImU32 translationLineColor = 0xAAAAAAAA;

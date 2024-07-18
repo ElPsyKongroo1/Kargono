@@ -72,14 +72,6 @@ namespace Kargono
 
 	void RuntimeApp::Terminate()
 	{
-		
-		auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::AudioComponent>();
-		for (auto& entity : view)
-		{
-			Scenes::Entity e = { entity, Scenes::SceneService::GetActiveScene().get() };
-			auto& audioComponent = e.GetComponent<Scenes::AudioComponent>();
-			audioComponent.Audio.reset();
-		}
 		OnStop();
 
 		Audio::AudioService::Terminate();
