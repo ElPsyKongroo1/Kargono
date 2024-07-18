@@ -28,6 +28,8 @@ namespace Kargono::Panels
 		//		This function is called in OnOverlayRender().
 		void DrawFrustrum(Scenes::Entity& entity);
 
+		void DrawWorldAxis();
+
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
 		//		update physics, and update scripts for m_ActiveScene.
 		// These functions are called in OnUpdate() depending on the current scene state (Edit, Runtime, and Simulation)
