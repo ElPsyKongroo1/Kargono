@@ -19,9 +19,6 @@ namespace Kargono::Panels
 		void DrawEntityNode(Scenes::Entity entity);
 		void DrawComponents(Scenes::Entity entity);
 	private:
-		template<typename T>
-		void DisplayAddComponentEntry(const std::string& entryName);
-	private:
 		std::string m_PanelName{"Scene Hierarchy"};
 	};
 }

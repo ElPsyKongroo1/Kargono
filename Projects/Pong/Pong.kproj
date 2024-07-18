@@ -1,6 +1,5 @@
 Project:
   Name: Pong
-  StartScene: Scenes/main_gameplay.kgscene
   StartSceneHandle: 13036162138140767594
   StartGameState: 13630226515263756832
   AssetDirectory: Assets
