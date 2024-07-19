@@ -656,7 +656,7 @@ namespace Kargono::Panels
 		{3,7}
 	};
 
-	static Math::vec4 s_DefaultFrustrumVertexPositions[8]
+	static Math::vec4 s_DefaultFrustumVertexPositions[8]
 	{
 		{ -1.0f, -1.0f, 1.0f, 1.0f },			// 0
 			{ 1.0f, -1.0f, 1.0f, 1.0f },		// 1
@@ -668,7 +668,7 @@ namespace Kargono::Panels
 		{ -1.0f, 1.0f, -1.0f, 1.0f },			// 7
 	};
 
-	static Math::uvec2 s_FrustrumIndices[16]
+	static Math::uvec2 s_FrustumIndices[16]
 	{
 		{0,1},
 		{1,2},
@@ -686,6 +686,13 @@ namespace Kargono::Panels
 		{5, 8},
 		{6, 8},
 		{7,8}
+	};
+
+	static Math::vec4 colorIndices[3]
+	{
+		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
+		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
+		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen)
 	};
 
 	static Ref<std::vector<Math::vec3>> s_OutputVector = CreateRef<std::vector<Math::vec3>>();
@@ -842,7 +849,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		DrawWorldAxis();
+		//DrawWorldAxis(); 
 
 		Rendering::RenderingService::EndScene();
 	}
@@ -862,7 +869,7 @@ namespace Kargono::Panels
 		// Set lineVertices 0 - 7 with vertices from camera frustum
 		for (size_t i = 0; i < 8; i++)
 		{
-			Math::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_DefaultFrustrumVertexPositions[i];
+			Math::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_DefaultFrustumVertexPositions[i];
 			localSpaceCoordinates = localSpaceCoordinates / localSpaceCoordinates.w; // Perspective Division
 			lineVertices[i] = transform.GetTranslation() * transform.GetRotation() * localSpaceCoordinates;
 		}
@@ -870,7 +877,7 @@ namespace Kargono::Panels
 		lineVertices[8] = (transform.GetTransform() * Math::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		bool colorChanged = false;
 		uint32_t iteration = 0;
-		for (auto& index : s_FrustrumIndices)
+		for (auto& index : s_FrustumIndices)
 		{
 			if (iteration >= 12 && !colorChanged)
 			{
@@ -888,16 +895,16 @@ namespace Kargono::Panels
 
 	}
 
-	void ViewportPanel::DrawWorldAxis()
+	/*void ViewportPanel::DrawWorldAxis()
 	{
 		static Math::vec3 lineVertices[6]
 		{
-			{ 1000.0f, 0.0f, 0.0f },
 			{ -1000.0f, 0.0f, 0.0f },
-			{ 0.0f, 1000.0f, 0.0f },
+			{ 1000.0f, 0.0f, 0.0f },
 			{ 0.0f, -1000.0f, 0.0f },
-			{ 0.0f, 0.0f, 1000.0f },
-			{ 0.0f, 0.0f, -1000.0f }
+			{ 0.0f, 1000.0f, 0.0f },
+			{ 0.0f, 0.0f, -1000.0f },
+			{ 0.0f, 0.0f, 1000.0f }
 		};
 		static Math::uvec2 lineIndices[3]
 		{
@@ -925,6 +932,85 @@ namespace Kargono::Panels
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			iteration++;
 		}
+	}*/
+
+	void ViewportPanel::DrawWorldAxis()
+	{
+		// Set cameraFrustrumVertices 0 - 7 with vertices from camera frustum
+		Math::vec3 currentVertex;
+		Math::vec3 minimumValues {std::numeric_limits<float>().max()};
+		Math::vec3 maximumValues {-std::numeric_limits<float>().max()};
+		for (size_t i = 0; i < 8; i++)
+		{
+			Math::vec4 localSpaceCoordinates = glm::inverse(m_EditorCamera.GetProjection()) * s_DefaultFrustumVertexPositions[i];
+			localSpaceCoordinates = localSpaceCoordinates / localSpaceCoordinates.w; // Perspective Division
+			currentVertex = glm::inverse(m_EditorCamera.GetViewMatrix()) * localSpaceCoordinates;
+			if (currentVertex.x > maximumValues.x)
+			{
+				maximumValues.x = currentVertex.x;
+			}
+			if (currentVertex.y > maximumValues.y)
+			{
+				maximumValues.y = currentVertex.y;
+			}
+			if (currentVertex.z > maximumValues.z)
+			{
+				maximumValues.z = currentVertex.z;
+			}
+			if (currentVertex.x < minimumValues.x)
+			{
+				minimumValues.x = currentVertex.x;
+			}
+			if (currentVertex.y < minimumValues.y)
+			{
+				minimumValues.y = currentVertex.y;
+			}
+			if (currentVertex.z < minimumValues.z)
+			{
+				minimumValues.z = currentVertex.z;
+			}
+		}
+
+		float step = 5.0f;
+
+		// X-Y Grid
+		//while ()
+		// Y-Z Grid
+		//while ()
+		// X-Z Grid
+		//while ()
+
+		std::vector<Math::vec3> outputVertices {};
+
+		// X Axis
+		s_OutputVector->clear();
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[0],
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+		s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
+		s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
+		s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		
+
+		// Y Axis
+		s_OutputVector->clear();
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[1],
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+		s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
+		s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
+		s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		
+
+		// Z Axis
+		s_OutputVector->clear();
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[2],
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+		s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
+		s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });
+		s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		
 	}
 
 }
