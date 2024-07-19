@@ -688,12 +688,6 @@ namespace Kargono::Panels
 		{7,8}
 	};
 
-	static Math::vec4 colorIndices[3]
-	{
-		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
-		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
-		Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen)
-	};
 
 	static Ref<std::vector<Math::vec3>> s_OutputVector = CreateRef<std::vector<Math::vec3>>();
 
@@ -849,7 +843,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		//DrawWorldAxis(); 
+		DrawWorldAxis(); 
 
 		Rendering::RenderingService::EndScene();
 	}
@@ -971,20 +965,109 @@ namespace Kargono::Panels
 			}
 		}
 
-		float step = 5.0f;
+		// Start Grids
+		int32_t step = 100;
+		int32_t currentLine;
+		s_OutputVector->clear();
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGray),
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+#if 0
+		{ // X-Y Grid
+			// Create Y Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			while ((float)currentLine < maximumValues.x)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
+				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
+				currentLine += step;
+			}
+			// Create X Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			while ((float)currentLine < maximumValues.y)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
+				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
+				currentLine += step;
+			}
+		}
+		{ // Y-Z Grid
+			// Create Y Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			while ((float)currentLine < maximumValues.y)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
+				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
+				currentLine += step;
+			}
+			// Create Z Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+			while ((float)currentLine < maximumValues.z)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine});
+				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
+				currentLine += step;
+			}
+		}
+#endif
+		{ // X-Z Grid
+			// Create X Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			while ((float)currentLine < maximumValues.x)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
+				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
+				currentLine += step;
+			}
+			// Create Z Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+			while ((float)currentLine < maximumValues.z)
+			{
+				if (currentLine == 0)
+				{
+					currentLine += step;
+					continue;
+				}
+				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
+				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
+				currentLine += step;
+			}
+		}
 
-		// X-Y Grid
-		//while ()
-		// Y-Z Grid
-		//while ()
-		// X-Z Grid
-		//while ()
-
-		std::vector<Math::vec3> outputVertices {};
+		// Submit all grid lines
+		if (s_OutputVector->size() > 0)
+		{
+			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		}
 
 		// X Axis
 		s_OutputVector->clear();
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[0],
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
 			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 		s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
 		s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
@@ -994,7 +1077,7 @@ namespace Kargono::Panels
 
 		// Y Axis
 		s_OutputVector->clear();
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[1],
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
 			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 		s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
 		s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
@@ -1004,7 +1087,7 @@ namespace Kargono::Panels
 
 		// Z Axis
 		s_OutputVector->clear();
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[2],
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen),
 			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 		s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
 		s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });

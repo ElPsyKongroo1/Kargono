@@ -29,7 +29,6 @@ namespace Kargono::Panels
 		void DrawFrustrum(Scenes::Entity& entity);
 
 		void DrawWorldAxis();
-		void TestDrawAxis();
 
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
 		//		update physics, and update scripts for m_ActiveScene.

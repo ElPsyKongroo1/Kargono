@@ -186,6 +186,7 @@ namespace Kargono::EditorUI
 		//==============================
 		inline static ImVec4 s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f};
 		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
+		inline static ImVec4 s_LightGray {0.7f, 0.7f, 0.7f, 1.0f};
 		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
 		inline static ImVec4 s_PearlBlue_Thin {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f};
