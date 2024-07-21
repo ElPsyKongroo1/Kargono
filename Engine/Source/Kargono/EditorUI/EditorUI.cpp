@@ -1048,6 +1048,11 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		if (spec.Flags & Checkbox_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+
 		// Display Item
 		if (spec.Flags & Checkbox_LeftLean)
 		{
@@ -1194,6 +1199,11 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		if (spec.Flags & RadioSelector_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+
 		// Display Item
 		TruncateText(spec.Label, 23);
 		ImGui::SameLine(200.0f);
@@ -1214,7 +1224,7 @@ namespace Kargono::EditorUI
 				{
 					spec.SelectedOption = 0;
 				}
-				spec.SelectAction(spec.SelectedOption);
+				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 0);
 
 			ImGui::SameLine(300.0f);
@@ -1230,7 +1240,7 @@ namespace Kargono::EditorUI
 				{
 					spec.SelectedOption = 1;
 				}
-				spec.SelectAction(spec.SelectedOption);
+				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 1);
 			ImGui::PopStyleColor(2);
 		}

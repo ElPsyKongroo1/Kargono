@@ -30,13 +30,17 @@ namespace Kargono::Panels
 	static EditorUI::GenericPopupSpec s_EditClassFieldPopup{};
 	static EditorUI::EditVariableSpec s_EditFieldValue {};
 
+	// Rigid Body 2D Component
+	static EditorUI::CollapsingHeaderSpec s_Rigidbody2DHeader{};
+	static EditorUI::RadioSelectorSpec s_Rigidbody2DType {};
+	static EditorUI::CheckboxSpec s_RigidBody2DFixedRotation {};
+
 	// TODO: Unsorted widgets
 	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
-	static EditorUI::CheckboxSpec s_RigidBodyFixedRotSpec {};
 
 	static void InitializeMainHeader()
 	{
@@ -348,6 +352,68 @@ namespace Kargono::Panels
 		
 	}
 
+	static void InitializeRigidbody2DComponent()
+	{
+		s_Rigidbody2DHeader.Label = "Rigid Body 2D Component";
+		s_Rigidbody2DHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		s_Rigidbody2DHeader.Expanded = true;
+		s_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&]()
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+				{
+					entity.RemoveComponent<Scenes::Rigidbody2DComponent>();
+				}
+			});
+		});
+
+		s_Rigidbody2DType.Label = "Interaction Type";
+		s_Rigidbody2DType.FirstOptionLabel = "Static";
+		s_Rigidbody2DType.SecondOptionLabel = "Dynamic";
+		s_Rigidbody2DType.Flags |= EditorUI::RadioSelector_Indented;
+		s_Rigidbody2DType.SelectAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::Rigidbody2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+
+			if (s_Rigidbody2DType.SelectedOption == 0)
+			{
+				component.Type = Scenes::Rigidbody2DComponent::BodyType::Static;
+				return;
+			}
+			if (s_Rigidbody2DType.SelectedOption == 1)
+			{
+				component.Type = Scenes::Rigidbody2DComponent::BodyType::Dynamic;
+				return;
+			}
+
+			KG_ERROR("Invalid SelectedOption");
+		};
+
+
+		// Set Shape Add Fixed Rotation Option
+		s_RigidBody2DFixedRotation.Label = "Use Fixed Rotation";
+		s_RigidBody2DFixedRotation.Flags |= EditorUI::Checkbox_Indented;
+		s_RigidBody2DFixedRotation.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::Rigidbody2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			component.FixedRotation = value;
+		};
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -369,12 +435,10 @@ namespace Kargono::Panels
 		// Set Shape Add Entity ID Option
 		s_ShapeAddEntityIDSpec.Label = "Use Entity ID";
 
-		// Set Shape Add Fixed Rotation Option
-		s_RigidBodyFixedRotSpec.Label = "Use Fixed Rotation";
-
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
 		InitializeMainHeader();
+		InitializeRigidbody2DComponent();
 
 
 	}
@@ -599,8 +663,56 @@ namespace Kargono::Panels
 				s_TransformEditRotation.CurrentVec3 = component.Rotation;
 				EditorUI::EditorUIService::EditVec3(s_TransformEditRotation);
 			}
-			
 		}
+
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		{
+			Scenes::Rigidbody2DComponent& component = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_Rigidbody2DHeader);
+			if (s_Rigidbody2DHeader.Expanded)
+			{
+				s_Rigidbody2DType.SelectedOption = component.Type == Scenes::Rigidbody2DComponent::BodyType::Static ?
+					0 : 1;
+				EditorUI::EditorUIService::RadioSelector(s_Rigidbody2DType);
+				s_RigidBody2DFixedRotation.ToggleBoolean = component.FixedRotation;
+				EditorUI::EditorUIService::Checkbox(s_RigidBody2DFixedRotation);
+			}
+		}
+
+		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_ClassInstanceHeader);
+			if (s_ClassInstanceHeader.Expanded)
+			{
+				EditorUI::EditorUIService::SelectOption(s_SelectClassOption);
+				if (component.ClassHandle != Assets::EmptyHandle)
+				{
+					EditorUI::EditorUIService::Table(s_InstanceFieldsTable);
+					EditorUI::EditorUIService::GenericPopup(s_EditClassFieldPopup);
+				}
+			}
+		}
+
+		DrawComponent<Scenes::BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.005f);
+			ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.005f);
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<Scenes::CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+			ImGui::DragFloat("Radius", &component.Radius, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+		});
 
 		DrawComponent<Scenes::CameraComponent>("Camera", entity, [](auto& component)
 		{
@@ -654,21 +766,6 @@ namespace Kargono::Panels
 				if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
 			}
 		});
-
-		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
-		{
-			Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_ClassInstanceHeader);
-			if (s_ClassInstanceHeader.Expanded)
-			{
-				EditorUI::EditorUIService::SelectOption(s_SelectClassOption);
-				if (component.ClassHandle != Assets::EmptyHandle)
-				{
-					EditorUI::EditorUIService::Table(s_InstanceFieldsTable);
-					EditorUI::EditorUIService::GenericPopup(s_EditClassFieldPopup);
-				}
-			}
-		}
 
 		DrawComponent<Scenes::ShapeComponent>("Shape", entity, [](auto& component)
 		{
@@ -934,7 +1031,10 @@ namespace Kargono::Panels
 			ImGui::Text("Shader Specification");
 
 			// This section displays the shader specification options available for the chosen object
-			if (selectedShape == Rendering::ShapeTypes::None) { return; }
+			if (selectedShape == Rendering::ShapeTypes::None)
+			{
+				return;
+			}
 			if (selectedShape == Rendering::ShapeTypes::Quad)
 			{
 				AddFlatColorSection();
@@ -954,52 +1054,5 @@ namespace Kargono::Panels
 			}
 			
 		});
-
-		DrawComponent<Scenes::Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
-		{
-			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic"};
-			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
-			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
-					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
-					{
-						currentBodyTypeString = bodyTypeStrings[i];
-						component.Type = (Scenes::Rigidbody2DComponent::BodyType)i;
-					}
-					if (isSelected) { ImGui::SetItemDefaultFocus(); }
-				}
-				ImGui::EndCombo();
-			}
-
-			s_RigidBodyFixedRotSpec.ConfirmAction = [&](bool value)
-			{
-				component.FixedRotation = value;
-			};
-			s_RigidBodyFixedRotSpec.ToggleBoolean = component.FixedRotation;
-			EditorUI::EditorUIService::Checkbox(s_RigidBodyFixedRotSpec);
-		});
-
-		DrawComponent<Scenes::BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
-			{
-				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.005f);
-				ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.005f);
-				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-			});
-
-		DrawComponent<Scenes::CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
-			{
-				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-				ImGui::DragFloat("Radius", &component.Radius, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-			});
 	}
 }
