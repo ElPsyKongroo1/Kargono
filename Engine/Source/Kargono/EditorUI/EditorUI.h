@@ -244,6 +244,7 @@ namespace Kargono::EditorUI
 	{
 		Checkbox_None = 0,
 		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
+		Checkbox_Indented = BIT(1)
 	};
 
 	
@@ -269,7 +270,7 @@ namespace Kargono::EditorUI
 	enum EditVec3Flags
 	{
 		EditVec3_None = 0,
-		EditVec3_Indented = BIT(0), // Check box aligns to the left
+		EditVec3_Indented = BIT(0)
 	};
 
 	struct EditVec3Spec
@@ -291,6 +292,12 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
 	};
 
+	enum RadioSelectorFlags
+	{
+		RadioSelector_None = 0,
+		RadioSelector_Indented = BIT(0)
+	};
+
 	struct RadioSelectorSpec
 	{
 	public:
@@ -300,11 +307,12 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label ;
+		WidgetFlags Flags{ RadioSelector_None };
 		uint16_t SelectedOption{ 0 };
 		std::string FirstOptionLabel {"None"};
 		std::string SecondOptionLabel {"None"};
 		bool Editing{ false };
-		std::function<void(uint16_t selectedOption)> SelectAction {nullptr};
+		std::function<void()> SelectAction {nullptr};
 	private:
 		WidgetID WidgetID;
 	private:

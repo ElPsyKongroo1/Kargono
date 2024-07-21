@@ -181,10 +181,10 @@ namespace Kargono::Panels
 		s_CreateScriptType.Editing = true;
 		s_CreateScriptType.FirstOptionLabel = "Class";
 		s_CreateScriptType.SecondOptionLabel = "Global";
-		s_CreateScriptType.SelectAction = [&](uint16_t option)
+		s_CreateScriptType.SelectAction = [&]()
 		{
 			// If we set the option to 'Class', try to get the first entity class option
-			if (option == 0)
+			if (s_CreateScriptType.SelectedOption == 0)
 			{
 				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
 				{
@@ -417,9 +417,9 @@ namespace Kargono::Panels
 		s_EditScriptType.Editing = true;
 		s_EditScriptType.FirstOptionLabel = "Class";
 		s_EditScriptType.SecondOptionLabel = "Global";
-		s_EditScriptType.SelectAction = [&](uint16_t option)
+		s_EditScriptType.SelectAction = [&]()
 		{
-			if (option == 0)
+			if (s_EditScriptType.SelectedOption == 0)
 			{
 				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
 				{
