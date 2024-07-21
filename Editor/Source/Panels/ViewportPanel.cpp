@@ -411,7 +411,7 @@ namespace Kargono::Panels
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
-				ImVec2(16, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
 				EditorUI::EditorUIService::s_PureWhite))
 			{
@@ -442,7 +442,7 @@ namespace Kargono::Panels
 
 			// Camera Speed
 			ImGui::SetNextItemWidth(30.0f);
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 5));
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 6));
 			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
 				s_EditorApp->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
 				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);

@@ -13,12 +13,14 @@ namespace Kargono::Panels
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
 		void SetSelectedEntity(Scenes::Entity entity);
-		void RefreshWidgetData();
+		void RefreshClassInstanceComponent();
 		void RefreshTransformComponent();
 	private:
 		void DrawEntityNode(Scenes::Entity entity);
 		void DrawComponents(Scenes::Entity entity);
 	private:
 		std::string m_PanelName{"Scene Hierarchy"};
+	private:
+		friend class PropertiesPanel;
 	};
 }
