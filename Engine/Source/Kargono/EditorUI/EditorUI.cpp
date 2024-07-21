@@ -29,6 +29,7 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconPlay{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconPause{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconStop{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconGrid{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconStep{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulate{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconAddItem{};
@@ -156,6 +157,7 @@ namespace Kargono::EditorUI
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
+		style.WindowMenuButtonPosition = -1;
 		SetDarkThemeColors();
 
 		// Setup Platform/Renderer backends
@@ -169,6 +171,7 @@ namespace Kargono::EditorUI
 		s_IconPlay = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/play_icon.png").string());
 		s_IconPause = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/pause_icon.png").string());
 		s_IconSimulate = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/simulate_icon.png").string());
+		s_IconGrid = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/grid_icon.png").string());
 		s_IconStop = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/stop_icon.png").string());
 		s_IconStep = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/step_icon.png").string());
 		s_IconAddItem = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/add_item.png").string());
@@ -336,6 +339,7 @@ namespace Kargono::EditorUI
 		s_IconStop.reset();
 		s_IconStep.reset();
 		s_IconSimulate.reset();
+		s_IconGrid.reset();
 		s_IconAddItem.reset();
 		s_IconDisplay.reset();
 		s_IconDisplayActive.reset();

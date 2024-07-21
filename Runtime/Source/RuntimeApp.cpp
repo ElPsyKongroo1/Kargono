@@ -88,6 +88,10 @@ namespace Kargono
 
 		OnUpdateRuntime(ts);
 		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		if (!cameraEntity)
+		{
+			return;
+		}
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 
@@ -220,6 +224,10 @@ namespace Kargono
 
 		// Render 2D
 		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		if (!cameraEntity)
+		{
+			return;
+		}
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
 

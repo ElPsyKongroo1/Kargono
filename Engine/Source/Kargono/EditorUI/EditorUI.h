@@ -165,7 +165,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Images/Textures
 		//==============================
-		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop,
+		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid,
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,

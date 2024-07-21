@@ -52,8 +52,12 @@ namespace Kargono::Panels
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
-		Math::vec2 m_ViewportBounds[2];
+		Math::vec2 m_ScreenViewportBounds[2];
 		int m_GizmoType = -1;
+
+		bool m_DisplayXYGrid = false;
+		bool m_DisplayXZGrid = true;
+		bool m_DisplayYZGrid = false;
 
 		friend Kargono::EditorApp;
 	};

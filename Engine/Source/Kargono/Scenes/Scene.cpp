@@ -271,9 +271,11 @@ namespace Kargono::Scenes
 		for (auto entity: view)
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
-			if (camera.Primary) { return Entity{ entity, this }; }
+			if (camera.Primary)
+			{
+				return Entity{ entity, this };
+			}
 		}
-		KG_CRITICAL("Could not find a primary camera");
 		return {};
 	}
 	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transform)

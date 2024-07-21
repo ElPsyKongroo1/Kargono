@@ -275,6 +275,14 @@ struct ImVec2
     constexpr ImVec2(float _x, float _y)    : x(_x), y(_y) { }
     float  operator[] (size_t idx) const    { IM_ASSERT(idx == 0 || idx == 1); return (&x)[idx]; }  // We very rarely use this [] operator, the assert overhead is fine.
     float& operator[] (size_t idx)          { IM_ASSERT(idx == 0 || idx == 1); return (&x)[idx]; }  // We very rarely use this [] operator, the assert overhead is fine.
+    ImVec2 operator+ (ImVec2 other)
+    {
+        return { x + other.x, y + other.y };
+    }
+    ImVec2 operator- (ImVec2 other)
+    {
+        return { x - other.x, y - other.y };
+    }
 #ifdef IM_VEC2_CLASS_EXTRA
     IM_VEC2_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec2.
 #endif
@@ -1778,6 +1786,7 @@ enum ImGuiSliderFlags_
     ImGuiSliderFlags_Logarithmic            = 1 << 5,       // Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
     ImGuiSliderFlags_NoRoundToFormat        = 1 << 6,       // Disable rounding underlying value to match precision of the display format string (e.g. %.3f values are rounded to those 3 digits)
     ImGuiSliderFlags_NoInput                = 1 << 7,       // Disable CTRL+Click or Enter key allowing to input text directly into the widget
+    ImGuiSliderFlags_CenterText             = 1 << 8,
     ImGuiSliderFlags_InvalidMask_           = 0x7000000F,   // [Internal] We treat using those bits as being potentially a 'float power' argument from the previous API that has got miscast to this enum, and will trigger an assert if needed.
 
     // Obsolete names (will be removed)
