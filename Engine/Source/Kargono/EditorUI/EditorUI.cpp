@@ -459,6 +459,11 @@ namespace Kargono::EditorUI
 		ImGui::SetWindowFocus(windowName.c_str());
 	}
 
+	void EditorUIService::BringWindowToFront(const std::string& windowName)
+	{
+		ImGui::BringWindowToFront(windowName.c_str());
+	}
+
 	void EditorUIService::ClearWindowFocus()
 	{
 		ImGui::FocusWindow(NULL);
@@ -1110,6 +1115,122 @@ namespace Kargono::EditorUI
 		spec.Editing);
 	}
 
+	void EditorUIService::EditFloat(EditFloatSpec& spec)
+	{
+		// Local Variables
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+		// Display Item
+		if (spec.Flags & EditFloat_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+		TruncateText(spec.Label, 20);
+		ImGui::SameLine(197.5f);
+
+		if (spec.Editing)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			// x value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentFloat), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+
+			ImGui::PopStyleVar();
+
+		}
+		else
+		{
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetCursorPos({ 197.5f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentFloat).c_str());
+		}
+
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				Utility::Operations::ToggleBoolean(spec.Editing);
+			},
+			EditorUIService::s_SmallEditButton,
+			spec.Editing);
+	}
+
+	void EditorUIService::EditVec2(EditVec2Spec& spec)
+	{
+		// Local Variables
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+		// Display Item
+		if (spec.Flags & EditVec2_Indented)
+		{
+			ImGui::SetCursorPosX(30.5f);
+		}
+		TruncateText(spec.Label, 20);
+		ImGui::SameLine(197.5f);
+
+		if (spec.Editing)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			// x value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.x), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+
+			// y value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_LightPurple);
+			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetNextItemWidth(50.0f);
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.y), 0.5f,
+				0.0f, 0.0f,
+				"%.2f"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction();
+				}
+			}
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+
+		}
+		else
+		{
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetCursorPos({ 197.5f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.x).c_str());
+			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.y).c_str());
+		}
+
+		ImGui::SameLine();
+		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				Utility::Operations::ToggleBoolean(spec.Editing);
+			},
+			EditorUIService::s_SmallEditButton,
+			spec.Editing);
+	}
+
 	void EditorUIService::EditVec3(EditVec3Spec& spec)
 	{
 		// Local Variables
@@ -1120,7 +1241,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(30.5f);
 		}
-		TruncateText(spec.Label, 23);
+		TruncateText(spec.Label, 20);
 		ImGui::SameLine(197.5f);
 		
 		if (spec.Editing)

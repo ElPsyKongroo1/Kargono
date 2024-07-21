@@ -13,6 +13,7 @@
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
 #include "Panels/InputModePanel.h"
+#include "Panels/PropertiesPanel.h"
 
 #include <filesystem>
 #include <thread>
@@ -162,6 +163,7 @@ namespace Kargono
 		static EditorApp* s_EditorApp;
 		// Booleans to display UI Windows
 		bool m_ShowSceneHierarchy = true;
+		bool m_ShowProperties = true;
 		bool m_ShowContentBrowser = true;
 		bool m_ShowLog = false;
 		bool m_ShowStats = false;
@@ -203,6 +205,7 @@ namespace Kargono
 	public:
 		// Panels
 		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
@@ -227,6 +230,7 @@ namespace Kargono
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
 		friend Panels::InputModePanel;
+		friend Panels::PropertiesPanel;
 
 	};
 

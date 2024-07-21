@@ -31,6 +31,8 @@ namespace Kargono::EditorUI
 	struct EditVariableSpec;
 	struct TableSpec;
 	struct InlineButtonSpec;
+	struct EditFloatSpec;
+	struct EditVec2Spec;
 	struct EditVec3Spec;
 
 	//==============================
@@ -120,6 +122,8 @@ namespace Kargono::EditorUI
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void Checkbox(CheckboxSpec& spec);
 
+		static void EditFloat(EditFloatSpec& spec);
+		static void EditVec2(EditVec2Spec& spec);
 		static void EditVec3(EditVec3Spec& spec);
 
 		static void RadioSelector(RadioSelectorSpec& spec);
@@ -142,6 +146,7 @@ namespace Kargono::EditorUI
 		static uint32_t GetActiveWidgetID();
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
+		static void BringWindowToFront(const std::string& windowName);
 		static void ClearWindowFocus();
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
@@ -265,6 +270,56 @@ namespace Kargono::EditorUI
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
+	};
+
+	enum EditFloatFlags
+	{
+		EditFloat_None = 0,
+		EditFloat_Indented = BIT(0)
+	};
+
+	struct EditFloatSpec
+	{
+	public:
+		EditFloatSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditFloat_None };
+		float CurrentFloat {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditFloat(EditFloatSpec& spec);
+	};
+
+	enum EditVec2Flags
+	{
+		EditVec2_None = 0,
+		EditVec2_Indented = BIT(0)
+	};
+
+	struct EditVec2Spec
+	{
+	public:
+		EditVec2Spec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditVec2_None };
+		Math::vec2 CurrentVec2 {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditVec2(EditVec2Spec& spec);
 	};
 
 	enum EditVec3Flags

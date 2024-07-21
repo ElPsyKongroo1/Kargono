@@ -147,7 +147,7 @@ namespace Kargono::Panels
 		s_DeleteEntityClassWarning.ConfirmAction = [&]()
 		{
 			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorApp->m_EditorScene);
-			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
+			s_EditorApp->m_SceneHierarchyPanel->RefreshClassInstanceComponent();
 			s_EditorEntityClassHandle = 0;
 			s_EditorEntityClass = nullptr;
 		};
@@ -170,7 +170,7 @@ namespace Kargono::Panels
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
-			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
+			s_EditorApp->m_SceneHierarchyPanel->RefreshClassInstanceComponent();
 			s_MainHeader.EditColorActive = false;
 		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
