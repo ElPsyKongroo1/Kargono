@@ -1333,7 +1333,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
-			TruncateText(spec.FirstOptionLabel, 12);
+			TruncateText(spec.FirstOptionLabel, 7);
 			ImGui::SameLine();
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
@@ -1349,7 +1349,7 @@ namespace Kargono::EditorUI
 			}, s_SmallCheckboxButton, spec.SelectedOption == 0);
 
 			ImGui::SameLine(300.0f);
-			TruncateText(spec.SecondOptionLabel, 12);
+			TruncateText(spec.SecondOptionLabel, 7);
 			ImGui::SameLine();
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
@@ -1367,7 +1367,7 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
-			TruncateText(spec.FirstOptionLabel, 12);
+			TruncateText(spec.FirstOptionLabel, 7);
 			ImGui::SameLine();
 			CreateImage(spec.SelectedOption == 0 ? 
 				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled : 
@@ -1375,7 +1375,7 @@ namespace Kargono::EditorUI
 				14);
 
 			ImGui::SameLine(300.0f);
-			TruncateText(spec.SecondOptionLabel, 12);
+			TruncateText(spec.SecondOptionLabel, 7);
 			ImGui::SameLine();
 			CreateImage(spec.SelectedOption == 1 ?
 				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled :
