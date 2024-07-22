@@ -21,8 +21,6 @@ namespace Kargono::Scripting
 			return {};
 		}
 
-		// Compile Script
-
 		// Load in script file from disk
 		std::string scriptFile = Utility::FileSystem::ReadFileString(scriptLocation);
 
@@ -42,8 +40,8 @@ namespace Kargono::Scripting
 	{
 		std::vector<ScriptToken> newTokens {};
 		std::string tokenBuffer {};
-
 		uint32_t textLocation = 0;
+
 		while (textLocation < text.size())
 		{
 			if (std::isalpha(text.at(textLocation)))
@@ -53,7 +51,7 @@ namespace Kargono::Scripting
 				textLocation++;
 
 				// Fill remainder of buffer
-				while (std::isalnum(text.at(textLocation)))
+				while (textLocation < text.size() && std::isalnum(text.at(textLocation)))
 				{
 					tokenBuffer.push_back(text.at(textLocation));
 					textLocation++;
@@ -80,7 +78,7 @@ namespace Kargono::Scripting
 				textLocation++;
 
 				// Fill remainder of buffer
-				while (std::isdigit(text.at(textLocation)))
+				while (textLocation < text.size() && std::isdigit(text.at(textLocation)))
 				{
 					tokenBuffer.push_back(text.at(textLocation));
 					textLocation++;
@@ -91,7 +89,7 @@ namespace Kargono::Scripting
 				}
 
 				// Fill in integer literal
-				newTokens.push_back({ ScriptTokenType::IntLiteral, tokenBuffer });
+				newTokens.push_back({ ScriptTokenType::IntegerLiteral, tokenBuffer });
 				tokenBuffer.clear();
 				continue;
 			}
@@ -104,7 +102,7 @@ namespace Kargono::Scripting
 
 			if (text.at(textLocation) == ';')
 			{
-				newTokens.push_back({ ScriptTokenType::SemiColon, {} });
+				newTokens.push_back({ ScriptTokenType::Semicolon, {} });
 				textLocation++;
 				continue;
 			}
