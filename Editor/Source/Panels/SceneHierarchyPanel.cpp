@@ -44,7 +44,6 @@ namespace Kargono::Panels
 	static EditorUI::EditFloatSpec s_BoxColliderRestitution{};
 	static EditorUI::EditFloatSpec s_BoxColliderRestitutionThreshold{};
 
-
 	// Circle Collider 2D Component
 	static EditorUI::CollapsingHeaderSpec s_CircleCollider2DHeader{};
 	static EditorUI::EditVec2Spec s_CircleColliderOffset{};
@@ -54,8 +53,19 @@ namespace Kargono::Panels
 	static EditorUI::EditFloatSpec s_CircleColliderRestitution{};
 	static EditorUI::EditFloatSpec s_CircleColliderRestitutionThreshold{};
 
+	// Camera Component
+	static EditorUI::CollapsingHeaderSpec s_CameraHeader{};
+	static EditorUI::CheckboxSpec s_CameraPrimary {};
+	static EditorUI::RadioSelectorSpec s_CameraProjection {};
+	static EditorUI::EditFloatSpec s_CameraPerspectiveFOV{};
+	static EditorUI::EditFloatSpec s_CameraPerspectiveNearPlane{};
+	static EditorUI::EditFloatSpec s_CameraPerspectiveFarPlane{};
+	static EditorUI::EditFloatSpec s_CameraOrthographicSize{};
+	static EditorUI::EditFloatSpec s_CameraOrthographicNearPlane{};
+	static EditorUI::EditFloatSpec s_CameraOrthographicFarPlane{};
+
+
 	// TODO: Unsorted widgets
-	static EditorUI::CheckboxSpec s_PrimaryCameraCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
 	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
@@ -635,14 +645,156 @@ namespace Kargono::Panels
 			component.RestitutionThreshold = s_CircleColliderRestitutionThreshold.CurrentFloat;
 		};
 	}
+
+	void InitializeCameraComponent()
+	{
+		s_CameraHeader.Label = "Camera";
+		s_CameraHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		s_CameraHeader.Expanded = true;
+		s_CameraHeader.AddToSelectionList("Remove Component", [&]()
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				if (entity.HasComponent<Scenes::CameraComponent>())
+				{
+					entity.RemoveComponent<Scenes::CameraComponent>();
+				}
+			});
+		});
+
+		// Set Primary Camera Checkbox
+		s_CameraPrimary.Label = "Primary Camera";
+		s_CameraPrimary.Flags |= EditorUI::Checkbox_Indented;
+		s_CameraPrimary.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Primary = value;
+		};
+
+		s_CameraProjection.Label = "Projection Type";
+		s_CameraProjection.Flags |= EditorUI::RadioSelector_Indented;
+		s_CameraProjection.FirstOptionLabel = "Perspective";
+		s_CameraProjection.SecondOptionLabel = "Orthographic";
+		s_CameraProjection.SelectAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+
+			if (s_CameraProjection.SelectedOption == 0)
+			{
+				component.Camera.SetProjectionType(Scenes::SceneCamera::ProjectionType::Perspective);
+				return;
+			}
+			if (s_CameraProjection.SelectedOption == 1)
+			{
+				component.Camera.SetProjectionType(Scenes::SceneCamera::ProjectionType::Orthographic);
+				return;
+			}
+			KG_ERROR("Invalid selection option provided");
+		};
+
+		s_CameraOrthographicSize.Label = "Size";
+		s_CameraOrthographicSize.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraOrthographicSize.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetOrthographicSize(s_CameraOrthographicSize.CurrentFloat);
+		};
+
+		s_CameraOrthographicNearPlane.Label = "Near Plane";
+		s_CameraOrthographicNearPlane.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraOrthographicNearPlane.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetOrthographicNearClip(s_CameraOrthographicNearPlane.CurrentFloat);
+		};
+
+		s_CameraOrthographicFarPlane.Label = "Far Plane";
+		s_CameraOrthographicFarPlane.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraOrthographicFarPlane.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetOrthographicFarClip(s_CameraOrthographicFarPlane.CurrentFloat);
+		};
+
+		s_CameraPerspectiveFOV.Label = "Vertical FOV";
+		s_CameraPerspectiveFOV.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraPerspectiveFOV.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetPerspectiveVerticalFOV(s_CameraPerspectiveFOV.CurrentFloat);
+		};
+
+		s_CameraPerspectiveNearPlane.Label = "Near Plane";
+		s_CameraPerspectiveNearPlane.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraPerspectiveNearPlane.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetPerspectiveNearClip(s_CameraPerspectiveNearPlane.CurrentFloat);
+		};
+
+		s_CameraPerspectiveFarPlane.Label = "Far Plane";
+		s_CameraPerspectiveFarPlane.Flags |= EditorUI::EditFloat_Indented;
+		s_CameraPerspectiveFarPlane.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::CameraComponent>())
+			{
+				KG_ERROR("Attempt to edit entity camera component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::CameraComponent>();
+			component.Camera.SetPerspectiveFarClip(s_CameraPerspectiveFarPlane.CurrentFloat);
+		};
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName, 
 			KG_BIND_CLASS_FN(SceneHierarchyPanel::OnKeyPressedEditor));
-
-		// Set Primary Camera Checkbox
-		s_PrimaryCameraCheckboxSpec.Label = "Set Primary";
 
 		// Set Shape Add Texture Checkbox
 		s_ShapeAddTextureCheckboxSpec.Label = "Use Texture";
@@ -662,6 +814,7 @@ namespace Kargono::Panels
 		InitializeRigidbody2DComponent();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
+		InitializeCameraComponent();
 
 	}
 	void SceneHierarchyPanel::OnEditorUIRender()
@@ -950,58 +1103,38 @@ namespace Kargono::Panels
 			}
 		}
 
-		DrawComponent<Scenes::CameraComponent>("Camera", entity, [](auto& component)
+		if (entity.HasComponent<Scenes::CameraComponent>())
 		{
-			auto& camera = component.Camera;
-
-			// Set Primary Camera Checkbox
-			s_PrimaryCameraCheckboxSpec.ToggleBoolean = component.Primary;
-			s_PrimaryCameraCheckboxSpec.ConfirmAction = [&](bool value)
+			Scenes::CameraComponent& component = entity.GetComponent<Scenes::CameraComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_CameraHeader);
+			if (s_CameraHeader.Expanded)
 			{
-				component.Primary = value;
-			};
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::EditorUIService::Checkbox(s_PrimaryCameraCheckboxSpec);
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+				s_CameraPrimary.ToggleBoolean = component.Primary;
+				EditorUI::EditorUIService::Checkbox(s_CameraPrimary);
+				s_CameraProjection.SelectedOption = component.Camera.GetProjectionType() ==
+					Scenes::SceneCamera::ProjectionType::Perspective ? 0 : 1;
+				EditorUI::EditorUIService::RadioSelector(s_CameraProjection);
 
-
-			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
-			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-			{
-				for (int i = 0; i < 2; i++)
+				if (component.Camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
 				{
-					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-					{
-						currentProjectionTypeString = projectionTypeStrings[i];
-						camera.SetProjectionType((Scenes::SceneCamera::ProjectionType)i);
-					}
-					if (isSelected) { ImGui::SetItemDefaultFocus(); }
+					s_CameraPerspectiveFOV.CurrentFloat = component.Camera.GetPerspectiveVerticalFOV();
+					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFOV);
+					s_CameraPerspectiveNearPlane.CurrentFloat = component.Camera.GetPerspectiveNearClip();
+					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveNearPlane);
+					s_CameraPerspectiveFarPlane.CurrentFloat = component.Camera.GetPerspectiveFarClip();
+					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFarPlane);
 				}
-				ImGui::EndCombo();
+				else
+				{
+					s_CameraOrthographicSize.CurrentFloat = component.Camera.GetOrthographicSize();
+					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicSize);
+					s_CameraOrthographicNearPlane.CurrentFloat = component.Camera.GetOrthographicNearClip();
+					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicNearPlane);
+					s_CameraOrthographicFarPlane.CurrentFloat = component.Camera.GetOrthographicFarClip();
+					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicFarPlane);
+				}
 			}
-
-			if (camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
-			{
-				float verticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (ImGui::DragFloat("Vertical FOV", &verticalFOV, 1, 0, 10000)) { camera.SetPerspectiveVerticalFOV(glm::radians(verticalFOV)); }
-				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (ImGui::DragFloat("Near Plane", &perspectiveNear, 1, 0, 10000)) { camera.SetPerspectiveNearClip(perspectiveNear); }
-				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far Plane", &perspectiveFar, 1, 0, 10000)) { camera.SetPerspectiveFarClip(perspectiveFar); }
-			}
-
-			if (camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Orthographic)
-			{
-				float orthoSize = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Size", &orthoSize, 1, 0, 10000)) { camera.SetOrthographicSize(orthoSize); }
-				float orthoNear = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near Plane", &orthoNear, 1, 0, 10000)) { camera.SetOrthographicNearClip(orthoNear); }
-				float orthoFar = camera.GetOrthographicFarClip();
-				if (ImGui::DragFloat("Far Plane", &orthoFar, 1, 0, 10000)) { camera.SetOrthographicFarClip(orthoFar); }
-			}
-		});
+		}
 
 		DrawComponent<Scenes::ShapeComponent>("Shape", entity, [](auto& component)
 		{
