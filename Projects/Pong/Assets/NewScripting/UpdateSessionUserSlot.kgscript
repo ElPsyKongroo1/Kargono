@@ -1,0 +1,5 @@
+void UpdateSessionUserSlot(UInt16 userSlot)
+{
+	String selectedWidget = "player_slot_" + str(userSlot);
+	UI::SetWidgetText("online_lobby", selectedWidget, "Connected");
+}

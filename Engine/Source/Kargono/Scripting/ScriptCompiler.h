@@ -9,8 +9,8 @@ namespace Kargono::Scripting
 	{
 		None = 0,
 		Return,
-		IntLiteral,
-		SemiColon
+		IntegerLiteral,
+		Semicolon
 	};
 
 	struct ScriptToken
@@ -44,8 +44,8 @@ namespace Kargono::Utility
 		switch (type)
 		{
 			case Scripting::ScriptTokenType::Return: return "Return";
-			case Scripting::ScriptTokenType::IntLiteral: return "Integer Literal";
-			case Scripting::ScriptTokenType::SemiColon: return "Semicolon";
+			case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
+			case Scripting::ScriptTokenType::Semicolon: return "Semicolon";
 
 			case Scripting::ScriptTokenType::None:
 			default:
