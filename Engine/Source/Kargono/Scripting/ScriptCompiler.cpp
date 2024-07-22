@@ -40,7 +40,7 @@ namespace Kargono::Scripting
 	{
 		std::vector<ScriptToken> newTokens {};
 		std::string tokenBuffer {};
-		uint32_t textLocation = 0;
+		uint32_t textLocation {0};
 
 		while (textLocation < text.size())
 		{
@@ -55,10 +55,6 @@ namespace Kargono::Scripting
 				{
 					tokenBuffer.push_back(text.at(textLocation));
 					textLocation++;
-					if (textLocation >= text.size())
-					{
-						break;
-					}
 				}
 
 				// Check what type of token is provided
@@ -68,7 +64,29 @@ namespace Kargono::Scripting
 					tokenBuffer.clear();
 					continue;
 				}
-				KG_WARN("Invalid token provided");
+				if (tokenBuffer == "void")
+				{
+					newTokens.push_back({ ScriptTokenType::Void, {} });
+					tokenBuffer.clear();
+					continue;
+				}
+				if (tokenBuffer == "UInt16")
+				{
+					newTokens.push_back({ ScriptTokenType::UInt16, {} });
+					tokenBuffer.clear();
+					continue;
+				}
+
+				if (tokenBuffer == "String")
+				{
+					newTokens.push_back({ ScriptTokenType::String, {} });
+					tokenBuffer.clear();
+					continue;
+				}
+
+				newTokens.push_back({ ScriptTokenType::Identifier, tokenBuffer });
+				tokenBuffer.clear();
+				continue;
 			}
 
 			if (std::isdigit(text.at(textLocation)))
@@ -82,10 +100,6 @@ namespace Kargono::Scripting
 				{
 					tokenBuffer.push_back(text.at(textLocation));
 					textLocation++;
-					if (textLocation >= text.size())
-					{
-						break;
-					}
 				}
 
 				// Fill in integer literal
@@ -100,12 +114,91 @@ namespace Kargono::Scripting
 				continue;
 			}
 
+			if (text.at(textLocation) == '\"')
+			{
+				// Skip first quotation
+				textLocation++;
+
+				// Fill buffer
+				while (textLocation < text.size() && text.at(textLocation) != '\"')
+				{
+					tokenBuffer.push_back(text.at(textLocation));
+					textLocation++;
+				}
+
+				// Move past second quotation
+				textLocation++;
+
+				// Fill in String literal
+				newTokens.push_back({ ScriptTokenType::StringLiteral, tokenBuffer });
+				tokenBuffer.clear();
+				continue;
+			}
+
 			if (text.at(textLocation) == ';')
 			{
 				newTokens.push_back({ ScriptTokenType::Semicolon, {} });
 				textLocation++;
 				continue;
 			}
+
+			if (text.at(textLocation) == '(')
+			{
+				newTokens.push_back({ ScriptTokenType::OpenParentheses, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == ')')
+			{
+				newTokens.push_back({ ScriptTokenType::CloseParentheses, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == '{')
+			{
+				newTokens.push_back({ ScriptTokenType::OpenCurlyBrace, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == '}')
+			{
+				newTokens.push_back({ ScriptTokenType::CloseCurlyBrace, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == '=')
+			{
+				newTokens.push_back({ ScriptTokenType::AssignmentOperator, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == '+')
+			{
+				newTokens.push_back({ ScriptTokenType::AdditionOperator, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == ',')
+			{
+				newTokens.push_back({ ScriptTokenType::Comma, {} });
+				textLocation++;
+				continue;
+			}
+
+			if (text.at(textLocation) == ':' && text.at(textLocation + 1) == ':')
+			{
+				newTokens.push_back({ ScriptTokenType::NamespaceResolver, {} });
+				textLocation+= 2;
+				continue;
+			}
+
+
 
 			KG_ERROR("Could not identify character!");
 		}
