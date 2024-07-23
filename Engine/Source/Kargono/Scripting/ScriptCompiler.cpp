@@ -243,10 +243,9 @@ namespace Kargono::Scripting
 		// Function Name
 		Advance();
 		tokenBuffer = GetCurrentToken();
-		// TODO: Check for parameters
-		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		if (tokenBuffer.Type == ScriptTokenType::Identifier)
 		{
-			
+			// TODO: Error state
 		}
 
 		// Parameter Open Parentheses
@@ -261,10 +260,10 @@ namespace Kargono::Scripting
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		// TODO: Check for parameters
-		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		/*while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
 		{
 
-		}
+		}*/
 
 
 		
@@ -277,7 +276,7 @@ namespace Kargono::Scripting
 		Advance();
 		tokenBuffer = GetCurrentToken();
 
-		m_AST.ProgramNode
+		//m_AST.ProgramNode
 
 		
 
