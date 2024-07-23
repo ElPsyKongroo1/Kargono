@@ -29,8 +29,13 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
 
 		TokenParser tokenParser{};
-		ScriptAST syntaxTree = tokenParser.ParseTokens(std::move(tokens));
+		auto [success, newAST] = tokenParser.ParseTokens(std::move(tokens));
 
+		if (!success)
+		{
+			KG_WARN("Token parsing failed. Here is resulting abstract syntax tree:");
+			tokenParser.PrintAST();
+		}
 
 		return "Hello";
 	}
@@ -229,62 +234,143 @@ namespace Kargono::Scripting
 		m_TextBuffer.clear();
 	}
 
-	ScriptAST TokenParser::ParseTokens(std::vector<ScriptToken> tokens)
+	std::tuple<bool, ScriptAST> TokenParser::ParseTokens(std::vector<ScriptToken> tokens)
 	{
 		m_Tokens = std::move(tokens);
 
-		// Return Value
+		FunctionNode newFunctionNode{};
+		// Store return value
 		ScriptToken& tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "void")
 		{
-			// TODO: Error state
+			KG_WARN("Expecting a return type in function signature. Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return {false, m_AST};
 		}
+		// TODO: Store return type if applicable
 
-		// Function Name
+		// Get Function Name
 		Advance();
 		tokenBuffer = GetCurrentToken();
-		if (tokenBuffer.Type == ScriptTokenType::Identifier)
+		if (tokenBuffer.Type != ScriptTokenType::Identifier)
 		{
-			// TODO: Error state
+			KG_WARN("Expecting a function name in function signature. Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return { false, m_AST };
 		}
+		newFunctionNode.Name = {tokenBuffer};
+
 
 		// Parameter Open Parentheses
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
 		{
-			// TODO: Error state
+			KG_WARN("Expecting an open parentheses in function signature (\"(\"). Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return { false, m_AST };
 		}
 
 		// Parameter List
 		Advance();
 		tokenBuffer = GetCurrentToken();
-		// TODO: Check for parameters
-		/*while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
 		{
+			FunctionParameter newParameter{};
+			// Store type of current parameter
+			newParameter.ParameterType = tokenBuffer;
 
-		}*/
+			// Check and store parameter name
+			Advance();
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type != ScriptTokenType::Identifier)
+			{
+				KG_WARN("Expecting an identifier for parameter in function signature. Got a {} with a value of {}",
+					Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+				return { false, m_AST };
+			}
+			newParameter.Identifier = tokenBuffer;
 
 
-		
+			// Check for comma
+			Advance();
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type == ScriptTokenType::Comma)
+			{
+				if (GetCurrentToken(1).Type != ScriptTokenType::Identifier)
+				{
+					KG_WARN("Expecting an identifier after comma separator for parameter list in function signature. Got a {} with a value of {}",
+						Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+					return { false, m_AST };
+				}
+
+				// Move to next token if comma is present
+				Advance();
+			}
+		}
+		// Check for close parentheses
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
 		{
-			// TODO: Error state
+			KG_WARN("Expecting an closing parentheses in function signature (\")\"). Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return { false, m_AST };
 		}
 
+
+		// Check for open curly braces
 		Advance();
 		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
+		{
+			KG_WARN("Expecting an opening curly brace in function signature. Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return { false, m_AST };
+		}
 
-		//m_AST.ProgramNode
+		// TODO: Process list of statements
 
-		
+		// Check for close curly braces
+		Advance();
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::CloseCurlyBrace)
+		{
+			KG_WARN("Expecting an closing curly brace in function signature. Got a {} with a value of {}",
+				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
+			return { false, m_AST };
+		}
 
+		m_AST.ProgramNode = { newFunctionNode };
 
-		return m_AST;
+		return { true, m_AST };
+	}
+	void TokenParser::PrintAST()
+	{
+		if (m_AST.ProgramNode)
+		{
+			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+			KG_WARN("Function Node");
+			KG_WARN("\tName:");
+			KG_WARN("\t\tType: {}", Utility::ScriptTokenTypeToString(funcNode.Name.Type));
+			KG_WARN("\t\tValue: {}", funcNode.Name.Value);
+			for (auto& parameter : funcNode.Parameters)
+			{
+				KG_WARN("\tParameter:");
+				KG_WARN("\t\tParameterType:");
+				KG_WARN("\t\t\tType: {}", Utility::ScriptTokenTypeToString(parameter.ParameterType.Type));
+				KG_WARN("\t\t\tValue: {}", parameter.ParameterType.Value);
+			}
+		}
 	}
 	ScriptToken& TokenParser::GetCurrentToken(int32_t offset)
 	{
+		// Return empty token if end of file reached
+		if (m_TokenLocation + offset >= m_Tokens.size())
+		{
+			static ScriptToken s_EmptyToken{};
+			s_EmptyToken = {};
+			return s_EmptyToken;
+		}
 		return m_Tokens.at(m_TokenLocation + offset);
 	}
 	void TokenParser::Advance(uint32_t count)
