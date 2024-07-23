@@ -40,7 +40,7 @@ namespace Kargono
 		s_EditorApp = this;
 
 		InitializeStaticResources();
-		KG_INFO(Scripting::ScriptCompiler::CompileScriptFile("./../Projects/Pong/Assets/NewScripting/UpdateSessionUserSlot.kgscript"));
+		//KG_INFO(Scripting::ScriptCompiler::CompileScriptFile("./../Projects/Pong/Assets/NewScripting/UpdateSessionUserSlot.kgscript"));
 	}
 
 	void EditorApp::Init()

@@ -89,6 +89,7 @@ namespace Kargono::Scripting
 
 	private:
 		ScriptToken& GetCurrentToken(int32_t offset = 0);
+		void Advance(uint32_t count = 1);
 	private:
 		std::vector<ScriptToken> m_Tokens{};
 		ScriptAST m_AST{};
