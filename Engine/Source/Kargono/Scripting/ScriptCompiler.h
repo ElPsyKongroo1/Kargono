@@ -14,12 +14,10 @@ namespace Kargono::Scripting
 		StringLiteral,
 
 		// Keywords
-		Return,
-		Void,
+		Keyword,
 
 		// Primitive Types
-		String,
-		UInt16,
+		PrimitiveType,
 
 		// Variable
 		Identifier,
@@ -44,6 +42,60 @@ namespace Kargono::Scripting
 		std::string Value {};
 	};
 
+	class ScriptTokenizer
+	{
+	public:
+		std::vector<ScriptToken> TokenizeString(std::string m_ScriptText);
+	private:
+		char GetCurrentChar(int32_t offset = 0);
+		bool CurrentLocationValid();
+		void AddCurrentCharToBuffer();
+		void Advance(uint32_t count = 1);
+		void AddTokenAndClearBuffer(const ScriptToken& token);
+	private:
+		std::string m_ScriptText{};
+		std::string m_TextBuffer{};
+		std::vector<ScriptToken> m_Tokens {};
+		uint32_t m_TextLocation{ 0 };
+
+		std::vector<std::string> m_Keywords {"return", "void"};
+		std::vector<std::string> m_PrimitiveTypes {"String", "UInt16"};
+	};
+
+	struct FunctionNode
+	{
+		
+	};
+
+	struct ProgramNode
+	{
+	public:
+
+	public:
+		FunctionNode funcNode;
+		// TODO: Add function node
+	};
+
+	struct ScriptAST
+	{
+		Ref<ProgramNode> ProgramNode { nullptr };
+	};
+
+
+	class TokenParser
+	{
+	public:
+		ScriptAST ParseTokens(std::vector<ScriptToken> tokens);
+
+	private:
+		ScriptToken& GetCurrentToken(int32_t offset = 0);
+	private:
+		std::vector<ScriptToken> m_Tokens{};
+		ScriptAST m_AST{};
+		uint32_t m_TokenLocation{0};
+	};
+
+
 	//==============================
 	// Script Compiler Class
 	//==============================
@@ -54,11 +106,6 @@ namespace Kargono::Scripting
 		// External API
 		//==============================
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		static std::vector<ScriptToken> ConvertTextToTokens(const std::string& text);
 	};
 }
 
@@ -71,12 +118,9 @@ namespace Kargono::Utility
 			case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 			case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 
-			case Scripting::ScriptTokenType::Return: return "Return";
-			case Scripting::ScriptTokenType::Void: return "Void";
-
-			case Scripting::ScriptTokenType::String: return "String";
-			case Scripting::ScriptTokenType::UInt16: return "UInt16";
-
+			
+			case Scripting::ScriptTokenType::Keyword: return "Keyword";
+			case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
 			case Scripting::ScriptTokenType::Identifier: return "Identifier";
 
 			case Scripting::ScriptTokenType::Semicolon: return "Semicolon";
