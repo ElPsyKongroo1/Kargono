@@ -24,184 +24,272 @@ namespace Kargono::Scripting
 		// Load in script file from disk
 		std::string scriptFile = Utility::FileSystem::ReadFileString(scriptLocation);
 
+		ScriptTokenizer scriptTokenizer{};
 		// Get Tokens from Text
-		std::vector<ScriptToken> allTokens = ConvertTextToTokens(scriptFile);
+		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
 
-		//TODO: Testing
-		std::stringstream outputStream {};
-		for (auto& token : allTokens)
-		{
-			outputStream << "TokenType: " << Utility::ScriptTokenTypeToString(token.Type) << " | Value: " << token.Value << "\n";
-		}
+		TokenParser tokenParser{};
+		ScriptAST syntaxTree = tokenParser.ParseTokens(std::move(tokens));
 
-		return outputStream.str();
+
+		return "Hello";
 	}
-	std::vector<ScriptToken> ScriptCompiler::ConvertTextToTokens(const std::string& text)
+	std::vector<ScriptToken> ScriptTokenizer::TokenizeString(std::string text)
 	{
-		std::vector<ScriptToken> newTokens {};
-		std::string tokenBuffer {};
-		uint32_t textLocation {0};
+		// Initialize Variables
+		m_ScriptText = std::move(text);
 
-		while (textLocation < text.size())
+		while (CurrentLocationValid())
 		{
-			if (std::isalpha(text.at(textLocation)))
+			if (std::isalpha(GetCurrentChar()))
 			{
 				// Add first character to buffer
-				tokenBuffer.push_back(text.at(textLocation));
-				textLocation++;
+				AddCurrentCharToBuffer();
+				Advance();
 
 				// Fill remainder of buffer
-				while (textLocation < text.size() && std::isalnum(text.at(textLocation)))
+				while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
 				{
-					tokenBuffer.push_back(text.at(textLocation));
-					textLocation++;
+					AddCurrentCharToBuffer();
+					Advance();
 				}
 
-				// Check what type of token is provided
-				if (tokenBuffer == "return")
+				// Check for keywords
+				bool foundKeyword = false;
+				for (auto& keyword : m_Keywords)
 				{
-					newTokens.push_back({ ScriptTokenType::Return, {} });
-					tokenBuffer.clear();
-					continue;
+					if (m_TextBuffer == keyword)
+					{
+						AddTokenAndClearBuffer({ ScriptTokenType::Keyword, {keyword} });
+						foundKeyword = true;
+						break;
+					}
 				}
-				if (tokenBuffer == "void")
+				if (foundKeyword)
 				{
-					newTokens.push_back({ ScriptTokenType::Void, {} });
-					tokenBuffer.clear();
-					continue;
-				}
-				if (tokenBuffer == "UInt16")
-				{
-					newTokens.push_back({ ScriptTokenType::UInt16, {} });
-					tokenBuffer.clear();
 					continue;
 				}
 
-				if (tokenBuffer == "String")
+				// Check for primitive types
+				bool foundPrimitiveType = false;
+				for (auto& primitiveType : m_PrimitiveTypes)
 				{
-					newTokens.push_back({ ScriptTokenType::String, {} });
-					tokenBuffer.clear();
+					if (m_TextBuffer == primitiveType)
+					{
+						AddTokenAndClearBuffer({ ScriptTokenType::PrimitiveType, {primitiveType} });
+						foundPrimitiveType = true;
+						break;
+					}
+				}
+				if (foundPrimitiveType)
+				{
 					continue;
 				}
 
-				newTokens.push_back({ ScriptTokenType::Identifier, tokenBuffer });
-				tokenBuffer.clear();
+				AddTokenAndClearBuffer({ ScriptTokenType::Identifier, m_TextBuffer });
 				continue;
 			}
 
-			if (std::isdigit(text.at(textLocation)))
+			if (std::isdigit(GetCurrentChar()))
 			{
 				// Add first digit to buffer
-				tokenBuffer.push_back(text.at(textLocation));
-				textLocation++;
+				AddCurrentCharToBuffer();
+				Advance();
 
 				// Fill remainder of buffer
-				while (textLocation < text.size() && std::isdigit(text.at(textLocation)))
+				while (CurrentLocationValid() && std::isdigit(GetCurrentChar()))
 				{
-					tokenBuffer.push_back(text.at(textLocation));
-					textLocation++;
+					AddCurrentCharToBuffer();
+					Advance();
 				}
 
 				// Fill in integer literal
-				newTokens.push_back({ ScriptTokenType::IntegerLiteral, tokenBuffer });
-				tokenBuffer.clear();
+				AddTokenAndClearBuffer({ ScriptTokenType::IntegerLiteral, m_TextBuffer });
 				continue;
 			}
 
-			if (std::isspace(text.at(textLocation)))
+			if (std::isspace(GetCurrentChar()))
 			{
-				textLocation++;
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '\"')
+			if (GetCurrentChar() == '\"')
 			{
 				// Skip first quotation
-				textLocation++;
+				Advance();
 
 				// Fill buffer
-				while (textLocation < text.size() && text.at(textLocation) != '\"')
+				while (CurrentLocationValid() && GetCurrentChar() != '\"')
 				{
-					tokenBuffer.push_back(text.at(textLocation));
-					textLocation++;
+					AddCurrentCharToBuffer();
+					Advance();
 				}
 
 				// Move past second quotation
-				textLocation++;
+				Advance();
 
 				// Fill in String literal
-				newTokens.push_back({ ScriptTokenType::StringLiteral, tokenBuffer });
-				tokenBuffer.clear();
+				AddTokenAndClearBuffer({ ScriptTokenType::StringLiteral, m_TextBuffer });
 				continue;
 			}
 
-			if (text.at(textLocation) == ';')
+			if (GetCurrentChar() == ';')
 			{
-				newTokens.push_back({ ScriptTokenType::Semicolon, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::Semicolon, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '(')
+			if (GetCurrentChar() == '(')
 			{
-				newTokens.push_back({ ScriptTokenType::OpenParentheses, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::OpenParentheses, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == ')')
+			if (GetCurrentChar() == ')')
 			{
-				newTokens.push_back({ ScriptTokenType::CloseParentheses, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::CloseParentheses, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '{')
+			if (GetCurrentChar() == '{')
 			{
-				newTokens.push_back({ ScriptTokenType::OpenCurlyBrace, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::OpenCurlyBrace, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '}')
+			if (GetCurrentChar() == '}')
 			{
-				newTokens.push_back({ ScriptTokenType::CloseCurlyBrace, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::CloseCurlyBrace, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '=')
+			if (GetCurrentChar() == '=')
 			{
-				newTokens.push_back({ ScriptTokenType::AssignmentOperator, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::AssignmentOperator, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == '+')
+			if (GetCurrentChar() == '+')
 			{
-				newTokens.push_back({ ScriptTokenType::AdditionOperator, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::AdditionOperator, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == ',')
+			if (GetCurrentChar() == ',')
 			{
-				newTokens.push_back({ ScriptTokenType::Comma, {} });
-				textLocation++;
+				AddTokenAndClearBuffer({ ScriptTokenType::Comma, {} });
+				Advance();
 				continue;
 			}
 
-			if (text.at(textLocation) == ':' && text.at(textLocation + 1) == ':')
+			if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 			{
-				newTokens.push_back({ ScriptTokenType::NamespaceResolver, {} });
-				textLocation+= 2;
+				AddTokenAndClearBuffer({ ScriptTokenType::NamespaceResolver, {} });
+				Advance(2);
 				continue;
 			}
-
-
 
 			KG_ERROR("Could not identify character!");
 		}
-		return newTokens;
+		return m_Tokens;
+	}
+
+	char ScriptTokenizer::GetCurrentChar(int32_t offset)
+	{
+		return m_ScriptText.at(m_TextLocation + offset);
+	}
+
+	bool ScriptTokenizer::CurrentLocationValid()
+	{
+		return m_TextLocation < m_ScriptText.size();
+	}
+
+
+	void ScriptTokenizer::AddCurrentCharToBuffer()
+	{
+		m_TextBuffer.push_back(m_ScriptText.at(m_TextLocation));
+	}
+
+	void ScriptTokenizer::Advance(uint32_t count)
+	{
+		m_TextLocation += count;
+	}
+
+	void ScriptTokenizer::AddTokenAndClearBuffer(const ScriptToken& token)
+	{
+		m_Tokens.push_back(token);
+		m_TextBuffer.clear();
+	}
+
+	ScriptAST TokenParser::ParseTokens(std::vector<ScriptToken> tokens)
+	{
+		m_Tokens = std::move(tokens);
+
+		// Return Value
+		ScriptToken& tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "void")
+		{
+			// TODO: Error state
+		}
+
+		// Function Name
+		Advance();
+		tokenBuffer = GetCurrentToken();
+		// TODO: Check for parameters
+		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		{
+			
+		}
+
+		// Parameter Open Parentheses
+		Advance();
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
+		{
+			// TODO: Error state
+		}
+
+		// Parameter List
+		Advance();
+		tokenBuffer = GetCurrentToken();
+		// TODO: Check for parameters
+		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		{
+
+		}
+
+
+		
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
+		{
+			// TODO: Error state
+		}
+
+		Advance();
+		tokenBuffer = GetCurrentToken();
+
+		m_AST.ProgramNode
+
+		
+
+
+		return m_AST;
+	}
+	ScriptToken& TokenParser::GetCurrentToken(int32_t offset)
+	{
+		return m_Tokens.at(m_TokenLocation + offset);
+	}
+	void TokenParser::Advance(uint32_t count)
+	{
+		m_TokenLocation += count;
 	}
 }
