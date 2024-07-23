@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <tuple>
 
 namespace Kargono::Scripting
 {
@@ -38,8 +39,14 @@ namespace Kargono::Scripting
 
 	struct ScriptToken
 	{
+	public:
 		ScriptTokenType Type{ ScriptTokenType::None };
 		std::string Value {};
+	public:
+		operator bool() const
+		{
+			return Type != ScriptTokenType::None;
+		}
 	};
 
 	class ScriptTokenizer
@@ -62,31 +69,53 @@ namespace Kargono::Scripting
 		std::vector<std::string> m_PrimitiveTypes {"String", "UInt16"};
 	};
 
+	struct FunctionParameter
+	{
+		ScriptToken ParameterType{};
+		ScriptToken Identifier{};
+	};
+
 	struct FunctionNode
 	{
-		
+		ScriptToken Name{};
+		std::vector<FunctionParameter> Parameters{};
+
+		operator bool() const
+		{
+			return Name;
+		}
 	};
 
 	struct ProgramNode
 	{
 	public:
-
+		FunctionNode FuncNode;
 	public:
-		FunctionNode funcNode;
-		// TODO: Add function node
+		operator bool() const
+		{
+			return FuncNode;
+		}
 	};
 
 	struct ScriptAST
 	{
-		Ref<ProgramNode> ProgramNode { nullptr };
+	public:
+		ProgramNode ProgramNode {};
+
+	public:
+		operator bool() const 
+		{ 
+			return ProgramNode; 
+		}
 	};
+
 
 
 	class TokenParser
 	{
 	public:
-		ScriptAST ParseTokens(std::vector<ScriptToken> tokens);
-
+		std::tuple<bool, ScriptAST> ParseTokens(std::vector<ScriptToken> tokens);
+		void PrintAST();
 	private:
 		ScriptToken& GetCurrentToken(int32_t offset = 0);
 		void Advance(uint32_t count = 1);
