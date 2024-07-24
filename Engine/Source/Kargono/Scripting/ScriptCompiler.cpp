@@ -33,9 +33,10 @@ namespace Kargono::Scripting
 
 		if (!success)
 		{
-			KG_WARN("Token parsing failed. Here is resulting abstract syntax tree:");
-			tokenParser.PrintAST();
+			KG_WARN("Token parsing failed");
 		}
+
+		tokenParser.PrintAST();
 
 		return "Hello";
 	}
@@ -290,6 +291,7 @@ namespace Kargono::Scripting
 				return { false, m_AST };
 			}
 			newParameter.Identifier = tokenBuffer;
+			newFunctionNode.Parameters.push_back(newParameter);
 
 
 			// Check for comma
@@ -350,15 +352,18 @@ namespace Kargono::Scripting
 		{
 			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
 			KG_WARN("Function Node");
-			KG_WARN("\tName:");
-			KG_WARN("\t\tType: {}", Utility::ScriptTokenTypeToString(funcNode.Name.Type));
-			KG_WARN("\t\tValue: {}", funcNode.Name.Value);
+			KG_WARN(" Name:");
+			KG_WARN("  Type: {}", Utility::ScriptTokenTypeToString(funcNode.Name.Type));
+			KG_WARN("  Value: {}", funcNode.Name.Value);
 			for (auto& parameter : funcNode.Parameters)
 			{
-				KG_WARN("\tParameter:");
-				KG_WARN("\t\tParameterType:");
-				KG_WARN("\t\t\tType: {}", Utility::ScriptTokenTypeToString(parameter.ParameterType.Type));
-				KG_WARN("\t\t\tValue: {}", parameter.ParameterType.Value);
+				KG_WARN(" Parameter:");
+				KG_WARN("  ParameterType:");
+				KG_WARN("   Type: {}", Utility::ScriptTokenTypeToString(parameter.ParameterType.Type));
+				KG_WARN("   Value: {}", parameter.ParameterType.Value);
+				KG_WARN("  Identifier:");
+				KG_WARN("   Type: {}", Utility::ScriptTokenTypeToString(parameter.Identifier.Type));
+				KG_WARN("   Value: {}", parameter.Identifier.Value);
 			}
 		}
 	}
