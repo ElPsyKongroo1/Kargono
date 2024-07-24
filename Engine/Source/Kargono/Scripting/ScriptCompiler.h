@@ -69,6 +69,16 @@ namespace Kargono::Scripting
 		std::vector<std::string> m_PrimitiveTypes {"String", "UInt16"};
 	};
 
+	/*class Statement
+	{
+	public:
+		Statement() = default;
+		virtual ~Statement() = default;
+
+		virtual operator bool() = 0;
+	public:
+	};*/
+
 	struct FunctionParameter
 	{
 		ScriptToken ParameterType{};
