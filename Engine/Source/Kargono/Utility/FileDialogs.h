@@ -25,5 +25,7 @@ namespace Kargono::Utility
 		//		The selected path is returned to the calling code to
 		//		be handled.
 		static std::filesystem::path SaveFile(const char* filter = "", const char* initialDirectory = "");
+
+		static std::filesystem::path ChooseDirectory(const std::filesystem::path& initialPath);
 	};
 }

@@ -13,7 +13,7 @@ namespace Kargono
 		std::vector<spdlog::sink_ptr> logSinks;
 		if (s_TestingActive)
 		{
-			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Log/Testing.log", true));
+			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Log/Kargono.log", true));
 			logSinks[0]->set_pattern("[%r] | [%s] | [%#] | [%!] | [%n] | [%v]");
 		}
 		else
@@ -32,6 +32,6 @@ namespace Kargono
 
 		spdlog::set_default_logger(s_CoreLogger);
 
-		KG_VERIFY(s_CoreLogger, "Logging System")
+		KG_VERIFY(s_CoreLogger, "Logging System");
 	}
 }

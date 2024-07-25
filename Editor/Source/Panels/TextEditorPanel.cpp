@@ -26,6 +26,7 @@ namespace Kargono::Panels
 	static std::function<void()> s_OnSaveFile { nullptr };
 	static std::function<void()> s_OnDeleteFile { nullptr };
 	static std::function<void()> s_OnCloseFile { nullptr };
+	static std::function<void()> s_OnCloseAllFiles { nullptr };
 
 	static EditorUI::GenericPopupSpec s_DeleteWarningSpec {};
 	static EditorUI::GenericPopupSpec s_DiscardChangesWarningSpec {};
@@ -39,7 +40,7 @@ namespace Kargono::Panels
 		s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 		s_OnCreateFile = [&]()
 		{
-			const std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
+			const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 			const std::filesystem::path filepath = Utility::FileDialogs::SaveFile("All Files\0*.*\0", initialDirectory.string().c_str());
 			if (!filepath.empty())
 			{
@@ -57,13 +58,15 @@ namespace Kargono::Panels
 		};
 		s_OnOpenFile = [&]()
 		{
-			const std::filesystem::path initialDirectory = Projects::Project::GetAssetDirectory();
+			const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 			const std::filesystem::path filepath = Utility::FileDialogs::OpenFile("All Files\0*.*\0", initialDirectory.string().c_str());
 			OpenFile(filepath);
 		};
 		s_OnSaveFile = [&]()
 		{
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
+
+			Utility::Operations::RemoveCharacterFromString(activeDocument.TextBuffer, '\r');
 
 			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
@@ -96,6 +99,14 @@ namespace Kargono::Panels
 				s_AllDocuments.at(0).SetActive = true;
 			}
 		};
+
+		s_OnCloseAllFiles = [&]()
+		{
+			s_AllDocuments.clear();
+			s_ActiveDocument = 0;
+		};
+
+
 
 		s_DeleteWarningSpec.Label = "Delete File";
 		s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;
@@ -249,7 +260,7 @@ namespace Kargono::Panels
 	}
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = Input::InputPolling::IsKeyPressed(Key::LeftControl) || Input::InputPolling::IsKeyPressed(Key::RightControl);
+		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
 
 		switch (event.GetKeyCode())
 		{
@@ -311,5 +322,9 @@ namespace Kargono::Panels
 				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 			}
 		}
+	}
+	void TextEditorPanel::ResetPanelResources()
+	{
+		s_OnCloseAllFiles();
 	}
 }

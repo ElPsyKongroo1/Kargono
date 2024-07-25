@@ -13,6 +13,9 @@
 
 namespace Kargono
 {
+	//==============================
+	// Wrapped Variables
+	//==============================
 	enum class WrappedVarType
 	{
 		None = 0,
@@ -263,7 +266,9 @@ namespace Kargono
 		}
 		float m_Value{};
 	};
-
+	//==============================
+	// Wrapped Functions
+	//==============================
 	enum class WrappedFuncType
 	{
 		None = 0,
@@ -438,6 +443,9 @@ namespace Kargono
 
 	namespace Utility
 	{
+		//==============================
+		// Wrapped Variable Utility Functions
+		//==============================
 		inline std::string WrappedVarTypeToString(WrappedVarType type)
 		{
 			switch (type)
@@ -590,7 +598,9 @@ namespace Kargono
 			}
 			return success;
 		}
-
+		//==============================
+		// Wrapped Function Utility Functions
+		//==============================
 		inline std::string WrappedFuncTypeToString(WrappedFuncType type)
 		{
 			switch (type)

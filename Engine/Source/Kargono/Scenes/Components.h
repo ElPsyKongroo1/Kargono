@@ -91,28 +91,16 @@ namespace Kargono::Scenes
 		NetworkType PhysicsType = NetworkType::None;
 	};
 
-	struct AudioComponent
-	{
-		std::string Name;
-		Ref<Audio::AudioBuffer> Audio;
-		Assets::AssetHandle AudioHandle;
-
-		AudioComponent() = default;
-		AudioComponent(const AudioComponent&) = default;
-	};
-
-	struct MultiAudioComponent
-	{
-		std::unordered_map<std::string, AudioComponent> AudioComponents{};
-
-		MultiAudioComponent() = default;
-		MultiAudioComponent(const MultiAudioComponent&) = default;
-	};
-
 	// Physics
 	struct Rigidbody2DComponent
 	{
-		enum class BodyType {Static = 0, Dynamic, Kinematic};
+		enum class BodyType
+		{
+			Static = 0,
+			Dynamic,
+			Kinematic
+		};
+
 		BodyType Type = BodyType::Static;
 		bool FixedRotation = false;
 
@@ -264,7 +252,7 @@ namespace Kargono::Scenes
 	{
 	};
 
-	using AllComponents = ComponentGroup<MultiAudioComponent, AudioComponent , TransformComponent, CameraComponent,
+	using AllComponents = ComponentGroup<TransformComponent, CameraComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }

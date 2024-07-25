@@ -4,7 +4,7 @@
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 
 #include "API/Platform/WindowsBackendAPI.h"
 #include "API/Platform/GlfwBackendAPI.h"
@@ -124,7 +124,7 @@ namespace Kargono::Utility
 
 
 
-#if KG_EXPORT == 0
+#ifndef KG_EXPORT
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
 		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
@@ -163,7 +163,7 @@ namespace Kargono::Utility
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow());
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
 		if (initialDirectory == "")
@@ -199,7 +199,7 @@ namespace Kargono::Utility
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)EngineCore::GetCurrentEngineCore().GetWindow().GetNativeWindow());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow());
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
 
@@ -230,6 +230,96 @@ namespace Kargono::Utility
 
 		return std::string();
 	}
+
+	std::filesystem::path FileDialogs::ChooseDirectory(const std::filesystem::path& initialPath)
+	{
+		// Initialize COM library
+		HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		if (FAILED(hr)) 
+		{
+			KG_WARN("Failed to initialize COM library");
+			return {};
+		}
+
+		IFileDialog* pFileDialog = nullptr;
+		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileDialog, reinterpret_cast<void**>(&pFileDialog));
+		if (FAILED(hr)) 
+		{
+			KG_WARN("Failed to create FileOpenDialog instance.");
+			CoUninitialize();
+			return {};
+		}
+
+		DWORD dwOptions;
+		hr = pFileDialog->GetOptions(&dwOptions);
+		if (SUCCEEDED(hr)) 
+		{
+			// Set the options for the file dialog to select folders
+			hr = pFileDialog->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
+		}
+
+		if (FAILED(hr)) 
+		{
+			KG_WARN("Failed to set dialog options.");
+			pFileDialog->Release();
+			CoUninitialize();
+			return {};
+		}
+
+		// Set the initial folder
+		if (!initialPath.empty()) 
+		{
+			PIDLIST_ABSOLUTE pidl;
+			SFGAOF sfgao;
+			hr = SHParseDisplayName(initialPath.c_str(), nullptr, &pidl, 0, &sfgao);
+			if (SUCCEEDED(hr)) {
+				IShellItem* psiFolder = nullptr;
+				hr = SHCreateShellItem(nullptr, nullptr, pidl, &psiFolder);
+				if (SUCCEEDED(hr)) {
+					pFileDialog->SetFolder(psiFolder);
+					psiFolder->Release();
+				}
+				CoTaskMemFree(pidl);
+			}
+		}
+
+		// Show the dialog
+		hr = pFileDialog->Show(NULL);
+		if (FAILED(hr)) 
+		{
+			KG_WARN("Dialog was canceled or an error occurred.");
+			pFileDialog->Release();
+			CoUninitialize();
+			return {};
+		}
+
+		// Get the selected folder
+		IShellItem* pItem = nullptr;
+		hr = pFileDialog->GetResult(&pItem);
+		if (SUCCEEDED(hr)) 
+		{
+			PWSTR pszFilePath = nullptr;
+			hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+			if (SUCCEEDED(hr)) {
+				std::filesystem::path selectedPath(pszFilePath);
+				CoTaskMemFree(pszFilePath);
+				pItem->Release();
+				pFileDialog->Release();
+				CoUninitialize();
+				return selectedPath;
+			}
+			pItem->Release();
+		}
+
+		pFileDialog->Release();
+		CoUninitialize();
+		return {};
+	}
+
+
+
+
+
 
 }
 

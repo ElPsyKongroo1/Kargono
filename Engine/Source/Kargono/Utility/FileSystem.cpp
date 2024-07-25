@@ -14,6 +14,26 @@ namespace Kargono::Utility
 		
 		std::filesystem::rename(oldPath, newPath);
 	}
+	bool FileSystem::CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile)
+	{
+		// Check if the sourceFile path exists and is a regular file
+		if (!std::filesystem::exists(sourceFile) || !std::filesystem::is_regular_file(sourceFile)) 
+		{
+			KG_WARN("Failed to copy file. Either could not locate file or file is unfamiliar format!");
+			return false;
+		}
+
+		// Create the destinationFile directory if it does not exist
+		if (!std::filesystem::exists(destinationFile.parent_path())) 
+		{
+			std::filesystem::create_directories(destinationFile.parent_path());
+		}
+
+		// Copy the file to the destinationFile path
+		std::filesystem::copy_file(sourceFile, destinationFile, std::filesystem::copy_options::overwrite_existing);
+
+		return true;
+	}
 	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
 	{
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
@@ -21,7 +41,7 @@ namespace Kargono::Utility
 		if (!stream)
 		{
 			// Failed to open the file
-			KG_ERROR("Failed to open file in ReadFileBinary!");
+			KG_ERROR("Failed to open file in ReadFileBinary: {}", filepath.string());
 			return {};
 		}
 
@@ -78,20 +98,6 @@ namespace Kargono::Utility
 		{
 			output_file.write(buffer.As<const char>(), buffer.Size);
 		}
-		return true;
-	}
-
-	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, ScopedBuffer buffer)
-	{
-		CreateNewDirectory(filepath.parent_path());
-		std::ofstream output_file(filepath, std::ios::binary);
-		if (!output_file)
-		{
-			KG_ERROR("Failed to write binary data to file");
-			return false;
-		}
-
-		output_file.write(buffer.As<const char>(), buffer.Size());
 		return true;
 	}
 
@@ -258,6 +264,69 @@ namespace Kargono::Utility
 		{
 			std::filesystem::create_directories(filepath);
 		}
+	}
+
+	bool FileSystem::CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory)
+	{
+		// Check if the source path exists and is a directory
+		if (!std::filesystem::exists(sourceDirectory) || !std::filesystem::is_directory(sourceDirectory)) 
+		{
+			KG_WARN("Failed to copy directory since source directory does not exist or is not a directory");
+			return false;
+		}
+
+		// Create the destination directory if it does not exist
+		if (!std::filesystem::exists(destinationDirectory)) 
+		{
+			std::filesystem::create_directories(destinationDirectory);
+		}
+
+		// Iterate through the source directory
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(sourceDirectory)) 
+		{
+			const auto& path = entry.path();
+			auto relative_path = std::filesystem::relative(path, sourceDirectory);
+			auto destination_path = destinationDirectory / relative_path;
+
+			// Create directory or file
+			if (std::filesystem::is_directory(path)) 
+			{
+				std::filesystem::create_directories(destination_path);
+			}
+			// Copy the file to the destination path
+			else if (std::filesystem::is_regular_file(path)) 
+			{
+				std::filesystem::copy_file(path, destination_path, std::filesystem::copy_options::overwrite_existing);
+			}
+			else 
+			{
+				KG_WARN("Skipping entry that is neither a directory nor a regular file!");
+			}
+		}
+
+		return true;
+	}
+
+	std::filesystem::path FileSystem::FindFileWithExtension(const std::filesystem::path& directory, const std::string& extension)
+	{
+		// Check if the provided path is a directory
+		if (!std::filesystem::is_directory(directory)) 
+		{
+			KG_WARN("Invalid directory provided!");
+			return {};
+		}
+
+		for (const auto& entry : std::filesystem::directory_iterator(directory)) 
+		{
+			// Check if the current entry is a regular file and has the specified extension
+			if (entry.is_regular_file() && entry.path().extension() == extension) 
+			{
+				return entry.path();
+			}
+		}
+
+		// Return an empty path if no file with the specified extension is found
+		return {};
 	}
 
 }

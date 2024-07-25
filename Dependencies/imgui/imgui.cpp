@@ -7882,6 +7882,38 @@ void ImGui::SetWindowFocus(const char* name)
     }
 }
 
+void ImGui::BringWindowToFront(const char* name)
+{
+    if (!name)
+    {
+        return;
+    }
+    ImGuiWindow* window = FindWindowByName(name);
+    if (!window)
+    {
+        return;
+    }
+
+    ImGuiContext& g = *GImGui;
+
+    // Move the root window to the top of the pile
+    IM_ASSERT(window == NULL || window->RootWindowDockTree != NULL);
+    ImGuiWindow* focus_front_window = window ? window->RootWindow : NULL;
+    ImGuiWindow* display_front_window = window ? window->RootWindowDockTree : NULL;
+    ImGuiDockNode* dock_node = window ? window->DockNode : NULL;
+
+    // Select in dock node
+    if (dock_node && dock_node->TabBar)
+        dock_node->TabBar->SelectedTabId = dock_node->TabBar->NextSelectedTabId = window->TabId;
+
+    // Bring to front
+    if (((window->Flags | focus_front_window->Flags | display_front_window->Flags) & ImGuiWindowFlags_NoBringToFrontOnFocus) == 0)
+    {
+        BringWindowToDisplayFront(display_front_window);
+    }
+    
+}
+
 void ImGui::SetNextWindowPos(const ImVec2& pos, ImGuiCond cond, const ImVec2& pivot)
 {
     ImGuiContext& g = *GImGui;

@@ -2,7 +2,7 @@
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
-    staticruntime "off"
+    staticruntime "on"
     linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
 
     targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
@@ -49,8 +49,7 @@
     {
         "_CRT_SECURE_NO_WARNINGS",
 		"GLFW_INCLUDE_NONE",
-        "KG_RENDERER_OPENGL",
-        "KG_EXPORT=0"
+        "KG_RENDERER_OPENGL"
     }
     includedirs 
     {
@@ -123,6 +122,12 @@
             "%{Library.WinVersion}",
             "%{Library.BCrypt}"
         }
+    filter "system:linux"
+       systemversion "latest"
+       defines
+       {
+	        "KG_PLATFORM_LINUX"
+       }
     filter "configurations:Debug"
         defines "KG_DEBUG"
         runtime "Debug"

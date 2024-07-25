@@ -2,7 +2,7 @@
 
 #include "Kargono/Scenes/SceneCamera.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 
 namespace Kargono::Scenes
 {
@@ -35,7 +35,7 @@ namespace Kargono::Scenes
 	}
 	void SceneCamera::RecalculateProjection()
 	{
-		auto& application = EngineCore::GetCurrentEngineCore().GetWindow();
+		auto& application = EngineService::GetActiveWindow();
 		float aspectRatio = static_cast<float>(application.GetViewportWidth()) / static_cast<float>(application.GetViewportHeight());
 
 		if (m_ProjectionType == ProjectionType::Perspective)

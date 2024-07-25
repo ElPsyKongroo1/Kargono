@@ -13,6 +13,8 @@
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
 #include "Panels/InputModePanel.h"
+#include "Panels/PropertiesPanel.h"
+#include "Panels/TestingPanel.h"
 
 #include <filesystem>
 #include <thread>
@@ -44,7 +46,7 @@ namespace Kargono
 		//=========================
 		// The constructor simply calls the parent constructor and initializes
 		//		the ImGui layer for window use.
-		EditorApp();
+		EditorApp(const std::filesystem::path& projectPath);
 		virtual ~EditorApp() override = default;
 		//=========================
 		// LifeCycle Functions
@@ -55,11 +57,10 @@ namespace Kargono
 		//		default scene resources, initializes editor boolean values,
 		//		requests the user select a project to open, and opens the selected
 		//		project. There are other things this function does, take a look at it.
-		virtual void OnAttach() override;
+		virtual void Init() override;
 		// This function simply closes and cleans up the audio system.
 
-	public:
-		virtual void OnDetach() override;
+		virtual void Terminate() override;
 		// This is a fairly large function and is at the heart of this application.
 		//		This function runs every frame. Here is the current functionality:
 		//		1. Request viewport resize on Scene to ensure in-runtime cameras are
@@ -130,13 +131,13 @@ namespace Kargono
 		// These functions are called from different parts of the editor to allow smooth
 		//		transitions between the current Project and other projects. Also allows
 		//		the current project to save.
-		void NewProject();
 		bool OpenProject();
 		void OpenProject(const std::filesystem::path& path);
 		void SaveProject();
 		// These functions allow transitioning between scenes in the editor and saving
 		//		the current scene.
 		void NewScene();
+		void NewScene(const std::string& sceneName);
 		void OpenScene();
 	public:
 		void OpenScene(const std::filesystem::path& path);
@@ -163,12 +164,14 @@ namespace Kargono
 		static EditorApp* s_EditorApp;
 		// Booleans to display UI Windows
 		bool m_ShowSceneHierarchy = true;
+		bool m_ShowProperties = true;
 		bool m_ShowContentBrowser = true;
 		bool m_ShowLog = false;
 		bool m_ShowStats = false;
 		bool m_ShowViewport = true;
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
+		bool m_ShowTesting = false;
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
@@ -187,10 +190,10 @@ namespace Kargono
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
-		Ref<RuntimeUI::UIObject> m_EditorUIObject = nullptr;
-		Assets::AssetHandle m_EditorUIObjectHandle{0};
 		Ref<Input::InputMode> m_EditorInputMode = nullptr;
 		Assets::AssetHandle m_EditorInputModeHandle{0};
+		Ref<RuntimeUI::UserInterface> m_EditorUIObject = nullptr;
+		Assets::AssetHandle m_EditorUIObjectHandle{0};
 
 		// Stepping Fields
 		bool m_IsPaused = false;
@@ -198,9 +201,13 @@ namespace Kargono
 
 		// Input Maps
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
+
+		// Initialization Fields
+		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
 		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
@@ -212,6 +219,7 @@ namespace Kargono
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
 		Scope<Panels::InputModePanel>  m_InputModePanel;
+		Scope<Panels::TestingPanel>  m_TestingPanel;
 	private:
 		friend Panels::ViewportPanel;
 		friend Panels::SceneHierarchyPanel;
@@ -225,6 +233,8 @@ namespace Kargono
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
 		friend Panels::InputModePanel;
+		friend Panels::PropertiesPanel;
+		friend Panels::TestingPanel;
 
 	};
 

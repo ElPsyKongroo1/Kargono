@@ -10,6 +10,11 @@ workspace "Kargono"
         "Dist"
     }
 
+    defines
+    {
+        "$(ExternalCompilerOptions)"
+    }
+
     -- solution_items
 	-- {
 	-- 	".editorconfig"
@@ -27,7 +32,7 @@ group "Dependencies"
     include "Dependencies/GLFW"
     include "Dependencies/Box2D"
     include "Dependencies/GLAD"
-    include "Dependencies/imGui"
+    include "Dependencies/imgui"
     include "Dependencies/msdf_atlas_gen"
     include "Dependencies/yaml-cpp"
 group ""
@@ -41,5 +46,7 @@ group "Applications"
     include "Runtime"
     include "Server"
 group ""
-group "Tools"
-    include "Testing"
+group "Testing"
+    include "Testing/EditorTesting"
+    include "Testing/RuntimeTesting"
+    include "Testing/ServerTesting"

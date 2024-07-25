@@ -34,17 +34,6 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
-	{
-		switch (stage)
-		{
-		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
-		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
-		}
-		KG_ERROR("Invalid Shader Type!");
-		return (shaderc_shader_kind)0;
-	}
-
 	static const char* GLShaderStageToString(GLenum stage)
 	{
 		switch (stage)
@@ -91,6 +80,17 @@ namespace Kargono::Utility
 
 		return shaderSources;
 	}
+#ifndef KG_EXPORT
+	static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
+	{
+		switch (stage)
+		{
+		case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
+		case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
+		}
+		KG_ERROR("Invalid Shader Type!");
+		return (shaderc_shader_kind)0;
+	}
 
 	static void CompileBinaries(const Assets::AssetHandle& assetHandle, const std::unordered_map<GLenum, std::string>& shaderSources, std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)
 	{
@@ -133,6 +133,7 @@ namespace Kargono::Utility
 			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
 		}
 	}
+#endif
 }
 
 namespace Kargono::Assets
@@ -145,12 +146,12 @@ namespace Kargono::Assets
 	{
 		// Clear current registry and open registry in current project 
 		s_ShaderRegistry.clear();
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& shaderRegistryLocation = Projects::Project::GetAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
 
 		if (!std::filesystem::exists(shaderRegistryLocation))
 		{
-			KG_ERROR("No .kgregistry file exists in project path!");
+			KG_WARN("No .kgregistry file exists in project path!");
 			return;
 		}
 		YAML::Node data;
@@ -231,8 +232,8 @@ namespace Kargono::Assets
 
 	void AssetManager::SerializeShaderRegistry()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& shaderRegistryLocation = Projects::Project::GetAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -354,7 +355,7 @@ namespace Kargono::Assets
 
 	Ref<Kargono::Rendering::Shader> AssetManager::GetShader(const AssetHandle& handle)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
 
 		if (s_Shaders.contains(handle)) { return s_Shaders[handle]; }
 
@@ -373,7 +374,7 @@ namespace Kargono::Assets
 
 	std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> AssetManager::GetShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "There is no active project when retrieving shader!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
 
 		for (const auto& [assetHandle, shaderRef] : s_Shaders)
 		{
@@ -410,7 +411,7 @@ namespace Kargono::Assets
 	{
 		Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
-		std::filesystem::path intermediatePath = Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation;
+		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
 		std::vector<std::string> stageTypes = { "vertex", "fragment" };
 
 		for (const auto& stage : stageTypes)
@@ -443,18 +444,23 @@ namespace Kargono::Assets
 	void AssetManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
 		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
 	{
+#ifdef KG_EXPORT
+		KG_ERROR("Attempt to create/compile new shader during runtime!");
+#endif
 		// Create Shader Binary
 		auto shaderSources = Utility::PreProcess(shaderSource);
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+#ifndef KG_EXPORT
 		Utility::CompileBinaries(newAsset.Handle, shaderSources, openGLSPIRV);
+#endif
 
 		// Save binary intermediates for all shader stages!
 		std::string intermediatePath = "Shaders/Intermediates/" + (std::string)newAsset.Handle;
 		for (const auto& [stage, source] : openGLSPIRV)
 		{
 			std::string intermediatePathWithExtension = intermediatePath + Utility::ShaderBinaryFileExtension(stage);
-			std::filesystem::path intermediateFullPath = Projects::Project::GetAssetDirectory() / intermediatePathWithExtension;
+			std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePathWithExtension;
 
 			Utility::FileSystem::CreateNewDirectory(intermediateFullPath.parent_path());
 			std::ofstream out(intermediateFullPath, std::ios::out | std::ios::binary);
@@ -471,7 +477,7 @@ namespace Kargono::Assets
 		// Debug Only
 #ifdef KG_DEBUG
 		std::string debugString = shaderSource;
-		std::filesystem::path debugPath = Projects::Project::GetAssetDirectory() / (intermediatePath + ".source");
+		std::filesystem::path debugPath = Projects::ProjectService::GetActiveAssetDirectory() / (intermediatePath + ".source");
 		Utility::FileSystem::WriteFileString(debugPath, debugString);
 #endif
 

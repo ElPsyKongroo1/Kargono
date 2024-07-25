@@ -13,7 +13,7 @@
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Timestep.h"
@@ -28,14 +28,16 @@
 #include "Kargono/Events/NetworkingEvent.h"
 
 //-----------------Input-----------------//
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Input/InputMode.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
 
 //-----------------Network-----------------//
-#include "Kargono/Network/Network.h"
+#include "Kargono/Network/Message.h"
+#include "Kargono/Network/Client.h"
+#include "Kargono/Network/Server.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
@@ -63,7 +65,7 @@
 
 //-----------------Runtime-UserInterface-----------------//
 #include "Kargono/RuntimeUI/RuntimeUI.h"
-#include "Kargono/RuntimeUI/Text.h"
+#include "Kargono/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
 #include "Kargono/EditorUI/EditorUI.h"

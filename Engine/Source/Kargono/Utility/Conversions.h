@@ -63,6 +63,16 @@ namespace Kargono::Utility
 
 		}
 		//==============================
+		// Convert Float -> String
+		//==============================
+		static std::string FloatToString(float value, int precision = 2)
+		{
+			std::ostringstream out;
+			out << std::fixed << std::setprecision(precision) << value;
+			return out.str();
+		}
+
+		//==============================
 		// Convert String -> Bool
 		//==============================
 		static bool StringToBool(const std::string& value)

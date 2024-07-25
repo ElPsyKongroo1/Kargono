@@ -1,7 +1,7 @@
 project "Server"
     language "C++"
     cppdialect "C++20"
-    staticruntime "off"
+    staticruntime "on"
     linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
     targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
     objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
@@ -26,7 +26,9 @@ project "Server"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Runtime/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.asio}",
+        "%{IncludeDir.doctest}",
+        "%{IncludeDir.ImGuiColorTextEdit}"
 
     }
 
@@ -43,8 +45,7 @@ project "Server"
     defines 
     {
         "KG_RUNTIME",
-		"_CRT_SECURE_NO_WARNINGS",
-        "KG_EXPORT=0"
+		"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"

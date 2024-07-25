@@ -25,7 +25,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_EditScriptFuncType{};
 	static EditorUI::RadioSelectorSpec s_EditScriptType{};
 	static EditorUI::SelectOptionSpec s_EditScriptSectionLabel{};
-	static Assets::AssetHandle s_ActiveScriptHandle {};
+	static Assets::AssetHandle s_ActiveScriptHandle {Assets::EmptyHandle};
 
 	// Group Label Table
 	static EditorUI::TableSpec s_GroupLabelsTable {};
@@ -72,7 +72,7 @@ namespace Kargono::Panels
 						return;
 					}
 					Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 				};
 				EditorUI::TableEntry newEntry
 				{
@@ -181,10 +181,10 @@ namespace Kargono::Panels
 		s_CreateScriptType.Editing = true;
 		s_CreateScriptType.FirstOptionLabel = "Class";
 		s_CreateScriptType.SecondOptionLabel = "Global";
-		s_CreateScriptType.SelectAction = [&](uint16_t option)
+		s_CreateScriptType.SelectAction = [&]()
 		{
 			// If we set the option to 'Class', try to get the first entity class option
-			if (option == 0)
+			if (s_CreateScriptType.SelectedOption == 0)
 			{
 				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
 				{
@@ -417,9 +417,9 @@ namespace Kargono::Panels
 		s_EditScriptType.Editing = true;
 		s_EditScriptType.FirstOptionLabel = "Class";
 		s_EditScriptType.SecondOptionLabel = "Global";
-		s_EditScriptType.SelectAction = [&](uint16_t option)
+		s_EditScriptType.SelectAction = [&]()
 		{
-			if (option == 0)
+			if (s_EditScriptType.SelectedOption == 0)
 			{
 				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
 				{
@@ -487,10 +487,10 @@ namespace Kargono::Panels
 
 		s_CreateGroupLabelPopup.Label = "Create New Group Label";
 		s_CreateGroupLabelPopup.Flags |= EditorUI::TextInput_PopupOnly;
-		s_CreateGroupLabelPopup.ConfirmAction = [&](const std::string& text)
+		s_CreateGroupLabelPopup.ConfirmAction = [&]()
 		{
 			// Create new group label
-			bool success = Assets::AssetManager::AddScriptSectionLabel(text);
+			bool success = Assets::AssetManager::AddScriptSectionLabel(s_CreateGroupLabelPopup.CurrentOption);
 			if (!success)
 			{
 				KG_WARN("Failed to create group label");
@@ -536,11 +536,7 @@ namespace Kargono::Panels
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
-		s_EditGroupLabelText.Flags = 0;
 		s_EditGroupLabelText.CurrentOption = "Empty";
-		s_EditGroupLabelText.ConfirmAction = [&](const std::string& text)
-		{
-		};
 
 	}
 	void ScriptEditorPanel::OnEditorUIRender()
@@ -567,5 +563,10 @@ namespace Kargono::Panels
 	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
+	}
+	void ScriptEditorPanel::ResetPanelResources()
+	{
+		s_AllScriptsTable.OnRefresh();
+		s_GroupLabelsTable.OnRefresh();
 	}
 }

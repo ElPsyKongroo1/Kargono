@@ -17,19 +17,23 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
+	struct ChooseDirectorySpec;
 	//==============================
 	// Widget Forward Declarations
 	//==============================
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct TextInputSpec;
-	struct SelectorHeaderSpec;
+	struct PanelHeaderSpec;
 	struct CheckboxSpec;
 	struct GenericPopupSpec;
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
 	struct TableSpec;
 	struct InlineButtonSpec;
+	struct EditFloatSpec;
+	struct EditVec2Spec;
+	struct EditVec3Spec;
 
 	//==============================
 	// Type Defines
@@ -107,7 +111,6 @@ namespace Kargono::EditorUI
 		//==============================
 		static void Spacing(float space);
 		static void Spacing(SpacingAmount space);
-		static void Separator();
 
 		//==============================
 		// Create/Display Widget Functions
@@ -118,13 +121,19 @@ namespace Kargono::EditorUI
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void Checkbox(CheckboxSpec& spec);
+
+		static void EditFloat(EditFloatSpec& spec);
+		static void EditVec2(EditVec2Spec& spec);
+		static void EditVec3(EditVec3Spec& spec);
+
 		static void RadioSelector(RadioSelectorSpec& spec);
 		static void Table(TableSpec& spec);
-		static void SelectorHeader(SelectorHeaderSpec& spec);
+		static void PanelHeader(PanelHeaderSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
 		static void TextInputPopup(TextInputSpec& spec);
+		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
 		static bool BeginTabItem(const std::string& title);
@@ -137,6 +146,7 @@ namespace Kargono::EditorUI
 		static uint32_t GetActiveWidgetID();
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
+		static void BringWindowToFront(const std::string& windowName);
 		static void ClearWindowFocus();
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
@@ -160,7 +170,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Images/Textures
 		//==============================
-		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop,
+		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid,
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
@@ -181,9 +191,13 @@ namespace Kargono::EditorUI
 		//==============================
 		inline static ImVec4 s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f};
 		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
+		inline static ImVec4 s_LightGray {0.7f, 0.7f, 0.7f, 1.0f};
 		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
 		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
+		inline static ImVec4 s_PearlBlue_Thin {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f};
 		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
+		inline static ImVec4 s_LightPurple {0.9226f, 0.4630f, 1.0f, 1.0f};
+		inline static ImVec4 s_LightGreen {0.2879f, 1.0f, 0.39322f, 1.0f};
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 	public:
 		//==============================
@@ -235,8 +249,10 @@ namespace Kargono::EditorUI
 	{
 		Checkbox_None = 0,
 		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
+		Checkbox_Indented = BIT(1)
 	};
 
+	
 	struct CheckboxSpec
 	{
 	public:
@@ -256,6 +272,87 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
 	};
 
+	enum EditFloatFlags
+	{
+		EditFloat_None = 0,
+		EditFloat_Indented = BIT(0)
+	};
+
+	struct EditFloatSpec
+	{
+	public:
+		EditFloatSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditFloat_None };
+		float CurrentFloat {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditFloat(EditFloatSpec& spec);
+	};
+
+	enum EditVec2Flags
+	{
+		EditVec2_None = 0,
+		EditVec2_Indented = BIT(0)
+	};
+
+	struct EditVec2Spec
+	{
+	public:
+		EditVec2Spec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditVec2_None };
+		Math::vec2 CurrentVec2 {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditVec2(EditVec2Spec& spec);
+	};
+
+	enum EditVec3Flags
+	{
+		EditVec3_None = 0,
+		EditVec3_Indented = BIT(0)
+	};
+
+	struct EditVec3Spec
+	{
+	public:
+		EditVec3Spec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditVec3_None };
+		Math::vec3 CurrentVec3 {};
+		std::function<void()> ConfirmAction { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
+	};
+
+	enum RadioSelectorFlags
+	{
+		RadioSelector_None = 0,
+		RadioSelector_Indented = BIT(0)
+	};
+
 	struct RadioSelectorSpec
 	{
 	public:
@@ -265,11 +362,12 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label ;
+		WidgetFlags Flags{ RadioSelector_None };
 		uint16_t SelectedOption{ 0 };
 		std::string FirstOptionLabel {"None"};
 		std::string SecondOptionLabel {"None"};
 		bool Editing{ false };
-		std::function<void(uint16_t selectedOption)> SelectAction {nullptr};
+		std::function<void()> SelectAction {nullptr};
 	private:
 		WidgetID WidgetID;
 	private:
@@ -292,13 +390,31 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		WidgetFlags Flags{ TextInput_None };
-		std::string CurrentOption;
-		std::function<void(const std::string&)> ConfirmAction;
+		std::string CurrentOption {};
+		std::function<void()> ConfirmAction;
 		bool StartPopup{ false };
 	private:
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::TextInputPopup(TextInputSpec& spec);
+	};
+
+	struct ChooseDirectorySpec
+	{
+	public:
+		ChooseDirectorySpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label;
+		WidgetFlags Flags{ TextInput_None };
+		std::filesystem::path CurrentOption {};
+		std::function<void(const std::string&)> ConfirmAction { nullptr };
+	private:
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec);
 	};
 
 	enum CollapsingHeaderFlags
@@ -343,10 +459,10 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};
 
-	struct SelectorHeaderSpec
+	struct PanelHeaderSpec
 	{
 	public:
-		SelectorHeaderSpec()
+		PanelHeaderSpec()
 		{
 			WidgetID = IncrementWidgetCounter();
 		}
@@ -374,7 +490,7 @@ namespace Kargono::EditorUI
 		SelectionList SelectionsList{};
 		WidgetID WidgetID;
 	private:
-		friend void EditorUIService::SelectorHeader(SelectorHeaderSpec& spec);
+		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
 
 	enum TableFlags
@@ -465,6 +581,7 @@ namespace Kargono::EditorUI
 
 	enum SelectOptionFlags
 	{
+		SelectOption_None = 0,
 		SelectOption_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
 		SelectOption_PopupOnly = BIT(1) // Determines if line of text is generated for options
 	};
@@ -486,7 +603,7 @@ namespace Kargono::EditorUI
 		std::function<void()> PopupAction {nullptr};
 		// Only used if PopupOnly is true
 		bool PopupActive{ false };
-		WidgetFlags Flags{ 0 };
+		WidgetFlags Flags{ SelectOption_None };
 		void ClearOptions()
 		{
 			ActiveOptions.clear();
@@ -540,4 +657,15 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
+}
+
+namespace Kargono::Utility
+{
+	//==============================
+	// ImVec4 -> Math::vec4
+	//==============================
+	static Math::vec4 ImVec4ToMathVec4(const ImVec4& color )
+	{
+		return { color.x, color.y, color.z, color.w };
+	}
 }

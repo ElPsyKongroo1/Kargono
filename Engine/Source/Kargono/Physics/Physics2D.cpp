@@ -2,7 +2,7 @@
 
 #include "Kargono/Physics/Physics2D.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Scenes/Entity.h"
 
@@ -40,7 +40,7 @@ namespace Kargono::Physics
 		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(gravity.x, gravity.y));
 		m_PhysicsWorld->SetAllowSleeping(false);
 		m_ContactListener = CreateScope<ContactListener>();
-		EngineCore::GetCurrentEngineCore().RegisterCollisionEventListener(*m_ContactListener);
+		EngineService::RegisterCollisionEventListener(*m_ContactListener);
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld

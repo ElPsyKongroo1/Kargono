@@ -11,7 +11,7 @@ namespace Kargono
 	static EditorUI::TextInputSpec s_SelectInputModeNameSpec {};
 
 	// Input Mode Header
-	static EditorUI::SelectorHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_MainHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteInputModeWarning {};
 	static EditorUI::GenericPopupSpec s_CloseInputModeWarning {};
 
@@ -90,7 +90,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Header
-			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteInputModeWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseInputModeWarning);
 
@@ -131,6 +131,12 @@ namespace Kargono::Panels
 	bool InputModePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
+	}
+
+	void InputModePanel::ResetPanelResources()
+	{
+		m_EditorInputMode = nullptr;
+		m_EditorInputModeHandle = Assets::EmptyHandle;
 	}
 
 	void InputModePanel::InitializeOpeningScreen()
@@ -174,10 +180,6 @@ namespace Kargono::Panels
 
 		s_SelectInputModeNameSpec.Label = "New Name";
 		s_SelectInputModeNameSpec.CurrentOption = "Empty";
-		s_SelectInputModeNameSpec.ConfirmAction = [&](const std::string& option)
-		{
-			s_SelectInputModeNameSpec.CurrentOption = option;
-		};
 
 		s_CreateInputModePopupSpec.Label = "Create Input Mode";
 		s_CreateInputModePopupSpec.PopupWidth = 420.0f;

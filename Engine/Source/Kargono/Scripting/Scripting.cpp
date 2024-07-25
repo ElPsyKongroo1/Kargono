@@ -2,7 +2,7 @@
 
 #include "Kargono/Scripting/Scripting.h"
 
-#include "Kargono/Core/EngineCore.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Scenes/Scene.h"
@@ -11,9 +11,10 @@
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Input/InputMode.h"
-#include "Kargono/Input/InputPolling.h"
+#include "Kargono/Input/InputService.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
+#include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Random.h"
 
 #ifdef KG_PLATFORM_WINDOWS
@@ -104,7 +105,7 @@ namespace Kargono::Scripting
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
 		EngineCore_CloseApplication->m_SectionLabel = "EngineCore";
-		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineCore::CloseApplication);
+		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineService::SubmitApplicationCloseEvent);
 		engineScripts.push_back(EngineCore_CloseApplication);
 
 		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
@@ -113,7 +114,7 @@ namespace Kargono::Scripting
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
 		Client_SessionReadyCheck->m_SectionLabel = "Client";
-		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::Client::SessionReadyCheck);
+		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::SessionReadyCheck);
 		engineScripts.push_back(Client_SessionReadyCheck);
 	}
 
@@ -141,7 +142,11 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadActiveScriptModule()
 	{
-		std::filesystem::path dllLocation { Projects::Project::GetAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+#ifdef KG_DEBUG
+		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBodyDebug.dll" };
+#else
+		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+#endif
 		
 		// Rebuild shared library if no library exists
 		static bool attemptedToRebuild = false;
@@ -154,10 +159,7 @@ namespace Kargono::Scripting
 			}
 			KG_WARN("Attempt to open scripting dll, however, none exists. Attempting to create new Shared Lib.");
 			attemptedToRebuild = true;
-			EngineCore::GetCurrentEngineCore().SubmitToMainThread([]()
-			{
-				ScriptModuleBuilder::CreateScriptModule();
-			});
+			ScriptModuleBuilder::CreateScriptModule();
 			return;
 		}
 		attemptedToRebuild = false;
@@ -170,7 +172,7 @@ namespace Kargono::Scripting
 
 		if (s_ScriptingData->DLLInstance)
 		{
-			KG_INFO("Closing existing script dll");
+			KG_INFO("Closing existing script module");
 			CloseActiveScriptModule();
 		}
 
@@ -188,7 +190,7 @@ namespace Kargono::Scripting
 
 		ScriptModuleBuilder::AttachEngineFunctionsToModule();
 
-		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting DLL Opened");
+		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting Module Opened");
 
 	}
 	void ScriptService::CloseActiveScriptModule()
@@ -222,9 +224,13 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
-		if (!s_ScriptingData || !s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
+		if (!s_ScriptingData)
 		{
 			KG_CRITICAL("Attempt to load a scripting function, however, ScriptEngine is not valid");
+			return;
+		}
+		if (!s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
+		{
 			return;
 		}
 
@@ -416,16 +422,51 @@ namespace Kargono::Scripting
 		KG_WARN(info);
 	}
 
-	void ScriptModuleBuilder::CreateScriptModule(bool addDebugSymbols)
+	void ScriptModuleBuilder::CreateScriptModule()
 	{
+		// Release active script module so it available to be written to...
+		KG_WARN("Closing active script module...");
 		ScriptService::CloseActiveScriptModule();
 
+		// Load in ScriptRegistry if not already loaded
+		if (Assets::AssetManager::s_ScriptRegistry.size() == 0)
+		{
+			KG_WARN("Loading script registry from disk since in-memory registry is empty");
+			Assets::AssetManager::DeserializeScriptRegistry();
+		}
+
+		bool buildSuccessful = true;
+
+		KG_INFO("Creating Script Module CPP Files...");
 		CreateModuleHeaderFile();
 		CreateModuleCPPFile();
-		CompileModuleCode(addDebugSymbols);
+		KG_INFO("Clearing previous compilation logs...");
+		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibraryDebug.log");
+		KG_INFO("Compiling debug script module...");
+		buildSuccessful = CompileModuleCode(true);
+		if (!buildSuccessful)
+		{
+			KG_WARN("Failed to compile debug script module");
+			ScriptService::LoadActiveScriptModule();
+			Assets::AssetManager::DeserializeScriptRegistry();
+			return;
+		}
+		KG_INFO("Clearing previous compilation logs...");
+		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibrary.log");
+		KG_INFO("Compiling release script module...");
+		buildSuccessful = CompileModuleCode(false);
+		if (!buildSuccessful)
+		{
+			KG_WARN("Failed to compile release script module");
+			ScriptService::LoadActiveScriptModule();
+			Assets::AssetManager::DeserializeScriptRegistry();
+			return;
+		}
 
+		KG_INFO("Opening New Scripting Module...");
 		ScriptService::LoadActiveScriptModule();
 		Assets::AssetManager::DeserializeScriptRegistry();
+		KG_INFO("Successfully build and loaded new script module");
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
@@ -508,8 +549,12 @@ namespace Kargono::Scripting
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
 
-		std::filesystem::path headerFile = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
-		Utility::FileSystem::WriteFileString(headerFile, outputStream.str());
+		std::filesystem::path headerFile = { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
+
+		std::string outputString = outputStream.str();
+		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
+
+		Utility::FileSystem::WriteFileString(headerFile, outputString);
 	}
 
 	void ScriptModuleBuilder::CreateModuleCPPFile()
@@ -665,65 +710,104 @@ namespace Kargono::Scripting
 			{
 				continue;
 			}
-			outputStream << Utility::FileSystem::ReadFileString(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+			outputStream << Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 			outputStream << '\n';
 		}
 		outputStream << "}\n";
 
-		std::filesystem::path file = { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
+		std::filesystem::path file = { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
-		Utility::FileSystem::WriteFileString(file, outputStream.str());
+		std::string outputString = outputStream.str();
+		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
+
+		Utility::FileSystem::WriteFileString(file, outputString);
 	}
 
-	void ScriptModuleBuilder::CompileModuleCode(bool addDebugSymbols)
+	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)
 	{
-		//Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Intermediates");
-		Utility::FileSystem::CreateNewDirectory(Projects::Project::GetAssetDirectory() / "Scripting/Binary");
-
-		//std::filesystem::path intermediatePath { Projects::Project::GetAssetDirectory() / "Scripting/Intermediates/" };
-		std::filesystem::path binaryPath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/" };
-		std::filesystem::path binaryFile { binaryPath / "ExportBody.dll" };
-		std::filesystem::path objectPath { binaryPath / "ExportBody.obj" };
+		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary");
+		std::filesystem::path binaryPath { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/" };
+		std::filesystem::path binaryFile;
+		std::filesystem::path objectPath;
+		if (createDebug)
+		{
+			binaryFile = { binaryPath / "ExportBodyDebug.dll" };
+			objectPath = { binaryPath / "ExportBody.obj" };
+		}
+		else
+		{
+			binaryFile = { binaryPath / "ExportBody.dll" };
+			objectPath = { binaryPath / "ExportBody.obj" };
+		}
 
 		UUID pdbID = UUID();
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
-		std::filesystem::path sourcePath { Projects::Project::GetAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
+		std::filesystem::path sourcePath { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
+		outputStream << "("; // Parentheses to group all function calls together
 		// Access visual studio toolset console
-		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && ";
+		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"";
+
+		// Start Next Command
+		//outputStream << " > Log\\ScriptCompilation.log 2>&1 "; // Sends error/info to log file
+		outputStream << " && "; // Combine commands
 
 		// Cl command for compiling binary code
 		outputStream << "cl "; // Add Command
 		outputStream << "/c "; // Tell cl command to only compile code
-		outputStream << "/MDd "; // Specify Runtime Library
+		if (createDebug)
+		{
+			outputStream << "/MDd "; // Specify Debug Multi-threaded DLL Runtime Library
+		}
+		else
+		{
+			outputStream << "/MD "; // Specify Multi-threaded DLL Runtime Library
+		}
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
 		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros for Exporting DLL Functions
 
-		if (addDebugSymbols)
+		if (createDebug)
 		{
 			outputStream << "/Z7 "; // Add debug info to executable
 		}
-		outputStream << "/Fo" << binaryPath.string() << ' '; // Define Intermediate Location
-		outputStream << sourcePath.string() << " "; // Compile scripting source file (ExportBody.cpp)
+		outputStream << "/Fo" << "\"" << binaryPath.string() << "\"" << ' '; // Define Intermediate Location
+		outputStream << "\"" << sourcePath.string() << "\"" << " "; // Compile scripting source file (ExportBody.cpp)
 
+		// Start Next Command
+		//outputStream << " > Log\\ScriptCompilation.log 2>&1 "; // Sends error/info to log file
 		outputStream << " && "; // Combine commands
+
 		// Start Linking Stage
 		outputStream << "link "; // Start link command
 		outputStream << "/DLL "; // Specify output as a shared library
 		outputStream << "/ignore:4099 "; // Ignores warning about missing pbd files for .obj files (I generate the symbols inside of the .obj file with /Z7 flag) 
-		if (addDebugSymbols)
+		if (createDebug)
 		{
 			outputStream << "/DEBUG "; // Specifies output as debug files
-			outputStream << "/PDB:" << debugSymbolsPath.string() << " "; // Specify .pdb file location/name
+			outputStream << "/PDB:" << "\"" << debugSymbolsPath.string() << "\"" << " "; // Specify .pdb file location/name
 		}
-		outputStream << "/OUT:" << binaryFile.string() << " "; // Specify output directory
-		outputStream << objectPath.string(); // Object File to Link
-		system(outputStream.str().c_str());
+		outputStream << "/OUT:" << "\"" << binaryFile.string() << "\"" <<" "; // Specify output directory
+		outputStream << "\"" <<objectPath.string() << "\""; // Object File to Link
+
+		outputStream << ")"; // Parentheses to group all function calls together
+
+		// Sends all three calls (open dev console, compiler, and linker) error/info to log file
+		if (createDebug)
+		{
+			outputStream << " >> Log\\BuildScriptLibraryDebug.log 2>&1 ";
+		}
+		else
+		{
+			outputStream << " >> Log\\BuildScriptLibrary.log 2>&1 "; 
+		}
+
+		// Call Command
+		return (system(outputStream.str().c_str()) != 1);
 	}
 
 
@@ -752,33 +836,33 @@ namespace Kargono::Scripting
 		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
 		ImportInsertFunction(StringUInt64)
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::Client::LeaveCurrentSession,VoidNone) 
-		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::Client::EnableReadyCheck,VoidNone) 
-		AddEngineFunctionPointerToDll(RequestJoinSession, Network::Client::RequestJoinSession,VoidNone) 
-		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::Client::SendAllEntityPhysics,VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::Client::RequestUserCount,VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::Client::GetActiveSessionSlot, UInt16None)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::Client::SendAllEntityLocation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(SignalAll, Network::Client::SignalAll, VoidUInt16)
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession,VoidNone) 
+		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck,VoidNone) 
+		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession,VoidNone) 
+		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics,VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount,VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
 		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
 		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName,VoidString) 
-		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputPolling::IsKeyPressed,BoolUInt16) 
-		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::LoadUserInterfaceFromName,VoidString) 
-		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::Scene::TransitionSceneFromName,VoidString) 
+		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputService::IsKeyPressed,BoolUInt16) 
+		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::SetActiveUIFromName,VoidString) 
+		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::SceneService::TransitionSceneFromName,VoidString) 
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow,VoidStringBool) 
-		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameState::SetActiveGameStateField, VoidStringVoidPtr) 
-		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameState::GetActiveGameStateField, VoidPtrString) 
-		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetWidgetText,VoidStringStringString) 
+		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr) 
+		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString) 
+		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetText,VoidStringStringString) 
 		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget,VoidStringString) 
 		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
-		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::Scene::CheckHasComponent, BoolUInt64String)
+		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
 		AddEngineFunctionPointerToDll(GetEntityFieldByName, Scenes::SceneService::GetEntityFieldByName, VoidPtrUInt64String)
-		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::Scene::FindEntityHandleByName, UInt64String)
+		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
 		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)

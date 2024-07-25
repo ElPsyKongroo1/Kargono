@@ -21,7 +21,10 @@ namespace Kargono
 
 #if defined(KG_PLATFORM_WINDOWS)
 #define KG_DEBUGBREAK() \
-	if (Kargono::s_TestingActive) { throw Kargono::TestingException("Empty Message"); }\
+	if (Kargono::s_TestingActive) { throw Kargono::TestingException("Default Break"); }\
+	else { __debugbreak(); }
+#define KG_DEBUGBREAK_MSG(msg) \
+	if (Kargono::s_TestingActive) { throw Kargono::TestingException(msg); }\
 	else { __debugbreak(); }
 #elif defined(KG_PLATFORM_LINUX)
 #include <signal.h>

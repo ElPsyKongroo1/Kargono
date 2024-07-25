@@ -44,7 +44,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::Init()
 	{
-		KG_ASSERT(Projects::Project::GetActive(), "No valid project is active while trying to initialize shaders!");
+		KG_ASSERT(Projects::ProjectService::GetActive(), "No valid project is active while trying to initialize shaders!");
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		KG_VERIFY(s_Data.CameraUniformBuffer, "Renderer Init")
 	}
@@ -165,6 +165,11 @@ namespace Kargono::Rendering
 		{
 			drawCallBuffer->IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
 		}
+	}
+
+	void RenderingService::FillEntityID(Rendering::RendererInputSpec& inputSpec)
+	{
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
 	}
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)

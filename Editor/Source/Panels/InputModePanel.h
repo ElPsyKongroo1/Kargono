@@ -15,6 +15,8 @@ namespace Kargono::Panels
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+
+		void ResetPanelResources();
 	private:
 		void InitializeOpeningScreen();
 		void InitializeInputModeHeader();

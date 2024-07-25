@@ -5,31 +5,62 @@
 
 namespace Kargono
 {
-	// Final Export Values
-	//const std::filesystem::path runtimePath = "../Projects/Pong/Pong.kproj";
-	//const std::filesystem::path logoPath = "../Projects/Pong/pong_logo.png";
-
-	const std::filesystem::path runtimePath = "./Pong/Pong.kproj";
-	const std::filesystem::path logoPath = "./Pong/pong_logo.png";
-
 	ServerApp::ServerApp()
 		: Application("ServerLayer")
 	{
 	}
 
-	void ServerApp::OnAttach()
+	void ServerApp::Init()
 	{
 		Scenes::SceneService::Init();
+#ifdef KG_TESTING
+	OpenProject("../Projects/Pong/Pong.kproj");
+#elif defined KG_EXPORT
+		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
+			std::filesystem::current_path(),
+			".kproj");
+		if (pathToProject.empty())
+		{
+			KG_CRITICAL("Could not locate a .kproj file in local directory!");
+			EngineService::EndRun();
+			return;
+	}
+		OpenProject(pathToProject);
+		if (!Projects::ProjectService::GetActive())
+		{
+			KG_CRITICAL("Failed to open project!");
+			EngineService::EndRun();
+			return;
+		}
+#else
 		if (!OpenProject())
 		{
-			EngineCore::GetCurrentEngineCore().Close();
+			KG_CRITICAL("Failed to select/open a project");
+			EngineService::EndRun();
+			return;
+		}
+#endif
+
+
+		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
+
+		Network::ServerService::SetActiveServer(CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort(), isLocal));
+
+		if (!Network::ServerService::GetActiveServer()->StartServer())
+		{
+			KG_CRITICAL("Failed to start server");
+			Network::ServerService::GetActiveServer()->StopServer();
+			Network::ServerService::GetActiveServer().reset();
+			EngineService::EndRun();
 			return;
 		}
 
-		bool isLocal = Projects::Project::GetServerLocation() == "LocalMachine";
-
-		Network::Server::SetActiveServer(CreateRef<Network::Server>(Projects::Project::GetServerPort(), isLocal));
-		Network::Server::GetActiveServer()->RunServer();
+#ifndef KG_TESTING
+		Network::ServerService::GetActiveServer()->RunServer();
+#endif
+		Network::ServerService::GetActiveServer()->StopServer();
+		Network::ServerService::GetActiveServer().reset();
+		Network::ServerService::GetActiveServer() = nullptr;
 	}
 
 	bool ServerApp::OpenProject()
@@ -52,7 +83,7 @@ namespace Kargono
 	}
 
 
-	void ServerApp::OnDetach()
+	void ServerApp::Terminate()
 	{
 	}
 

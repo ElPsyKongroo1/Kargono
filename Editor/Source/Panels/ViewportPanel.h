@@ -6,7 +6,6 @@ namespace Kargono { class EditorApp; }
 
 namespace Kargono::Panels
 {
-
 	class ViewportPanel
 	{
 	public:
@@ -29,6 +28,8 @@ namespace Kargono::Panels
 		//		This function is called in OnOverlayRender().
 		void DrawFrustrum(Scenes::Entity& entity);
 
+		void DrawWorldAxis();
+
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
 		//		update physics, and update scripts for m_ActiveScene.
 		// These functions are called in OnUpdate() depending on the current scene state (Edit, Runtime, and Simulation)
@@ -41,7 +42,7 @@ namespace Kargono::Panels
 		void OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera);
 
 		// This function initializes the static data used by the OnOverlayRender()
-		//		function below. This function is called in OnAttach().
+		//		function below. This function is called in Init().
 		void InitializeOverlayData();
 	public:
 		Rendering::EditorCamera m_EditorCamera;
@@ -51,8 +52,12 @@ namespace Kargono::Panels
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
-		Math::vec2 m_ViewportBounds[2];
+		Math::vec2 m_ScreenViewportBounds[2];
 		int m_GizmoType = -1;
+
+		bool m_DisplayXYGrid = false;
+		bool m_DisplayXZGrid = true;
+		bool m_DisplayYZGrid = false;
 
 		friend Kargono::EditorApp;
 	};

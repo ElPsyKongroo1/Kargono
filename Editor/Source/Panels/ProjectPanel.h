@@ -13,6 +13,7 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
+		void ResetPanelResources();
 	private:
 		std::string m_PanelName{ "Project" };
 	};

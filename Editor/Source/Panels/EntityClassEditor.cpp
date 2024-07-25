@@ -21,7 +21,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_OpenClassPopupSpec {};
 	static EditorUI::TextInputSpec s_SelectClassNameSpec {};
 	// Header
-	static EditorUI::SelectorHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_MainHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteEntityClassWarning {};
 	static EditorUI::GenericPopupSpec s_CloseEntityClassWarning {};
 	// Fields Table
@@ -110,10 +110,6 @@ namespace Kargono::Panels
 
 		s_SelectClassNameSpec.Label = "New Name";
 		s_SelectClassNameSpec.CurrentOption = "Empty";
-		s_SelectClassNameSpec.ConfirmAction = [&](const std::string& option)
-		{
-			s_SelectClassNameSpec.CurrentOption = option;
-		};
 
 		s_CreateClassPopupSpec.Label = "Create Entity Class";
 		s_CreateClassPopupSpec.PopupWidth = 420.0f;
@@ -151,7 +147,7 @@ namespace Kargono::Panels
 		s_DeleteEntityClassWarning.ConfirmAction = [&]()
 		{
 			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorApp->m_EditorScene);
-			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
+			s_EditorApp->m_SceneHierarchyPanel->RefreshClassInstanceComponent();
 			s_EditorEntityClassHandle = 0;
 			s_EditorEntityClass = nullptr;
 		};
@@ -174,7 +170,7 @@ namespace Kargono::Panels
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
-			s_EditorApp->m_SceneHierarchyPanel->RefreshWidgetData();
+			s_EditorApp->m_SceneHierarchyPanel->RefreshClassInstanceComponent();
 			s_MainHeader.EditColorActive = false;
 		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
@@ -253,10 +249,6 @@ namespace Kargono::Panels
 
 		s_EditFieldName.Label = "Field Name";
 		s_EditFieldName.CurrentOption = "Empty";
-		s_EditFieldName.ConfirmAction = [&](const std::string& option)
-		{
-			s_EditFieldName.CurrentOption = option;
-		};
 
 		s_EditFieldType.Label = "Field Type";
 		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
@@ -522,7 +514,7 @@ namespace Kargono::Panels
 							return;
 						}
 						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::Project::GetAssetDirectory() / asset.Data.IntermediateLocation);
+						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 					};
 
 					EditorUI::TableEntry newEntry
@@ -563,7 +555,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::SelectorHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);
@@ -598,6 +590,11 @@ namespace Kargono::Panels
 	bool EntityClassEditor::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
+	}
+	void EntityClassEditor::ResetPanelResources()
+	{
+		s_EditorEntityClass = nullptr;
+		s_EditorEntityClassHandle = Assets::EmptyHandle;
 	}
 	void EntityClassEditor::RefreshEntityScripts(Assets::AssetHandle handle)
 	{

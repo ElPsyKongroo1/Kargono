@@ -11,8 +11,46 @@
 
 namespace Kargono::Network
 {
-	//class Connection;
-	class ConnectionToClient;
+
+	enum class MessageType : uint32_t
+	{
+		AcceptConnection = 0,
+		DenyConnection,
+		ServerPing,
+		MessageAll,
+		ServerMessage,
+		ClientChat,
+		ServerChat,
+		KeepAlive,
+		UDPInit,
+
+		RequestUserCount,
+		UpdateUserCount,
+		UpdateSessionUserSlot,
+		LeaveCurrentSession,
+		UserLeftSession,
+
+		// Session Messages
+		RequestJoinSession,
+		ApproveJoinSession,
+		DenyJoinSession,
+		CurrentSessionInit,
+		StartSession,
+		InitSyncPing,
+		SessionReadyCheck,
+		SessionReadyCheckConfirm,
+		EnableReadyCheck,
+
+		// Entity Updates
+		SendAllEntityLocation,
+		UpdateEntityLocation,
+		SendAllEntityPhysics,
+		UpdateEntityPhysics,
+		SignalAll,
+		ReceiveSignal
+	};
+
+	class TCPServerConnection;
 
 	//============================================================
 	// Message Struct
@@ -72,7 +110,7 @@ namespace Kargono::Network
 
 	struct owned_message
 	{
-		Ref<ConnectionToClient> remote = nullptr;
+		Ref<TCPServerConnection> remote = nullptr;
 		Message msg;
 
 		//==============================

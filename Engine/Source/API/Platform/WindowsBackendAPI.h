@@ -3,4 +3,5 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <commdlg.h>
+#include <ShlObj.h>
 #endif
