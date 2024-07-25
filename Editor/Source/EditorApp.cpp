@@ -40,7 +40,6 @@ namespace Kargono
 		s_EditorApp = this;
 
 		InitializeStaticResources();
-		KG_INFO(Scripting::ScriptCompiler::CompileScriptFile("./../Projects/Pong/Assets/NewScripting/test.kgscript"));
 	}
 
 	void EditorApp::Init()
@@ -71,6 +70,7 @@ namespace Kargono
 		m_InputModePanel = CreateScope<Panels::InputModePanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
+		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
 
@@ -231,6 +231,8 @@ namespace Kargono
 				{
 					Utility::OSCommands::OpenProfiler();
 				}
+
+				ImGui::MenuItem("Testing Window",NULL, &m_ShowTesting);
 				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
 				
 				if (ImGui::BeginMenu("ImGui Options"))
@@ -286,6 +288,7 @@ namespace Kargono
 		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
+		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
 
 		EditorUI::EditorUIService::GenericPopup(s_ExportProjectSpec);
 

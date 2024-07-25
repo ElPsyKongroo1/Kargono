@@ -34,6 +34,8 @@ namespace Kargono::Scripting
 		if (!success)
 		{
 			KG_WARN("Token parsing failed");
+			// Print out error messages
+			tokenParser.PrintErrors();
 		}
 
 		tokenParser.PrintAST();
@@ -47,14 +49,14 @@ namespace Kargono::Scripting
 
 		while (CurrentLocationValid())
 		{
-			if (std::isalpha(GetCurrentChar()))
+			if (std::isalpha(GetCurrentChar()) || GetCurrentChar() == '_')
 			{
 				// Add first character to buffer
 				AddCurrentCharToBuffer();
 				Advance();
 
 				// Fill remainder of buffer
-				while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+				while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 				{
 					AddCurrentCharToBuffer();
 					Advance();
@@ -66,7 +68,7 @@ namespace Kargono::Scripting
 				{
 					if (m_TextBuffer == keyword)
 					{
-						AddTokenAndClearBuffer({ ScriptTokenType::Keyword, {keyword} });
+						AddTokenAndClearBuffer(ScriptTokenType::Keyword, {keyword});
 						foundKeyword = true;
 						break;
 					}
@@ -82,7 +84,7 @@ namespace Kargono::Scripting
 				{
 					if (m_TextBuffer == primitiveType)
 					{
-						AddTokenAndClearBuffer({ ScriptTokenType::PrimitiveType, {primitiveType} });
+						AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, {primitiveType});
 						foundPrimitiveType = true;
 						break;
 					}
@@ -92,7 +94,7 @@ namespace Kargono::Scripting
 					continue;
 				}
 
-				AddTokenAndClearBuffer({ ScriptTokenType::Identifier, m_TextBuffer });
+				AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
 				continue;
 			}
 
@@ -110,7 +112,7 @@ namespace Kargono::Scripting
 				}
 
 				// Fill in integer literal
-				AddTokenAndClearBuffer({ ScriptTokenType::IntegerLiteral, m_TextBuffer });
+				AddTokenAndClearBuffer(ScriptTokenType::IntegerLiteral, m_TextBuffer);
 				continue;
 			}
 
@@ -136,74 +138,75 @@ namespace Kargono::Scripting
 				Advance();
 
 				// Fill in String literal
-				AddTokenAndClearBuffer({ ScriptTokenType::StringLiteral, m_TextBuffer });
+				AddTokenAndClearBuffer(ScriptTokenType::StringLiteral, m_TextBuffer);
 				continue;
 			}
 
 			if (GetCurrentChar() == ';')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::Semicolon, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::Semicolon, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '(')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::OpenParentheses, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::OpenParentheses, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ')')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::CloseParentheses, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::CloseParentheses, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '{')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::OpenCurlyBrace, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::OpenCurlyBrace, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '}')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::CloseCurlyBrace, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::CloseCurlyBrace, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '=')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::AssignmentOperator, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::AssignmentOperator, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '+')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::AdditionOperator, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::AdditionOperator, {});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ',')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::Comma, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::Comma, {} );
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 			{
-				AddTokenAndClearBuffer({ ScriptTokenType::NamespaceResolver, {} });
+				AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, {});
 				Advance(2);
 				continue;
 			}
 
-			KG_ERROR("Could not identify character!");
+			KG_CRITICAL("Could not identify character!");
+			Advance();
 		}
 		return m_Tokens;
 	}
@@ -226,12 +229,34 @@ namespace Kargono::Scripting
 
 	void ScriptTokenizer::Advance(uint32_t count)
 	{
-		m_TextLocation += count;
+		for (uint32_t iteration {0}; iteration < count; iteration++)
+		{
+			if (!CurrentLocationValid())
+			{
+				return;
+			}
+			if (m_ScriptText.at(m_TextLocation) == '\n')
+			{
+				m_ColumnCount = 0;
+				m_LineCount++;
+			}
+			else if (m_ScriptText.at(m_TextLocation) == '\r')
+			{
+				// Do nothing
+			}
+			else
+			{
+				m_ColumnCount++;
+			}
+
+			m_TextLocation++;
+		}
 	}
 
-	void ScriptTokenizer::AddTokenAndClearBuffer(const ScriptToken& token)
+	void ScriptTokenizer::AddTokenAndClearBuffer(ScriptTokenType type, const std::string& value)
 	{
-		m_Tokens.push_back(token);
+		ScriptToken newToken{ type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size()};
+		m_Tokens.push_back(newToken);
 		m_TextBuffer.clear();
 	}
 
@@ -239,37 +264,209 @@ namespace Kargono::Scripting
 	{
 		m_Tokens = std::move(tokens);
 
+		auto [success, newFunctionNode] = ParseFunctionNode();
+		if (!success)
+		{
+			return { false, m_AST };
+		}
+
+		m_AST.ProgramNode = { newFunctionNode };
+
+		Advance();
+		ScriptToken tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::None || tokenBuffer.Value != "End of File")
+		{
+			StoreParseError(ParseErrorType::ProgEnd, "Expecting end of file token");
+			return { false, m_AST};
+		}
+
+		return { true, m_AST };
+	}
+
+	static std::string GetIndentation(uint32_t count)
+	{
+		std::string outputIndentation {};
+		for (uint32_t iteration {0}; iteration < count; iteration++)
+		{
+			outputIndentation += " ";
+		}
+		return outputIndentation;
+	}
+
+	static void PrintToken(const ScriptToken& token, uint32_t indentation = 0)
+	{
+		KG_INFO("{}Type: {}", GetIndentation(indentation), Utility::ScriptTokenTypeToString(token.Type));
+		KG_INFO("{}Value: {}", GetIndentation(indentation), token.Value);
+	}
+
+	static void PrintStatement(const Statement& statement, uint32_t indentation = 0)
+	{
+		std::visit([&](auto&& state)
+		{
+			using type = std::decay_t<decltype(state)>;
+			if constexpr (std::is_same_v<type, StatementEmpty>)
+			{
+				KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
+			}
+			else if constexpr (std::is_same_v<type, StatementLiteral>)
+			{
+				KG_INFO("{}Literal Statement", GetIndentation(indentation));
+				KG_INFO("{}Literal Value", GetIndentation(indentation + 1));
+				PrintToken(state.ExpressionValue, indentation + 2);
+			}
+			else if constexpr (std::is_same_v<type, StatementDeclaration>)
+			{
+				KG_INFO("{}Declaration Statement", GetIndentation(indentation));
+				KG_INFO("{}Declaration Type", GetIndentation(indentation + 1));
+				PrintToken(state.Type, indentation + 2);
+				KG_INFO("{}Declaration Name/Identifier", GetIndentation(indentation + 1));
+				PrintToken(state.Name, indentation + 2);
+			}
+			else if constexpr (std::is_same_v<type, StatementAssignment>)
+			{
+				KG_INFO("{}Assignment Statement", GetIndentation(indentation));
+				KG_INFO("{}Assignemnt Declared Type", GetIndentation(indentation + 1));
+				PrintToken(state.Type, indentation + 2);
+				KG_INFO("{}Declared Name/Identifier", GetIndentation(indentation + 1));
+				PrintToken(state.Name, indentation + 2);
+				KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
+				PrintToken(state.Value, indentation + 2);
+			}
+		}, statement);
+	}
+
+	static void PrintFunction(const FunctionNode& funcNode, uint32_t indentation = 0)
+	{
+		KG_INFO("Function Node");
+		KG_INFO("{}Name:", GetIndentation(indentation + 1));
+		PrintToken(funcNode.Name, indentation + 2);
+		KG_INFO("{}Return Type:", GetIndentation(indentation + 1));
+		PrintToken(funcNode.ReturnType, indentation + 2);
+		for (auto& parameter : funcNode.Parameters)
+		{
+			KG_INFO("{}Parameter:", GetIndentation(indentation + 1));
+			KG_INFO("{}ParameterType:", GetIndentation(indentation + 2));
+			PrintToken(parameter.ParameterType, indentation + 3);
+			KG_INFO("{}ParameterName:", GetIndentation(indentation + 2));
+			PrintToken(parameter.ParameterName, indentation + 3);
+		}
+		for (auto& statement : funcNode.Statements)
+		{
+			KG_INFO("{}Statement:", GetIndentation(indentation + 1));
+			PrintStatement(statement, indentation + 2);
+		}
+	}
+
+	void TokenParser::PrintAST()
+	{
+		if (m_AST.ProgramNode)
+		{
+			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+			if (funcNode)
+			{
+				PrintFunction(funcNode);
+			}
+		}
+	}
+	void TokenParser::PrintErrors()
+	{
+		for (auto& error : m_Errors)
+		{
+			KG_WARN(error.ToString());
+		}
+	}
+
+
+	std::tuple<bool, Statement> TokenParser::ParseStatementNode()
+	{
+		Statement newStatementEmpty{};
+
+		ScriptToken tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type == ScriptTokenType::Semicolon)
+		{
+			newStatementEmpty.emplace<StatementEmpty>();
+			Advance();
+			return { true, newStatementEmpty };
+		}
+
+		if ((tokenBuffer.Type == ScriptTokenType::StringLiteral || tokenBuffer.Type == ScriptTokenType::IntegerLiteral) 
+			&& GetCurrentToken(1).Type == ScriptTokenType::Semicolon)
+		{
+			StatementLiteral newStatementLiteral{ tokenBuffer };
+			newStatementEmpty.emplace<StatementLiteral>(newStatementLiteral);
+			Advance(2);
+			return { true, newStatementEmpty };
+		}
+
+		if (tokenBuffer.Type == ScriptTokenType::PrimitiveType && GetCurrentToken(1).Type == ScriptTokenType::Identifier
+			&& GetCurrentToken(2).Type == ScriptTokenType::Semicolon)
+		{
+			StatementDeclaration newStatementDeclaration{ tokenBuffer, GetCurrentToken(1)};
+			newStatementEmpty.emplace<StatementDeclaration>(newStatementDeclaration);
+			Advance(3);
+			return { true, newStatementEmpty };
+		}
+
+		if (tokenBuffer.Type == ScriptTokenType::PrimitiveType && GetCurrentToken(1).Type == ScriptTokenType::Identifier
+			&& GetCurrentToken(2).Type == ScriptTokenType::AssignmentOperator
+			&& (GetCurrentToken(3).Type == ScriptTokenType::StringLiteral || GetCurrentToken(3).Type == ScriptTokenType::IntegerLiteral)
+			&& GetCurrentToken(4).Type == ScriptTokenType::Semicolon)
+		{
+			std::vector<ScriptTokenType> acceptableTypes = Utility::PrimitiveTypeAcceptableInput(GetCurrentToken().Value);
+			bool success = false;
+			for (ScriptTokenType type : acceptableTypes)
+			{
+				if (type == GetCurrentToken(3).Type)
+				{
+					success = true;
+				}
+			}
+			if (!success)
+			{
+				StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
+				return { false, newStatementEmpty };
+			}
+
+			StatementAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), GetCurrentToken(3) };
+			newStatementEmpty.emplace<StatementAssignment>(newStatementAssignment);
+			Advance(5);
+			return { true, newStatementEmpty };
+		}
+
+
+
+		return { false, newStatementEmpty };
+	}
+
+	std::tuple<bool, FunctionNode> TokenParser::ParseFunctionNode()
+	{
 		FunctionNode newFunctionNode{};
 		// Store return value
-		ScriptToken& tokenBuffer = GetCurrentToken();
+		ScriptToken tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "void")
 		{
-			KG_WARN("Expecting a return type in function signature. Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return {false, m_AST};
+			StoreParseError(ParseErrorType::FuncReturn, "Expecting a return type for function signature");
+			return { false, newFunctionNode };
 		}
-		// TODO: Store return type if applicable
+		newFunctionNode.ReturnType = tokenBuffer;
 
 		// Get Function Name
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::Identifier)
 		{
-			KG_WARN("Expecting a function name in function signature. Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return { false, m_AST };
+			StoreParseError(ParseErrorType::FuncName, "Expecting a function name in function signature");
+			return { false, newFunctionNode };
 		}
-		newFunctionNode.Name = {tokenBuffer};
-
+		newFunctionNode.Name = { tokenBuffer };
 
 		// Parameter Open Parentheses
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
 		{
-			KG_WARN("Expecting an open parentheses in function signature (\"(\"). Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return { false, m_AST };
+			StoreParseError(ParseErrorType::FuncPunc, "Expecting an open parentheses in function signature");
+			return { false, newFunctionNode };
 		}
 
 		// Parameter List
@@ -286,11 +483,10 @@ namespace Kargono::Scripting
 			tokenBuffer = GetCurrentToken();
 			if (tokenBuffer.Type != ScriptTokenType::Identifier)
 			{
-				KG_WARN("Expecting an identifier for parameter in function signature. Got a {} with a value of {}",
-					Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-				return { false, m_AST };
+				StoreParseError(ParseErrorType::FuncParam, "Expecting an identifier for parameter in function signature");
+				return { false, newFunctionNode };
 			}
-			newParameter.Identifier = tokenBuffer;
+			newParameter.ParameterName = tokenBuffer;
 			newFunctionNode.Parameters.push_back(newParameter);
 
 
@@ -301,9 +497,9 @@ namespace Kargono::Scripting
 			{
 				if (GetCurrentToken(1).Type != ScriptTokenType::Identifier)
 				{
-					KG_WARN("Expecting an identifier after comma separator for parameter list in function signature. Got a {} with a value of {}",
-						Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-					return { false, m_AST };
+					StoreParseError(ParseErrorType::FuncParam,
+						"Expecting an identifier after comma separator for parameter list in function signature");
+					return { false, newFunctionNode };
 				}
 
 				// Move to next token if comma is present
@@ -314,67 +510,58 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
 		{
-			KG_WARN("Expecting an closing parentheses in function signature (\")\"). Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return { false, m_AST };
+			StoreParseError(ParseErrorType::FuncPunc, "Expecting an closing parentheses in function signature");
+			return { false, newFunctionNode };
 		}
-
 
 		// Check for open curly braces
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
 		{
-			KG_WARN("Expecting an opening curly brace in function signature. Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return { false, m_AST };
+			StoreParseError(ParseErrorType::FuncPunc, "Expecting an opening curly brace in function signature");
+			return { false, newFunctionNode };
 		}
 
-		// TODO: Process list of statements
+		Advance();
+		bool success = false;
+		Statement statement;
+		do
+		{
+			std::tie(success, statement) = ParseStatementNode();
+			if (success)
+			{
+				newFunctionNode.Statements.push_back(statement);
+			}
+		} while (success);
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::FuncBody, "Invalid function statement");
+			return { false, newFunctionNode };
+		}
 
 		// Check for close curly braces
-		Advance();
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::CloseCurlyBrace)
 		{
-			KG_WARN("Expecting an closing curly brace in function signature. Got a {} with a value of {}",
-				Utility::ScriptTokenTypeToString(tokenBuffer.Type), tokenBuffer.Value);
-			return { false, m_AST };
+			StoreParseError(ParseErrorType::FuncPunc, "Expecting an closing curly brace in function signature");
+			return { false, newFunctionNode };
 		}
 
-		m_AST.ProgramNode = { newFunctionNode };
-
-		return { true, m_AST };
+		return { true, newFunctionNode };
 	}
-	void TokenParser::PrintAST()
+	ScriptToken TokenParser::GetCurrentToken(int32_t offset)
 	{
-		if (m_AST.ProgramNode)
+		// Return empty token if end of file reached or attempt to access token below 0
+		if ((int32_t)m_TokenLocation + offset >= (int32_t)m_Tokens.size())
 		{
-			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
-			KG_WARN("Function Node");
-			KG_WARN(" Name:");
-			KG_WARN("  Type: {}", Utility::ScriptTokenTypeToString(funcNode.Name.Type));
-			KG_WARN("  Value: {}", funcNode.Name.Value);
-			for (auto& parameter : funcNode.Parameters)
-			{
-				KG_WARN(" Parameter:");
-				KG_WARN("  ParameterType:");
-				KG_WARN("   Type: {}", Utility::ScriptTokenTypeToString(parameter.ParameterType.Type));
-				KG_WARN("   Value: {}", parameter.ParameterType.Value);
-				KG_WARN("  Identifier:");
-				KG_WARN("   Type: {}", Utility::ScriptTokenTypeToString(parameter.Identifier.Type));
-				KG_WARN("   Value: {}", parameter.Identifier.Value);
-			}
+			return {ScriptTokenType::None, "End of File", InvalidLine, InvalidColumn};
 		}
-	}
-	ScriptToken& TokenParser::GetCurrentToken(int32_t offset)
-	{
-		// Return empty token if end of file reached
-		if (m_TokenLocation + offset >= m_Tokens.size())
+
+		if ((int32_t)m_TokenLocation + offset < 0)
 		{
-			static ScriptToken s_EmptyToken{};
-			s_EmptyToken = {};
-			return s_EmptyToken;
+			return {ScriptTokenType::None, "Index below 0", InvalidLine, InvalidColumn};
 		}
 		return m_Tokens.at(m_TokenLocation + offset);
 	}
@@ -382,4 +569,15 @@ namespace Kargono::Scripting
 	{
 		m_TokenLocation += count;
 	}
+	void TokenParser::StoreParseError(ParseErrorType errorType, const std::string& message)
+	{
+		m_Errors.push_back({ errorType , message, GetCurrentToken(), 
+			GetCurrentToken(-1) });
+	}
+
+	bool TokenParser::CheckForErrors()
+	{
+		return m_Errors.size() > 0;
+	}
+
 }
