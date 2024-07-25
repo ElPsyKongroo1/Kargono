@@ -28,9 +28,19 @@ namespace Kargono::Utility
 			// Avoid division by zero
 			if (multipleOf == 0)
 			{
-				return valueToRound; 
+				return valueToRound;
 			}
-			return valueToRound - (valueToRound % multipleOf);
+
+			// Calculate the remainder
+			T remainder = valueToRound % multipleOf;
+
+			// If the remainder is not zero and the value is negative, adjust the value
+			if (remainder != 0 && valueToRound < 0)
+			{
+				remainder += multipleOf;
+			}
+
+			return valueToRound - remainder;
 		}
 		template <typename T>
 		static T RoundUp(T valueToRound, T multipleOf) {

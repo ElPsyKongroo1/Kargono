@@ -55,6 +55,8 @@ namespace Kargono::Panels
 		Math::vec2 m_ScreenViewportBounds[2];
 		int m_GizmoType = -1;
 
+		float m_LargeGridSpacing = 100.0f;
+		float m_FineGridSpacing = 10.0f;
 		bool m_DisplayXYGrid = false;
 		bool m_DisplayXZGrid = true;
 		bool m_DisplayYZGrid = false;

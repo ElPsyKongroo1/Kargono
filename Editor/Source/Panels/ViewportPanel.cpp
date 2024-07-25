@@ -247,7 +247,7 @@ namespace Kargono::Panels
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Grid Options Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 219.0f, initialScreenCursorPos.y),
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
 				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
@@ -496,7 +496,7 @@ namespace Kargono::Panels
 
 			// Grid Options Button
 			icon = EditorUI::EditorUIService::s_IconGrid;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 214, initialCursorPos.y + 4));
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Grid Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
@@ -528,6 +528,20 @@ namespace Kargono::Panels
 					Utility::Operations::ToggleBoolean(m_DisplayYZGrid);
 				}
 				ImGui::EndPopup();
+			}
+
+			// Grid Spacing
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
+			ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
+				10.0f, 100.0f,
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Grid Spacing");
+				ImGui::EndTooltip();
 			}
 		}
 
@@ -998,6 +1012,14 @@ namespace Kargono::Panels
 
 	void ViewportPanel::DrawWorldAxis()
 	{
+		Math::vec3 cameraPosition = m_EditorCamera.GetPosition();
+		Math::vec3 fineGridStart =
+		{
+			Utility::Operations::RoundDown((int32_t)cameraPosition.x, (int32_t)m_LargeGridSpacing),
+			Utility::Operations::RoundDown((int32_t)cameraPosition.y, (int32_t)m_LargeGridSpacing),
+			Utility::Operations::RoundDown((int32_t)cameraPosition.z, (int32_t)m_LargeGridSpacing)
+		};
+
 		// Set cameraFrustrumVertices 0 - 7 with vertices from camera frustum
 		Math::vec3 currentVertex;
 		Math::vec3 minimumValues {std::numeric_limits<float>().max()};
@@ -1034,7 +1056,6 @@ namespace Kargono::Panels
 		}
 
 		// Start Grids
-		int32_t step = 100;
 		int32_t currentLine;
 		s_OutputVector->clear();
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGray),
@@ -1043,91 +1064,120 @@ namespace Kargono::Panels
 		if (m_DisplayXYGrid)
 		{
 			// Create Y Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.x)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
 				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 			// Create X Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.y)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
 				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
 		// Y-Z Grid
 		if (m_DisplayYZGrid)
 		{ 
 			// Create Y Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.y)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
 				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 			// Create Z Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.z)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine});
 				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
 
 		// X-Z Grid
 		if (m_DisplayXZGrid)
 		{ 
-			// Create X Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			// Create Large X Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.x)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
 				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
-			// Create Z Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+
+			// Create X Fine-Grid lines
+			currentLine = fineGridStart.x;
+			while ((float)currentLine < (fineGridStart.x + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z });
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + m_LargeGridSpacing });
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Large Z Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.z)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
 				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
 				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
-				currentLine += step;
+				currentLine += (int32_t)m_LargeGridSpacing;
+			}
+
+			// Create Z Fine-Grid lines
+			currentLine = fineGridStart.z;
+			while ((float)currentLine < (fineGridStart.z + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->push_back({ fineGridStart.x, 0.0f, currentLine });
+				s_OutputVector->push_back({ fineGridStart.x + m_LargeGridSpacing, 0.0f, currentLine });
+				currentLine += (int32_t)m_FineGridSpacing;
 			}
 		}
 
