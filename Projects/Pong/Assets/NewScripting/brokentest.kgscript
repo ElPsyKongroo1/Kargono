@@ -1,0 +1,5 @@
+void UpdateSessionUserSlot(UInt16 userSlot)
+{
+	String asdf = "Hello world, how are you friend?";
+	UInt16 babadu = 235432
+}
