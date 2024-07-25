@@ -114,78 +114,79 @@ $(document).ready(function(){initNavTree('RuntimeApp_8h_source.html',''); initRe
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// Does nothing other than calling parent constructor</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">RuntimeApp</a>();</div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1RuntimeApp.html#a5958ccc69873c280276b33da3f0c0bf2">   25</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a5958ccc69873c280276b33da3f0c0bf2">~RuntimeApp</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="comment">//==========================</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">//==========================</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">// Starts Audio System and askes the user what project to open(TEMPORARY TODO).</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a17be3fa28d979cf6bbc853f4d892374c">OnAttach</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// Closes Audio System and calls OnSceneStop()</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a7ff7fd8fb61826ba4b198a2310202654">OnDetach</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Calls Runtime Update for Physics, Scripting, and Rendering.</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">// Currently does nothing!</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; event) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// This function processes key pressed events</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordtype">bool</span> OnKeyPressed(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// This function renders the active scene, updates scripts, and updates the scene&#39;s physics.</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">void</span> OnUpdateRuntime(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">// This function updates the scene cameras when the window is resized</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordtype">bool</span> OnWindowResize(<a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Events::WindowResizeEvent</a> event);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">// This function closes the runtime application</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordtype">bool</span> OnApplicationClose(<a class="code" href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Events::ApplicationCloseEvent</a> event);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// This function responds to application collision events. Currently it plays a sound(Very Temporary).</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> OnPhysicsCollision(<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a> event);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordtype">bool</span> OnPhysicsCollisionEnd(<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a> event);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordtype">bool</span> OnUpdateUserCount(<a class="code" href="classKargono_1_1Events_1_1UpdateOnlineUsers.html">Events::UpdateOnlineUsers</a> event);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">bool</span> OnApproveJoinSession(<a class="code" href="classKargono_1_1Events_1_1ApproveJoinSession.html">Events::ApproveJoinSession</a> event);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordtype">bool</span> OnUpdateSessionUserSlot(<a class="code" href="classKargono_1_1Events_1_1UpdateSessionUserSlot.html">Events::UpdateSessionUserSlot</a> event);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordtype">bool</span> OnUserLeftSession(<a class="code" href="classKargono_1_1Events_1_1UserLeftSession.html">Events::UserLeftSession</a> event);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordtype">bool</span> OnCurrentSessionInit(<a class="code" href="classKargono_1_1Events_1_1CurrentSessionInit.html">Events::CurrentSessionInit</a> event);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">bool</span> OnConnectionTerminated(<a class="code" href="classKargono_1_1Events_1_1ConnectionTerminated.html">Events::ConnectionTerminated</a> event);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">bool</span> OnStartSession(<a class="code" href="classKargono_1_1Events_1_1StartSession.html">Events::StartSession</a> event);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordtype">bool</span> OnSessionReadyCheckConfirm(<a class="code" href="classKargono_1_1Events_1_1SessionReadyCheckConfirm.html">Events::SessionReadyCheckConfirm</a> event);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordtype">bool</span> OnReceiveSignal(<a class="code" href="classKargono_1_1Events_1_1ReceiveSignal.html">Events::ReceiveSignal</a> event);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">//==========================</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">// LifeCycle Functions</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">//==========================</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="comment">// Starts Audio System and askes the user what project to open(TEMPORARY TODO).</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a6c9bcfa45c1430ba25609fa603ef1e5e">Init</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// Closes Audio System and calls OnSceneStop()</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#ae0b705145f32ea131a4168fd95c68fea">Terminate</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">// Calls Runtime Update for Physics, Scripting, and Rendering.</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="comment">// Currently does nothing!</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">OnEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>&amp; event) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">// This function processes key pressed events</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordtype">bool</span> OnKeyPressed(<a class="code" href="classKargono_1_1Events_1_1KeyPressedEvent.html">Events::KeyPressedEvent</a> event);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// This function renders the active scene, updates scripts, and updates the scene&#39;s physics.</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">void</span> OnUpdateRuntime(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">// This function updates the scene cameras when the window is resized</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordtype">bool</span> OnWindowResize(<a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Events::WindowResizeEvent</a> event);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// This function closes the runtime application</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">bool</span> OnApplicationClose(<a class="code" href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Events::ApplicationCloseEvent</a> event);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="comment">// This function responds to application collision events. Currently it plays a sound(Very Temporary).</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordtype">bool</span> OnPhysicsCollision(<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEvent.html">Events::PhysicsCollisionEvent</a> event);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordtype">bool</span> OnPhysicsCollisionEnd(<a class="code" href="classKargono_1_1Events_1_1PhysicsCollisionEnd.html">Events::PhysicsCollisionEnd</a> event);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordtype">bool</span> OnUpdateUserCount(<a class="code" href="classKargono_1_1Events_1_1UpdateOnlineUsers.html">Events::UpdateOnlineUsers</a> event);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordtype">bool</span> OnApproveJoinSession(<a class="code" href="classKargono_1_1Events_1_1ApproveJoinSession.html">Events::ApproveJoinSession</a> event);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordtype">bool</span> OnUpdateSessionUserSlot(<a class="code" href="classKargono_1_1Events_1_1UpdateSessionUserSlot.html">Events::UpdateSessionUserSlot</a> event);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">bool</span> OnUserLeftSession(<a class="code" href="classKargono_1_1Events_1_1UserLeftSession.html">Events::UserLeftSession</a> event);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordtype">bool</span> OnCurrentSessionInit(<a class="code" href="classKargono_1_1Events_1_1CurrentSessionInit.html">Events::CurrentSessionInit</a> event);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordtype">bool</span> OnConnectionTerminated(<a class="code" href="classKargono_1_1Events_1_1ConnectionTerminated.html">Events::ConnectionTerminated</a> event);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keywordtype">bool</span> OnStartSession(<a class="code" href="classKargono_1_1Events_1_1StartSession.html">Events::StartSession</a> event);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">bool</span> OnSessionReadyCheckConfirm(<a class="code" href="classKargono_1_1Events_1_1SessionReadyCheckConfirm.html">Events::SessionReadyCheckConfirm</a> event);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordtype">bool</span> OnReceiveSignal(<a class="code" href="classKargono_1_1Events_1_1ReceiveSignal.html">Events::ReceiveSignal</a> event);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">// Logic to open the project and its main scene</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="comment">//==========================</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">// Project Management</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">//==========================</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="comment">// This function opens a file dialog and calls the other OpenProject(path) function</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">//      if the file dialog was successful.</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">bool</span> OpenProject();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="comment">// Function opens project described by the path which includes opening the initial scene</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">//      and loading the new app assembly into the scripting engine.</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordtype">void</span> OpenProject(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="comment">// This function opens a scene. This function is only currently called by the OpenProject function</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="comment">//      to open the initial scene.</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordtype">void</span> OpenScene(<a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> sceneHandle);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">// Starts and stops the runtime. This includes Scripting,</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="comment">//      Physics, and supporting functionality.</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordtype">void</span> OnPlay();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordtype">void</span> OnStop();</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    };</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="comment">// Logic to open the project and its main scene</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">//==========================</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="comment">// Project Management</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="comment">//==========================</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">// This function opens a file dialog and calls the other OpenProject(path) function</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">//      if the file dialog was successful.</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">bool</span> OpenProject();</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="comment">// Function opens project described by the path which includes opening the initial scene</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">//      and loading the new app assembly into the scripting engine.</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordtype">void</span> OpenProject(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="comment">// This function opens a scene. This function is only currently called by the OpenProject function</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">//      to open the initial scene.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordtype">void</span> OpenScene(<a class="code" href="classKargono_1_1UUID.html">Assets::AssetHandle</a> sceneHandle);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="comment">// Starts and stops the runtime. This includes Scripting,</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="comment">//      Physics, and supporting functionality.</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordtype">void</span> OnPlay();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">void</span> OnStop();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    };</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
 <div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00011">Application.h:12</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00012">Application.h:13</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1ApplicationCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApplicationCloseEvent.html">Kargono::Events::ApplicationCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00081">ApplicationEvent.h:82</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1ApproveJoinSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ApproveJoinSession.html">Kargono::Events::ApproveJoinSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00365">NetworkingEvent.h:366</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1ConnectionTerminated_html"><div class="ttname"><a href="classKargono_1_1Events_1_1ConnectionTerminated.html">Kargono::Events::ConnectionTerminated</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00237">NetworkingEvent.h:238</a></div></div>
@@ -202,14 +203,14 @@ $(document).ready(function(){initNavTree('RuntimeApp_8h_source.html',''); initRe
 <div class="ttc" id="aclassKargono_1_1Events_1_1UserLeftSession_html"><div class="ttname"><a href="classKargono_1_1Events_1_1UserLeftSession.html">Kargono::Events::UserLeftSession</a></div><div class="ttdef"><b>Definition:</b> <a href="NetworkingEvent_8h_source.html#l00283">NetworkingEvent.h:284</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1WindowResizeEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00017">ApplicationEvent.h:18</a></div></div>
 <div class="ttc" id="aclassKargono_1_1RuntimeApp_html"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html">Kargono::RuntimeApp</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8h_source.html#l00017">RuntimeApp.h:18</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a17be3fa28d979cf6bbc853f4d892374c"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a17be3fa28d979cf6bbc853f4d892374c">Kargono::RuntimeApp::OnAttach</a></div><div class="ttdeci">virtual void OnAttach() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00020">RuntimeApp.cpp:20</a></div></div>
 <div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a5958ccc69873c280276b33da3f0c0bf2"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a5958ccc69873c280276b33da3f0c0bf2">Kargono::RuntimeApp::~RuntimeApp</a></div><div class="ttdeci">virtual ~RuntimeApp()=default</div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a77f2e035b47670f79de132e6bcfb61ea"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">Kargono::RuntimeApp::RuntimeApp</a></div><div class="ttdeci">RuntimeApp()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00015">RuntimeApp.cpp:15</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a7ff7fd8fb61826ba4b198a2310202654"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a7ff7fd8fb61826ba4b198a2310202654">Kargono::RuntimeApp::OnDetach</a></div><div class="ttdeci">virtual void OnDetach() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00057">RuntimeApp.cpp:57</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a88a789ccd8bc596f2d84ea19d22bf9e4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">Kargono::RuntimeApp::OnEvent</a></div><div class="ttdeci">virtual void OnEvent(Events::Event &amp;event) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00091">RuntimeApp.cpp:91</a></div></div>
-<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_aff0eac6b695374c12ee1fab3aa0187c4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">Kargono::RuntimeApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00071">RuntimeApp.cpp:71</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a6c9bcfa45c1430ba25609fa603ef1e5e"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a6c9bcfa45c1430ba25609fa603ef1e5e">Kargono::RuntimeApp::Init</a></div><div class="ttdeci">virtual void Init() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00016">RuntimeApp.cpp:16</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a77f2e035b47670f79de132e6bcfb61ea"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a77f2e035b47670f79de132e6bcfb61ea">Kargono::RuntimeApp::RuntimeApp</a></div><div class="ttdeci">RuntimeApp()</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00011">RuntimeApp.cpp:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_a88a789ccd8bc596f2d84ea19d22bf9e4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#a88a789ccd8bc596f2d84ea19d22bf9e4">Kargono::RuntimeApp::OnEvent</a></div><div class="ttdeci">virtual void OnEvent(Events::Event &amp;event) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00105">RuntimeApp.cpp:105</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_ae0b705145f32ea131a4168fd95c68fea"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#ae0b705145f32ea131a4168fd95c68fea">Kargono::RuntimeApp::Terminate</a></div><div class="ttdeci">virtual void Terminate() override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00073">RuntimeApp.cpp:73</a></div></div>
+<div class="ttc" id="aclassKargono_1_1RuntimeApp_html_aff0eac6b695374c12ee1fab3aa0187c4"><div class="ttname"><a href="classKargono_1_1RuntimeApp.html#aff0eac6b695374c12ee1fab3aa0187c4">Kargono::RuntimeApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00081">RuntimeApp.cpp:81</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00005">Timestep.h:6</a></div></div>
-<div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00007">UUID.h:8</a></div></div>
+<div class="ttc" id="aclassKargono_1_1UUID_html"><div class="ttname"><a href="classKargono_1_1UUID.html">Kargono::UUID</a></div><div class="ttdef"><b>Definition:</b> <a href="UUID_8h_source.html#l00010">UUID.h:11</a></div></div>
 <div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

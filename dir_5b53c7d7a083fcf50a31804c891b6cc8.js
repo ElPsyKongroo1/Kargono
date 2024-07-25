@@ -15,5 +15,5 @@ var dir_5b53c7d7a083fcf50a31804c891b6cc8 =
     [ "ScriptManager.cpp", "ScriptManager_8cpp.html", null ],
     [ "ShaderManager.cpp", "ShaderManager_8cpp.html", null ],
     [ "TextureManager.cpp", "TextureManager_8cpp.html", null ],
-    [ "UIObjectManager.cpp", "UIObjectManager_8cpp.html", null ]
+    [ "UserInterfaceManager.cpp", "UserInterfaceManager_8cpp.html", null ]
 ];

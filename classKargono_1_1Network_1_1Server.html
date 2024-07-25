@@ -87,8 +87,6 @@ $(document).ready(function(){initNavTree('classKargono_1_1Network_1_1Server.html
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classKargono_1_1Network_1_1Server-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Kargono::Network::Server Class Reference</div>  </div>
@@ -101,88 +99,40 @@ $(document).ready(function(){initNavTree('classKargono_1_1Network_1_1Server.html
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4deb48afca7ef2b31f73c4984edaf3e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a4deb48afca7ef2b31f73c4984edaf3e1">Server</a> (uint16_t nPort, bool isLocal=false)</td></tr>
 <tr class="separator:a4deb48afca7ef2b31f73c4984edaf3e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a998cad96509816153750d1ca4ad05e29"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a998cad96509816153750d1ca4ad05e29">~Server</a> ()=default</td></tr>
+<tr class="separator:a998cad96509816153750d1ca4ad05e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b3ceb278e4b2840247581f23a4f9998"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a9b3ceb278e4b2840247581f23a4f9998">Start</a> ()</td></tr>
+<tr class="separator:a9b3ceb278e4b2840247581f23a4f9998"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12345f335c5b4322de2ac5ba0986d1c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a12345f335c5b4322de2ac5ba0986d1c9">Stop</a> ()</td></tr>
+<tr class="separator:a12345f335c5b4322de2ac5ba0986d1c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada38eea9a48709909c18a6f2810e923c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#ada38eea9a48709909c18a6f2810e923c">Update</a> (size_t nMaxMessages=-1)</td></tr>
+<tr class="separator:ada38eea9a48709909c18a6f2810e923c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ee0de8d486151e28b2a33c0e9c6d1eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a5ee0de8d486151e28b2a33c0e9c6d1eb">Wait</a> ()</td></tr>
+<tr class="separator:a5ee0de8d486151e28b2a33c0e9c6d1eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad31653e60036ead4aa5c1620c4085f0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#ad31653e60036ead4aa5c1620c4085f0f">WakeUpNetworkThread</a> ()</td></tr>
+<tr class="separator:ad31653e60036ead4aa5c1620c4085f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52607248190992eaefee1732e05af840"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a52607248190992eaefee1732e05af840">CheckConnectionsValid</a> ()</td></tr>
+<tr class="separator:a52607248190992eaefee1732e05af840"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1aafb0126fd2e68d98c87164cd4e1a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#ae1aafb0126fd2e68d98c87164cd4e1a7">MessageClient</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt; client, const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
+<tr class="separator:ae1aafb0126fd2e68d98c87164cd4e1a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af99e4c60bb0fd52b4bd03ba205e0f00b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#af99e4c60bb0fd52b4bd03ba205e0f00b">MessageClientUDP</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt; client, <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
+<tr class="separator:af99e4c60bb0fd52b4bd03ba205e0f00b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa42dfbaace536b9be01af524c656efc1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#aa42dfbaace536b9be01af524c656efc1">MessageAllClients</a> (const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt; pIgnoreClient=nullptr)</td></tr>
+<tr class="separator:aa42dfbaace536b9be01af524c656efc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8386add630774888c3a62c661cff4e52"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a8386add630774888c3a62c661cff4e52">StartServer</a> ()</td></tr>
+<tr class="separator:a8386add630774888c3a62c661cff4e52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0015f180d1ef97f6cfef61fbea86d440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a0015f180d1ef97f6cfef61fbea86d440">RunServer</a> ()</td></tr>
 <tr class="separator:a0015f180d1ef97f6cfef61fbea86d440"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0be8fa764ecc0deecc044db2ceb336ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a0be8fa764ecc0deecc044db2ceb336ee">StopServer</a> ()</td></tr>
+<tr class="separator:a0be8fa764ecc0deecc044db2ceb336ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61db2a8a649ad1e74a106df6595b9615"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a61db2a8a649ad1e74a106df6595b9615">SessionClock</a> ()</td></tr>
 <tr class="separator:a61db2a8a649ad1e74a106df6595b9615"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e27604b1d1b206d7ac03437e719c87d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a8e27604b1d1b206d7ac03437e719c87d">SubmitToEventQueue</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> &gt; e)</td></tr>
 <tr class="separator:a8e27604b1d1b206d7ac03437e719c87d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classKargono_1_1Network_1_1ServerInterface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classKargono_1_1Network_1_1ServerInterface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classKargono_1_1Network_1_1ServerInterface.html">Kargono::Network::ServerInterface</a></td></tr>
-<tr class="memitem:a2a5081484d753fa9a8f46cbfc1f24b95 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a2a5081484d753fa9a8f46cbfc1f24b95">ServerInterface</a> (uint16_t port, bool isLocal)</td></tr>
-<tr class="separator:a2a5081484d753fa9a8f46cbfc1f24b95 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad14487fd75b9eac9138579daf26aa15a inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ad14487fd75b9eac9138579daf26aa15a">~ServerInterface</a> ()</td></tr>
-<tr class="separator:ad14487fd75b9eac9138579daf26aa15a inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2a91967653691d31b2a55c3249607b0 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#af2a91967653691d31b2a55c3249607b0">Start</a> ()</td></tr>
-<tr class="separator:af2a91967653691d31b2a55c3249607b0 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acba56acd57cc34cbfa4031ba949c3643 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#acba56acd57cc34cbfa4031ba949c3643">Stop</a> ()</td></tr>
-<tr class="separator:acba56acd57cc34cbfa4031ba949c3643 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1e895fb57445840a8e3a306e819f648 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ac1e895fb57445840a8e3a306e819f648">Update</a> (size_t nMaxMessages=-1)</td></tr>
-<tr class="separator:ac1e895fb57445840a8e3a306e819f648 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add6c188c085ee36a44cf78cbc5ecb5bf inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#add6c188c085ee36a44cf78cbc5ecb5bf">Wait</a> ()</td></tr>
-<tr class="separator:add6c188c085ee36a44cf78cbc5ecb5bf inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3adf1b4736138e82f8a864c9842c01e inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#aa3adf1b4736138e82f8a864c9842c01e">WakeUpNetworkThread</a> ()</td></tr>
-<tr class="separator:aa3adf1b4736138e82f8a864c9842c01e inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35319f0d725c2c62c23c95fb766d91bf inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a35319f0d725c2c62c23c95fb766d91bf">CheckConnectionsValid</a> ()</td></tr>
-<tr class="separator:a35319f0d725c2c62c23c95fb766d91bf inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9da881c1acfd22ea621cae70a1db3e7c inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a9da881c1acfd22ea621cae70a1db3e7c">MessageClient</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client, const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
-<tr class="separator:a9da881c1acfd22ea621cae70a1db3e7c inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af76c3f846aa23346baec16c75ca88a80 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#af76c3f846aa23346baec16c75ca88a80">MessageClientUDP</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client, <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
-<tr class="separator:af76c3f846aa23346baec16c75ca88a80 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabf084218f366d4ce5701c87df7c0c53 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#aabf084218f366d4ce5701c87df7c0c53">MessageAllClients</a> (const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; pIgnoreClient=nullptr)</td></tr>
-<tr class="separator:aabf084218f366d4ce5701c87df7c0c53 inherit pub_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa1230be7d5a814c6b335d0ced67e73dc"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1Server.html">Network::Server</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#aa1230be7d5a814c6b335d0ced67e73dc">GetActiveServer</a> ()</td></tr>
-<tr class="separator:aa1230be7d5a814c6b335d0ced67e73dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6e90bd14c23b73eb7c2c71afd5b3c5f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#ae6e90bd14c23b73eb7c2c71afd5b3c5f">SetActiveServer</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1Server.html">Network::Server</a> &gt; newServer)</td></tr>
-<tr class="separator:ae6e90bd14c23b73eb7c2c71afd5b3c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a4e27cd8e1ae6cc966d735491a9ebc020"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a4e27cd8e1ae6cc966d735491a9ebc020">OnClientConnect</a> (std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt; client) override</td></tr>
-<tr class="separator:a4e27cd8e1ae6cc966d735491a9ebc020"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2579769348c3d00eea021e40b80edf5c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a2579769348c3d00eea021e40b80edf5c">OnClientDisconnect</a> (std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt; client) override</td></tr>
-<tr class="separator:a2579769348c3d00eea021e40b80edf5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a859a3c30fde34d2eb3419dd0733f63c3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html#a859a3c30fde34d2eb3419dd0733f63c3">OnMessage</a> (std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt; client, <a class="el" href="structKargono_1_1Network_1_1Message.html">Kargono::Network::Message</a> &amp;incomingMessage) override</td></tr>
-<tr class="separator:a859a3c30fde34d2eb3419dd0733f63c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_classKargono_1_1Network_1_1ServerInterface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classKargono_1_1Network_1_1ServerInterface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classKargono_1_1Network_1_1ServerInterface.html">Kargono::Network::ServerInterface</a></td></tr>
-<tr class="memitem:a86384b38ec30c36495e218badd24aac9 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a86384b38ec30c36495e218badd24aac9">OnClientConnect</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client)</td></tr>
-<tr class="separator:a86384b38ec30c36495e218badd24aac9 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19083999b5968e3ca4b392a211f47ce3 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a19083999b5968e3ca4b392a211f47ce3">OnClientDisconnect</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client)</td></tr>
-<tr class="separator:a19083999b5968e3ca4b392a211f47ce3 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ced98176290ccfb8ddee6007879b8a3 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a4ced98176290ccfb8ddee6007879b8a3">OnMessage</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client, <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;msg)</td></tr>
-<tr class="separator:a4ced98176290ccfb8ddee6007879b8a3 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a852ddbb10aacadcf17ce2dd5098976 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a5a852ddbb10aacadcf17ce2dd5098976">OnClientValidated</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; client)</td></tr>
-<tr class="separator:a5a852ddbb10aacadcf17ce2dd5098976 inherit pro_methods_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classKargono_1_1Network_1_1ServerInterface')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classKargono_1_1Network_1_1ServerInterface.html">Kargono::Network::ServerInterface</a></td></tr>
-<tr class="memitem:a10e2be7853de9faf16473812ee79475a inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classKargono_1_1Network_1_1tsqueue.html">tsqueue</a>&lt; <a class="el" href="structKargono_1_1Network_1_1owned__message.html">owned_message</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a10e2be7853de9faf16473812ee79475a">m_qMessagesIn</a></td></tr>
-<tr class="separator:a10e2be7853de9faf16473812ee79475a inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9ffcda160e0f57a86cdec8db28e07df inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">std::deque&lt; <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ae9ffcda160e0f57a86cdec8db28e07df">m_Connections</a></td></tr>
-<tr class="separator:ae9ffcda160e0f57a86cdec8db28e07df inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb9d01fbf82d38fdbf3ce3b9dfc9cd72 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1UDPServer.html">UDPServer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#aeb9d01fbf82d38fdbf3ce3b9dfc9cd72">m_UDPServer</a> { nullptr }</td></tr>
-<tr class="separator:aeb9d01fbf82d38fdbf3ce3b9dfc9cd72 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac93a09dd76312fffaf28475efa711899 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; asio::ip::udp::endpoint, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">ConnectionToClient</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ac93a09dd76312fffaf28475efa711899">m_IPAddressToConnection</a> {}</td></tr>
-<tr class="separator:ac93a09dd76312fffaf28475efa711899 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad363b8f8e0f843107ca6a8ea83706ceb inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">asio::io_context&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ad363b8f8e0f843107ca6a8ea83706ceb">m_Context</a></td></tr>
-<tr class="separator:ad363b8f8e0f843107ca6a8ea83706ceb inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89565d27fd22bc161cc1552a297f2209 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">std::thread&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a89565d27fd22bc161cc1552a297f2209">m_threadContext</a></td></tr>
-<tr class="separator:a89565d27fd22bc161cc1552a297f2209 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee1cb4ca2ecdfd76cb7fe884b8c60ed5 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">asio::ip::tcp::acceptor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#aee1cb4ca2ecdfd76cb7fe884b8c60ed5">m_TCPAcceptor</a></td></tr>
-<tr class="separator:aee1cb4ca2ecdfd76cb7fe884b8c60ed5 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6a90581e9300dcb9700c502d54d3986 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#ac6a90581e9300dcb9700c502d54d3986">nIDCounter</a> = 10000</td></tr>
-<tr class="separator:ac6a90581e9300dcb9700c502d54d3986 inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a738e741cad6b7c03c5da04e4da7d0b3f inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a738e741cad6b7c03c5da04e4da7d0b3f">m_BlockThreadCV</a> {}</td></tr>
-<tr class="separator:a738e741cad6b7c03c5da04e4da7d0b3f inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52925ebe20dbd0ccb1557686c36db3bb inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a52925ebe20dbd0ccb1557686c36db3bb">m_BlockThreadMx</a> {}</td></tr>
-<tr class="separator:a52925ebe20dbd0ccb1557686c36db3bb inherit pro_attribs_classKargono_1_1Network_1_1ServerInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Server_8h_source.html#l00015">15</a> of file <a class="el" href="Server_8h_source.html">Server.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Server_8h_source.html#l00110">110</a> of file <a class="el" href="Server_8h_source.html">Server.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4deb48afca7ef2b31f73c4984edaf3e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4deb48afca7ef2b31f73c4984edaf3e1">&#9670;&nbsp;</a></span>Server()</h2>
@@ -210,11 +160,260 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00011">11</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00172">172</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a998cad96509816153750d1ca4ad05e29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a998cad96509816153750d1ca4ad05e29">&#9670;&nbsp;</a></span>~Server()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Kargono::Network::Server::~Server </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9b3ceb278e4b2840247581f23a4f9998"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b3ceb278e4b2840247581f23a4f9998">&#9670;&nbsp;</a></span>Start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::Network::Server::Start </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00210">210</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a12345f335c5b4322de2ac5ba0986d1c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12345f335c5b4322de2ac5ba0986d1c9">&#9670;&nbsp;</a></span>Stop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::Stop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00228">228</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ada38eea9a48709909c18a6f2810e923c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada38eea9a48709909c18a6f2810e923c">&#9670;&nbsp;</a></span>Update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::Update </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>nMaxMessages</em> = <code>-1</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00237">237</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5ee0de8d486151e28b2a33c0e9c6d1eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ee0de8d486151e28b2a33c0e9c6d1eb">&#9670;&nbsp;</a></span>Wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::Wait </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00254">254</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad31653e60036ead4aa5c1620c4085f0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad31653e60036ead4aa5c1620c4085f0f">&#9670;&nbsp;</a></span>WakeUpNetworkThread()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::WakeUpNetworkThread </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00259">259</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a52607248190992eaefee1732e05af840"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52607248190992eaefee1732e05af840">&#9670;&nbsp;</a></span>CheckConnectionsValid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::CheckConnectionsValid </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00264">264</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae1aafb0126fd2e68d98c87164cd4e1a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1aafb0126fd2e68d98c87164cd4e1a7">&#9670;&nbsp;</a></span>MessageClient()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::MessageClient </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt;&#160;</td>
+          <td class="paramname"><em>client</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;&#160;</td>
+          <td class="paramname"><em>msg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00286">286</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af99e4c60bb0fd52b4bd03ba205e0f00b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af99e4c60bb0fd52b4bd03ba205e0f00b">&#9670;&nbsp;</a></span>MessageClientUDP()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::MessageClientUDP </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt;&#160;</td>
+          <td class="paramname"><em>client</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;&#160;</td>
+          <td class="paramname"><em>msg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00294">294</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa42dfbaace536b9be01af524c656efc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa42dfbaace536b9be01af524c656efc1">&#9670;&nbsp;</a></span>MessageAllClients()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::MessageAllClients </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structKargono_1_1Network_1_1Message.html">Message</a> &amp;&#160;</td>
+          <td class="paramname"><em>msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">TCPServerConnection</a> &gt;&#160;</td>
+          <td class="paramname"><em>pIgnoreClient</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00306">306</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a8386add630774888c3a62c661cff4e52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8386add630774888c3a62c661cff4e52">&#9670;&nbsp;</a></span>StartServer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::Network::Server::StartServer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00321">321</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a0015f180d1ef97f6cfef61fbea86d440"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0015f180d1ef97f6cfef61fbea86d440">&#9670;&nbsp;</a></span>RunServer()</h2>
 
@@ -230,7 +429,26 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00016">16</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00325">325</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0be8fa764ecc0deecc044db2ceb336ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0be8fa764ecc0deecc044db2ceb336ee">&#9670;&nbsp;</a></span>StopServer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Network::Server::StopServer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00333">333</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
 
 </div>
 </div>
@@ -249,7 +467,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00026">26</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00361">361</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
 
 </div>
 </div>
@@ -269,156 +487,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00273">273</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a4e27cd8e1ae6cc966d735491a9ebc020"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e27cd8e1ae6cc966d735491a9ebc020">&#9670;&nbsp;</a></span>OnClientConnect()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Network::Server::OnClientConnect </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt;&#160;</td>
-          <td class="paramname"><em>client</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00050">50</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a2579769348c3d00eea021e40b80edf5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2579769348c3d00eea021e40b80edf5c">&#9670;&nbsp;</a></span>OnClientDisconnect()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Server::OnClientDisconnect </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt;&#160;</td>
-          <td class="paramname"><em>client</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00061">61</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a859a3c30fde34d2eb3419dd0733f63c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a859a3c30fde34d2eb3419dd0733f63c3">&#9670;&nbsp;</a></span>OnMessage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::Network::Server::OnMessage </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html">Kargono::Network::ConnectionToClient</a> &gt;&#160;</td>
-          <td class="paramname"><em>client</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Network_1_1Message.html">Kargono::Network::Message</a> &amp;&#160;</td>
-          <td class="paramname"><em>incomingMessage</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00086">86</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aa1230be7d5a814c6b335d0ced67e73dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1230be7d5a814c6b335d0ced67e73dc">&#9670;&nbsp;</a></span>GetActiveServer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1Network_1_1Server.html">Network::Server</a>&gt; Kargono::Network::Server::GetActiveServer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Server_8h_source.html#l00038">38</a> of file <a class="el" href="Server_8h_source.html">Server.h</a>.</p>
-
-</div>
-</div>
-<a id="ae6e90bd14c23b73eb7c2c71afd5b3c5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6e90bd14c23b73eb7c2c71afd5b3c5f">&#9670;&nbsp;</a></span>SetActiveServer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Kargono::Network::Server::SetActiveServer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Network_1_1Server.html">Network::Server</a> &gt;&#160;</td>
-          <td class="paramname"><em>newServer</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Server_8h_source.html#l00039">39</a> of file <a class="el" href="Server_8h_source.html">Server.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Server_8cpp_source.html#l00608">608</a> of file <a class="el" href="Server_8cpp_source.html">Server.cpp</a>.</p>
 
 </div>
 </div>

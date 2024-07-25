@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('Scripting_8cpp.html',''); initResizabl
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="kgpch_8h_source.html">kgpch.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Scripting_8h_source.html">Kargono/Scripting/Scripting.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="EngineCore_8h_source.html">Kargono/Core/EngineCore.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Engine_8h_source.html">Kargono/Core/Engine.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ScriptModuleBuilder_8h_source.html">Kargono/Scripting/ScriptModuleBuilder.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="AssetManager_8h_source.html">Kargono/Assets/AssetManager.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Scene_8h_source.html">Kargono/Scenes/Scene.h</a>&quot;</code><br />
@@ -105,9 +105,10 @@ $(document).ready(function(){initNavTree('Scripting_8cpp.html',''); initResizabl
 <code>#include &quot;<a class="el" href="Audio_8h_source.html">Kargono/Audio/Audio.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="RuntimeUI_8h_source.html">Kargono/RuntimeUI/RuntimeUI.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="InputMode_8h_source.html">Kargono/Input/InputMode.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="InputPolling_8h_source.html">Kargono/Input/InputPolling.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="InputService_8h_source.html">Kargono/Input/InputService.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Client_8h_source.html">Kargono/Network/Client.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="GameState_8h_source.html">Kargono/Scenes/GameState.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Operations_8h_source.html">Kargono/Utility/Operations.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Random_8h_source.html">Kargono/Utility/Random.h</a>&quot;</code><br />
 </div>
 <p><a href="Scripting_8cpp_source.html">Go to the source code of this file.</a></p>
@@ -214,9 +215,9 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">typedef</span> <a class="code" href="namespaceKargono_1_1Scripting.html#aeeec80a487b2e0dfe57f1b4eeaf2d7bb">void</a> (*Void_String_Func##name)(<span class="keyword">const</span> std::string&amp;, std::function&lt;returnType(__VA_ARGS__)&gt;); \</div>
 <div class="line">    std::function&lt;<a class="code" href="namespaceKargono_1_1Scripting.html#aeeec80a487b2e0dfe57f1b4eeaf2d7bb">void</a>(<span class="keyword">const</span> std::string&amp;, std::function&lt;returnType(__VA_ARGS__)&gt;)&gt; s_Add##name {};</div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html_aeeec80a487b2e0dfe57f1b4eeaf2d7bb"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#aeeec80a487b2e0dfe57f1b4eeaf2d7bb">Kargono::Scripting::void</a></div><div class="ttdeci">void</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00390">Scripting.cpp:390</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_aeeec80a487b2e0dfe57f1b4eeaf2d7bb"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#aeeec80a487b2e0dfe57f1b4eeaf2d7bb">Kargono::Scripting::void</a></div><div class="ttdeci">void</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00396">Scripting.cpp:396</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00316">316</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00322">322</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -242,7 +243,7 @@ Variables</h2></td></tr>
 <div class="line">        return;\</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00320">320</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00326">326</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -278,7 +279,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00327">327</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00333">333</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -314,7 +315,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00330">330</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00336">336</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +355,7 @@ Variables</h2></td></tr>
 <div class="line">    outputStream &lt;&lt; #name <span class="stringliteral">&quot;Ptr();\n&quot;</span>; \</div>
 <div class="line">    outputStream &lt;&lt; <span class="stringliteral">&quot;}\n&quot;</span>;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00333">333</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00339">339</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -400,7 +401,7 @@ Variables</h2></td></tr>
 <div class="line">    outputStream &lt;&lt; #name <span class="stringliteral">&quot;Ptr(a);\n&quot;</span>; \</div>
 <div class="line">    outputStream &lt;&lt; <span class="stringliteral">&quot;}\n&quot;</span>;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00344">344</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00350">350</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -452,7 +453,7 @@ Variables</h2></td></tr>
 <div class="line">    outputStream &lt;&lt; #name <span class="stringliteral">&quot;Ptr(a, b);\n&quot;</span>; \</div>
 <div class="line">    outputStream &lt;&lt; <span class="stringliteral">&quot;}\n&quot;</span>;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00355">355</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00361">361</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -510,7 +511,7 @@ Variables</h2></td></tr>
 <div class="line">    outputStream &lt;&lt; #name <span class="stringliteral">&quot;Ptr(a, b, c);\n&quot;</span>; \</div>
 <div class="line">    outputStream &lt;&lt; <span class="stringliteral">&quot;}\n&quot;</span>;</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00367">367</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00373">373</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -530,7 +531,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00379">379</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00385">385</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>
@@ -566,7 +567,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00382">382</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scripting_8cpp_source.html#l00388">388</a> of file <a class="el" href="Scripting_8cpp_source.html">Scripting.cpp</a>.</p>
 
 </div>
 </div>

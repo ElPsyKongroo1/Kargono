@@ -106,6 +106,8 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a7023c199c7e6b17eb417b12e7f81713b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a7023c199c7e6b17eb417b12e7f81713b">Label</a></td></tr>
 <tr class="separator:a7023c199c7e6b17eb417b12e7f81713b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d3a5e516f5691c61d75aed4b2053d9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1EditorUI.html#a77396d181434d59fcbfeffa72eb3123c">WidgetFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a2d3a5e516f5691c61d75aed4b2053d9f">Flags</a> { <a class="el" href="namespaceKargono_1_1EditorUI.html#a46fc91ab00bbbf6a1b7de2a157164693ae7d5811f8641dc9f0eeb03c9bd1f7422">RadioSelector_None</a> }</td></tr>
+<tr class="separator:a2d3a5e516f5691c61d75aed4b2053d9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ccc045cbbd278ac99d891ed74465337"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a0ccc045cbbd278ac99d891ed74465337">SelectedOption</a> { 0 }</td></tr>
 <tr class="separator:a0ccc045cbbd278ac99d891ed74465337"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c54c86cc1988d94715ca508d43c5584"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a0c54c86cc1988d94715ca508d43c5584">FirstOptionLabel</a> {&quot;None&quot;}</td></tr>
@@ -114,8 +116,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a737dcb03c2631197834e32d39c034338"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99c21844da02e46e709667decb679453"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a99c21844da02e46e709667decb679453">Editing</a> { false }</td></tr>
 <tr class="separator:a99c21844da02e46e709667decb679453"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab85bd2427cd45d7b130ee9d32258a9a3"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(uint16_t selectedOption)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#ab85bd2427cd45d7b130ee9d32258a9a3">SelectAction</a> {nullptr}</td></tr>
-<tr class="separator:ab85bd2427cd45d7b130ee9d32258a9a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adff2440ae3e3bf8b966cf788de31a2f7"><td class="memItemLeft" align="right" valign="top">std::function&lt; void()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#adff2440ae3e3bf8b966cf788de31a2f7">SelectAction</a> {nullptr}</td></tr>
+<tr class="separator:adff2440ae3e3bf8b966cf788de31a2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -124,7 +126,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00259">259</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00356">356</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa558c70df0cf73c727019498c80c420a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa558c70df0cf73c727019498c80c420a">&#9670;&nbsp;</a></span>RadioSelectorSpec()</h2>
@@ -141,7 +143,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00262">262</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00359">359</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
@@ -185,7 +187,23 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00267">267</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00364">364</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+
+</div>
+</div>
+<a id="a2d3a5e516f5691c61d75aed4b2053d9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d3a5e516f5691c61d75aed4b2053d9f">&#9670;&nbsp;</a></span>Flags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1EditorUI.html#a77396d181434d59fcbfeffa72eb3123c">WidgetFlags</a> Kargono::EditorUI::RadioSelectorSpec::Flags { <a class="el" href="namespaceKargono_1_1EditorUI.html#a46fc91ab00bbbf6a1b7de2a157164693ae7d5811f8641dc9f0eeb03c9bd1f7422">RadioSelector_None</a> }</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00365">365</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
@@ -201,7 +219,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00268">268</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00366">366</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
@@ -217,7 +235,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00269">269</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00367">367</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
@@ -233,7 +251,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00270">270</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00368">368</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
@@ -249,23 +267,23 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00271">271</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00369">369</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>
-<a id="ab85bd2427cd45d7b130ee9d32258a9a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab85bd2427cd45d7b130ee9d32258a9a3">&#9670;&nbsp;</a></span>SelectAction</h2>
+<a id="adff2440ae3e3bf8b966cf788de31a2f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adff2440ae3e3bf8b966cf788de31a2f7">&#9670;&nbsp;</a></span>SelectAction</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::function&lt;void(uint16_t selectedOption)&gt; Kargono::EditorUI::RadioSelectorSpec::SelectAction {nullptr}</td>
+          <td class="memname">std::function&lt;void()&gt; Kargono::EditorUI::RadioSelectorSpec::SelectAction {nullptr}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00272">272</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorUI_8h_source.html#l00370">370</a> of file <a class="el" href="EditorUI_8h_source.html">EditorUI.h</a>.</p>
 
 </div>
 </div>

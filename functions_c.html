@@ -114,6 +114,9 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>CharBufferToVariable()
 : <a class="el" href="classKargono_1_1Utility_1_1Conversions.html#ab08f4a27c64304dde72b28d94bb02c76">Kargono::Utility::Conversions</a>
 </li>
+<li>CheckActiveHasComponent()
+: <a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#aa6db74408f68642f1d04483a4b93e312">Kargono::Scenes::SceneService</a>
+</li>
 <li>Checkbox()
 : <a class="el" href="classKargono_1_1EditorUI_1_1EditorUIService.html#a19f74336b6d85c7b6edc04e589404535">Kargono::EditorUI::EditorUIService</a>
 </li>
@@ -130,7 +133,7 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 : <a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html#a712dcd4a6cc09dddd6e12d00009ec496">Kargono::RuntimeUI::Window::WidgetCounts</a>
 </li>
 <li>CheckConnectionsValid()
-: <a class="el" href="classKargono_1_1Network_1_1ServerInterface.html#a35319f0d725c2c62c23c95fb766d91bf">Kargono::Network::ServerInterface</a>
+: <a class="el" href="classKargono_1_1Network_1_1Server.html#a52607248190992eaefee1732e05af840">Kargono::Network::Server</a>
 </li>
 <li>CheckEntityClassExists()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a47b8bf7ed19de80eedd42101fc15ffb3">Kargono::Assets::AssetManager</a>
@@ -140,9 +143,6 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 </li>
 <li>CheckGameStateExists()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a066d4d7c28204ff2e87ca013f06b639d">Kargono::Assets::AssetManager</a>
-</li>
-<li>CheckHasComponent()
-: <a class="el" href="classKargono_1_1Scenes_1_1Scene.html#ab66a40e8cdb611473dee47003477dae7">Kargono::Scenes::Scene</a>
 </li>
 <li>CheckInputModeExists()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a8404188cada7256be6451b4b2284a128">Kargono::Assets::AssetManager</a>
@@ -162,14 +162,21 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>ChecksumFromString()
 : <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#ab84c350e008700fc7bb2451bd51a02e1">Kargono::Utility::FileSystem</a>
 </li>
-<li>CheckUIObjectExists()
-: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#ac6ceec2037ad62e5c30bd24d04053f90">Kargono::Assets::AssetManager</a>
+<li>CheckUserInterfaceExists()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a7ef15650cfc5dfa0307185e3803f2c24">Kargono::Assets::AssetManager</a>
 </li>
 <li>ChildBufferIndex
 : <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#aedfc654a3423de843f7a67e930e0d7a8">Kargono::RuntimeUI::Window</a>
 </li>
 <li>ChildBufferSize
 : <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a5ec9f505a58846702d471a0483fdedba">Kargono::RuntimeUI::Window</a>
+</li>
+<li>ChooseDirectory()
+: <a class="el" href="classKargono_1_1EditorUI_1_1EditorUIService.html#a551d4a84ac171734bd3341a883f73878">Kargono::EditorUI::EditorUIService</a>
+, <a class="el" href="classKargono_1_1Utility_1_1FileDialogs.html#ace4d2bd69801962b9b325828badada8e">Kargono::Utility::FileDialogs</a>
+</li>
+<li>ChooseDirectorySpec()
+: <a class="el" href="structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#a4008a20f1e36373d02e82a7cf5699f36">Kargono::EditorUI::ChooseDirectorySpec</a>
 </li>
 <li>CircleCollider2DComponent()
 : <a class="el" href="structKargono_1_1Scenes_1_1CircleCollider2DComponent.html#a8ab62b7fd2a0da25f28d24e7b548d42c">Kargono::Scenes::CircleCollider2DComponent</a>
@@ -178,7 +185,7 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 : <a class="el" href="structKargono_1_1Scenes_1_1ClassInstanceComponent.html#a5d909e9b8a3350f6cbe01325895cf44d">Kargono::Scenes::ClassInstanceComponent</a>
 </li>
 <li>ClassInstanceComponent()
-: <a class="el" href="structKargono_1_1Scenes_1_1ClassInstanceComponent.html#a2905b7828f06a12c8405252fb9802766">Kargono::Scenes::ClassInstanceComponent</a>
+: <a class="el" href="structKargono_1_1Scenes_1_1ClassInstanceComponent.html#a9b001cf2c84bdd3887caf99f1b1ede4e">Kargono::Scenes::ClassInstanceComponent</a>
 </li>
 <li>ClassReference
 : <a class="el" href="structKargono_1_1Scenes_1_1ClassInstanceComponent.html#aa4730a32c5af12a073a24e5f0029cdcd">Kargono::Scenes::ClassInstanceComponent</a>
@@ -189,17 +196,21 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>CleanUpTimersEvent()
 : <a class="el" href="classKargono_1_1Events_1_1CleanUpTimersEvent.html#a433282b9391968f76ba05a71006dbe26">Kargono::Events::CleanUpTimersEvent</a>
 </li>
-<li>clear()
-: <a class="el" href="classKargono_1_1Network_1_1tsqueue.html#ac1ccbeb76e8a0813265c4f28c149d730">Kargono::Network::tsqueue&lt; T &gt;</a>
-</li>
 <li>Clear()
 : <a class="el" href="structKargono_1_1Panels_1_1ImGuiLog.html#aca576df83aeb72d024b05ff68ff8386e">Kargono::Panels::ImGuiLog</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1InputBufferLayout.html#a312d82c6103dcd91ef46bd1eb30f2caa">Kargono::Rendering::InputBufferLayout</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1RendererAPI.html#a4e1dc3172bd263c50d6a46e9e560b1a6">Kargono::Rendering::RendererAPI</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1UniformBufferList.html#a42324f2979eb36513f2fb5919809270c">Kargono::Rendering::UniformBufferList</a>
+, <a class="el" href="classKargono_1_1TSQueue.html#a93707047e6dc7a2aecdeb51091dee960">Kargono::TSQueue&lt; T &gt;</a>
+</li>
+<li>ClearActiveGameState()
+: <a class="el" href="classKargono_1_1Scenes_1_1GameStateService.html#a9166fbd38a2fb01ae1d2c7ff663eefda">Kargono::Scenes::GameStateService</a>
 </li>
 <li>ClearActiveInputMode()
 : <a class="el" href="classKargono_1_1Input_1_1InputModeService.html#a2b8169bb70c5f97cfcf4c67e47003f04">Kargono::Input::InputModeService</a>
+</li>
+<li>ClearActiveUI()
+: <a class="el" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#acbdf3cc47934f0105bb23840660d6430">Kargono::RuntimeUI::RuntimeUIService</a>
 </li>
 <li>ClearAll()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a4a83086f785589f7e99059cd1b78f283">Kargono::Assets::AssetManager</a>
@@ -226,7 +237,7 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a66b98a0a7d0354acd5f1fa4564b8b139">Kargono::Assets::AssetManager</a>
 </li>
 <li>ClearGenerators()
-: <a class="el" href="classKargono_1_1AppTickEngine.html#aba18c69d547a93d48b45d1f6ba7ebc3b">Kargono::AppTickEngine</a>
+: <a class="el" href="classKargono_1_1AppTickService.html#a19d73bd63e28441906b25fc1fbe89e3c">Kargono::AppTickService</a>
 </li>
 <li>ClearInputModeRegistry()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#af2fc0d4b7a1a26e589f02453c5164597">Kargono::Assets::AssetManager</a>
@@ -242,7 +253,7 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 </li>
 <li>ClearSelectionList()
 : <a class="el" href="structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html#a7e1637aa52f2f8b2019e44fa87aa12c0">Kargono::EditorUI::CollapsingHeaderSpec</a>
-, <a class="el" href="structKargono_1_1EditorUI_1_1SelectorHeaderSpec.html#a613d3131acad03ec2d40b4633be0fcd1">Kargono::EditorUI::SelectorHeaderSpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1PanelHeaderSpec.html#a1a162af3eaca3afc675c49cae9f274bd">Kargono::EditorUI::PanelHeaderSpec</a>
 </li>
 <li>ClearShaderRegistry()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a5927d03ead7bb20c3f16a2a024e81157">Kargono::Assets::AssetManager</a>
@@ -253,29 +264,23 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>ClearTextureRegistry()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a98e234803bdf703e42ebb45c8fda2394">Kargono::Assets::AssetManager</a>
 </li>
-<li>ClearUIEngine()
-: <a class="el" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a452675e1d9642659169a5dd3f650877c">Kargono::RuntimeUI::RuntimeUIService</a>
-</li>
-<li>ClearUIObjectRegistry()
-: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a507cb6be16346b919330a37711292db6">Kargono::Assets::AssetManager</a>
+<li>ClearUserInterfaceRegistry()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#af1e43c4bd7170e6f02f4c9dd8fdd0e44">Kargono::Assets::AssetManager</a>
 </li>
 <li>ClearWindowFocus()
 : <a class="el" href="classKargono_1_1EditorUI_1_1EditorUIService.html#ac6af24d41f7bec48d56931f3f5ae3714">Kargono::EditorUI::EditorUIService</a>
 </li>
-<li>ClientInterface()
-: <a class="el" href="classKargono_1_1Network_1_1ClientInterface.html#a243f5dac9126fd6f88853dcb2ce87199">Kargono::Network::ClientInterface</a>
+<li>Client()
+: <a class="el" href="classKargono_1_1Network_1_1Client.html#acba7db0f679a876a3fbf8a1571066055">Kargono::Network::Client</a>
 </li>
-<li>Close()
-: <a class="el" href="classKargono_1_1EngineCore.html#a75751283416f7b15610f2d207c13b604">Kargono::EngineCore</a>
+<li>ClientService
+: <a class="el" href="classKargono_1_1Network_1_1Client.html#a944257f756ee4569d9847a76ee58a738">Kargono::Network::Client</a>
 </li>
 <li>CloseActiveScriptModule()
 : <a class="el" href="classKargono_1_1Scripting_1_1ScriptService.html#a2cc14e2d4a0e5db4caee42e1a95cc40f">Kargono::Scripting::ScriptService</a>
 </li>
 <li>CloseAllTimers()
 : <a class="el" href="classKargono_1_1Utility_1_1AsyncBusyTimer.html#ae7e4c6e61aa6b346d03d65c0db3ad216">Kargono::Utility::AsyncBusyTimer</a>
-</li>
-<li>CloseApplication()
-: <a class="el" href="classKargono_1_1EngineCore.html#a348e544451c946aac75a8601e2614a95">Kargono::EngineCore</a>
 </li>
 <li>CollapsingHeader()
 : <a class="el" href="classKargono_1_1EditorUI_1_1EditorUIService.html#ab4ca6abba1565f15855e0d6edf29928c">Kargono::EditorUI::EditorUIService</a>
@@ -285,6 +290,9 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 </li>
 <li>ColorInput
 : <a class="el" href="structKargono_1_1Rendering_1_1ShaderSpecification.html#ac0a3c4fa387acd35c0c3a2f19b4adcbe">Kargono::Rendering::ShaderSpecification</a>
+</li>
+<li>Column
+: <a class="el" href="structKargono_1_1Scripting_1_1ScriptToken.html#aa3e7b4cef615d0eedd597a0d33058988">Kargono::Scripting::ScriptToken</a>
 </li>
 <li>Column1Title
 : <a class="el" href="structKargono_1_1EditorUI_1_1TableSpec.html#af9af321313791ef6e60a173c6af814b2">Kargono::EditorUI::TableSpec</a>
@@ -302,33 +310,31 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 : <a class="el" href="structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html#a327ee2a3e7b7bc4812beda35ee8e9734">Kargono::RuntimeUI::Window::WidgetCounts</a>
 </li>
 <li>CommandLineArgs
-: <a class="el" href="structKargono_1_1AppSpec.html#a6ce9c0a5761367c077a1bd2969233067">Kargono::AppSpec</a>
+: <a class="el" href="structKargono_1_1EngineSpec.html#aec85bc444c6aba3e7b120773d9303b46">Kargono::EngineSpec</a>
+</li>
+<li>CompileScriptFile()
+: <a class="el" href="classKargono_1_1Scripting_1_1ScriptCompiler.html#a8499fad34119c048884e914a432a713d">Kargono::Scripting::ScriptCompiler</a>
 </li>
 <li>CompleteSessionInit()
 : <a class="el" href="classKargono_1_1Network_1_1Session.html#ac29c2a45368a310c649a379cdc440db9">Kargono::Network::Session</a>
 </li>
 <li>ConfirmAction
 : <a class="el" href="structKargono_1_1EditorUI_1_1CheckboxSpec.html#ad938190042a250de13246bffd50e4071">Kargono::EditorUI::CheckboxSpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#a7a8c2a9a6bd8a6bf0e5cf6f13591bd56">Kargono::EditorUI::ChooseDirectorySpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1EditFloatSpec.html#a3cd2d8fc3b8a0f65c5abf01d8e36b898">Kargono::EditorUI::EditFloatSpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1EditVec2Spec.html#aca34b68c5ed73e625c7f03ef6022d25c">Kargono::EditorUI::EditVec2Spec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1EditVec3Spec.html#ab0d65d50d2c454c096ea607614017b51">Kargono::EditorUI::EditVec3Spec</a>
 , <a class="el" href="structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a40189f2bd47fd44d6bd35541e9e95e55">Kargono::EditorUI::GenericPopupSpec</a>
 , <a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html#ac0f8054d7156f223242e39c70299bca2">Kargono::EditorUI::SelectOptionSpec</a>
-, <a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html#ae909b6908b93ea78ced3a402b7e1ddce">Kargono::EditorUI::TextInputSpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html#af135c553054dc4f247c208b4e93f6c2e">Kargono::EditorUI::TextInputSpec</a>
 </li>
 <li>Connect()
-: <a class="el" href="classKargono_1_1Network_1_1ClientInterface.html#aab80a2065ced7e8092148b2ec4ed3079">Kargono::Network::ClientInterface</a>
-, <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html#ac406b275ca2a2a618c6037df4e2123ff">Kargono::Network::ConnectionToClient</a>
-, <a class="el" href="classKargono_1_1Network_1_1ConnectionToServer.html#a2a71734cc512e5c0834eb15d605dc4a5">Kargono::Network::ConnectionToServer</a>
-</li>
-<li>Connection()
-: <a class="el" href="classKargono_1_1Network_1_1Connection.html#a02063aab30727db5f2d8511ac3de887c">Kargono::Network::Connection</a>
+: <a class="el" href="classKargono_1_1Network_1_1Client.html#a1f1a47a82cec1f8610f90d83d1c62af8">Kargono::Network::Client</a>
+, <a class="el" href="classKargono_1_1Network_1_1TCPClientConnection.html#a9dbe1483017d3df0857c5203ba8a0723">Kargono::Network::TCPClientConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html#a8ba7f890ab64b9f56332bcca1e40d90f">Kargono::Network::TCPServerConnection</a>
 </li>
 <li>ConnectionTerminated()
 : <a class="el" href="classKargono_1_1Events_1_1ConnectionTerminated.html#a8079cf6099b49781ff3d13c6825a2a85">Kargono::Events::ConnectionTerminated</a>
-</li>
-<li>ConnectionToClient()
-: <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html#aa2106ad100c0d8e0fb8d9e799e3d0635">Kargono::Network::ConnectionToClient</a>
-</li>
-<li>ConnectionToServer()
-: <a class="el" href="classKargono_1_1Network_1_1ConnectionToServer.html#aed9aef90f4ac9b9b6b640c34879d540e">Kargono::Network::ConnectionToServer</a>
 </li>
 <li>ContactListener()
 : <a class="el" href="classKargono_1_1Physics_1_1ContactListener.html#af29f2ecb5a88024649c033f3bae8e9f2">Kargono::Physics::ContactListener</a>
@@ -339,15 +345,20 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>ContentBrowserPanel()
 : <a class="el" href="classKargono_1_1Panels_1_1ContentBrowserPanel.html#adf56137e6c2e11189bb086739baa372f">Kargono::Panels::ContentBrowserPanel</a>
 </li>
+<li>ContextID
+: <a class="el" href="structKargono_1_1Audio_1_1AudioContext.html#a7eb0f2647a666ec5194975a3feb1bbd0">Kargono::Audio::AudioContext</a>
+</li>
 <li>Copy()
 : <a class="el" href="structKargono_1_1Buffer.html#a7815fcfd838024c6f73c68370c0f095b">Kargono::Buffer</a>
-, <a class="el" href="classKargono_1_1Scenes_1_1Scene.html#a223a7e88e039b776e6b0b03b815745a7">Kargono::Scenes::Scene</a>
+</li>
+<li>CopyDirectory()
+: <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#abdcef940e295f333b85b20596f431902">Kargono::Utility::FileSystem</a>
+</li>
+<li>CopySingleFile()
+: <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#afea47863e0158b9ac868dfb7440aedd4">Kargono::Utility::FileSystem</a>
 </li>
 <li>Count
-: <a class="el" href="structKargono_1_1CommandLineArgs.html#a6c4d5e6da07e45a269d8c3eaa89f2050">Kargono::CommandLineArgs</a>
-</li>
-<li>count()
-: <a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a754b189130455c5f759428ab861f9d7e">Kargono::Network::tsqueue&lt; T &gt;</a>
+: <a class="el" href="structKargono_1_1CommandLineArguments.html#a1cd0513795cf61c20b7563451b12b65c">Kargono::CommandLineArguments</a>
 </li>
 <li>CRCFromBuffer()
 : <a class="el" href="classKargono_1_1Utility_1_1FileSystem.html#a2da3971d61ce54a91071b0320765cb26">Kargono::Utility::FileSystem</a>
@@ -356,10 +367,10 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 : <a class="el" href="classKargono_1_1Rendering_1_1Framebuffer.html#ad7a56468541a73eb21456604713d1321">Kargono::Rendering::Framebuffer</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1IndexBuffer.html#ab011e0cf607f9ac296e37c36a49549b9">Kargono::Rendering::IndexBuffer</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1Shader.html#aac35031d6bc242c4a168783389044764">Kargono::Rendering::Shader</a>
-, <a class="el" href="classKargono_1_1Rendering_1_1Texture2D.html#a12005f8edc0475f0cd856c9b7de643f8">Kargono::Rendering::Texture2D</a>
+, <a class="el" href="classKargono_1_1Rendering_1_1Texture2D.html#a77377de1b106ba59376dc8c62938086a">Kargono::Rendering::Texture2D</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1UniformBuffer.html#a94eff9016e267b003e753993aac8b5ba">Kargono::Rendering::UniformBuffer</a>
 , <a class="el" href="classKargono_1_1Rendering_1_1VertexArray.html#a55ef1281e05861324d8b6310f8b8a12c">Kargono::Rendering::VertexArray</a>
-, <a class="el" href="classKargono_1_1Rendering_1_1VertexBuffer.html#a9aec6bf0272b054b4e6aa20e5522d82b">Kargono::Rendering::VertexBuffer</a>
+, <a class="el" href="classKargono_1_1Rendering_1_1VertexBuffer.html#a5c159fc5705c7494cd0b44988b43780f">Kargono::Rendering::VertexBuffer</a>
 , <a class="el" href="classKargono_1_1Window.html#a76ff6f8d0e0575bd24954a03c8c23015">Kargono::Window</a>
 </li>
 <li>CreateEditorTexture()
@@ -383,20 +394,26 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>CreateNewInputMode()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#af3a7886de5a1cfd4995faf7ca34cddac">Kargono::Assets::AssetManager</a>
 </li>
+<li>CreateNewProject()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#aff67f70f158aa9bcbd8a64edc356c8b0">Kargono::Assets::AssetManager</a>
+</li>
 <li>CreateNewScene()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a2905347f4d77128a4d22f65ea789319e">Kargono::Assets::AssetManager</a>
 </li>
 <li>CreateNewScript()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a09610062885b5185fe25b1cf955f8015">Kargono::Assets::AssetManager</a>
 </li>
-<li>CreateNewUIObject()
-: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#ae8297c12cfd9e118b1bfa23d3bfd1fbe">Kargono::Assets::AssetManager</a>
+<li>CreateNewUserInterface()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a7468aa9d71fa12dd7950c54496fbd55b">Kargono::Assets::AssetManager</a>
 </li>
 <li>CreateRecurringTimer()
 : <a class="el" href="classKargono_1_1Utility_1_1AsyncBusyTimer.html#a17dc895296a26dfc640b0f5c2c18e4c0">Kargono::Utility::AsyncBusyTimer</a>
 </li>
+<li>CreateSceneCopy()
+: <a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a7c1c687c72c3d11a1a74f6d642888640">Kargono::Scenes::SceneService</a>
+</li>
 <li>CreateScriptModule()
-: <a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#aa9df53dac130d1820e71c08c7a02a607">Kargono::Scripting::ScriptModuleBuilder</a>
+: <a class="el" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a556428a0679d982384a89d3293143145">Kargono::Scripting::ScriptModuleBuilder</a>
 </li>
 <li>CreateTimer()
 : <a class="el" href="classKargono_1_1Utility_1_1AsyncBusyTimer.html#ab5718f6f9137ce94e68071125d7b05b7">Kargono::Utility::AsyncBusyTimer</a>
@@ -404,11 +421,21 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>CurrentBuffer
 : <a class="el" href="structKargono_1_1Audio_1_1AudioSourceSpecification.html#a5727ca611a72d02b1198ef96dc18b848">Kargono::Audio::AudioSourceSpecification</a>
 </li>
+<li>CurrentDeviceID
+: <a class="el" href="structKargono_1_1Audio_1_1AudioContext.html#a11fed1d8b8c0cadd44dc644e0fca9033">Kargono::Audio::AudioContext</a>
+</li>
+<li>CurrentDeviceName
+: <a class="el" href="structKargono_1_1Audio_1_1AudioContext.html#af863f84f90bd688ac2b5dc92be9a4eec">Kargono::Audio::AudioContext</a>
+</li>
 <li>CurrentDrawBuffer
 : <a class="el" href="structKargono_1_1Rendering_1_1RendererInputSpec.html#a31d9a0db0b809cd2b9d43826df5f714c">Kargono::Rendering::RendererInputSpec</a>
 </li>
+<li>CurrentFloat
+: <a class="el" href="structKargono_1_1EditorUI_1_1EditFloatSpec.html#ace337656e290205e305cd9368c47a511">Kargono::EditorUI::EditFloatSpec</a>
+</li>
 <li>CurrentOption
-: <a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a5d1c4d8639e39315f72c0a3bb4e84b79">Kargono::EditorUI::SelectOptionSpec</a>
+: <a class="el" href="structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#afc8283493627eef69cf4df20edb1e7d5">Kargono::EditorUI::ChooseDirectorySpec</a>
+, <a class="el" href="structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a5d1c4d8639e39315f72c0a3bb4e84b79">Kargono::EditorUI::SelectOptionSpec</a>
 , <a class="el" href="structKargono_1_1EditorUI_1_1TextInputSpec.html#a0fed6554894a164cd4876fc79e568e14">Kargono::EditorUI::TextInputSpec</a>
 </li>
 <li>CurrentSessionInit()
@@ -417,8 +444,14 @@ $(document).ready(function(){initNavTree('functions_c.html',''); initResizable()
 <li>CurrentShape
 : <a class="el" href="structKargono_1_1Scenes_1_1ShapeComponent.html#ab9bcb0710a06d384aae17da006090ce3">Kargono::Scenes::ShapeComponent</a>
 </li>
-<li>cvBlocking
-: <a class="el" href="classKargono_1_1Network_1_1tsqueue.html#a3c8ab508e1c507aad1a0d19af71374fb">Kargono::Network::tsqueue&lt; T &gt;</a>
+<li>CurrentToken
+: <a class="el" href="structKargono_1_1Scripting_1_1ParserError.html#ac734cccb0048ab7f28d8c41b898bc57b">Kargono::Scripting::ParserError</a>
+</li>
+<li>CurrentVec2
+: <a class="el" href="structKargono_1_1EditorUI_1_1EditVec2Spec.html#aa17fd5692a5de4fe627496bc9c030690">Kargono::EditorUI::EditVec2Spec</a>
+</li>
+<li>CurrentVec3
+: <a class="el" href="structKargono_1_1EditorUI_1_1EditVec3Spec.html#ab230365b0440a4b87ba287192dcdda52">Kargono::EditorUI::EditVec3Spec</a>
 </li>
 </ul>
 </div><!-- contents -->

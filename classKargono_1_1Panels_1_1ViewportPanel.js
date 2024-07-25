@@ -9,6 +9,7 @@ var classKargono_1_1Panels_1_1ViewportPanel =
     [ "ProcessMousePicking", "classKargono_1_1Panels_1_1ViewportPanel.html#a0fe56ceb00d60dcdad68a0c1d58906a2", null ],
     [ "OnOverlayRender", "classKargono_1_1Panels_1_1ViewportPanel.html#aaa4d0efed8342b6dfcf71e42229b044d", null ],
     [ "DrawFrustrum", "classKargono_1_1Panels_1_1ViewportPanel.html#a4d7622e289795b0a1c7d14d1d7a9e690", null ],
+    [ "DrawWorldAxis", "classKargono_1_1Panels_1_1ViewportPanel.html#ad451c54079641d41f9be4e97d0fe9115", null ],
     [ "OnUpdateEditor", "classKargono_1_1Panels_1_1ViewportPanel.html#af8b1b2735dabcad5838cb30ec321d034", null ],
     [ "OnUpdateRuntime", "classKargono_1_1Panels_1_1ViewportPanel.html#a29676027420c5849e4a9d78f2751bc88", null ],
     [ "OnUpdateSimulation", "classKargono_1_1Panels_1_1ViewportPanel.html#abc6b1c10712e8fbd8613dc9ab12d68ec", null ],

@@ -7,9 +7,11 @@ var namespaceKargono_1_1Panels =
     [ "ImGuiLog", "structKargono_1_1Panels_1_1ImGuiLog.html", "structKargono_1_1Panels_1_1ImGuiLog" ],
     [ "LogPanel", "classKargono_1_1Panels_1_1LogPanel.html", "classKargono_1_1Panels_1_1LogPanel" ],
     [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ],
+    [ "PropertiesPanel", "classKargono_1_1Panels_1_1PropertiesPanel.html", "classKargono_1_1Panels_1_1PropertiesPanel" ],
     [ "SceneHierarchyPanel", "classKargono_1_1Panels_1_1SceneHierarchyPanel.html", "classKargono_1_1Panels_1_1SceneHierarchyPanel" ],
     [ "ScriptEditorPanel", "classKargono_1_1Panels_1_1ScriptEditorPanel.html", "classKargono_1_1Panels_1_1ScriptEditorPanel" ],
     [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ],
+    [ "TestingPanel", "classKargono_1_1Panels_1_1TestingPanel.html", "classKargono_1_1Panels_1_1TestingPanel" ],
     [ "TextEditorPanel", "classKargono_1_1Panels_1_1TextEditorPanel.html", "classKargono_1_1Panels_1_1TextEditorPanel" ],
     [ "UIEditorPanel", "classKargono_1_1Panels_1_1UIEditorPanel.html", "classKargono_1_1Panels_1_1UIEditorPanel" ],
     [ "ViewportPanel", "classKargono_1_1Panels_1_1ViewportPanel.html", "classKargono_1_1Panels_1_1ViewportPanel" ],
@@ -27,5 +29,8 @@ var namespaceKargono_1_1Panels =
       [ "Input", "namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba324118a6721dd6b8a9b9f4e327df2bf5", null ]
     ] ],
     [ "OnFileWatchUpdate", "namespaceKargono_1_1Panels.html#a89c553f73028a13941a53f18949d5dab", null ],
-    [ "InitializeStaticResources", "namespaceKargono_1_1Panels.html#a05e2c64c8471484cbc150d4a5aa33195", null ]
+    [ "InitializeStaticResources", "namespaceKargono_1_1Panels.html#a05e2c64c8471484cbc150d4a5aa33195", null ],
+    [ "InitializeBoxCollider2DComponent", "namespaceKargono_1_1Panels.html#a21f0ac1e3d58f981ad545f108e8071a3", null ],
+    [ "InitializeCircleCollider2DComponent", "namespaceKargono_1_1Panels.html#af66016498295cf7cb4a4f1f51c85b615", null ],
+    [ "InitializeCameraComponent", "namespaceKargono_1_1Panels.html#ab5382ad8ca76364954273664e04f304a", null ]
 ];

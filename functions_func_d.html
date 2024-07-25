@@ -88,9 +88,6 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 &#160;
 
 <h3><a id="index_d"></a>- d -</h3><ul>
-<li>Data()
-: <a class="el" href="structKargono_1_1ScopedBuffer.html#aef41e1df2369cf72a6d0eec01870a8d1">Kargono::ScopedBuffer</a>
-</li>
 <li>decode()
 : <a class="el" href="structYAML_1_1convert_3_01Kargono_1_1Math_1_1ivec2_01_4.html#a59e5ed0dc6ba15a536a4e94325be04fb">YAML::convert&lt; Kargono::Math::ivec2 &gt;</a>
 , <a class="el" href="structYAML_1_1convert_3_01Kargono_1_1Math_1_1ivec3_01_4.html#a688a84787facb1b8b610cfe466f2d163">YAML::convert&lt; Kargono::Math::ivec3 &gt;</a>
@@ -99,6 +96,9 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 , <a class="el" href="structYAML_1_1convert_3_01Kargono_1_1Math_1_1vec3_01_4.html#adeb738afcb957c697e87f3c7036ce6c1">YAML::convert&lt; Kargono::Math::vec3 &gt;</a>
 , <a class="el" href="structYAML_1_1convert_3_01Kargono_1_1Math_1_1vec4_01_4.html#a8456c7252288720679c3d711afe5801d">YAML::convert&lt; Kargono::Math::vec4 &gt;</a>
 , <a class="el" href="structYAML_1_1convert_3_01Kargono_1_1UUID_01_4.html#a9324ba95f7c84ffc59ced557e5806377">YAML::convert&lt; Kargono::UUID &gt;</a>
+</li>
+<li>DeleteActiveWindow()
+: <a class="el" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a33edf3e39049c20fb27d32b0947e0e94">Kargono::RuntimeUI::RuntimeUIService</a>
 </li>
 <li>DeleteEntityClass()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#af0ccf52489d6172ceee8ce850505bf76">Kargono::Assets::AssetManager</a>
@@ -127,9 +127,6 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 </li>
 <li>DeleteWidget()
 : <a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html#a147a038fde4f471743b2e346120ba2df">Kargono::RuntimeUI::Window</a>
-</li>
-<li>DeleteWindow()
-: <a class="el" href="classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad6b092d46454e47006163bb1e9ff081d">Kargono::RuntimeUI::RuntimeUIService</a>
 </li>
 <li>DenyJoinSession()
 : <a class="el" href="classKargono_1_1Events_1_1DenyJoinSession.html#a13db0bfeb79974e4ba3c9cb137503cfa">Kargono::Events::DenyJoinSession</a>
@@ -170,8 +167,8 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 <li>DeserializeTextureRegistry()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a2e0b8ae5505a20b89035b1956a493954">Kargono::Assets::AssetManager</a>
 </li>
-<li>DeserializeUIObjectRegistry()
-: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#acc6458d9889a6eb1ae80ee1631daa6c2">Kargono::Assets::AssetManager</a>
+<li>DeserializeUserInterfaceRegistry()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a25d7724432988c85b8d82013b2583343">Kargono::Assets::AssetManager</a>
 </li>
 <li>DestroyAllEntities()
 : <a class="el" href="classKargono_1_1Scenes_1_1Scene.html#abb9a41845307517f8363c4a855750ffc">Kargono::Scenes::Scene</a>
@@ -180,13 +177,13 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 : <a class="el" href="classKargono_1_1Scenes_1_1Scene.html#a448299fcff0e6e84a47bf8b47c302e0d">Kargono::Scenes::Scene</a>
 </li>
 <li>Disconnect()
-: <a class="el" href="classKargono_1_1Network_1_1ClientInterface.html#a0456f5f869283db0477b01f51aa0ba24">Kargono::Network::ClientInterface</a>
-, <a class="el" href="classKargono_1_1Network_1_1Connection.html#a6c5c6183d9b56c7561bbf31fe399bca1">Kargono::Network::Connection</a>
-, <a class="el" href="classKargono_1_1Network_1_1ConnectionToClient.html#a7273595f5ce518ff9c96cb74904ece41">Kargono::Network::ConnectionToClient</a>
-, <a class="el" href="classKargono_1_1Network_1_1ConnectionToServer.html#a2acbbff6e1fa458bb9c3bb81e63bfe1a">Kargono::Network::ConnectionToServer</a>
-, <a class="el" href="classKargono_1_1Network_1_1UDPClient.html#a4f55a153beae837bbb8e30d477aa18ba">Kargono::Network::UDPClient</a>
-, <a class="el" href="classKargono_1_1Network_1_1UDPServer.html#adc0479485de43359a4b9e4cf3a5e482a">Kargono::Network::UDPServer</a>
-, <a class="el" href="classKargono_1_1Network_1_1UDPService.html#ae436c373a1c6ce11a21e4e90e148446f">Kargono::Network::UDPService</a>
+: <a class="el" href="classKargono_1_1Network_1_1Client.html#adea7d7cc283c9c649962e12ec276ecfa">Kargono::Network::Client</a>
+, <a class="el" href="classKargono_1_1Network_1_1TCPClientConnection.html#ab6f9e87148b6aeac543019447bb68909">Kargono::Network::TCPClientConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1TCPConnection.html#a5f2acf1aa9847f83944fda6dc9731fee">Kargono::Network::TCPConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html#acc83020b20973a7dc6cd607876a0a786">Kargono::Network::TCPServerConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1UDPClientConnection.html#a6c337a623614a6c3ff2f74904d548565">Kargono::Network::UDPClientConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1UDPConnection.html#aa2efd02c56aced07f4b0fb2449a646fc">Kargono::Network::UDPConnection</a>
+, <a class="el" href="classKargono_1_1Network_1_1UDPServerConnection.html#abfcb32aada2a6c4d03770f7078b4c98b">Kargono::Network::UDPServerConnection</a>
 </li>
 <li>Dispatch()
 : <a class="el" href="classKargono_1_1Events_1_1EventDispatcher.html#a6877bed5aaa0bfaf5b7d1b29fa8c3b29">Kargono::Events::EventDispatcher</a>
@@ -211,6 +208,9 @@ $(document).ready(function(){initNavTree('functions_func_d.html',''); initResiza
 </li>
 <li>DrawTriangles()
 : <a class="el" href="classKargono_1_1Rendering_1_1RendererAPI.html#aa54527f462a2915ef4e13144b55cc487">Kargono::Rendering::RendererAPI</a>
+</li>
+<li>DrawWorldAxis()
+: <a class="el" href="classKargono_1_1Panels_1_1ViewportPanel.html#ad451c54079641d41f9be4e97d0fe9115">Kargono::Panels::ViewportPanel</a>
 </li>
 <li>DuplicateEntity()
 : <a class="el" href="classKargono_1_1Scenes_1_1Scene.html#a03a69da322a33af2f61268aeff35e116">Kargono::Scenes::Scene</a>

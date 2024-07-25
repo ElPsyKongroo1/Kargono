@@ -92,20 +92,33 @@ $(document).ready(function(){initNavTree('Server_8h.html',''); initResizable(); 
 <div class="title">Server.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="Common_8h_source.html">Kargono/Network/Common.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ServerInterface_8h_source.html">Kargono/Network/ServerInterface.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Session_8h_source.html">Kargono/Network/Session.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Session_8h_source.html">Kargono/Network/Session.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Event_8h_source.html">Kargono/Events/Event.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkingEvent_8h_source.html">Kargono/Events/NetworkingEvent.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="DataStructures_8h_source.html">Kargono/Core/DataStructures.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Message_8h_source.html">Kargono/Network/Message.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="UDPConnection_8h_source.html">Kargono/Network/UDPConnection.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="TCPConnection_8h_source.html">Kargono/Network/TCPConnection.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Base_8h_source.html">Kargono/Core/Base.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AsioAPI_8h_source.html">API/Network/AsioAPI.h</a>&quot;</code><br />
 <code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;atomic&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
+<code>#include &lt;condition_variable&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
 </div>
 <p><a href="Server_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1UDPServerConnection.html">Kargono::Network::UDPServerConnection</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1TCPServerConnection.html">Kargono::Network::TCPServerConnection</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Server.html">Kargono::Network::Server</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ServerService.html">Kargono::Network::ServerService</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>

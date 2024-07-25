@@ -101,16 +101,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad97be0a0d11f959f588556ff5ede458a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99c189c676fc3e44ef3566d3e535bd45"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a99c189c676fc3e44ef3566d3e535bd45">~ServerApp</a> ()=default</td></tr>
 <tr class="separator:a99c189c676fc3e44ef3566d3e535bd45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a057c564ae024efa5eb8165c739445a0d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a057c564ae024efa5eb8165c739445a0d">OnAttach</a> () override</td></tr>
-<tr class="separator:a057c564ae024efa5eb8165c739445a0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f7590eb860385a8e9f113e657a0655"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#aa8f7590eb860385a8e9f113e657a0655">Init</a> () override</td></tr>
+<tr class="separator:aa8f7590eb860385a8e9f113e657a0655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8eedbf0524a70e888480d36d0e5600de"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a8eedbf0524a70e888480d36d0e5600de">Terminate</a> () override</td></tr>
+<tr class="separator:a8eedbf0524a70e888480d36d0e5600de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7a4cda058892749cb4a32cf1155418f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ac7a4cda058892749cb4a32cf1155418f">OnUpdate</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts) override</td></tr>
+<tr class="separator:ac7a4cda058892749cb4a32cf1155418f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2afb21fed7520cd2eafc0f68045a126"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ae2afb21fed7520cd2eafc0f68045a126">OpenProject</a> ()</td></tr>
 <tr class="separator:ae2afb21fed7520cd2eafc0f68045a126"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9968ea35cfc56073a98936764f5f1dc6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a9968ea35cfc56073a98936764f5f1dc6">OpenProject</a> (const std::filesystem::path &amp;path)</td></tr>
 <tr class="separator:a9968ea35cfc56073a98936764f5f1dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7342174a71f01410682c15333424788b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#a7342174a71f01410682c15333424788b">OnDetach</a> () override</td></tr>
-<tr class="separator:a7342174a71f01410682c15333424788b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7a4cda058892749cb4a32cf1155418f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1ServerApp.html#ac7a4cda058892749cb4a32cf1155418f">OnUpdate</a> (<a class="el" href="classKargono_1_1Timestep.html">Timestep</a> ts) override</td></tr>
-<tr class="separator:ac7a4cda058892749cb4a32cf1155418f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classKargono_1_1Application"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classKargono_1_1Application')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classKargono_1_1Application.html">Kargono::Application</a></td></tr>
 <tr class="memitem:a3cbce74213816ddcd8ad7fd4f2bd0cca inherit pub_methods_classKargono_1_1Application"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a3cbce74213816ddcd8ad7fd4f2bd0cca">Application</a> (const std::string &amp;name=&quot;Layer&quot;)</td></tr>
 <tr class="separator:a3cbce74213816ddcd8ad7fd4f2bd0cca inherit pub_methods_classKargono_1_1Application"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,7 +148,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00015">15</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00008">8</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
 
 </div>
 </div>
@@ -178,8 +178,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a057c564ae024efa5eb8165c739445a0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a057c564ae024efa5eb8165c739445a0d">&#9670;&nbsp;</a></span>OnAttach()</h2>
+<a id="aa8f7590eb860385a8e9f113e657a0655"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8f7590eb860385a8e9f113e657a0655">&#9670;&nbsp;</a></span>Init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -188,7 +188,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void Kargono::ServerApp::OnAttach </td>
+          <td class="memname">void Kargono::ServerApp::Init </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -201,53 +201,14 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a142393f2f347a83830409381464a8240">Kargono::Application</a>.</p>
+<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a8e73ec374a8ec63c5af35141e27ff9c6">Kargono::Application</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00020">20</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae2afb21fed7520cd2eafc0f68045a126"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2afb21fed7520cd2eafc0f68045a126">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::ServerApp::OpenProject </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00035">35</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00013">13</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a9968ea35cfc56073a98936764f5f1dc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9968ea35cfc56073a98936764f5f1dc6">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Kargono::ServerApp::OpenProject </td>
-          <td>(</td>
-          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>path</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00049">49</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7342174a71f01410682c15333424788b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7342174a71f01410682c15333424788b">&#9670;&nbsp;</a></span>OnDetach()</h2>
+<a id="a8eedbf0524a70e888480d36d0e5600de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8eedbf0524a70e888480d36d0e5600de">&#9670;&nbsp;</a></span>Terminate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -256,7 +217,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void Kargono::ServerApp::OnDetach </td>
+          <td class="memname">void Kargono::ServerApp::Terminate </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -269,9 +230,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a607e28e87c49456c819e3e3fe8384886">Kargono::Application</a>.</p>
+<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a0bf3ef3c11130a54496a89f9da3c4938">Kargono::Application</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00055">55</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00086">86</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +262,46 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#ac17daf7d35686bc8461f823c421aa636">Kargono::Application</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00059">59</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00090">90</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae2afb21fed7520cd2eafc0f68045a126"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2afb21fed7520cd2eafc0f68045a126">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::ServerApp::OpenProject </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00066">66</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9968ea35cfc56073a98936764f5f1dc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9968ea35cfc56073a98936764f5f1dc6">&#9670;&nbsp;</a></span>OpenProject() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::ServerApp::OpenProject </td>
+          <td>(</td>
+          <td class="paramtype">const std::filesystem::path &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ServerApp_8cpp_source.html#l00080">80</a> of file <a class="el" href="ServerApp_8cpp_source.html">ServerApp.cpp</a>.</p>
 
 </div>
 </div>

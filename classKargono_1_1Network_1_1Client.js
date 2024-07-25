@@ -1,5 +1,15 @@
 var classKargono_1_1Network_1_1Client =
 [
+    [ "Client", "classKargono_1_1Network_1_1Client.html#acba7db0f679a876a3fbf8a1571066055", null ],
+    [ "~Client", "classKargono_1_1Network_1_1Client.html#a233534b6176ce9d067dfbc3531abff3f", null ],
+    [ "Connect", "classKargono_1_1Network_1_1Client.html#a1f1a47a82cec1f8610f90d83d1c62af8", null ],
+    [ "Disconnect", "classKargono_1_1Network_1_1Client.html#adea7d7cc283c9c649962e12ec276ecfa", null ],
+    [ "IsConnected", "classKargono_1_1Network_1_1Client.html#a4be0618ea4e45b810cbfae41f7e1e9a4", null ],
+    [ "Update", "classKargono_1_1Network_1_1Client.html#a37c06ec89cfe4843f514fdf2e1aa5664", null ],
+    [ "Send", "classKargono_1_1Network_1_1Client.html#af89697b2dee4e1b47c45e83fc73c2ebf", null ],
+    [ "SendUDP", "classKargono_1_1Network_1_1Client.html#acc852cce6f18217c6f444f90c8e9eb16", null ],
+    [ "Wait", "classKargono_1_1Network_1_1Client.html#a08c86a490dbf9da7a35c0e65b6aa18a7", null ],
+    [ "WakeUpNetworkThread", "classKargono_1_1Network_1_1Client.html#aa63acbe5b087a1f0904ef3d748628c76", null ],
     [ "SendChat", "classKargono_1_1Network_1_1Client.html#aeb752f127b89dc9e6aec7e3e007d6d64", null ],
     [ "OnEvent", "classKargono_1_1Network_1_1Client.html#a599833fd97653b53fd410692ca0fb985", null ],
     [ "OnRequestUserCount", "classKargono_1_1Network_1_1Client.html#a7f919f74000c7ea9cd602eae2b685cd9", null ],
@@ -19,8 +29,9 @@ var classKargono_1_1Network_1_1Client =
     [ "ExecuteFunctionQueue", "classKargono_1_1Network_1_1Client.html#a561fa696ea3082b39ae7cdc6c018da36", null ],
     [ "SubmitToEventQueue", "classKargono_1_1Network_1_1Client.html#ac8ef222076e89b241712554d34dfd2c5", null ],
     [ "ProcessEventQueue", "classKargono_1_1Network_1_1Client.html#a52b518c0a47c2fb55e0d533c33e39645", null ],
-    [ "OnMessage", "classKargono_1_1Network_1_1Client.html#a1072b18abd8c0c0361a3803cbf419b30", null ],
+    [ "OnMessage", "classKargono_1_1Network_1_1Client.html#a1c9c8e07d5df59b6322444795e9555fe", null ],
     [ "GetSessionSlot", "classKargono_1_1Network_1_1Client.html#a56316cf13789c267dddc5a1eaf4067d1", null ],
     [ "GetSessionStartFrame", "classKargono_1_1Network_1_1Client.html#a46d6d7bfb792e5ac39a46e149ef3a4f2", null ],
-    [ "SetSessionStartFrame", "classKargono_1_1Network_1_1Client.html#ae6ca4209ea8eff5f1bb54b8ba7eeaded", null ]
+    [ "SetSessionStartFrame", "classKargono_1_1Network_1_1Client.html#ae6ca4209ea8eff5f1bb54b8ba7eeaded", null ],
+    [ "ClientService", "classKargono_1_1Network_1_1Client.html#a944257f756ee4569d9847a76ee58a738", null ]
 ];

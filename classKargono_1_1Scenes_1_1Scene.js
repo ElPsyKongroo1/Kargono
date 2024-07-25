@@ -31,5 +31,6 @@ var classKargono_1_1Scenes_1_1Scene =
     [ "Entity", "classKargono_1_1Scenes_1_1Scene.html#a614439ccac0344926adc4c0165d64060", null ],
     [ "SceneSerializer", "classKargono_1_1Scenes_1_1Scene.html#a5fa7cde0ffbc72d80ef032c1ea3e9c85", null ],
     [ "Assets::AssetManager", "classKargono_1_1Scenes_1_1Scene.html#a93a4681dfdc6917d50d61ef8c5254626", null ],
+    [ "SceneService", "classKargono_1_1Scenes_1_1Scene.html#a9f15f4ca687cd9b8327dfbf94165b86f", null ],
     [ "m_Registry", "classKargono_1_1Scenes_1_1Scene.html#a894c8e01578f2adb2e671d4694ce574a", null ]
 ];

@@ -91,34 +91,38 @@ $(document).ready(function(){initNavTree('ScriptModuleBuilder_8h_source.html',''
 <div class="contents">
 <a href="ScriptModuleBuilder_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Scripting.html">Kargono::Scripting</a></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;{</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;    <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">// Script Module Builder Class  </span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ScriptCompiler_8h.html">Kargono/Scripting/ScriptCompiler.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono_1_1Scripting.html">Kargono::Scripting</a></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">    8</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">ScriptModuleBuilder</a></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="comment">// Create Script Module</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// Script Module Builder Class  </span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">   10</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">ScriptModuleBuilder</a></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#aa9df53dac130d1820e71c08c7a02a607">CreateScriptModule</a>(<span class="keywordtype">bool</span> addDebugSymbols = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">// Internal Functionality to Support Creation</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">//==============================</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> CreateModuleHeaderFile();</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> CreateModuleCPPFile();</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> CompileModuleCode(<span class="keywordtype">bool</span> addDebugSymbols);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> AttachEngineFunctionsToModule();</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">   24</a></span>&#160;        <span class="keyword">friend</span> <a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">ScriptService</a>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    };</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
-<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">Kargono::Scripting::ScriptModuleBuilder</a></div><div class="ttdef"><b>Definition:</b> <a href="ScriptModuleBuilder_8h_source.html#l00008">ScriptModuleBuilder.h:9</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html_a579ee63f1b09684225d57493ff418ea6"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">Kargono::Scripting::ScriptModuleBuilder::ScriptService</a></div><div class="ttdeci">friend ScriptService</div><div class="ttdef"><b>Definition:</b> <a href="ScriptModuleBuilder_8h_source.html#l00024">ScriptModuleBuilder.h:24</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html_aa9df53dac130d1820e71c08c7a02a607"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#aa9df53dac130d1820e71c08c7a02a607">Kargono::Scripting::ScriptModuleBuilder::CreateScriptModule</a></div><div class="ttdeci">static void CreateScriptModule(bool addDebugSymbols=true)</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00419">Scripting.cpp:419</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html">Kargono::Scripting</a></div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00037">Scripting.cpp:38</a></div></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="comment">// Create Script Module</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a556428a0679d982384a89d3293143145">CreateScriptModule</a>();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment">// Internal Functionality to Support Creation</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="comment">//==============================</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> CreateModuleHeaderFile();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> CreateModuleCPPFile();</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">bool</span> CompileModuleCode(<span class="keywordtype">bool</span> createDebug);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> AttachEngineFunctionsToModule();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">   27</a></span>&#160;        <span class="keyword">friend</span> <a class="code" href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">ScriptService</a>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    };</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
+<div class="ttc" id="aScriptCompiler_8h_html"><div class="ttname"><a href="ScriptCompiler_8h.html">ScriptCompiler.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html">Kargono::Scripting::ScriptModuleBuilder</a></div><div class="ttdef"><b>Definition:</b> <a href="ScriptModuleBuilder_8h_source.html#l00010">ScriptModuleBuilder.h:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html_a556428a0679d982384a89d3293143145"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a556428a0679d982384a89d3293143145">Kargono::Scripting::ScriptModuleBuilder::CreateScriptModule</a></div><div class="ttdeci">static void CreateScriptModule()</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00425">Scripting.cpp:425</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Scripting_1_1ScriptModuleBuilder_html_a579ee63f1b09684225d57493ff418ea6"><div class="ttname"><a href="classKargono_1_1Scripting_1_1ScriptModuleBuilder.html#a579ee63f1b09684225d57493ff418ea6">Kargono::Scripting::ScriptModuleBuilder::ScriptService</a></div><div class="ttdeci">friend ScriptService</div><div class="ttdef"><b>Definition:</b> <a href="ScriptModuleBuilder_8h_source.html#l00027">ScriptModuleBuilder.h:27</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html">Kargono::Scripting</a></div><div class="ttdef"><b>Definition:</b> <a href="ScriptCompiler_8cpp_source.html#l00007">ScriptCompiler.cpp:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

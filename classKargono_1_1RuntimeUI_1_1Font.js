@@ -6,5 +6,5 @@ var classKargono_1_1RuntimeUI_1_1Font =
     [ "GetLineHeight", "classKargono_1_1RuntimeUI_1_1Font.html#a61bfa4b38a132cc55b97dd25b504e3bf", null ],
     [ "SetLineHeight", "classKargono_1_1RuntimeUI_1_1Font.html#a3b6bd98b06f573e1a2a4704aadc44d8b", null ],
     [ "Assets::AssetManager", "classKargono_1_1RuntimeUI_1_1Font.html#a93a4681dfdc6917d50d61ef8c5254626", null ],
-    [ "Text", "classKargono_1_1RuntimeUI_1_1Font.html#aee0ad1dafe471596e6d25530d9fbaf0c", null ]
+    [ "FontService", "classKargono_1_1RuntimeUI_1_1Font.html#a555200eb82eba7174ad67eb303985453", null ]
 ];

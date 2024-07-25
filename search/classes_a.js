@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['labeledmessage_2167',['LabeledMessage',['../structKargono_1_1Network_1_1LabeledMessage.html',1,'Kargono::Network']]],
-  ['leavecurrentsession_2168',['LeaveCurrentSession',['../classKargono_1_1Events_1_1LeaveCurrentSession.html',1,'Kargono::Events']]],
-  ['log_2169',['Log',['../classKargono_1_1Log.html',1,'Kargono']]],
-  ['logpanel_2170',['LogPanel',['../classKargono_1_1Panels_1_1LogPanel.html',1,'Kargono::Panels']]]
+  ['labeledmessage_2244',['LabeledMessage',['../structKargono_1_1Network_1_1LabeledMessage.html',1,'Kargono::Network']]],
+  ['launcherapp_2245',['LauncherApp',['../classKargono_1_1LauncherApp.html',1,'Kargono']]],
+  ['leavecurrentsession_2246',['LeaveCurrentSession',['../classKargono_1_1Events_1_1LeaveCurrentSession.html',1,'Kargono::Events']]],
+  ['log_2247',['Log',['../classKargono_1_1Log.html',1,'Kargono']]],
+  ['logpanel_2248',['LogPanel',['../classKargono_1_1Panels_1_1LogPanel.html',1,'Kargono::Panels']]]
 ];

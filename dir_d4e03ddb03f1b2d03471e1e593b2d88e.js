@@ -23,7 +23,11 @@ var dir_d4e03ddb03f1b2d03471e1e593b2d88e =
     [ "ProjectPanel.h", "ProjectPanel_8h.html", [
       [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ]
     ] ],
-    [ "SceneHierarchyPanel.cpp", "SceneHierarchyPanel_8cpp.html", null ],
+    [ "PropertiesPanel.cpp", "PropertiesPanel_8cpp.html", null ],
+    [ "PropertiesPanel.h", "PropertiesPanel_8h.html", [
+      [ "PropertiesPanel", "classKargono_1_1Panels_1_1PropertiesPanel.html", "classKargono_1_1Panels_1_1PropertiesPanel" ]
+    ] ],
+    [ "SceneHierarchyPanel.cpp", "SceneHierarchyPanel_8cpp.html", "SceneHierarchyPanel_8cpp" ],
     [ "SceneHierarchyPanel.h", "SceneHierarchyPanel_8h.html", [
       [ "SceneHierarchyPanel", "classKargono_1_1Panels_1_1SceneHierarchyPanel.html", "classKargono_1_1Panels_1_1SceneHierarchyPanel" ]
     ] ],
@@ -34,6 +38,10 @@ var dir_d4e03ddb03f1b2d03471e1e593b2d88e =
     [ "StatisticsPanel.cpp", "StatisticsPanel_8cpp.html", null ],
     [ "StatisticsPanel.h", "StatisticsPanel_8h.html", [
       [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ]
+    ] ],
+    [ "TestingPanel.cpp", "TestingPanel_8cpp.html", null ],
+    [ "TestingPanel.h", "TestingPanel_8h.html", [
+      [ "TestingPanel", "classKargono_1_1Panels_1_1TestingPanel.html", "classKargono_1_1Panels_1_1TestingPanel" ]
     ] ],
     [ "TextEditorPanel.cpp", "TextEditorPanel_8cpp.html", null ],
     [ "TextEditorPanel.h", "TextEditorPanel_8h.html", [

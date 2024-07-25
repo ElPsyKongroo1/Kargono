@@ -92,21 +92,31 @@ $(document).ready(function(){initNavTree('Client_8h.html',''); initResizable(); 
 <div class="title">Client.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="Network_8h_source.html">Kargono/Network/Network.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Common_8h_source.html">Kargono/Network/Common.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="NetworkingEvent_8h_source.html">Kargono/Events/NetworkingEvent.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="NetworkingEvent_8h_source.html">Kargono/Events/NetworkingEvent.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ApplicationEvent_8h_source.html">Kargono/Events/ApplicationEvent.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="UDPConnection_8h_source.html">Kargono/Network/UDPConnection.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="TCPConnection_8h_source.html">Kargono/Network/TCPConnection.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Base_8h_source.html">Kargono/Core/Base.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AsioAPI_8h_source.html">API/Network/AsioAPI.h</a>&quot;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;atomic&gt;</code><br />
 <code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
+<code>#include &lt;condition_variable&gt;</code><br />
 </div>
 <p><a href="Client_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1UDPClientConnection.html">Kargono::Network::UDPClientConnection</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1TCPClientConnection.html">Kargono::Network::TCPClientConnection</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1Client.html">Kargono::Network::Client</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Network_1_1ClientService.html">Kargono::Network::ClientService</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>

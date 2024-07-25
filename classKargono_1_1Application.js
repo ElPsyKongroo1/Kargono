@@ -2,8 +2,8 @@ var classKargono_1_1Application =
 [
     [ "Application", "classKargono_1_1Application.html#a3cbce74213816ddcd8ad7fd4f2bd0cca", null ],
     [ "~Application", "classKargono_1_1Application.html#a946795bdbcf6236c525dfeced8c6d36b", null ],
-    [ "OnAttach", "classKargono_1_1Application.html#a142393f2f347a83830409381464a8240", null ],
-    [ "OnDetach", "classKargono_1_1Application.html#a607e28e87c49456c819e3e3fe8384886", null ],
+    [ "Init", "classKargono_1_1Application.html#a8e73ec374a8ec63c5af35141e27ff9c6", null ],
+    [ "Terminate", "classKargono_1_1Application.html#a0bf3ef3c11130a54496a89f9da3c4938", null ],
     [ "OnUpdate", "classKargono_1_1Application.html#ac17daf7d35686bc8461f823c421aa636", null ],
     [ "OnEditorUIRender", "classKargono_1_1Application.html#a82d02bad2358731e6d1a62f3ebe607d8", null ],
     [ "OnEvent", "classKargono_1_1Application.html#a0b5ab23577072c6052590c97a9d7b3fb", null ],

@@ -7,17 +7,19 @@ var dir_55dff011b17a48042a5c043300c85edd =
     [ "AppTick.cpp", "AppTick_8cpp.html", null ],
     [ "AppTick.h", "AppTick_8h.html", [
       [ "AppTickGenerator", "structKargono_1_1AppTickGenerator.html", "structKargono_1_1AppTickGenerator" ],
-      [ "AppTickEngine", "classKargono_1_1AppTickEngine.html", null ]
+      [ "AppTickService", "classKargono_1_1AppTickService.html", null ]
     ] ],
     [ "Assert.h", "Assert_8h.html", "Assert_8h" ],
     [ "Base.h", "Base_8h.html", "Base_8h" ],
     [ "Buffer.h", "Buffer_8h.html", [
-      [ "Buffer", "structKargono_1_1Buffer.html", "structKargono_1_1Buffer" ],
-      [ "ScopedBuffer", "structKargono_1_1ScopedBuffer.html", "structKargono_1_1ScopedBuffer" ]
+      [ "Buffer", "structKargono_1_1Buffer.html", "structKargono_1_1Buffer" ]
     ] ],
-    [ "EngineCore.cpp", "EngineCore_8cpp.html", "EngineCore_8cpp" ],
-    [ "EngineCore.h", "EngineCore_8h.html", "EngineCore_8h" ],
-    [ "EntryPoint.h", "EntryPoint_8h.html", null ],
+    [ "DataStructures.h", "DataStructures_8h.html", [
+      [ "TSQueue", "classKargono_1_1TSQueue.html", "classKargono_1_1TSQueue" ]
+    ] ],
+    [ "Engine.cpp", "Engine_8cpp.html", "Engine_8cpp" ],
+    [ "Engine.h", "Engine_8h.html", "Engine_8h" ],
+    [ "EntryPoint.h", "EntryPoint_8h.html", "EntryPoint_8h" ],
     [ "KeyCodes.h", "KeyCodes_8h.html", "KeyCodes_8h" ],
     [ "Log.cpp", "Log_8cpp.html", null ],
     [ "Log.h", "Log_8h.html", "Log_8h" ],

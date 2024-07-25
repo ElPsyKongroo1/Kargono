@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['runtimeuiservice_4310',['RuntimeUIService',['../classKargono_1_1RuntimeUI_1_1TextWidget.html#aeba14d711b387aceeced5194058d1571',1,'Kargono::RuntimeUI::TextWidget']]]
+  ['fontservice_4446',['FontService',['../classKargono_1_1RuntimeUI_1_1Font.html#a555200eb82eba7174ad67eb303985453',1,'Kargono::RuntimeUI::Font']]]
 ];

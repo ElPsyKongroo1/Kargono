@@ -11,7 +11,7 @@ var RuntimeUI_8h =
     [ "PopupWidget", "classKargono_1_1RuntimeUI_1_1PopupWidget.html", "classKargono_1_1RuntimeUI_1_1PopupWidget" ],
     [ "Window", "structKargono_1_1RuntimeUI_1_1Window.html", "structKargono_1_1RuntimeUI_1_1Window" ],
     [ "WidgetCounts", "structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts.html", "structKargono_1_1RuntimeUI_1_1Window_1_1WidgetCounts" ],
-    [ "UIObject", "structKargono_1_1RuntimeUI_1_1UIObject.html", "structKargono_1_1RuntimeUI_1_1UIObject" ],
+    [ "UserInterface", "classKargono_1_1RuntimeUI_1_1UserInterface.html", "classKargono_1_1RuntimeUI_1_1UserInterface" ],
     [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1RuntimeUIService.html", "classKargono_1_1RuntimeUI_1_1RuntimeUIService" ],
     [ "WidgetTypes", "RuntimeUI_8h.html#a900087a85fbae11ea45b1b8376fc720f", [
       [ "None", "RuntimeUI_8h.html#a900087a85fbae11ea45b1b8376fc720fa6adf97f83acf6453d4a6a4b1070f3754", null ],

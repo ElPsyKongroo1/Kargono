@@ -8,7 +8,7 @@ var annotated_dup =
         [ "ShaderMetaData", "structKargono_1_1Assets_1_1ShaderMetaData.html", "structKargono_1_1Assets_1_1ShaderMetaData" ],
         [ "FontMetaData", "structKargono_1_1Assets_1_1FontMetaData.html", "structKargono_1_1Assets_1_1FontMetaData" ],
         [ "SceneMetaData", "structKargono_1_1Assets_1_1SceneMetaData.html", null ],
-        [ "UIObjectMetaData", "structKargono_1_1Assets_1_1UIObjectMetaData.html", null ],
+        [ "UserInterfaceMetaData", "structKargono_1_1Assets_1_1UserInterfaceMetaData.html", null ],
         [ "InputModeMetaData", "structKargono_1_1Assets_1_1InputModeMetaData.html", null ],
         [ "GameStateMetaData", "structKargono_1_1Assets_1_1GameStateMetaData.html", "structKargono_1_1Assets_1_1GameStateMetaData" ],
         [ "EntityClassMetaData", "structKargono_1_1Assets_1_1EntityClassMetaData.html", "structKargono_1_1Assets_1_1EntityClassMetaData" ],
@@ -22,6 +22,7 @@ var annotated_dup =
         [ "AudioListener", "classKargono_1_1Audio_1_1AudioListener.html", "classKargono_1_1Audio_1_1AudioListener" ],
         [ "AudioBuffer", "classKargono_1_1Audio_1_1AudioBuffer.html", "classKargono_1_1Audio_1_1AudioBuffer" ],
         [ "AudioSource", "classKargono_1_1Audio_1_1AudioSource.html", "classKargono_1_1Audio_1_1AudioSource" ],
+        [ "AudioContext", "structKargono_1_1Audio_1_1AudioContext.html", "structKargono_1_1Audio_1_1AudioContext" ],
         [ "AudioService", "classKargono_1_1Audio_1_1AudioService.html", "classKargono_1_1Audio_1_1AudioService" ]
       ] ],
       [ "EditorUI", "namespaceKargono_1_1EditorUI.html", [
@@ -29,10 +30,14 @@ var annotated_dup =
         [ "EditorUIService", "classKargono_1_1EditorUI_1_1EditorUIService.html", null ],
         [ "GenericPopupSpec", "structKargono_1_1EditorUI_1_1GenericPopupSpec.html", "structKargono_1_1EditorUI_1_1GenericPopupSpec" ],
         [ "CheckboxSpec", "structKargono_1_1EditorUI_1_1CheckboxSpec.html", "structKargono_1_1EditorUI_1_1CheckboxSpec" ],
+        [ "EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html", "structKargono_1_1EditorUI_1_1EditFloatSpec" ],
+        [ "EditVec2Spec", "structKargono_1_1EditorUI_1_1EditVec2Spec.html", "structKargono_1_1EditorUI_1_1EditVec2Spec" ],
+        [ "EditVec3Spec", "structKargono_1_1EditorUI_1_1EditVec3Spec.html", "structKargono_1_1EditorUI_1_1EditVec3Spec" ],
         [ "RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html", "structKargono_1_1EditorUI_1_1RadioSelectorSpec" ],
         [ "TextInputSpec", "structKargono_1_1EditorUI_1_1TextInputSpec.html", "structKargono_1_1EditorUI_1_1TextInputSpec" ],
+        [ "ChooseDirectorySpec", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec" ],
         [ "CollapsingHeaderSpec", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec" ],
-        [ "SelectorHeaderSpec", "structKargono_1_1EditorUI_1_1SelectorHeaderSpec.html", "structKargono_1_1EditorUI_1_1SelectorHeaderSpec" ],
+        [ "PanelHeaderSpec", "structKargono_1_1EditorUI_1_1PanelHeaderSpec.html", "structKargono_1_1EditorUI_1_1PanelHeaderSpec" ],
         [ "TableEntry", "structKargono_1_1EditorUI_1_1TableEntry.html", "structKargono_1_1EditorUI_1_1TableEntry" ],
         [ "TableSpec", "structKargono_1_1EditorUI_1_1TableSpec.html", "structKargono_1_1EditorUI_1_1TableSpec" ],
         [ "OptionEntry", "structKargono_1_1EditorUI_1_1OptionEntry.html", "structKargono_1_1EditorUI_1_1OptionEntry" ],
@@ -88,26 +93,25 @@ var annotated_dup =
         [ "KeyboardActionBinding", "classKargono_1_1Input_1_1KeyboardActionBinding.html", "classKargono_1_1Input_1_1KeyboardActionBinding" ],
         [ "InputMode", "classKargono_1_1Input_1_1InputMode.html", "classKargono_1_1Input_1_1InputMode" ],
         [ "InputModeService", "classKargono_1_1Input_1_1InputModeService.html", null ],
-        [ "InputPolling", "classKargono_1_1Input_1_1InputPolling.html", null ]
+        [ "InputService", "classKargono_1_1Input_1_1InputService.html", null ]
       ] ],
       [ "Network", "namespaceKargono_1_1Network.html", [
+        [ "UDPClientConnection", "classKargono_1_1Network_1_1UDPClientConnection.html", "classKargono_1_1Network_1_1UDPClientConnection" ],
+        [ "TCPClientConnection", "classKargono_1_1Network_1_1TCPClientConnection.html", "classKargono_1_1Network_1_1TCPClientConnection" ],
         [ "Client", "classKargono_1_1Network_1_1Client.html", "classKargono_1_1Network_1_1Client" ],
-        [ "ClientInterface", "classKargono_1_1Network_1_1ClientInterface.html", "classKargono_1_1Network_1_1ClientInterface" ],
-        [ "Connection", "classKargono_1_1Network_1_1Connection.html", "classKargono_1_1Network_1_1Connection" ],
-        [ "ConnectionToClient", "classKargono_1_1Network_1_1ConnectionToClient.html", "classKargono_1_1Network_1_1ConnectionToClient" ],
-        [ "ConnectionToServer", "classKargono_1_1Network_1_1ConnectionToServer.html", "classKargono_1_1Network_1_1ConnectionToServer" ],
-        [ "tsqueue", "classKargono_1_1Network_1_1tsqueue.html", "classKargono_1_1Network_1_1tsqueue" ],
+        [ "ClientService", "classKargono_1_1Network_1_1ClientService.html", null ],
         [ "MessageHeader", "structKargono_1_1Network_1_1MessageHeader.html", "structKargono_1_1Network_1_1MessageHeader" ],
         [ "Message", "structKargono_1_1Network_1_1Message.html", "structKargono_1_1Network_1_1Message" ],
         [ "owned_message", "structKargono_1_1Network_1_1owned__message.html", "structKargono_1_1Network_1_1owned__message" ],
         [ "LabeledMessage", "structKargono_1_1Network_1_1LabeledMessage.html", "structKargono_1_1Network_1_1LabeledMessage" ],
+        [ "UDPServerConnection", "classKargono_1_1Network_1_1UDPServerConnection.html", "classKargono_1_1Network_1_1UDPServerConnection" ],
+        [ "TCPServerConnection", "classKargono_1_1Network_1_1TCPServerConnection.html", "classKargono_1_1Network_1_1TCPServerConnection" ],
         [ "Server", "classKargono_1_1Network_1_1Server.html", "classKargono_1_1Network_1_1Server" ],
-        [ "ServerInterface", "classKargono_1_1Network_1_1ServerInterface.html", "classKargono_1_1Network_1_1ServerInterface" ],
+        [ "ServerService", "classKargono_1_1Network_1_1ServerService.html", null ],
         [ "SessionInitCache", "structKargono_1_1Network_1_1SessionInitCache.html", "structKargono_1_1Network_1_1SessionInitCache" ],
         [ "Session", "classKargono_1_1Network_1_1Session.html", "classKargono_1_1Network_1_1Session" ],
-        [ "UDPClient", "classKargono_1_1Network_1_1UDPClient.html", "classKargono_1_1Network_1_1UDPClient" ],
-        [ "UDPServer", "classKargono_1_1Network_1_1UDPServer.html", "classKargono_1_1Network_1_1UDPServer" ],
-        [ "UDPService", "classKargono_1_1Network_1_1UDPService.html", "classKargono_1_1Network_1_1UDPService" ]
+        [ "TCPConnection", "classKargono_1_1Network_1_1TCPConnection.html", "classKargono_1_1Network_1_1TCPConnection" ],
+        [ "UDPConnection", "classKargono_1_1Network_1_1UDPConnection.html", "classKargono_1_1Network_1_1UDPConnection" ]
       ] ],
       [ "Panels", "namespaceKargono_1_1Panels.html", [
         [ "ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
@@ -117,9 +121,11 @@ var annotated_dup =
         [ "ImGuiLog", "structKargono_1_1Panels_1_1ImGuiLog.html", "structKargono_1_1Panels_1_1ImGuiLog" ],
         [ "LogPanel", "classKargono_1_1Panels_1_1LogPanel.html", "classKargono_1_1Panels_1_1LogPanel" ],
         [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ],
+        [ "PropertiesPanel", "classKargono_1_1Panels_1_1PropertiesPanel.html", "classKargono_1_1Panels_1_1PropertiesPanel" ],
         [ "SceneHierarchyPanel", "classKargono_1_1Panels_1_1SceneHierarchyPanel.html", "classKargono_1_1Panels_1_1SceneHierarchyPanel" ],
         [ "ScriptEditorPanel", "classKargono_1_1Panels_1_1ScriptEditorPanel.html", "classKargono_1_1Panels_1_1ScriptEditorPanel" ],
         [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ],
+        [ "TestingPanel", "classKargono_1_1Panels_1_1TestingPanel.html", "classKargono_1_1Panels_1_1TestingPanel" ],
         [ "TextEditorPanel", "classKargono_1_1Panels_1_1TextEditorPanel.html", "classKargono_1_1Panels_1_1TextEditorPanel" ],
         [ "UIEditorPanel", "classKargono_1_1Panels_1_1UIEditorPanel.html", "classKargono_1_1Panels_1_1UIEditorPanel" ],
         [ "ViewportPanel", "classKargono_1_1Panels_1_1ViewportPanel.html", "classKargono_1_1Panels_1_1ViewportPanel" ]
@@ -130,8 +136,8 @@ var annotated_dup =
         [ "Physics2DWorld", "classKargono_1_1Physics_1_1Physics2DWorld.html", "classKargono_1_1Physics_1_1Physics2DWorld" ]
       ] ],
       [ "Projects", "namespaceKargono_1_1Projects.html", [
-        [ "ProjectConfig", "structKargono_1_1Projects_1_1ProjectConfig.html", "structKargono_1_1Projects_1_1ProjectConfig" ],
-        [ "Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ]
+        [ "Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ],
+        [ "ProjectService", "classKargono_1_1Projects_1_1ProjectService.html", "classKargono_1_1Projects_1_1ProjectService" ]
       ] ],
       [ "Rendering", "namespaceKargono_1_1Rendering.html", [
         [ "Camera", "classKargono_1_1Rendering_1_1Camera.html", "classKargono_1_1Rendering_1_1Camera" ],
@@ -161,6 +167,9 @@ var annotated_dup =
         [ "VertexArray", "classKargono_1_1Rendering_1_1VertexArray.html", "classKargono_1_1Rendering_1_1VertexArray" ]
       ] ],
       [ "RuntimeUI", "namespaceKargono_1_1RuntimeUI.html", [
+        [ "FontService", "classKargono_1_1RuntimeUI_1_1FontService.html", null ],
+        [ "Character", "structKargono_1_1RuntimeUI_1_1Character.html", "structKargono_1_1RuntimeUI_1_1Character" ],
+        [ "Font", "classKargono_1_1RuntimeUI_1_1Font.html", "classKargono_1_1RuntimeUI_1_1Font" ],
         [ "WidgetCallbacks", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks" ],
         [ "UICallbacks", "structKargono_1_1RuntimeUI_1_1UICallbacks.html", "structKargono_1_1RuntimeUI_1_1UICallbacks" ],
         [ "DirectionPointers", "structKargono_1_1RuntimeUI_1_1DirectionPointers.html", "structKargono_1_1RuntimeUI_1_1DirectionPointers" ],
@@ -171,11 +180,8 @@ var annotated_dup =
         [ "ComboWidget", "classKargono_1_1RuntimeUI_1_1ComboWidget.html", "classKargono_1_1RuntimeUI_1_1ComboWidget" ],
         [ "PopupWidget", "classKargono_1_1RuntimeUI_1_1PopupWidget.html", "classKargono_1_1RuntimeUI_1_1PopupWidget" ],
         [ "Window", "structKargono_1_1RuntimeUI_1_1Window.html", "structKargono_1_1RuntimeUI_1_1Window" ],
-        [ "UIObject", "structKargono_1_1RuntimeUI_1_1UIObject.html", "structKargono_1_1RuntimeUI_1_1UIObject" ],
-        [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1RuntimeUIService.html", "classKargono_1_1RuntimeUI_1_1RuntimeUIService" ],
-        [ "Text", "classKargono_1_1RuntimeUI_1_1Text.html", null ],
-        [ "Character", "structKargono_1_1RuntimeUI_1_1Character.html", "structKargono_1_1RuntimeUI_1_1Character" ],
-        [ "Font", "classKargono_1_1RuntimeUI_1_1Font.html", "classKargono_1_1RuntimeUI_1_1Font" ]
+        [ "UserInterface", "classKargono_1_1RuntimeUI_1_1UserInterface.html", "classKargono_1_1RuntimeUI_1_1UserInterface" ],
+        [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1RuntimeUIService.html", "classKargono_1_1RuntimeUI_1_1RuntimeUIService" ]
       ] ],
       [ "Scenes", "namespaceKargono_1_1Scenes.html", [
         [ "IDComponent", "structKargono_1_1Scenes_1_1IDComponent.html", "structKargono_1_1Scenes_1_1IDComponent" ],
@@ -183,8 +189,6 @@ var annotated_dup =
         [ "TransformComponent", "structKargono_1_1Scenes_1_1TransformComponent.html", "structKargono_1_1Scenes_1_1TransformComponent" ],
         [ "CameraComponent", "structKargono_1_1Scenes_1_1CameraComponent.html", "structKargono_1_1Scenes_1_1CameraComponent" ],
         [ "NetworkComponent", "structKargono_1_1Scenes_1_1NetworkComponent.html", "structKargono_1_1Scenes_1_1NetworkComponent" ],
-        [ "AudioComponent", "structKargono_1_1Scenes_1_1AudioComponent.html", "structKargono_1_1Scenes_1_1AudioComponent" ],
-        [ "MultiAudioComponent", "structKargono_1_1Scenes_1_1MultiAudioComponent.html", "structKargono_1_1Scenes_1_1MultiAudioComponent" ],
         [ "Rigidbody2DComponent", "structKargono_1_1Scenes_1_1Rigidbody2DComponent.html", "structKargono_1_1Scenes_1_1Rigidbody2DComponent" ],
         [ "BoxCollider2DComponent", "structKargono_1_1Scenes_1_1BoxCollider2DComponent.html", "structKargono_1_1Scenes_1_1BoxCollider2DComponent" ],
         [ "ClassInstanceComponent", "structKargono_1_1Scenes_1_1ClassInstanceComponent.html", "structKargono_1_1Scenes_1_1ClassInstanceComponent" ],
@@ -196,11 +200,25 @@ var annotated_dup =
         [ "ClassField", "structKargono_1_1Scenes_1_1ClassField.html", "structKargono_1_1Scenes_1_1ClassField" ],
         [ "EntityClass", "classKargono_1_1Scenes_1_1EntityClass.html", "classKargono_1_1Scenes_1_1EntityClass" ],
         [ "GameState", "classKargono_1_1Scenes_1_1GameState.html", "classKargono_1_1Scenes_1_1GameState" ],
-        [ "SceneService", "classKargono_1_1Scenes_1_1SceneService.html", null ],
+        [ "GameStateService", "classKargono_1_1Scenes_1_1GameStateService.html", null ],
         [ "Scene", "classKargono_1_1Scenes_1_1Scene.html", "classKargono_1_1Scenes_1_1Scene" ],
+        [ "SceneService", "classKargono_1_1Scenes_1_1SceneService.html", null ],
         [ "SceneCamera", "classKargono_1_1Scenes_1_1SceneCamera.html", "classKargono_1_1Scenes_1_1SceneCamera" ]
       ] ],
       [ "Scripting", "namespaceKargono_1_1Scripting.html", [
+        [ "ScriptToken", "structKargono_1_1Scripting_1_1ScriptToken.html", "structKargono_1_1Scripting_1_1ScriptToken" ],
+        [ "ScriptTokenizer", "classKargono_1_1Scripting_1_1ScriptTokenizer.html", "classKargono_1_1Scripting_1_1ScriptTokenizer" ],
+        [ "StatementEmpty", "structKargono_1_1Scripting_1_1StatementEmpty.html", null ],
+        [ "StatementLiteral", "structKargono_1_1Scripting_1_1StatementLiteral.html", "structKargono_1_1Scripting_1_1StatementLiteral" ],
+        [ "StatementDeclaration", "structKargono_1_1Scripting_1_1StatementDeclaration.html", "structKargono_1_1Scripting_1_1StatementDeclaration" ],
+        [ "StatementAssignment", "structKargono_1_1Scripting_1_1StatementAssignment.html", "structKargono_1_1Scripting_1_1StatementAssignment" ],
+        [ "FunctionParameter", "structKargono_1_1Scripting_1_1FunctionParameter.html", "structKargono_1_1Scripting_1_1FunctionParameter" ],
+        [ "FunctionNode", "structKargono_1_1Scripting_1_1FunctionNode.html", "structKargono_1_1Scripting_1_1FunctionNode" ],
+        [ "ProgramNode", "structKargono_1_1Scripting_1_1ProgramNode.html", "structKargono_1_1Scripting_1_1ProgramNode" ],
+        [ "ScriptAST", "structKargono_1_1Scripting_1_1ScriptAST.html", "structKargono_1_1Scripting_1_1ScriptAST" ],
+        [ "ParserError", "structKargono_1_1Scripting_1_1ParserError.html", "structKargono_1_1Scripting_1_1ParserError" ],
+        [ "TokenParser", "classKargono_1_1Scripting_1_1TokenParser.html", "classKargono_1_1Scripting_1_1TokenParser" ],
+        [ "ScriptCompiler", "classKargono_1_1Scripting_1_1ScriptCompiler.html", null ],
         [ "ScriptService", "classKargono_1_1Scripting_1_1ScriptService.html", null ],
         [ "Script", "classKargono_1_1Scripting_1_1Script.html", "classKargono_1_1Scripting_1_1Script" ],
         [ "ScriptModuleBuilder", "classKargono_1_1Scripting_1_1ScriptModuleBuilder.html", "classKargono_1_1Scripting_1_1ScriptModuleBuilder" ]
@@ -220,13 +238,14 @@ var annotated_dup =
       [ "RuntimeApp", "classKargono_1_1RuntimeApp.html", "classKargono_1_1RuntimeApp" ],
       [ "Application", "classKargono_1_1Application.html", "classKargono_1_1Application" ],
       [ "AppTickGenerator", "structKargono_1_1AppTickGenerator.html", "structKargono_1_1AppTickGenerator" ],
-      [ "AppTickEngine", "classKargono_1_1AppTickEngine.html", null ],
+      [ "AppTickService", "classKargono_1_1AppTickService.html", null ],
       [ "TestingException", "classKargono_1_1TestingException.html", "classKargono_1_1TestingException" ],
       [ "Buffer", "structKargono_1_1Buffer.html", "structKargono_1_1Buffer" ],
-      [ "ScopedBuffer", "structKargono_1_1ScopedBuffer.html", "structKargono_1_1ScopedBuffer" ],
-      [ "CommandLineArgs", "structKargono_1_1CommandLineArgs.html", "structKargono_1_1CommandLineArgs" ],
-      [ "AppSpec", "structKargono_1_1AppSpec.html", "structKargono_1_1AppSpec" ],
-      [ "EngineCore", "classKargono_1_1EngineCore.html", "classKargono_1_1EngineCore" ],
+      [ "TSQueue", "classKargono_1_1TSQueue.html", "classKargono_1_1TSQueue" ],
+      [ "CommandLineArguments", "structKargono_1_1CommandLineArguments.html", "structKargono_1_1CommandLineArguments" ],
+      [ "EngineSpec", "structKargono_1_1EngineSpec.html", "structKargono_1_1EngineSpec" ],
+      [ "Engine", "classKargono_1_1Engine.html", "classKargono_1_1Engine" ],
+      [ "EngineService", "classKargono_1_1EngineService.html", null ],
       [ "Log", "classKargono_1_1Log.html", null ],
       [ "Timestep", "classKargono_1_1Timestep.html", "classKargono_1_1Timestep" ],
       [ "UUID", "classKargono_1_1UUID.html", "classKargono_1_1UUID" ],
@@ -254,7 +273,8 @@ var annotated_dup =
       [ "WrappedBoolUInt64UInt64", "classKargono_1_1WrappedBoolUInt64UInt64.html", "classKargono_1_1WrappedBoolUInt64UInt64" ],
       [ "WrappedBoolUInt64UInt16UInt64", "classKargono_1_1WrappedBoolUInt64UInt16UInt64.html", "classKargono_1_1WrappedBoolUInt64UInt16UInt64" ],
       [ "ServerApp", "classKargono_1_1ServerApp.html", "classKargono_1_1ServerApp" ],
-      [ "EditorApp", "classKargono_1_1EditorApp.html", "classKargono_1_1EditorApp" ]
+      [ "EditorApp", "classKargono_1_1EditorApp.html", "classKargono_1_1EditorApp" ],
+      [ "LauncherApp", "classKargono_1_1LauncherApp.html", "classKargono_1_1LauncherApp" ]
     ] ],
     [ "std", "namespacestd.html", [
       [ "hash< Kargono::UUID >", "structstd_1_1hash_3_01Kargono_1_1UUID_01_4.html", "structstd_1_1hash_3_01Kargono_1_1UUID_01_4" ]

@@ -331,78 +331,98 @@ $(document).ready(function(){initNavTree('WindowsWindow_8cpp_source.html',''); i
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    {</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        <span class="keywordflow">if</span> (enabled)</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        }</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        {</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            glfwSetWindowMonitor(m_Window, <span class="keyword">nullptr</span>, 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        }</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    }</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetResizable(<span class="keywordtype">bool</span> resizable)</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    {</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::CenterWindow()</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    {</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        GLFWmonitor* monitor = glfwGetPrimaryMonitor();</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keyword">const</span> GLFWvidmode* mode = glfwGetVideoMode(monitor);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        glfwSetWindowPos(m_Window, (mode-&gt;width - m_Data.Width) / 2, (mode-&gt;height - m_Data.Height) / 2);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            GLFWmonitor* monitor = glfwGetPrimaryMonitor();</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            <span class="keywordflow">if</span> (!monitor)</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            {</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;No primary monitor is available! Failed to set monitor to fullscreen.&quot;</span>);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            }</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        }</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            glfwSetWindowMonitor(m_Window, <span class="keyword">nullptr</span>, 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetResizable(<span class="keywordtype">bool</span> resizable)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    }</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a> WindowsWindow::GetMonitorDimensions()</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::CenterWindow()</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    {</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        GLFWmonitor* monitor = glfwGetPrimaryMonitor();</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="keyword">const</span> GLFWvidmode* mode = glfwGetVideoMode(monitor);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(mode-&gt;width), <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(mode-&gt;height));</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    }</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::ResizeWindow(<a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a> newWindowSize)</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    {</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        glfwSetWindowSize(m_Window, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newWindowSize.x), <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newWindowSize.y));</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        m_Data.Width = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.x);</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        m_Data.Height = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.y);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="classKargono_1_1Projects_1_1Project.html#a3ab4ca2b8a39d0e1ae5461a165c8c70f">Kargono::Projects::Project::GetIsFullscreen</a>()) { CenterWindow(); }</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="comment">// Event thrown to ensure resize updates viewport</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a> event(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.x), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.y));</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        m_Data.EventCallback(event);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    }</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::ToggleMaximized()</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    {</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="keywordflow">if</span> (glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED))</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        {</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            glfwRestoreWindow(m_Window);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        {</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            glfwMaximizeWindow(m_Window);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetMouseCursorVisible(<span class="keywordtype">bool</span> choice)</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <span class="keyword">auto</span> cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetVisible(<span class="keywordtype">bool</span> visible)</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        <span class="keywordflow">if</span> (visible)</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        {</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            glfwShowWindow(m_Window);</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        }</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            glfwHideWindow(m_Window);</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        }</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;}</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="keywordflow">if</span> (!monitor)</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;No primary monitor could be located. Failed to center window.&quot;</span>);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        <span class="keyword">const</span> GLFWvidmode* mode = glfwGetVideoMode(monitor);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        glfwSetWindowPos(m_Window, (mode-&gt;width - m_Data.Width) / 2, (mode-&gt;height - m_Data.Height) / 2);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a> WindowsWindow::GetMonitorDimensions()</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        GLFWmonitor* monitor = glfwGetPrimaryMonitor();</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordflow">if</span> (!monitor)</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Could not locate primary monitor! Returning default monitor dimensions.&quot;</span>);</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a>(400.0f, 400.0f);</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        }</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        <span class="keyword">const</span> GLFWvidmode* mode = glfwGetVideoMode(monitor);</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(mode-&gt;width), <span class="keyword">static_cast&lt;</span><span class="keywordtype">float</span><span class="keyword">&gt;</span>(mode-&gt;height));</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::ResizeWindow(<a class="code" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">glm::vec2</a> newWindowSize)</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    {</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        glfwSetWindowSize(m_Window, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newWindowSize.x), <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newWindowSize.y));</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        m_Data.Width = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.x);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        m_Data.Height = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.y);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="classKargono_1_1Projects_1_1ProjectService.html#a99059bbc083904d985e0338e364e7cd2">Kargono::Projects::ProjectService::GetActiveIsFullscreen</a>())</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            CenterWindow();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        }</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <span class="comment">// Event thrown to ensure resize updates viewport</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        <a class="code" href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a> event(<span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.x), <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(newWindowSize.y));</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        m_Data.EventCallback(event);</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    }</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::ToggleMaximized()</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        <span class="keywordflow">if</span> (glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED))</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            glfwRestoreWindow(m_Window);</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        }</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        {</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            glfwMaximizeWindow(m_Window);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        }</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetMouseCursorVisible(<span class="keywordtype">bool</span> choice)</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keyword">auto</span> cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordtype">void</span> WindowsWindow::SetVisible(<span class="keywordtype">bool</span> visible)</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    {</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <span class="keywordflow">if</span> (visible)</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            glfwShowWindow(m_Window);</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        {</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            glfwHideWindow(m_Window);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    }</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;}</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aApplicationEvent_8h_html"><div class="ttname"><a href="ApplicationEvent_8h.html">ApplicationEvent.h</a></div></div>
 <div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
 <div class="ttc" id="aKeyEvent_8h_html"><div class="ttname"><a href="KeyEvent_8h.html">KeyEvent.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00032">Log.h:32</a></div></div>
+<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00038">Log.h:38</a></div></div>
+<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00036">Log.h:36</a></div></div>
+<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
 <div class="ttc" id="aMouseEvent_8h_html"><div class="ttname"><a href="MouseEvent_8h.html">MouseEvent.h</a></div></div>
 <div class="ttc" id="aProfiler_8h_html_a26107eeb05909516ba146aa619a01763"><div class="ttname"><a href="Profiler_8h.html#a26107eeb05909516ba146aa619a01763">KG_PROFILE_FUNCTION</a></div><div class="ttdeci">#define KG_PROFILE_FUNCTION(...)</div><div class="ttdef"><b>Definition:</b> <a href="Profiler_8h_source.html#l00018">Profiler.h:18</a></div></div>
 <div class="ttc" id="aProject_8h_html"><div class="ttname"><a href="Project_8h.html">Project.h</a></div></div>
@@ -417,16 +437,16 @@ $(document).ready(function(){initNavTree('WindowsWindow_8cpp_source.html',''); i
 <div class="ttc" id="aclassKargono_1_1Events_1_1MouseScrolledEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1MouseScrolledEvent.html">Kargono::Events::MouseScrolledEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="MouseEvent_8h_source.html#l00055">MouseEvent.h:56</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1WindowCloseEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowCloseEvent.html">Kargono::Events::WindowCloseEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00056">ApplicationEvent.h:57</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Events_1_1WindowResizeEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1WindowResizeEvent.html">Kargono::Events::WindowResizeEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00017">ApplicationEvent.h:18</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Projects_1_1Project_html_a3ab4ca2b8a39d0e1ae5461a165c8c70f"><div class="ttname"><a href="classKargono_1_1Projects_1_1Project.html#a3ab4ca2b8a39d0e1ae5461a165c8c70f">Kargono::Projects::Project::GetIsFullscreen</a></div><div class="ttdeci">static bool GetIsFullscreen()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00195">Project.h:195</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Projects_1_1ProjectService_html_a99059bbc083904d985e0338e364e7cd2"><div class="ttname"><a href="classKargono_1_1Projects_1_1ProjectService.html#a99059bbc083904d985e0338e364e7cd2">Kargono::Projects::ProjectService::GetActiveIsFullscreen</a></div><div class="ttdeci">static bool GetActiveIsFullscreen()</div><div class="ttdef"><b>Definition:</b> <a href="Project_8h_source.html#l00196">Project.h:196</a></div></div>
 <div class="ttc" id="agladAPI_8h_html"><div class="ttname"><a href="gladAPI_8h.html">gladAPI.h</a></div></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
 <div class="ttc" id="anamespaceKargono_1_1Math_html_afe66e1ce2eda99d406c4d29062f8f9af"><div class="ttname"><a href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Kargono::Math::vec2</a></div><div class="ttdeci">glm::vec2 vec2</div><div class="ttdef"><b>Definition:</b> <a href="MathAliases_8h_source.html#l00013">MathAliases.h:13</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_ae102309f7ce66cbeaddc85cc7d254b35"><div class="ttname"><a href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">Kargono::logoPath</a></div><div class="ttdeci">const std::filesystem::path logoPath</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00013">RuntimeApp.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_ae102309f7ce66cbeaddc85cc7d254b35"><div class="ttname"><a href="namespaceKargono.html#ae102309f7ce66cbeaddc85cc7d254b35">Kargono::logoPath</a></div><div class="ttdeci">const std::filesystem::path logoPath</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00009">RuntimeApp.cpp:9</a></div></div>
 <div class="ttc" id="astbAPI_8h_html"><div class="ttname"><a href="stbAPI_8h.html">stbAPI.h</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html"><div class="ttname"><a href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00012">Window.h:13</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_a15041108829f07d670cb1baa10010f95"><div class="ttname"><a href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Kargono::WindowProps::Title</a></div><div class="ttdeci">std::string Title</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00014">Window.h:14</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_adc3f4fe742af52e6096fc713ae178a65"><div class="ttname"><a href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Kargono::WindowProps::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00015">Window.h:15</a></div></div>
-<div class="ttc" id="astructKargono_1_1WindowProps_html_af6062f6807ebe63e379c8f2cca956b22"><div class="ttname"><a href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Kargono::WindowProps::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00016">Window.h:16</a></div></div>
+<div class="ttc" id="astructKargono_1_1WindowProps_html"><div class="ttname"><a href="structKargono_1_1WindowProps.html">Kargono::WindowProps</a></div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00015">Window.h:16</a></div></div>
+<div class="ttc" id="astructKargono_1_1WindowProps_html_a15041108829f07d670cb1baa10010f95"><div class="ttname"><a href="structKargono_1_1WindowProps.html#a15041108829f07d670cb1baa10010f95">Kargono::WindowProps::Title</a></div><div class="ttdeci">std::string Title</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00017">Window.h:17</a></div></div>
+<div class="ttc" id="astructKargono_1_1WindowProps_html_adc3f4fe742af52e6096fc713ae178a65"><div class="ttname"><a href="structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65">Kargono::WindowProps::Width</a></div><div class="ttdeci">uint32_t Width</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00018">Window.h:18</a></div></div>
+<div class="ttc" id="astructKargono_1_1WindowProps_html_af6062f6807ebe63e379c8f2cca956b22"><div class="ttname"><a href="structKargono_1_1WindowProps.html#af6062f6807ebe63e379c8f2cca956b22">Kargono::WindowProps::Height</a></div><div class="ttdeci">uint32_t Height</div><div class="ttdef"><b>Definition:</b> <a href="Window_8h_source.html#l00019">Window.h:19</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

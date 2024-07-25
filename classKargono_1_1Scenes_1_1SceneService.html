@@ -99,6 +99,8 @@ $(document).ready(function(){initNavTree('classKargono_1_1Scenes_1_1SceneService
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a1cc40d1b90ef3a3aa13d2ba928fb0e57"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a1cc40d1b90ef3a3aa13d2ba928fb0e57">Init</a> ()</td></tr>
 <tr class="separator:a1cc40d1b90ef3a3aa13d2ba928fb0e57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6db74408f68642f1d04483a4b93e312"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#aa6db74408f68642f1d04483a4b93e312">CheckActiveHasComponent</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID, const std::string &amp;componentName)</td></tr>
+<tr class="separator:aa6db74408f68642f1d04483a4b93e312"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a842e1a97bc3ae219abed876ee7832fda"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a842e1a97bc3ae219abed876ee7832fda">TransformComponentGetTranslation</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID)</td></tr>
 <tr class="separator:a842e1a97bc3ae219abed876ee7832fda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af592578e15090dbe75d9bb96f29092cd"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#af592578e15090dbe75d9bb96f29092cd">TransformComponentSetTranslation</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID, <a class="el" href="namespaceKargono_1_1Math.html#a87decc7c23070fc65bf0e32f9ce6b61e">Math::vec3</a> newTranslation)</td></tr>
@@ -113,10 +115,26 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a90d7ac7b1ec5fe9d67caa2cdb8da163a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae59490208945b8d02cc4b6449de0dcff"><td class="memItemLeft" align="right" valign="top">static void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#ae59490208945b8d02cc4b6449de0dcff">GetEntityFieldByName</a> (<a class="el" href="classKargono_1_1UUID.html">UUID</a> entityID, const std::string &amp;fieldName)</td></tr>
 <tr class="separator:ae59490208945b8d02cc4b6449de0dcff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a361337d9b48176b245873e055f72d049"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a361337d9b48176b245873e055f72d049">FindEntityHandleByName</a> (const std::string &amp;name)</td></tr>
+<tr class="separator:a361337d9b48176b245873e055f72d049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01dbcd10bc8f794eadfa7d2f485e8bb4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a01dbcd10bc8f794eadfa7d2f485e8bb4">TransitionScene</a> (<a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> newSceneHandle)</td></tr>
+<tr class="separator:a01dbcd10bc8f794eadfa7d2f485e8bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af25216125a2f1603e7cf2b1063fece58"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#af25216125a2f1603e7cf2b1063fece58">TransitionScene</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt; newScene)</td></tr>
+<tr class="separator:af25216125a2f1603e7cf2b1063fece58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cdd6744ac38c9266222c469a3933deb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a2cdd6744ac38c9266222c469a3933deb">TransitionSceneFromName</a> (const std::string &amp;sceneName)</td></tr>
+<tr class="separator:a2cdd6744ac38c9266222c469a3933deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c1c687c72c3d11a1a74f6d642888640"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a7c1c687c72c3d11a1a74f6d642888640">CreateSceneCopy</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt; other)</td></tr>
+<tr class="separator:a7c1c687c72c3d11a1a74f6d642888640"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8853c7caf60afe814d0f194392db4e75"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a8853c7caf60afe814d0f194392db4e75">GetActiveScene</a> ()</td></tr>
+<tr class="separator:a8853c7caf60afe814d0f194392db4e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add0dd1c9b2ade988b863c1659b4cb6f3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#add0dd1c9b2ade988b863c1659b4cb6f3">GetActiveSceneHandle</a> ()</td></tr>
+<tr class="separator:add0dd1c9b2ade988b863c1659b4cb6f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d16c081b2819612c72ca3a87eea7218"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Scenes_1_1SceneService.html#a9d16c081b2819612c72ca3a87eea7218">SetActiveScene</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt; newScene, <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> newHandle)</td></tr>
+<tr class="separator:a9d16c081b2819612c72ca3a87eea7218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00026">26</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00164">164</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a1cc40d1b90ef3a3aa13d2ba928fb0e57"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1cc40d1b90ef3a3aa13d2ba928fb0e57">&#9670;&nbsp;</a></span>Init()</h2>
@@ -141,7 +159,45 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00466">466</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00403">403</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa6db74408f68642f1d04483a4b93e312"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6db74408f68642f1d04483a4b93e312">&#9670;&nbsp;</a></span>CheckActiveHasComponent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::Scenes::SceneService::CheckActiveHasComponent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classKargono_1_1UUID.html">UUID</a>&#160;</td>
+          <td class="paramname"><em>entityID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>componentName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00520">520</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -169,7 +225,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00470">470</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00407">407</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -207,7 +263,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00479">479</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00415">415</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +291,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00494">494</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00429">429</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -273,7 +329,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00505">505</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00438">438</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +357,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00516">516</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00448">448</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -345,7 +401,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00528">528</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00459">459</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
 
 </div>
 </div>
@@ -383,7 +439,239 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00551">551</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00481">481</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a361337d9b48176b245873e055f72d049"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a361337d9b48176b245873e055f72d049">&#9670;&nbsp;</a></span>FindEntityHandleByName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Scenes::SceneService::FindEntityHandleByName </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00502">502</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a01dbcd10bc8f794eadfa7d2f485e8bb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01dbcd10bc8f794eadfa7d2f485e8bb4">&#9670;&nbsp;</a></span>TransitionScene() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Scenes::SceneService::TransitionScene </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td>
+          <td class="paramname"><em>newSceneHandle</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00532">532</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af25216125a2f1603e7cf2b1063fece58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af25216125a2f1603e7cf2b1063fece58">&#9670;&nbsp;</a></span>TransitionScene() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Scenes::SceneService::TransitionScene </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>newScene</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00538">538</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a2cdd6744ac38c9266222c469a3933deb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cdd6744ac38c9266222c469a3933deb">&#9670;&nbsp;</a></span>TransitionSceneFromName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Scenes::SceneService::TransitionSceneFromName </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>sceneName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00556">556</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7c1c687c72c3d11a1a74f6d642888640"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c1c687c72c3d11a1a74f6d642888640">&#9670;&nbsp;</a></span>CreateSceneCopy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt; Kargono::Scenes::SceneService::CreateSceneCopy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8cpp_source.html#l00080">80</a> of file <a class="el" href="Scene_8cpp_source.html">Scene.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a8853c7caf60afe814d0f194392db4e75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8853c7caf60afe814d0f194392db4e75">&#9670;&nbsp;</a></span>GetActiveScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt;<a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a>&gt; Kargono::Scenes::SceneService::GetActiveScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00202">202</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
+
+</div>
+</div>
+<a id="add0dd1c9b2ade988b863c1659b4cb6f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add0dd1c9b2ade988b863c1659b4cb6f3">&#9670;&nbsp;</a></span>GetActiveSceneHandle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a> Kargono::Scenes::SceneService::GetActiveSceneHandle </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00206">206</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
+
+</div>
+</div>
+<a id="a9d16c081b2819612c72ca3a87eea7218"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d16c081b2819612c72ca3a87eea7218">&#9670;&nbsp;</a></span>SetActiveScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void Kargono::Scenes::SceneService::SetActiveScene </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scenes_1_1Scene.html">Scene</a> &gt;&#160;</td>
+          <td class="paramname"><em>newScene</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Assets::AssetHandle</a>&#160;</td>
+          <td class="paramname"><em>newHandle</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Scene_8h_source.html#l00210">210</a> of file <a class="el" href="Scene_8h_source.html">Scene.h</a>.</p>
 
 </div>
 </div>

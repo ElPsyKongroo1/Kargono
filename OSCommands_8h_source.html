@@ -110,7 +110,7 @@ $(document).ready(function(){initNavTree('OSCommands_8h_source.html',''); initRe
 <div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1OSCommands.html">   19</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Utility_1_1OSCommands.html">OSCommands</a></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#if KG_EXPORT == 0</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#ifndef KG_EXPORT</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// This function opens a file explorer window at the provided absolute</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">//      path. This is operating system dependent and only works on windows.</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">   25</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">OpenFileExplorer</a>(<span class="keyword">const</span> std::filesystem::path&amp; path);</div>

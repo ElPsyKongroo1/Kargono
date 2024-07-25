@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OSCommands_8h.html">Kargono/Utility/OSCommands.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileDialogs_8h.html">Kargono/Utility/FileDialogs.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EngineCore_8h.html">Kargono/Core/EngineCore.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Engine_8h.html">Kargono/Core/Engine.h</a>&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="WindowsBackendAPI_8h.html">API/Platform/WindowsBackendAPI.h</a>&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GlfwBackendAPI_8h.html">API/Platform/GlfwBackendAPI.h</a>&quot;</span></div>
@@ -215,7 +215,7 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#if KG_EXPORT == 0</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#ifndef KG_EXPORT</span></div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">OSCommands::OpenFileExplorer</a>(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    {</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <a class="code" href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a>(std::filesystem::is_directory(path), <span class="stringliteral">&quot;Invalid path provided, needs to be a directory!&quot;</span>);</div>
@@ -254,7 +254,7 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        CHAR currentDir[256] = { 0 };</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        ZeroMemory(&amp;ofn, <span class="keyword">sizeof</span>(OPENFILENAME));</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        ofn.lStructSize = <span class="keyword">sizeof</span>(OPENFILENAME);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)<a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().GetWindow().GetNativeWindow());</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)<a class="code" href="classKargono_1_1EngineService.html#acfc89b5be5eeab350ae26d31e12bed25">EngineService::GetActiveWindow</a>().GetNativeWindow());</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        ofn.lpstrFile = szFile;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        ofn.nMaxFile = <span class="keyword">sizeof</span>(szFile);</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keywordflow">if</span> (initialDirectory == <span class="stringliteral">&quot;&quot;</span>)</div>
@@ -290,7 +290,7 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        CHAR currentDir[256] = { 0 };</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        ZeroMemory(&amp;ofn, <span class="keyword">sizeof</span>(OPENFILENAME));</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        ofn.lStructSize = <span class="keyword">sizeof</span>(OPENFILENAME);</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)<a class="code" href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">EngineCore::GetCurrentEngineCore</a>().GetWindow().GetNativeWindow());</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)<a class="code" href="classKargono_1_1EngineService.html#acfc89b5be5eeab350ae26d31e12bed25">EngineService::GetActiveWindow</a>().GetNativeWindow());</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        ofn.lpstrFile = szFile;</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        ofn.nMaxFile = <span class="keyword">sizeof</span>(szFile);</div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
@@ -322,21 +322,113 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        <span class="keywordflow">return</span> std::string();</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    }</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;}</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    std::filesystem::path <a class="code" href="classKargono_1_1Utility_1_1FileDialogs.html#ace4d2bd69801962b9b325828badada8e">FileDialogs::ChooseDirectory</a>(<span class="keyword">const</span> std::filesystem::path&amp; initialPath)</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="comment">// Initialize COM library</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        <span class="keywordflow">if</span> (FAILED(hr)) </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        {</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Failed to initialize COM library&quot;</span>);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        IFileDialog* pFileDialog = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileDialog, <span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span>**<span class="keyword">&gt;</span>(&amp;pFileDialog));</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keywordflow">if</span> (FAILED(hr)) </div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Failed to create FileOpenDialog instance.&quot;</span>);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            CoUninitialize();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        DWORD dwOptions;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        hr = pFileDialog-&gt;GetOptions(&amp;dwOptions);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">if</span> (SUCCEEDED(hr)) </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        {</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            <span class="comment">// Set the options for the file dialog to select folders</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            hr = pFileDialog-&gt;SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        }</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keywordflow">if</span> (FAILED(hr)) </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Failed to set dialog options.&quot;</span>);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            pFileDialog-&gt;Release();</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            CoUninitialize();</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        <span class="comment">// Set the initial folder</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <span class="keywordflow">if</span> (!initialPath.empty()) </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        {</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            PIDLIST_ABSOLUTE pidl;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            SFGAOF sfgao;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            hr = SHParseDisplayName(initialPath.c_str(), <span class="keyword">nullptr</span>, &amp;pidl, 0, &amp;sfgao);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="keywordflow">if</span> (SUCCEEDED(hr)) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                IShellItem* psiFolder = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                hr = SHCreateShellItem(<span class="keyword">nullptr</span>, <span class="keyword">nullptr</span>, pidl, &amp;psiFolder);</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                <span class="keywordflow">if</span> (SUCCEEDED(hr)) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                    pFileDialog-&gt;SetFolder(psiFolder);</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                    psiFolder-&gt;Release();</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                CoTaskMemFree(pidl);</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="comment">// Show the dialog</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        hr = pFileDialog-&gt;Show(NULL);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        <span class="keywordflow">if</span> (FAILED(hr)) </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        {</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <a class="code" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(<span class="stringliteral">&quot;Dialog was canceled or an error occurred.&quot;</span>);</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            pFileDialog-&gt;Release();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            CoUninitialize();</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        <span class="comment">// Get the selected folder</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        IShellItem* pItem = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        hr = pFileDialog-&gt;GetResult(&amp;pItem);</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        <span class="keywordflow">if</span> (SUCCEEDED(hr)) </div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            PWSTR pszFilePath = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            hr = pItem-&gt;GetDisplayName(SIGDN_FILESYSPATH, &amp;pszFilePath);</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">if</span> (SUCCEEDED(hr)) {</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                std::filesystem::path selectedPath(pszFilePath);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                CoTaskMemFree(pszFilePath);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                pItem-&gt;Release();</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                pFileDialog-&gt;Release();</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                CoUninitialize();</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                <span class="keywordflow">return</span> selectedPath;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            }</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            pItem-&gt;Release();</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        pFileDialog-&gt;Release();</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        CoUninitialize();</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    }</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;}</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aAssert_8h_html_a81a3a3850d648d0746c304c7641e2926"><div class="ttname"><a href="Assert_8h.html#a81a3a3850d648d0746c304c7641e2926">KG_ASSERT</a></div><div class="ttdeci">#define KG_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="Assert_8h_source.html#l00019">Assert.h:19</a></div></div>
-<div class="ttc" id="aEngineCore_8h_html"><div class="ttname"><a href="EngineCore_8h.html">EngineCore.h</a></div></div>
+<div class="ttc" id="aEngine_8h_html"><div class="ttname"><a href="Engine_8h.html">Engine.h</a></div></div>
 <div class="ttc" id="aFileDialogs_8h_html"><div class="ttname"><a href="FileDialogs_8h.html">FileDialogs.h</a></div></div>
 <div class="ttc" id="aFileSystem_8h_html"><div class="ttname"><a href="FileSystem_8h.html">FileSystem.h</a></div></div>
 <div class="ttc" id="aGlfwBackendAPI_8h_html"><div class="ttname"><a href="GlfwBackendAPI_8h.html">GlfwBackendAPI.h</a></div></div>
-<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00035">Log.h:35</a></div></div>
+<div class="ttc" id="aLog_8h_html_a0fde1e10e9504c8cc3a772105b4257f3"><div class="ttname"><a href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a></div><div class="ttdeci">#define KG_ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00038">Log.h:38</a></div></div>
+<div class="ttc" id="aLog_8h_html_a764b175145e3ddb27f7467345c905d94"><div class="ttname"><a href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a></div><div class="ttdeci">#define KG_WARN(...)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00036">Log.h:36</a></div></div>
 <div class="ttc" id="aOSCommands_8h_html"><div class="ttname"><a href="OSCommands_8h.html">OSCommands.h</a></div></div>
 <div class="ttc" id="aTime_8h_html"><div class="ttname"><a href="Time_8h.html">Time.h</a></div></div>
 <div class="ttc" id="aWindowsBackendAPI_8h_html"><div class="ttname"><a href="WindowsBackendAPI_8h.html">WindowsBackendAPI.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html_a86dc061a48c9b27250aa3a7c9a5b0c8c"><div class="ttname"><a href="classKargono_1_1EngineCore.html#a86dc061a48c9b27250aa3a7c9a5b0c8c">Kargono::EngineCore::GetCurrentEngineCore</a></div><div class="ttdeci">static EngineCore &amp; GetCurrentEngineCore()</div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00097">EngineCore.h:97</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_acfc89b5be5eeab350ae26d31e12bed25"><div class="ttname"><a href="classKargono_1_1EngineService.html#acfc89b5be5eeab350ae26d31e12bed25">Kargono::EngineService::GetActiveWindow</a></div><div class="ttdeci">static Window &amp; GetActiveWindow()</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8h_source.html#l00141">Engine.h:141</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a3b09ec6fd0535fcda6b4d2b8ef755978"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a3b09ec6fd0535fcda6b4d2b8ef755978">Kargono::Utility::FileDialogs::OpenFile</a></div><div class="ttdeci">static std::filesystem::path OpenFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_a9982e7fbe29d7a4610385da03316817c"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#a9982e7fbe29d7a4610385da03316817c">Kargono::Utility::FileDialogs::SaveFile</a></div><div class="ttdeci">static std::filesystem::path SaveFile(const char *filter=&quot;&quot;, const char *initialDirectory=&quot;&quot;)</div></div>
+<div class="ttc" id="aclassKargono_1_1Utility_1_1FileDialogs_html_ace4d2bd69801962b9b325828badada8e"><div class="ttname"><a href="classKargono_1_1Utility_1_1FileDialogs.html#ace4d2bd69801962b9b325828badada8e">Kargono::Utility::FileDialogs::ChooseDirectory</a></div><div class="ttdeci">static std::filesystem::path ChooseDirectory(const std::filesystem::path &amp;initialPath)</div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_a718972291dc333ee2517fba0cfaeb9bb"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#a718972291dc333ee2517fba0cfaeb9bb">Kargono::Utility::OSCommands::OpenScriptProject</a></div><div class="ttdeci">static void OpenScriptProject(const std::filesystem::path &amp;path)</div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_a8c30f22814efecdda7814ae3509d51bb"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#a8c30f22814efecdda7814ae3509d51bb">Kargono::Utility::OSCommands::OpenProfiler</a></div><div class="ttdeci">static void OpenProfiler()</div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1OSCommands_html_ab222bbaf462da0a2d46f45bf5bef363e"><div class="ttname"><a href="classKargono_1_1Utility_1_1OSCommands.html#ab222bbaf462da0a2d46f45bf5bef363e">Kargono::Utility::OSCommands::OpenFileExplorer</a></div><div class="ttdeci">static void OpenFileExplorer(const std::filesystem::path &amp;path)</div></div>
@@ -345,7 +437,7 @@ $(document).ready(function(){initNavTree('WindowsPlatformUtils_8cpp_source.html'
 <div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_ad979374156c042da22d4fa4a483178b8"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#ad979374156c042da22d4fa4a483178b8">Kargono::Utility::Time::GetStringFromMilliseconds</a></div><div class="ttdeci">static std::string GetStringFromMilliseconds(uint64_t initialMilliseconds)</div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1Time_html_afee356d3763178f9e5c06e07374f8e15"><div class="ttname"><a href="classKargono_1_1Utility_1_1Time.html#afee356d3763178f9e5c06e07374f8e15">Kargono::Utility::Time::GetStringFromSeconds</a></div><div class="ttdeci">static std::string GetStringFromSeconds(uint64_t initialSeconds)</div></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
-<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00398">Scripting.cpp:398</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Scripting_html_a1ecc9d32bd2f8bb0fcd0f1a74d631f30"><div class="ttname"><a href="namespaceKargono_1_1Scripting.html#a1ecc9d32bd2f8bb0fcd0f1a74d631f30">Kargono::Scripting::uint64_t</a></div><div class="ttdeci">const std::string const std::string bool const std::string const std::string const std::string const std::string const std::string uint64_t</div><div class="ttdef"><b>Definition:</b> <a href="Scripting_8cpp_source.html#l00404">Scripting.cpp:404</a></div></div>
 <div class="ttc" id="anamespaceKargono_1_1Utility_html"><div class="ttname"><a href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></div><div class="ttdef"><b>Definition:</b> <a href="OpenALAPI_8h_source.html#l00006">OpenALAPI.h:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

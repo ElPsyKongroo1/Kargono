@@ -5,5 +5,6 @@ var namespaceKargono_1_1Audio =
     [ "AudioListener", "classKargono_1_1Audio_1_1AudioListener.html", "classKargono_1_1Audio_1_1AudioListener" ],
     [ "AudioBuffer", "classKargono_1_1Audio_1_1AudioBuffer.html", "classKargono_1_1Audio_1_1AudioBuffer" ],
     [ "AudioSource", "classKargono_1_1Audio_1_1AudioSource.html", "classKargono_1_1Audio_1_1AudioSource" ],
+    [ "AudioContext", "structKargono_1_1Audio_1_1AudioContext.html", "structKargono_1_1Audio_1_1AudioContext" ],
     [ "AudioService", "classKargono_1_1Audio_1_1AudioService.html", "classKargono_1_1Audio_1_1AudioService" ]
 ];

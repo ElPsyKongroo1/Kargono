@@ -109,22 +109,66 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:abff906b1cbb717518091a93936461b52"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#abff906b1cbb717518091a93936461b52">KG_STRINGIFY</a>(x)&#160;&#160;&#160;#x</td></tr>
+<tr class="separator:abff906b1cbb717518091a93936461b52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9b7d886e8acbd0ed222cf23a3442ba4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#ae9b7d886e8acbd0ed222cf23a3442ba4">KG_EXPAND_AND_STRINGIFY</a>(...)&#160;&#160;&#160;<a class="el" href="Log_8h.html#abff906b1cbb717518091a93936461b52">KG_STRINGIFY</a>(__VA_ARGS__)</td></tr>
+<tr class="separator:ae9b7d886e8acbd0ed222cf23a3442ba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e8d3aab6c4ab2b51b625e9aea62f862"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(...)</td></tr>
 <tr class="separator:a9e8d3aab6c4ab2b51b625e9aea62f862"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a764b175145e3ddb27f7467345c905d94"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">KG_WARN</a>(...)&#160;&#160;&#160;SPDLOG_LOGGER_WARN(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__)</td></tr>
 <tr class="separator:a764b175145e3ddb27f7467345c905d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa966f911c6b441ead2497227a9cee59f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">KG_CRITICAL</a>(...)&#160;&#160;&#160;SPDLOG_LOGGER_CRITICAL(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__)</td></tr>
 <tr class="separator:aa966f911c6b441ead2497227a9cee59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fde1e10e9504c8cc3a772105b4257f3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(...)&#160;&#160;&#160;SPDLOG_LOGGER_ERROR(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__); KG_DEBUGBREAK();</td></tr>
+<tr class="memitem:a0fde1e10e9504c8cc3a772105b4257f3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">KG_ERROR</a>(...)&#160;&#160;&#160;SPDLOG_LOGGER_ERROR(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot; KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</td></tr>
 <tr class="separator:a0fde1e10e9504c8cc3a772105b4257f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a04d44b8154d2378583b5075008e625"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a1a04d44b8154d2378583b5075008e625">KG_TRACE</a>(...)</td></tr>
-<tr class="separator:a1a04d44b8154d2378583b5075008e625"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0461fc63b46b84a39b731a5708ade830"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a0461fc63b46b84a39b731a5708ade830">KG_TRACE2</a>(...)</td></tr>
-<tr class="separator:a0461fc63b46b84a39b731a5708ade830"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a50e69365c46a41545fb96e14410fcf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a2a50e69365c46a41545fb96e14410fcf">KG_TRACE3</a>(...)</td></tr>
-<tr class="separator:a2a50e69365c46a41545fb96e14410fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e1e8ccd198e616d362371bf2a798f4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a4e1e8ccd198e616d362371bf2a798f4e">KG_TRACE_INFO</a>(...)</td></tr>
+<tr class="separator:a4e1e8ccd198e616d362371bf2a798f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63cfd904b31d136ddbf44645141442fe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a63cfd904b31d136ddbf44645141442fe">KG_TRACE_CRITICAL</a>(...)</td></tr>
+<tr class="separator:a63cfd904b31d136ddbf44645141442fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82cbfe785a1977a03a1c8521dc703c72"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Log_8h.html#a82cbfe785a1977a03a1c8521dc703c72">KG_TRACE_ERROR</a>(...)</td></tr>
+<tr class="separator:a82cbfe785a1977a03a1c8521dc703c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="abff906b1cbb717518091a93936461b52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abff906b1cbb717518091a93936461b52">&#9670;&nbsp;</a></span>KG_STRINGIFY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KG_STRINGIFY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x</td><td>)</td>
+          <td>&#160;&#160;&#160;#x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00004">4</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+
+</div>
+</div>
+<a id="ae9b7d886e8acbd0ed222cf23a3442ba4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9b7d886e8acbd0ed222cf23a3442ba4">&#9670;&nbsp;</a></span>KG_EXPAND_AND_STRINGIFY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KG_EXPAND_AND_STRINGIFY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="Log_8h.html#abff906b1cbb717518091a93936461b52">KG_STRINGIFY</a>(__VA_ARGS__)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00005">5</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+
+</div>
+</div>
 <a id="a9e8d3aab6c4ab2b51b625e9aea62f862"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e8d3aab6c4ab2b51b625e9aea62f862">&#9670;&nbsp;</a></span>KG_INFO</h2>
 
@@ -141,7 +185,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00032">32</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00035">35</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
 
 </div>
 </div>
@@ -161,7 +205,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00033">33</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00036">36</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
 
 </div>
 </div>
@@ -181,7 +225,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00034">34</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00037">37</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
 
 </div>
 </div>
@@ -196,27 +240,7 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
-          <td>&#160;&#160;&#160;SPDLOG_LOGGER_ERROR(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__); KG_DEBUGBREAK();</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00035">35</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
-
-</div>
-</div>
-<a id="a1a04d44b8154d2378583b5075008e625"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a04d44b8154d2378583b5075008e625">&#9670;&nbsp;</a></span>KG_TRACE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define KG_TRACE</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>...</em></td><td>)</td>
-          <td></td>
+          <td>&#160;&#160;&#160;SPDLOG_LOGGER_ERROR(::<a class="el" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a>(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot; KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -225,14 +249,14 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="a0461fc63b46b84a39b731a5708ade830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0461fc63b46b84a39b731a5708ade830">&#9670;&nbsp;</a></span>KG_TRACE2</h2>
+<a id="a4e1e8ccd198e616d362371bf2a798f4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e1e8ccd198e616d362371bf2a798f4e">&#9670;&nbsp;</a></span>KG_TRACE_INFO</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define KG_TRACE2</td>
+          <td class="memname">#define KG_TRACE_INFO</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
@@ -241,18 +265,18 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00039">39</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00041">41</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
 
 </div>
 </div>
-<a id="a2a50e69365c46a41545fb96e14410fcf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a50e69365c46a41545fb96e14410fcf">&#9670;&nbsp;</a></span>KG_TRACE3</h2>
+<a id="a63cfd904b31d136ddbf44645141442fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63cfd904b31d136ddbf44645141442fe">&#9670;&nbsp;</a></span>KG_TRACE_CRITICAL</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define KG_TRACE3</td>
+          <td class="memname">#define KG_TRACE_CRITICAL</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
@@ -261,7 +285,27 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00040">40</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00042">42</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
+
+</div>
+</div>
+<a id="a82cbfe785a1977a03a1c8521dc703c72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82cbfe785a1977a03a1c8521dc703c72">&#9670;&nbsp;</a></span>KG_TRACE_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KG_TRACE_ERROR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Log_8h_source.html#l00043">43</a> of file <a class="el" href="Log_8h_source.html">Log.h</a>.</p>
 
 </div>
 </div>

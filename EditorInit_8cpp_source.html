@@ -90,33 +90,60 @@ $(document).ready(function(){initNavTree('EditorInit_8cpp_source.html',''); init
 </div><!--header-->
 <div class="contents">
 <a href="EditorInit_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Kargono_8h.html">Kargono.h</a>&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EntryPoint_8h.html">Kargono/Core/EntryPoint.h</a>&quot;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorApp_8h.html">EditorApp.h</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#ifndef KG_TESTING</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EntryPoint_8h.html">Kargono/Core/EntryPoint.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;{</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    EngineCore* <a class="code" href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">InitEngineAndCreateApp</a>(CommandLineArgs args)</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        AppSpec spec;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        spec.Name = <span class="stringliteral">&quot;Kargono Editor&quot;</span>;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        spec.CommandLineArgs = args;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        spec.WorkingDirectory = std::filesystem::current_path();</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        spec.Width = 1600;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        spec.Height = 900;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Application</a>* editorApp = <span class="keyword">new</span> EditorApp();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        KG_VERIFY(editorApp, <span class="stringliteral">&quot;Editor App Init&quot;</span>);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code" href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a>(spec, editorApp);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    }</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="EditorApp_8h.html">EditorApp.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="LauncherApp_8h.html">Launcher/LauncherApp.h</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="namespaceKargono.html#a696e7f52a7ae18cc2ecfbc4d14c52f73">InitEngineAndCreateApp</a>(CommandLineArguments args)</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        std::filesystem::path projectPath {};</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifdef KG_TESTING</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        projectPath = <span class="stringliteral">&quot;../Projects/Pong/Pong.kproj&quot;</span>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        EngineSpec launcherSpec;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        launcherSpec.Name = <span class="stringliteral">&quot;Editor Launcher&quot;</span>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        launcherSpec.CommandLineArgs = args;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        launcherSpec.WorkingDirectory = std::filesystem::current_path();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        launcherSpec.DefaultWindowWidth = 800;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        launcherSpec.DefaultWindowHeight = 320;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        LauncherApp* launcherApp = <span class="keyword">new</span> LauncherApp();</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classKargono_1_1EngineService.html#a230646b171d54d63db48672c3af9ca16">EngineService::Init</a>(launcherSpec, launcherApp);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <a class="code" href="classKargono_1_1EngineService.html#a3c05c1b096f642ae81de35dd482568fd">Kargono::EngineService::Run</a>();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        projectPath = launcherApp-&gt;GetSelectedProject();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="classKargono_1_1EngineService.html#a635b6cde846312b92f9e1fe4b990d531">EngineService::Terminate</a>();</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">if</span> (projectPath.empty())</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        EngineSpec editorSpec;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        editorSpec.Name = <span class="stringliteral">&quot;Kargono Editor&quot;</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        editorSpec.CommandLineArgs = args;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        editorSpec.WorkingDirectory = std::filesystem::current_path();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        editorSpec.DefaultWindowWidth = 1600;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        editorSpec.DefaultWindowHeight = 900;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <a class="code" href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Application</a>* editorApp = <span class="keyword">new</span> EditorApp(projectPath);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="classKargono_1_1EngineService.html#a230646b171d54d63db48672c3af9ca16">EngineService::Init</a>(editorSpec, editorApp);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        KG_VERIFY(editorApp, <span class="stringliteral">&quot;Editor App Init&quot;</span>);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
 <div class="ttc" id="aEditorApp_8h_html"><div class="ttname"><a href="EditorApp_8h.html">EditorApp.h</a></div></div>
 <div class="ttc" id="aEntryPoint_8h_html"><div class="ttname"><a href="EntryPoint_8h.html">EntryPoint.h</a></div></div>
 <div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineCore_html"><div class="ttname"><a href="classKargono_1_1EngineCore.html">Kargono::EngineCore</a></div><div class="ttdef"><b>Definition:</b> <a href="EngineCore_8h_source.html#l00051">EngineCore.h:52</a></div></div>
+<div class="ttc" id="aLauncherApp_8h_html"><div class="ttname"><a href="LauncherApp_8h.html">LauncherApp.h</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_a230646b171d54d63db48672c3af9ca16"><div class="ttname"><a href="classKargono_1_1EngineService.html#a230646b171d54d63db48672c3af9ca16">Kargono::EngineService::Init</a></div><div class="ttdeci">static void Init(const EngineSpec &amp;specification, Application *app)</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8cpp_source.html#l00034">Engine.cpp:34</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_a3c05c1b096f642ae81de35dd482568fd"><div class="ttname"><a href="classKargono_1_1EngineService.html#a3c05c1b096f642ae81de35dd482568fd">Kargono::EngineService::Run</a></div><div class="ttdeci">static void Run()</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8cpp_source.html#l00073">Engine.cpp:73</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_a635b6cde846312b92f9e1fe4b990d531"><div class="ttname"><a href="classKargono_1_1EngineService.html#a635b6cde846312b92f9e1fe4b990d531">Kargono::EngineService::Terminate</a></div><div class="ttdeci">static void Terminate()</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8cpp_source.html#l00051">Engine.cpp:51</a></div></div>
 <div class="ttc" id="anamespaceKargono_1_1Events_html_ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84">Kargono::Events::Application</a></div><div class="ttdeci">@ Application</div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00060">Event.h:60</a></div></div>
 <div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
-<div class="ttc" id="anamespaceKargono_html_a45923d73887d88bd86f612361e918d0b"><div class="ttname"><a href="namespaceKargono.html#a45923d73887d88bd86f612361e918d0b">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">EngineCore * InitEngineAndCreateApp(CommandLineArgs args)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeInit_8cpp_source.html#l00014">RuntimeInit.cpp:14</a></div></div>
+<div class="ttc" id="anamespaceKargono_html_a696e7f52a7ae18cc2ecfbc4d14c52f73"><div class="ttname"><a href="namespaceKargono.html#a696e7f52a7ae18cc2ecfbc4d14c52f73">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">void InitEngineAndCreateApp(CommandLineArguments args)</div><div class="ttdef"><b>Definition:</b> <a href="RuntimeInit_8cpp_source.html#l00016">RuntimeInit.cpp:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
