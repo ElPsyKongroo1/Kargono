@@ -80,6 +80,11 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Init();
 
 		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+		m_ViewportPanel->m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
+		m_ViewportPanel->m_EditorCamera.SetDistance(1.0f);
+		m_ViewportPanel->m_EditorCamera.SetPitch(0.195f);
+		m_ViewportPanel->m_EditorCamera.SetYaw(-0.372);
 		
 		m_ViewportPanel->InitializeOverlayData();
 

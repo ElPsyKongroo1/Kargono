@@ -115,6 +115,10 @@ namespace Kargono::Rendering
 			m_FocalPoint = focalPoint;
 			UpdateView();
 		}
+		Math::vec3 GetFocalPoint()
+		{
+			return m_FocalPoint;
+		}
 
 	private:
 		//============================================================

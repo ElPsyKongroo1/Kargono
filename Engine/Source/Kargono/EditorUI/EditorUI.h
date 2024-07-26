@@ -199,6 +199,10 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_LightPurple {0.9226f, 0.4630f, 1.0f, 1.0f};
 		inline static ImVec4 s_LightGreen {0.2879f, 1.0f, 0.39322f, 1.0f};
 		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
+
+
+		inline static ImVec4 s_GridMajor { 0.735f, 0.720f, 0.690f, 1.0f};
+		inline static ImVec4 s_GridMinor { 0.347f, 0.347f, 0.347f, 1.0f};
 	public:
 		//==============================
 		// UI Button Presets
