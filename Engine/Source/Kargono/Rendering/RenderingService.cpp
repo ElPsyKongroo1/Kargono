@@ -159,7 +159,7 @@ namespace Kargono::Rendering
 	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
 	{
 		// Upload Indices
-		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
 		std::size_t currentBufferSize = (drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data) / inputSpec.Shader->GetInputLayout().GetStride();
 		for (auto& index : *(inputSpec.ShapeComponent->Indices))
 		{
@@ -176,8 +176,9 @@ namespace Kargono::Rendering
 	{
 		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == RenderingType::None) { return; }
 
-		// Manage current DrawCallBuffer
-		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+
+		// Create new DrawCallBuffer if one is not associated with active shader
 		if (!drawCallBuffer)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
@@ -190,10 +191,12 @@ namespace Kargono::Rendering
 			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
 			drawCallBuffer->Shader = inputSpec.Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
 		std::size_t currentBufferSize = drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data;
 		std::size_t sizeOfNewDrawCallBuffer = inputSpec.Buffer.Size * inputSpec.ShapeComponent->Vertices->size() + currentBufferSize;
+		// Create new DrawCallBuffer if current buffer overflows
 		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
@@ -206,6 +209,7 @@ namespace Kargono::Rendering
 			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
 			drawCallBuffer->Shader = inputSpec.Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
 		inputSpec.CurrentDrawBuffer = drawCallBuffer;
@@ -293,7 +297,7 @@ namespace Kargono::Rendering
 		{
 			if (buffer->Shader->GetCurrentDrawCallBuffer())
 			{
-				buffer->Shader->SetCurrentDrawCallBufferNull();
+				buffer->Shader->ClearCurrentDrawCallBuffer();
 			}
 		}
 

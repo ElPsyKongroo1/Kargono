@@ -57,9 +57,13 @@ namespace Kargono::Panels
 
 		float m_LargeGridSpacing = 100.0f;
 		float m_FineGridSpacing = 10.0f;
-		bool m_DisplayXYGrid = false;
-		bool m_DisplayXZGrid = true;
-		bool m_DisplayYZGrid = false;
+		bool m_DisplayXYMajorGrid = false;
+		bool m_DisplayXZMajorGrid = true;
+		bool m_DisplayYZMajorGrid = false;
+
+		bool m_DisplayXYMinorGrid = false;
+		bool m_DisplayXZMinorGrid = true;
+		bool m_DisplayYZMinorGrid = false;
 
 		friend Kargono::EditorApp;
 	};

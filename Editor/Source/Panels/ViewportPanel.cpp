@@ -515,17 +515,44 @@ namespace Kargono::Panels
 
 			if (ImGui::BeginPopup("Grid Options"))
 			{
-				if (ImGui::MenuItem("Display X-Y Grid", 0, m_DisplayXYGrid))
+				if (ImGui::BeginMenu("X-Y Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayXYGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
+					}
+
+					if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+					}
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Display X-Z Grid", 0, m_DisplayXZGrid))
+
+				if (ImGui::BeginMenu("X-Z Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayXZGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
+					}
+					if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+					}
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Display Y-Z Grid", 0, m_DisplayYZGrid))
+
+				if (ImGui::BeginMenu("Y-Z Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayYZGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
+					}
+					if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndPopup();
 			}
@@ -534,7 +561,7 @@ namespace Kargono::Panels
 			ImGui::SetNextItemWidth(30.0f);
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
 			ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
-				10.0f, 100.0f,
+				1.0f, 100.0f,
 				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
 			if (ImGui::IsItemHovered())
 			{
@@ -971,45 +998,6 @@ namespace Kargono::Panels
 
 	}
 
-	/*void ViewportPanel::DrawWorldAxis()
-	{
-		static Math::vec3 lineVertices[6]
-		{
-			{ -1000.0f, 0.0f, 0.0f },
-			{ 1000.0f, 0.0f, 0.0f },
-			{ 0.0f, -1000.0f, 0.0f },
-			{ 0.0f, 1000.0f, 0.0f },
-			{ 0.0f, 0.0f, -1000.0f },
-			{ 0.0f, 0.0f, 1000.0f }
-		};
-		static Math::uvec2 lineIndices[3]
-		{
-			{ 0, 1 },
-			{ 2, 3 },
-			{ 4, 5 }
-		};
-
-		static Math::vec4 colorIndices[3]
-		{
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen)
-		};
-
-		uint32_t iteration = 0;
-		for (auto& index : lineIndices)
-		{
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[iteration],
-			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
-			s_OutputVector->clear();
-			s_OutputVector->push_back(lineVertices[index.x]);
-			s_OutputVector->push_back(lineVertices[index.y]);
-			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
-			iteration++;
-		}
-	}*/
-
 	void ViewportPanel::DrawWorldAxis()
 	{
 		Math::vec3 cameraPosition = m_EditorCamera.GetPosition();
@@ -1061,7 +1049,7 @@ namespace Kargono::Panels
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGray),
 			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 		// X-Y Grid
-		if (m_DisplayXYGrid)
+		if (m_DisplayXYMajorGrid)
 		{
 			// Create Y Lines
 			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
@@ -1072,10 +1060,14 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
 				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
+
 			// Create X Lines
 			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.y)
@@ -1085,13 +1077,54 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
 				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
+
+		if (m_DisplayXYMinorGrid)
+		{
+			// Create X Minor Grid lines
+			currentLine = (int32_t)fineGridStart.x;
+			while ((float)currentLine < (fineGridStart.x + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ currentLine,   fineGridStart.y, 0.0f });
+				s_OutputVector->push_back({ currentLine,fineGridStart.y + m_LargeGridSpacing , 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Y Minor Grid lines
+			currentLine = (int32_t)fineGridStart.y;
+			while ((float)currentLine < (fineGridStart.y + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ fineGridStart.x, currentLine, 0.0f });
+				s_OutputVector->push_back({ fineGridStart.x + m_LargeGridSpacing , currentLine, 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+		}
+
 		// Y-Z Grid
-		if (m_DisplayYZGrid)
+		if (m_DisplayYZMajorGrid)
 		{ 
 			// Create Y Lines
 			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
@@ -1102,10 +1135,14 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
 				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
+
 			// Create Z Lines
 			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.z)
@@ -1115,14 +1152,54 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine});
 				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
 
+		if (m_DisplayYZMinorGrid)
+		{
+			// Create Y Minor Grid lines
+			currentLine = (int32_t)fineGridStart.y;
+			while ((float)currentLine < (fineGridStart.y + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ 0.0f, currentLine,  fineGridStart.z });
+				s_OutputVector->push_back({ 0.0f , currentLine,  fineGridStart.z + m_LargeGridSpacing });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Z Minor Grid lines
+			currentLine = (int32_t)fineGridStart.z;
+			while ((float)currentLine < (fineGridStart.z + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ 0.0f, fineGridStart.y, currentLine });
+				s_OutputVector->push_back({ 0.0f , fineGridStart.y + m_LargeGridSpacing, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+		}
+
 		// X-Z Grid
-		if (m_DisplayXZGrid)
+		if (m_DisplayXZMajorGrid)
 		{ 
 			// Create Large X Lines
 			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
@@ -1133,23 +1210,12 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
 				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
-			}
-
-			// Create X Fine-Grid lines
-			currentLine = fineGridStart.x;
-			while ((float)currentLine < (fineGridStart.x + m_LargeGridSpacing))
-			{
-				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
-				{
-					currentLine += (int32_t)m_FineGridSpacing;
-					continue;
-				}
-				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z });
-				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + m_LargeGridSpacing });
-				currentLine += (int32_t)m_FineGridSpacing;
 			}
 
 			// Create Large Z Lines
@@ -1161,13 +1227,36 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
 				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
+		}
 
-			// Create Z Fine-Grid lines
-			currentLine = fineGridStart.z;
+		if (m_DisplayXZMinorGrid)
+		{
+			// Create X Minor Grid lines
+			currentLine = (int32_t)fineGridStart.x;
+			while ((float)currentLine < (fineGridStart.x + m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z });
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + m_LargeGridSpacing });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Z Minor Grid lines
+			currentLine = (int32_t)fineGridStart.z;
 			while ((float)currentLine < (fineGridStart.z + m_LargeGridSpacing))
 			{
 				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
@@ -1175,19 +1264,16 @@ namespace Kargono::Panels
 					currentLine += (int32_t)m_FineGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ fineGridStart.x, 0.0f, currentLine });
 				s_OutputVector->push_back({ fineGridStart.x + m_LargeGridSpacing, 0.0f, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
 		}
 
-		// Submit all grid lines
-		if (s_OutputVector->size() > 0)
-		{
-			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
-		}
-		if (m_DisplayXZGrid || m_DisplayXYGrid || m_DisplayYZGrid)
+		if (m_DisplayXZMajorGrid || m_DisplayXYMajorGrid || m_DisplayYZMajorGrid)
 		{
 			// X Axis
 			s_OutputVector->clear();
