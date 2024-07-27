@@ -84,7 +84,7 @@ namespace Kargono
 		m_ViewportPanel->m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
 		m_ViewportPanel->m_EditorCamera.SetDistance(1.0f);
 		m_ViewportPanel->m_EditorCamera.SetPitch(0.195f);
-		m_ViewportPanel->m_EditorCamera.SetYaw(-0.372);
+		m_ViewportPanel->m_EditorCamera.SetYaw(-0.372f);
 		
 		m_ViewportPanel->InitializeOverlayData();
 

@@ -67,15 +67,20 @@ namespace Kargono::Panels
 	// Shape Component
 	static EditorUI::CollapsingHeaderSpec s_ShapeHeader{};
 	static std::function<void()> s_UpdateComponent { nullptr };
-	static std::function<void()> s_AddFlatColorSection { nullptr };
+	static std::function<void()> s_AddColorSection { nullptr };
 	static std::function<void()> s_AddTextureSection { nullptr };
 	static std::function<void()> s_AddCircleShapeSection { nullptr };
 	static std::function<void()> s_AddProjectionMatrixSection { nullptr };
 	static std::function<void()> s_AddEntityIDSection { nullptr };
 
 	static EditorUI::SelectOptionSpec s_ShapeSelect {};
+	static EditorUI::SelectOptionSpec s_ShapeColorType {};
 	static EditorUI::CheckboxSpec s_ShapeAddTexture {};
+	static EditorUI::SelectOptionSpec s_ShapeSetTexture {};
+	static EditorUI::EditFloatSpec s_ShapeTilingFactor{};
 	static EditorUI::CheckboxSpec s_ShapeAddCircle {};
+	static EditorUI::EditFloatSpec s_ShapeCircleThickness{};
+	static EditorUI::EditFloatSpec s_ShapeCircleFade{};
 	static EditorUI::CheckboxSpec s_ShapeAddProjection {};
 	static EditorUI::CheckboxSpec s_ShapeAddEntityID {};
 
@@ -849,46 +854,12 @@ namespace Kargono::Panels
 		//=========================
 
 		// These lambdas provide UI for user manipulating of shader specifications and input values
-		s_AddFlatColorSection = [&]()
+		s_AddColorSection = [&]()
 		{
 			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
-			if (ImGui::Button("Select Color Input")) { ImGui::OpenPopup("Color Type Selection"); }
-			ImGui::SameLine();
-			ImGui::TextUnformatted(Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput).c_str());
-			if (ImGui::BeginPopup("Color Type Selection"))
-			{
-				if (ImGui::Selectable("No Color"))
-				{
-					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
-					s_UpdateComponent();
-				}
-
-				if (ImGui::Selectable("Flat Color"))
-				{
-					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
-					s_UpdateComponent();
-					Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
-				}
-				if (ImGui::Selectable("Vertex Color"))
-				{
-					Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
-					if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
-					{
-						transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
-					}
-					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
-					s_UpdateComponent();
-					if (component.VertexColors) { component.VertexColors->clear(); }
-					component.VertexColors = CreateRef<std::vector<Math::vec4>>();
-					for (uint32_t iterator{ 0 }; iterator < component.Vertices->size(); iterator++)
-					{
-						component.VertexColors->push_back(transferColor);
-					}
-				}
-
-				ImGui::EndPopup();
-			}
+			s_ShapeColorType.CurrentOption = { Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput), Assets::EmptyHandle };
+			EditorUI::EditorUIService::SelectOption(s_ShapeColorType);
 
 			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::None) { return; }
 
@@ -916,26 +887,22 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Checkbox(s_ShapeAddTexture);
 			if (s_ShapeAddTexture.ToggleBoolean)
 			{
-				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-				if (ImGui::BeginDragDropTarget())
+				if (component.TextureHandle == Assets::EmptyHandle)
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_IMAGE"))
-					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath(path);
-						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewTextureFromFile(texturePath);
-						component.TextureHandle = currentHandle;
-						Ref<Rendering::Texture2D> texture = Assets::AssetManager::GetTexture(currentHandle);
-						if (texture)
-							component.Texture = texture;
-						else
-							KG_WARN("Could not load texture {0}", texturePath.filename().string());
-					}
-					ImGui::EndDragDropTarget();
+					s_ShapeSetTexture.CurrentOption = { "None", Assets::EmptyHandle };
 				}
+				else
+				{
+					s_ShapeSetTexture.CurrentOption = 
+					{
+						Assets::AssetManager::GetTextureRegistry().at(component.TextureHandle).Data.GetSpecificFileData<Assets::TextureMetaData>()->InitialFileLocation.string(),
+						component.TextureHandle
+					};
+				}
+				EditorUI::EditorUIService::SelectOption(s_ShapeSetTexture);
 
-				float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
-				ImGui::DragFloat("Tiling Factor", tilingFactor, 0.1f, 0.0f, 100.0f);
+				s_ShapeTilingFactor.CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+				EditorUI::EditorUIService::EditFloat(s_ShapeTilingFactor);
 			}
 		};
 
@@ -947,11 +914,11 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Checkbox(s_ShapeAddCircle);
 			if (component.ShaderSpecification.AddCircleShape)
 			{
-				float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
-				ImGui::DragFloat("Thickness", thickness, 0.025f, 0.0f, 1.0f);
+				s_ShapeCircleThickness.CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+				EditorUI::EditorUIService::EditFloat(s_ShapeCircleThickness);
 
-				float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
-				ImGui::DragFloat("Fade", fade, 0.00025f, 0.0f, 1.0f);
+				s_ShapeCircleFade.CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+				EditorUI::EditorUIService::EditFloat(s_ShapeCircleFade);
 			}
 		};
 
@@ -1049,6 +1016,48 @@ namespace Kargono::Panels
 			}
 		};
 
+		s_ShapeColorType.Label = "Color Type";
+		s_ShapeColorType.Flags |= EditorUI::SelectOption_Indented;
+		s_ShapeColorType.PopupAction = [&]()
+		{
+			s_ShapeColorType.ClearOptions();
+			s_ShapeColorType.AddToOptions("Clear", "No Color", Assets::EmptyHandle);
+			s_ShapeColorType.AddToOptions("All Types", "Flat Color", Assets::EmptyHandle);
+			s_ShapeColorType.AddToOptions("All Types", "Vertex Color", Assets::EmptyHandle);
+		};
+		s_ShapeColorType.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			if (entry.Label == "No Color")
+			{
+				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
+				s_UpdateComponent();
+			}
+			if (entry.Label == "Flat Color")
+			{
+				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
+				s_UpdateComponent();
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
+			}
+			if (entry.Label == "Vertex Color")
+			{
+				Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
+				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
+				{
+					transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+				}
+				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
+				s_UpdateComponent();
+				if (component.VertexColors) { component.VertexColors->clear(); }
+				component.VertexColors = CreateRef<std::vector<Math::vec4>>();
+				for (uint32_t iterator{ 0 }; iterator < component.Vertices->size(); iterator++)
+				{
+					component.VertexColors->push_back(transferColor);
+				}
+			}
+		};
+
 		// Set Shape Add Texture Checkbox
 		s_ShapeAddTexture.Label = "Use Texture";
 		s_ShapeAddTexture.Flags |= EditorUI::Checkbox_Indented;
@@ -1087,6 +1096,54 @@ namespace Kargono::Panels
 			}
 		};
 
+		s_ShapeSetTexture.Label = "Select Texture";
+		s_ShapeSetTexture.Flags |= EditorUI::SelectOption_Indented;
+		s_ShapeSetTexture.PopupAction = [&]()
+		{
+			s_ShapeSetTexture.ClearOptions();
+			for (auto& [handle, asset] : Assets::AssetManager::GetTextureRegistry())
+			{
+				s_ShapeSetTexture.AddToOptions("All Textures", asset.Data.GetSpecificFileData<Assets::TextureMetaData>()->InitialFileLocation.string(), handle);
+			}
+		};
+		s_ShapeSetTexture.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				Buffer textureBuffer{ 4 };
+				textureBuffer.SetDataToByte(0xff);
+				component.TextureHandle = Assets::AssetManager::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
+				component.Texture = Assets::AssetManager::GetTexture(component.TextureHandle);
+				textureBuffer.Release();
+			}
+
+			if (!Assets::AssetManager::GetTextureRegistry().contains(entry.Handle))
+			{
+				KG_WARN("Could not locate texture in asset registry!");
+				return;
+			}
+
+			component.TextureHandle = entry.Handle;
+			component.Texture = Assets::AssetManager::GetTexture(entry.Handle);
+		};
+
+		s_ShapeTilingFactor.Label = "Tiling Factor";
+		s_ShapeTilingFactor.Flags |= EditorUI::EditFloat_Indented;
+		s_ShapeTilingFactor.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::ShapeComponent>())
+			{
+				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::ShapeComponent>();
+			float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+			*tilingFactor = s_ShapeTilingFactor.CurrentFloat;
+		};
+
 		// Set Shape Circle Option
 		s_ShapeAddCircle.Label = "Use Circle Shape";
 		s_ShapeAddCircle.Flags |= EditorUI::Checkbox_Indented;
@@ -1101,6 +1158,36 @@ namespace Kargono::Panels
 				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
 				Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
 			}
+		};
+
+		s_ShapeCircleThickness.Label = "Circle Thickness";
+		s_ShapeCircleThickness.Flags |= EditorUI::EditFloat_Indented;
+		s_ShapeCircleThickness.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::ShapeComponent>())
+			{
+				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::ShapeComponent>();
+			float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+			*thickness = s_ShapeCircleThickness.CurrentFloat;
+		};
+
+		s_ShapeCircleFade.Label = "Circle Fade";
+		s_ShapeCircleFade.Flags |= EditorUI::EditFloat_Indented;
+		s_ShapeCircleFade.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::ShapeComponent>())
+			{
+				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::ShapeComponent>();
+			float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+			*fade = s_ShapeCircleFade.CurrentFloat;
 		};
 
 		// Set Shape Add Projection Option
@@ -1435,7 +1522,7 @@ namespace Kargono::Panels
 				}
 				if (component.CurrentShape == Rendering::ShapeTypes::Quad)
 				{
-					s_AddFlatColorSection();
+					s_AddColorSection();
 					s_AddTextureSection();
 					s_AddCircleShapeSection();
 					s_AddProjectionMatrixSection();
@@ -1444,7 +1531,7 @@ namespace Kargono::Panels
 				}
 				if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 				{
-					s_AddFlatColorSection();
+					s_AddColorSection();
 					s_AddTextureSection();
 					s_AddProjectionMatrixSection();
 					s_AddEntityIDSection();

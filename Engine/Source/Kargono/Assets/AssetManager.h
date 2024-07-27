@@ -94,6 +94,10 @@ namespace Kargono::Assets
 		//==============================
 		// Function to get a texture with a given name
 		static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetTextureRegistry()
+		{
+			return s_TextureRegistry;
+		}
 		
 	private:
 		//==============================
