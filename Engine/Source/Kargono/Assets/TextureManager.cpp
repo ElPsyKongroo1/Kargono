@@ -148,7 +148,7 @@ namespace Kargono::Assets
 
 		if (isAssetDuplicate)
 		{
-			KG_ERROR("THERE IS A DUPLICATE!");
+			KG_INFO("Duplicate asset found");
 			return currentHandle;
 		}
 

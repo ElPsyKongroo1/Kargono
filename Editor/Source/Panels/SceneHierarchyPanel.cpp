@@ -64,12 +64,20 @@ namespace Kargono::Panels
 	static EditorUI::EditFloatSpec s_CameraOrthographicNearPlane{};
 	static EditorUI::EditFloatSpec s_CameraOrthographicFarPlane{};
 
+	// Shape Component
+	static EditorUI::CollapsingHeaderSpec s_ShapeHeader{};
+	static std::function<void()> s_UpdateComponent { nullptr };
+	static std::function<void()> s_AddFlatColorSection { nullptr };
+	static std::function<void()> s_AddTextureSection { nullptr };
+	static std::function<void()> s_AddCircleShapeSection { nullptr };
+	static std::function<void()> s_AddProjectionMatrixSection { nullptr };
+	static std::function<void()> s_AddEntityIDSection { nullptr };
 
-	// TODO: Unsorted widgets
-	static EditorUI::CheckboxSpec s_ShapeAddTextureCheckboxSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddCircleSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddProjectionSpec {};
-	static EditorUI::CheckboxSpec s_ShapeAddEntityIDSpec {};
+	static EditorUI::SelectOptionSpec s_ShapeSelect {};
+	static EditorUI::CheckboxSpec s_ShapeAddTexture {};
+	static EditorUI::CheckboxSpec s_ShapeAddCircle {};
+	static EditorUI::CheckboxSpec s_ShapeAddProjection {};
+	static EditorUI::CheckboxSpec s_ShapeAddEntityID {};
 
 	static void InitializeMainHeader()
 	{
@@ -326,17 +334,6 @@ namespace Kargono::Panels
 		s_TransformHeader.Label = "Transform";
 		s_TransformHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		s_TransformHeader.Expanded = true;
-		s_TransformHeader.AddToSelectionList("Remove Component", [&]()
-		{
-			EngineService::SubmitToMainThread([&]()
-			{
-				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-				if (entity.HasComponent<Scenes::TransformComponent>())
-				{
-					entity.RemoveComponent<Scenes::TransformComponent>();
-				}
-			});
-		});
 
 		s_TransformEditTranslation.Label = "Translation";
 		s_TransformEditTranslation.Flags = EditorUI::EditVec3_Indented;
@@ -790,23 +787,350 @@ namespace Kargono::Panels
 		};
 	}
 
+	static void InitializeShapeComponent()
+	{
+		//=========================
+		// Lambda Functions for Later Use (Scroll down to find main function body)
+		//=========================
+
+		// This Lambda updates the shader after a checkbox is clicked that changes the component.ShaderSpecification
+		// Another function of this lambda is to ensure data inside the old buffer is transferred to the new buffer
+		// if they represent the same input
+		s_UpdateComponent = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			// Get Previous Buffer and Previous Shader
+			Buffer oldBuffer = component.ShaderData;
+			Ref<Rendering::Shader> oldShader = component.Shader;
+			// Get New Shader
+			auto [newShaderAssetHandle, newShader] = Assets::AssetManager::GetShader(component.ShaderSpecification);
+			// Assign New Shader to Component
+			component.ShaderHandle = newShaderAssetHandle;
+			component.Shader = newShader;
+			// Create New Buffer with New ShaderLayout Size and Set Entire Buffer to Zero
+			Buffer newBuffer(newShader->GetInputLayout().GetStride() * sizeof(uint8_t));
+			newBuffer.SetDataToByte(0);
+
+			// Transfer Data from Old Buffer to New Buffer if applicable
+			// This for loop checks if each element in the old shader exists in the new shader.
+			// If an element does exist in both shaders, the data from the old buffer is
+			// transferred to the new buffer!
+			for (const auto& element : oldShader->GetInputLayout().GetElements())
+			{
+				if (newShader->GetInputLayout().FindElementByName(element.Name))
+				{
+					// Get Location of Old Data Pointer
+					std::size_t oldLocation = element.Offset;
+					uint8_t* oldLocationPointer = oldBuffer.As<uint8_t>(oldLocation);
+
+					// Get Location of New Data Pointer
+					uint8_t* newLocationPointer = Rendering::Shader::GetInputLocation<uint8_t>(element.Name, newBuffer, newShader);
+
+					// Get Size of Data to Transfer
+					std::size_t size = element.Size;
+
+					// Final Memory Copy
+					memcpy_s(newLocationPointer, size, oldLocationPointer, size);
+				}
+			}
+
+			// Assign and Zero Out New Buffer
+			component.ShaderData = newBuffer;
+
+			// Clear old buffer
+			if (oldBuffer)
+			{
+				oldBuffer.Release();
+			}
+		};
+		//=========================
+		// More Lambdas: ShaderSpecification UI Code
+		//=========================
+
+		// These lambdas provide UI for user manipulating of shader specifications and input values
+		s_AddFlatColorSection = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			if (ImGui::Button("Select Color Input")) { ImGui::OpenPopup("Color Type Selection"); }
+			ImGui::SameLine();
+			ImGui::TextUnformatted(Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput).c_str());
+			if (ImGui::BeginPopup("Color Type Selection"))
+			{
+				if (ImGui::Selectable("No Color"))
+				{
+					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
+					s_UpdateComponent();
+				}
+
+				if (ImGui::Selectable("Flat Color"))
+				{
+					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
+					s_UpdateComponent();
+					Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
+				}
+				if (ImGui::Selectable("Vertex Color"))
+				{
+					Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
+					if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
+					{
+						transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+					}
+					component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
+					s_UpdateComponent();
+					if (component.VertexColors) { component.VertexColors->clear(); }
+					component.VertexColors = CreateRef<std::vector<Math::vec4>>();
+					for (uint32_t iterator{ 0 }; iterator < component.Vertices->size(); iterator++)
+					{
+						component.VertexColors->push_back(transferColor);
+					}
+				}
+
+				ImGui::EndPopup();
+			}
+
+			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::None) { return; }
+
+			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
+			{
+				Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+				ImGui::ColorEdit4("Color", glm::value_ptr(*color));
+			}
+			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
+			{
+				uint32_t iterator{ 1 };
+				for (auto& color : *component.VertexColors)
+				{
+					ImGui::ColorEdit4(("Vertex " + std::to_string(iterator)).c_str(), glm::value_ptr(color));
+					iterator++;
+				}
+			}
+		};
+
+		s_AddTextureSection = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			s_ShapeAddTexture.ToggleBoolean = component.ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
+			EditorUI::EditorUIService::Checkbox(s_ShapeAddTexture);
+			if (s_ShapeAddTexture.ToggleBoolean)
+			{
+				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_IMAGE"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath(path);
+						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewTextureFromFile(texturePath);
+						component.TextureHandle = currentHandle;
+						Ref<Rendering::Texture2D> texture = Assets::AssetManager::GetTexture(currentHandle);
+						if (texture)
+							component.Texture = texture;
+						else
+							KG_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+				ImGui::DragFloat("Tiling Factor", tilingFactor, 0.1f, 0.0f, 100.0f);
+			}
+		};
+
+		s_AddCircleShapeSection = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			s_ShapeAddCircle.ToggleBoolean = component.ShaderSpecification.AddCircleShape;
+			EditorUI::EditorUIService::Checkbox(s_ShapeAddCircle);
+			if (component.ShaderSpecification.AddCircleShape)
+			{
+				float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+				ImGui::DragFloat("Thickness", thickness, 0.025f, 0.0f, 1.0f);
+
+				float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+				ImGui::DragFloat("Fade", fade, 0.00025f, 0.0f, 1.0f);
+			}
+		};
+
+		s_AddProjectionMatrixSection = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			s_ShapeAddProjection.ToggleBoolean = component.ShaderSpecification.AddProjectionMatrix;
+			EditorUI::EditorUIService::Checkbox(s_ShapeAddProjection);
+		};
+
+		s_AddEntityIDSection = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			s_ShapeAddEntityID.ToggleBoolean = component.ShaderSpecification.AddEntityID;
+			EditorUI::EditorUIService::Checkbox(s_ShapeAddEntityID);
+		};
+
+		s_ShapeHeader.Label = "Shape";
+		s_ShapeHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		s_ShapeHeader.Expanded = true;
+		s_ShapeHeader.AddToSelectionList("Remove Component", [&]()
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				if (entity.HasComponent<Scenes::ShapeComponent>())
+				{
+					entity.RemoveComponent<Scenes::ShapeComponent>();
+				}
+			});
+		});
+
+		s_ShapeSelect.Label = "Mesh";
+		s_ShapeSelect.Flags |= EditorUI::SelectOption_Indented;
+		s_ShapeSelect.PopupAction = [&]()
+		{
+			s_ShapeSelect.ClearOptions();
+			s_ShapeSelect.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_ShapeSelect.AddToOptions("All Shapes", "Quad", Assets::EmptyHandle);
+			s_ShapeSelect.AddToOptions("All Shapes", "Pyramid", Assets::EmptyHandle);
+			s_ShapeSelect.AddToOptions("All Shapes", "Cube", Assets::EmptyHandle);
+		};
+		s_ShapeSelect.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			Rendering::Shape* shape {nullptr};
+
+			if (entry.Label == "None")
+			{
+				shape = &Rendering::Shape::s_None;
+			}
+			if (entry.Label == "Quad")
+			{
+				shape = &Rendering::Shape::s_Quad;
+			}
+			if (entry.Label == "Cube")
+			{
+				shape = &Rendering::Shape::s_Cube;
+			}
+			if (entry.Label == "Pyramid")
+			{
+				shape = &Rendering::Shape::s_Pyramid;
+			}
+
+			if (!shape)
+			{
+				KG_ERROR("Invalid shape component provided");
+			}
+
+			component.CurrentShape = shape->GetShapeType();
+			component.ShaderSpecification.RenderType = shape->GetRenderingType();
+			if (shape->GetRenderingType() == Rendering::RenderingType::DrawIndex)
+			{
+				component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetIndexVertices());
+				component.Indices = CreateRef<std::vector<uint32_t>>(shape->GetIndices());
+				component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetIndexTextureCoordinates());
+			}
+			if (shape->GetRenderingType() == Rendering::RenderingType::DrawTriangle)
+			{
+				component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetTriangleVertices());
+				component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetTriangleTextureCoordinates());
+			}
+			if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
+			{
+				//component.ShaderSpecification.AddTexture = false;
+				component.ShaderSpecification.AddCircleShape = false;
+			}
+			s_UpdateComponent();
+			if (component.VertexColors)
+			{
+				component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f });
+			}
+		};
+
+		// Set Shape Add Texture Checkbox
+		s_ShapeAddTexture.Label = "Use Texture";
+		s_ShapeAddTexture.Flags |= EditorUI::Checkbox_Indented;
+		s_ShapeAddTexture.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			value ? component.ShaderSpecification.TextureInput = Rendering::TextureInputType::ColorTexture :
+				component.ShaderSpecification.TextureInput = Rendering::TextureInputType::None;
+			s_UpdateComponent();
+			// Checkbox is switched on
+			if (value)
+			{
+				if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
+				{
+					component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawTriangle;
+					s_UpdateComponent();
+					component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleVertices());
+					component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleTextureCoordinates());
+					if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
+				}
+				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
+			}
+			// Checkbox is switched off
+			if (!value)
+			{
+				if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
+				{
+					component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawIndex;
+					s_UpdateComponent();
+					component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndexVertices());
+					component.Indices = CreateRef<std::vector<uint32_t>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndices());
+					component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndexTextureCoordinates());
+					if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
+				}
+			}
+		};
+
+		// Set Shape Circle Option
+		s_ShapeAddCircle.Label = "Use Circle Shape";
+		s_ShapeAddCircle.Flags |= EditorUI::Checkbox_Indented;
+		s_ShapeAddCircle.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			component.ShaderSpecification.AddCircleShape = value;
+			s_UpdateComponent();
+			if (value)
+			{
+				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
+				Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
+			}
+		};
+
+		// Set Shape Add Projection Option
+		s_ShapeAddProjection.Label = "Use Projection Matrix";
+		s_ShapeAddProjection.Flags |= EditorUI::Checkbox_Indented;
+		s_ShapeAddProjection.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			component.ShaderSpecification.AddProjectionMatrix = value;
+			s_UpdateComponent();
+		};
+
+		// Set Shape Add Entity ID Option
+		s_ShapeAddEntityID.Label = "Use Entity ID";
+		s_ShapeAddEntityID.Flags |= EditorUI::Checkbox_Indented;
+		s_ShapeAddEntityID.ConfirmAction = [&](bool value)
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			component.ShaderSpecification.AddEntityID = value;
+			s_UpdateComponent();
+		};
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName, 
 			KG_BIND_CLASS_FN(SceneHierarchyPanel::OnKeyPressedEditor));
-
-		// Set Shape Add Texture Checkbox
-		s_ShapeAddTextureCheckboxSpec.Label = "Use Texture";
-
-		// Set Shape Circle Option
-		s_ShapeAddCircleSpec.Label = "Use Circle Shape";
-
-		// Set Shape Add Projection Option
-		s_ShapeAddProjectionSpec.Label = "Use Projection Matrix";
-
-		// Set Shape Add Entity ID Option
-		s_ShapeAddEntityIDSpec.Label = "Use Entity ID";
 
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
@@ -815,6 +1139,7 @@ namespace Kargono::Panels
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
 		InitializeCameraComponent();
+		InitializeShapeComponent();
 
 	}
 	void SceneHierarchyPanel::OnEditorUIRender()
@@ -966,48 +1291,6 @@ namespace Kargono::Panels
 		}
 	}
 
-	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Scenes::Entity entity, UIFunction uiFunction)
-	{
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | 
-			ImGuiTreeNodeFlags_AllowItemOverlap | 
-			ImGuiTreeNodeFlags_Framed | 
-			ImGuiTreeNodeFlags_SpanAvailWidth | 
-			ImGuiTreeNodeFlags_FramePadding;
-		if (entity.HasComponent<T>())
-		{
-			auto& component = entity.GetComponent<T>();
-			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-			ImGui::Separator();
-
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-			ImGui::PopStyleVar();
-			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
-			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight}))
-			{
-				ImGui::OpenPopup("ComponentSettings");
-			}
-			bool removeComponent = false;
-			if (ImGui::BeginPopup("ComponentSettings"))
-			{
-				if (ImGui::MenuItem("Remove Component"))
-				{
-					removeComponent = true;
-				}
-				ImGui::EndPopup();
-			}
-			if (open)
-			{
-				//ImGui::ColorEdit4("Color", Math::value_ptr(src.Color));
-				uiFunction(component);
-				ImGui::TreePop();
-			}
-		}
-	}
-
 	void SceneHierarchyPanel::DrawComponents(Scenes::Entity entity)
 	{
 		if (entity.HasComponent<Scenes::TagComponent>())
@@ -1136,292 +1419,37 @@ namespace Kargono::Panels
 			}
 		}
 
-		DrawComponent<Scenes::ShapeComponent>("Shape", entity, [](auto& component)
+		if (entity.HasComponent<Scenes::ShapeComponent>())
 		{
-			//=========================
-			// Lambda Functions for Later Use (Scroll down to find main function body)
-			//=========================
-
-			// This Lambda updates the shader after a checkbox is clicked that changes the component.ShaderSpecification
-			// Another function of this lambda is to ensure data inside the old buffer is transferred to the new buffer
-			// if they represent the same input
-			auto updateComponent = [&]()
+			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_ShapeHeader);
+			if (s_ShapeHeader.Expanded)
 			{
-				// Get Previous Buffer and Previous Shader
-				Buffer oldBuffer = component.ShaderData;
-				Ref<Rendering::Shader> oldShader = component.Shader;
-				// Get New Shader
-				auto [newShaderAssetHandle, newShader] = Assets::AssetManager::GetShader(component.ShaderSpecification);
-				// Assign New Shader to Component
-				component.ShaderHandle = newShaderAssetHandle;
-				component.Shader = newShader;
-				// Create New Buffer with New ShaderLayout Size and Set Entire Buffer to Zero
-				Buffer newBuffer(newShader->GetInputLayout().GetStride() * sizeof(uint8_t));
-				newBuffer.SetDataToByte(0);
+				s_ShapeSelect.CurrentOption = { Utility::ShapeTypeToString(component.CurrentShape), Assets::EmptyHandle };
+				EditorUI::EditorUIService::SelectOption(s_ShapeSelect);
 
-				// Transfer Data from Old Buffer to New Buffer if applicable
-				// This for loop checks if each element in the old shader exists in the new shader.
-				// If an element does exist in both shaders, the data from the old buffer is
-				// transferred to the new buffer!
-				for (const auto& element : oldShader->GetInputLayout().GetElements())
+				// This section displays the shader specification options available for the chosen object
+				if (component.CurrentShape == Rendering::ShapeTypes::None)
 				{
-					if (newShader->GetInputLayout().FindElementByName(element.Name))
-					{
-						// Get Location of Old Data Pointer
-						std::size_t oldLocation = element.Offset;
-						uint8_t* oldLocationPointer = oldBuffer.As<uint8_t>(oldLocation);
-
-						// Get Location of New Data Pointer
-						uint8_t* newLocationPointer = Rendering::Shader::GetInputLocation<uint8_t>(element.Name, newBuffer, newShader);
-
-						// Get Size of Data to Transfer
-						std::size_t size = element.Size;
-
-						// Final Memory Copy
-						memcpy_s(newLocationPointer, size, oldLocationPointer, size);
-					}
+					return;
 				}
-
-				// Assign and Zero Out New Buffer
-				component.ShaderData = newBuffer;
-
-				// Clear old buffer
-				if (oldBuffer) { oldBuffer.Release(); }
-			};
-			//=========================
-			// More Lambdas: ShaderSpecification UI Code
-			//=========================
-
-			// These lambdas provide UI for user manipulating of shader specifications and input values
-			auto AddFlatColorSection = [&]()
-			{
-				if (ImGui::Button("Select Color Input")) { ImGui::OpenPopup("Color Type Selection"); }
-				ImGui::SameLine();
-				ImGui::TextUnformatted(Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput).c_str());
-				if (ImGui::BeginPopup("Color Type Selection"))
+				if (component.CurrentShape == Rendering::ShapeTypes::Quad)
 				{
-					if (ImGui::Selectable("No Color"))
-					{
-						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
-						updateComponent();
-					}
+					s_AddFlatColorSection();
+					s_AddTextureSection();
+					s_AddCircleShapeSection();
+					s_AddProjectionMatrixSection();
+					s_AddEntityIDSection();
 
-					if (ImGui::Selectable("Flat Color"))
-					{
-						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
-						updateComponent();
-						Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
-					}
-					if (ImGui::Selectable("Vertex Color"))
-					{
-						Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
-						if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
-						{
-							transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
-						}
-						component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
-						updateComponent();
-						if (component.VertexColors) { component.VertexColors->clear(); }
-						component.VertexColors = CreateRef<std::vector<Math::vec4>>();
-						for (uint32_t iterator{0}; iterator < component.Vertices->size(); iterator++)
-						{
-							component.VertexColors->push_back(transferColor);
-						}
-					}
-					
-					ImGui::EndPopup();
 				}
-
-				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::None) { return; }
-
-				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
+				if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 				{
-					Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
-					ImGui::ColorEdit4("Color", glm::value_ptr(*color));
+					s_AddFlatColorSection();
+					s_AddTextureSection();
+					s_AddProjectionMatrixSection();
+					s_AddEntityIDSection();
 				}
-				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
-				{
-					uint32_t iterator{ 1 };
-					for (auto& color : *component.VertexColors)
-					{
-						ImGui::ColorEdit4(("Vertex " + std::to_string(iterator)).c_str(), glm::value_ptr(color));
-						iterator++;
-					}
-				}
-			};
-
-			auto AddTextureSection = [&]()
-			{
-				s_ShapeAddTextureCheckboxSpec.ToggleBoolean = component.ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
-				EditorUI::EditorUIService::Checkbox(s_ShapeAddTextureCheckboxSpec);
-				s_ShapeAddTextureCheckboxSpec.ConfirmAction = [&](bool value)
-				{
-					value ? component.ShaderSpecification.TextureInput = Rendering::TextureInputType::ColorTexture :
-						component.ShaderSpecification.TextureInput = Rendering::TextureInputType::None;
-					updateComponent();
-					// Checkbox is switched on
-					if (value)
-					{
-						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
-						{
-							component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawTriangle;
-							updateComponent();
-							component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleVertices());
-							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleTextureCoordinates());
-							if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
-						}
-						Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
-					}
-					// Checkbox is switched off
-					if (!value)
-					{
-						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
-						{
-							component.ShaderSpecification.RenderType = Rendering::RenderingType::DrawIndex;
-							updateComponent();
-							component.Vertices = CreateRef<std::vector<Math::vec3>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndexVertices());
-							component.Indices = CreateRef<std::vector<uint32_t>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndices());
-							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetIndexTextureCoordinates());
-							if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
-						}
-					}
-				};
-				if (s_ShapeAddTextureCheckboxSpec.ToggleBoolean)
-				{
-					ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-					if (ImGui::BeginDragDropTarget())
-					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_IMAGE"))
-						{
-							const wchar_t* path = (const wchar_t*)payload->Data;
-							std::filesystem::path texturePath(path);
-							Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewTextureFromFile(texturePath);
-							component.TextureHandle = currentHandle;
-							Ref<Rendering::Texture2D> texture = Assets::AssetManager::GetTexture(currentHandle);
-							if (texture)
-								component.Texture = texture;
-							else
-								KG_WARN("Could not load texture {0}", texturePath.filename().string());
-						}
-						ImGui::EndDragDropTarget();
-					}
-
-					float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
-					ImGui::DragFloat("Tiling Factor", tilingFactor, 0.1f, 0.0f, 100.0f);
-				}
-			};
-
-			auto AddCircleShapeSection = [&]()
-			{
-				s_ShapeAddCircleSpec.ConfirmAction = [&](bool value)
-				{
-					component.ShaderSpecification.AddCircleShape = value;
-					updateComponent();
-					if (value)
-					{
-						Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
-						Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
-					}
-				};
-				s_ShapeAddCircleSpec.ToggleBoolean = component.ShaderSpecification.AddCircleShape;
-				EditorUI::EditorUIService::Checkbox(s_ShapeAddCircleSpec);
-				if (component.ShaderSpecification.AddCircleShape)
-				{
-					float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
-					ImGui::DragFloat("Thickness", thickness, 0.025f, 0.0f, 1.0f);
-
-					float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
-					ImGui::DragFloat("Fade", fade, 0.00025f, 0.0f, 1.0f);
-				}
-			};
-
-			auto AddProjectionMatrixSection = [&]()
-			{
-				s_ShapeAddProjectionSpec.ConfirmAction = [&](bool value)
-				{
-					component.ShaderSpecification.AddProjectionMatrix = value;
-					updateComponent();
-				};
-				s_ShapeAddProjectionSpec.ToggleBoolean = component.ShaderSpecification.AddProjectionMatrix;
-				EditorUI::EditorUIService::Checkbox(s_ShapeAddProjectionSpec);
-			};
-
-			auto AddEntityIDSection = [&]()
-			{
-				s_ShapeAddEntityIDSpec.ConfirmAction = [&](bool value)
-				{
-					component.ShaderSpecification.AddEntityID = value;
-					updateComponent();
-				};
-				s_ShapeAddEntityIDSpec.ToggleBoolean = component.ShaderSpecification.AddEntityID;
-				EditorUI::EditorUIService::Checkbox(s_ShapeAddEntityIDSpec);
-			};
-			
-
-			//=========================
-			// Beginning of Main Functionality
-			//=========================
-			// Display Selection Popup Button to choose Shape
-			Rendering::ShapeTypes selectedShape = component.CurrentShape;
-			if (ImGui::Button("Select a Shape")) { ImGui::OpenPopup("Shape Selection"); }
-			ImGui::SameLine();
-			ImGui::TextUnformatted(Utility::ShapeTypeToString(selectedShape).c_str());
-			if (ImGui::BeginPopup("Shape Selection"))
-			{
-				for (const auto& shape : Rendering::Shape::s_AllShapes)
-				{
-					if (ImGui::Selectable(Utility::ShapeTypeToString(shape->GetShapeType()).c_str()))
-					{
-						component.CurrentShape = shape->GetShapeType();
-						component.ShaderSpecification.RenderType = shape->GetRenderingType();
-						if (shape->GetRenderingType() == Rendering::RenderingType::DrawIndex)
-						{
-							component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetIndexVertices());
-							component.Indices = CreateRef<std::vector<uint32_t>>(shape->GetIndices());
-							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetIndexTextureCoordinates());
-						}
-						if (shape->GetRenderingType() == Rendering::RenderingType::DrawTriangle)
-						{
-							component.Vertices = CreateRef<std::vector<Math::vec3>>(shape->GetTriangleVertices());
-							component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(shape->GetTriangleTextureCoordinates());
-						}
-						if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
-						{
-							//component.ShaderSpecification.AddTexture = false;
-							component.ShaderSpecification.AddCircleShape = false;
-						}
-						updateComponent();
-						if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
-					}
-				}
-				ImGui::EndPopup();
 			}
-			ImGui::Separator();
-			ImGui::Text("Shader Specification");
-
-			// This section displays the shader specification options available for the chosen object
-			if (selectedShape == Rendering::ShapeTypes::None)
-			{
-				return;
-			}
-			if (selectedShape == Rendering::ShapeTypes::Quad)
-			{
-				AddFlatColorSection();
-				AddTextureSection();
-				AddCircleShapeSection();
-				AddProjectionMatrixSection();
-				AddEntityIDSection();
-				
-			}
-			if (selectedShape == Rendering::ShapeTypes::Cube || selectedShape == Rendering::ShapeTypes::Pyramid)
-			{
-				AddFlatColorSection();
-				AddTextureSection();
-				AddProjectionMatrixSection();
-				AddEntityIDSection();
-				
-			}
-			
-		});
+		}
 	}
 }
