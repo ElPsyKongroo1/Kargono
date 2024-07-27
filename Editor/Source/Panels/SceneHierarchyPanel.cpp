@@ -1021,26 +1021,26 @@ namespace Kargono::Panels
 		s_ShapeColorType.PopupAction = [&]()
 		{
 			s_ShapeColorType.ClearOptions();
-			s_ShapeColorType.AddToOptions("Clear", "No Color", Assets::EmptyHandle);
-			s_ShapeColorType.AddToOptions("All Types", "Flat Color", Assets::EmptyHandle);
-			s_ShapeColorType.AddToOptions("All Types", "Vertex Color", Assets::EmptyHandle);
+			s_ShapeColorType.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			s_ShapeColorType.AddToOptions("All Types", "FlatColor", Assets::EmptyHandle);
+			s_ShapeColorType.AddToOptions("All Types", "VertexColor", Assets::EmptyHandle);
 		};
 		s_ShapeColorType.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
 			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
-			if (entry.Label == "No Color")
+			if (entry.Label == "None")
 			{
 				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::None;
 				s_UpdateComponent();
 			}
-			if (entry.Label == "Flat Color")
+			if (entry.Label == "FlatColor")
 			{
 				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
 				s_UpdateComponent();
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
 			}
-			if (entry.Label == "Vertex Color")
+			if (entry.Label == "VertexColor")
 			{
 				Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
 				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)

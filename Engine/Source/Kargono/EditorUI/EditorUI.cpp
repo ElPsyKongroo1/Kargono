@@ -48,6 +48,7 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconEdit{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconEdit_Active{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconCancel{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCancel2{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconConfirm{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconSearch{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Empty_Disabled{};
@@ -121,8 +122,18 @@ namespace Kargono::EditorUI
 		s_TableLinkButton.YPosition = -5.5f;
 
 		s_TableExpandButton = EditorUIService::s_SmallExpandButton;
+
 	}
 
+	static InlineButtonSpec s_CheckboxDisabledButton {};
+
+	static void InitializeCheckboxResources ()
+	{
+		s_CheckboxDisabledButton = EditorUIService::s_SmallCheckboxButton;
+		s_CheckboxDisabledButton.Disabled = true;
+		s_CheckboxDisabledButton.ActiveIcon = EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled;
+		s_CheckboxDisabledButton.InactiveIcon = EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled;
+	}
 
 	void EditorUIService::Init()
 	{
@@ -190,6 +201,7 @@ namespace Kargono::EditorUI
 		s_IconEdit = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/edit_icon.png").string());
 		s_IconEdit_Active = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/edit_active_icon.png").string());
 		s_IconCancel = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/cancel_icon.png").string());
+		s_IconCancel2 = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/cancel_icon_2.png").string());
 		s_IconConfirm = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/confirm_icon.png").string());
 		s_IconSearch = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/search_icon.png").string());
 		s_IconOptions = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/options_icon.png").string());
@@ -310,7 +322,7 @@ namespace Kargono::EditorUI
 				-112.0f,
 				-0.6f,
 				28.0f,
-				EditorUI::EditorUIService::s_IconSearch,
+				EditorUI::EditorUIService::s_IconCancel2,
 				EditorUI::EditorUIService::s_IconSearch,
 				"Cancel Search",
 				"Search",
@@ -318,6 +330,7 @@ namespace Kargono::EditorUI
 		};
 
 		InitializeTableResources();
+		InitializeCheckboxResources();
 
 		s_Running = true;
 
@@ -356,6 +369,7 @@ namespace Kargono::EditorUI
 		s_IconEdit.reset();
 		s_IconEdit_Active.reset();
 		s_IconCancel.reset();
+		s_IconCancel2.reset();
 		s_IconConfirm.reset();
 		s_IconSearch.reset();
 		s_IconCheckbox_Empty_Disabled.reset();
@@ -396,6 +410,7 @@ namespace Kargono::EditorUI
 		s_TableEditButton = {};
 		s_TableLinkButton = {};
 		s_TableExpandButton = {};
+		s_CheckboxDisabledButton = {};
 
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
@@ -622,16 +637,23 @@ namespace Kargono::EditorUI
 			EditorUIService::s_PureEmpty,
 			EditorUI::EditorUIService::s_PureWhite, 0))
 		{
-			onPress();
+			if (onPress)
+			{
+				onPress();
+			}
 		}
 		ImGui::PopStyleColor(spec.Disabled ? 3 : 1);
 
-		if (ImGui::IsItemHovered())
+		if (!spec.Disabled)
 		{
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, active ? spec.ActiveTooltip.c_str() : spec.InactiveTooltip.c_str());
-			ImGui::EndTooltip();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, active ? spec.ActiveTooltip.c_str() : spec.InactiveTooltip.c_str());
+				ImGui::EndTooltip();
+			}
 		}
+
 	}
 
 	static void WriteMultilineText(const std::string& text, float leftHandOffset, const uint32_t charPerLine, float yOffset = 0)
@@ -867,7 +889,12 @@ namespace Kargono::EditorUI
 					return 0;
 				};
 
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, s_LightPurple_Thin);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, s_LightPurple_Thin);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, s_LightPurple_Thin);
+
 				ImGui::InputText((id + "InputText").c_str(), searchBuffer, sizeof(searchBuffer), ImGuiInputTextFlags_CallbackEdit, callback, (void*)&spec);
+				ImGui::PopStyleColor(3);
 			}
 
 			// Search Tool Bar Button
@@ -1100,10 +1127,9 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
-			CreateImage(spec.ToggleBoolean ?
-				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled :
-				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
-				14);
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+			s_CheckboxDisabledButton,
+			spec.ToggleBoolean);
 		}
 
 		ImGui::SameLine();
@@ -1327,14 +1353,12 @@ namespace Kargono::EditorUI
 
 		// Display Item
 		TruncateText(spec.Label, 23);
-		ImGui::SameLine(200.0f);
+		ImGui::SameLine(197.5f);
 
 		if (spec.Editing)
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
-			TruncateText(spec.FirstOptionLabel, 7);
-			ImGui::SameLine();
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 0)
@@ -1347,10 +1371,10 @@ namespace Kargono::EditorUI
 				}
 				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 0);
+			ImGui::SameLine();
+			TruncateText(spec.FirstOptionLabel, 7);
 
 			ImGui::SameLine(300.0f);
-			TruncateText(spec.SecondOptionLabel, 7);
-			ImGui::SameLine();
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 1)
@@ -1363,24 +1387,22 @@ namespace Kargono::EditorUI
 				}
 				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 1);
+			ImGui::SameLine();
+			TruncateText(spec.SecondOptionLabel, 7);
 			ImGui::PopStyleColor(2);
 		}
 		else
 		{
-			TruncateText(spec.FirstOptionLabel, 7);
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+				s_CheckboxDisabledButton, spec.SelectedOption == 0);
 			ImGui::SameLine();
-			CreateImage(spec.SelectedOption == 0 ? 
-				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled : 
-				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
-				14);
+			TruncateText(spec.FirstOptionLabel, 7);
 
 			ImGui::SameLine(300.0f);
-			TruncateText(spec.SecondOptionLabel, 7);
+			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+				s_CheckboxDisabledButton, spec.SelectedOption == 1);
 			ImGui::SameLine();
-			CreateImage(spec.SelectedOption == 1 ?
-				EditorUI::EditorUIService::s_IconCheckbox_Check_Disabled :
-				EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled,
-				14);
+			TruncateText(spec.SecondOptionLabel, 7);
 		}
 
 		ImGui::SameLine();
@@ -1653,8 +1675,14 @@ namespace Kargono::EditorUI
 				ImGui::CloseCurrentPopup();
 			}, s_LargeConfirmButton);
 
+			ImGui::Separator();
+
 			ImGui::SetNextItemWidth(583.0f);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, s_LightPurple_Thin);
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, s_LightPurple_Thin);
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, s_LightPurple_Thin);
 			ImGui::InputText((id + "InputText").c_str(), stringBuffer, sizeof(stringBuffer));
+			ImGui::PopStyleColor(3);
 			ImGui::PopFont();
 			ImGui::EndPopup();
 		}
