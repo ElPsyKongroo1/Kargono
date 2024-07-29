@@ -10,6 +10,10 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
+
+	// Scene Hierarchy Tree
+	static EditorUI::TreeSpec s_SceneHierarchyTree {};
+
 	// Main Header & Tag Component
 	static EditorUI::PanelHeaderSpec s_MainHeader{};
 	static EditorUI::TextInputSpec s_TagEdit{};
@@ -866,6 +870,7 @@ namespace Kargono::Panels
 			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 			{
 				Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+				ImGui::SetCursorPosX(30.0f);
 				ImGui::ColorEdit4("Color", glm::value_ptr(*color));
 			}
 			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
@@ -873,6 +878,7 @@ namespace Kargono::Panels
 				uint32_t iterator{ 1 };
 				for (auto& color : *component.VertexColors)
 				{
+					ImGui::SetCursorPosX(30.0f);
 					ImGui::ColorEdit4(("Vertex " + std::to_string(iterator)).c_str(), glm::value_ptr(color));
 					iterator++;
 				}
@@ -1219,9 +1225,34 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName, 
 			KG_BIND_CLASS_FN(SceneHierarchyPanel::OnKeyPressedEditor));
 
+		s_SceneHierarchyTree.Label = "Scene Hierarchy";
+		s_SceneHierarchyTree.OnRefresh = [&]()
+		{
+			if (Scenes::SceneService::GetActiveScene())
+			{
+				s_SceneHierarchyTree.ClearTree();
+				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
+				{
+					Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
+
+					EditorUI::TreeEntry newEntry {};
+					newEntry.Label = entity.GetComponent<Scenes::TagComponent>().Tag;
+					newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+					newEntry.Handle = (uint64_t)entityID;
+					newEntry.OnClick = [&](EditorUI::TreeEntry& entry)
+					{
+						Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+						SetSelectedEntity(entity);
+					};
+
+					s_SceneHierarchyTree.InsertEntry(newEntry);
+				});
+			}
+		};
+
+		InitializeMainHeader();
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
-		InitializeMainHeader();
 		InitializeRigidbody2DComponent();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
@@ -1236,11 +1267,8 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene())
 		{
-			Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
-			{
-				Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
-				DrawEntityNode(entity);
-			});
+			s_SceneHierarchyTree.OnRefresh();
+			EditorUI::EditorUIService::Tree(s_SceneHierarchyTree);
 
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))

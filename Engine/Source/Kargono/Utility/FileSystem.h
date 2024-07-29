@@ -6,10 +6,6 @@
 #include <vector>
 #include <string>
 
-namespace Kargono
-{
-	class Texture2D;
-}
 namespace Kargono::Utility
 {
 	//==============================

@@ -30,6 +30,7 @@ namespace Kargono::EditorUI
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
 	struct TableSpec;
+	struct TreeSpec;
 	struct InlineButtonSpec;
 	struct EditFloatSpec;
 	struct EditVec2Spec;
@@ -128,6 +129,7 @@ namespace Kargono::EditorUI
 
 		static void RadioSelector(RadioSelectorSpec& spec);
 		static void Table(TableSpec& spec);
+		static void Tree(TreeSpec& spec);
 		static void PanelHeader(PanelHeaderSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
@@ -172,7 +174,7 @@ namespace Kargono::EditorUI
 		//==============================
 		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid, 
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
-			s_IconCamera, s_IconCameraActive,
+			s_IconCamera, s_IconCameraActive, s_IconEntity,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
 			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconEdit_Active, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,
@@ -496,6 +498,47 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
+
+
+	struct TreeEntry
+	{
+		std::string Label {};
+		UUID Handle {};
+		Ref<Rendering::Texture2D> IconHandle{ nullptr };
+		std::function<void(TreeEntry& entry)> OnClick {nullptr};
+		bool Expanded{ false };
+		void* ProvidedData { nullptr };
+		std::vector<TreeEntry> SubEntries{};
+	};
+
+	struct TreeSpec
+	{
+	public:
+		TreeSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label;
+		TreeEntry* SelectedEntry{ nullptr };
+		std::function<void()> OnRefresh { nullptr };
+	public:
+		void InsertEntry(const TreeEntry& entry)
+		{
+			TreeEntries.push_back(entry);
+		}
+		void ClearTree()
+		{
+			TreeEntries.clear();
+		}
+	private:
+		WidgetID WidgetID;
+		std::vector<TreeEntry> TreeEntries{};
+	private:
+		friend void EditorUIService::Tree(TreeSpec& spec);
+		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition = {});
+	};
+
 
 	enum TableFlags
 	{

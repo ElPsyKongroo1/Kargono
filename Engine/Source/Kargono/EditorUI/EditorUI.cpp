@@ -33,6 +33,7 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconStep{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulate{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconAddItem{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconEntity{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplay{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplayActive{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconCamera{};
@@ -208,6 +209,7 @@ namespace Kargono::EditorUI
 		s_IconDown = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/down_icon.png").string());
 		s_IconRight = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/right_icon.png").string());
 		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/dash_icon.png").string());
+		s_IconEntity = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/entity_icon.png").string());
 
 		s_IconCheckbox_Empty_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
 		s_IconCheckbox_Check_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
@@ -396,6 +398,7 @@ namespace Kargono::EditorUI
 		s_UserInterfaceIcon.reset();
 		s_FontIcon.reset();
 		s_InputIcon.reset();
+		s_IconEntity.reset();
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};
@@ -1523,6 +1526,103 @@ namespace Kargono::EditorUI
 				
 			}
 		}
+	}
+
+	static void DrawEntries(TreeSpec& spec , std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition)
+	{
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition{};
+		for (auto& treeEntry : entries)
+		{
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
+			screenPosition = ImGui::GetCursorScreenPos();
+
+			if (spec.SelectedEntry == &treeEntry)
+			{
+				// Draw SelectedEntry background
+				draw_list->AddRectFilled(screenPosition,
+					ImVec2(screenPosition.x + ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, screenPosition.y + 21.0f),
+					ImColor(EditorUI::EditorUIService::s_LightPurple_Thin), 4, ImDrawFlags_RoundCornersAll);
+			}
+
+			if (treeEntry.IconHandle)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
+				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
+					(ImTextureID)(uint64_t)treeEntry.IconHandle->GetRendererID(),
+					ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+					EditorUIService::s_PureEmpty,
+					EditorUI::EditorUIService::s_PureWhite, 0))
+				{
+					if (treeEntry.OnClick)
+					{
+						treeEntry.OnClick(treeEntry);
+					}
+					spec.SelectedEntry = &treeEntry;
+				}
+				ImGui::PopStyleColor(3);
+				ImGui::SameLine();
+			}
+
+			ImGui::Text(treeEntry.Label.c_str());
+
+			if (ImGui::IsItemClicked())
+			{
+				if (treeEntry.OnClick)
+				{
+					treeEntry.OnClick(treeEntry);
+				}
+				spec.SelectedEntry = &treeEntry;
+			}
+
+			if (treeEntry.SubEntries.size() > 0)
+			{
+				ImGui::SameLine();
+				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
+				const Ref<Rendering::Texture2D> icon = treeEntry.Expanded ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
+				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
+					(ImTextureID)(uint64_t)icon->GetRendererID(),
+					ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+					EditorUIService::s_PureEmpty,
+					EditorUI::EditorUIService::s_PureWhite, 0))
+				{
+					Utility::Operations::ToggleBoolean(treeEntry.Expanded);
+				}
+				ImGui::PopStyleColor();
+
+				if (treeEntry.Expanded)
+				{
+					/*draw_list->AddLine(ImVec2(screenPosition.x + 10.0f, screenPosition.y + 21.0f),
+						ImVec2(screenPosition.x + 10.0f, screenPosition.y + 36.0f + (24.0f * (treeEntry.SubEntries.size() - 1))),
+						ImColor(EditorUIService::s_PureWhite));*/
+					DrawEntries(spec, treeEntry.SubEntries, widgetCount, depth + 1, screenPosition);
+				}
+			}
+
+			if (depth > 0)
+			{
+				draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
+					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
+					ImColor(EditorUIService::s_PureWhite));
+			}
+		}
+
+		if (depth > 0)
+		{
+			draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, rootPosition.y + 21.0f),
+				ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
+				ImColor(EditorUIService::s_PureWhite));
+		}
+	}
+
+	void EditorUIService::Tree(TreeSpec& spec)
+	{
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		DrawEntries(spec, spec.TreeEntries, widgetCount, 0);
 	}
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)

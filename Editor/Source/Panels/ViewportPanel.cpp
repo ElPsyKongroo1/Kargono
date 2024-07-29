@@ -18,6 +18,7 @@ namespace Kargono::Panels
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
+		KG_PROFILE_FUNCTION();
 		// Adjust Framebuffer Size Based on Viewport
 		auto& currentWindow = EngineService::GetActiveWindow();
 		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();

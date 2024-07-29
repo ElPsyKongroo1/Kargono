@@ -13,9 +13,6 @@ namespace Kargono::Panels
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
-	public:
-		static ImVec4 s_TestColor;
-		static ImVec4 s_TestColor2;
 	private:
 		std::string m_PanelName{ "Testing" };
 	};
