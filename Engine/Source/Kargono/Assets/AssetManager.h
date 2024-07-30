@@ -377,7 +377,10 @@ namespace Kargono::Assets
 		// Check if name already exists in registry
 		static bool CheckSceneExists(const std::string& sceneName);
 		// TODO: Commentplzzzz
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetSceneRegistry() { return s_SceneRegistry; }
+		static std::unordered_map<AssetHandle, Assets::Asset>& GetSceneRegistry()
+		{
+			return s_SceneRegistry;
+		}
 
 	private:
 		//==============================

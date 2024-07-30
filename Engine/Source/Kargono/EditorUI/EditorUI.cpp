@@ -34,6 +34,12 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulate{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconAddItem{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconEntity{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconBoxCollider{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconCircleCollider{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconClassInstance{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconRigidBody{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconTag{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconTransform{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplay{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplayActive{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconCamera{};
@@ -209,7 +215,13 @@ namespace Kargono::EditorUI
 		s_IconDown = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/down_icon.png").string());
 		s_IconRight = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/right_icon.png").string());
 		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/dash_icon.png").string());
-		s_IconEntity = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/entity_icon.png").string());
+		s_IconEntity = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/entity_icon.png").string());
+		s_IconBoxCollider = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/box_collider_icon.png").string());
+		s_IconCircleCollider = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/circle_collider_icon.png").string());
+		s_IconClassInstance = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/class_instance_icon.png").string());
+		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/rigid_body_icon.png").string());
+		s_IconTag = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/tag_icon.png").string());
+		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/scene_editor/transform_icon.png").string());
 
 		s_IconCheckbox_Empty_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_empty_icon.png").string());
 		s_IconCheckbox_Check_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/icons/checkbox/checkbox_disabled_check_icon.png").string());
@@ -399,6 +411,12 @@ namespace Kargono::EditorUI
 		s_FontIcon.reset();
 		s_InputIcon.reset();
 		s_IconEntity.reset();
+		s_IconBoxCollider.reset();
+		s_IconCircleCollider.reset();
+		s_IconClassInstance.reset();
+		s_IconRigidBody.reset();
+		s_IconTag.reset();
+		s_IconTransform.reset();
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};
@@ -1530,13 +1548,16 @@ namespace Kargono::EditorUI
 
 	static void DrawEntries(TreeSpec& spec , std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition)
 	{
+		// Get initial positions and common resources
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition{};
 		for (auto& treeEntry : entries)
 		{
+			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
 
+			// Display Selected Background
 			if (spec.SelectedEntry == &treeEntry)
 			{
 				// Draw SelectedEntry background
@@ -1545,6 +1566,7 @@ namespace Kargono::EditorUI
 					ImColor(EditorUI::EditorUIService::s_LightPurple_Thin), 4, ImDrawFlags_RoundCornersAll);
 			}
 
+			// Display entry icon
 			if (treeEntry.IconHandle)
 			{
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
@@ -1556,29 +1578,66 @@ namespace Kargono::EditorUI
 					EditorUIService::s_PureEmpty,
 					EditorUI::EditorUIService::s_PureWhite, 0))
 				{
-					if (treeEntry.OnClick)
+					if (treeEntry.OnLeftClick)
 					{
-						treeEntry.OnClick(treeEntry);
+						treeEntry.OnLeftClick(treeEntry);
 					}
 					spec.SelectedEntry = &treeEntry;
+				}
+
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+				{
+					if (treeEntry.OnRightClickSelection.size() > 0)
+					{
+						ImGui::OpenPopup(("##" + std::to_string(spec.WidgetID)).c_str());
+						spec.CurrentRightClick = &treeEntry;
+					}
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (treeEntry.OnDoubleLeftClick)
+					{
+						treeEntry.OnDoubleLeftClick(treeEntry);
+					}
 				}
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 			}
 
+			// Display entry text
 			ImGui::Text(treeEntry.Label.c_str());
 
 			if (ImGui::IsItemClicked())
 			{
-				if (treeEntry.OnClick)
+				if (treeEntry.OnLeftClick)
 				{
-					treeEntry.OnClick(treeEntry);
+					treeEntry.OnLeftClick(treeEntry);
 				}
 				spec.SelectedEntry = &treeEntry;
 			}
 
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			{
+				if (treeEntry.OnRightClickSelection.size() > 0)
+				{
+					ImGui::OpenPopup(("##" + std::to_string(spec.WidgetID)).c_str());
+					spec.CurrentRightClick = &treeEntry;
+				}
+			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				if (treeEntry.OnDoubleLeftClick)
+				{
+					treeEntry.OnDoubleLeftClick(treeEntry);
+				}
+			}
+
+			// Handle all sub-entries
 			if (treeEntry.SubEntries.size() > 0)
 			{
+				// Draw expand icon
 				ImGui::SameLine();
 				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 				const Ref<Rendering::Texture2D> icon = treeEntry.Expanded ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
@@ -1592,15 +1651,14 @@ namespace Kargono::EditorUI
 				}
 				ImGui::PopStyleColor();
 
+				// Draw all sub-entries
 				if (treeEntry.Expanded)
 				{
-					/*draw_list->AddLine(ImVec2(screenPosition.x + 10.0f, screenPosition.y + 21.0f),
-						ImVec2(screenPosition.x + 10.0f, screenPosition.y + 36.0f + (24.0f * (treeEntry.SubEntries.size() - 1))),
-						ImColor(EditorUIService::s_PureWhite));*/
 					DrawEntries(spec, treeEntry.SubEntries, widgetCount, depth + 1, screenPosition);
 				}
 			}
 
+			// Add horizontal line for each child node
 			if (depth > 0)
 			{
 				draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
@@ -1609,6 +1667,7 @@ namespace Kargono::EditorUI
 			}
 		}
 
+		// Add vertical line for parent node
 		if (depth > 0)
 		{
 			draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, rootPosition.y + 21.0f),
@@ -1623,6 +1682,21 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 
 		DrawEntries(spec, spec.TreeEntries, widgetCount, 0);
+
+		if (ImGui::BeginPopup(("##" + std::to_string(spec.WidgetID)).c_str()))
+		{
+			if (spec.CurrentRightClick)
+			{
+				for (auto& [label, func] : spec.CurrentRightClick->OnRightClickSelection)
+				{
+					if (ImGui::Selectable((label + "##" + std::to_string(spec.WidgetID)).c_str()))
+					{
+						func(*spec.CurrentRightClick);
+					}
+				}
+			}
+			ImGui::EndPopup();
+		}
 	}
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
@@ -1712,7 +1786,7 @@ namespace Kargono::EditorUI
 	{
 		ImGui::Text(Text.c_str());
 	}
-	void EditorUIService::TextInputPopup(TextInputSpec& spec)
+	void EditorUIService::TextInput(TextInputSpec& spec)
 	{
 		// Local Variables
 		static char stringBuffer[256];
@@ -1732,6 +1806,10 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
+			if (spec.Flags & TextInput_Indented)
+			{
+				ImGui::SetCursorPosX(30.5f);
+			}
 			ImGui::TextColored(s_PureWhite, spec.Label.c_str());
 			ImGui::PushStyleColor(ImGuiCol_Text, s_PearlBlue);
 			WriteMultilineText(spec.CurrentOption, 200.0f, 23);

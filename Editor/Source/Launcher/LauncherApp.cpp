@@ -18,7 +18,7 @@ namespace Kargono
 		s_CreateProjectSpec.PopupWidth = 420.0f;
 		s_CreateProjectSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_CreateProjectName);
+			EditorUI::EditorUIService::TextInput(s_CreateProjectName);
 			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
 		};
 		s_CreateProjectSpec.ConfirmAction = [&]()

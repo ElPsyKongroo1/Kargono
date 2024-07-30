@@ -21,7 +21,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_OpenClassPopupSpec {};
 	static EditorUI::TextInputSpec s_SelectClassNameSpec {};
 	// Header
-	static EditorUI::PanelHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_TagHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteEntityClassWarning {};
 	static EditorUI::GenericPopupSpec s_CloseEntityClassWarning {};
 	// Fields Table
@@ -102,9 +102,9 @@ namespace Kargono::Panels
 
 			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(selection.Handle);
 			s_EditorEntityClassHandle = selection.Handle;
-			s_MainHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
 				selection.Handle).Data.IntermediateLocation.string();
-			s_MainHeader.EditColorActive = false;
+			s_TagHeader.EditColorActive = false;
 			s_OnRefreshData();
 		};
 
@@ -129,14 +129,14 @@ namespace Kargono::Panels
 			}
 			s_EditorEntityClassHandle = Assets::AssetManager::CreateNewEntityClass(s_SelectClassNameSpec.CurrentOption);
 			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(s_EditorEntityClassHandle);
-			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+			s_TagHeader.EditColorActive = false;
+			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
 				s_EditorEntityClassHandle).Data.IntermediateLocation.string();
 			s_OnRefreshData();
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_SelectClassNameSpec);
+			EditorUI::EditorUIService::TextInput(s_SelectClassNameSpec);
 		};
 	}
 
@@ -167,15 +167,15 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to close this entity class object without saving?");
 		};
 
-		s_MainHeader.AddToSelectionList("Save", [&]()
+		s_TagHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
 			s_EditorApp->m_SceneHierarchyPanel->RefreshClassInstanceComponent();
-			s_MainHeader.EditColorActive = false;
+			s_TagHeader.EditColorActive = false;
 		});
-		s_MainHeader.AddToSelectionList("Close", [&]()
+		s_TagHeader.AddToSelectionList("Close", [&]()
 			{
-				if (s_MainHeader.EditColorActive)
+				if (s_TagHeader.EditColorActive)
 				{
 					s_CloseEntityClassWarning.PopupActive = true;
 				}
@@ -185,7 +185,7 @@ namespace Kargono::Panels
 					s_EditorEntityClass = nullptr;
 				}
 			});
-		s_MainHeader.AddToSelectionList("Delete", [&]()
+		s_TagHeader.AddToSelectionList("Delete", [&]()
 			{
 				s_DeleteEntityClassWarning.PopupActive = true;
 			});
@@ -243,7 +243,7 @@ namespace Kargono::Panels
 			{
 				iteration++;
 			}
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();
 		};
 
@@ -274,7 +274,7 @@ namespace Kargono::Panels
 				KG_ERROR("Unable to delete field inside entity class!");
 				return;
 			}
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupWidth = 420.0f;
@@ -300,12 +300,12 @@ namespace Kargono::Panels
 			s_EditorEntityClass->DeleteField(s_CurrentField);
 			s_EditorEntityClass->AddField(s_EditFieldName.CurrentOption, 
 				Utility::StringToWrappedVarType(s_EditFieldType.CurrentOption.Label));
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_EditFieldName);
+			EditorUI::EditorUIService::TextInput(s_EditFieldName);
 			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 		};
 
@@ -341,7 +341,7 @@ namespace Kargono::Panels
 			{
 				s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle = 0;
 				s_EditorEntityClass->GetScripts().OnPhysicsCollisionStart = nullptr;
-				s_MainHeader.EditColorActive = true;
+				s_TagHeader.EditColorActive = true;
 				return;
 			}
 
@@ -354,7 +354,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionStart =
 				Assets::AssetManager::GetScript(selection.Handle).get();
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 		};
 
 		// Update OnPhysicsCollisionEnd
@@ -385,7 +385,7 @@ namespace Kargono::Panels
 			{
 				s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle = 0;
 				s_EditorEntityClass->GetScripts().OnPhysicsCollisionEnd = nullptr;
-				s_MainHeader.EditColorActive = true;
+				s_TagHeader.EditColorActive = true;
 				return;
 			}
 
@@ -398,7 +398,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionEnd =
 				Assets::AssetManager::GetScript(selection.Handle).get();
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 		};
 
 		// Update OnCreate
@@ -429,7 +429,7 @@ namespace Kargono::Panels
 			{
 				s_EditorEntityClass->GetScripts().OnCreateHandle = 0;
 				s_EditorEntityClass->GetScripts().OnCreate = nullptr;
-				s_MainHeader.EditColorActive = true;
+				s_TagHeader.EditColorActive = true;
 				return;
 			}
 
@@ -442,7 +442,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass->GetScripts().OnCreateHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnCreate =
 				Assets::AssetManager::GetScript(selection.Handle).get();
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 		};
 
 		// Update OnUpdate
@@ -473,7 +473,7 @@ namespace Kargono::Panels
 			{
 				s_EditorEntityClass->GetScripts().OnUpdateHandle = 0;
 				s_EditorEntityClass->GetScripts().OnUpdate = nullptr;
-				s_MainHeader.EditColorActive = true;
+				s_TagHeader.EditColorActive = true;
 				return;
 			}
 
@@ -486,7 +486,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass->GetScripts().OnUpdateHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnUpdate =
 				Assets::AssetManager::GetScript(selection.Handle).get();
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 		};
 
 		// AllScripts Table
@@ -555,7 +555,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_TagHeader);
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);

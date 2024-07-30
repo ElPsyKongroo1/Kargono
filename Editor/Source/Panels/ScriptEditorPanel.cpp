@@ -98,7 +98,7 @@ namespace Kargono::Panels
 		};
 		s_CreateScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_CreateScriptName);
+			EditorUI::EditorUIService::TextInput(s_CreateScriptName);
 			EditorUI::EditorUIService::SelectOption(s_CreateScriptFuncType);
 			EditorUI::EditorUIService::RadioSelector(s_CreateScriptType);
 			EditorUI::EditorUIService::SelectOption(s_CreateScriptSectionLabel);
@@ -300,7 +300,7 @@ namespace Kargono::Panels
 		s_EditScriptPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
-			//EditorUI::Editor::TextInputPopup(s_EditScriptName);
+			//EditorUI::Editor::TextInput(s_EditScriptName);
 			EditorUI::EditorUIService::SelectOption(s_EditScriptFuncType);
 			EditorUI::EditorUIService::RadioSelector(s_EditScriptType);
 			EditorUI::EditorUIService::SelectOption(s_EditScriptSectionLabel);
@@ -532,7 +532,7 @@ namespace Kargono::Panels
 		};
 		s_EditGroupLabelPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_EditGroupLabelText);
+			EditorUI::EditorUIService::TextInput(s_EditGroupLabelText);
 		};
 
 		s_EditGroupLabelText.Label = "Group Label";
@@ -555,7 +555,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::GenericPopup(s_EditScriptPopup);
 		EditorUI::EditorUIService::GenericPopup(s_DeleteScriptWarning);
 		EditorUI::EditorUIService::GenericPopup(s_EditScriptFuncTypeWarning);
-		EditorUI::EditorUIService::TextInputPopup(s_CreateGroupLabelPopup);
+		EditorUI::EditorUIService::TextInput(s_CreateGroupLabelPopup);
 		EditorUI::EditorUIService::GenericPopup(s_EditGroupLabelPopup);
 
 		EditorUI::EditorUIService::EndWindow();

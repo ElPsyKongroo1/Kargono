@@ -48,7 +48,7 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
+		m_SceneHierarchyPanel = CreateScope<Panels::SceneEditorPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -786,8 +786,8 @@ namespace Kargono
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
 
 		m_EditorScene = newScene;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::SaveScene()

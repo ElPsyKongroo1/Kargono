@@ -13,6 +13,6 @@ namespace Kargono::Panels
 	private:
 		std::string m_PanelName{ "Properties" };
 	private:
-		friend class SceneHierarchyPanel;
+		friend class SceneEditorPanel;
 	};
 }

@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/SceneEditorPanel.h"
 
 #include "EditorApp.h"
 
@@ -12,12 +12,14 @@ namespace Kargono::Panels
 {
 
 	// Scene Hierarchy Tree
+	static EditorUI::PanelHeaderSpec s_MainSceneHeader{};
 	static EditorUI::TreeSpec s_SceneHierarchyTree {};
-
-	// Main Header & Tag Component
-	static EditorUI::PanelHeaderSpec s_MainHeader{};
-	static EditorUI::TextInputSpec s_TagEdit{};
+	static int32_t s_AddComponentEntity {};
 	static EditorUI::SelectOptionSpec s_AddComponent{};
+
+	// Tag Component
+	static EditorUI::CollapsingHeaderSpec s_TagHeader{};
+	static EditorUI::TextInputSpec s_TagEdit{};
 
 	// Transform Component
 	static EditorUI::CollapsingHeaderSpec s_TransformHeader{};
@@ -88,35 +90,88 @@ namespace Kargono::Panels
 	static EditorUI::CheckboxSpec s_ShapeAddProjection {};
 	static EditorUI::CheckboxSpec s_ShapeAddEntityID {};
 
-	static void InitializeMainHeader()
+	static void InitializeSceneHierarchy()
 	{
-		s_MainHeader.Label = "Empty Tag";
-		s_MainHeader.EditColorActive = false;
-		s_MainHeader.AddToSelectionList("Edit Entity Tag", [&]()
+		s_MainSceneHeader.Label = "No Scene Name";
+		s_MainSceneHeader.EditColorActive = false;
+		s_MainSceneHeader.AddToSelectionList("Create Entity", []()
 		{
-			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			if (entity && entity.HasComponent<Scenes::TagComponent>())
-			{
-				auto& component = entity.GetComponent<Scenes::TagComponent>();
-				s_TagEdit.CurrentOption = component.Tag;
-				s_TagEdit.StartPopup = true;
-			}
-		});
-		s_MainHeader.AddToSelectionList("Add Component", [&]()
-		{
-			s_AddComponent.PopupActive = true;
+			Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
 		});
 
-		s_TagEdit.Flags = EditorUI::TextInput_PopupOnly;
-		s_TagEdit.Label = "Edit Tag";
-		s_TagEdit.ConfirmAction = [&]()
+		s_SceneHierarchyTree.Label = "Scene Hierarchy";
+		s_SceneHierarchyTree.OnRefresh = [&]()
 		{
-			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			if (entity && entity.HasComponent<Scenes::TagComponent>())
+			if (Scenes::SceneService::GetActiveScene())
 			{
-				auto& component = entity.GetComponent<Scenes::TagComponent>();
-				component.Tag = s_TagEdit.CurrentOption;
-				s_MainHeader.Label = "Entity Tag: " + component.Tag;
+				s_SceneHierarchyTree.ClearTree();
+				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
+					{
+						Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
+
+						EditorUI::TreeEntry newEntry {};
+						newEntry.Label = entity.GetComponent<Scenes::TagComponent>().Tag;
+						newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+						newEntry.Handle = (uint64_t)entityID;
+						newEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity(entity);
+						};
+						newEntry.OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
+							auto& transformComponent = entity.GetComponent<Scenes::TransformComponent>();
+							editorCamera.SetFocalPoint(transformComponent.Translation);
+							editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+							editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+						};
+
+						newEntry.OnRightClickSelection.push_back({ "Add Component", [](EditorUI::TreeEntry& entry)
+						{
+							s_AddComponent.PopupActive = true;
+							s_AddComponentEntity = (int32_t)entry.Handle;
+						} });
+
+						newEntry.OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
+						{
+							static Scenes::Entity entityToDelete;
+							entityToDelete = { entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+
+							EngineService::SubmitToMainThread([&]()
+							{
+								if (!entityToDelete)
+								{
+									KG_WARN("Attempt to delete entity that does not exist");
+									return;
+								}
+								Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
+								if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
+								{
+									*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
+									s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+								}
+							});
+
+						} });
+
+						EditorUI::TreeEntry componentEntry {};
+						if (entity.HasComponent<Scenes::TagComponent>())
+						{
+							componentEntry.Label = "Tag Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+
+						s_SceneHierarchyTree.InsertEntry(newEntry);
+
+						if (entity == *Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
+						{
+							s_SceneHierarchyTree.SelectedEntry = &s_SceneHierarchyTree.GetTreeEntries().back();
+						}
+					});
 			}
 		};
 
@@ -124,7 +179,13 @@ namespace Kargono::Panels
 		s_AddComponent.Flags = EditorUI::SelectOption_PopupOnly;
 		s_AddComponent.PopupAction = [&]()
 		{
-			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			
+			Scenes::Entity entity = { entt::entity(s_AddComponentEntity), Scenes::SceneService::GetActiveScene().get() };
+			if (!entity)
+			{
+				KG_WARN("Attempt to add component to empty entity");
+				return;
+			}
 			s_AddComponent.ClearOptions();
 			s_AddComponent.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			if (!entity.HasComponent<Scenes::ClassInstanceComponent>())
@@ -157,43 +218,69 @@ namespace Kargono::Panels
 
 		s_AddComponent.ConfirmAction = [&](const EditorUI::OptionEntry& option)
 		{
+			Scenes::Entity entity = { entt::entity(s_AddComponentEntity), Scenes::SceneService::GetActiveScene().get() };
+			if (!entity)
+			{
+				KG_WARN("Attempt to add component to empty entity");
+				return;
+			}
+
 			if (option.Label == "None")
 			{
 				return;
 			}
 			if (option.Label == "Class Instance")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::ClassInstanceComponent>();
+				entity.AddComponent<Scenes::ClassInstanceComponent>();
 				return;
 			}
 			if (option.Label == "Camera")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::CameraComponent>();
+				entity.AddComponent<Scenes::CameraComponent>();
 				return;
 			}
 			if (option.Label == "Shape")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::ShapeComponent>();
+				entity.AddComponent<Scenes::ShapeComponent>();
 				return;
 			}
 			if (option.Label == "Rigidbody 2D")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::Rigidbody2DComponent>();
+				entity.AddComponent<Scenes::Rigidbody2DComponent>();
 				return;
 			}
 			if (option.Label == "Box Collider 2D")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::BoxCollider2DComponent>();
+				entity.AddComponent<Scenes::BoxCollider2DComponent>();
 				return;
 			}
 			if (option.Label == "Circle Collider 2D")
 			{
-				(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity()).AddComponent<Scenes::CircleCollider2DComponent>();
+				entity.AddComponent<Scenes::CircleCollider2DComponent>();
 				return;
 			}
 
 			KG_ERROR("Invalid option selected to add as component!");
-			
+
+		};
+	}
+
+	static void InitializeTagComponent()
+	{
+		s_TagHeader.Label = "Tag";
+		s_TagHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		s_TagHeader.Expanded = true;
+
+		s_TagEdit.Label = "Tag Label";
+		s_TagEdit.Flags |= EditorUI::TextInput_Indented;
+		s_TagEdit.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (entity && entity.HasComponent<Scenes::TagComponent>())
+			{
+				auto& component = entity.GetComponent<Scenes::TagComponent>();
+				component.Tag = s_TagEdit.CurrentOption;
+			}
 		};
 	}
 
@@ -1219,38 +1306,13 @@ namespace Kargono::Panels
 		};
 	}
 
-	SceneHierarchyPanel::SceneHierarchyPanel()
+	SceneEditorPanel::SceneEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName, 
-			KG_BIND_CLASS_FN(SceneHierarchyPanel::OnKeyPressedEditor));
-
-		s_SceneHierarchyTree.Label = "Scene Hierarchy";
-		s_SceneHierarchyTree.OnRefresh = [&]()
-		{
-			if (Scenes::SceneService::GetActiveScene())
-			{
-				s_SceneHierarchyTree.ClearTree();
-				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
-				{
-					Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
-
-					EditorUI::TreeEntry newEntry {};
-					newEntry.Label = entity.GetComponent<Scenes::TagComponent>().Tag;
-					newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-					newEntry.Handle = (uint64_t)entityID;
-					newEntry.OnClick = [&](EditorUI::TreeEntry& entry)
-					{
-						Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
-						SetSelectedEntity(entity);
-					};
-
-					s_SceneHierarchyTree.InsertEntry(newEntry);
-				});
-			}
-		};
-
-		InitializeMainHeader();
+			KG_BIND_CLASS_FN(SceneEditorPanel::OnKeyPressedEditor));
+		InitializeSceneHierarchy();
+		InitializeTagComponent();
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
 		InitializeRigidbody2DComponent();
@@ -1260,26 +1322,25 @@ namespace Kargono::Panels
 		InitializeShapeComponent();
 
 	}
-	void SceneHierarchyPanel::OnEditorUIRender()
+	void SceneEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
 		if (Scenes::SceneService::GetActiveScene())
 		{
+			s_MainSceneHeader.Label = Assets::AssetManager::GetSceneRegistry().at(
+				Scenes::SceneService::GetActiveSceneHandle()).Data.IntermediateLocation.string();
+			
+			EditorUI::EditorUIService::PanelHeader(s_MainSceneHeader);
 			s_SceneHierarchyTree.OnRefresh();
 			EditorUI::EditorUIService::Tree(s_SceneHierarchyTree);
 
-			// Right-click on blank space
-			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
-			{
-				if (ImGui::MenuItem("Create Empty Entity")) { Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity"); }
-				ImGui::EndPopup();
-			}
+			EditorUI::EditorUIService::SelectOption(s_AddComponent);
 		}
 		EditorUI::EditorUIService::EndWindow();
 	}
-	bool SceneHierarchyPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	bool SceneEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		switch (event.GetKeyCode())
 		{
@@ -1294,17 +1355,15 @@ namespace Kargono::Panels
 			}
 		}
 	}
-	void SceneHierarchyPanel::SetSelectedEntity(Scenes::Entity entity)
+	void SceneEditorPanel::SetSelectedEntity(Scenes::Entity entity)
 	{
 		*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = entity;
+		if (!entity)
+		{
+			s_SceneHierarchyTree.SelectedEntry = nullptr;
+		}
 		if (entity)
 		{
-			if (entity.HasComponent<Scenes::TagComponent>())
-			{
-				auto& tagComp = entity.GetComponent<Scenes::TagComponent>();
-				s_MainHeader.Label = "Entity Tag: " + tagComp.Tag;
-			}
-
 			if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 			{
 				Scenes::ClassInstanceComponent& instanceComp = entity.GetComponent<Scenes::ClassInstanceComponent>();
@@ -1325,7 +1384,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 		
 	}
-	void SceneHierarchyPanel::RefreshClassInstanceComponent()
+	void SceneEditorPanel::RefreshClassInstanceComponent()
 	{
 		Scenes::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (!currentEntity)
@@ -1345,7 +1404,7 @@ namespace Kargono::Panels
 			s_InstanceFieldsTable.OnRefresh();
 		}
 	}
-	void SceneHierarchyPanel::RefreshTransformComponent()
+	void SceneEditorPanel::RefreshTransformComponent()
 	{
 		Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (!entity)
@@ -1360,59 +1419,18 @@ namespace Kargono::Panels
 			s_TransformEditScale.CurrentVec3 = transformComp.Scale;
 		}
 	}
-	void SceneHierarchyPanel::DrawEntityNode(Scenes::Entity entity)
-	{
-		auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
-			ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
-		if (ImGui::IsItemClicked())
-		{
-			SetSelectedEntity(entity);
-		}
-		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		{
-			auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
-			auto& transformComponent = entity.GetComponent<Scenes::TransformComponent>();
-			editorCamera.SetFocalPoint(transformComponent.Translation);
-			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-			editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
-		}
-		bool entityDeleted = false;
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (ImGui::MenuItem("Delete Entity")) { entityDeleted = true; }
-			ImGui::EndPopup();
-		}
-
-		if (opened)
-		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
-			ImGui::TreePop();
-		}
-
-		if (entityDeleted)
-		{
-			Scenes::SceneService::GetActiveScene()->DestroyEntity(entity);
-			if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entity)
-			{
-				*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
-			}
-		}
-	}
-
-	void SceneHierarchyPanel::DrawComponents(Scenes::Entity entity)
+	void SceneEditorPanel::DrawComponents(Scenes::Entity entity)
 	{
 		if (entity.HasComponent<Scenes::TagComponent>())
 		{
-			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
-			EditorUI::EditorUIService::TextInputPopup(s_TagEdit);
-			EditorUI::EditorUIService::SelectOption(s_AddComponent);
+			Scenes::TagComponent& component = entity.GetComponent<Scenes::TagComponent>();
+			EditorUI::EditorUIService::CollapsingHeader(s_TagHeader);
+			if (s_TagHeader.Expanded)
+			{
+				s_TagEdit.CurrentOption = component.Tag;
+				EditorUI::EditorUIService::TextInput(s_TagEdit);
+			}
 		}
 
 		if (entity.HasComponent<Scenes::TransformComponent>())

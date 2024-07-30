@@ -204,7 +204,7 @@ namespace Kargono::Panels
 		};
 		s_CreateInputModePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_SelectInputModeNameSpec);
+			EditorUI::EditorUIService::TextInput(s_SelectInputModeNameSpec);
 		};
 	}
 

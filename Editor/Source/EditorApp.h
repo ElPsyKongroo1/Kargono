@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono.h"
 
-#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/SceneEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
@@ -206,7 +206,7 @@ namespace Kargono
 		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
-		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::SceneEditorPanel> m_SceneHierarchyPanel;
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
@@ -222,7 +222,7 @@ namespace Kargono
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 	private:
 		friend Panels::ViewportPanel;
-		friend Panels::SceneHierarchyPanel;
+		friend Panels::SceneEditorPanel;
 		friend Panels::ContentBrowserPanel;
 		friend Panels::LogPanel;
 		friend Panels::StatisticsPanel;

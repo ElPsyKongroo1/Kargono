@@ -4,10 +4,10 @@
 
 namespace Kargono::Panels
 {
-	class SceneHierarchyPanel
+	class SceneEditorPanel
 	{
 	public:
-		SceneHierarchyPanel();
+		SceneEditorPanel();
 	public:
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
@@ -16,10 +16,9 @@ namespace Kargono::Panels
 		void RefreshClassInstanceComponent();
 		void RefreshTransformComponent();
 	private:
-		void DrawEntityNode(Scenes::Entity entity);
 		void DrawComponents(Scenes::Entity entity);
 	private:
-		std::string m_PanelName{"Scene Hierarchy"};
+		std::string m_PanelName{"Scene Editor"};
 	private:
 		friend class PropertiesPanel;
 	};

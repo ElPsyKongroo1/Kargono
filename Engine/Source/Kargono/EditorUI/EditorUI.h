@@ -134,7 +134,7 @@ namespace Kargono::EditorUI
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
-		static void TextInputPopup(TextInputSpec& spec);
+		static void TextInput(TextInputSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
@@ -175,6 +175,7 @@ namespace Kargono::EditorUI
 		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid, 
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive, s_IconEntity,
+			s_IconBoxCollider, s_IconCircleCollider, s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
 			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconEdit_Active, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,
@@ -384,6 +385,7 @@ namespace Kargono::EditorUI
 	{
 		TextInput_None = 0,
 		TextInput_PopupOnly = BIT(0), // Only use a popup and remove inline text
+		TextInput_Indented = BIT(1) // Display indented
 	};
 
 	struct TextInputSpec
@@ -402,7 +404,7 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void EditorUIService::TextInputPopup(TextInputSpec& spec);
+		friend void EditorUIService::TextInput(TextInputSpec& spec);
 	};
 
 	struct ChooseDirectorySpec
@@ -499,16 +501,25 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
 
+	struct TreeEntry;
+
+	struct SelectionEntry
+	{
+		std::string Label{};
+		std::function<void(TreeEntry&)> OnClick { nullptr };
+	};
 
 	struct TreeEntry
 	{
 		std::string Label {};
 		UUID Handle {};
 		Ref<Rendering::Texture2D> IconHandle{ nullptr };
-		std::function<void(TreeEntry& entry)> OnClick {nullptr};
+		std::function<void(TreeEntry& entry)> OnLeftClick { nullptr };
+		std::function<void(TreeEntry& entry)> OnDoubleLeftClick { nullptr };
 		bool Expanded{ false };
 		void* ProvidedData { nullptr };
 		std::vector<TreeEntry> SubEntries{};
+		std::vector<SelectionEntry> OnRightClickSelection {};
 	};
 
 	struct TreeSpec
@@ -531,9 +542,14 @@ namespace Kargono::EditorUI
 		{
 			TreeEntries.clear();
 		}
+		std::vector<TreeEntry>& GetTreeEntries()
+		{
+			return TreeEntries;
+		}
 	private:
 		WidgetID WidgetID;
 		std::vector<TreeEntry> TreeEntries{};
+		TreeEntry* CurrentRightClick{ nullptr };
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition = {});

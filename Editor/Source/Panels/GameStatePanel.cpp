@@ -16,7 +16,7 @@ namespace Kargono::Panels
 	static EditorUI::SelectOptionSpec s_OpenGameStatePopupSpec {};
 	// Header
 	static EditorUI::TextInputSpec s_SelectGameStateNameSpec {};
-	static EditorUI::PanelHeaderSpec s_MainHeader {};
+	static EditorUI::PanelHeaderSpec s_TagHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteGameStateWarning {};
 	static EditorUI::GenericPopupSpec s_CloseGameStateWarning {};
 	// Main Panel
@@ -69,8 +69,8 @@ namespace Kargono::Panels
 
 			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(selection.Handle);
 			s_GameStatePanel->m_EditorGameStateHandle = selection.Handle;
-			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+			s_TagHeader.EditColorActive = false;
+			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
 				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
@@ -96,14 +96,14 @@ namespace Kargono::Panels
 			}
 			s_GameStatePanel->m_EditorGameStateHandle = Assets::AssetManager::CreateNewGameState(s_SelectGameStateNameSpec.CurrentOption);
 			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
-			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+			s_TagHeader.EditColorActive = false;
+			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
 				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
 		s_CreateGameStatePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_SelectGameStateNameSpec);
+			EditorUI::EditorUIService::TextInput(s_SelectGameStateNameSpec);
 		};
 	}
 
@@ -133,14 +133,14 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to close this game state object without saving?");
 		};
 
-		s_MainHeader.AddToSelectionList("Save", [&]()
+		s_TagHeader.AddToSelectionList("Save", [&]()
 			{
 				Assets::AssetManager::SaveGameState(s_GameStatePanel->m_EditorGameStateHandle, s_GameStatePanel->m_EditorGameState);
-				s_MainHeader.EditColorActive = false;
+				s_TagHeader.EditColorActive = false;
 			});
-		s_MainHeader.AddToSelectionList("Close", [&]()
+		s_TagHeader.AddToSelectionList("Close", [&]()
 			{
-				if (s_MainHeader.EditColorActive)
+				if (s_TagHeader.EditColorActive)
 				{
 					s_CloseGameStateWarning.PopupActive = true;
 				}
@@ -150,7 +150,7 @@ namespace Kargono::Panels
 					s_GameStatePanel->m_EditorGameState = nullptr;
 				}
 			});
-		s_MainHeader.AddToSelectionList("Delete", [&]()
+		s_TagHeader.AddToSelectionList("Delete", [&]()
 			{
 				s_DeleteGameStateWarning.PopupActive = true;
 			});
@@ -219,7 +219,7 @@ namespace Kargono::Panels
 				{
 					iteration++;
 				}
-				s_MainHeader.EditColorActive = true;
+				s_TagHeader.EditColorActive = true;
 			}
 			s_FieldsTable.OnRefresh();
 		};
@@ -251,7 +251,7 @@ namespace Kargono::Panels
 				KG_ERROR("Unable to delete field inside game state!");
 				return;
 			}
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupWidth = 420.0f;
@@ -310,12 +310,12 @@ namespace Kargono::Panels
 			}
 
 			fieldMap.insert_or_assign(s_EditFieldName.CurrentOption, newField);
-			s_MainHeader.EditColorActive = true;
+			s_TagHeader.EditColorActive = true;
 			s_FieldsTable.OnRefresh();
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_EditFieldName);
+			EditorUI::EditorUIService::TextInput(s_EditFieldName);
 			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 			EditorUI::EditorUIService::EditVariable(s_EditFieldValue);
 		};
@@ -347,7 +347,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(s_MainHeader);
+			EditorUI::EditorUIService::PanelHeader(s_TagHeader);
 			EditorUI::EditorUIService::GenericPopup(s_DeleteGameStateWarning);
 			EditorUI::EditorUIService::GenericPopup(s_CloseGameStateWarning);
 			EditorUI::EditorUIService::Table(s_FieldsTable);
