@@ -125,6 +125,12 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
 		ImGui::PopStyleVar();
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		// Get current cursor position and GLFW viewport size
 		auto windowScreenOffset = ImGui::GetWindowPos();
 		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };

@@ -505,6 +505,11 @@ namespace Kargono::EditorUI
 		ImGui::FocusWindow(NULL);
 	}
 
+	bool EditorUIService::IsCurrentWindowVisible()
+	{
+		return ImGui::IsWindowVisible();
+	}
+
 	void EditorUIService::HighlightFocusedWindow()
 	{
 		ImGuiWindow* window = GImGui->NavWindow;
@@ -1546,19 +1551,22 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	static void DrawEntries(TreeSpec& spec , std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition)
+	static void DrawEntries(TreeSpec& spec , std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath, ImVec2 rootPosition)
 	{
 		// Get initial positions and common resources
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition{};
+		uint64_t depth = currentPath.GetDepth();
+		uint32_t iteration = 0;
 		for (auto& treeEntry : entries)
 		{
+			currentPath.AddNode(iteration);
 			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
 
 			// Display Selected Background
-			if (spec.SelectedEntry == &treeEntry)
+			if (spec.SelectedEntry == currentPath)
 			{
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
@@ -1582,7 +1590,7 @@ namespace Kargono::EditorUI
 					{
 						treeEntry.OnLeftClick(treeEntry);
 					}
-					spec.SelectedEntry = &treeEntry;
+					spec.SelectedEntry = currentPath;
 				}
 
 				if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
@@ -1614,7 +1622,7 @@ namespace Kargono::EditorUI
 				{
 					treeEntry.OnLeftClick(treeEntry);
 				}
-				spec.SelectedEntry = &treeEntry;
+				spec.SelectedEntry = currentPath;
 			}
 
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
@@ -1640,21 +1648,28 @@ namespace Kargono::EditorUI
 				// Draw expand icon
 				ImGui::SameLine();
 				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-				const Ref<Rendering::Texture2D> icon = treeEntry.Expanded ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
+				const Ref<Rendering::Texture2D> icon = spec.ExpandedNodes.contains(currentPath) ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
 				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
 					ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 					EditorUIService::s_PureEmpty,
 					EditorUI::EditorUIService::s_PureWhite, 0))
 				{
-					Utility::Operations::ToggleBoolean(treeEntry.Expanded);
+					if (spec.ExpandedNodes.contains(currentPath))
+					{
+						spec.ExpandedNodes.erase(currentPath);
+					}
+					else
+					{
+						spec.ExpandedNodes.insert(currentPath);
+					}
 				}
 				ImGui::PopStyleColor();
 
 				// Draw all sub-entries
-				if (treeEntry.Expanded)
+				if (spec.ExpandedNodes.contains(currentPath))
 				{
-					DrawEntries(spec, treeEntry.SubEntries, widgetCount, depth + 1, screenPosition);
+					DrawEntries(spec, treeEntry.SubEntries, widgetCount, currentPath, screenPosition);
 				}
 			}
 
@@ -1665,6 +1680,8 @@ namespace Kargono::EditorUI
 					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
 					ImColor(EditorUIService::s_PureWhite));
 			}
+			currentPath.PopNode();
+			iteration++;
 		}
 
 		// Add vertical line for parent node
@@ -1680,8 +1697,8 @@ namespace Kargono::EditorUI
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
-
-		DrawEntries(spec, spec.TreeEntries, widgetCount, 0);
+		TreePath treePath{};
+		DrawEntries(spec, spec.TreeEntries, widgetCount, treePath, {});
 
 		if (ImGui::BeginPopup(("##" + std::to_string(spec.WidgetID)).c_str()))
 		{

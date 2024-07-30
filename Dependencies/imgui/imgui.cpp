@@ -7858,6 +7858,13 @@ bool ImGui::IsWindowAppearing()
     return window->Appearing;
 }
 
+IMGUI_API bool ImGui::IsWindowVisible()
+{
+    ImGuiWindow* window = GetCurrentWindowRead();
+
+    return !(window->Collapsed || window->Hidden);
+}
+
 void ImGui::SetWindowCollapsed(const char* name, bool collapsed, ImGuiCond cond)
 {
     if (ImGuiWindow* window = FindWindowByName(name))

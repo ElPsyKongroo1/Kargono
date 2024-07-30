@@ -120,6 +120,13 @@ namespace Kargono::Panels
 		// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
 		// Most of the contents of the window will be added by the log.Draw() call.
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowLog);
+
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (ImGui::Button("Reload"))
 		{
 			LoadBuffer();

@@ -33,6 +33,12 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowTesting);
+		// Exit window early if window is not visible
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
 
 		EditorUI::EditorUIService::Tree(s_TreeSpec);
 

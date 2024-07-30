@@ -163,13 +163,69 @@ namespace Kargono::Panels
 							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
 							newEntry.SubEntries.push_back(componentEntry);
 						}
+						if (entity.HasComponent<Scenes::TransformComponent>())
+						{
+							componentEntry.Label = "Transform Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTransform;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+						if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+						{
+							componentEntry.Label = "Class Instance Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+						if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+						{
+							componentEntry.Label = "Rigid Body 2D Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+						if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+						{
+							componentEntry.Label = "Box Collider 2D Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+						if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+						{
+							componentEntry.Label = "Circle Collider 2D Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+						if (entity.HasComponent<Scenes::CameraComponent>())
+						{
+							componentEntry.Label = "Camera Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
+
+						if (entity.HasComponent<Scenes::ShapeComponent>())
+						{
+							componentEntry.Label = "Shape Component";
+							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+							newEntry.SubEntries.push_back(componentEntry);
+						}
 
 
 						s_SceneHierarchyTree.InsertEntry(newEntry);
 
 						if (entity == *Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 						{
-							s_SceneHierarchyTree.SelectedEntry = &s_SceneHierarchyTree.GetTreeEntries().back();
+							EditorUI::TreePath newPath{};
+							if (EditorUI::GetPathToTreeEntry(newPath, &s_SceneHierarchyTree.GetTreeEntries().back(),
+								s_SceneHierarchyTree.GetTreeEntries()))
+							{
+								s_SceneHierarchyTree.SelectedEntry = newPath;
+							}
+							else
+							{
+								KG_WARN("Could not locate selected entry");
+							}
 						}
 					});
 			}
@@ -1327,6 +1383,12 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowSceneHierarchy);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (Scenes::SceneService::GetActiveScene())
 		{
 			s_MainSceneHeader.Label = Assets::AssetManager::GetSceneRegistry().at(
@@ -1360,7 +1422,7 @@ namespace Kargono::Panels
 		*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = entity;
 		if (!entity)
 		{
-			s_SceneHierarchyTree.SelectedEntry = nullptr;
+			s_SceneHierarchyTree.SelectedEntry = {};
 		}
 		if (entity)
 		{

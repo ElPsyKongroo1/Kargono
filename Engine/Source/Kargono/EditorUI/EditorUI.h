@@ -12,6 +12,7 @@
 #include <functional>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace Kargono::Rendering { class Texture2D; }
 
@@ -61,12 +62,12 @@ namespace Kargono::EditorUI
 	struct InlineButtonSpec
 	{
 	public:
-		float XPosition {0.0f};
+		float XPosition{ 0.0f };
 		float YPosition{ 0.0f };
 		float IconSize{ 0.0f };
-		Ref<Rendering::Texture2D> ActiveIcon { nullptr };
-		Ref<Rendering::Texture2D> InactiveIcon { nullptr };
-		std::string ActiveTooltip {};
+		Ref<Rendering::Texture2D> ActiveIcon{ nullptr };
+		Ref<Rendering::Texture2D> InactiveIcon{ nullptr };
+		std::string ActiveTooltip{};
 		std::string InactiveTooltip{};
 		PositionType XPositionType{ PositionType::Inline };
 		bool Disabled{ false };
@@ -75,7 +76,7 @@ namespace Kargono::EditorUI
 	//==============================
 	// Widget Count Management
 	//==============================
-	inline uint32_t widgetCounter {1};
+	inline uint32_t widgetCounter{ 1 };
 	// Maintain unique id for each widget
 	static WidgetID IncrementWidgetCounter()
 	{
@@ -150,9 +151,11 @@ namespace Kargono::EditorUI
 		static void SetFocusedWindow(const std::string& windowName);
 		static void BringWindowToFront(const std::string& windowName);
 		static void ClearWindowFocus();
+		static bool IsCurrentWindowVisible();
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
 		static void BlockMouseEvents(bool block);
+		
 	public:
 		//==============================
 		// UI Fonts
@@ -172,7 +175,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Images/Textures
 		//==============================
-		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid, 
+		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid,
 			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
 			s_IconCamera, s_IconCameraActive, s_IconEntity,
 			s_IconBoxCollider, s_IconCircleCollider, s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform,
@@ -192,20 +195,20 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Colors
 		//==============================
-		inline static ImVec4 s_PureWhite {1.0f, 1.0f, 1.0f, 1.0f};
-		inline static ImVec4 s_PureBlack {0.0f, 0.0f, 0.0f, 1.0f};
-		inline static ImVec4 s_LightGray {0.7f, 0.7f, 0.7f, 1.0f};
-		inline static ImVec4 s_PureEmpty {0.0f, 0.0f, 0.0f, 0.0f};
-		inline static ImVec4 s_PearlBlue {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f};
-		inline static ImVec4 s_PearlBlue_Thin {38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f};
-		inline static ImVec4 s_DarkPurple {0.27843f, 0.011764f, 0.4f, 1.0f};
-		inline static ImVec4 s_LightPurple {0.9226f, 0.4630f, 1.0f, 1.0f};
-		inline static ImVec4 s_LightGreen {0.2879f, 1.0f, 0.39322f, 1.0f};
-		inline static ImVec4 s_LightPurple_Thin { 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
+		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
+		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
+		inline static ImVec4 s_LightGray{ 0.7f, 0.7f, 0.7f, 1.0f };
+		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
+		inline static ImVec4 s_PearlBlue{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f };
+		inline static ImVec4 s_PearlBlue_Thin{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f };
+		inline static ImVec4 s_DarkPurple{ 0.27843f, 0.011764f, 0.4f, 1.0f };
+		inline static ImVec4 s_LightPurple{ 0.9226f, 0.4630f, 1.0f, 1.0f };
+		inline static ImVec4 s_LightGreen{ 0.2879f, 1.0f, 0.39322f, 1.0f };
+		inline static ImVec4 s_LightPurple_Thin{ 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 
 
-		inline static ImVec4 s_GridMajor { 0.735f, 0.720f, 0.690f, 1.0f};
-		inline static ImVec4 s_GridMinor { 0.347f, 0.347f, 0.347f, 1.0f};
+		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
+		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
 	public:
 		//==============================
 		// UI Button Presets
@@ -241,10 +244,10 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		float PopupWidth{ 700.0f };
-		std::function<void()> PopupContents {nullptr};
-		std::function<void()> ConfirmAction {nullptr};
-		std::function<void()> DeleteAction {nullptr};
-		std::function<void()> PopupAction {nullptr};
+		std::function<void()> PopupContents{ nullptr };
+		std::function<void()> ConfirmAction{ nullptr };
+		std::function<void()> DeleteAction{ nullptr };
+		std::function<void()> PopupAction{ nullptr };
 		bool PopupActive{ false };
 	private:
 		WidgetID WidgetID;
@@ -259,7 +262,7 @@ namespace Kargono::EditorUI
 		Checkbox_Indented = BIT(1)
 	};
 
-	
+
 	struct CheckboxSpec
 	{
 	public:
@@ -273,7 +276,7 @@ namespace Kargono::EditorUI
 		bool ToggleBoolean{ false };
 		std::function<void(bool)> ConfirmAction;
 	private:
-		bool Editing {false};
+		bool Editing{ false };
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
@@ -295,8 +298,8 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label{};
 		WidgetFlags Flags{ EditFloat_None };
-		float CurrentFloat {};
-		std::function<void()> ConfirmAction { nullptr };
+		float CurrentFloat{};
+		std::function<void()> ConfirmAction{ nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -320,8 +323,8 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label{};
 		WidgetFlags Flags{ EditVec2_None };
-		Math::vec2 CurrentVec2 {};
-		std::function<void()> ConfirmAction { nullptr };
+		Math::vec2 CurrentVec2{};
+		std::function<void()> ConfirmAction{ nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -345,8 +348,8 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label{};
 		WidgetFlags Flags{ EditVec3_None };
-		Math::vec3 CurrentVec3 {};
-		std::function<void()> ConfirmAction { nullptr };
+		Math::vec3 CurrentVec3{};
+		std::function<void()> ConfirmAction{ nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -368,13 +371,13 @@ namespace Kargono::EditorUI
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label ;
+		std::string Label;
 		WidgetFlags Flags{ RadioSelector_None };
 		uint16_t SelectedOption{ 0 };
-		std::string FirstOptionLabel {"None"};
-		std::string SecondOptionLabel {"None"};
+		std::string FirstOptionLabel{ "None" };
+		std::string SecondOptionLabel{ "None" };
 		bool Editing{ false };
-		std::function<void()> SelectAction {nullptr};
+		std::function<void()> SelectAction{ nullptr };
 	private:
 		WidgetID WidgetID;
 	private:
@@ -398,7 +401,7 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		WidgetFlags Flags{ TextInput_None };
-		std::string CurrentOption {};
+		std::string CurrentOption{};
 		std::function<void()> ConfirmAction;
 		bool StartPopup{ false };
 	private:
@@ -417,8 +420,8 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		WidgetFlags Flags{ TextInput_None };
-		std::filesystem::path CurrentOption {};
-		std::function<void(const std::string&)> ConfirmAction { nullptr };
+		std::filesystem::path CurrentOption{};
+		std::function<void(const std::string&)> ConfirmAction{ nullptr };
 	private:
 		WidgetID WidgetID;
 	private:
@@ -442,7 +445,7 @@ namespace Kargono::EditorUI
 		std::string Label;
 		WidgetFlags Flags{ CollapsingHeader_None };
 		bool Expanded{ false };
-		std::function<void()> OnExpand { nullptr };
+		std::function<void()> OnExpand{ nullptr };
 	public:
 		void ClearSelectionList()
 		{
@@ -501,6 +504,57 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
 
+	class TreePath
+	{
+	public:
+		void AddNode(uint16_t newNode)
+		{
+			m_Path.push_back(newNode);
+		}
+
+		void PopNode()
+		{
+			m_Path.pop_back();
+		}
+
+		std::size_t GetDepth()
+		{
+			return m_Path.size();
+		}
+
+		const std::vector<uint16_t>& GetPath() const
+		{
+			return m_Path;
+		}
+
+		bool operator==(const TreePath& other) const
+		{
+			return m_Path == other.m_Path;
+		}
+	private:
+		std::vector<uint16_t> m_Path{};
+	};
+}
+
+namespace std
+{
+	template<>
+	struct hash<Kargono::EditorUI::TreePath>
+	{
+		std::size_t operator()(const Kargono::EditorUI::TreePath& path) const
+		{
+			std::size_t seed = 0;
+			for (uint16_t node : path.GetPath()) 
+			{
+				seed ^= std::hash<uint16_t>()(node) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+			}
+			return seed;
+		}
+	};
+}
+
+namespace Kargono::EditorUI 
+{
 	struct TreeEntry;
 
 	struct SelectionEntry
@@ -516,11 +570,36 @@ namespace Kargono::EditorUI
 		Ref<Rendering::Texture2D> IconHandle{ nullptr };
 		std::function<void(TreeEntry& entry)> OnLeftClick { nullptr };
 		std::function<void(TreeEntry& entry)> OnDoubleLeftClick { nullptr };
-		bool Expanded{ false };
 		void* ProvidedData { nullptr };
 		std::vector<TreeEntry> SubEntries{};
 		std::vector<SelectionEntry> OnRightClickSelection {};
 	};
+
+	inline bool GetPathToTreeEntry(TreePath& outputPath, TreeEntry* entryQuery, const std::vector<TreeEntry>& entries)
+	{
+		uint32_t iteration{ 0 };
+		for (auto& treeEntry : entries)
+		{
+			outputPath.AddNode(iteration);
+			if (entryQuery == &treeEntry)
+			{
+				return true;
+			}
+
+			if (treeEntry.SubEntries.size() > 0)
+			{
+				bool success = GetPathToTreeEntry(outputPath, entryQuery, treeEntry.SubEntries);
+				if (success)
+				{
+					return true;
+				}
+			}
+
+			outputPath.PopNode();
+			iteration++;
+		}
+		return false;
+	}
 
 	struct TreeSpec
 	{
@@ -531,7 +610,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
-		TreeEntry* SelectedEntry{ nullptr };
+		TreePath SelectedEntry{};
 		std::function<void()> OnRefresh { nullptr };
 	public:
 		void InsertEntry(const TreeEntry& entry)
@@ -549,10 +628,11 @@ namespace Kargono::EditorUI
 	private:
 		WidgetID WidgetID;
 		std::vector<TreeEntry> TreeEntries{};
+		std::unordered_set<TreePath> ExpandedNodes{};
 		TreeEntry* CurrentRightClick{ nullptr };
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
-		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, uint32_t depth, ImVec2 rootPosition = {});
+		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
 	};
 
 

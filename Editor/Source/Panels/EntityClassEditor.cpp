@@ -547,6 +547,12 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowClassEditor);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (!s_EditorEntityClass)
 		{
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Class", s_OnOpenClass, "Create New Class", s_OnCreateClass);

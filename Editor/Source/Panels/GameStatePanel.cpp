@@ -339,6 +339,12 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowGameStateEditor);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (!m_EditorGameState)
 		{
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", s_OnOpenGameState, "Create New Game State", s_OnCreateGameState);

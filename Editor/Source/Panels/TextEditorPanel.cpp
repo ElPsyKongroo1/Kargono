@@ -135,6 +135,12 @@ namespace Kargono::Panels
 		}
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowTextEditor, flags);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (s_AllDocuments.size() == 0)
 		{
 			EditorUI::EditorUIService::NewItemScreen("Open Existing File", s_OnOpenFile, "Create New File", s_OnCreateFile);

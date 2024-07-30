@@ -544,6 +544,12 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		EditorUI::EditorUIService::Table(s_AllScriptsTable);
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 

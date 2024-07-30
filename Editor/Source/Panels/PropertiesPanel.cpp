@@ -16,6 +16,13 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow("Properties", &s_EditorApp->m_ShowProperties, 
 			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoFocusOnAppearing);
+
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 		{
 			s_EditorApp->m_SceneHierarchyPanel->DrawComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());

@@ -70,6 +70,12 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		Assets::AssetHandle currentUIHandle = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
 		if (ImGui::BeginCombo("##Select User Interface", static_cast<bool>(currentUIHandle) ? Assets::AssetManager::GetUserInterfaceLocation(currentUIHandle).string().c_str() : "None"))
 		{

@@ -507,6 +507,12 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
+
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
 		// Project Name
 		EditorUI::EditorUIService::LabeledText("Project Name", Projects::ProjectService::GetActiveProjectName());
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);

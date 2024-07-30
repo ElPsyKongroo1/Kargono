@@ -371,6 +371,7 @@ namespace ImGui
     // Windows Utilities
     // - 'current window' = the window we are appending into while inside a Begin()/End() block. 'next window' = next window we will Begin() into.
     IMGUI_API bool          IsWindowAppearing();
+    IMGUI_API bool          IsWindowVisible();                          // is the current window visible on the screen?
     IMGUI_API bool          IsWindowCollapsed();
     IMGUI_API bool          IsWindowFocused(ImGuiFocusedFlags flags=0); // is current window focused? or its root/child, depending on flags. see flags for options.
     IMGUI_API bool          IsWindowHovered(ImGuiHoveredFlags flags=0); // is current window hovered (and typically: not blocked by a popup/modal)? see flags for options. NB: If you are trying to check whether your mouse should be dispatched to imgui or to your app, you should use the 'io.WantCaptureMouse' boolean for that! Please read the FAQ!
