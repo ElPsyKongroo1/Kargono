@@ -1925,4 +1925,43 @@ namespace Kargono::EditorUI
 	{
 		ImGui::EndTabItem();
 	}
+
+	static bool RecursiveGetPathFromEntry(TreePath& outputPath, TreeEntry* entryQuery, const std::vector<TreeEntry>& entries)
+	{
+		uint32_t iteration{ 0 };
+		for (auto& treeEntry : entries)
+		{
+			outputPath.AddNode(iteration);
+			if (entryQuery == &treeEntry)
+			{
+				return true;
+			}
+
+			if (treeEntry.SubEntries.size() > 0)
+			{
+				bool success = RecursiveGetPathFromEntry(outputPath, entryQuery, treeEntry.SubEntries);
+				if (success)
+				{
+					return true;
+				}
+			}
+
+			outputPath.PopNode();
+			iteration++;
+		}
+		return false;
+	}
+
+	TreePath TreeSpec::GetPathFromEntryReference(TreeEntry* entryQuery)
+	{
+		TreePath newPath{};
+		if (RecursiveGetPathFromEntry(newPath, entryQuery, GetTreeEntries()))
+		{
+			return newPath;
+		}
+		
+		KG_WARN("Could not locate provided entry query");
+		return {};
+		
+	}
 }

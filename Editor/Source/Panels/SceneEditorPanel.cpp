@@ -106,128 +106,129 @@ namespace Kargono::Panels
 			{
 				s_SceneHierarchyTree.ClearTree();
 				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
+				{
+					Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
+
+					EditorUI::TreeEntry newEntry {};
+					newEntry.Label = entity.GetComponent<Scenes::TagComponent>().Tag;
+					newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+					newEntry.Handle = (uint64_t)entityID;
+					newEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
 					{
-						Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
+						Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+						s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity(entity);
+					};
+					newEntry.OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
+					{
+						Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+						auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
+						auto& transformComponent = entity.GetComponent<Scenes::TransformComponent>();
+						editorCamera.SetFocalPoint(transformComponent.Translation);
+						editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+						editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+					};
 
-						EditorUI::TreeEntry newEntry {};
-						newEntry.Label = entity.GetComponent<Scenes::TagComponent>().Tag;
-						newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-						newEntry.Handle = (uint64_t)entityID;
-						newEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
-						{
-							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
-							s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity(entity);
-						};
-						newEntry.OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
-						{
-							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
-							auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
-							auto& transformComponent = entity.GetComponent<Scenes::TransformComponent>();
-							editorCamera.SetFocalPoint(transformComponent.Translation);
-							editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-							editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
-						};
+					newEntry.OnRightClickSelection.push_back({ "Add Component", [](EditorUI::TreeEntry& entry)
+					{
+						s_AddComponent.PopupActive = true;
+						s_AddComponentEntity = (int32_t)entry.Handle;
+					} });
 
-						newEntry.OnRightClickSelection.push_back({ "Add Component", [](EditorUI::TreeEntry& entry)
-						{
-							s_AddComponent.PopupActive = true;
-							s_AddComponentEntity = (int32_t)entry.Handle;
-						} });
+					newEntry.OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
+					{
+						static Scenes::Entity entityToDelete;
+						entityToDelete = { entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
 
-						newEntry.OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
+						EngineService::SubmitToMainThread([&]()
 						{
-							static Scenes::Entity entityToDelete;
-							entityToDelete = { entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
-
-							EngineService::SubmitToMainThread([&]()
+							if (!entityToDelete)
 							{
-								if (!entityToDelete)
-								{
-									KG_WARN("Attempt to delete entity that does not exist");
-									return;
-								}
-								Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
-								if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
-								{
-									*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
-									s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
-								}
-							});
-
-						} });
-
-						EditorUI::TreeEntry componentEntry {};
-						if (entity.HasComponent<Scenes::TagComponent>())
-						{
-							componentEntry.Label = "Tag Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-						if (entity.HasComponent<Scenes::TransformComponent>())
-						{
-							componentEntry.Label = "Transform Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTransform;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-						if (entity.HasComponent<Scenes::ClassInstanceComponent>())
-						{
-							componentEntry.Label = "Class Instance Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-						if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
-						{
-							componentEntry.Label = "Rigid Body 2D Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-						if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
-						{
-							componentEntry.Label = "Box Collider 2D Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-						if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
-						{
-							componentEntry.Label = "Circle Collider 2D Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-						if (entity.HasComponent<Scenes::CameraComponent>())
-						{
-							componentEntry.Label = "Camera Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-						if (entity.HasComponent<Scenes::ShapeComponent>())
-						{
-							componentEntry.Label = "Shape Component";
-							componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-							newEntry.SubEntries.push_back(componentEntry);
-						}
-
-
-						s_SceneHierarchyTree.InsertEntry(newEntry);
-
-						if (entity == *Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
-						{
-							EditorUI::TreePath newPath{};
-							if (EditorUI::GetPathToTreeEntry(newPath, &s_SceneHierarchyTree.GetTreeEntries().back(),
-								s_SceneHierarchyTree.GetTreeEntries()))
-							{
-								s_SceneHierarchyTree.SelectedEntry = newPath;
+								KG_WARN("Attempt to delete entity that does not exist");
+								return;
 							}
-							else
+							Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
+							if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
 							{
-								KG_WARN("Could not locate selected entry");
+								*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
+								s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
 							}
+						});
+
+					} });
+
+					EditorUI::TreeEntry componentEntry {};
+					componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+					{
+						
+					};
+					if (entity.HasComponent<Scenes::TagComponent>())
+					{
+						componentEntry.Label = "Tag Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+					if (entity.HasComponent<Scenes::TransformComponent>())
+					{
+						componentEntry.Label = "Transform Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTransform;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+					if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+					{
+						componentEntry.Label = "Class Instance Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+					if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+					{
+						componentEntry.Label = "Rigid Body 2D Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+					if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+					{
+						componentEntry.Label = "Box Collider 2D Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+					if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+					{
+						componentEntry.Label = "Circle Collider 2D Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+					if (entity.HasComponent<Scenes::CameraComponent>())
+					{
+						componentEntry.Label = "Camera Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+					if (entity.HasComponent<Scenes::ShapeComponent>())
+					{
+						componentEntry.Label = "Shape Component";
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+						newEntry.SubEntries.push_back(componentEntry);
+					}
+
+
+					s_SceneHierarchyTree.InsertEntry(newEntry);
+
+					//TODO: Remove this last section
+					if (entity == *Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
+					{
+						EditorUI::TreePath path = s_SceneHierarchyTree.GetPathFromEntryReference(&s_SceneHierarchyTree.GetTreeEntries().back());
+
+						if (path)
+						{
+							s_SceneHierarchyTree.SelectedEntry = path;
 						}
-					});
+					}
+				});
 			}
 		};
 
@@ -1440,6 +1441,15 @@ namespace Kargono::Panels
 				s_InstanceFieldsTable.OnRefresh();
 			}
 		}
+
+		//TODO: Add Selected Entry to Tree
+		/*EditorUI::TreePath path = s_SceneHierarchyTree.GetPathFromEntryReference(&s_SceneHierarchyTree.GetTreeEntries().back());
+
+		if (path)
+		{
+			s_SceneHierarchyTree.SelectedEntry = path;
+		}*/
+		
 
 		RefreshTransformComponent();
 		s_EditorApp->m_ShowProperties = true;

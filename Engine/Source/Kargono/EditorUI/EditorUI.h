@@ -531,6 +531,11 @@ namespace Kargono::EditorUI
 		{
 			return m_Path == other.m_Path;
 		}
+
+		operator bool() const
+		{
+			return (bool)m_Path.size();
+		}
 	private:
 		std::vector<uint16_t> m_Path{};
 	};
@@ -575,32 +580,6 @@ namespace Kargono::EditorUI
 		std::vector<SelectionEntry> OnRightClickSelection {};
 	};
 
-	inline bool GetPathToTreeEntry(TreePath& outputPath, TreeEntry* entryQuery, const std::vector<TreeEntry>& entries)
-	{
-		uint32_t iteration{ 0 };
-		for (auto& treeEntry : entries)
-		{
-			outputPath.AddNode(iteration);
-			if (entryQuery == &treeEntry)
-			{
-				return true;
-			}
-
-			if (treeEntry.SubEntries.size() > 0)
-			{
-				bool success = GetPathToTreeEntry(outputPath, entryQuery, treeEntry.SubEntries);
-				if (success)
-				{
-					return true;
-				}
-			}
-
-			outputPath.PopNode();
-			iteration++;
-		}
-		return false;
-	}
-
 	struct TreeSpec
 	{
 	public:
@@ -625,6 +604,8 @@ namespace Kargono::EditorUI
 		{
 			return TreeEntries;
 		}
+
+		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
 	private:
 		WidgetID WidgetID;
 		std::vector<TreeEntry> TreeEntries{};
