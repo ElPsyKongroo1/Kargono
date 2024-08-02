@@ -247,6 +247,20 @@ namespace Kargono::Scenes
 		}
 	};
 
+	enum class ComponentType
+	{
+		None = 0,
+		Transform,
+		Tag,
+		Camera,
+		Rigidbody2D,
+		BoxCollider2D,
+		CircleCollider2D,
+		ClassInstance,
+		Shape,
+		Network
+	};
+
 	template<typename... Components>
 	struct ComponentGroup
 	{

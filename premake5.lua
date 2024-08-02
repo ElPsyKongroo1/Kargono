@@ -25,7 +25,7 @@ workspace "Kargono"
 		"MultiProcessorCompile"
 	}
 
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputdir = "%{cfg.buildcfg}_%{cfg.system}"
 
 
 group "Dependencies"

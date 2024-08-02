@@ -657,7 +657,8 @@ namespace Kargono::Panels
 		{
 			case Key::Escape:
 			{
-				s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
+				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
 				return true;
 			}
 			case Key::Tab:

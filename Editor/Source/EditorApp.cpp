@@ -48,7 +48,7 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-		m_SceneHierarchyPanel = CreateScope<Panels::SceneEditorPanel>();
+		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -279,7 +279,7 @@ namespace Kargono
 		}
 
 		// Display other panels
-		if (m_ShowSceneHierarchy) { m_SceneHierarchyPanel->OnEditorUIRender(); }
+		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
@@ -434,7 +434,7 @@ namespace Kargono
 				if (selectedEntity)
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);
-					m_SceneHierarchyPanel->SetSelectedEntity({});
+					m_SceneEditorPanel->SetSelectedEntity({});
 				}
 			}
 				break;
@@ -456,7 +456,8 @@ namespace Kargono
 			{
 				if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 				{
-					m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
+					m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
+					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
 					// Algorithm to enable double clicking for an entity!
 					static float previousTime{ 0.0f };
 					static Scenes::Entity previousEntity{};
@@ -927,7 +928,8 @@ namespace Kargono
 		if (selectedEntity)
 		{
 			Scenes::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
-			m_SceneHierarchyPanel->SetSelectedEntity(newEntity);
+			m_SceneEditorPanel->SetSelectedEntity(newEntity);
+			s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
 		}
 	}
 

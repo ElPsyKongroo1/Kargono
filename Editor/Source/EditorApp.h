@@ -206,7 +206,7 @@ namespace Kargono
 		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
-		Scope<Panels::SceneEditorPanel> m_SceneHierarchyPanel;
+		Scope<Panels::SceneEditorPanel> m_SceneEditorPanel;
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;

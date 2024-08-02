@@ -25,7 +25,14 @@ namespace Kargono::Panels
 
 		if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 		{
-			s_EditorApp->m_SceneHierarchyPanel->DrawComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+			if (s_EditorApp->m_SceneEditorPanel->m_DisplayedComponent == Scenes::ComponentType::None)
+			{
+				s_EditorApp->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+			}
+			else
+			{
+				s_EditorApp->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+			}
 		}
 		EditorUI::EditorUIService::EndWindow();
 	}

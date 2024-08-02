@@ -116,7 +116,8 @@ namespace Kargono::Panels
 					newEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
 					{
 						Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
-						s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity(entity);
+						s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+						s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
 					};
 					newEntry.OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
 					{
@@ -150,33 +151,48 @@ namespace Kargono::Panels
 							if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
 							{
 								*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
-								s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+								s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
 							}
 						});
 
 					} });
 
 					EditorUI::TreeEntry componentEntry {};
-					componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
-					{
-						
-					};
+					componentEntry.Handle = (uint64_t)entityID;
 					if (entity.HasComponent<Scenes::TagComponent>())
 					{
 						componentEntry.Label = "Tag Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::Tag);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 					if (entity.HasComponent<Scenes::TransformComponent>())
 					{
 						componentEntry.Label = "Transform Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTransform;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::Transform);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 					if (entity.HasComponent<Scenes::ClassInstanceComponent>())
 					{
 						componentEntry.Label = "Class Instance Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::ClassInstance);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
@@ -184,6 +200,12 @@ namespace Kargono::Panels
 					{
 						componentEntry.Label = "Rigid Body 2D Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::Rigidbody2D);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
@@ -191,6 +213,12 @@ namespace Kargono::Panels
 					{
 						componentEntry.Label = "Box Collider 2D Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::BoxCollider2D);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
@@ -198,6 +226,12 @@ namespace Kargono::Panels
 					{
 						componentEntry.Label = "Circle Collider 2D Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::CircleCollider2D);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
@@ -205,6 +239,12 @@ namespace Kargono::Panels
 					{
 						componentEntry.Label = "Camera Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::Camera);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
@@ -212,22 +252,16 @@ namespace Kargono::Panels
 					{
 						componentEntry.Label = "Shape Component";
 						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+						{
+							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
+							s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+							s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::Shape);
+						};
 						newEntry.SubEntries.push_back(componentEntry);
 					}
 
-
 					s_SceneHierarchyTree.InsertEntry(newEntry);
-
-					//TODO: Remove this last section
-					if (entity == *Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
-					{
-						EditorUI::TreePath path = s_SceneHierarchyTree.GetPathFromEntryReference(&s_SceneHierarchyTree.GetTreeEntries().back());
-
-						if (path)
-						{
-							s_SceneHierarchyTree.SelectedEntry = path;
-						}
-					}
 				});
 			}
 		};
@@ -1409,7 +1443,7 @@ namespace Kargono::Panels
 		{
 			case Key::Escape:
 			{
-				s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
 				return true;
 			}
 			default:
@@ -1440,16 +1474,26 @@ namespace Kargono::Panels
 				}
 				s_InstanceFieldsTable.OnRefresh();
 			}
+
+			EditorUI::TreePath path;
+			for (auto& entry : s_SceneHierarchyTree.GetTreeEntries())
+			{
+				if ((uint32_t)entry.Handle == (uint32_t)entity)
+				{
+					path = s_SceneHierarchyTree.GetPathFromEntryReference(&entry);
+				}
+			}
+
+			if (path)
+			{
+				s_SceneHierarchyTree.SelectedEntry = path;
+			}
+			else
+			{
+				KG_WARN("Failed to locate entity inside tree");
+			}
 		}
 
-		//TODO: Add Selected Entry to Tree
-		/*EditorUI::TreePath path = s_SceneHierarchyTree.GetPathFromEntryReference(&s_SceneHierarchyTree.GetTreeEntries().back());
-
-		if (path)
-		{
-			s_SceneHierarchyTree.SelectedEntry = path;
-		}*/
-		
 
 		RefreshTransformComponent();
 		s_EditorApp->m_ShowProperties = true;
@@ -1492,168 +1536,255 @@ namespace Kargono::Panels
 		}
 	}
 
-	void SceneEditorPanel::DrawComponents(Scenes::Entity entity)
+	void SceneEditorPanel::DrawAllComponents(Scenes::Entity entity)
 	{
-		if (entity.HasComponent<Scenes::TagComponent>())
+		DrawTagComponent(entity);
+		DrawTransformComponent(entity);
+		DrawClassInstanceComponent(entity);
+		DrawRigidbody2DComponent(entity);
+		DrawBoxCollider2DComponent(entity);
+		DrawCircleCollider2DComponent(entity);
+		DrawCameraComponent(entity);
+		DrawShapeComponent(entity);
+	}
+	void SceneEditorPanel::DrawSingleComponent(Scenes::Entity entity)
+	{
+		switch (m_DisplayedComponent)
 		{
-			Scenes::TagComponent& component = entity.GetComponent<Scenes::TagComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_TagHeader);
-			if (s_TagHeader.Expanded)
-			{
-				s_TagEdit.CurrentOption = component.Tag;
-				EditorUI::EditorUIService::TextInput(s_TagEdit);
-			}
+		case Scenes::ComponentType::Tag:
+		{
+			DrawTagComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::Transform:
+		{
+			DrawTransformComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::Rigidbody2D:
+		{
+			DrawRigidbody2DComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::BoxCollider2D:
+		{
+			DrawBoxCollider2DComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::CircleCollider2D:
+		{
+			DrawCircleCollider2DComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::Camera:
+		{
+			DrawCameraComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::Shape:
+		{
+			DrawShapeComponent(entity);
+			return;
+		}
+		case Scenes::ComponentType::ClassInstance:
+		{
+			DrawClassInstanceComponent(entity);
+			return;
 		}
 
-		if (entity.HasComponent<Scenes::TransformComponent>())
+		case Scenes::ComponentType::None:
+		case Scenes::ComponentType::Network:
+		default:
+			KG_ERROR("Undefined component type provided")
+		}
+	}
+	void SceneEditorPanel::DrawTagComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::TagComponent>())
 		{
-			Scenes::TransformComponent& component = entity.GetComponent<Scenes::TransformComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_TransformHeader);
-			if (s_TransformHeader.Expanded)
+			return;
+		}
+		Scenes::TagComponent& component = entity.GetComponent<Scenes::TagComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_TagHeader);
+		if (s_TagHeader.Expanded)
+		{
+			s_TagEdit.CurrentOption = component.Tag;
+			EditorUI::EditorUIService::TextInput(s_TagEdit);
+		}
+	}
+	void SceneEditorPanel::DrawTransformComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::TransformComponent>())
+		{
+			return;
+		}
+		Scenes::TransformComponent& component = entity.GetComponent<Scenes::TransformComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_TransformHeader);
+		if (s_TransformHeader.Expanded)
+		{
+			s_TransformEditTranslation.CurrentVec3 = component.Translation;
+			EditorUI::EditorUIService::EditVec3(s_TransformEditTranslation);
+			s_TransformEditScale.CurrentVec3 = component.Scale;
+			EditorUI::EditorUIService::EditVec3(s_TransformEditScale);
+			s_TransformEditRotation.CurrentVec3 = component.Rotation;
+			EditorUI::EditorUIService::EditVec3(s_TransformEditRotation);
+		}
+	}
+	void SceneEditorPanel::DrawClassInstanceComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			return;
+		}
+		Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_ClassInstanceHeader);
+		if (s_ClassInstanceHeader.Expanded)
+		{
+			EditorUI::EditorUIService::SelectOption(s_SelectClassOption);
+			if (component.ClassHandle != Assets::EmptyHandle)
 			{
-				s_TransformEditTranslation.CurrentVec3 = component.Translation;
-				EditorUI::EditorUIService::EditVec3(s_TransformEditTranslation);
-				s_TransformEditScale.CurrentVec3 = component.Scale;
-				EditorUI::EditorUIService::EditVec3(s_TransformEditScale);
-				s_TransformEditRotation.CurrentVec3 = component.Rotation;
-				EditorUI::EditorUIService::EditVec3(s_TransformEditRotation);
+				EditorUI::EditorUIService::Table(s_InstanceFieldsTable);
+				EditorUI::EditorUIService::GenericPopup(s_EditClassFieldPopup);
 			}
 		}
-
-		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+	}
+	void SceneEditorPanel::DrawRigidbody2DComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entity.GetComponent<Scenes::ClassInstanceComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_ClassInstanceHeader);
-			if (s_ClassInstanceHeader.Expanded)
+			return;
+		}
+		Scenes::Rigidbody2DComponent& component = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_Rigidbody2DHeader);
+		if (s_Rigidbody2DHeader.Expanded)
+		{
+			s_Rigidbody2DType.SelectedOption = component.Type == Scenes::Rigidbody2DComponent::BodyType::Static ?
+				0 : 1;
+			EditorUI::EditorUIService::RadioSelector(s_Rigidbody2DType);
+			s_RigidBody2DFixedRotation.ToggleBoolean = component.FixedRotation;
+			EditorUI::EditorUIService::Checkbox(s_RigidBody2DFixedRotation);
+		}
+	}
+	void SceneEditorPanel::DrawBoxCollider2DComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::BoxCollider2DComponent>())
+		{
+			return;
+		}
+		Scenes::BoxCollider2DComponent& component = entity.GetComponent<Scenes::BoxCollider2DComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_BoxCollider2DHeader);
+		if (s_BoxCollider2DHeader.Expanded)
+		{
+			s_BoxColliderOffset.CurrentVec2 = component.Offset;
+			EditorUI::EditorUIService::EditVec2(s_BoxColliderOffset);
+			s_BoxColliderSize.CurrentVec2 = component.Size;
+			EditorUI::EditorUIService::EditVec2(s_BoxColliderSize);
+			s_BoxColliderDensity.CurrentFloat = component.Density;
+			EditorUI::EditorUIService::EditFloat(s_BoxColliderDensity);
+			s_BoxColliderFriction.CurrentFloat = component.Friction;
+			EditorUI::EditorUIService::EditFloat(s_BoxColliderFriction);
+			s_BoxColliderRestitution.CurrentFloat = component.Restitution;
+			EditorUI::EditorUIService::EditFloat(s_BoxColliderRestitution);
+			s_BoxColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
+			EditorUI::EditorUIService::EditFloat(s_BoxColliderRestitutionThreshold);
+		}
+		
+	}
+	void SceneEditorPanel::DrawCircleCollider2DComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::CircleCollider2DComponent>())
+		{
+			return;
+		}
+		Scenes::CircleCollider2DComponent& component = entity.GetComponent<Scenes::CircleCollider2DComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_CircleCollider2DHeader);
+		if (s_CircleCollider2DHeader.Expanded)
+		{
+			s_CircleColliderOffset.CurrentVec2 = component.Offset;
+			EditorUI::EditorUIService::EditVec2(s_CircleColliderOffset);
+			s_CircleColliderRadius.CurrentFloat = component.Radius;
+			EditorUI::EditorUIService::EditFloat(s_CircleColliderRadius);
+			s_CircleColliderDensity.CurrentFloat = component.Density;
+			EditorUI::EditorUIService::EditFloat(s_CircleColliderDensity);
+			s_CircleColliderFriction.CurrentFloat = component.Friction;
+			EditorUI::EditorUIService::EditFloat(s_CircleColliderFriction);
+			s_CircleColliderRestitution.CurrentFloat = component.Restitution;
+			EditorUI::EditorUIService::EditFloat(s_CircleColliderRestitution);
+			s_CircleColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
+			EditorUI::EditorUIService::EditFloat(s_CircleColliderRestitutionThreshold);
+		}
+		
+	}
+	void SceneEditorPanel::DrawCameraComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::CameraComponent>())
+		{
+			return;
+		}
+		Scenes::CameraComponent& component = entity.GetComponent<Scenes::CameraComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_CameraHeader);
+		if (s_CameraHeader.Expanded)
+		{
+			s_CameraPrimary.ToggleBoolean = component.Primary;
+			EditorUI::EditorUIService::Checkbox(s_CameraPrimary);
+			s_CameraProjection.SelectedOption = component.Camera.GetProjectionType() ==
+				Scenes::SceneCamera::ProjectionType::Perspective ? 0 : 1;
+			EditorUI::EditorUIService::RadioSelector(s_CameraProjection);
+
+			if (component.Camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
 			{
-				EditorUI::EditorUIService::SelectOption(s_SelectClassOption);
-				if (component.ClassHandle != Assets::EmptyHandle)
-				{
-					EditorUI::EditorUIService::Table(s_InstanceFieldsTable);
-					EditorUI::EditorUIService::GenericPopup(s_EditClassFieldPopup);
-				}
+				s_CameraPerspectiveFOV.CurrentFloat = component.Camera.GetPerspectiveVerticalFOV();
+				EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFOV);
+				s_CameraPerspectiveNearPlane.CurrentFloat = component.Camera.GetPerspectiveNearClip();
+				EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveNearPlane);
+				s_CameraPerspectiveFarPlane.CurrentFloat = component.Camera.GetPerspectiveFarClip();
+				EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFarPlane);
+			}
+			else
+			{
+				s_CameraOrthographicSize.CurrentFloat = component.Camera.GetOrthographicSize();
+				EditorUI::EditorUIService::EditFloat(s_CameraOrthographicSize);
+				s_CameraOrthographicNearPlane.CurrentFloat = component.Camera.GetOrthographicNearClip();
+				EditorUI::EditorUIService::EditFloat(s_CameraOrthographicNearPlane);
+				s_CameraOrthographicFarPlane.CurrentFloat = component.Camera.GetOrthographicFarClip();
+				EditorUI::EditorUIService::EditFloat(s_CameraOrthographicFarPlane);
 			}
 		}
-
-		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		
+	}
+	void SceneEditorPanel::DrawShapeComponent(Scenes::Entity entity)
+	{
+		if (!entity.HasComponent<Scenes::ShapeComponent>())
 		{
-			Scenes::Rigidbody2DComponent& component = entity.GetComponent<Scenes::Rigidbody2DComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_Rigidbody2DHeader);
-			if (s_Rigidbody2DHeader.Expanded)
-			{
-				s_Rigidbody2DType.SelectedOption = component.Type == Scenes::Rigidbody2DComponent::BodyType::Static ?
-					0 : 1;
-				EditorUI::EditorUIService::RadioSelector(s_Rigidbody2DType);
-				s_RigidBody2DFixedRotation.ToggleBoolean = component.FixedRotation;
-				EditorUI::EditorUIService::Checkbox(s_RigidBody2DFixedRotation);
-			}
+			return;
 		}
-
-		if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+		Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(s_ShapeHeader);
+		if (s_ShapeHeader.Expanded)
 		{
-			Scenes::BoxCollider2DComponent& component = entity.GetComponent<Scenes::BoxCollider2DComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_BoxCollider2DHeader);
-			if (s_BoxCollider2DHeader.Expanded)
+			s_ShapeSelect.CurrentOption = { Utility::ShapeTypeToString(component.CurrentShape), Assets::EmptyHandle };
+			EditorUI::EditorUIService::SelectOption(s_ShapeSelect);
+
+			// This section displays the shader specification options available for the chosen object
+			if (component.CurrentShape == Rendering::ShapeTypes::None)
 			{
-				s_BoxColliderOffset.CurrentVec2 = component.Offset;
-				EditorUI::EditorUIService::EditVec2(s_BoxColliderOffset);
-				s_BoxColliderSize.CurrentVec2 = component.Size;
-				EditorUI::EditorUIService::EditVec2(s_BoxColliderSize);
-				s_BoxColliderDensity.CurrentFloat = component.Density;
-				EditorUI::EditorUIService::EditFloat(s_BoxColliderDensity);
-				s_BoxColliderFriction.CurrentFloat = component.Friction;
-				EditorUI::EditorUIService::EditFloat(s_BoxColliderFriction);
-				s_BoxColliderRestitution.CurrentFloat = component.Restitution;
-				EditorUI::EditorUIService::EditFloat(s_BoxColliderRestitution);
-				s_BoxColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
-				EditorUI::EditorUIService::EditFloat(s_BoxColliderRestitutionThreshold);
+				return;
 			}
-		}
-
-		if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
-		{
-			Scenes::CircleCollider2DComponent& component = entity.GetComponent<Scenes::CircleCollider2DComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_CircleCollider2DHeader);
-			if (s_CircleCollider2DHeader.Expanded)
+			if (component.CurrentShape == Rendering::ShapeTypes::Quad)
 			{
-				s_CircleColliderOffset.CurrentVec2 = component.Offset;
-				EditorUI::EditorUIService::EditVec2(s_CircleColliderOffset);
-				s_CircleColliderRadius.CurrentFloat = component.Radius;
-				EditorUI::EditorUIService::EditFloat(s_CircleColliderRadius);
-				s_CircleColliderDensity.CurrentFloat = component.Density;
-				EditorUI::EditorUIService::EditFloat(s_CircleColliderDensity);
-				s_CircleColliderFriction.CurrentFloat = component.Friction;
-				EditorUI::EditorUIService::EditFloat(s_CircleColliderFriction);
-				s_CircleColliderRestitution.CurrentFloat = component.Restitution;
-				EditorUI::EditorUIService::EditFloat(s_CircleColliderRestitution);
-				s_CircleColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
-				EditorUI::EditorUIService::EditFloat(s_CircleColliderRestitutionThreshold);
+				s_AddColorSection();
+				s_AddTextureSection();
+				s_AddCircleShapeSection();
+				s_AddProjectionMatrixSection();
+				s_AddEntityIDSection();
+
 			}
-		}
-
-		if (entity.HasComponent<Scenes::CameraComponent>())
-		{
-			Scenes::CameraComponent& component = entity.GetComponent<Scenes::CameraComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_CameraHeader);
-			if (s_CameraHeader.Expanded)
+			if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
 			{
-				s_CameraPrimary.ToggleBoolean = component.Primary;
-				EditorUI::EditorUIService::Checkbox(s_CameraPrimary);
-				s_CameraProjection.SelectedOption = component.Camera.GetProjectionType() ==
-					Scenes::SceneCamera::ProjectionType::Perspective ? 0 : 1;
-				EditorUI::EditorUIService::RadioSelector(s_CameraProjection);
-
-				if (component.Camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
-				{
-					s_CameraPerspectiveFOV.CurrentFloat = component.Camera.GetPerspectiveVerticalFOV();
-					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFOV);
-					s_CameraPerspectiveNearPlane.CurrentFloat = component.Camera.GetPerspectiveNearClip();
-					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveNearPlane);
-					s_CameraPerspectiveFarPlane.CurrentFloat = component.Camera.GetPerspectiveFarClip();
-					EditorUI::EditorUIService::EditFloat(s_CameraPerspectiveFarPlane);
-				}
-				else
-				{
-					s_CameraOrthographicSize.CurrentFloat = component.Camera.GetOrthographicSize();
-					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicSize);
-					s_CameraOrthographicNearPlane.CurrentFloat = component.Camera.GetOrthographicNearClip();
-					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicNearPlane);
-					s_CameraOrthographicFarPlane.CurrentFloat = component.Camera.GetOrthographicFarClip();
-					EditorUI::EditorUIService::EditFloat(s_CameraOrthographicFarPlane);
-				}
-			}
-		}
-
-		if (entity.HasComponent<Scenes::ShapeComponent>())
-		{
-			Scenes::ShapeComponent& component = entity.GetComponent<Scenes::ShapeComponent>();
-			EditorUI::EditorUIService::CollapsingHeader(s_ShapeHeader);
-			if (s_ShapeHeader.Expanded)
-			{
-				s_ShapeSelect.CurrentOption = { Utility::ShapeTypeToString(component.CurrentShape), Assets::EmptyHandle };
-				EditorUI::EditorUIService::SelectOption(s_ShapeSelect);
-
-				// This section displays the shader specification options available for the chosen object
-				if (component.CurrentShape == Rendering::ShapeTypes::None)
-				{
-					return;
-				}
-				if (component.CurrentShape == Rendering::ShapeTypes::Quad)
-				{
-					s_AddColorSection();
-					s_AddTextureSection();
-					s_AddCircleShapeSection();
-					s_AddProjectionMatrixSection();
-					s_AddEntityIDSection();
-
-				}
-				if (component.CurrentShape == Rendering::ShapeTypes::Cube || component.CurrentShape == Rendering::ShapeTypes::Pyramid)
-				{
-					s_AddColorSection();
-					s_AddTextureSection();
-					s_AddProjectionMatrixSection();
-					s_AddEntityIDSection();
-				}
+				s_AddColorSection();
+				s_AddTextureSection();
+				s_AddProjectionMatrixSection();
+				s_AddEntityIDSection();
 			}
 		}
 	}
