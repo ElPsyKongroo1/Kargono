@@ -47,7 +47,7 @@ jobs:
           echo "Removing cached scripting binaries"
           rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         )
-        cd Binary\${{matrix.build-configuration}}-windows-x86_64\RuntimeTesting
+        cd Binary\${{matrix.build-configuration}}_windows\RuntimeTesting
         RuntimeTesting.exe
     - name: TestEditor
       if: ${{ always() }}
@@ -59,7 +59,7 @@ jobs:
           echo "Removing cached scripting binaries"
           rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         )
-        cd Binary\${{matrix.build-configuration}}-windows-x86_64\EditorTesting
+        cd Binary\${{matrix.build-configuration}}_windows\EditorTesting
         EditorTesting.exe
     - name: TestServer
       if: ${{ always() }}
@@ -71,7 +71,7 @@ jobs:
           echo "Removing cached scripting binaries"
           rmdir /s /q Projects\Pong\Assets\Scripting\Binary || echo "Failed to remove cached scripting binaries"
         )
-        cd Binary\${{matrix.build-configuration}}-windows-x86_64\ServerTesting
+        cd Binary\${{matrix.build-configuration}}_windows\ServerTesting
         ServerTesting.exe
     - name: Display Logs
       if: ${{ always() }}
