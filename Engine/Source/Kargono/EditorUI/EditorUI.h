@@ -180,7 +180,7 @@ namespace Kargono::EditorUI
 			s_IconCamera, s_IconCameraActive, s_IconEntity,
 			s_IconBoxCollider, s_IconCircleCollider, s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform,
 			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
-			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconEdit_Active, s_IconCancel, s_IconCancel2,
+			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,
 			s_IconCheckbox_Check_Disabled, s_IconCheckbox_Empty_Enabled,
 			s_IconCheckbox_Check_Enabled, s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
@@ -198,6 +198,7 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
 		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
 		inline static ImVec4 s_LightGray{ 0.7f, 0.7f, 0.7f, 1.0f };
+		inline static ImVec4 s_LightGray_Thin{ 0.5f, 0.5f, 0.5f, 1.0f };
 		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PearlBlue{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f };
 		inline static ImVec4 s_PearlBlue_Thin{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f };
@@ -205,6 +206,17 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_LightPurple{ 0.9226f, 0.4630f, 1.0f, 1.0f };
 		inline static ImVec4 s_LightGreen{ 0.2879f, 1.0f, 0.39322f, 1.0f };
 		inline static ImVec4 s_LightPurple_Thin{ 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
+
+
+		// Editor Colors
+		inline static ImVec4 s_PrimaryColor{ s_PureWhite };
+		inline static ImVec4 s_SecondaryColor{ s_LightGray };
+		inline static ImVec4 s_DisabledColor{ s_LightGray_Thin };
+
+		inline static ImVec4 s_HighlightColor1{ s_PearlBlue };
+		inline static ImVec4 s_HighlightColor1_Thin { s_PearlBlue_Thin };
+		inline static ImVec4 s_HighlightColor2{ s_LightPurple };
+		inline static ImVec4 s_HighlightColor3{ s_LightGreen };
 
 
 		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };

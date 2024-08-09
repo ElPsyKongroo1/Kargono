@@ -8,26 +8,11 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 namespace Kargono::Panels
 {
 
-	static EditorUI::TreeSpec s_TreeSpec {};
-
 	TestingPanel::TestingPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
-
-		s_TreeSpec.Label = "HAHAH ITS A SPEC";
-		EditorUI::TreeEntry newEntry {};
-		newEntry.Label = "HAHAH brahhhhahahaha";
-		newEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
-
-		for (uint64_t size {0}; size < 8; size++)
-		{
-			newEntry.SubEntries.push_back(newEntry);
-		}
-
-		s_TreeSpec.InsertEntry(newEntry);
-		s_TreeSpec.InsertEntry(newEntry);
 	}
 	void TestingPanel::OnEditorUIRender()
 	{
@@ -40,7 +25,14 @@ namespace Kargono::Panels
 			return;
 		}
 
-		EditorUI::EditorUIService::Tree(s_TreeSpec);
+		ImGui::DragFloat4("Primary Color", (float*)&EditorUI::EditorUIService::s_PrimaryColor, 0.01f);
+		ImGui::DragFloat4("Secondary Color", (float*)&EditorUI::EditorUIService::s_SecondaryColor, 0.01f);
+		ImGui::DragFloat4("Disabled Color", (float*)&EditorUI::EditorUIService::s_DisabledColor, 0.01f);
+		ImGui::DragFloat4("Highlight Color 1", (float*)&EditorUI::EditorUIService::s_HighlightColor1, 0.01f);
+		ImGui::DragFloat4("Highlight Color 1 Thin", (float*)&EditorUI::EditorUIService::s_HighlightColor1_Thin, 0.01f);
+		ImGui::DragFloat4("Highlight Color 2", (float*)&EditorUI::EditorUIService::s_HighlightColor2, 0.01f);
+		ImGui::DragFloat4("Highlight Color 3", (float*)&EditorUI::EditorUIService::s_HighlightColor3, 0.01f);
+
 
 		EditorUI::EditorUIService::EndWindow();
 	}

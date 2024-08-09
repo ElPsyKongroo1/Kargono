@@ -303,7 +303,7 @@ namespace Kargono::Panels
 				if (hasSimulateButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasPlayButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasPlayButton ?
 						"Run Application" : "Stop Application");
 					ImGui::EndTooltip();
 				}
@@ -342,7 +342,7 @@ namespace Kargono::Panels
 				if (hasPlayButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasSimulateButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasSimulateButton ?
 						"Simulate Physics" : "Stop Physics Simulation");
 					ImGui::EndTooltip();
 				}
@@ -374,7 +374,7 @@ namespace Kargono::Panels
 				if (hasPauseButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -404,7 +404,7 @@ namespace Kargono::Panels
 				if (hasStepButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Step Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Step Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -428,7 +428,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Movement Types");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Movement Types");
 				ImGui::EndTooltip();
 			}
 
@@ -457,7 +457,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Speed");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
 				ImGui::EndTooltip();
 			}
 
@@ -476,7 +476,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Display Options");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
 				ImGui::EndTooltip();
 			}
 
@@ -516,7 +516,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Grid Options");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
 				ImGui::EndTooltip();
 			}
 
@@ -600,7 +600,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Local Grid Spacing");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
 				ImGui::EndTooltip();
 			}
 		}
@@ -621,7 +621,7 @@ namespace Kargono::Panels
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
 			ImGui::EndTooltip();
 		}
 
@@ -1318,7 +1318,7 @@ namespace Kargono::Panels
 		{
 			// X Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
 			s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
@@ -1328,7 +1328,7 @@ namespace Kargono::Panels
 
 			// Y Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
 			s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
@@ -1338,7 +1338,7 @@ namespace Kargono::Panels
 
 			// Z Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
 			s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });

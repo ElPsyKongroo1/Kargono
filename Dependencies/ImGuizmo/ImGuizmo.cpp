@@ -686,20 +686,20 @@ namespace ImGuizmo
    static const float planeLimit = 0.2f;
 
    static const vec_t directionUnary[3] = { makeVect(1.f, 0.f, 0.f), makeVect(0.f, 1.f, 0.f), makeVect(0.f, 0.f, 1.f) };
-   static const ImU32 directionColor[3] =
-   {
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightPurple),
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PearlBlue),
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightGreen)
-   };
+   //static const ImU32 directionColor[3] =
+   //{
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3)
+   //};
 
-   // Alpha: 100%: FF, 87%: DE, 70%: B3, 54%: 8A, 50%: 80, 38%: 61, 12%: 1F
-   static const ImU32 planeColor[3] =
-   {
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightPurple),
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PearlBlue),
-      ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_LightGreen)
-   };
+   //// Alpha: 100%: FF, 87%: DE, 70%: B3, 54%: 8A, 50%: 80, 38%: 61, 12%: 1F
+   //static const ImU32 planeColor[3] =
+   //{
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3)
+   //};
    static const ImU32 selectionColor = 0xFF20AACC;
    static const ImU32 inactiveColor = 0x99999999;
    static const ImU32 translationLineColor = 0xAAAAAAAA;
@@ -982,26 +982,32 @@ namespace ImGuizmo
          {
          case TRANSLATE:
             colors[0] = (type == MOVE_SCREEN) ? selectionColor : 0xFFFFFFFF;
-            for (int i = 0; i < 3; i++)
-            {
-               colors[i + 1] = (type == (int)(MOVE_X + i)) ? selectionColor : directionColor[i];
-               colors[i + 4] = (type == (int)(MOVE_YZ + i)) ? selectionColor : planeColor[i];
-               colors[i + 4] = (type == MOVE_SCREEN) ? selectionColor : colors[i + 4];
-            }
+
+            colors[1] = (type == (int)(MOVE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2) ;
+            colors[4] = (type == (int)(MOVE_YZ)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2);
+            colors[4] = (type == MOVE_SCREEN) ? selectionColor : colors[4];
+
+            colors[2] = (type == (int)(MOVE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+            colors[5] = (type == (int)(MOVE_ZX)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+            colors[5] = (type == MOVE_SCREEN) ? selectionColor : colors[5];
+
+            colors[3] = (type == (int)(MOVE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3);
+            colors[6] = (type == (int)(MOVE_XY)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3);
+            colors[6] = (type == MOVE_SCREEN) ? selectionColor : colors[6];
+            
             break;
          case ROTATE:
             colors[0] = (type == ROTATE_SCREEN) ? selectionColor : 0xFFFFFFFF;
-            for (int i = 0; i < 3; i++)
-            {
-               colors[i + 1] = (type == (int)(ROTATE_X + i)) ? selectionColor : directionColor[i];
-            }
+            colors[1] = (type == (int)(ROTATE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2);
+            colors[2] = (type == (int)(ROTATE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+            colors[3] = (type == (int)(ROTATE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3);
+
             break;
          case SCALE:
             colors[0] = (type == SCALE_XYZ) ? selectionColor : 0xFFFFFFFF;
-            for (int i = 0; i < 3; i++)
-            {
-               colors[i + 1] = (type == (int)(SCALE_X + i)) ? selectionColor : directionColor[i];
-            }
+            colors[1] = (type == (int)(SCALE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2);
+            colors[2] = (type == (int)(SCALE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+            colors[3] = (type == (int)(SCALE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3);
             break;
          case BOUNDS:
             break;
@@ -1319,7 +1325,38 @@ namespace ImGuizmo
                vec_t cornerWorldPos = (dirPlaneX * quadUV[j * 2] + dirPlaneY * quadUV[j * 2 + 1]) * gContext.mScreenFactor;
                screenQuadPts[j] = worldToPos(cornerWorldPos, gContext.mMVP);
             }
-            drawList->AddPolyline(screenQuadPts, 4, directionColor[i], true, 1.0f);
+
+            static ImVec4 directionColor { Kargono::EditorUI::EditorUIService::s_PureWhite };
+
+            switch(i)
+            {
+               case 0:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor2;
+                  break;
+               }
+                  
+               case 1:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor1;
+                  break;
+               }
+                  
+               case 2:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor3;
+                  break;
+               }
+
+               default:
+               {
+                  KG_WARN("Invalid direction provided");
+                  break;
+               }
+                  
+            }
+
+            drawList->AddPolyline(screenQuadPts, 4, ImGui::ColorConvertFloat4ToU32(directionColor), true, 1.0f);
             drawList->AddConvexPolyFilled(screenQuadPts, 4, colors[i + 4]);
          }
       }
@@ -2303,7 +2340,37 @@ namespace ImGuizmo
             {
                cubeFace.faceCoordsScreen[iCoord] = worldToPos(faceCoords[iCoord] * 0.5f * invert, res);
             }
-            cubeFace.color = directionColor[normalIndex] | 0x808080;
+
+            static ImVec4 directionColor { Kargono::EditorUI::EditorUIService::s_PureWhite };
+
+            switch (normalIndex)
+            {
+               case 0:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor2;
+                  break;
+               }
+
+               case 1:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor1;
+                  break;
+               }
+
+               case 2:
+               {
+                  directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor3;
+                  break;
+               }
+
+               default:
+               {
+                  KG_WARN("Invalid direction provided");
+                  break;
+               }
+            }
+
+            cubeFace.color = ImGui::ColorConvertFloat4ToU32(directionColor) | 0x808080;
             
             cubeFace.z = centerPositionVP.z / centerPositionVP.w;
             cubeFaceCount++;
@@ -2501,7 +2568,36 @@ namespace ImGuizmo
                // draw face with lighter color
                if (iPass)
                {
-                  gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, (directionColor[normalIndex] | 0x80808080) | (isInside ? 0x080808 : 0));
+                  static ImVec4 directionColor { Kargono::EditorUI::EditorUIService::s_PureWhite };
+
+                  switch (normalIndex)
+                  {
+                  case 0:
+                  {
+                     directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor2;
+                     break;
+                  }
+
+                  case 1:
+                  {
+                     directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor1;
+                     break;
+                  }
+
+                  case 2:
+                  {
+                     directionColor = Kargono::EditorUI::EditorUIService::s_HighlightColor3;
+                     break;
+                  }
+
+                  default:
+                  {
+                     KG_WARN("Invalid direction provided");
+                     break;
+                  }
+
+                  }
+                  gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, (ImGui::ColorConvertFloat4ToU32(directionColor) | 0x80808080) | (isInside ? 0x080808 : 0));
                   if (boxes[boxCoordInt])
                   {
                      gContext.mDrawList->AddConvexPolyFilled(faceCoordsScreen, 4, 0x8060A0F0);
