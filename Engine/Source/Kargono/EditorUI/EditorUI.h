@@ -24,7 +24,7 @@ namespace Kargono::EditorUI
 	//==============================
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
-	struct TextInputSpec;
+	struct EditTextSpec;
 	struct PanelHeaderSpec;
 	struct CheckboxSpec;
 	struct GenericPopupSpec;
@@ -135,7 +135,7 @@ namespace Kargono::EditorUI
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
-		static void TextInput(TextInputSpec& spec);
+		static void EditText(EditTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
@@ -160,36 +160,38 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Fonts
 		//==============================
-		static ImFont* s_AntaLarge;
-		static ImFont* s_AntaRegular;
-		static ImFont* s_AntaSmall;
-		static ImFont* s_PlexBold;
-		static ImFont* s_PlexRegular;
-		static ImFont* s_OpenSansRegular;
-		static ImFont* s_OpenSansBold;
-		static ImFont* s_RobotoRegular;
-		static ImFont* s_RobotoMono;
-		static ImFont* s_AnonymousRegular;
+		static ImFont* s_FontAntaLarge;
+		static ImFont* s_FontAntaRegular;
+		static ImFont* s_FontAntaSmall;
+		static ImFont* s_FontPlexBold;
+		static ImFont* s_FontPlexRegular;
+		static ImFont* s_FontOpenSansRegular;
+		static ImFont* s_FontOpenSansBold;
+		static ImFont* s_FontRobotoRegular;
+		static ImFont* s_FontRobotoMono;
+		static ImFont* s_FontAnonymousRegular;
 
 	public:
 		//==============================
 		// UI Images/Textures
 		//==============================
-		static Ref<Rendering::Texture2D> s_IconPlay, s_IconPause, s_IconStop, s_IconGrid,
-			s_IconStep, s_IconSimulate, s_IconAddItem, s_IconDisplay, s_IconDisplayActive,
-			s_IconCamera, s_IconCameraActive, s_IconEntity,
-			s_IconBoxCollider, s_IconCircleCollider, s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform,
-			s_IconPlayActive, s_IconStopActive, s_IconPauseActive, s_IconStepActive, s_IconSimulateActive,
-			s_IconSettings, s_IconDelete, s_IconDeleteActive, s_IconEdit, s_IconCancel, s_IconCancel2,
-			s_IconConfirm, s_IconSearch, s_IconCheckbox_Empty_Disabled,
-			s_IconCheckbox_Check_Disabled, s_IconCheckbox_Empty_Enabled,
-			s_IconCheckbox_Check_Enabled, s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
+		static Ref<Rendering::Texture2D> s_IconCamera,
+			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
+			s_IconConfirm, s_IconSearch,
+			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled,
+			s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
 
-		static Ref<Rendering::Texture2D> s_DirectoryIcon, s_GenericFileIcon,
-			s_BackIcon, s_BackInactiveIcon, s_ForwardIcon, s_ForwardInactiveIcon,
-			s_AudioIcon, s_ImageIcon, s_BinaryIcon,
-			s_SceneIcon, s_RegistryIcon, s_ScriptProjectIcon,
-			s_UserInterfaceIcon, s_FontIcon, s_InputIcon;
+		static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
+			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform;
+
+		static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
+			s_IconPause, s_IconStop, s_IconGrid;
+
+		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
+			s_IconBack, s_IconForward,
+			s_IconAudio, s_IconImage, s_IconBinary,
+			s_IconScene, s_IconRegistry, s_IconScriptProject,
+			s_IconUserInterface, s_IconFont, s_IconInput;
 
 	public:
 		//==============================
@@ -201,20 +203,19 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_LightGray_Thin{ 0.5f, 0.5f, 0.5f, 1.0f };
 		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PearlBlue{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_PearlBlue_Thin{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 0.75f };
 		inline static ImVec4 s_DarkPurple{ 0.27843f, 0.011764f, 0.4f, 1.0f };
 		inline static ImVec4 s_LightPurple{ 0.9226f, 0.4630f, 1.0f, 1.0f };
 		inline static ImVec4 s_LightGreen{ 0.2879f, 1.0f, 0.39322f, 1.0f };
 		inline static ImVec4 s_LightPurple_Thin{ 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 
-
 		// Editor Colors
+		inline static ImVec4 s_BackgroundColor { 0.1f, 0.105f, 0.11f, 1.0f  };
 		inline static ImVec4 s_PrimaryColor{ s_PureWhite };
 		inline static ImVec4 s_SecondaryColor{ s_LightGray };
 		inline static ImVec4 s_DisabledColor{ s_LightGray_Thin };
 
 		inline static ImVec4 s_HighlightColor1{ s_PearlBlue };
-		inline static ImVec4 s_HighlightColor1_Thin { s_PearlBlue_Thin };
+		inline static ImVec4 s_HighlightColor1_Thin { s_PearlBlue.x, s_PearlBlue.y, s_PearlBlue.z, s_PearlBlue.w * 0.75f };
 		inline static ImVec4 s_HighlightColor2{ s_LightPurple };
 		inline static ImVec4 s_HighlightColor3{ s_LightGreen };
 
@@ -396,30 +397,30 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::RadioSelector(RadioSelectorSpec& spec);
 	};
 
-	enum TextInputFlags
+	enum EditTextFlags
 	{
-		TextInput_None = 0,
-		TextInput_PopupOnly = BIT(0), // Only use a popup and remove inline text
-		TextInput_Indented = BIT(1) // Display indented
+		EditText_None = 0,
+		EditText_PopupOnly = BIT(0), // Only use a popup and remove inline text
+		EditText_Indented = BIT(1) // Display indented
 	};
 
-	struct TextInputSpec
+	struct EditTextSpec
 	{
 	public:
-		TextInputSpec()
+		EditTextSpec()
 		{
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
 		std::string Label;
-		WidgetFlags Flags{ TextInput_None };
+		WidgetFlags Flags{ EditText_None };
 		std::string CurrentOption{};
 		std::function<void()> ConfirmAction;
 		bool StartPopup{ false };
 	private:
 		WidgetID WidgetID;
 	private:
-		friend void EditorUIService::TextInput(TextInputSpec& spec);
+		friend void EditorUIService::EditText(EditTextSpec& spec);
 	};
 
 	struct ChooseDirectorySpec
@@ -431,7 +432,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
-		WidgetFlags Flags{ TextInput_None };
+		WidgetFlags Flags{ EditText_None };
 		std::filesystem::path CurrentOption{};
 		std::function<void(const std::string&)> ConfirmAction{ nullptr };
 	private:

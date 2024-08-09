@@ -15,7 +15,7 @@ namespace Kargono::Panels
 	static EditorUI::GenericPopupSpec s_CreateGameStatePopupSpec {};
 	static EditorUI::SelectOptionSpec s_OpenGameStatePopupSpec {};
 	// Header
-	static EditorUI::TextInputSpec s_SelectGameStateNameSpec {};
+	static EditorUI::EditTextSpec s_SelectGameStateNameSpec {};
 	static EditorUI::PanelHeaderSpec s_TagHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteGameStateWarning {};
 	static EditorUI::GenericPopupSpec s_CloseGameStateWarning {};
@@ -23,7 +23,7 @@ namespace Kargono::Panels
 	static EditorUI::TableSpec s_FieldsTable {};
 	static EditorUI::SelectOptionSpec s_AddFieldPopup {};
 	static EditorUI::GenericPopupSpec s_EditFieldPopup {};
-	static EditorUI::TextInputSpec s_EditFieldName {};
+	static EditorUI::EditTextSpec s_EditFieldName {};
 	static EditorUI::SelectOptionSpec s_EditFieldType {};
 	static EditorUI::EditVariableSpec s_EditFieldValue {};
 
@@ -103,7 +103,7 @@ namespace Kargono::Panels
 		};
 		s_CreateGameStatePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_SelectGameStateNameSpec);
+			EditorUI::EditorUIService::EditText(s_SelectGameStateNameSpec);
 		};
 	}
 
@@ -315,7 +315,7 @@ namespace Kargono::Panels
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_EditFieldName);
+			EditorUI::EditorUIService::EditText(s_EditFieldName);
 			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 			EditorUI::EditorUIService::EditVariable(s_EditFieldValue);
 		};

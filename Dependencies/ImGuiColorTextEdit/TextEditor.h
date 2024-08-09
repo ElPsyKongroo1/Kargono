@@ -265,9 +265,8 @@ public:
 	void Redo(int aSteps = 1);
 	void Save();
 
-	static const Palette& GetDarkPalette();
-	static const Palette& GetLightPalette();
-	static const Palette& GetRetroBluePalette();
+	static Palette& GetDefaultColorPalette();
+	static Palette& GetCurrentColorPalette();
 
 private:
 	typedef std::vector<std::pair<std::regex, PaletteIndex>> RegexList;

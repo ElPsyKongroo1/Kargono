@@ -19,7 +19,7 @@ namespace Kargono::Panels
 
 	// Tag Component
 	static EditorUI::CollapsingHeaderSpec s_TagHeader{};
-	static EditorUI::TextInputSpec s_TagEdit{};
+	static EditorUI::EditTextSpec s_TagEdit{};
 
 	// Transform Component
 	static EditorUI::CollapsingHeaderSpec s_TransformHeader{};
@@ -238,7 +238,7 @@ namespace Kargono::Panels
 					if (entity.HasComponent<Scenes::CameraComponent>())
 					{
 						componentEntry.Label = "Camera Component";
-						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCameraActive;
+						componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCamera;
 						componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
 						{
 							Scenes::Entity entity{ entt::entity((int)entry.Handle), Scenes::SceneService::GetActiveScene().get() };
@@ -363,7 +363,7 @@ namespace Kargono::Panels
 		s_TagHeader.Expanded = true;
 
 		s_TagEdit.Label = "Tag Label";
-		s_TagEdit.Flags |= EditorUI::TextInput_Indented;
+		s_TagEdit.Flags |= EditorUI::EditText_Indented;
 		s_TagEdit.ConfirmAction = [&]()
 		{
 			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1609,7 +1609,7 @@ namespace Kargono::Panels
 		if (s_TagHeader.Expanded)
 		{
 			s_TagEdit.CurrentOption = component.Tag;
-			EditorUI::EditorUIService::TextInput(s_TagEdit);
+			EditorUI::EditorUIService::EditText(s_TagEdit);
 		}
 	}
 	void SceneEditorPanel::DrawTransformComponent(Scenes::Entity entity)

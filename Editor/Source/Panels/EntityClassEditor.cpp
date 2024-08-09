@@ -19,7 +19,7 @@ namespace Kargono::Panels
 	static std::function<void()> s_OnRefreshData { nullptr };
 	static EditorUI::GenericPopupSpec s_CreateClassPopupSpec {};
 	static EditorUI::SelectOptionSpec s_OpenClassPopupSpec {};
-	static EditorUI::TextInputSpec s_SelectClassNameSpec {};
+	static EditorUI::EditTextSpec s_SelectClassNameSpec {};
 	// Header
 	static EditorUI::PanelHeaderSpec s_TagHeader {};
 	static EditorUI::GenericPopupSpec s_DeleteEntityClassWarning {};
@@ -28,7 +28,7 @@ namespace Kargono::Panels
 	static EditorUI::TableSpec s_FieldsTable {};
 	static EditorUI::SelectOptionSpec s_AddFieldPopup {};
 	static EditorUI::GenericPopupSpec s_EditFieldPopup {};
-	static EditorUI::TextInputSpec s_EditFieldName {};
+	static EditorUI::EditTextSpec s_EditFieldName {};
 	static EditorUI::SelectOptionSpec s_EditFieldType {};
 	// Static Function Widgets
 	static EditorUI::CollapsingHeaderSpec s_StaticFunctionHeaderSpec {};
@@ -136,7 +136,7 @@ namespace Kargono::Panels
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_SelectClassNameSpec);
+			EditorUI::EditorUIService::EditText(s_SelectClassNameSpec);
 		};
 	}
 
@@ -305,7 +305,7 @@ namespace Kargono::Panels
 		};
 		s_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_EditFieldName);
+			EditorUI::EditorUIService::EditText(s_EditFieldName);
 			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
 		};
 

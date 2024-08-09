@@ -595,7 +595,9 @@ namespace Kargono::Panels
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 126.0f);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconSettings->GetRendererID(), ImVec2(17, 17), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconSettings->GetRendererID(), ImVec2(17, 17), 
+			ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, 
+			ImVec4(0.0f, 0.0f, 0.0f, 0.0f), EditorUI::EditorUIService::s_DisabledColor))
 		{
 			ImGui::OpenPopup("AppTickGeneratorSettings");
 		}

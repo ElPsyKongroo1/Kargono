@@ -280,8 +280,11 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 77.0f, initialCursorPos.y + 4));
-			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlayActive : EditorUI::EditorUIService::s_IconStopActive;
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlay : EditorUI::EditorUIService::s_IconStop;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(),
+				ImVec2(iconSize, iconSize), ImVec2(0, 0),
+				ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
 				&& toolbarEnabled)
 			{
 				if (hasSimulateButton)
@@ -319,9 +322,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulateActive : EditorUI::EditorUIService::s_IconStopActive;
+			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulate : EditorUI::EditorUIService::s_IconStop;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 37.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(),
+				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
 				&& toolbarEnabled)
 			{
 				if (hasPlayButton)
@@ -358,9 +364,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasPauseButton ? EditorUI::EditorUIService::s_IconPauseActive: EditorUI::EditorUIService::s_IconPause;
+			icon = EditorUI::EditorUIService::s_IconPause;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 3.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize),
+				ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				hasPauseButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
 				&& toolbarEnabled)
 			{
 				if (hasPauseButton)
@@ -388,9 +397,13 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasStepButton ? EditorUI::EditorUIService::s_IconStepActive : EditorUI::EditorUIService::s_IconStep;
+			icon = EditorUI::EditorUIService::s_IconStep;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 43.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), 
+				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, 
+				ImVec2{ 1, 0 }, 0, 
+				ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
+				hasStepButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
 				&& toolbarEnabled)
 			{
 				if (hasStepButton)
@@ -414,13 +427,13 @@ namespace Kargono::Panels
 			}
 
 			// Camera Options Button
-			icon = EditorUI::EditorUIService::s_IconCameraActive;
+			icon = EditorUI::EditorUIService::s_IconCamera;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Viewport Camera Options");
 			}
@@ -462,13 +475,13 @@ namespace Kargono::Panels
 			}
 
 			// Viewport Display Options Button
-			icon = EditorUI::EditorUIService::s_IconDisplayActive;
+			icon = EditorUI::EditorUIService::s_IconDisplay;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Display Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Display Options");
 			}
@@ -508,7 +521,7 @@ namespace Kargono::Panels
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Grid Options");
 			}
@@ -606,14 +619,14 @@ namespace Kargono::Panels
 		}
 
 		// Toggle Top Bar Button
-		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Check_Enabled :
-		EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled;
+		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
+		EditorUI::EditorUIService::s_IconCheckbox_Disabled;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 			EditorUI::EditorUIService::s_PureEmpty,
-			EditorUI::EditorUIService::s_PureWhite))
+			toolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
 		{
 			Utility::Operations::ToggleBoolean(toolbarEnabled);
 		}
@@ -629,7 +642,7 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene()->IsRunning() && !Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity())
 		{
-			ImGui::PushFont(EditorUI::EditorUIService::s_AntaLarge);
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaLarge);
 			ImVec2 cursorStart = ImGui::GetCursorStartPos();
 			windowSize = ImGui::GetContentRegionAvail();
 			ImVec2 textSize = ImGui::CalcTextSize("No Primary Camera Set");

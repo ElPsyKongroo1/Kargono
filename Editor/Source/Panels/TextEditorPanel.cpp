@@ -38,6 +38,7 @@ namespace Kargono::Panels
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
 		s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
+		s_TextEditor.SetPalette(TextEditor::GetCurrentColorPalette());
 		s_OnCreateFile = [&]()
 		{
 			const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();

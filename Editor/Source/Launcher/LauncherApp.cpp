@@ -9,7 +9,7 @@ namespace Kargono
 
 	// Create Project Panel
 	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
-	static EditorUI::TextInputSpec s_CreateProjectName {};
+	static EditorUI::EditTextSpec s_CreateProjectName {};
 	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
 
 	static void InitializeStaticResources()
@@ -18,7 +18,7 @@ namespace Kargono
 		s_CreateProjectSpec.PopupWidth = 420.0f;
 		s_CreateProjectSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_CreateProjectName);
+			EditorUI::EditorUIService::EditText(s_CreateProjectName);
 			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
 		};
 		s_CreateProjectSpec.ConfirmAction = [&]()

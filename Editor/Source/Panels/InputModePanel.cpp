@@ -8,7 +8,7 @@ namespace Kargono
 	// Opening Panel w/ Popups
 	static EditorUI::SelectOptionSpec s_OpenInputModePopupSpec {};
 	static EditorUI::GenericPopupSpec s_CreateInputModePopupSpec {};
-	static EditorUI::TextInputSpec s_SelectInputModeNameSpec {};
+	static EditorUI::EditTextSpec s_SelectInputModeNameSpec {};
 
 	// Input Mode Header
 	static EditorUI::PanelHeaderSpec s_MainHeader {};
@@ -210,7 +210,7 @@ namespace Kargono::Panels
 		};
 		s_CreateInputModePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInput(s_SelectInputModeNameSpec);
+			EditorUI::EditorUIService::EditText(s_SelectInputModeNameSpec);
 		};
 	}
 
