@@ -195,7 +195,7 @@ namespace Kargono::Panels
 				bool setColorHighlight = false;
 				if (document.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_HighlightColor1);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_HighlightColor2);
 					setColorHighlight = true;
 				}
 				// Handle case 

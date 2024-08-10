@@ -201,24 +201,20 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
 		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
-
-		inline static ImVec4 s_LightGray{ 0.7f, 0.7f, 0.7f, 1.0f };
 		inline static ImVec4 s_LightGray_Thin{ 0.5f, 0.5f, 0.5f, 1.0f };
-		inline static ImVec4 s_PearlBlue{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_DarkPurple{ 0.27843f, 0.011764f, 0.4f, 1.0f };
-		inline static ImVec4 s_LightPurple{ 0.9226f, 0.4630f, 1.0f, 1.0f };
-		inline static ImVec4 s_LightGreen{ 0.2879f, 1.0f, 0.39322f, 1.0f };
-		inline static ImVec4 s_LightPurple_Thin{ 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
-
+		
 		// Editor Colors
 		inline static ImVec4 s_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
 		inline static ImVec4 s_SecondaryTextColor{ 220.0f / 255.0f, 215.0f / 255.0f, 201.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_HoveredColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
+		inline static ImVec4 s_HoveredColor{ 91.4f / 255.0f, 113.3f / 255.0f, 114.7f / 255.0f, 1.0f };
+		inline static ImVec4 s_ActiveColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
+		inline static ImVec4 s_SelectedColor{ 162.0f / 255.0f, 123.0f / 255.0f, 92.0f / 255.0f, 1.0f };
 		inline static ImVec4 s_DisabledColor{ s_LightGray_Thin };
-		inline static ImVec4 s_ActiveColor{ 69.3f / 255.0f, 85.8f / 255.0f, 86.9f / 255.0f, 1.0f };
+
 		inline static ImVec4 s_BackgroundColor { 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f  };
 		inline static ImVec4 s_DarkBackgroundColor { 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f  };
 		inline static ImVec4 s_AccentColor { 63.0f / 255.0f, 78.0f / 255.0f, 79.0f / 255.0f, 1.0f  };
+		inline static ImVec4 s_DarkAccentColor { 50.4f / 255.0f, 62.4f / 255.0f, 63.2f / 255.0f, 1.0f  };
 
 		inline static ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
@@ -235,6 +231,7 @@ namespace Kargono::EditorUI
 		inline static InlineButtonSpec s_SmallExpandButton;
 		inline static InlineButtonSpec s_SmallOptionsButton;
 		inline static InlineButtonSpec s_SmallCheckboxButton;
+		inline static InlineButtonSpec s_SmallCheckboxDisabledButton;
 		inline static InlineButtonSpec s_SmallLinkButton;
 		inline static InlineButtonSpec s_LargeDeleteButton;
 		inline static InlineButtonSpec s_LargeCancelButton;

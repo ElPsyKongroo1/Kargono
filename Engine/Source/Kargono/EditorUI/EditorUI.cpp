@@ -88,6 +88,12 @@ namespace Kargono::EditorUI
 		// Drag Drop
 		colors[ImGuiCol_DragDropTarget] = EditorUIService::s_HighlightColor1_Thin;
 
+		// Scroll Bar
+		colors[ImGuiCol_ScrollbarBg] = EditorUIService::s_DarkBackgroundColor;
+		colors[ImGuiCol_ScrollbarGrab] = EditorUIService::s_DisabledColor;
+		colors[ImGuiCol_ScrollbarGrabActive] = EditorUIService::s_SelectedColor;
+		colors[ImGuiCol_ScrollbarGrabHovered] = EditorUIService::s_SelectedColor;
+
 		// Headers
 		colors[ImGuiCol_Header] = EditorUIService::s_AccentColor;
 		colors[ImGuiCol_HeaderHovered] = EditorUIService::s_HoveredColor;
@@ -108,19 +114,19 @@ namespace Kargono::EditorUI
 		colors[ImGuiCol_FrameBgActive] = EditorUIService::s_PureEmpty;
 
 		// Tabs
-		colors[ImGuiCol_Tab] = EditorUIService::s_AccentColor;
-		colors[ImGuiCol_TabHovered] = EditorUIService::s_HoveredColor;
-		colors[ImGuiCol_TabActive] = EditorUIService::s_ActiveColor;
-		colors[ImGuiCol_TabUnfocused] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_Tab] = EditorUIService::s_DarkAccentColor;
+		colors[ImGuiCol_TabActive] = EditorUIService::s_SelectedColor;
+		colors[ImGuiCol_TabUnfocused] = EditorUIService::s_DarkAccentColor;
 		colors[ImGuiCol_TabUnfocusedActive] = EditorUIService::s_ActiveColor;
+		colors[ImGuiCol_TabHovered] = EditorUIService::s_HoveredColor;
 
 		// Title
-		colors[ImGuiCol_TitleBg] = EditorUIService::s_BackgroundColor;
-		colors[ImGuiCol_TitleBgActive] = EditorUIService::s_BackgroundColor;
-		colors[ImGuiCol_TitleBgCollapsed] = EditorUIService::s_BackgroundColor;
+		colors[ImGuiCol_TitleBg] = EditorUIService::s_DarkBackgroundColor;
+		colors[ImGuiCol_TitleBgActive] = EditorUIService::s_DarkBackgroundColor;
+		colors[ImGuiCol_TitleBgCollapsed] = EditorUIService::s_DarkBackgroundColor;
 
 		// Menu Bar
-		colors[ImGuiCol_MenuBarBg] = EditorUIService::s_BackgroundColor;
+		colors[ImGuiCol_MenuBarBg] = EditorUIService::s_DarkBackgroundColor;
 	}
 
 	static InlineButtonSpec s_TableEditButton {};
@@ -273,6 +279,18 @@ namespace Kargono::EditorUI
 				PositionType::Inline
 		};
 
+		s_SmallCheckboxDisabledButton = {
+				0.0,
+				0.0f,
+				14.0f,
+				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Disabled,
+				"",
+				"",
+				PositionType::Inline,
+				true
+		};
+
 		s_SmallLinkButton = {
 				390.0,
 				0.0f,
@@ -392,6 +410,7 @@ namespace Kargono::EditorUI
 		s_SmallExpandButton = {};
 		s_SmallOptionsButton = {};
 		s_SmallCheckboxButton = {};
+		s_SmallCheckboxDisabledButton = {};
 		s_SmallLinkButton = {};
 		s_LargeDeleteButton = {};
 		s_LargeCancelButton = {};
@@ -487,7 +506,7 @@ namespace Kargono::EditorUI
 			ImVec2 windowPos = window->Pos;
 			ImVec2 windowSize = window->Size;
 			ImGui::GetForegroundDrawList(window)->AddRect(windowPos,
-				ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), IM_COL32(193, 249, 255, 132));
+				ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), ImGui::ColorConvertFloat4ToU32(s_HighlightColor1_Thin));
 		}
 	}
 
@@ -951,7 +970,7 @@ namespace Kargono::EditorUI
 
 					if (selectedButton)
 					{
-						ImGui::PushStyleColor(ImGuiCol_Button, s_ActiveColor);
+						ImGui::PushStyleColor(ImGuiCol_Button, s_SelectedColor);
 					}
 
 					if (ImGui::Button((option.Label + id + std::string(option.Handle)).c_str()))
@@ -1129,8 +1148,8 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
-			s_SmallCheckboxButton,
-			spec.ToggleBoolean, s_DisabledColor);
+			s_SmallCheckboxDisabledButton,
+			spec.ToggleBoolean, s_SecondaryTextColor);
 			ImGui::PopStyleColor(3);
 		}
 
@@ -1404,7 +1423,7 @@ namespace Kargono::EditorUI
 					spec.SelectedOption = 1;
 				}
 				spec.SelectAction();
-			}, s_SmallCheckboxButton, spec.SelectedOption == 1, s_HighlightColor1);
+			}, s_SmallCheckboxButton, spec.SelectedOption == 1, s_HighlightColor2);
 			ImGui::SameLine();
 			TruncateText(spec.SecondOptionLabel, 7);
 			ImGui::PopStyleColor(3);
@@ -1416,13 +1435,13 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
-				s_SmallCheckboxButton, spec.SelectedOption == 0, s_DisabledColor);
+				s_SmallCheckboxDisabledButton, spec.SelectedOption == 0, s_SecondaryTextColor);
 			ImGui::SameLine();
 			TruncateText(spec.FirstOptionLabel, 7);
 
 			ImGui::SameLine(300.0f);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
-				s_SmallCheckboxButton, spec.SelectedOption == 1, s_DisabledColor);
+				s_SmallCheckboxDisabledButton, spec.SelectedOption == 1, s_SecondaryTextColor);
 			ImGui::SameLine();
 			TruncateText(spec.SecondOptionLabel, 7);
 			ImGui::PopStyleColor(4);
@@ -1669,6 +1688,13 @@ namespace Kargono::EditorUI
 				}
 				ImGui::PopStyleColor();
 
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, spec.ExpandedNodes.contains(currentPath) ? "Collapse" : "Expand");
+					ImGui::EndTooltip();
+				}
+
 				// Draw all sub-entries
 				if (spec.ExpandedNodes.contains(currentPath))
 				{
@@ -1723,7 +1749,7 @@ namespace Kargono::EditorUI
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
-		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_HighlightColor1 : EditorUIService::s_PrimaryTextColor , spec.Label.c_str());
+		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_HighlightColor2 : EditorUIService::s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
 
 		ImGui::SameLine();

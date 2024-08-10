@@ -2058,13 +2058,13 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 	s_CurrentPalette = 
 	{
 		{
-			ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor),	// Default
-				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1),	// Keyword	
-				0xff00ff00,	// Number
-				0xff7070e0,	// String
-				0xff70a0e0, // Char literal
-				0xffffffff, // Punctuation
-				0xff408080,	// Preprocessor
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor),	// Default
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3),	// Keyword	
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// Number
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// String
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2), // Char literal
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor), // Punctuation
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor),	// Preprocessor
 				0xffaaaaaa, // Identifier
 				0xff9bc64d, // Known identifier
 				0xffc040a0, // Preproc identifier
@@ -2074,11 +2074,11 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Cursor
 				0x80a06020, // Selection
 				0x800020ff, // ErrorMarker
-				0x40f08000, // Breakpoint
-				0xff707000, // Line number
-				0x40000000, // Current line fill
-				0x40808080, // Current line fill (inactive)
-				0x40a0a0a0, // Current line edge
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Breakpoint
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Line number
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DarkBackgroundColor), // Current line fill
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line fill (inactive)
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line edge
 		}
 	};
 
