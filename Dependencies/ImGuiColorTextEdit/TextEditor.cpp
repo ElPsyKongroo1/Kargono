@@ -2058,7 +2058,7 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 	s_CurrentPalette = 
 	{
 		{
-			ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryColor),	// Default
+			ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor),	// Default
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1),	// Keyword	
 				0xff00ff00,	// Number
 				0xff7070e0,	// String
@@ -2071,7 +2071,7 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (single line)
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (multi line)
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_BackgroundColor), // Background
-				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryColor), // Cursor
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Cursor
 				0x80a06020, // Selection
 				0x800020ff, // ErrorMarker
 				0x40f08000, // Breakpoint

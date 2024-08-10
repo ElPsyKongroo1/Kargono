@@ -71,24 +71,32 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconFont{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconInput{};
 
-	void SetColors()
+	void EditorUIService::SetColors()
 	{
 		auto& colors = ImGui::GetStyle().Colors;
 		colors[ImGuiCol_WindowBg] = EditorUIService::s_BackgroundColor;
-		colors[ImGuiCol_PopupBg] = EditorUIService::s_BackgroundColor;
+		colors[ImGuiCol_PopupBg] = EditorUIService::s_DarkBackgroundColor;
 
 		// TextColor
-		colors[ImGuiCol_Text] = EditorUIService::s_PrimaryColor;
+		colors[ImGuiCol_Text] = EditorUIService::s_PrimaryTextColor;
+
+		// Separator
+		colors[ImGuiCol_Separator] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_SeparatorActive] = EditorUIService::s_HighlightColor1_Thin;
+		colors[ImGuiCol_SeparatorHovered] = EditorUIService::s_HighlightColor1_Thin;
+
+		// Drag Drop
+		colors[ImGuiCol_DragDropTarget] = EditorUIService::s_HighlightColor1_Thin;
 
 		// Headers
-		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_Header] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_HeaderHovered] = EditorUIService::s_HoveredColor;
+		colors[ImGuiCol_HeaderActive] = EditorUIService::s_ActiveColor;
 
 		// Buttons
-		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_ButtonHovered] = EditorUIService::s_LightPurple_Thin;
-		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_Button] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_ButtonHovered] = EditorUIService::s_HoveredColor;
+		colors[ImGuiCol_ButtonActive] = EditorUIService::s_ActiveColor;
 
 		// Border
 		colors[ImGuiCol_Border] = EditorUIService::s_PureEmpty;
@@ -100,16 +108,19 @@ namespace Kargono::EditorUI
 		colors[ImGuiCol_FrameBgActive] = EditorUIService::s_PureEmpty;
 
 		// Tabs
-		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
-		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
-		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_Tab] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_TabHovered] = EditorUIService::s_HoveredColor;
+		colors[ImGuiCol_TabActive] = EditorUIService::s_ActiveColor;
+		colors[ImGuiCol_TabUnfocused] = EditorUIService::s_AccentColor;
+		colors[ImGuiCol_TabUnfocusedActive] = EditorUIService::s_ActiveColor;
 
 		// Title
 		colors[ImGuiCol_TitleBg] = EditorUIService::s_BackgroundColor;
 		colors[ImGuiCol_TitleBgActive] = EditorUIService::s_BackgroundColor;
 		colors[ImGuiCol_TitleBgCollapsed] = EditorUIService::s_BackgroundColor;
+
+		// Menu Bar
+		colors[ImGuiCol_MenuBarBg] = EditorUIService::s_BackgroundColor;
 	}
 
 	static InlineButtonSpec s_TableEditButton {};
@@ -725,7 +736,7 @@ namespace Kargono::EditorUI
 						spec.DeleteAction();
 					}
 					ImGui::CloseCurrentPopup();
-				}, s_LargeDeleteButton);
+				}, s_LargeDeleteButton, false, s_PrimaryTextColor);
 			}
 
 			// Cancel Tool Bar Button
@@ -733,7 +744,7 @@ namespace Kargono::EditorUI
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				ImGui::CloseCurrentPopup();
-			}, s_LargeCancelButton);
+			}, s_LargeCancelButton, false, s_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
@@ -744,7 +755,7 @@ namespace Kargono::EditorUI
 					spec.ConfirmAction();
 				}
 				ImGui::CloseCurrentPopup();
-			}, s_LargeConfirmButton);
+			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 
 			ImGui::Separator();
 
@@ -831,11 +842,11 @@ namespace Kargono::EditorUI
 			{
 				ImGui::SetCursorPosX(30.5f);
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 			TruncateText(spec.Label, spec.Flags & SelectOption_Indented ? 20: 23);
 			ImGui::PopStyleColor();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			WriteMultilineText(spec.CurrentOption.Label, 200.0f, 23);
 			ImGui::PopStyleColor();
 
@@ -876,9 +887,9 @@ namespace Kargono::EditorUI
 					return 0;
 				};
 
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, s_LightPurple_Thin);
-				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, s_LightPurple_Thin);
-				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, s_LightPurple_Thin);
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, s_ActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, s_ActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, s_ActiveColor);
 
 				ImGui::InputText((id + "InputText").c_str(), searchBuffer, sizeof(searchBuffer), ImGuiInputTextFlags_CallbackEdit, callback, (void*)&spec);
 				ImGui::PopStyleColor(3);
@@ -897,7 +908,7 @@ namespace Kargono::EditorUI
 					spec.Searching = true;
 					spec.CachedSearchResults = GenerateSearchCache(spec.ActiveOptions, searchBuffer);
 				}
-			}, s_LargeSearchButton, spec.Searching);
+			}, s_LargeSearchButton, spec.Searching, s_PrimaryTextColor);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
@@ -906,7 +917,7 @@ namespace Kargono::EditorUI
 				spec.Searching = false;
 				memset(searchBuffer, 0, sizeof(searchBuffer));
 				ImGui::CloseCurrentPopup();
-			}, s_LargeCancelButton);
+			}, s_LargeCancelButton, false, s_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
@@ -921,7 +932,7 @@ namespace Kargono::EditorUI
 				spec.Searching = false;
 				memset(searchBuffer, 0, sizeof(searchBuffer));
 				ImGui::CloseCurrentPopup();
-			}, s_LargeConfirmButton);
+			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 
 			ImGui::Separator();
 
@@ -940,7 +951,7 @@ namespace Kargono::EditorUI
 
 					if (selectedButton)
 					{
-						ImGui::PushStyleColor(ImGuiCol_Button, s_DarkPurple);
+						ImGui::PushStyleColor(ImGuiCol_Button, s_ActiveColor);
 					}
 
 					if (ImGui::Button((option.Label + id + std::string(option.Handle)).c_str()))
@@ -975,8 +986,8 @@ namespace Kargono::EditorUI
 		static ImGuiInputTextFlags inputFlags {};
 
 
-		ImGui::TextColored(s_PrimaryColor, spec.Label.c_str());
-		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+		ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 		switch (spec.VariableType)
 		{
 			case WrappedVarType::None:
@@ -1009,16 +1020,16 @@ namespace Kargono::EditorUI
 				TruncateText("False", 12);
 				ImGui::SameLine();
 				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				{
+					if (spec.FieldBuffer.As<char>() == "False")
 					{
-						if (spec.FieldBuffer.As<char>() == "False")
-						{
-							spec.FieldBuffer.SetString("True");
-						}
-						else
-						{
-							spec.FieldBuffer.SetString("False");
-						}
-					}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "False", s_HighlightColor1);
+						spec.FieldBuffer.SetString("True");
+					}
+					else
+					{
+						spec.FieldBuffer.SetString("False");
+					}
+				}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "False", s_HighlightColor1);
 				ImGui::PopStyleColor(2);
 				break;
 			}
@@ -1070,7 +1081,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(30.5f);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		// Display Item
 		if (spec.Flags & Checkbox_LeftLean)
 		{
@@ -1114,9 +1125,13 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 			s_SmallCheckboxButton,
 			spec.ToggleBoolean, s_DisabledColor);
+			ImGui::PopStyleColor(3);
 		}
 
 		ImGui::SameLine();
@@ -1125,7 +1140,7 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
 		EditorUIService::s_SmallEditButton,
-		spec.Editing, spec.Editing ? s_PrimaryColor : s_DisabledColor);
+		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::EditFloat(EditFloatSpec& spec)
@@ -1139,7 +1154,7 @@ namespace Kargono::EditorUI
 			ImGui::SetCursorPosX(30.5f);
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 20);
 		ImGui::PopStyleColor();
 
@@ -1168,7 +1183,7 @@ namespace Kargono::EditorUI
 		{
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetCursorPos({ 200.0f, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentFloat).c_str());
 			ImGui::PopStyleColor();
 		}
@@ -1179,7 +1194,7 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
 		EditorUIService::s_SmallEditButton,
-		spec.Editing, spec.Editing ? s_PrimaryColor : s_DisabledColor);
+		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::EditVec2(EditVec2Spec& spec)
@@ -1192,7 +1207,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(30.5f);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 20);
 		ImGui::PopStyleColor();
 		ImGui::SameLine(200.0f);
@@ -1236,7 +1251,7 @@ namespace Kargono::EditorUI
 		{
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetCursorPos({ 200.0f, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.x).c_str());
 			ImGui::SetCursorPos({ 260.0f, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.y).c_str());
@@ -1245,11 +1260,11 @@ namespace Kargono::EditorUI
 
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
-			{
-				Utility::Operations::ToggleBoolean(spec.Editing);
-			},
-			EditorUIService::s_SmallEditButton,
-			spec.Editing, spec.Editing ? s_PrimaryColor : s_DisabledColor);
+		{
+			Utility::Operations::ToggleBoolean(spec.Editing);
+		},
+		EditorUIService::s_SmallEditButton,
+		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::EditVec3(EditVec3Spec& spec)
@@ -1262,7 +1277,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(30.5f);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 20);
 		ImGui::PopStyleColor();
 
@@ -1321,7 +1336,7 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			ImGui::SetCursorPos({ 200.0f, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.x).c_str());
 			ImGui::SetCursorPos({ 260.0f, yPosition });
@@ -1337,7 +1352,7 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
 		EditorUIService::s_SmallEditButton,
-		spec.Editing, spec.Editing ? s_PrimaryColor : s_DisabledColor);
+		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::RadioSelector(RadioSelectorSpec& spec)
@@ -1352,7 +1367,7 @@ namespace Kargono::EditorUI
 		}
 
 		// Display Item
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 23);
 		ImGui::PopStyleColor();
 		ImGui::SameLine(197.5f);
@@ -1361,7 +1376,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 0)
@@ -1396,7 +1411,10 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxButton, spec.SelectedOption == 0, s_DisabledColor);
 			ImGui::SameLine();
@@ -1407,7 +1425,7 @@ namespace Kargono::EditorUI
 				s_SmallCheckboxButton, spec.SelectedOption == 1, s_DisabledColor);
 			ImGui::SameLine();
 			TruncateText(spec.SecondOptionLabel, 7);
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(4);
 		}
 
 		ImGui::SameLine();
@@ -1416,7 +1434,7 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
 		EditorUIService::s_SmallEditButton,
-		spec.Editing, spec.Editing ? s_PrimaryColor : s_DisabledColor);
+		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::Table(TableSpec& spec)
@@ -1433,7 +1451,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 40);
 		ImGui::PopStyleColor();
 
@@ -1481,7 +1499,7 @@ namespace Kargono::EditorUI
 			if (!spec.TableValues.empty())
 			{
 				// Column Titles
-				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: 30.5f);
 				TruncateText(spec.Column1Title, 12);
 				ImGui::SameLine();
@@ -1500,7 +1518,7 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f : 30.5f);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				TruncateText(tableEntry.Label, 16);
-				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 				WriteMultilineText(tableEntry.Value,200.0f, 21, -5.2f);
 				ImGui::PopStyleColor();
 				
@@ -1554,7 +1572,7 @@ namespace Kargono::EditorUI
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, screenPosition.y + 21.0f),
-					ImColor(EditorUI::EditorUIService::s_LightPurple_Thin), 4, ImDrawFlags_RoundCornersAll);
+					ImColor(EditorUI::EditorUIService::s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
 			}
 
 			// Display entry icon
@@ -1597,7 +1615,7 @@ namespace Kargono::EditorUI
 			}
 
 			// Display entry text
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
 			ImGui::Text(treeEntry.Label.c_str());
 			ImGui::PopStyleColor();
 
@@ -1663,7 +1681,7 @@ namespace Kargono::EditorUI
 			{
 				draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
 					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
-					ImColor(EditorUIService::s_PureWhite));
+					ImColor(EditorUIService::s_PrimaryTextColor));
 			}
 			currentPath.PopNode();
 			iteration++;
@@ -1674,7 +1692,7 @@ namespace Kargono::EditorUI
 		{
 			draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, rootPosition.y + 21.0f),
 				ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
-				ImColor(EditorUIService::s_PureWhite));
+				ImColor(EditorUIService::s_PrimaryTextColor));
 		}
 	}
 
@@ -1705,7 +1723,7 @@ namespace Kargono::EditorUI
 	{
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
-		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_HighlightColor1 : EditorUIService::s_PrimaryColor , spec.Label.c_str());
+		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_HighlightColor1 : EditorUIService::s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
 
 		ImGui::SameLine();
@@ -1734,7 +1752,7 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
-		ImGui::TextColored(s_PrimaryColor , spec.Label.c_str());
+		ImGui::TextColored(s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
 		ImGui::SameLine();
 		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
@@ -1778,11 +1796,11 @@ namespace Kargono::EditorUI
 	void EditorUIService::LabeledText(const std::string& label, const std::string& text)
 	{
 		// Display Menu Item
-		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(label, 23);
 		ImGui::PopStyleColor();
 		//ImGui::TextColored(s_PureWhite, label.c_str());
-		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 		WriteMultilineText(text, 200.0f, 23);
 		ImGui::PopStyleColor();
 	}
@@ -1814,8 +1832,8 @@ namespace Kargono::EditorUI
 			{
 				ImGui::SetCursorPosX(30.5f);
 			}
-			ImGui::TextColored(s_PrimaryColor, spec.Label.c_str());
-			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+			ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			WriteMultilineText(spec.CurrentOption, 200.0f, 23);
 			ImGui::PopStyleColor();
 
@@ -1872,8 +1890,8 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		std::string popUpLabel = spec.Label;
 
-		ImGui::TextColored(s_PrimaryColor, spec.Label.c_str());
-		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryColor);
+		ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 		WriteMultilineText(spec.CurrentOption.string(), 200.0f, 21);
 		ImGui::PopStyleColor();
 

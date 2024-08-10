@@ -155,6 +155,7 @@ namespace Kargono::EditorUI
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
 		static void BlockMouseEvents(bool block);
+		static void SetColors();
 		
 	public:
 		//==============================
@@ -198,10 +199,11 @@ namespace Kargono::EditorUI
 		// UI Colors
 		//==============================
 		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
+		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
+
 		inline static ImVec4 s_LightGray{ 0.7f, 0.7f, 0.7f, 1.0f };
 		inline static ImVec4 s_LightGray_Thin{ 0.5f, 0.5f, 0.5f, 1.0f };
-		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PearlBlue{ 38.0f / 255.0f, 212.0f / 255.0f, 212.0f / 255.0f, 1.0f };
 		inline static ImVec4 s_DarkPurple{ 0.27843f, 0.011764f, 0.4f, 1.0f };
 		inline static ImVec4 s_LightPurple{ 0.9226f, 0.4630f, 1.0f, 1.0f };
@@ -209,16 +211,19 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_LightPurple_Thin{ 182.0f / 255.0f, 103.0f / 255.0f, 219.0f / 255.0f, 0.35f };
 
 		// Editor Colors
-		inline static ImVec4 s_BackgroundColor { 0.1f, 0.105f, 0.11f, 1.0f  };
-		inline static ImVec4 s_PrimaryColor{ s_PureWhite };
-		inline static ImVec4 s_SecondaryColor{ s_LightGray };
+		inline static ImVec4 s_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
+		inline static ImVec4 s_SecondaryTextColor{ 220.0f / 255.0f, 215.0f / 255.0f, 201.0f / 255.0f, 1.0f };
+		inline static ImVec4 s_HoveredColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
 		inline static ImVec4 s_DisabledColor{ s_LightGray_Thin };
+		inline static ImVec4 s_ActiveColor{ 69.3f / 255.0f, 85.8f / 255.0f, 86.9f / 255.0f, 1.0f };
+		inline static ImVec4 s_BackgroundColor { 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f  };
+		inline static ImVec4 s_DarkBackgroundColor { 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f  };
+		inline static ImVec4 s_AccentColor { 63.0f / 255.0f, 78.0f / 255.0f, 79.0f / 255.0f, 1.0f  };
 
-		inline static ImVec4 s_HighlightColor1{ s_PearlBlue };
-		inline static ImVec4 s_HighlightColor1_Thin { s_PearlBlue.x, s_PearlBlue.y, s_PearlBlue.z, s_PearlBlue.w * 0.75f };
-		inline static ImVec4 s_HighlightColor2{ s_LightPurple };
-		inline static ImVec4 s_HighlightColor3{ s_LightGreen };
-
+		inline static ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
+		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
+		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
+		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
 
 		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
 		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };

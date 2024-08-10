@@ -192,11 +192,11 @@ namespace Kargono::Panels
 
 			for (auto& document : s_AllDocuments)
 			{
-				bool setColorBlue = false;
+				bool setColorHighlight = false;
 				if (document.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_PearlBlue);
-					setColorBlue = true;
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_HighlightColor1);
+					setColorHighlight = true;
 				}
 				// Handle case 
 				ImGuiTabItemFlags tabItemFlags = 0;
@@ -233,7 +233,7 @@ namespace Kargono::Panels
 					document.SetActive = true;
 				}
 
-				if (setColorBlue)
+				if (setColorHighlight)
 				{
 					ImGui::PopStyleColor();
 				}

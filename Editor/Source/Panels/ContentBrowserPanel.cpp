@@ -138,7 +138,7 @@ namespace Kargono::Panels
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0), 
-			backActive ? EditorUI::EditorUIService::s_PrimaryColor : EditorUI::EditorUIService::s_DisabledColor))
+			backActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 		{
 			if (backActive)
 			{
@@ -160,7 +160,7 @@ namespace Kargono::Panels
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(), 
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0), 
-			forwardActive ? EditorUI::EditorUIService::s_PrimaryColor : EditorUI::EditorUIService::s_DisabledColor))
+			forwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 		{
 			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
 			{
@@ -179,7 +179,7 @@ namespace Kargono::Panels
 			ImGui::PopStyleColor(2);
 		}
 		ImGui::PopStyleColor();
-		if (ImGui::BeginDragDropTarget())
+		if (forwardActive && ImGui::BeginDragDropTarget())
 		{
 			static std::array<std::string, 6> acceptablePayloads
 			{
@@ -193,10 +193,7 @@ namespace Kargono::Panels
 				{
 					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 					std::filesystem::path payloadPath(payloadPathPointer);
-					KG_CRITICAL(payloadPath.string());
-					KG_CRITICAL(m_CurrentDirectory.parent_path());
 					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
-					KG_CRITICAL("-----------------");
 					break;
 				}
 			}
