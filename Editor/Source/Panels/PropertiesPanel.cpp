@@ -14,8 +14,7 @@ namespace Kargono::Panels
 	void PropertiesPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow("Properties", &s_EditorApp->m_ShowProperties, 
-			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoFocusOnAppearing);
+		EditorUI::EditorUIService::StartWindow("Properties", &s_EditorApp->m_ShowProperties, ImGuiWindowFlags_NoFocusOnAppearing);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{

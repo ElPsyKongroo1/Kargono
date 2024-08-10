@@ -25,53 +25,58 @@ namespace Kargono::Panels
 			return;
 		}
 
+		if (ImGui::DragFloat("Small Button Offset", (float*)&EditorUI::EditorUIService::s_SmallButtonLeftOffset, 0.01f))
+		{
+			EditorUI::EditorUIService::SetButtonDefaults();
+		}
+
 		if (ImGui::DragFloat4("Background Color", (float*)&EditorUI::EditorUIService::s_BackgroundColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Accent Color", (float*)&EditorUI::EditorUIService::s_AccentColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Primary Text Color", (float*)&EditorUI::EditorUIService::s_PrimaryTextColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Secondary Text Color", (float*)&EditorUI::EditorUIService::s_SecondaryTextColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Disabled Color", (float*)&EditorUI::EditorUIService::s_DisabledColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Active Color", (float*)&EditorUI::EditorUIService::s_ActiveColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Hovered Color", (float*)&EditorUI::EditorUIService::s_HoveredColor, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Highlight Color 1", (float*)&EditorUI::EditorUIService::s_HighlightColor1, 0.01f))
 		{
-			EditorUI::EditorUIService::s_HighlightColor1_Thin = 
+			EditorUI::EditorUIService::s_HighlightColor1_Thin =
 			{
 				EditorUI::EditorUIService::s_HighlightColor1.x,
 				EditorUI::EditorUIService::s_HighlightColor1.y,
 				EditorUI::EditorUIService::s_HighlightColor1.z,
 				EditorUI::EditorUIService::s_HighlightColor1.w * 0.75f
 			};
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
-		
+
 		if (ImGui::DragFloat4("Highlight Color 2", (float*)&EditorUI::EditorUIService::s_HighlightColor2, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 		if (ImGui::DragFloat4("Highlight Color 3", (float*)&EditorUI::EditorUIService::s_HighlightColor3, 0.01f))
 		{
-			EditorUI::EditorUIService::SetColors();
+			EditorUI::EditorUIService::SetColorDefaults();
 		}
 
 		EditorUI::EditorUIService::EndWindow();

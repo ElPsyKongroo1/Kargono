@@ -17,14 +17,8 @@ namespace Kargono::EditorUI
 {
 	ImFont* EditorUIService::s_FontAntaLarge{ nullptr };
 	ImFont* EditorUIService::s_FontAntaRegular{ nullptr };
-	ImFont* EditorUIService::s_FontAntaSmall{ nullptr };
 	ImFont* EditorUIService::s_FontPlexBold{ nullptr };
-	ImFont* EditorUIService::s_FontPlexRegular{ nullptr };
-	ImFont* EditorUIService::s_FontOpenSansRegular{ nullptr };
-	ImFont* EditorUIService::s_FontOpenSansBold{ nullptr };
-	ImFont* EditorUIService::s_FontRobotoRegular{ nullptr };
 	ImFont* EditorUIService::s_FontRobotoMono{ nullptr };
-	ImFont* EditorUIService::s_FontAnonymousRegular{ nullptr };
 
 	Ref<Rendering::Texture2D> EditorUIService::s_IconCamera{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconSettings{};
@@ -71,7 +65,8 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconFont{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconInput{};
 
-	void EditorUIService::SetColors()
+
+	void EditorUIService::SetColorDefaults()
 	{
 		auto& colors = ImGui::GetStyle().Colors;
 		colors[ImGuiCol_WindowBg] = EditorUIService::s_BackgroundColor;
@@ -133,8 +128,122 @@ namespace Kargono::EditorUI
 	static InlineButtonSpec s_TableLinkButton {};
 	static InlineButtonSpec s_TableExpandButton {};
 
-	static void InitializeTableResources()
+	void EditorUIService::SetButtonDefaults()
 	{
+		s_SmallEditButton =
+		{
+				-s_SmallButtonLeftOffset,
+				0.0f,
+				13.0f,
+				EditorUI::EditorUIService::s_IconEdit,
+				EditorUI::EditorUIService::s_IconEdit,
+				"Cancel Editing",
+				"Edit",
+				PositionType::Relative
+		};
+
+		s_SmallExpandButton =
+		{
+				-1.2f,
+				4.0f,
+				14.0f,
+				EditorUI::EditorUIService::s_IconDown,
+				EditorUI::EditorUIService::s_IconRight,
+				"Collapse",
+				"Expand",
+				PositionType::Inline
+		};
+
+		s_MediumOptionsButton =
+		{
+				-s_MediumButtonLeftOffset,
+				1.0f,
+				19.0f,
+				EditorUI::EditorUIService::s_IconOptions,
+				EditorUI::EditorUIService::s_IconOptions,
+				"Options",
+				"Options",
+				PositionType::Relative
+		};
+
+		s_SmallCheckboxButton = {
+				0.0,
+				0.0f,
+				14.0f,
+				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Disabled,
+				"Uncheck",
+				"Check",
+				PositionType::Inline
+		};
+
+		s_SmallCheckboxDisabledButton = {
+				0.0,
+				0.0f,
+				14.0f,
+				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
+				EditorUI::EditorUIService::s_IconCheckbox_Disabled,
+				"",
+				"",
+				PositionType::Inline,
+				true
+		};
+
+		s_SmallLinkButton = {
+				-s_SmallButtonLeftOffset,
+				0.0f,
+				14.0f,
+				EditorUI::EditorUIService::s_IconForward,
+				EditorUI::EditorUIService::s_IconForward,
+				"Open",
+				"Open",
+				PositionType::Relative
+		};
+
+		s_LargeDeleteButton = {
+				-112.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::EditorUIService::s_IconDelete,
+				EditorUI::EditorUIService::s_IconDelete,
+				"Delete",
+				"Delete",
+				PositionType::Relative
+		};
+
+		s_LargeCancelButton = {
+				-75.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::EditorUIService::s_IconCancel,
+				EditorUI::EditorUIService::s_IconCancel,
+				"Cancel",
+				"Cancel",
+				PositionType::Relative
+		};
+
+		s_LargeConfirmButton = {
+				-38.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::EditorUIService::s_IconConfirm,
+				EditorUI::EditorUIService::s_IconConfirm,
+				"Confirm",
+				"Confirm",
+				PositionType::Relative
+		};
+
+		s_LargeSearchButton = {
+				-112.0f,
+				-0.6f,
+				28.0f,
+				EditorUI::EditorUIService::s_IconCancel2,
+				EditorUI::EditorUIService::s_IconSearch,
+				"Cancel Search",
+				"Search",
+				PositionType::Relative
+		};
+
 		s_TableEditButton = EditorUIService::s_SmallEditButton;
 		s_TableEditButton.YPosition = -5.5f;
 
@@ -143,6 +252,7 @@ namespace Kargono::EditorUI
 
 		s_TableExpandButton = EditorUIService::s_SmallExpandButton;
 
+		
 	}
 
 	void EditorUIService::Init()
@@ -156,16 +266,10 @@ namespace Kargono::EditorUI
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
-		s_FontOpenSansBold = io.Fonts->AddFontFromFileTTF("Resources/Fonts/opensans/static/OpenSans-Bold.ttf", 18.0f);
-		s_FontOpenSansRegular = io.Fonts->AddFontFromFileTTF("Resources/Fonts/opensans/static/OpenSans-Regular.ttf", 18.0f);
 		s_FontAntaLarge = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Anta-Regular.ttf", 23.0f);
 		s_FontAntaRegular = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Anta-Regular.ttf", 20.0f);
-		s_FontAntaSmall = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Anta-Regular.ttf", 18.0f);
 		s_FontPlexBold = io.Fonts->AddFontFromFileTTF("Resources/Fonts/IBMPlexMono-Bold.ttf", 29.0f);
-		s_FontPlexRegular = io.Fonts->AddFontFromFileTTF("Resources/Fonts/IBMPlexMono-Bold.ttf", 22.0f);
-		s_FontRobotoRegular = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Roboto-Regular.ttf", 18.0f);
 		s_FontRobotoMono = io.Fonts->AddFontFromFileTTF("Resources/Fonts/RobotoMono-SemiBold.ttf", 17.0f);
-		s_FontAnonymousRegular = io.Fonts->AddFontFromFileTTF("Resources/Fonts/AnonymousPro-Regular.ttf", 16.0f);
 		io.FontDefault = s_FontRobotoMono;
 
 		// Setup Dear ImGui style
@@ -180,7 +284,7 @@ namespace Kargono::EditorUI
 
 		style.WindowMenuButtonPosition = -1;
 		style.WindowPadding = { 7.0f, 4.0f };
-		SetColors();
+		SetColorDefaults();
 
 		// Setup Platform/Renderer backends
 		Engine& core = EngineService::GetActiveEngine();
@@ -235,118 +339,7 @@ namespace Kargono::EditorUI
 		s_IconUserInterface = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/UserInterface.png");
 		s_IconInput = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Input.png");
 
-		s_SmallEditButton = {
-				390.0f,
-				0.0f,
-				13.0f,
-				EditorUI::EditorUIService::s_IconEdit,
-				EditorUI::EditorUIService::s_IconEdit,
-				"Cancel Editing",
-				"Edit",
-				PositionType::Absolute
-		};
-
-		s_SmallExpandButton = {
-				-1.2f,
-				4.0f,
-				14.0f,
-				EditorUI::EditorUIService::s_IconDown,
-				EditorUI::EditorUIService::s_IconRight,
-				"Collapse",
-				"Expand",
-				PositionType::Inline
-		};
-
-		s_SmallOptionsButton = {
-				386.0f,
-				1.0f,
-				19.0f,
-				EditorUI::EditorUIService::s_IconOptions,
-				EditorUI::EditorUIService::s_IconOptions,
-				"Options",
-				"Options",
-				PositionType::Absolute
-		};
-
-		s_SmallCheckboxButton = {
-				0.0,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
-				EditorUI::EditorUIService::s_IconCheckbox_Disabled,
-				"Uncheck",
-				"Check",
-				PositionType::Inline
-		};
-
-		s_SmallCheckboxDisabledButton = {
-				0.0,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
-				EditorUI::EditorUIService::s_IconCheckbox_Disabled,
-				"",
-				"",
-				PositionType::Inline,
-				true
-		};
-
-		s_SmallLinkButton = {
-				390.0,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::s_IconForward,
-				EditorUI::EditorUIService::s_IconForward,
-				"Open",
-				"Open",
-				PositionType::Absolute
-		};
-
-		s_LargeDeleteButton = {
-				-112.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::s_IconDelete,
-				EditorUI::EditorUIService::s_IconDelete,
-				"Delete",
-				"Delete",
-				PositionType::Relative
-		};
-
-		s_LargeCancelButton = {
-				-75.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::s_IconCancel,
-				EditorUI::EditorUIService::s_IconCancel,
-				"Cancel",
-				"Cancel",
-				PositionType::Relative
-		};
-
-		s_LargeConfirmButton = {
-				-38.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::s_IconConfirm,
-				EditorUI::EditorUIService::s_IconConfirm,
-				"Confirm",
-				"Confirm",
-				PositionType::Relative
-		};
-
-		s_LargeSearchButton = {
-				-112.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::s_IconCancel2,
-				EditorUI::EditorUIService::s_IconSearch,
-				"Cancel Search",
-				"Search",
-				PositionType::Relative
-		};
-
-		InitializeTableResources();
+		SetButtonDefaults();
 
 		s_Running = true;
 
@@ -408,7 +401,7 @@ namespace Kargono::EditorUI
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};
-		s_SmallOptionsButton = {};
+		s_MediumOptionsButton = {};
 		s_SmallCheckboxButton = {};
 		s_SmallCheckboxDisabledButton = {};
 		s_SmallLinkButton = {};
@@ -607,12 +600,12 @@ namespace Kargono::EditorUI
 			EditorUIService::s_PureEmpty);
 	}
 
-	static float SmallButtonAbsoluteLocation(uint32_t slot)
+	static float SmallButtonRelativeLocation(uint32_t slot)
 	{
-		return 390.0f - (22.0f * slot);
+		return -EditorUIService::s_SmallButtonLeftOffset - (EditorUIService::s_SmallButtonSpacing * slot);
 	}
 
-	static void CreateInlineButton(ImGuiID widgetID, std::function<void()> onPress, 
+	static void CreateButton(ImGuiID widgetID, std::function<void()> onPress, 
 		const InlineButtonSpec& spec, bool active = false, ImVec4 tintColor = {1.0f, 1.0f, 1.0f, 1.0f})
 	{
 		switch (spec.XPositionType)
@@ -629,7 +622,7 @@ namespace Kargono::EditorUI
 			}
 			case PositionType::Relative:
 			{
-				ImGui::SetCursorPosX(ImGui::GetWindowWidth() + spec.XPosition);
+				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x + spec.XPosition);
 				break;
 			}
 			default:
@@ -748,7 +741,7 @@ namespace Kargono::EditorUI
 			{
 				// Optional Delete Tool Bar Button
 				ImGui::SameLine();
-				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 				{
 					if (spec.DeleteAction)
 					{
@@ -760,14 +753,14 @@ namespace Kargono::EditorUI
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				ImGui::CloseCurrentPopup();
 			}, s_LargeCancelButton, false, s_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.ConfirmAction)
 				{
@@ -870,7 +863,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				ImGui::OpenPopup(id.c_str());
 				if (spec.PopupAction)
@@ -916,7 +909,7 @@ namespace Kargono::EditorUI
 
 			// Search Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.Searching)
 				{
@@ -931,7 +924,7 @@ namespace Kargono::EditorUI
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.Searching = false;
 				memset(searchBuffer, 0, sizeof(searchBuffer));
@@ -940,7 +933,7 @@ namespace Kargono::EditorUI
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.CurrentOption = spec.CachedSelection;
 				if (spec.ConfirmAction)
@@ -1023,7 +1016,7 @@ namespace Kargono::EditorUI
 				ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 				TruncateText("True", 12);
 				ImGui::SameLine();
-				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 				{
 					if (spec.FieldBuffer.As<char>() == "True")
 					{
@@ -1038,7 +1031,7 @@ namespace Kargono::EditorUI
 				ImGui::SameLine(300.0f);
 				TruncateText("False", 12);
 				ImGui::SameLine();
-				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 				{
 					if (spec.FieldBuffer.As<char>() == "False")
 					{
@@ -1118,7 +1111,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 
 				if (spec.ToggleBoolean)
@@ -1147,14 +1140,14 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 			s_SmallCheckboxDisabledButton,
 			spec.ToggleBoolean, s_SecondaryTextColor);
 			ImGui::PopStyleColor(3);
 		}
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
@@ -1208,7 +1201,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
@@ -1278,7 +1271,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
@@ -1366,7 +1359,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
@@ -1396,7 +1389,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 0)
 				{
@@ -1412,7 +1405,7 @@ namespace Kargono::EditorUI
 			TruncateText(spec.FirstOptionLabel, 7);
 
 			ImGui::SameLine(300.0f);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 1)
 				{
@@ -1434,13 +1427,13 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 0, s_SecondaryTextColor);
 			ImGui::SameLine();
 			TruncateText(spec.FirstOptionLabel, 7);
 
 			ImGui::SameLine(300.0f);
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 1, s_SecondaryTextColor);
 			ImGui::SameLine();
 			TruncateText(spec.SecondOptionLabel, 7);
@@ -1448,7 +1441,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Editing);
 		},
@@ -1486,7 +1479,7 @@ namespace Kargono::EditorUI
 		s_TableExpandButton.IconSize = (spec.Flags & Table_Indented) ? 12.0f : 14.0f;
 		s_TableExpandButton.YPosition = spec.Flags & Table_Indented ? -0.0f : 4.5f;
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		}, 
@@ -1497,10 +1490,10 @@ namespace Kargono::EditorUI
 			if (!spec.EditTableSelectionList.empty())
 			{
 				ImGui::SameLine();
-				CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+				CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(spec.WidgetID - 1);
-				}, s_SmallOptionsButton, false, s_DisabledColor);
+				}, s_MediumOptionsButton, false, s_DisabledColor);
 
 				if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 				{
@@ -1543,9 +1536,9 @@ namespace Kargono::EditorUI
 				
 				if (tableEntry.OnLink)
 				{
-					s_TableLinkButton.XPosition = SmallButtonAbsoluteLocation(smallButtonCount++);
+					s_TableLinkButton.XPosition = SmallButtonRelativeLocation(smallButtonCount++);
 					ImGui::SameLine();
-					CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+					CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 					{
 						if (tableEntry.OnLink)
 						{
@@ -1556,9 +1549,9 @@ namespace Kargono::EditorUI
 
 				if (tableEntry.OnEdit)
 				{
-					s_TableEditButton.XPosition = SmallButtonAbsoluteLocation(smallButtonCount++);
+					s_TableEditButton.XPosition = SmallButtonRelativeLocation(smallButtonCount++);
 					ImGui::SameLine();
-					CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+					CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 					{
 						if (tableEntry.OnEdit)
 						{
@@ -1753,10 +1746,10 @@ namespace Kargono::EditorUI
 		ImGui::PopFont();
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID, [&]()
+		CreateButton(spec.WidgetID, [&]()
 		{
 			ImGui::OpenPopup(id.c_str());
-		}, s_SmallOptionsButton, false, s_DisabledColor);
+		}, s_MediumOptionsButton, false, s_DisabledColor);
 		
 		if (ImGui::BeginPopup(id.c_str()))
 		{
@@ -1781,7 +1774,7 @@ namespace Kargono::EditorUI
 		ImGui::TextColored(s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		},
@@ -1790,10 +1783,10 @@ namespace Kargono::EditorUI
 		if (spec.Expanded && !spec.SelectionList.empty())
 		{
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
-				{
-					ImGui::OpenPopup(spec.WidgetID - 1);
-				}, s_SmallOptionsButton, false, s_DisabledColor);
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				ImGui::OpenPopup(spec.WidgetID - 1);
+			}, s_MediumOptionsButton, false, s_DisabledColor);
 
 			if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{
@@ -1864,7 +1857,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount),[&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount),[&]()
 			{
 				ImGui::OpenPopup(id.c_str());
 				memset(stringBuffer, 0, sizeof(stringBuffer));
@@ -1882,7 +1875,7 @@ namespace Kargono::EditorUI
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				ImGui::CloseCurrentPopup();
@@ -1890,7 +1883,7 @@ namespace Kargono::EditorUI
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				spec.CurrentOption = std::string(stringBuffer);
 				if (spec.ConfirmAction)
@@ -1922,7 +1915,7 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleColor();
 
 		ImGui::SameLine();
-		CreateInlineButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			const std::filesystem::path initialDirectory = spec.CurrentOption.empty() ? std::filesystem::current_path() : spec.CurrentOption;
 			std::filesystem::path outputDirectory = Utility::FileDialogs::ChooseDirectory(initialDirectory);

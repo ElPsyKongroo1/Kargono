@@ -155,7 +155,8 @@ namespace Kargono::EditorUI
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
 		static void BlockMouseEvents(bool block);
-		static void SetColors();
+		static void SetColorDefaults();
+		static void SetButtonDefaults();
 		
 	public:
 		//==============================
@@ -163,14 +164,8 @@ namespace Kargono::EditorUI
 		//==============================
 		static ImFont* s_FontAntaLarge;
 		static ImFont* s_FontAntaRegular;
-		static ImFont* s_FontAntaSmall;
 		static ImFont* s_FontPlexBold;
-		static ImFont* s_FontPlexRegular;
-		static ImFont* s_FontOpenSansRegular;
-		static ImFont* s_FontOpenSansBold;
-		static ImFont* s_FontRobotoRegular;
 		static ImFont* s_FontRobotoMono;
-		static ImFont* s_FontAnonymousRegular;
 
 	public:
 		//==============================
@@ -229,7 +224,7 @@ namespace Kargono::EditorUI
 		//==============================
 		inline static InlineButtonSpec s_SmallEditButton;
 		inline static InlineButtonSpec s_SmallExpandButton;
-		inline static InlineButtonSpec s_SmallOptionsButton;
+		inline static InlineButtonSpec s_MediumOptionsButton;
 		inline static InlineButtonSpec s_SmallCheckboxButton;
 		inline static InlineButtonSpec s_SmallCheckboxDisabledButton;
 		inline static InlineButtonSpec s_SmallLinkButton;
@@ -237,6 +232,14 @@ namespace Kargono::EditorUI
 		inline static InlineButtonSpec s_LargeCancelButton;
 		inline static InlineButtonSpec s_LargeConfirmButton;
 		inline static InlineButtonSpec s_LargeSearchButton;
+
+	public:
+		//==============================
+		// Spacing
+		//==============================
+		inline static float s_SmallButtonLeftOffset = 24.0f;
+		inline static float s_SmallButtonSpacing = 22.0f;
+		inline static float s_MediumButtonLeftOffset = 28.0f;
 	private:
 		//==============================
 		// Internal Fields
