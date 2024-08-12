@@ -132,7 +132,7 @@ namespace Kargono::EditorUI
 	{
 		s_SmallEditButton =
 		{
-				-s_SmallButtonLeftOffset,
+				-s_SmallButtonRightOffset,
 				0.0f,
 				13.0f,
 				EditorUI::EditorUIService::s_IconEdit,
@@ -156,7 +156,7 @@ namespace Kargono::EditorUI
 
 		s_MediumOptionsButton =
 		{
-				-s_MediumButtonLeftOffset,
+				-s_MediumButtonRightOffset,
 				1.0f,
 				19.0f,
 				EditorUI::EditorUIService::s_IconOptions,
@@ -167,7 +167,7 @@ namespace Kargono::EditorUI
 		};
 
 		s_SmallCheckboxButton = {
-				0.0,
+				0.0f,
 				0.0f,
 				14.0f,
 				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
@@ -178,7 +178,7 @@ namespace Kargono::EditorUI
 		};
 
 		s_SmallCheckboxDisabledButton = {
-				0.0,
+				0.0f,
 				0.0f,
 				14.0f,
 				EditorUI::EditorUIService::s_IconCheckbox_Enabled,
@@ -190,7 +190,7 @@ namespace Kargono::EditorUI
 		};
 
 		s_SmallLinkButton = {
-				-s_SmallButtonLeftOffset,
+				-s_SmallButtonRightOffset,
 				0.0f,
 				14.0f,
 				EditorUI::EditorUIService::s_IconForward,
@@ -602,7 +602,7 @@ namespace Kargono::EditorUI
 
 	static float SmallButtonRelativeLocation(uint32_t slot)
 	{
-		return -EditorUIService::s_SmallButtonLeftOffset - (EditorUIService::s_SmallButtonSpacing * slot);
+		return -EditorUIService::s_SmallButtonRightOffset - (EditorUIService::s_SmallButtonSpacing * slot);
 	}
 
 	static void CreateButton(ImGuiID widgetID, std::function<void()> onPress, 
@@ -852,7 +852,7 @@ namespace Kargono::EditorUI
 			// Display Menu Item
 			if (spec.Flags & SelectOption_Indented)
 			{
-				ImGui::SetCursorPosX(30.5f);
+				ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 			}
 			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 			TruncateText(spec.Label, spec.Flags & SelectOption_Indented ? 20: 23);
@@ -1091,7 +1091,7 @@ namespace Kargono::EditorUI
 
 		if (spec.Flags & Checkbox_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		// Display Item
@@ -1163,7 +1163,7 @@ namespace Kargono::EditorUI
 		// Display Item
 		if (spec.Flags & EditFloat_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
@@ -1217,7 +1217,7 @@ namespace Kargono::EditorUI
 		// Display Item
 		if (spec.Flags & EditVec2_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 20);
@@ -1287,7 +1287,7 @@ namespace Kargono::EditorUI
 		// Display Item
 		if (spec.Flags & EditVec3_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		TruncateText(spec.Label, 20);
@@ -1375,7 +1375,7 @@ namespace Kargono::EditorUI
 
 		if (spec.Flags & RadioSelector_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 
 		// Display Item
@@ -1457,7 +1457,7 @@ namespace Kargono::EditorUI
 
 		if (spec.Flags & Table_Indented)
 		{
-			ImGui::SetCursorPosX(30.5f);
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
 		else
 		{
@@ -1512,7 +1512,7 @@ namespace Kargono::EditorUI
 			{
 				// Column Titles
 				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: 30.5f);
+				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: s_TextLeftIndentOffset);
 				TruncateText(spec.Column1Title, 12);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(200.0f);
@@ -1527,7 +1527,7 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 42.5f : 12.0f);
 				CreateImage(s_IconDash, 8, s_DisabledColor);
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f : 30.5f);
+				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f : s_TextLeftIndentOffset);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				TruncateText(tableEntry.Label, 16);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
@@ -1849,7 +1849,7 @@ namespace Kargono::EditorUI
 		{
 			if (spec.Flags & EditText_Indented)
 			{
-				ImGui::SetCursorPosX(30.5f);
+				ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 			}
 			ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);

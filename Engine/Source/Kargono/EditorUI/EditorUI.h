@@ -237,9 +237,11 @@ namespace Kargono::EditorUI
 		//==============================
 		// Spacing
 		//==============================
-		inline static float s_SmallButtonLeftOffset = 24.0f;
+		inline static float s_SmallButtonRightOffset = 24.0f;
 		inline static float s_SmallButtonSpacing = 22.0f;
-		inline static float s_MediumButtonLeftOffset = 28.0f;
+		inline static float s_MediumButtonRightOffset = 28.0f;
+
+		inline static float s_TextLeftIndentOffset = 30.5f;
 	private:
 		//==============================
 		// Internal Fields

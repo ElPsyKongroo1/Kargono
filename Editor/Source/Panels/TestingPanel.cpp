@@ -25,7 +25,12 @@ namespace Kargono::Panels
 			return;
 		}
 
-		if (ImGui::DragFloat("Small Button Offset", (float*)&EditorUI::EditorUIService::s_SmallButtonLeftOffset, 0.01f))
+		if (ImGui::DragFloat("Small Button Offset", (float*)&EditorUI::EditorUIService::s_SmallButtonRightOffset, 0.01f))
+		{
+			EditorUI::EditorUIService::SetButtonDefaults();
+		}
+
+		if (ImGui::DragFloat("Lefthand Indenting", (float*)&EditorUI::EditorUIService::s_TextLeftIndentOffset, 0.01f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
