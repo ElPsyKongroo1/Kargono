@@ -5260,6 +5260,15 @@ ImVec2 ImGui::CalcTextSize(const char* text, const char* text_end, bool hide_tex
     return text_size;
 }
 
+int ImGui::FindPositionAfterLength(const char* text, float length)
+{
+    ImGuiContext& g = *GImGui;
+
+    ImFont* font = g.Font;
+    const float font_size = g.FontSize;
+    return font->FindPositionAfterLengthA(font_size, text, NULL, length);
+}
+
 // Find window given position, search front-to-back
 // FIXME: Note that we have an inconsequential lag here: OuterRectClipped is updated in Begin(), so windows moved programmatically
 // with SetWindowPos() and not SetNextWindowPos() will have that rectangle lagging by a frame at the time FindHoveredWindow() is

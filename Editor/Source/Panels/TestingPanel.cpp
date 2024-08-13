@@ -7,12 +7,35 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
+	static EditorUI::RadioSelectorSpec s_TestSelector {};
+	static EditorUI::EditTextSpec s_SelectorLabelOne {};
+	static EditorUI::EditTextSpec s_SelectorLabelTwo {};
+
 
 	TestingPanel::TestingPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
+
+		s_TestSelector.Label = "Test hahaha";
+		s_TestSelector.FirstOptionLabel = "This is the first option";
+		s_TestSelector.SecondOptionLabel = "This is the second option";
+
+		s_SelectorLabelOne.Label = "Edit Radio One";
+		s_SelectorLabelOne.CurrentOption = s_TestSelector.FirstOptionLabel;
+		s_SelectorLabelOne.ConfirmAction = [&]()
+		{
+			s_TestSelector.FirstOptionLabel = s_SelectorLabelOne.CurrentOption;
+		};
+
+		s_SelectorLabelTwo.Label = "Edit Radio Two";
+		s_SelectorLabelTwo.CurrentOption = s_TestSelector.SecondOptionLabel;
+		
+		s_SelectorLabelTwo.ConfirmAction = [&]() 
+		{
+			s_TestSelector.SecondOptionLabel = s_SelectorLabelTwo.CurrentOption;
+		};
 	}
 	void TestingPanel::OnEditorUIRender()
 	{
@@ -25,12 +48,31 @@ namespace Kargono::Panels
 			return;
 		}
 
+		EditorUI::EditorUIService::RadioSelector(s_TestSelector);
+		EditorUI::EditorUIService::EditText(s_SelectorLabelOne);
+		EditorUI::EditorUIService::EditText(s_SelectorLabelTwo);
+
 		if (ImGui::DragFloat("Small Button Offset", (float*)&EditorUI::EditorUIService::s_SmallButtonRightOffset, 0.01f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
 
 		if (ImGui::DragFloat("Lefthand Indenting", (float*)&EditorUI::EditorUIService::s_TextLeftIndentOffset, 0.01f))
+		{
+			EditorUI::EditorUIService::SetButtonDefaults();
+		}
+
+		if (ImGui::DragFloat("Secondary Text Start", (float*)&EditorUI::EditorUIService::s_SecondaryTextStartLocation, 0.05f))
+		{
+			EditorUI::EditorUIService::SetButtonDefaults();
+		}
+
+		if (ImGui::DragFloat("Secondary Text Second", (float*)&EditorUI::EditorUIService::s_SecondaryTextSecondLocation, 0.05f))
+		{
+			EditorUI::EditorUIService::SetButtonDefaults();
+		}
+
+		if (ImGui::DragFloat("Secondary Text Third", (float*)&EditorUI::EditorUIService::s_SecondaryTextThirdLocation, 0.05f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}

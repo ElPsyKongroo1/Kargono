@@ -833,6 +833,7 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation * ImGui::GetContentRegionMax().x) - 20.0f;
 
 		if (spec.Flags & SelectOption_PopupOnly)
 		{
@@ -853,13 +854,15 @@ namespace Kargono::EditorUI
 			if (spec.Flags & SelectOption_Indented)
 			{
 				ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+				primaryTextWidth -= s_TextLeftIndentOffset;
 			}
 			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-			TruncateText(spec.Label, spec.Flags & SelectOption_Indented ? 20: 23);
+			int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+			TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 			ImGui::PopStyleColor();
 
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			WriteMultilineText(spec.CurrentOption.Label, 200.0f, 23);
+			WriteMultilineText(spec.CurrentOption.Label, ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, 23);
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
@@ -995,10 +998,14 @@ namespace Kargono::EditorUI
 		// Local Variables
 		uint32_t widgetCount{ 0 };
 		std::string id = "##" + std::to_string(spec.WidgetID);
+		float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
 		static ImGuiInputTextFlags inputFlags {};
 
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
 
-		ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
 		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 		switch (spec.VariableType)
 		{
@@ -1011,7 +1018,7 @@ namespace Kargono::EditorUI
 
 			case WrappedVarType::Bool:
 			{
-				ImGui::SameLine(200.0f);
+				ImGui::SameLine(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
 				TruncateText("True", 12);
@@ -1049,7 +1056,7 @@ namespace Kargono::EditorUI
 			{
 				inputFlags = ImGuiInputTextFlags_CallbackEdit;
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(200.0f);
+				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 				ImGui::SetNextItemWidth(170.0f);
 				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
@@ -1068,7 +1075,7 @@ namespace Kargono::EditorUI
 			{
 				inputFlags = ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsDecimal;
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(200.0f);
+				ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 				ImGui::SetNextItemWidth(170.0f);
 				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
@@ -1088,24 +1095,27 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
 
 		if (spec.Flags & Checkbox_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
+		// Display Primary Label
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		// Display Item
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
 		if (spec.Flags & Checkbox_LeftLean)
 		{
-			TruncateText(spec.Label, 23);
-			ImGui::SameLine(197.5f);
+			ImGui::SameLine((ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation) - 2.5f);
 		}
 		else
 		{
-			ImGui::Text(spec.Label.c_str());
 			ImGui::SameLine(360.0f);
 		}
-		ImGui::PopStyleColor();
 
 		if (spec.Editing)
 		{
@@ -1160,17 +1170,20 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
 		// Display Item
 		if (spec.Flags & EditFloat_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(spec.Label, 20);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::SameLine(200.0f);
+		ImGui::SameLine(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 
 		if (spec.Editing)
 		{
@@ -1178,7 +1191,7 @@ namespace Kargono::EditorUI
 			// x value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentFloat), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentFloat), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1194,7 +1207,7 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ 200.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, yPosition });
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentFloat).c_str());
 			ImGui::PopStyleColor();
@@ -1214,15 +1227,21 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
+
 		// Display Item
 		if (spec.Flags & EditVec2_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(spec.Label, 20);
+
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+
 		ImGui::PopStyleColor();
-		ImGui::SameLine(200.0f);
+		ImGui::SameLine(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 
 		if (spec.Editing)
 		{
@@ -1231,7 +1250,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.x), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.x), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1244,9 +1263,9 @@ namespace Kargono::EditorUI
 
 			// y value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
-			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextSecondLocation, yPosition });
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.y), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec2.y), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1262,10 +1281,10 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ 200.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, yPosition });
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.x).c_str());
-			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextSecondLocation, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec2.y).c_str());
 			ImGui::PopStyleColor();
 		}
@@ -1284,16 +1303,19 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
 		// Display Item
 		if (spec.Flags & EditVec3_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(spec.Label, 20);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::SameLine(200.0f);
+		ImGui::SameLine(ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation);
 		
 		if (spec.Editing)
 		{
@@ -1302,7 +1324,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.x), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.x), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1315,9 +1337,9 @@ namespace Kargono::EditorUI
 
 			// y value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
-			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextSecondLocation, yPosition });
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.y), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.y), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1330,9 +1352,9 @@ namespace Kargono::EditorUI
 
 			// z value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor3);
-			ImGui::SetCursorPos({ 320.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextThirdLocation, yPosition });
 			ImGui::SetNextItemWidth(50.0f);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.z), 0.5f,
+			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec3.z), 0.01f,
 				0.0f, 0.0f,
 				"%.2f"))
 			{
@@ -1349,11 +1371,11 @@ namespace Kargono::EditorUI
 		{
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			ImGui::SetCursorPos({ 200.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.x).c_str());
-			ImGui::SetCursorPos({ 260.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextSecondLocation, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.y).c_str());
-			ImGui::SetCursorPos({ 320.0f, yPosition });
+			ImGui::SetCursorPos({ ImGui::GetContentRegionMax().x * s_SecondaryTextThirdLocation, yPosition });
 			ImGui::Text(Utility::Conversions::FloatToString(spec.CurrentVec3.z).c_str());
 			ImGui::PopStyleColor();
 		}
@@ -1373,16 +1395,22 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		float primaryTextWidth = (s_SecondaryTextStartLocation) * ImGui::GetContentRegionMax().x - 20.0f;
+		float secondaryTextWidth = ((s_SecondaryTextMiddleLocation - s_SecondaryTextStartLocation) * ImGui::GetContentRegionMax().x) - 30.0f;
+
 		if (spec.Flags & RadioSelector_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
 
 		// Display Item
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(spec.Label, 23);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+
 		ImGui::PopStyleColor();
-		ImGui::SameLine(197.5f);
+		ImGui::SameLine((ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation) - 2.5f);
 
 		if (spec.Editing)
 		{
@@ -1402,9 +1430,11 @@ namespace Kargono::EditorUI
 				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 0, s_HighlightColor1);
 			ImGui::SameLine();
-			TruncateText(spec.FirstOptionLabel, 7);
 
-			ImGui::SameLine(300.0f);
+			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), secondaryTextWidth);
+			TruncateText(spec.FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
+			
+			ImGui::SameLine((ImGui::GetContentRegionMax().x * s_SecondaryTextMiddleLocation) - 2.5f);
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 				if (spec.SelectedOption == 1)
@@ -1418,7 +1448,9 @@ namespace Kargono::EditorUI
 				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 1, s_HighlightColor2);
 			ImGui::SameLine();
-			TruncateText(spec.SecondOptionLabel, 7);
+			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), secondaryTextWidth);
+			TruncateText(spec.SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
+
 			ImGui::PopStyleColor(3);
 		}
 		else
@@ -1430,13 +1462,16 @@ namespace Kargono::EditorUI
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 0, s_SecondaryTextColor);
 			ImGui::SameLine();
-			TruncateText(spec.FirstOptionLabel, 7);
 
-			ImGui::SameLine(300.0f);
+			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), secondaryTextWidth);
+			TruncateText(spec.FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
+
+			ImGui::SameLine((ImGui::GetContentRegionMax().x * s_SecondaryTextMiddleLocation) - 2.5f);
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 1, s_SecondaryTextColor);
 			ImGui::SameLine();
-			TruncateText(spec.SecondOptionLabel, 7);
+			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), secondaryTextWidth);
+			TruncateText(spec.SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 			ImGui::PopStyleColor(4);
 		}
 
@@ -1454,17 +1489,21 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 		uint32_t smallButtonCount{ 0 };
+		float primaryTextWidth = (s_SecondaryTextStartLocation) * ImGui::GetContentRegionMax().x - 20.0f;
+		float secondaryTextPos1 = ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation;
 
 		if (spec.Flags & Table_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			primaryTextWidth -= s_TextLeftIndentOffset;
 		}
 		else
 		{
 			ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(spec.Label, 40);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		if (spec.Flags & Table_UnderlineTitle)
@@ -1515,7 +1554,7 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: s_TextLeftIndentOffset);
 				TruncateText(spec.Column1Title, 12);
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(200.0f);
+				ImGui::SetCursorPosX(secondaryTextPos1);
 				TruncateText(spec.Column2Title, 12);
 				ImGui::PopStyleColor();
 				Spacing(SpacingAmount::Small);
@@ -1531,7 +1570,7 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				TruncateText(tableEntry.Label, 16);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-				WriteMultilineText(tableEntry.Value,200.0f, 21, -5.2f);
+				WriteMultilineText(tableEntry.Value, secondaryTextPos1, 21, -5.2f);
 				ImGui::PopStyleColor();
 				
 				if (tableEntry.OnLink)
@@ -1814,13 +1853,16 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::LabeledText(const std::string& label, const std::string& text)
 	{
+		float primaryTextWidth = (s_SecondaryTextStartLocation) * ImGui::GetContentRegionMax().x - 20.0f;
+
 		// Display Menu Item
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		TruncateText(label, 23);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(label.c_str(), primaryTextWidth);
+		TruncateText(label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 		//ImGui::TextColored(s_PureWhite, label.c_str());
 		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-		WriteMultilineText(text, 200.0f, 23);
+		WriteMultilineText(text, ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, 23);
 		ImGui::PopStyleColor();
 	}
 	void EditorUIService::Text(const std::string& Text)
@@ -1847,13 +1889,19 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
+			float primaryTextWidth = (s_SecondaryTextStartLocation)*ImGui::GetContentRegionMax().x - 20.0f;
 			if (spec.Flags & EditText_Indented)
 			{
 				ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+				primaryTextWidth -= s_TextLeftIndentOffset;
 			}
-			ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+			int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+			TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			ImGui::PopStyleColor();
+
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			WriteMultilineText(spec.CurrentOption, 200.0f, 23);
+			WriteMultilineText(spec.CurrentOption, ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, 23);
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
@@ -1908,10 +1956,15 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		std::string popUpLabel = spec.Label;
+		float primaryTextWidth = (s_SecondaryTextStartLocation) * ImGui::GetContentRegionMax().x - 20.0f;
 
-		ImGui::TextColored(s_PrimaryTextColor, spec.Label.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), primaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
 		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-		WriteMultilineText(spec.CurrentOption.string(), 200.0f, 21);
+		WriteMultilineText(spec.CurrentOption.string(), ImGui::GetContentRegionMax().x * s_SecondaryTextStartLocation, 21);
 		ImGui::PopStyleColor();
 
 		ImGui::SameLine();
