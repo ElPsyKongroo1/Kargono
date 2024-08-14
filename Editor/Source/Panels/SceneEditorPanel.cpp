@@ -81,6 +81,7 @@ namespace Kargono::Panels
 
 	static EditorUI::SelectOptionSpec s_ShapeSelect {};
 	static EditorUI::SelectOptionSpec s_ShapeColorType {};
+	static EditorUI::EditVec4Spec s_ShapeColor {};
 	static EditorUI::CheckboxSpec s_ShapeAddTexture {};
 	static EditorUI::SelectOptionSpec s_ShapeSetTexture {};
 	static EditorUI::EditFloatSpec s_ShapeTilingFactor{};
@@ -1047,9 +1048,8 @@ namespace Kargono::Panels
 
 			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 			{
-				Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
-				ImGui::SetCursorPosX(30.0f);
-				ImGui::ColorEdit4("Color", glm::value_ptr(*color));
+				s_ShapeColor.CurrentVec4 = *(Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader));
+				EditorUI::EditorUIService::EditVec4(s_ShapeColor);
 			}
 			if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
 			{
@@ -1240,6 +1240,21 @@ namespace Kargono::Panels
 					component.VertexColors->push_back(transferColor);
 				}
 			}
+		};
+
+		s_ShapeColor.Label = "Flat Color";
+		s_ShapeColor.Flags |= EditorUI::EditVec4_Indented;
+		s_ShapeColor.ConfirmAction = [&]()
+		{
+			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<Scenes::ShapeComponent>())
+			{
+				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<Scenes::ShapeComponent>();
+			Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+			*color = s_ShapeColor.CurrentVec4;
 		};
 
 		// Set Shape Add Texture Checkbox

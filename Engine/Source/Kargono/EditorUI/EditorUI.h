@@ -36,6 +36,7 @@ namespace Kargono::EditorUI
 	struct EditFloatSpec;
 	struct EditVec2Spec;
 	struct EditVec3Spec;
+	struct EditVec4Spec;
 
 	//==============================
 	// Type Defines
@@ -127,6 +128,7 @@ namespace Kargono::EditorUI
 		static void EditFloat(EditFloatSpec& spec);
 		static void EditVec2(EditVec2Spec& spec);
 		static void EditVec3(EditVec3Spec& spec);
+		static void EditVec4(EditVec4Spec& spec);
 
 		static void RadioSelector(RadioSelectorSpec& spec);
 		static void Table(TableSpec& spec);
@@ -215,6 +217,7 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
 		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
+		inline static ImVec4 s_HighlightColor4{ 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
 
 		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
 		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
@@ -246,10 +249,28 @@ namespace Kargono::EditorUI
 		// These values represent the percentage location
 		//		of text relative to the size of the current window
 		//		Ex: 0.3f means 30% of the width of the window
-		inline static float s_SecondaryTextStartLocation = 0.5f;
-		inline static float s_SecondaryTextSecondLocation = 0.65f;
-		inline static float s_SecondaryTextThirdLocation = 0.8f;
-		inline static float s_SecondaryTextMiddleLocation = 0.725f;
+		inline static float s_SecondaryTextFirstPercentage = 0.43f;
+		inline static float s_SecondaryTextSecondPercentage = 0.56f;
+		inline static float s_SecondaryTextThirdPercentage = 0.69f;
+		inline static float s_SecondaryTextFourthPercentage = 0.82f;
+		inline static float s_SecondaryTextMiddlePercentage = 0.655f;
+
+
+	public:
+		//==============================
+		// Active Window Fields
+		//==============================
+		inline static float s_PrimaryTextWidth{ 0.0f };
+		inline static float s_PrimaryTextIndentedWidth{ 0.0f };
+		inline static float s_SecondaryTextSmallWidth{ 0.0f };
+		inline static float s_SecondaryTextMediumWidth{ 0.0f };
+		inline static float s_SecondaryTextLargeWidth{ 0.0f };
+		inline static float s_SecondaryTextPosOne{ 0.0f };
+		inline static float s_SecondaryTextPosTwo{ 0.0f };
+		inline static float s_SecondaryTextPosThree{ 0.0f };
+		inline static float s_SecondaryTextPosFour{ 0.0f };
+		inline static float s_SecondaryTextPosMiddle{ 0.0f };
+
 
 	private:
 		//==============================
@@ -385,6 +406,34 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
 	};
+
+	enum EditVec4Flags
+	{
+		EditVec4_None =		0,
+		EditVec4_Indented = BIT(0),
+		EditVec4_RGBA =		BIT(1)
+	};
+
+	struct EditVec4Spec
+	{
+	public:
+		EditVec4Spec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditVec4_None };
+		Math::vec4 CurrentVec4{};
+		std::function<void()> ConfirmAction{ nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditVec4(EditVec4Spec& spec);
+	};
+
+
 
 	enum RadioSelectorFlags
 	{

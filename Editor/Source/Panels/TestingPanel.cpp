@@ -62,17 +62,17 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
 
-		if (ImGui::DragFloat("Secondary Text Start", (float*)&EditorUI::EditorUIService::s_SecondaryTextStartLocation, 0.05f))
+		if (ImGui::DragFloat("Secondary Text Start", (float*)&EditorUI::EditorUIService::s_SecondaryTextFirstPercentage, 0.05f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
 
-		if (ImGui::DragFloat("Secondary Text Second", (float*)&EditorUI::EditorUIService::s_SecondaryTextSecondLocation, 0.05f))
+		if (ImGui::DragFloat("Secondary Text Second", (float*)&EditorUI::EditorUIService::s_SecondaryTextSecondPercentage, 0.05f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
 
-		if (ImGui::DragFloat("Secondary Text Third", (float*)&EditorUI::EditorUIService::s_SecondaryTextThirdLocation, 0.05f))
+		if (ImGui::DragFloat("Secondary Text Third", (float*)&EditorUI::EditorUIService::s_SecondaryTextThirdPercentage, 0.05f))
 		{
 			EditorUI::EditorUIService::SetButtonDefaults();
 		}
