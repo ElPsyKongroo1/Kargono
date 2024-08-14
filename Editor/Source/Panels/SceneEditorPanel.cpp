@@ -1243,7 +1243,7 @@ namespace Kargono::Panels
 		};
 
 		s_ShapeColor.Label = "Flat Color";
-		s_ShapeColor.Flags |= EditorUI::EditVec4_Indented;
+		s_ShapeColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		s_ShapeColor.ConfirmAction = [&]()
 		{
 			Scenes::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();

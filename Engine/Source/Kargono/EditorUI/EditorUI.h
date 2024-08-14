@@ -198,7 +198,7 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
 		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
 		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
-		inline static ImVec4 s_LightGray_Thin{ 0.5f, 0.5f, 0.5f, 1.0f };
+
 		
 		// Editor Colors
 		inline static ImVec4 s_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
@@ -206,7 +206,7 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_HoveredColor{ 91.4f / 255.0f, 113.3f / 255.0f, 114.7f / 255.0f, 1.0f };
 		inline static ImVec4 s_ActiveColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
 		inline static ImVec4 s_SelectedColor{ 162.0f / 255.0f, 123.0f / 255.0f, 92.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_DisabledColor{ s_LightGray_Thin };
+		inline static ImVec4 s_DisabledColor{ 0.5f, 0.5f, 0.5f, 1.0f };
 
 		inline static ImVec4 s_BackgroundColor { 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f  };
 		inline static ImVec4 s_DarkBackgroundColor { 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f  };
@@ -218,6 +218,11 @@ namespace Kargono::EditorUI
 		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor4{ 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
+
+		inline static ImVec4 s_Red { 255.0f / 255.0f, 40.0f / 255.0f, 73.0f / 255.0f, 1.0f };
+		inline static ImVec4 s_Green { 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
+		inline static ImVec4 s_Blue { 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
+		inline static ImVec4 s_Alpha { 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
 
 		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
 		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };

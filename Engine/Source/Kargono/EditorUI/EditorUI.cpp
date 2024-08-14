@@ -1208,6 +1208,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor1, "X-Value");
+				ImGui::EndTooltip();
+			}
 			ImGui::PopStyleVar();
 
 		}
@@ -1268,6 +1274,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor1, "X-Value");
+				ImGui::EndTooltip();
+			}
 
 			// y value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
@@ -1283,6 +1295,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor2, "Y-Value");
+				ImGui::EndTooltip();
+			}
 			ImGui::PopStyleVar();
 
 		}
@@ -1347,6 +1365,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor1, "X-Value");
+				ImGui::EndTooltip();
+			}
 
 			// y value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
@@ -1362,6 +1386,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor2, "Y-Value");
+				ImGui::EndTooltip();
+			}
 
 			// z value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor3);
@@ -1377,6 +1407,12 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor3, "Z-Value");
+				ImGui::EndTooltip();
+			}
 			ImGui::PopStyleVar();
 			
 		}
@@ -1433,7 +1469,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, (spec.Flags & EditVec4_RGBA) ? s_Red : s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec4.x), 0.01f,
@@ -1446,9 +1482,16 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
-
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(spec.Flags & EditVec4_RGBA ? s_Red : s_HighlightColor1, 
+					spec.Flags & EditVec4_RGBA ? "Red Channel" : "X-Value");
+				ImGui::EndTooltip();
+			}
+			
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
+			ImGui::PushStyleColor(ImGuiCol_Text, (spec.Flags & EditVec4_RGBA) ? s_Green : s_HighlightColor2);
 			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec4.y), 0.01f,
@@ -1461,9 +1504,16 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(spec.Flags & EditVec4_RGBA ? s_Green : s_HighlightColor2, 
+					spec.Flags & EditVec4_RGBA ? "Green Channel" : "Y-Value");
+				ImGui::EndTooltip();
+			}
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor3);
+			ImGui::PushStyleColor(ImGuiCol_Text, (spec.Flags & EditVec4_RGBA) ? s_Blue : s_HighlightColor3);
 			ImGui::SetCursorPos({ s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec4.z), 0.01f,
@@ -1476,9 +1526,16 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(spec.Flags & EditVec4_RGBA ? s_Blue : s_HighlightColor3,
+					spec.Flags & EditVec4_RGBA ? "Blue Channel" : "Z-Value");
+				ImGui::EndTooltip();
+			}
 
 			// w value
-			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor4);
+			ImGui::PushStyleColor(ImGuiCol_Text, (spec.Flags & EditVec4_RGBA) ? s_Alpha : s_HighlightColor4);
 			ImGui::SetCursorPos({ s_SecondaryTextPosFour, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentVec4.w), 0.01f,
@@ -1491,6 +1548,13 @@ namespace Kargono::EditorUI
 				}
 			}
 			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(spec.Flags & EditVec4_RGBA ? s_Alpha : s_HighlightColor4, 
+					spec.Flags & EditVec4_RGBA ? "Alpha Channel" : "W-Value");
+				ImGui::EndTooltip();
+			}
 
 			ImGui::PopStyleVar();
 

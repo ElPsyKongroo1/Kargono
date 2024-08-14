@@ -7,10 +7,6 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-	static EditorUI::RadioSelectorSpec s_TestSelector {};
-	static EditorUI::EditTextSpec s_SelectorLabelOne {};
-	static EditorUI::EditTextSpec s_SelectorLabelTwo {};
-
 
 	TestingPanel::TestingPanel()
 	{
@@ -18,24 +14,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
-		s_TestSelector.Label = "Test hahaha";
-		s_TestSelector.FirstOptionLabel = "This is the first option";
-		s_TestSelector.SecondOptionLabel = "This is the second option";
-
-		s_SelectorLabelOne.Label = "Edit Radio One";
-		s_SelectorLabelOne.CurrentOption = s_TestSelector.FirstOptionLabel;
-		s_SelectorLabelOne.ConfirmAction = [&]()
-		{
-			s_TestSelector.FirstOptionLabel = s_SelectorLabelOne.CurrentOption;
-		};
-
-		s_SelectorLabelTwo.Label = "Edit Radio Two";
-		s_SelectorLabelTwo.CurrentOption = s_TestSelector.SecondOptionLabel;
 		
-		s_SelectorLabelTwo.ConfirmAction = [&]() 
-		{
-			s_TestSelector.SecondOptionLabel = s_SelectorLabelTwo.CurrentOption;
-		};
 	}
 	void TestingPanel::OnEditorUIRender()
 	{
@@ -46,84 +25,6 @@ namespace Kargono::Panels
 		{
 			EditorUI::EditorUIService::EndWindow();
 			return;
-		}
-
-		EditorUI::EditorUIService::RadioSelector(s_TestSelector);
-		EditorUI::EditorUIService::EditText(s_SelectorLabelOne);
-		EditorUI::EditorUIService::EditText(s_SelectorLabelTwo);
-
-		if (ImGui::DragFloat("Small Button Offset", (float*)&EditorUI::EditorUIService::s_SmallButtonRightOffset, 0.01f))
-		{
-			EditorUI::EditorUIService::SetButtonDefaults();
-		}
-
-		if (ImGui::DragFloat("Lefthand Indenting", (float*)&EditorUI::EditorUIService::s_TextLeftIndentOffset, 0.01f))
-		{
-			EditorUI::EditorUIService::SetButtonDefaults();
-		}
-
-		if (ImGui::DragFloat("Secondary Text Start", (float*)&EditorUI::EditorUIService::s_SecondaryTextFirstPercentage, 0.05f))
-		{
-			EditorUI::EditorUIService::SetButtonDefaults();
-		}
-
-		if (ImGui::DragFloat("Secondary Text Second", (float*)&EditorUI::EditorUIService::s_SecondaryTextSecondPercentage, 0.05f))
-		{
-			EditorUI::EditorUIService::SetButtonDefaults();
-		}
-
-		if (ImGui::DragFloat("Secondary Text Third", (float*)&EditorUI::EditorUIService::s_SecondaryTextThirdPercentage, 0.05f))
-		{
-			EditorUI::EditorUIService::SetButtonDefaults();
-		}
-
-		if (ImGui::DragFloat4("Background Color", (float*)&EditorUI::EditorUIService::s_BackgroundColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Accent Color", (float*)&EditorUI::EditorUIService::s_AccentColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Primary Text Color", (float*)&EditorUI::EditorUIService::s_PrimaryTextColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Secondary Text Color", (float*)&EditorUI::EditorUIService::s_SecondaryTextColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Disabled Color", (float*)&EditorUI::EditorUIService::s_DisabledColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Active Color", (float*)&EditorUI::EditorUIService::s_ActiveColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Hovered Color", (float*)&EditorUI::EditorUIService::s_HoveredColor, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Highlight Color 1", (float*)&EditorUI::EditorUIService::s_HighlightColor1, 0.01f))
-		{
-			EditorUI::EditorUIService::s_HighlightColor1_Thin =
-			{
-				EditorUI::EditorUIService::s_HighlightColor1.x,
-				EditorUI::EditorUIService::s_HighlightColor1.y,
-				EditorUI::EditorUIService::s_HighlightColor1.z,
-				EditorUI::EditorUIService::s_HighlightColor1.w * 0.75f
-			};
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-
-		if (ImGui::DragFloat4("Highlight Color 2", (float*)&EditorUI::EditorUIService::s_HighlightColor2, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
-		}
-		if (ImGui::DragFloat4("Highlight Color 3", (float*)&EditorUI::EditorUIService::s_HighlightColor3, 0.01f))
-		{
-			EditorUI::EditorUIService::SetColorDefaults();
 		}
 
 		EditorUI::EditorUIService::EndWindow();
