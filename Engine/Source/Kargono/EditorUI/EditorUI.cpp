@@ -1817,52 +1817,21 @@ namespace Kargono::EditorUI
 			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
+			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, 21.0f };
 
 			// Display Selected Background
 			if (spec.SelectedEntry == currentPath)
 			{
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
-					ImVec2(screenPosition.x + ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, screenPosition.y + 21.0f),
+					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
 					ImColor(EditorUI::EditorUIService::s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
 			}
 
 			// Display entry icon
 			if (treeEntry.IconHandle)
 			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
-					(ImTextureID)(uint64_t)treeEntry.IconHandle->GetRendererID(),
-					ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-					EditorUIService::s_PureEmpty,
-					EditorUI::EditorUIService::s_HighlightColor1, 0))
-				{
-					if (treeEntry.OnLeftClick)
-					{
-						treeEntry.OnLeftClick(treeEntry);
-					}
-					spec.SelectedEntry = currentPath;
-				}
-
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-				{
-					if (treeEntry.OnRightClickSelection.size() > 0)
-					{
-						ImGui::OpenPopup(("##" + std::to_string(spec.WidgetID)).c_str());
-						spec.CurrentRightClick = &treeEntry;
-					}
-				}
-
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-				{
-					if (treeEntry.OnDoubleLeftClick)
-					{
-						treeEntry.OnDoubleLeftClick(treeEntry);
-					}
-				}
-				ImGui::PopStyleColor(3);
+				CreateImage(treeEntry.IconHandle, 14, EditorUI::EditorUIService::s_HighlightColor1);
 				ImGui::SameLine();
 			}
 
@@ -1871,7 +1840,9 @@ namespace Kargono::EditorUI
 			ImGui::Text(treeEntry.Label.c_str());
 			ImGui::PopStyleColor();
 
-			if (ImGui::IsItemClicked())
+			// Create Invisible Button for Interation with current node
+			ImGui::SetCursorScreenPos(screenPosition);
+			if (ImGui::InvisibleButton(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), buttonDimensions))
 			{
 				if (treeEntry.OnLeftClick)
 				{
@@ -1879,7 +1850,7 @@ namespace Kargono::EditorUI
 				}
 				spec.SelectedEntry = currentPath;
 			}
-
+			
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
 			{
 				if (treeEntry.OnRightClickSelection.size() > 0)
@@ -1896,6 +1867,7 @@ namespace Kargono::EditorUI
 					treeEntry.OnDoubleLeftClick(treeEntry);
 				}
 			}
+
 
 			// Handle all sub-entries
 			if (treeEntry.SubEntries.size() > 0)
