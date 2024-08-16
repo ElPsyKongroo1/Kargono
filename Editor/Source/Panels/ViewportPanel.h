@@ -14,7 +14,7 @@ namespace Kargono::Panels
 		void OnUpdate(Timestep ts);
 
 		void OnEditorUIRender();
-		void OnEvent(Events::Event& e);
+		void OnInputEvent(Events::Event* e);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
 		void InitializeFrameBuffer();

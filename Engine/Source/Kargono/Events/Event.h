@@ -33,17 +33,24 @@ namespace Kargono::Events
 	enum class EventType
 	{
 		None = 0,
+		// Application
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		CleanUpTimers,
 		SkipUpdate, AddExtraUpdate,
+		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
+		// Physics
+		PhysicsCollisionStart, PhysicsCollisionEnd,
+		// Keyboard
+		KeyPressed, KeyReleased, KeyTyped,
+		// Mouse Button
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
+		// Network
 		UpdateOnlineUsers, RequestJoinSession, ApproveJoinSession, DenyJoinSession, RequestUserCount,
 		LeaveCurrentSession, UserLeftSession, CurrentSessionInit, ConnectionTerminated, StartSession,
 		UpdateSessionUserSlot, EnableReadyCheck, SendReadyCheck, SendReadyCheckConfirm, SendAllEntityLocation,
 		UpdateEntityLocation, SendAllEntityPhysics, UpdateEntityPhysics, SignalAll, ReceiveSignal,
-		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
-		PhysicsCollision, PhysicsCollisionEnd,
-		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		// Scene
+		DeleteEntity
 	};
 
 	//==============================
@@ -59,11 +66,12 @@ namespace Kargono::Events
 		None				= 0,
 		Application			= BIT(0),
 		Input				= BIT(1),
-		Keyboard			= BIT(2),
-		Mouse				= BIT(3),
-		MouseButton			= BIT(4),
-		Networking			= BIT(5)
-
+		Scene				= BIT(2),
+		Network				= BIT(3),
+		Keyboard			= BIT(4),
+		Mouse				= BIT(5),
+		MouseButton			= BIT(6),
+		Physics				= BIT(7)
 	};
 
 	//============================================================
@@ -93,9 +101,7 @@ namespace Kargono::Events
 		//		and manage the events externally. The ToString function is
 		//		for debugging.
 		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const { return GetName(); }
 		// This function provides an easy method for determining if an event
 		//		is part of a broader category since EventCategory's are bit
 		//		fields.
@@ -103,76 +109,8 @@ namespace Kargono::Events
 		{
 			return GetCategoryFlags() & category;
 		}
-		// This variable determines if an event has been handled.
-		//		A handled event can be managed by the event pipeline.
-		//		Ex: An event that has ran its functionality can be
-		//		set to handled. Later in the event pipeline, there
-		//		can be an early-out if the event is labeled handled.
-		bool Handled = false;
 	};
 
-
-	//============================================================
-	// Event Dispatcher Class
-	//============================================================
-	// This class is a supporting functionality class for the event class. This
-	//		class is meant to be instantiated inside of the event pipeline with
-	//		the currently managed event. Once this class is instantiated,
-	//		it can be used to dispatch an event (determine if the event type
-	//		is correct for a particular function and run the function if correct).
-	class EventDispatcher
-	{
-		// Templated alias for a function pointer is used in the
-		//		Dispatch function.
-		template<typename K>
-		using EventFn = std::function<bool(K&)>;
-	public:
-		//==============================
-		// Constructors and Destructors
-		//==============================
-		// This constructor simply initializes the dispatcher with an event
-		//		to handle. This construction method allows for one easy
-		//		connection between the event and the dispatcher to be made.
-		//		Multiple dispatches can be run with different function pointers
-		//		with the same dispatch object and event.
-		EventDispatcher(Event& event) : m_Event(event)
-		{
-		}
-		//==============================
-		// Execute and Handle Event
-		//==============================
-		// This function provides a method for ensuring the event initialized with
-		//		m_Event has the same EventType as the template type T. Once the
-		//		event types match, the provided function is called and the event is
-		//		set to handled. This allows for an easy API to externally handle
-		//		different scenerios involving event management inside the event
-		//		pipeline.
-		template<typename T>
-		bool Dispatch(EventFn<T> func)
-		{
-			if (m_Event.GetEventType() == T::GetStaticType())
-			{
-				m_Event.Handled |= func(*(T*)&m_Event);
-				return true;
-			}
-			return false;
-		}
-	private:
-		// m_Event holds a reference to the currently managed event inside the
-		//		event pipeline. This event is stored internally so that it does
-		//		not need to be provided to the Dispatch call repeatadly.
-		Event& m_Event;
-	};
-
-	//==============================
-	// Operator Overload
-	//==============================
-	// This overload allows for easy logging of the event type when debugging.
-	inline std::ostream& operator<<(std::ostream& os, const Event& e)
-	{
-		return os << e.ToString();
-	}
-
-	using EventCallbackFn = std::function<void(Events::Event&)>;
+	using EventCallbackFn = std::function<void(Events::Event*)>;
 	
 }

@@ -80,7 +80,6 @@ namespace Kargono
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
-		
 		// Render
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
@@ -102,30 +101,87 @@ namespace Kargono
 		}
 	}
 
-	void RuntimeApp::OnEvent(Events::Event& event)
+	bool RuntimeApp::OnApplicationEvent(Events::Event* event)
 	{
-		Events::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnKeyPressed));
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollisionEnd));
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnWindowResize));
-		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnApplicationClose));
-		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateUserCount));
-		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(RuntimeApp::OnApproveJoinSession));
-		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(RuntimeApp::OnUserLeftSession));
-		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(RuntimeApp::OnCurrentSessionInit));
-		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(RuntimeApp::OnConnectionTerminated));
-		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateSessionUserSlot));
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(RuntimeApp::OnStartSession));
-		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(RuntimeApp::OnSessionReadyCheckConfirm));
-		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(RuntimeApp::OnReceiveSignal));
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::WindowResize:
+			handled = OnWindowResize(*(Events::WindowResizeEvent*)event);
+			break;
+		case Events::EventType::AppClose:
+			handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			break;
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnNetworkEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::UpdateOnlineUsers:
+			handled = OnUpdateUserCount(*(Events::UpdateOnlineUsers*)event);
+			break;
+		case Events::EventType::ApproveJoinSession:
+			handled = OnApproveJoinSession(*(Events::ApproveJoinSession*)event);
+			break;
+		case Events::EventType::UserLeftSession:
+			handled = OnUserLeftSession(*(Events::UserLeftSession*)event);
+			break;
+		case Events::EventType::CurrentSessionInit:
+			handled = OnCurrentSessionInit(*(Events::CurrentSessionInit*)event);
+			break;
+		case Events::EventType::ConnectionTerminated:
+			handled = OnConnectionTerminated(*(Events::ConnectionTerminated*)event);
+			break;
+		case Events::EventType::UpdateSessionUserSlot:
+			handled = OnUpdateSessionUserSlot(*(Events::UpdateSessionUserSlot*)event);
+			break;
+		case Events::EventType::StartSession:
+			handled = OnStartSession(*(Events::StartSession*)event);
+			break;
+		case Events::EventType::SendReadyCheckConfirm:
+			handled = OnSessionReadyCheckConfirm(*(Events::SessionReadyCheckConfirm*)event);
+			break;
+		case Events::EventType::ReceiveSignal:
+			handled = OnReceiveSignal(*(Events::ReceiveSignal*)event);
+			break;
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnInputEvent(Events::Event* event)
+	{
+		bool handled = false;
+		if (event->GetEventType() == Events::EventType::KeyPressed)
+		{
+			handled = OnKeyPressed(*(Events::KeyPressedEvent*)event);
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnPhysicsEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::PhysicsCollisionStart:
+			handled = OnPhysicsCollision(*(Events::PhysicsCollisionStart*)event);
+			break;
+		case Events::EventType::PhysicsCollisionEnd:
+			handled = OnPhysicsCollisionEnd(*(Events::PhysicsCollisionEnd*)event);
+			break;
+		}
+		return handled;
 	}
 
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
 		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
-		eventCallback(windowEvent);
+		eventCallback(&windowEvent);
 		return false;
 	}
 
@@ -137,7 +193,7 @@ namespace Kargono
 		return false;
 	}
 
-	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
+	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionStart event)
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();

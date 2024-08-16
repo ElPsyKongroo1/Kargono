@@ -98,7 +98,10 @@ namespace Kargono
 		// This function catches thrown application events and dispatches them to other functions
 		//		(OnKeyPressed(), OnMouseButtonPressed(), and OnPhysicsCollision()).
 		//		Those functions proceed to run logic that responds to the thrown event.
-		virtual void OnEvent(Events::Event& event) override;
+		virtual bool OnApplicationEvent(Events::Event* event) override;
+		virtual bool OnNetworkEvent(Events::Event* event) override;
+		virtual bool OnInputEvent(Events::Event* event) override;
+		virtual bool OnPhysicsEvent(Events::Event* event) override;
 	private:
 		// These private functions are called by the above OnEvent(e) function to handle application events.
 		// These next functions provide different code to respond to user input.
@@ -108,7 +111,7 @@ namespace Kargono
 		bool OnKeyPressedRuntime(Events::KeyPressedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		// This function responds to application collision events.
-		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+		bool OnPhysicsCollision(Events::PhysicsCollisionStart event);
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
 		bool OnApproveJoinSession(Events::ApproveJoinSession event);

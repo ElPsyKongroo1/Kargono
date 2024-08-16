@@ -120,27 +120,91 @@ namespace Kargono
 		s_ActiveEngine->m_Running = false;
 	}
 
-	void EngineService::OnEvent(Events::Event& e)
+	void EngineService::OnEvent(Events::Event* e)
 	{
-		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::WindowCloseEvent>(EngineService::OnWindowClose);
-		dispatcher.Dispatch<Events::WindowResizeEvent>(EngineService::OnWindowResize);
-		dispatcher.Dispatch<Events::CleanUpTimersEvent>(EngineService::OnCleanUpTimers);
-		dispatcher.Dispatch<Events::AddTickGeneratorUsage>(EngineService::OnAddTickGeneratorUsage);
-		dispatcher.Dispatch<Events::RemoveTickGeneratorUsage>(EngineService::OnRemoveTickGeneratorUsage);
-		dispatcher.Dispatch<Events::AppTickEvent>(EngineService::OnAppTickEvent);
-
-		dispatcher.Dispatch<Events::UpdateEntityLocation>(EngineService::OnUpdateEntityLocation);
-		dispatcher.Dispatch<Events::UpdateEntityPhysics>(EngineService::OnUpdateEntityPhysics);
-
-		if (e.Handled)
+		bool handled = false;
+		// Process Input Events
+		if (e->IsInCategory(Events::Input))
 		{
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnInputEvent(e);
+			}
 			return;
 		}
-		if (s_ActiveEngine->m_CurrentApp)
+
+		// Process Physics Events
+		if (e->IsInCategory(Events::Physics))
 		{
-			s_ActiveEngine->m_CurrentApp->OnEvent(e);
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnPhysicsEvent(e);
+			}
+			return;
 		}
+
+		// Process Network Events
+		if (e->IsInCategory(Events::Network))
+		{
+			switch (e->GetEventType())
+			{
+			case Events::EventType::UpdateEntityLocation:
+				handled = OnUpdateEntityLocation(*(Events::UpdateEntityLocation*)e);
+				break;
+			case Events::EventType::UpdateEntityPhysics:
+				handled = OnUpdateEntityPhysics(*(Events::UpdateEntityPhysics*)e);
+				break;
+			}
+
+			if (handled)
+			{
+				return;
+			}
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnNetworkEvent(e);
+			}
+			return;
+		}
+
+		// Process Application Events
+		if (e->IsInCategory(Events::Application))
+		{
+			switch (e->GetEventType())
+			{
+			case Events::EventType::WindowClose:
+				handled = OnWindowClose(*(Events::WindowCloseEvent*)e);
+				break;
+			case Events::EventType::WindowResize:
+				handled = OnWindowResize(*(Events::WindowResizeEvent*)e);
+				break;
+			case Events::EventType::CleanUpTimers:
+				handled = OnCleanUpTimers(*(Events::CleanUpTimersEvent*)e);
+				break;
+			case Events::EventType::AddTickGeneratorUsage:
+				handled = OnAddTickGeneratorUsage(*(Events::AddTickGeneratorUsage*)e);
+				break;
+			case Events::EventType::RemoveTickGeneratorUsage:
+				handled = OnRemoveTickGeneratorUsage(*(Events::RemoveTickGeneratorUsage*)e);
+				break;
+			case Events::EventType::AppTick:
+				handled = OnAppTickEvent(*(Events::AppTickEvent*)e);
+				break;
+			}
+
+			if (handled)
+			{
+				return;
+			}
+
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnApplicationEvent(e);
+			}
+
+			return;
+		}
+
 	}
 
 	bool EngineService::OnWindowClose(Events::WindowCloseEvent& e)
@@ -151,7 +215,6 @@ namespace Kargono
 
 	bool EngineService::OnWindowResize(Events::WindowResizeEvent& e)
 	{
-
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			s_ActiveEngine->m_Minimized = true;
@@ -276,7 +339,7 @@ namespace Kargono
 		{
 			Events::ApplicationCloseEvent event{};
 			Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
-			eventCallback(event);
+			eventCallback(&event);
 		});
 	}
 
@@ -300,7 +363,7 @@ namespace Kargono
 
 		for (auto& event : s_ActiveEngine->m_EventQueue)
 		{
-			OnEvent(*event);
+			OnEvent(event.get());
 		}
 		s_ActiveEngine->m_EventQueue.clear();
 	}

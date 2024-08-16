@@ -110,7 +110,7 @@ namespace Kargono
 		//==============================
 		// OnEvent Functions
 		//==============================
-		static void OnEvent(Events::Event& e);
+		static void OnEvent(Events::Event* e);
 		static bool OnWindowClose(Events::WindowCloseEvent& e);
 		static bool OnWindowResize(Events::WindowResizeEvent& e);
 		static bool OnUpdateEntityLocation(Events::UpdateEntityLocation& e);

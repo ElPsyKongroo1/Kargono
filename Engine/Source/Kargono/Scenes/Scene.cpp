@@ -373,9 +373,9 @@ namespace Kargono::Scenes
 			}
 		}
 	}
-	void Scene::OnKeyPressed(Events::KeyPressedEvent event)
+	bool Scene::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		if (event.IsRepeat()) { return; }
+		if (event.IsRepeat()) { return false; }
 		if (Input::InputModeService::GetActiveInputMode())
 		{
 			for (auto& inputBinding : Input::InputModeService::GetActiveOnKeyPressed())
@@ -388,6 +388,8 @@ namespace Kargono::Scenes
 				}
 			}
 		}
+
+		return false;
 	}
 
 	template <typename T>

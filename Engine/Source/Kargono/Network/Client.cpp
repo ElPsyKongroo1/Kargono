@@ -316,21 +316,44 @@ namespace Kargono::Network
 		Send(msg);
 	}
 
-	void Client::OnEvent(Events::Event& e)
+	void Client::OnEvent(Events::Event* e)
 	{
-		Events::EventDispatcher dispatcher(e);
-
-		dispatcher.Dispatch<Events::RequestJoinSession>(KG_BIND_CLASS_FN(Client::OnRequestJoinSession));
-		dispatcher.Dispatch<Events::RequestUserCount>(KG_BIND_CLASS_FN(Client::OnRequestUserCount));
-		dispatcher.Dispatch<Events::LeaveCurrentSession>(KG_BIND_CLASS_FN(Client::OnLeaveCurrentSession));
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(Client::OnStartSession));
-		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(Client::OnConnectionTerminated));
-		dispatcher.Dispatch<Events::EnableReadyCheck>(KG_BIND_CLASS_FN(Client::OnEnableReadyCheck));
-		dispatcher.Dispatch<Events::SessionReadyCheck>(KG_BIND_CLASS_FN(Client::OnSessionReadyCheck));
-		dispatcher.Dispatch<Events::SendAllEntityLocation>(KG_BIND_CLASS_FN(Client::OnSendAllEntityLocation));
-		dispatcher.Dispatch<Events::SendAllEntityPhysics>(KG_BIND_CLASS_FN(Client::OnSendAllEntityPhysics));
-		dispatcher.Dispatch<Events::SignalAll>(KG_BIND_CLASS_FN(Client::OnSignalAll));
-		dispatcher.Dispatch<Events::AppTickEvent>(KG_BIND_CLASS_FN(Client::OnAppTickEvent));
+		switch (e->GetEventType())
+		{
+		case Events::EventType::RequestJoinSession:
+			OnRequestJoinSession(*(Events::RequestJoinSession*)e);
+			break;
+		case Events::EventType::RequestUserCount:
+			OnRequestUserCount(*(Events::RequestUserCount*)e);
+			break;
+		case Events::EventType::LeaveCurrentSession:
+			OnLeaveCurrentSession(*(Events::LeaveCurrentSession*)e);
+			break;
+		case Events::EventType::StartSession:
+			OnStartSession(*(Events::StartSession*)e);
+			break;
+		case Events::EventType::ConnectionTerminated:
+			OnConnectionTerminated(*(Events::ConnectionTerminated*)e);
+			break;
+		case Events::EventType::EnableReadyCheck:
+			OnEnableReadyCheck(*(Events::EnableReadyCheck*)e);
+			break;
+		case Events::EventType::SendReadyCheck:
+			OnSessionReadyCheck(*(Events::SessionReadyCheck*)e);
+			break;
+		case Events::EventType::SendAllEntityLocation:
+			OnSendAllEntityLocation(*(Events::SendAllEntityLocation*)e);
+			break;
+		case Events::EventType::SendAllEntityPhysics:
+			OnSendAllEntityPhysics(*(Events::SendAllEntityPhysics*)e);
+			break;
+		case Events::EventType::SignalAll:
+			OnSignalAll(*(Events::SignalAll*)e);
+			break;
+		case Events::EventType::AppTick:
+			OnAppTickEvent(*(Events::AppTickEvent*)e);
+			break;
+		}
 
 	}
 
@@ -691,7 +714,7 @@ namespace Kargono::Network
 
 		for (auto& event : m_EventQueue)
 		{
-			OnEvent(*event);
+			OnEvent(event.get());
 		}
 		m_EventQueue.clear();
 	}

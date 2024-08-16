@@ -129,12 +129,28 @@ namespace Kargono::Rendering
 		m_FocalPoint = m_Position + GetForwardDirection() * m_Distance;
 	}
 
-	void EditorCamera::OnEvent(Events::Event& e)
+	bool EditorCamera::OnInputEvent(Events::Event* e)
 	{
-		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::MouseScrolledEvent>(KG_BIND_CLASS_FN(EditorCamera::OnMouseScroll));
-		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorCamera::OnKeyPressed));
-		dispatcher.Dispatch<Events::KeyReleasedEvent>(KG_BIND_CLASS_FN(EditorCamera::OnKeyReleased));
+		bool handled = false;
+		switch (e->GetEventType())
+		{
+		case Events::EventType::MouseScrolled:
+			handled = OnMouseScroll(*(Events::MouseScrolledEvent*)e);
+			break;
+		case Events::EventType::KeyPressed:
+			handled = OnKeyPressed(*(Events::KeyPressedEvent*)e);
+			break;
+		case Events::EventType::KeyReleased:
+			handled = OnKeyReleased(*(Events::KeyReleasedEvent*)e);
+			break;
+		}
+
+		if (handled)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	bool EditorCamera::OnKeyReleased(Events::KeyReleasedEvent& e)

@@ -106,7 +106,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Event Functions
 		//==============================
-		static void OnEvent(Events::Event& e);
+		static bool OnInputEvent(Events::Event* e);
 
 	public:
 		//==============================
@@ -686,6 +686,11 @@ namespace Kargono::EditorUI
 		std::vector<TreeEntry>& GetTreeEntries()
 		{
 			return TreeEntries;
+		}
+
+		void ClearExpandedNodes()
+		{
+			ExpandedNodes.clear();
 		}
 
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);

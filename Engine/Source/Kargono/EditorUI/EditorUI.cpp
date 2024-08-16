@@ -527,15 +527,15 @@ namespace Kargono::EditorUI
 		s_BlockMouseEvents = block;
 	}
 
-	void EditorUIService::OnEvent(Events::Event& e)
+	bool EditorUIService::OnInputEvent(Events::Event* e)
 	{
 		KG_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
 		if (!s_BlockMouseEvents)
 		{
-			e.Handled |= e.IsInCategory(Events::Mouse) & io.WantCaptureMouse;
+			return e->IsInCategory(Events::Mouse) && io.WantCaptureMouse;
 		}
-		e.Handled |= e.IsInCategory(Events::Keyboard) & io.WantCaptureKeyboard;
+		return e->IsInCategory(Events::Keyboard) && io.WantCaptureKeyboard;
 	}
 
 	uint32_t WidgetIterator(uint32_t& count)
@@ -1819,7 +1819,40 @@ namespace Kargono::EditorUI
 			screenPosition = ImGui::GetCursorScreenPos();
 			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, 21.0f };
 
+			// Create Invisible Button for Interation with current node
+			if (ImGui::InvisibleButton(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), buttonDimensions))
+			{
+				if (treeEntry.OnLeftClick)
+				{
+					treeEntry.OnLeftClick(treeEntry);
+				}
+				spec.SelectedEntry = currentPath;
+			}
+
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			{
+				if (treeEntry.OnRightClickSelection.size() > 0)
+				{
+					ImGui::OpenPopup(("##" + std::to_string(spec.WidgetID)).c_str());
+					spec.CurrentRightClick = &treeEntry;
+				}
+			}
+
+			if (ImGui::IsItemHovered())
+			{
+				// Draw SelectedEntry background
+				draw_list->AddRectFilled(screenPosition,
+					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
+					ImColor(EditorUI::EditorUIService::s_HoveredColor), 4, ImDrawFlags_RoundCornersAll);
+
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && treeEntry.OnDoubleLeftClick)
+				{
+					treeEntry.OnDoubleLeftClick(treeEntry);
+				}
+			}
+
 			// Display Selected Background
+			ImGui::SetCursorScreenPos(screenPosition);
 			if (spec.SelectedEntry == currentPath)
 			{
 				// Draw SelectedEntry background
@@ -1840,34 +1873,6 @@ namespace Kargono::EditorUI
 			ImGui::Text(treeEntry.Label.c_str());
 			ImGui::PopStyleColor();
 
-			// Create Invisible Button for Interation with current node
-			ImGui::SetCursorScreenPos(screenPosition);
-			if (ImGui::InvisibleButton(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), buttonDimensions))
-			{
-				if (treeEntry.OnLeftClick)
-				{
-					treeEntry.OnLeftClick(treeEntry);
-				}
-				spec.SelectedEntry = currentPath;
-			}
-			
-			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-			{
-				if (treeEntry.OnRightClickSelection.size() > 0)
-				{
-					ImGui::OpenPopup(("##" + std::to_string(spec.WidgetID)).c_str());
-					spec.CurrentRightClick = &treeEntry;
-				}
-			}
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (treeEntry.OnDoubleLeftClick)
-				{
-					treeEntry.OnDoubleLeftClick(treeEntry);
-				}
-			}
-
 
 			// Handle all sub-entries
 			if (treeEntry.SubEntries.size() > 0)
@@ -1878,7 +1883,7 @@ namespace Kargono::EditorUI
 				const Ref<Rendering::Texture2D> icon = spec.ExpandedNodes.contains(currentPath) ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
 				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
-					ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+					ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 					EditorUIService::s_PureEmpty,
 					spec.ExpandedNodes.contains(currentPath) ? EditorUIService::s_HighlightColor1 : EditorUIService::s_DisabledColor, 0))
 				{

@@ -125,7 +125,7 @@ namespace Kargono::Network
 	public:
 		void SendChat(const std::string& text);
 
-		void OnEvent(Events::Event& e);
+		void OnEvent(Events::Event* e);
 
 		bool OnRequestUserCount(Events::RequestUserCount event);
 

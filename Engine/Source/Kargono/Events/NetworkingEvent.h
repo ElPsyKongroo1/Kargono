@@ -29,17 +29,8 @@ namespace Kargono::Events
 
 		uint32_t GetUserCount() const { return m_UserCount; }
 
-		static EventType GetStaticType() { return EventType::UpdateOnlineUsers; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "UpdateOnlineUsers"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "UpdateOnlineUsers: " << m_UserCount;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::UpdateOnlineUsers; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint32_t m_UserCount;
 	};
@@ -64,17 +55,8 @@ namespace Kargono::Events
 
 		uint16_t GetSignal() const { return m_Signal; }
 
-		static EventType GetStaticType() { return EventType::SignalAll; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SignalAll"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "SignalAll: " << m_Signal;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::SignalAll; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 
 		uint16_t m_Signal;
@@ -100,17 +82,8 @@ namespace Kargono::Events
 
 		uint16_t GetSignal() const { return m_Signal; }
 
-		static EventType GetStaticType() { return EventType::ReceiveSignal; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "ReceiveSignal"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "ReceiveSignal: " << m_Signal;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::ReceiveSignal; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint16_t m_Signal;
 	};
@@ -132,10 +105,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::RequestJoinSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "RequestJoinSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::RequestJoinSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -155,10 +126,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::StartSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "StartSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::StartSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -178,10 +147,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::EnableReadyCheck; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "EnableReadyCheck"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::EnableReadyCheck; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -201,10 +168,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::SendReadyCheck; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SendReadyCheck"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::SendReadyCheck; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -224,10 +189,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::SendReadyCheckConfirm; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SendReadyCheckConfirm"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::SendReadyCheckConfirm; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -247,10 +210,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::ConnectionTerminated; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "ConnectionTerminated"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::ConnectionTerminated; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -270,10 +231,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::LeaveCurrentSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "LeaveCurrentSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::LeaveCurrentSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -296,17 +255,8 @@ namespace Kargono::Events
 
 		uint16_t GetUserSlot() const { return m_UserSlot; }
 
-		static EventType GetStaticType() { return EventType::UserLeftSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "UserLeftSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "User Left Session " << m_UserSlot;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::UserLeftSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 
 	private:
 		uint16_t m_UserSlot;
@@ -329,10 +279,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::RequestUserCount; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "RequestUserCount"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::RequestUserCount; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -352,10 +300,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::CurrentSessionInit; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "CurrentSessionInit"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::CurrentSessionInit; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	};
 
 	//============================================================
@@ -378,17 +324,8 @@ namespace Kargono::Events
 
 		uint16_t GetUserSlot() const { return m_UserSlot; }
 
-		static EventType GetStaticType() { return EventType::ApproveJoinSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "ApproveJoinSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "ApproveJoinSession " << m_UserSlot;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::ApproveJoinSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint16_t m_UserSlot;
 	};
@@ -413,17 +350,8 @@ namespace Kargono::Events
 
 		uint16_t GetUserSlot() const { return m_UserSlot; }
 
-		static EventType GetStaticType() { return EventType::UpdateSessionUserSlot; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "UpdateSessionUserSlot"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "UpdateSessionUserSlot " << m_UserSlot;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::UpdateSessionUserSlot; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint16_t m_UserSlot;
 	};
@@ -449,17 +377,9 @@ namespace Kargono::Events
 		uint64_t GetEntityID() const { return m_EntityID; }
 		Math::vec3 GetTranslation() const { return m_Translation; }
 
-		static EventType GetStaticType() { return EventType::SendAllEntityLocation; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SendAllEntityLocation"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::SendAllEntityLocation; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "SendAllEntityLocation " << m_EntityID;
-			return ss.str();
-		}
 	private:
 		uint64_t m_EntityID;
 		Math::vec3 m_Translation;
@@ -486,17 +406,8 @@ namespace Kargono::Events
 		uint64_t GetEntityID() const { return m_EntityID; }
 		Math::vec3 GetTranslation() const { return m_Translation; }
 
-		static EventType GetStaticType() { return EventType::UpdateEntityLocation; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "UpdateEntityLocation"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "UpdateEntityLocation " << m_EntityID;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::UpdateEntityLocation; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint64_t m_EntityID;
 		Math::vec3 m_Translation;
@@ -524,17 +435,8 @@ namespace Kargono::Events
 		Math::vec3 GetTranslation() const { return m_Translation; }
 		Math::vec2 GetLinearVelocity() const { return m_LinearVelocity; }
 
-		static EventType GetStaticType() { return EventType::SendAllEntityPhysics; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SendAllEntityPhysics"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "SendAllEntityPhysics " << m_EntityID;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::SendAllEntityPhysics; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint64_t m_EntityID;
 		Math::vec3 m_Translation;
@@ -563,17 +465,8 @@ namespace Kargono::Events
 		Math::vec3 GetTranslation() const { return m_Translation; }
 		Math::vec2 GetLinearVelocity() const { return m_LinearVelocity; }
 
-		static EventType GetStaticType() { return EventType::UpdateEntityPhysics; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "UpdateEntityPhysics"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "UpdateEntityPhysics " << m_EntityID;
-			return ss.str();
-		}
+		virtual EventType GetEventType() const override { return EventType::UpdateEntityPhysics; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint64_t m_EntityID;
 		Math::vec3 m_Translation;
@@ -597,10 +490,8 @@ namespace Kargono::Events
 		// Getters/Setters
 		//==============================
 
-		static EventType GetStaticType() { return EventType::DenyJoinSession; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "DenyJoinSession"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Networking; }
+		virtual EventType GetEventType() const override { return EventType::DenyJoinSession; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 
 	};
 

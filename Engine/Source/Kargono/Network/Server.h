@@ -175,7 +175,7 @@ namespace Kargono::Network
 		void OnMessage(std::shared_ptr<Kargono::Network::TCPServerConnection> client, Kargono::Network::Message& incomingMessage);
 
 		void ProcessEventQueue();
-		void OnEvent(Events::Event& e);
+		void OnEvent(Events::Event* e);
 		bool OnStartSession(Events::StartSession event);
 
 		// ASYNC - Instruct asio to wait for connection

@@ -34,7 +34,10 @@ namespace Kargono
 		// Calls Runtime Update for Physics, Scripting, and Rendering.
 		virtual void OnUpdate(Timestep ts) override;
 		// Currently does nothing!
-		virtual void OnEvent(Events::Event& event) override;
+		virtual bool OnApplicationEvent(Events::Event* event) override;
+		virtual bool OnNetworkEvent(Events::Event* event) override;
+		virtual bool OnInputEvent(Events::Event* event) override;
+		virtual bool OnPhysicsEvent(Events::Event* event) override;
 		
 	private:
 		// This function processes key pressed events
@@ -46,7 +49,7 @@ namespace Kargono
 		// This function closes the runtime application
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
-		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+		bool OnPhysicsCollision(Events::PhysicsCollisionStart event);
 
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 

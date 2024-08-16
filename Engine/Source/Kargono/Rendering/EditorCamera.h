@@ -35,7 +35,7 @@ namespace Kargono::Rendering
 		void OnUpdate(Timestep ts);
 		// On Event typically updates the m_ViewProjection Matrix based on input rules *it defines
 		// This function currently manages mouse button clicks
-		void OnEvent(Events::Event& e);
+		bool OnInputEvent(Events::Event* e);
 
 		bool OnKeyReleased(Events::KeyReleasedEvent& e);
 	private:

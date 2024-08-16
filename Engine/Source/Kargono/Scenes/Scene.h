@@ -66,7 +66,7 @@ namespace Kargono::Scenes
 		void OnUpdatePhysics(Timestep ts);
 		void OnUpdateEntities(Timestep ts);
 		void OnUpdateInputMode(Timestep ts);
-		void OnKeyPressed(Events::KeyPressedEvent event);
+		bool OnKeyPressed(Events::KeyPressedEvent event);
 
 		// Other LifeCycle Functions
 		// These Getter/Setter Functions query the current state of the scene.

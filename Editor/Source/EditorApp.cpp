@@ -304,54 +304,6 @@ namespace Kargono
 		EditorUI::EditorUIService::EndRendering();
 	}
 
-
-	void EditorApp::OnEvent(Events::Event& event)
-	{
-		EditorUI::EditorUIService::OnEvent(event);
-		if (event.Handled)
-		{
-			return;
-		}
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-		if (focusedWindow == m_ViewportPanel->m_PanelName)
-		{
-			m_ViewportPanel->OnEvent(event);
-		}
-
-		Events::EventDispatcher dispatcher(event);
-		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
-		{
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedEditor));
-			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
-			if (event.GetEventType() == Events::EventType::KeyReleased)
-			{
-				m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)& event);
-			}
-		}
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollisionEnd));
-
-		if (m_SceneState == SceneState::Play && m_IsPaused)
-		{
-			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
-		}
-		
-		if (m_SceneState == SceneState::Play)
-		{
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedRuntime));
-			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(EditorApp::OnApplicationClose));
-			dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(EditorApp::OnUpdateUserCount));
-			dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(EditorApp::OnApproveJoinSession));
-			dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(EditorApp::OnUserLeftSession));
-			dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(EditorApp::OnCurrentSessionInit));
-			dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(EditorApp::OnConnectionTerminated));
-			dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(EditorApp::OnUpdateSessionUserSlot));
-			dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(EditorApp::OnStartSession));
-			dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(EditorApp::OnSessionReadyCheckConfirm));
-			dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(EditorApp::OnReceiveSignal));
-		}
-	}
-
 	bool EditorApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		OnStop();
@@ -361,10 +313,114 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
+		return Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
+	}
 
-		Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
-		
-		return false;
+	bool EditorApp::OnApplicationEvent(Events::Event* event)
+	{
+		bool handled = false;
+
+		if (m_SceneState == SceneState::Play)
+		{
+			if (event->GetEventType() == Events::EventType::AppClose)
+			{
+				handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			}
+		}
+		return handled;
+	}
+
+	bool EditorApp::OnNetworkEvent(Events::Event* event)
+	{
+		bool handled = false;
+		if (m_SceneState == SceneState::Play)
+		{
+			switch (event->GetEventType())
+			{
+			case Events::EventType::UpdateOnlineUsers:
+				handled = OnUpdateUserCount(*(Events::UpdateOnlineUsers*)event);
+				break;
+			case Events::EventType::ApproveJoinSession:
+				handled = OnApproveJoinSession(*(Events::ApproveJoinSession*)event);
+				break;
+			case Events::EventType::UserLeftSession:
+				handled = OnUserLeftSession(*(Events::UserLeftSession*)event);
+				break;
+			case Events::EventType::CurrentSessionInit:
+				handled = OnCurrentSessionInit(*(Events::CurrentSessionInit*)event);
+				break;
+			case Events::EventType::ConnectionTerminated:
+				handled = OnConnectionTerminated(*(Events::ConnectionTerminated*)event);
+				break;
+			case Events::EventType::UpdateSessionUserSlot:
+				handled = OnUpdateSessionUserSlot(*(Events::UpdateSessionUserSlot*)event);
+				break;
+			case Events::EventType::StartSession:
+				handled = OnStartSession(*(Events::StartSession*)event);
+				break;
+			case Events::EventType::SendReadyCheckConfirm:
+				handled = OnSessionReadyCheckConfirm(*(Events::SessionReadyCheckConfirm*)event);
+				break;
+			case Events::EventType::ReceiveSignal:
+				handled = OnReceiveSignal(*(Events::ReceiveSignal*)event);
+				break;
+			}
+		}
+
+		return handled;
+	}
+
+	bool EditorApp::OnInputEvent(Events::Event* event)
+	{
+		bool handled = false;
+		handled = EditorUI::EditorUIService::OnInputEvent(event);
+		if (handled)
+		{
+			return true;
+		}
+		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (focusedWindow == m_ViewportPanel->m_PanelName)
+		{
+			m_ViewportPanel->OnInputEvent(event);
+		}
+
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+		{
+			if (event->GetEventType() == Events::EventType::KeyPressed)
+			{
+				handled = OnKeyPressedEditor(*(Events::KeyPressedEvent*)event);
+			}
+			
+			if (event->GetEventType() == Events::EventType::KeyReleased)
+			{
+				handled = m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)event);
+			}
+		}
+
+		if (m_SceneState == SceneState::Play)
+		{
+			if (event->GetEventType() == Events::EventType::KeyPressed)
+			{
+				handled = OnKeyPressedRuntime(*(Events::KeyPressedEvent*)event);
+			}
+		}
+
+		return handled;
+	}
+
+	bool EditorApp::OnPhysicsEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::PhysicsCollisionStart:
+			handled = OnPhysicsCollision(*(Events::PhysicsCollisionStart*)event);
+			break;
+		case Events::EventType::PhysicsCollisionEnd:
+			handled = OnPhysicsCollisionEnd(*(Events::PhysicsCollisionEnd*)event);
+			break;
+		}
+		return handled;
 	}
 
 	bool EditorApp::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -480,7 +536,7 @@ namespace Kargono
 	}
 
 
-	bool EditorApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
+	bool EditorApp::OnPhysicsCollision(Events::PhysicsCollisionStart event)
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();

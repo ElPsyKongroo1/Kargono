@@ -623,15 +623,17 @@ namespace Kargono::Network
 
 		for (auto& event : m_EventQueue)
 		{
-			OnEvent(*event);
+			OnEvent(event.get());
 		}
 		m_EventQueue.clear();
 	}
 
-	void Server::OnEvent(Events::Event& e)
+	void Server::OnEvent(Events::Event* e)
 	{
-		Events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(Server::OnStartSession));
+		if (e->GetEventType() == Events::EventType::StartSession)
+		{
+			OnStartSession(*(Events::StartSession*)e);
+		}
 		
 	}
 

@@ -652,11 +652,11 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndWindow();
 	}
-	void ViewportPanel::OnEvent(Events::Event& event)
+	void ViewportPanel::OnInputEvent(Events::Event* event)
 	{
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
-			m_EditorCamera.OnEvent(event);
+			m_EditorCamera.OnInputEvent(event);
 		}
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
