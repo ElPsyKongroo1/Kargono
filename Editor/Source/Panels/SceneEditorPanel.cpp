@@ -106,6 +106,8 @@ namespace Kargono::Panels
 			if (Scenes::SceneService::GetActiveScene())
 			{
 				s_SceneHierarchyTree.ClearTree();
+				s_SceneHierarchyTree.ClearExpandedNodes();
+				s_SceneHierarchyTree.SelectedEntry = {};
 				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
 				{
 					Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
@@ -149,11 +151,6 @@ namespace Kargono::Panels
 								return;
 							}
 							Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
-							if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
-							{
-								*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
-								s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
-							}
 						});
 
 					} });
@@ -1445,12 +1442,61 @@ namespace Kargono::Panels
 				Scenes::SceneService::GetActiveSceneHandle()).Data.IntermediateLocation.string();
 			
 			EditorUI::EditorUIService::PanelHeader(s_MainSceneHeader);
-			s_SceneHierarchyTree.OnRefresh();
+
 			EditorUI::EditorUIService::Tree(s_SceneHierarchyTree);
 
 			EditorUI::EditorUIService::SelectOption(s_AddComponent);
 		}
 		EditorUI::EditorUIService::EndWindow();
+	}
+	bool SceneEditorPanel::OnSceneEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::ManageScene)
+		{
+			Events::ManageScene* manageEvent = (Events::ManageScene*)event;
+			if (manageEvent->GetAction() == Events::ManageSceneAction::Open)
+			{
+				s_SceneHierarchyTree.OnRefresh();
+			}
+		}
+		if (event->GetEventType() == Events::EventType::ManageEntity)
+		{
+			Events::ManageEntity* manageEntity = (Events::ManageEntity*)event;
+			if (manageEntity->GetAction() == Events::ManageEntityAction::Delete)
+			{
+				Scenes::Entity entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByUUID(manageEntity->GetID());
+				if (!entityToDelete)
+				{
+					KG_WARN("Could not locate entity by UUID");
+					return false;
+				}
+
+				if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() == entityToDelete)
+				{
+					*Scenes::SceneService::GetActiveScene()->GetSelectedEntity() = {};
+					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
+				}
+				uint32_t iteration{ 0 };
+				// Remove entry from Hierarchy Tree
+				for (auto& entry : s_SceneHierarchyTree.GetTreeEntries())
+				{
+					if ((uint32_t)entry.Handle == (uint32_t)entityToDelete)
+					{
+						EditorUI::TreePath path = s_SceneHierarchyTree.GetPathFromEntryReference(&entry);
+						if (!path)
+						{
+							KG_WARN("Could not locate path from entry reference!");
+							return false;
+						}
+						s_SceneHierarchyTree.RemoveEntry(path);
+						break;
+					}
+					iteration++;
+				}
+			}
+			
+		}
+		return false;
 	}
 	bool SceneEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

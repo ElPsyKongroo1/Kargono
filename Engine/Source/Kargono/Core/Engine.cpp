@@ -167,6 +167,15 @@ namespace Kargono
 			return;
 		}
 
+		if (e->IsInCategory(Events::Scene))
+		{
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnSceneEvent(e);
+			}
+			return;
+		}
+
 		// Process Application Events
 		if (e->IsInCategory(Events::Application))
 		{

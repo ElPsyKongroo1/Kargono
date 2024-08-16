@@ -423,6 +423,11 @@ namespace Kargono
 		return handled;
 	}
 
+	bool EditorApp::OnSceneEvent(Events::Event* event)
+	{
+		return m_SceneEditorPanel->OnSceneEvent(event);
+	}
+
 	bool EditorApp::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		if (event.IsRepeat()) { return false; }

@@ -102,6 +102,7 @@ namespace Kargono
 		virtual bool OnNetworkEvent(Events::Event* event) override;
 		virtual bool OnInputEvent(Events::Event* event) override;
 		virtual bool OnPhysicsEvent(Events::Event* event) override;
+		virtual bool OnSceneEvent(Events::Event* event) override;
 	private:
 		// These private functions are called by the above OnEvent(e) function to handle application events.
 		// These next functions provide different code to respond to user input.

@@ -50,7 +50,7 @@ namespace Kargono::Events
 		UpdateSessionUserSlot, EnableReadyCheck, SendReadyCheck, SendReadyCheckConfirm, SendAllEntityLocation,
 		UpdateEntityLocation, SendAllEntityPhysics, UpdateEntityPhysics, SignalAll, ReceiveSignal,
 		// Scene
-		DeleteEntity
+		ManageEntity, ManageScene
 	};
 
 	//==============================

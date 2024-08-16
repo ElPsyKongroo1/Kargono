@@ -595,6 +595,17 @@ namespace Kargono::EditorUI
 			m_Path.push_back(newNode);
 		}
 
+		void SetNode(uint16_t newValue, size_t location)
+		{
+			if (location >= m_Path.size())
+			{
+				KG_WARN("Invalid location provided. Cannot update TreePath node");
+				return;
+			}
+
+			m_Path.at(location) = newValue;
+		}
+
 		void PopNode()
 		{
 			m_Path.pop_back();
@@ -613,6 +624,34 @@ namespace Kargono::EditorUI
 		bool operator==(const TreePath& other) const
 		{
 			return m_Path == other.m_Path;
+		}
+
+		bool SameParentPath(const TreePath& other) const
+		{
+			// Parent path cannot be equal if sizes do not match
+			if (m_Path.size() != other.m_Path.size())
+			{
+				return false;
+			}
+
+			for (size_t iteration{ 0 }; iteration < m_Path.size(); iteration++)
+			{
+				// Check if nodes differ
+				if (m_Path.at(iteration) != other.m_Path.at(iteration))
+				{
+					if (iteration == m_Path.size() - 1)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+
+			// If paths are equivalent, return true
+			return true;
 		}
 
 		operator bool() const
@@ -679,6 +718,8 @@ namespace Kargono::EditorUI
 		{
 			TreeEntries.push_back(entry);
 		}
+
+		void RemoveEntry(TreePath& path);
 		void ClearTree()
 		{
 			TreeEntries.clear();

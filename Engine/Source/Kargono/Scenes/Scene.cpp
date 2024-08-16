@@ -8,6 +8,7 @@
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Input/InputService.h"
 #include "Kargono/Rendering/Shader.h"
+#include "Kargono/Events/SceneEvent.h"
 
 
 namespace Kargono::Utility
@@ -135,6 +136,9 @@ namespace Kargono::Scenes
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		Events::ManageEntity event = {entity.GetUUID(), Events::ManageEntityAction::Delete};
+		EngineService::OnEvent(&event);
+
 		m_EntityMap.erase(entity.GetUUID());
 		if (m_Registry.valid(entity))
 		{
@@ -534,7 +538,16 @@ namespace Kargono::Scenes
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
 		Ref<Scene> newScene = Assets::AssetManager::GetScene(newSceneHandle);
+		if (!newScene)
+		{
+			KG_WARN("Could not locate scene by scene handle");
+			return;
+		}
 		TransitionScene(newScene);
+		s_ActiveSceneHandle = newSceneHandle;
+		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newSceneHandle, Events::ManageSceneAction::Open);
+		EngineService::SubmitToEventQueue(event);
+		
 	}
 
 	void SceneService::TransitionScene(Ref<Scene> newScene)
@@ -546,8 +559,6 @@ namespace Kargono::Scenes
 		s_ActiveScene.reset();
 
 		s_ActiveScene = newScene;
-
-		//Audio::AudioEngine::StopAllAudio();
 
 		*s_ActiveScene->m_HoveredEntity = {};
 		*s_ActiveScene->m_SelectedEntity = {};
@@ -562,6 +573,18 @@ namespace Kargono::Scenes
 		{
 			TransitionScene(sceneReference);
 		}
+		s_ActiveSceneHandle = handle;
+		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
+		EngineService::SubmitToEventQueue(event);
+	}
+
+	void SceneService::SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
+	{
+		s_ActiveScene = newScene;
+		s_ActiveSceneHandle = newHandle;
+
+		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newHandle, Events::ManageSceneAction::Open);
+		EngineService::SubmitToEventQueue(event);
 	}
 }
 

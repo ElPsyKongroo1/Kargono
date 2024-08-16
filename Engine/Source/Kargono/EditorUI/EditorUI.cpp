@@ -2210,4 +2210,95 @@ namespace Kargono::EditorUI
 		return {};
 		
 	}
+
+	void TreeSpec::RemoveEntry(TreePath& path)
+	{
+		uint32_t iteration{ 0 };
+		TreeEntry* parentEntry{ nullptr };
+		TreeEntry* currentEntry{ nullptr };
+
+		// Locate entry and its parent entry using the provided path
+		for (auto location : path.GetPath())
+		{
+			if (iteration == 0)
+			{
+				if (location >= TreeEntries.size())
+				{
+					KG_WARN("Failed to remove entry. Path provided is beyond TreeEntries vector bounds!");
+					return;
+				}
+				currentEntry = &(TreeEntries.at(location));
+			}
+			else
+			{
+				if (location >= currentEntry->SubEntries.size())
+				{
+					KG_WARN("Failed to remove entry. Path provided is beyond SubEntries vector bounds!");
+					return;
+				}
+				parentEntry = currentEntry;
+				currentEntry = &(currentEntry->SubEntries.at(location));
+			}
+			iteration++;
+		}
+
+		if (!currentEntry)
+		{
+			KG_WARN("Failed to remove entry. Invalid entry acquired");
+			return;
+		}
+
+		uint32_t locationCurrentList = path.GetPath().at(iteration - 1);
+
+
+		// Clear SelectedEntry field if path is the same
+		if (SelectedEntry == path)
+		{
+			SelectedEntry = {};
+		}
+
+		// Decriment SelectedEntry if end of path is greater
+		if (SelectedEntry.SameParentPath(path) && SelectedEntry.GetPath().at(iteration - 1) > locationCurrentList)
+		{
+			SelectedEntry.SetNode(SelectedEntry.GetPath().at(SelectedEntry.GetPath().size() - 1) - 1, SelectedEntry.GetPath().size() - 1);
+		}
+
+		// Remove Entry from Tree
+		if (parentEntry == nullptr)
+		{
+			TreeEntries.erase(TreeEntries.begin() + locationCurrentList);
+		}
+		else
+		{
+			parentEntry->SubEntries.erase(parentEntry->SubEntries.begin() + locationCurrentList);
+		}
+
+		// Decriment elements inside ExpandedNodes that are higher than the provided path
+		std::vector<TreePath> pathCache {};
+		for (auto nodePath : ExpandedNodes)
+		{
+			if (nodePath.SameParentPath(path) && nodePath.GetPath().at(iteration - 1) > locationCurrentList)
+			{
+				pathCache.push_back(nodePath);
+			}
+		}
+		// Remove current path from ExpandedNodes
+		if (ExpandedNodes.contains(path))
+		{
+			ExpandedNodes.erase(path);
+		}
+		for (auto& nodePath : pathCache)
+		{
+			ExpandedNodes.erase(nodePath);
+			nodePath.SetNode(nodePath.GetPath().at(nodePath.GetPath().size() - 1) - 1, nodePath.GetPath().size() - 1);
+		}
+		for (auto& nodePath : pathCache)
+		{
+			ExpandedNodes.insert(nodePath);
+		}
+		
+
+
+
+	}
 }

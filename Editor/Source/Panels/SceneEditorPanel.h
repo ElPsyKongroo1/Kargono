@@ -10,6 +10,7 @@ namespace Kargono::Panels
 		SceneEditorPanel();
 	public:
 		void OnEditorUIRender();
+		bool OnSceneEvent(Events::Event* event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
 		void SetSelectedEntity(Scenes::Entity entity);

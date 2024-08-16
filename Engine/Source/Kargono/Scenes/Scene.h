@@ -207,11 +207,7 @@ namespace Kargono::Scenes
 		{
 			return s_ActiveSceneHandle;
 		}
-		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
-		{
-			s_ActiveScene = newScene;
-			s_ActiveSceneHandle = newHandle;
-		}
+		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle);
 	private:
 		//====================
 		// Internal Fields
