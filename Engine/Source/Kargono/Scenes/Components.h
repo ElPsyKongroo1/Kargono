@@ -247,7 +247,7 @@ namespace Kargono::Scenes
 		}
 	};
 
-	enum class ComponentType
+	enum class ComponentType : uint16_t
 	{
 		None = 0,
 		Transform,

@@ -131,12 +131,16 @@ namespace Kargono::Scenes
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = entity;
+
+		Events::ManageEntity event = { entity.GetUUID(), this, Events::ManageEntityAction::Create };
+		EngineService::OnEvent(&event);
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		Events::ManageEntity event = {entity.GetUUID(), Events::ManageEntityAction::Delete};
+		Events::ManageEntity event = {entity.GetUUID(), this , Events::ManageEntityAction::Delete};
 		EngineService::OnEvent(&event);
 
 		m_EntityMap.erase(entity.GetUUID());

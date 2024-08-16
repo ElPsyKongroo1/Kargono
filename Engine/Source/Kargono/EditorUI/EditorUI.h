@@ -697,7 +697,7 @@ namespace Kargono::EditorUI
 		Ref<Rendering::Texture2D> IconHandle{ nullptr };
 		std::function<void(TreeEntry& entry)> OnLeftClick { nullptr };
 		std::function<void(TreeEntry& entry)> OnDoubleLeftClick { nullptr };
-		void* ProvidedData { nullptr };
+		Ref<void> ProvidedData { nullptr };
 		std::vector<TreeEntry> SubEntries{};
 		std::vector<SelectionEntry> OnRightClickSelection {};
 	};
@@ -714,6 +714,9 @@ namespace Kargono::EditorUI
 		TreePath SelectedEntry{};
 		std::function<void()> OnRefresh { nullptr };
 	public:
+
+		TreeEntry* SearchFirstLayer(UUID handle);
+
 		void InsertEntry(const TreeEntry& entry)
 		{
 			TreeEntries.push_back(entry);
@@ -734,6 +737,7 @@ namespace Kargono::EditorUI
 			ExpandedNodes.clear();
 		}
 
+		TreeEntry* GetEntryFromPath(TreePath& path);
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
 	private:
 		WidgetID WidgetID;

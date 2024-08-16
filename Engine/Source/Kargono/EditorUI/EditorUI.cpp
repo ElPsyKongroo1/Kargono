@@ -1870,6 +1870,7 @@ namespace Kargono::EditorUI
 
 			// Display entry text
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.5f);
 			ImGui::Text(treeEntry.Label.c_str());
 			ImGui::PopStyleColor();
 
@@ -1879,6 +1880,7 @@ namespace Kargono::EditorUI
 			{
 				// Draw expand icon
 				ImGui::SameLine();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
 				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 				const Ref<Rendering::Texture2D> icon = spec.ExpandedNodes.contains(currentPath) ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
 				if (ImGui::ImageButtonEx(spec.WidgetID + WidgetIterator(widgetCount),
@@ -2198,6 +2200,25 @@ namespace Kargono::EditorUI
 		return false;
 	}
 
+	TreeEntry* TreeSpec::GetEntryFromPath(TreePath& path)
+	{
+		std::vector<TreeEntry>* currentEntryList = &TreeEntries;
+		TreeEntry* currentEntry{nullptr};
+		for (auto node : path.GetPath())
+		{
+			if (node >= currentEntryList->size())
+			{
+				KG_WARN("Node location is out of bounds for current entry list");
+				return {};
+			}
+
+			currentEntry = &currentEntryList->at(node);
+			currentEntryList = &currentEntry->SubEntries;
+		}
+
+		return currentEntry;
+	}
+
 	TreePath TreeSpec::GetPathFromEntryReference(TreeEntry* entryQuery)
 	{
 		TreePath newPath{};
@@ -2209,6 +2230,19 @@ namespace Kargono::EditorUI
 		KG_WARN("Could not locate provided entry query");
 		return {};
 		
+	}
+
+	TreeEntry* TreeSpec::SearchFirstLayer(UUID handle)
+	{
+		for (auto& entry : TreeEntries)
+		{
+			// Found the entry
+			if (entry.Handle == handle)
+			{
+				return &entry;
+			}
+		}
+		return {};
 	}
 
 	void TreeSpec::RemoveEntry(TreePath& path)
