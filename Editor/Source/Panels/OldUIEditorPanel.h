@@ -10,21 +10,15 @@ namespace Kargono { class EditorApp; }
 
 namespace Kargono::Panels
 {
-	class UIEditorPanel
+	class OldUIEditorPanel
 	{
 	public:
-		UIEditorPanel();
+		OldUIEditorPanel();
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
-		void InitializeOpeningScreen();
-		void InitializeUIHeader();
-	public:
-		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
-		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
-	private:
-		std::string m_PanelName{ "User Interface Editor" };
+		std::string m_PanelName{ "Old User Interface Editor" };
 	private:
 		friend Kargono::EditorApp;
 	};

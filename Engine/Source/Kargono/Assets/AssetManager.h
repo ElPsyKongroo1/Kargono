@@ -434,6 +434,8 @@ namespace Kargono::Assets
 		//		4. Return the userInterface handle
 		static AssetHandle CreateNewUserInterface(const std::string& userInterfaceName);
 
+		static void DeleteUserInterface(AssetHandle handle);
+
 		//==============================
 		// Save a UserInterface
 		//==============================

@@ -396,6 +396,22 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
+	void AssetManager::DeleteUserInterface(AssetHandle handle)
+	{
+		if (!s_UserInterfaceRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete user interface in AssetManager");
+			return;
+		}
+
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
+			s_UserInterfaceRegistry.at(handle).Data.IntermediateLocation);
+
+		s_UserInterfaceRegistry.erase(handle);
+
+		SerializeUserInterfaceRegistry();
+	}
+
 	void AssetManager::SaveUserInterface(AssetHandle userInterfaceHandle, Ref<RuntimeUI::UserInterface> userInterface)
 	{
 		if (!s_UserInterfaceRegistry.contains(userInterfaceHandle))

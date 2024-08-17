@@ -61,6 +61,7 @@ namespace Kargono
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
+		m_OldUIEditorPanel = CreateScope<Panels::OldUIEditorPanel>();
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
@@ -218,6 +219,7 @@ namespace Kargono
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::Separator();
+				ImGui::MenuItem("Old User Interface Editor", NULL, &m_ShowOldUserInterfaceEditor);
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
@@ -284,6 +286,7 @@ namespace Kargono
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
+		if (m_ShowOldUserInterfaceEditor) { m_OldUIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }

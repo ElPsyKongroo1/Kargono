@@ -44,7 +44,6 @@ namespace Kargono
 	static EditorUI::SelectOptionSpec s_KeyboardPollingEditKeyCode {};
 	static uint32_t s_KeyboardPollingActiveSlot {};
 
-
 	// Reusable Functions
 	static void OnOpenInputMode()
 	{
