@@ -266,8 +266,6 @@ namespace Kargono::Panels
 			if (Scenes::SceneService::GetActiveScene())
 			{
 				s_SceneHierarchyTree.ClearTree();
-				s_SceneHierarchyTree.ClearExpandedNodes();
-				s_SceneHierarchyTree.SelectedEntry = {};
 				Scenes::SceneService::GetActiveScene()->m_Registry.each([&](auto entityID)
 				{
 					Scenes::Entity entity{ entityID, Scenes::SceneService::GetActiveScene().get() };
@@ -1813,6 +1811,7 @@ namespace Kargono::Panels
 		RefreshTransformComponent();
 		s_EditorApp->m_ShowProperties = true;
 		EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
+		s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 		
 	}
 	void SceneEditorPanel::RefreshClassInstanceComponent()

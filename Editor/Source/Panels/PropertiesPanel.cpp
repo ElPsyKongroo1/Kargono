@@ -22,17 +22,36 @@ namespace Kargono::Panels
 			return;
 		}
 
-		if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
+		if (m_ActiveParent == s_EditorApp->m_SceneEditorPanel->m_PanelName)
 		{
-			if (s_EditorApp->m_SceneEditorPanel->m_DisplayedComponent == Scenes::ComponentType::None)
+			if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 			{
-				s_EditorApp->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
-			}
-			else
-			{
-				s_EditorApp->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+				if (s_EditorApp->m_SceneEditorPanel->m_DisplayedComponent == Scenes::ComponentType::None)
+				{
+					s_EditorApp->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+				}
+				else
+				{
+					s_EditorApp->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+				}
 			}
 		}
+
+		if (m_ActiveParent == s_EditorApp->m_UIEditorPanel->m_PanelName)
+		{
+			switch (s_EditorApp->m_UIEditorPanel->m_CurrentDisplay)
+			{
+			case UIPropertiesDisplay::None:
+				break;
+			case UIPropertiesDisplay::Window:
+				s_EditorApp->m_UIEditorPanel->DrawWindowOptions();
+				break;
+			case UIPropertiesDisplay::Widget:
+				s_EditorApp->m_UIEditorPanel->DrawWidgetOptions();
+				break;
+			}
+		}
+
 		EditorUI::EditorUIService::EndWindow();
 	}
 }

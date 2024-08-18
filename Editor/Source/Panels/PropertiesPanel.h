@@ -11,8 +11,10 @@ namespace Kargono::Panels
 
 		void OnEditorUIRender();
 	private:
+		std::string m_ActiveParent{};
 		std::string m_PanelName{ "Properties" };
 	private:
 		friend class SceneEditorPanel;
+		friend class UIEditorPanel;
 	};
 }

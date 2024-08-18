@@ -6,7 +6,6 @@
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
 #include "Panels/StatisticsPanel.h"
-#include "Panels/OldUIEditorPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
 #include "Panels/EntityClassEditor.h"
@@ -177,7 +176,6 @@ namespace Kargono
 		bool m_ShowProject = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowTesting = false;
-		bool m_ShowOldUserInterfaceEditor = false;
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowClassEditor = false;
@@ -196,10 +194,8 @@ namespace Kargono
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
-		Ref<Input::InputMode> m_EditorInputMode = nullptr;
-		Assets::AssetHandle m_EditorInputModeHandle{0};
-		Ref<RuntimeUI::UserInterface> m_EditorUIObject = nullptr;
-		Assets::AssetHandle m_EditorUIObjectHandle{0};
+		Ref<Input::InputMode> m_EditorInputMode {nullptr};
+		Assets::AssetHandle m_EditorInputModeHandle{Assets::EmptyHandle};
 
 		// Stepping Fields
 		bool m_IsPaused = false;
@@ -218,7 +214,6 @@ namespace Kargono
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
-		Scope<Panels::OldUIEditorPanel>  m_OldUIEditorPanel;
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
 		Scope<Panels::ViewportPanel>  m_ViewportPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
@@ -234,7 +229,6 @@ namespace Kargono
 		friend Panels::LogPanel;
 		friend Panels::StatisticsPanel;
 		friend Panels::ProjectPanel;
-		friend Panels::OldUIEditorPanel;
 		friend Panels::UIEditorPanel;
 		friend Panels::ScriptEditorPanel;
 		friend Panels::EntityClassEditor;

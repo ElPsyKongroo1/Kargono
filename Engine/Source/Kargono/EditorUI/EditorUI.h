@@ -185,6 +185,8 @@ namespace Kargono::EditorUI
 		static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
 			s_IconPause, s_IconStop, s_IconGrid;
 
+		static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
+
 		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
 			s_IconAudio, s_IconImage, s_IconBinary,
@@ -726,6 +728,8 @@ namespace Kargono::EditorUI
 		void ClearTree()
 		{
 			TreeEntries.clear();
+			ExpandedNodes.clear();
+			SelectedEntry = {};
 		}
 		std::vector<TreeEntry>& GetTreeEntries()
 		{

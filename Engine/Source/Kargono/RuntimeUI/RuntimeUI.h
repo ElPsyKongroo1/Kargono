@@ -275,19 +275,6 @@ namespace Kargono::RuntimeUI
 		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
 		static bool SaveCurrentUIIntoUIObject();
 		static void RefreshDisplayedWindows();
-
-	public:
-		//==============================
-		// Editor API TODO REMOVE PLEASE AHHHHHHHHHHHHHHHHHHHHGODDD
-		//==============================
-		static int32_t& GetWindowToDelete();
-		static int32_t& GetWidgetToDelete();
-		static int32_t& GetWindowsToAddWidget();
-		static RuntimeUI::WidgetTypes& GetWidgetTypeToAdd();
-		static uint32_t& GetWindowToAdd();
-		static int32_t& GetSelectedWindow();
-		static int32_t& GetSelectedWidget();
-		static Math::vec4& GetSelectColor();
 	private:
 		//==============================
 		// Internal Fields

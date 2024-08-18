@@ -51,6 +51,9 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconTag{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconTransform{};
 
+	Ref<Rendering::Texture2D> EditorUIService::s_IconWindow{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconTextWidget{};
+
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDirectory{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconGenericFile{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconBack{};
@@ -325,6 +328,9 @@ namespace Kargono::EditorUI
 		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Rigidbody.png").string());
 		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Transform.png").string());
 
+		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
+		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/TextWidget.png").string());
+
 		s_IconDirectory = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Directory.png");
 		s_IconGenericFile = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GenericFile.png");
 		s_IconBack = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Back.png");
@@ -377,6 +383,9 @@ namespace Kargono::EditorUI
 		s_IconDown.reset();
 		s_IconRight.reset();
 		s_IconDash.reset();
+
+		s_IconWindow.reset();
+		s_IconTextWidget.reset();
 
 		s_IconDirectory.reset();
 		s_IconGenericFile.reset();

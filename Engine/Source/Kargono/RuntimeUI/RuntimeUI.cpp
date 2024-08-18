@@ -17,16 +17,6 @@ namespace Kargono::RuntimeUI
 
 	static Rendering::RendererInputSpec s_BackgroundInputSpec{};
 
-	// Editor Specific Fields
-	static int32_t s_WindowToDelete { -1 };
-	static int32_t s_WidgetToDelete { -1 };
-	static int32_t s_WindowsToAddWidget { -1 };
-	static RuntimeUI::WidgetTypes s_WidgetTypeToAdd {RuntimeUI::WidgetTypes::None };
-	static uint32_t s_WindowToAdd {0};
-	static int32_t s_SelectedWindow { -1 };
-	static int32_t s_SelectedWidget { -1 };
-
-
 	void RuntimeUIService::Init()
 	{
 		s_ActiveUI = nullptr;
@@ -249,15 +239,6 @@ namespace Kargono::RuntimeUI
 	{
 		s_ActiveUI = nullptr;
 		s_ActiveUIHandle = Assets::EmptyHandle;
-
-		// Clear Editor Values
-		s_WindowToDelete = -1;
-		s_WidgetToDelete = -1;
-		s_WindowsToAddWidget = -1;
-		s_WidgetTypeToAdd = RuntimeUI::WidgetTypes::None;
-		s_WindowToAdd = 0;
-		s_SelectedWindow = -1;
-		s_SelectedWidget = -1;
 	}
 
 	Ref<UserInterface> RuntimeUIService::GetActiveUI()
@@ -728,46 +709,6 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	int32_t& RuntimeUIService::GetWindowToDelete()
-	{
-		return s_WindowToDelete;
-	}
-
-	int32_t& RuntimeUIService::GetWidgetToDelete()
-	{
-		return s_WidgetToDelete;
-	}
-
-	int32_t& RuntimeUIService::GetWindowsToAddWidget()
-	{
-		return s_WindowsToAddWidget;
-	}
-
-	RuntimeUI::WidgetTypes& RuntimeUIService::GetWidgetTypeToAdd()
-	{
-		return s_WidgetTypeToAdd;
-	}
-
-	uint32_t& RuntimeUIService::GetWindowToAdd()
-	{
-		return s_WindowToAdd;
-	}
-
-	int32_t& RuntimeUIService::GetSelectedWindow()
-	{
-		return s_SelectedWindow;
-	}
-
-	int32_t& RuntimeUIService::GetSelectedWidget()
-	{
-		return s_SelectedWidget;
-	}
-
-	Math::vec4& RuntimeUIService::GetSelectColor()
-	{
-		return s_ActiveUI->m_SelectColor;
-	}
-
 	void Window::DisplayWindow()
 	{
 		if (WindowDisplayed) { return; }
@@ -907,13 +848,6 @@ namespace Kargono::RuntimeUI
 			//widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f), widgetTranslation.z);
 			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
 		}
-
-		//KG_CORE_INFO("Hey, the widget size for this text is {} wide and the text is {} wide", widgetSize.x, TextAbsoluteDimensions.x * textSize);
-		//KG_CORE_INFO("Hey, the widget height is {} and the text height is {}", widgetSize.y, TextAbsoluteDimensions.y * textSize);
-
-		//KG_CORE_INFO(textSize);
-		//KG_CORE_INFO("Text Absolute Size is {} {}", TextAbsoluteDimensions.x, TextAbsoluteDimensions.y);
-		//textSize += 50.0f;
 
 		RuntimeUIService::s_ActiveUI->m_Font->PushTextData(Text, widgetTranslation, TextColor, textSize);
 	}

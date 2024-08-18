@@ -61,7 +61,6 @@ namespace Kargono
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
-		m_OldUIEditorPanel = CreateScope<Panels::OldUIEditorPanel>();
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
@@ -219,7 +218,6 @@ namespace Kargono
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::Separator();
-				ImGui::MenuItem("Old User Interface Editor", NULL, &m_ShowOldUserInterfaceEditor);
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
@@ -286,7 +284,6 @@ namespace Kargono
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-		if (m_ShowOldUserInterfaceEditor) { m_OldUIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
@@ -868,16 +865,12 @@ namespace Kargono
 
 	void EditorApp::OnPlay()
 	{
-		// Cache Current UserInterface/InputMode in editor
-		if (!RuntimeUI::RuntimeUIService::GetActiveUI()) { m_EditorUIObject = nullptr; }
-		else
-		{
-			RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = RuntimeUI::RuntimeUIService::GetActiveUI();
-			m_EditorUIObjectHandle = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
+		RuntimeUI::RuntimeUIService::ClearActiveUI();
+		// Cache Current InputMode in editor
+		if (!Input::InputModeService::GetActiveInputMode())
+		{ 
+			m_EditorInputMode = nullptr; 
 		}
-
-		if (!Input::InputModeService::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
 		else
 		{
 			m_EditorInputMode = Input::InputModeService::GetActiveInputMode();
@@ -941,9 +934,9 @@ namespace Kargono
 		Audio::AudioService::StopAllAudio();
 
 		// Clear UIObjects during runtime.
-		if (m_EditorUIObject)
+		if (m_UIEditorPanel->m_EditorUI)
 		{
-			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::RuntimeUIService::SetActiveUI(m_UIEditorPanel->m_EditorUI, m_UIEditorPanel->m_EditorUIHandle);
 		}
 		else
 		{
