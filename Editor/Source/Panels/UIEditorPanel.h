@@ -1,6 +1,7 @@
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Assets/Asset.h"
+#include "Kargono/EditorUI/EditorUI.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 
 #include <string>
@@ -34,6 +35,11 @@ namespace Kargono::Panels
 		void InitializeMainContent();
 		void InitializeWindowOptions();
 		void InitializeWidgetOptions();
+	private:
+		static void AddWindow();
+		static void AddTextWidget(EditorUI::TreeEntry& entry);
+		static void DeleteWindow(EditorUI::TreeEntry& entry);
+		static void DeleteWidget(EditorUI::TreeEntry& entry);
 	public:
 		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
 		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
@@ -45,5 +51,6 @@ namespace Kargono::Panels
 	private:
 		friend class PropertiesPanel;
 		friend Kargono::EditorApp;
+
 	};
 }

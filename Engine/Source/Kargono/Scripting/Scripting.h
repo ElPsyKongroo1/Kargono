@@ -72,6 +72,11 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
+	inline std::string ScriptToString(Ref<Scripting::Script> script)
+	{
+		return Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+	}
+
 	//==============================
 	// Utility for Creating Function Definition/Signatures
 	//==============================

@@ -91,7 +91,7 @@ namespace Kargono::RuntimeUI
 	public:
 		void SetText(const std::string& newText);
 
-		std::string Text{ "New Text" };
+		std::string Text{ "New Text Widget" };
 		float TextSize{ 0.12f };
 		Math::vec2 TextAbsoluteDimensions {};
 		Math::vec4 TextColor{0.5f};
@@ -153,25 +153,12 @@ namespace Kargono::RuntimeUI
 
 	struct Window
 	{
-		struct WidgetCounts
-		{
-			uint16_t TextWidgetCount{ 0 };
-			uint16_t TextWidgetLocation{};
-			uint16_t ButtonWidgetCount{ 0 };
-			uint16_t ButtonWidgetLocation{};
-			uint16_t CheckboxWidgetCount{ 0 };
-			uint16_t CheckboxWidgetLocation{};
-			uint16_t ComboWidgetCount{ 0 };
-			uint16_t ComboWidgetLocation{};
-			uint16_t PopupWidgetCount{ 0 };
-			uint16_t PopupWidgetLocation{};
-		};
+		
 	public:
 		std::string Tag{ "None" };
 		Math::vec3 ScreenPosition{};
 		Math::vec2 Size {};
 		Math::vec4 BackgroundColor {1.0f};
-		WidgetCounts WidgetCounts{};
 		int32_t ParentIndex{ -1 };
 		int32_t ChildBufferIndex{ -1 };
 		uint32_t ChildBufferSize{ 0 };
@@ -187,15 +174,8 @@ namespace Kargono::RuntimeUI
 		bool WindowDisplayed = false;
 
 	public:
-		void AddTextWidget(Ref<TextWidget> newWidget);
-		void AddButtonWidget(Ref<ButtonWidget> newWidget);
-		void AddCheckboxWidget(Ref<CheckboxWidget> newWidget);
-		void AddComboWidget(Ref<ComboWidget> newWidget);
-		void AddPopupWidget(Ref<PopupWidget> newWidget);
+		void AddWidget(Ref<Widget> newWidget);
 		void DeleteWidget(int32_t widgetLocation);
-	private:
-		void IncrementIterators(uint16_t iterator);
-		void DecrementIterators(uint16_t iterator);
 	};
 
 	class UserInterface

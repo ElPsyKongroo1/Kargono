@@ -32,6 +32,7 @@ namespace Kargono::Panels
 	static EditorUI::CollapsingHeaderSpec s_WidgetHeader{};
 	static EditorUI::EditTextSpec s_WidgetTag{};
 	static EditorUI::EditVec2Spec s_WidgetLocation{};
+	static EditorUI::EditVec2Spec s_WidgetSize{};
 	static EditorUI::EditVec4Spec s_WidgetBackgroundColor{};
 	static EditorUI::SelectOptionSpec s_WidgetOnPress{};
 	static EditorUI::EditTextSpec s_WidgetText{};
@@ -102,7 +103,17 @@ namespace Kargono::Panels
 	}
 	bool UIEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		return false;
+		switch (event.GetKeyCode())
+		{
+		case Key::Escape:
+			s_UITree.SelectedEntry = {};
+			m_CurrentDisplay = UIPropertiesDisplay::None;
+			return true;
+		
+		default:
+			return false;
+		
+		}
 	}
 
 	void UIEditorPanel::DrawWindowOptions()
@@ -112,39 +123,73 @@ namespace Kargono::Panels
 
 		if (s_WindowHeader.Expanded)
 		{
+			s_WindowTag.CurrentOption = m_ActiveWindow->Tag;
 			EditorUI::EditorUIService::EditText(s_WindowTag);
+
+			int32_t activeWidget = m_ActiveWindow->DefaultActiveWidget;
+			s_WindowDefaultWidget.CurrentOption =
+			{
+				activeWidget == -1 ? "None" : m_ActiveWindow->Widgets.at(activeWidget)->Tag,
+				(uint64_t)activeWidget
+			};
 			EditorUI::EditorUIService::SelectOption(s_WindowDefaultWidget);
+
+			s_WindowDisplay.ToggleBoolean = m_ActiveWindow->GetWindowDisplayed();
 			EditorUI::EditorUIService::Checkbox(s_WindowDisplay);
+
+			s_WindowLocation.CurrentVec3 = m_ActiveWindow->ScreenPosition;
 			EditorUI::EditorUIService::EditVec3(s_WindowLocation);
+
+			s_WindowSize.CurrentVec2 = m_ActiveWindow->Size;
 			EditorUI::EditorUIService::EditVec2(s_WindowSize);
+
+			s_WindowBackgroundColor.CurrentVec4 = m_ActiveWindow->BackgroundColor;
 			EditorUI::EditorUIService::EditVec4(s_WindowBackgroundColor);
 		}
 	}
 
 	void UIEditorPanel::DrawWidgetOptions()
 	{
-		EditorUI::EditorUIService::CollapsingHeader(s_WindowHeader);
-		if (s_WindowHeader.Expanded)
-		{
-			EditorUI::EditorUIService::EditText(s_WindowTag);
-			EditorUI::EditorUIService::SelectOption(s_WindowDefaultWidget);
-			EditorUI::EditorUIService::Checkbox(s_WindowDisplay);
-			EditorUI::EditorUIService::EditVec3(s_WindowLocation);
-			EditorUI::EditorUIService::EditVec2(s_WindowSize);
-			EditorUI::EditorUIService::EditVec4(s_WindowBackgroundColor);
-		}
-
 		EditorUI::EditorUIService::CollapsingHeader(s_WidgetHeader);
 		if (s_WidgetHeader.Expanded)
 		{
+			s_WidgetTag.CurrentOption = m_ActiveWidget->Tag;
 			EditorUI::EditorUIService::EditText(s_WidgetTag);
+
+			s_WidgetLocation.CurrentVec2 = m_ActiveWidget->WindowPosition;
 			EditorUI::EditorUIService::EditVec2(s_WidgetLocation);
+
+			s_WidgetSize.CurrentVec2 = m_ActiveWidget->Size;
+			EditorUI::EditorUIService::EditVec2(s_WidgetSize);
+			
+			s_WidgetBackgroundColor.CurrentVec4 = m_ActiveWidget->DefaultBackgroundColor;
 			EditorUI::EditorUIService::EditVec4(s_WidgetBackgroundColor);
-			EditorUI::EditorUIService::SelectOption(s_WidgetOnPress);
-			EditorUI::EditorUIService::EditText(s_WidgetText);
-			EditorUI::EditorUIService::EditFloat(s_WidgetTextSize);
-			EditorUI::EditorUIService::EditVec4(s_WidgetTextColor);
-			EditorUI::EditorUIService::Checkbox(s_WidgetCentered);
+
+			if (m_ActiveWidget->WidgetType == RuntimeUI::WidgetTypes::TextWidget)
+			{
+				RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+				Assets::AssetHandle onPressHandle = activeTextWidget.FunctionPointers.OnPressHandle;
+				s_WidgetOnPress.CurrentOption =
+				{
+					onPressHandle == Assets::EmptyHandle ? "None" : Utility::ScriptToString(Assets::AssetManager::GetScript(onPressHandle)),
+					onPressHandle
+				};
+				EditorUI::EditorUIService::SelectOption(s_WidgetOnPress);
+
+				s_WidgetText.CurrentOption = activeTextWidget.Text;
+				EditorUI::EditorUIService::EditText(s_WidgetText);
+
+				s_WidgetTextSize.CurrentFloat = activeTextWidget.TextSize;
+				EditorUI::EditorUIService::EditFloat(s_WidgetTextSize);
+
+				s_WidgetTextColor.CurrentVec4 = activeTextWidget.TextColor;
+				EditorUI::EditorUIService::EditVec4(s_WidgetTextColor);
+
+				s_WidgetCentered.ToggleBoolean = activeTextWidget.TextCentered;
+				EditorUI::EditorUIService::Checkbox(s_WidgetCentered);
+			}
+			
 		}
 	}
 
@@ -236,6 +281,7 @@ namespace Kargono::Panels
 		}
 	}
 
+
 	void UIEditorPanel::InitializeUIHeader()
 	{
 		// Header (Game State Name and Options)
@@ -271,45 +317,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to close this user interface object without saving?");
 		};
 
-		s_MainHeader.AddToSelectionList("Add Window", [&]()
-		{
-			
-			EditorUI::TreeEntry newEntry {};
-			newEntry.Label = "None";
-			newEntry.IconHandle = EditorUI::EditorUIService::s_IconWindow;
-			newEntry.Handle = s_UITree.GetTreeEntries().size();
-			newEntry.OnLeftClick = [&](EditorUI::TreeEntry& entry)
-			{
-				m_ActiveWindow = &m_EditorUI->m_Windows.at(entry.Handle);
-				m_CurrentDisplay = UIPropertiesDisplay::Window;
-				EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
-				s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
-			};
-
-			newEntry.OnRightClickSelection.push_back({ "Delete Window", [&](EditorUI::TreeEntry& entry)
-			{
-				EditorUI::TreePath path = s_UITree.GetPathFromEntryReference(&entry);
-				if (!path)
-				{
-					KG_WARN("Could not locate window path inside s_UITree");
-					return;
-				}
-				auto& windows = s_EditorApp->m_UIEditorPanel->m_EditorUI->m_Windows;
-				windows.erase(windows.begin() + entry.Handle);
-				s_UITree.RemoveEntry(path);
-				s_EditorApp->m_UIEditorPanel->m_ActiveWidget = nullptr;
-				s_EditorApp->m_UIEditorPanel->m_ActiveWindow = nullptr;
-				s_EditorApp->m_UIEditorPanel->m_CurrentDisplay = UIPropertiesDisplay::None;
-
-				s_MainHeader.EditColorActive = true;
-				RecalculateTreeIterators();
-
-			} });
-
-			s_UITree.InsertEntry(newEntry);
-			s_EditorApp->m_UIEditorPanel->m_EditorUI->m_Windows.push_back({});
-			s_MainHeader.EditColorActive = true;
-		});
+		s_MainHeader.AddToSelectionList("Add Window", AddWindow);
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
@@ -365,25 +373,9 @@ namespace Kargono::Panels
 				};
 
 
-				newEntry.OnRightClickSelection.push_back({ "Delete Window", [&](EditorUI::TreeEntry& entry)
-				{
-					EditorUI::TreePath path = s_UITree.GetPathFromEntryReference(&entry);
-					if (!path)
-					{
-						KG_WARN("Could not locate window path inside s_UITree");
-						return;
-					}
-					auto& windows = s_EditorApp->m_UIEditorPanel->m_EditorUI->m_Windows;
-					windows.erase(windows.begin() + entry.Handle);
-					s_UITree.RemoveEntry(path);
-					s_EditorApp->m_UIEditorPanel->m_ActiveWidget = nullptr;
-					s_EditorApp->m_UIEditorPanel->m_ActiveWindow = nullptr;
-					s_EditorApp->m_UIEditorPanel->m_CurrentDisplay = UIPropertiesDisplay::None;
+				newEntry.OnRightClickSelection.push_back({ "Delete Window", DeleteWindow });
 
-					s_MainHeader.EditColorActive = true;
-					RecalculateTreeIterators();
-
-				} });
+				newEntry.OnRightClickSelection.push_back({ "Add Text Widget", AddTextWidget });
 
 				uint32_t iteratorTwo{ 0 };
 				for (auto widget : window.Widgets)
@@ -401,27 +393,7 @@ namespace Kargono::Panels
 						EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 						s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 					};
-					newWidgetEntry.OnRightClickSelection.push_back({ "Delete Widget", [&](EditorUI::TreeEntry& entry)
-					{
-						EditorUI::TreePath path = s_UITree.GetPathFromEntryReference(&entry);
-						if (!path)
-						{
-							KG_WARN("Could not locate widget path inside s_UITree");
-							return;
-						}
-						auto& windows = s_EditorApp->m_UIEditorPanel->m_EditorUI->m_Windows;
-						auto& widgets = windows.at(*(uint32_t*)entry.ProvidedData.get()).Widgets;
-						
-						widgets.erase(widgets.begin() + entry.Handle);
-						s_UITree.RemoveEntry(path);
-						s_EditorApp->m_UIEditorPanel->m_ActiveWidget = nullptr;
-						s_EditorApp->m_UIEditorPanel->m_ActiveWindow = nullptr;
-						s_EditorApp->m_UIEditorPanel->m_CurrentDisplay = UIPropertiesDisplay::None;
-
-						s_MainHeader.EditColorActive = true;
-						RecalculateTreeIterators();
-
-					} });
+					newWidgetEntry.OnRightClickSelection.push_back({ "Delete Widget", DeleteWidget });
 
 					newEntry.SubEntries.push_back(newWidgetEntry);
 					iteratorTwo++;
@@ -440,21 +412,125 @@ namespace Kargono::Panels
 
 		s_WindowTag.Label = "Tag";
 		s_WindowTag.Flags |= EditorUI::EditText_Indented;
+		s_WindowTag.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid window active when trying to update window tag");
+				return;
+			}
+			if (!s_UITree.SelectedEntry)
+			{
+				KG_WARN("No valid selected window path available in s_UITree when trying to update window tag");
+				return;
+			}
+
+			EditorUI::TreeEntry* entry = s_UITree.GetEntryFromPath(s_UITree.SelectedEntry);
+			if (!entry)
+			{
+				KG_WARN("No valid selected window active in s_UITree when trying to update window tag");
+				return;
+			}
+
+			entry->Label = s_WindowTag.CurrentOption;
+			m_ActiveWindow->Tag = s_WindowTag.CurrentOption;
+
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WindowDefaultWidget.Label = "Default Widget";
 		s_WindowDefaultWidget.Flags |= EditorUI::SelectOption_Indented;
+		s_WindowDefaultWidget.PopupAction = [&]() 
+		{
+			s_WindowDefaultWidget.ClearOptions();
+			s_WindowDefaultWidget.AddToOptions("Clear", "None", (uint64_t)-1);
+			uint32_t iteration{ 0 };
+			for (auto& widget : m_ActiveWindow->Widgets)
+			{
+				switch (widget->WidgetType)
+				{
+				case RuntimeUI::WidgetTypes::TextWidget:
+					s_WindowDefaultWidget.AddToOptions("Text Widget", widget->Tag, iteration);
+					break;
+				default:
+					KG_ERROR("Invalid widge type provided to UIEditorPanel");
+					break;
+				}
+				iteration++;
+			}
+		};
+
+		s_WindowDefaultWidget.ConfirmAction = [&](const EditorUI::OptionEntry& entry) 
+		{
+
+			if (entry.Handle == (uint64_t)-1)
+			{
+				m_ActiveWindow->DefaultActiveWidget = -1;
+				m_ActiveWindow->DefaultActiveWidgetRef = nullptr;
+				return;
+			}
+
+			if (entry.Handle > m_ActiveWindow->Widgets.size())
+			{
+				KG_WARN("Invalid widget location provided when updating default active widget in window");
+				return;
+			}
+
+			m_ActiveWindow->DefaultActiveWidget = (int32_t)entry.Handle;
+			m_ActiveWindow->DefaultActiveWidgetRef = m_ActiveWindow->Widgets.at(entry.Handle);
+		};
 
 		s_WindowDisplay.Label = "Display Window";
 		s_WindowDisplay.Flags |= EditorUI::Checkbox_Indented;
+		s_WindowDisplay.ConfirmAction = [&](bool value) 
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid window active when trying to update window display option");
+				return;
+			}
+			value ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WindowLocation.Label = "Screen Location";
 		s_WindowLocation.Flags |= EditorUI::EditVec3_Indented;
+		s_WindowLocation.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid window active when trying to update window location");
+				return;
+			}
+			m_ActiveWindow->ScreenPosition = s_WindowLocation.CurrentVec3;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WindowSize.Label = "Screen Size";
 		s_WindowSize.Flags |= EditorUI::EditVec2_Indented;
+		s_WindowSize.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid window active when trying to update window size");
+				return;
+			}
+			m_ActiveWindow->Size = s_WindowSize.CurrentVec2;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WindowBackgroundColor.Label = "Background Color";
-		s_WindowBackgroundColor.Flags |= EditorUI::EditVec4_Indented;
+		s_WindowBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		s_WindowBackgroundColor.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid window active when trying to update window background color");
+				return;
+			}
+			m_ActiveWindow->BackgroundColor = s_WindowBackgroundColor.CurrentVec4;
+			s_MainHeader.EditColorActive = true;
+		};
 	}
 	void UIEditorPanel::InitializeWidgetOptions()
 	{
@@ -464,26 +540,323 @@ namespace Kargono::Panels
 
 		s_WidgetTag.Label = "Tag";
 		s_WidgetTag.Flags |= EditorUI::EditText_Indented;
+		s_WidgetTag.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWidget)
+			{
+				KG_WARN("No valid widget active when trying to update widget tag");
+				return;
+			}
+			if (!s_UITree.SelectedEntry)
+			{
+				KG_WARN("No valid selected widget path available in s_UITree when trying to update widget tag");
+				return;
+			}
+
+			EditorUI::TreeEntry* entry = s_UITree.GetEntryFromPath(s_UITree.SelectedEntry);
+			if (!entry)
+			{
+				KG_WARN("No valid selected widget active in s_UITree when trying to update widget tag");
+				return;
+			}
+
+			entry->Label = s_WidgetTag.CurrentOption;
+			m_ActiveWidget->Tag = s_WidgetTag.CurrentOption;
+			
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetLocation.Label = "Window Location";
 		s_WidgetLocation.Flags |= EditorUI::EditVec2_Indented;
+		s_WidgetLocation.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget's window location");
+				return;
+			}
+
+			m_ActiveWidget->WindowPosition = s_WidgetLocation.CurrentVec2;
+			s_MainHeader.EditColorActive = true;
+		};
+
+		s_WidgetSize.Label = "Size";
+		s_WidgetSize.Flags |= EditorUI::EditVec2_Indented;
+		s_WidgetSize.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget size");
+				return;
+			}
+
+			m_ActiveWidget->Size = s_WidgetSize.CurrentVec2;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetBackgroundColor.Label = "Background Color";
-		s_WidgetBackgroundColor.Flags |= EditorUI::EditVec4_Indented;
+		s_WidgetBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		s_WidgetBackgroundColor.ConfirmAction = [&]()
+		{
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget background color");
+				return;
+			}
+
+			m_ActiveWidget->DefaultBackgroundColor = s_WidgetBackgroundColor.CurrentVec4;
+			m_ActiveWidget->ActiveBackgroundColor = s_WidgetBackgroundColor.CurrentVec4;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetOnPress.Label = "On Press";
 		s_WidgetOnPress.Flags |= EditorUI::SelectOption_Indented;
+		s_WidgetOnPress.PopupAction = [&]()
+		{
+			s_WidgetOnPress.ClearOptions();
+			s_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			{
+				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+					{
+						continue;
+					}
+					s_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
+						"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				}
+				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
+				{
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+					s_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+						"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				}
+			}
+
+			uint32_t iteration{ 0 };
+			for (auto& widget : m_ActiveWindow->Widgets)
+			{
+				switch (widget->WidgetType)
+				{
+				case RuntimeUI::WidgetTypes::TextWidget:
+					s_WidgetOnPress.AddToOptions("Text Widget", widget->Tag, iteration);
+					break;
+				default:
+					KG_ERROR("Invalid widge type provided to UIEditorPanel");
+					break;
+				}
+				iteration++;
+			}
+		};
+
+		s_WidgetOnPress.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		{
+
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				m_ActiveWidget->FunctionPointers.OnPress = nullptr;
+				m_ActiveWidget->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
+				return;
+			}
+
+			m_ActiveWidget->FunctionPointers.OnPressHandle = entry.Handle;
+			m_ActiveWidget->FunctionPointers.OnPress = Assets::AssetManager::GetScript(entry.Handle);
+			
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetText.Label = "Text";
 		s_WidgetText.Flags |= EditorUI::EditText_Indented;
+		s_WidgetText.ConfirmAction = [&]()
+		{
+			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+			{
+				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+				return;
+			}
+			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget text");
+				return;
+			}
+
+			textWidget.Text = s_WidgetText.CurrentOption;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetTextSize.Label = "Text Size";
 		s_WidgetTextSize.Flags |= EditorUI::EditFloat_Indented;
+		s_WidgetTextSize.ConfirmAction = [&]()
+		{
+			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+			{
+				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+				return;
+			}
+			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget text size");
+				return;
+			}
+
+			textWidget.TextSize = s_WidgetTextSize.CurrentFloat;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetTextColor.Label = "Text Color";
-		s_WidgetTextColor.Flags |= EditorUI::EditVec4_Indented;
+		s_WidgetTextColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		s_WidgetTextColor.ConfirmAction = [&]()
+		{
+			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+			{
+				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+				return;
+			}
+			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget text color");
+				return;
+			}
+
+			textWidget.TextColor = s_WidgetTextColor.CurrentVec4;
+			s_MainHeader.EditColorActive = true;
+		};
 
 		s_WidgetCentered.Label = "Centered";
 		s_WidgetCentered.Flags |= EditorUI::Checkbox_Indented;
+		s_WidgetCentered.ConfirmAction = [&](bool value)
+		{
+			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+			{
+				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+				return;
+			}
+			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+			if (!m_ActiveWindow)
+			{
+				KG_WARN("No valid widget active when trying to update widget's TextCentered field");
+				return;
+			}
+
+			textWidget.TextCentered = value;
+			s_MainHeader.EditColorActive = true;
+		};
+	}
+
+	void UIEditorPanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
+	{
+		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		EditorUI::TreePath windowPath = s_UITree.GetPathFromEntryReference(&windowEntry);
+		if (!windowPath)
+		{
+			KG_WARN("Could not locate window path inside s_UITree");
+			return;
+		}
+
+		// Create Text Widget
+		auto& window = panel.m_EditorUI->m_Windows.at(windowEntry.Handle);
+		Ref<RuntimeUI::TextWidget> newTextWidget = CreateRef<RuntimeUI::TextWidget>();
+
+		// Create new widget entry for s_UITree
+		EditorUI::TreeEntry newWidgetEntry {};
+		newWidgetEntry.Label = newTextWidget->Tag;
+		newWidgetEntry.IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+		newWidgetEntry.ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.Handle); ;
+		newWidgetEntry.Handle = window.Widgets.size();
+		newWidgetEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+		{
+			UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(*(uint32_t*)entry.ProvidedData.get());
+			panel.m_ActiveWidget = panel.m_ActiveWindow->Widgets.at(entry.Handle).get();
+			panel.m_CurrentDisplay = UIPropertiesDisplay::Widget;
+			EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
+			s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
+		};
+		newWidgetEntry.OnRightClickSelection.push_back({ "Delete Widget", DeleteWidget });
+
+		// Add Widget to RuntimeUI and EditorUI::Tree
+		window.AddWidget(newTextWidget);
+		windowEntry.SubEntries.push_back(newWidgetEntry);
+	}
+
+	void UIEditorPanel::DeleteWindow(EditorUI::TreeEntry& entry)
+	{
+		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		EditorUI::TreePath path = s_UITree.GetPathFromEntryReference(&entry);
+		if (!path)
+		{
+			KG_WARN("Could not locate window path inside s_UITree");
+			return;
+		}
+		auto& windows = panel.m_EditorUI->m_Windows;
+		windows.erase(windows.begin() + entry.Handle);
+		s_UITree.RemoveEntry(path);
+		panel.m_ActiveWidget = nullptr;
+		panel.m_ActiveWindow = nullptr;
+		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
+
+		s_MainHeader.EditColorActive = true;
+		RecalculateTreeIterators();
+
+	}
+
+	void UIEditorPanel::DeleteWidget(EditorUI::TreeEntry& entry)
+	{
+		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		EditorUI::TreePath path = s_UITree.GetPathFromEntryReference(&entry);
+		if (!path)
+		{
+			KG_WARN("Could not locate widget path inside s_UITree");
+			return;
+		}
+		auto& windows = panel.m_EditorUI->m_Windows;
+		auto& widgets = windows.at(*(uint32_t*)entry.ProvidedData.get()).Widgets;
+
+		widgets.erase(widgets.begin() + entry.Handle);
+		s_UITree.RemoveEntry(path);
+		panel.m_ActiveWidget = nullptr;
+		panel.m_ActiveWindow = nullptr;
+		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
+
+		s_MainHeader.EditColorActive = true;
+		RecalculateTreeIterators();
+
+	}
+
+	void UIEditorPanel::AddWindow()
+	{
+		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		EditorUI::TreeEntry newEntry {};
+		newEntry.Label = "None";
+		newEntry.IconHandle = EditorUI::EditorUIService::s_IconWindow;
+		newEntry.Handle = s_UITree.GetTreeEntries().size();
+		newEntry.OnLeftClick = [&](EditorUI::TreeEntry& entry)
+		{
+			UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(entry.Handle);
+			panel.m_CurrentDisplay = UIPropertiesDisplay::Window;
+			EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
+			s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
+		};
+
+		newEntry.OnRightClickSelection.push_back({ "Delete Window", DeleteWindow });
+
+		newEntry.OnRightClickSelection.push_back({ "Add Text Widget", AddTextWidget });
+
+		s_UITree.InsertEntry(newEntry);
+		panel.m_EditorUI->m_Windows.push_back({});
+		s_MainHeader.EditColorActive = true;
 	}
 }

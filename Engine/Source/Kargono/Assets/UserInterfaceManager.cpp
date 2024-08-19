@@ -129,20 +129,6 @@ namespace Kargono::Assets
 			out << YAML::Key << "ChildBufferSize" << YAML::Value << window.ChildBufferSize;
 			out << YAML::Key << "DefaultActiveWidget" << YAML::Value << window.DefaultActiveWidget;
 
-			out << YAML::Key << "WidgetCounts" << YAML::Value;
-			out << YAML::BeginMap; // Begin WidgetCounts Map
-			out << YAML::Key << "TextWidgetCount" << YAML::Value << window.WidgetCounts.TextWidgetCount;
-			out << YAML::Key << "TextWidgetLocation" << YAML::Value << window.WidgetCounts.TextWidgetLocation;
-			out << YAML::Key << "ButtonWidgetCount" << YAML::Value << window.WidgetCounts.ButtonWidgetCount;
-			out << YAML::Key << "ButtonWidgetLocation" << YAML::Value << window.WidgetCounts.ButtonWidgetLocation;
-			out << YAML::Key << "CheckboxWidgetCount" << YAML::Value << window.WidgetCounts.CheckboxWidgetCount;
-			out << YAML::Key << "CheckboxWidgetLocation" << YAML::Value << window.WidgetCounts.CheckboxWidgetLocation;
-			out << YAML::Key << "ComboWidgetCount" << YAML::Value << window.WidgetCounts.ComboWidgetCount;
-			out << YAML::Key << "ComboWidgetLocation" << YAML::Value << window.WidgetCounts.ComboWidgetLocation;
-			out << YAML::Key << "PopupWidgetCount" << YAML::Value << window.WidgetCounts.PopupWidgetCount;
-			out << YAML::Key << "PopupWidgetLocation" << YAML::Value << window.WidgetCounts.PopupWidgetLocation;
-			out << YAML::EndMap; // End WidgetCounts Map
-
 			out << YAML::Key << "Widgets" << YAML::Value;
 			out << YAML::BeginSeq; // Begin Widget Sequence
 
@@ -272,18 +258,6 @@ namespace Kargono::Assets
 				newWindow.ChildBufferIndex = window["ChildBufferIndex"].as<int32_t>();
 				newWindow.ChildBufferSize = window["ChildBufferSize"].as<uint32_t>();
 				newWindow.DefaultActiveWidget = window["DefaultActiveWidget"].as<int32_t>();
-
-				auto widgetCounts = window["WidgetCounts"];
-				newWindow.WidgetCounts.TextWidgetCount = widgetCounts["TextWidgetCount"].as<uint16_t>();
-				newWindow.WidgetCounts.TextWidgetLocation = widgetCounts["TextWidgetLocation"].as<uint16_t>();
-				newWindow.WidgetCounts.ButtonWidgetCount = widgetCounts["ButtonWidgetCount"].as<uint16_t>();
-				newWindow.WidgetCounts.ButtonWidgetLocation = widgetCounts["ButtonWidgetLocation"].as<uint16_t>();
-				newWindow.WidgetCounts.CheckboxWidgetCount = widgetCounts["CheckboxWidgetCount"].as<uint16_t>();
-				newWindow.WidgetCounts.CheckboxWidgetLocation = widgetCounts["CheckboxWidgetLocation"].as<uint16_t>();
-				newWindow.WidgetCounts.ComboWidgetCount = widgetCounts["ComboWidgetCount"].as<uint16_t>();
-				newWindow.WidgetCounts.ComboWidgetLocation = widgetCounts["ComboWidgetLocation"].as<uint16_t>();
-				newWindow.WidgetCounts.PopupWidgetCount = widgetCounts["PopupWidgetCount"].as<uint16_t>();
-				newWindow.WidgetCounts.PopupWidgetLocation = widgetCounts["PopupWidgetLocation"].as<uint16_t>();
 
 				auto widgets = window["Widgets"];
 

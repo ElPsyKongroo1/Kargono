@@ -301,10 +301,9 @@ namespace Kargono::Panels
 				else
 				{
 					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
-					std::string displayValue {Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName };
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
-						displayValue,
+						Utility::ScriptToString(script),
 						iteration,
 						s_EditKeyboardSlot,
 						nullptr
@@ -380,8 +379,7 @@ namespace Kargono::Panels
 					{
 						continue;
 					}
-					s_KeyboardOnUpdateAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) + 
-						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					s_KeyboardOnUpdateAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 				}
 				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
@@ -523,10 +521,9 @@ namespace Kargono::Panels
 				else
 				{
 					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
-					std::string displayValue {Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + ":" + script->m_ScriptName };
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
-						displayValue,
+						Utility::ScriptToString(script),
 						iteration,
 						s_EditKeyboardSlot,
 						nullptr

@@ -75,11 +75,13 @@ namespace Kargono::RuntimeUI
 
 			for (auto& window : s_ActiveUI->m_Windows)
 			{
-				if (window.WidgetCounts.TextWidgetCount < 1){ continue; }
-				for (uint32_t iterator{0}; iterator < window.WidgetCounts.TextWidgetCount; iterator++)
+				for (auto& widget : window.Widgets)
 				{
-					auto textWidget = (TextWidget*)window.Widgets.at(window.WidgetCounts.TextWidgetLocation + iterator).get();
-					textWidget->CalculateTextSize();
+					if (widget->WidgetType == WidgetTypes::TextWidget)
+					{
+						TextWidget* textWidget = (TextWidget*)widget.get();
+						textWidget->CalculateTextSize();
+					}
 				}
 			}
 
@@ -147,9 +149,6 @@ namespace Kargono::RuntimeUI
 			(float)0, static_cast<float>(viewportHeight), (float)-1, (float)1);
 		Math::mat4 outputMatrix = orthographicProjection;
 
-		/*Math::vec2 windowLocation = Math::vec2(0.3f, 0.2f);
-		Math::vec2 windowSize = Math::vec2(0.2f, 0.2f);*/
-
 		Rendering::RenderingService::BeginScene(outputMatrix);
 
 		// Submit all windows
@@ -190,11 +189,13 @@ namespace Kargono::RuntimeUI
 
 		for (auto& window : s_ActiveUI->m_Windows)
 		{
-			if (window.WidgetCounts.TextWidgetCount < 1) { continue; }
-			for (uint32_t iterator{ 0 }; iterator < window.WidgetCounts.TextWidgetCount; iterator++)
+			for (auto& widget : window.Widgets)
 			{
-				auto textWidget = (TextWidget*)window.Widgets.at(window.WidgetCounts.TextWidgetLocation + iterator).get();
-				textWidget->CalculateTextSize();
+				if (widget->WidgetType == WidgetTypes::TextWidget)
+				{
+					TextWidget* textWidget = (TextWidget*)widget.get();
+					textWidget->CalculateTextSize();
+				}
 			}
 		}
 	}
@@ -202,28 +203,6 @@ namespace Kargono::RuntimeUI
 	std::vector<Window>& RuntimeUIService::GetActiveWindows()
 	{
 		return s_ActiveUI->m_Windows;
-	}
-
-	void Window::IncrementIterators(uint16_t iterator)
-	{
-		// Note that comparisons with itself does not cause increment
-		//		Ex: TextWidgetLocation is not greater than TextWidgetLocation
-		if (WidgetCounts.TextWidgetLocation > iterator) { WidgetCounts.TextWidgetLocation++; }
-		if (WidgetCounts.ButtonWidgetLocation > iterator) { WidgetCounts.ButtonWidgetLocation++; }
-		if (WidgetCounts.CheckboxWidgetLocation > iterator) { WidgetCounts.CheckboxWidgetLocation++; }
-		if (WidgetCounts.ComboWidgetLocation > iterator) { WidgetCounts.ComboWidgetLocation++; }
-		if (WidgetCounts.PopupWidgetLocation > iterator) { WidgetCounts.PopupWidgetLocation++; }
-	}
-
-	void Window::DecrementIterators(uint16_t iterator)
-	{
-		// Note that comparisons with itself does not cause increment
-		//		Ex: TextWidgetLocation is not greater than TextWidgetLocation
-		if (WidgetCounts.TextWidgetLocation > iterator) { WidgetCounts.TextWidgetLocation--; }
-		if (WidgetCounts.ButtonWidgetLocation > iterator) { WidgetCounts.ButtonWidgetLocation--; }
-		if (WidgetCounts.CheckboxWidgetLocation > iterator) { WidgetCounts.CheckboxWidgetLocation--; }
-		if (WidgetCounts.ComboWidgetLocation > iterator) { WidgetCounts.ComboWidgetLocation--; }
-		if (WidgetCounts.PopupWidgetLocation > iterator) { WidgetCounts.PopupWidgetLocation--; }
 	}
 
 	void RuntimeUIService::RefreshDisplayedWindows()
@@ -733,91 +712,14 @@ namespace Kargono::RuntimeUI
 		return WindowDisplayed;
 	}
 
-	void Window::AddTextWidget(Ref<TextWidget> newWidget)
+	void Window::AddWidget(Ref<Widget> newWidget)
 	{
-		if (WidgetCounts.TextWidgetCount == 0)
-		{
-			WidgetCounts.TextWidgetLocation = static_cast<uint16_t>(Widgets.size());
-			Widgets.push_back(newWidget);
-			WidgetCounts.TextWidgetCount++;
-			return;
-		}
-
-		Widgets.insert(Widgets.begin() + WidgetCounts.TextWidgetLocation + WidgetCounts.TextWidgetCount, newWidget);
-		Window::IncrementIterators(WidgetCounts.TextWidgetLocation);
-		WidgetCounts.TextWidgetCount++;
-
-	}
-	void Window::AddButtonWidget(Ref<ButtonWidget> newWidget)
-	{
-		if (WidgetCounts.ButtonWidgetCount == 0)
-		{
-			WidgetCounts.ButtonWidgetLocation = static_cast<uint16_t>(Widgets.size());
-			Widgets.push_back(newWidget);
-			WidgetCounts.ButtonWidgetCount++;
-			return;
-		}
-
-		Widgets.insert(Widgets.begin() + WidgetCounts.ButtonWidgetLocation + WidgetCounts.ButtonWidgetCount, newWidget);
-		Window::IncrementIterators(WidgetCounts.ButtonWidgetLocation);
-		WidgetCounts.ButtonWidgetCount++;
-	}
-	void Window::AddCheckboxWidget(Ref<CheckboxWidget> newWidget)
-	{
-		if (WidgetCounts.CheckboxWidgetCount == 0)
-		{
-			WidgetCounts.CheckboxWidgetLocation = static_cast<uint16_t>(Widgets.size());
-			Widgets.push_back(newWidget);
-			WidgetCounts.CheckboxWidgetCount++;
-			return;
-		}
-
-		Widgets.insert(Widgets.begin() + WidgetCounts.CheckboxWidgetLocation + WidgetCounts.CheckboxWidgetCount, newWidget);
-		Window::IncrementIterators(WidgetCounts.CheckboxWidgetLocation);
-		WidgetCounts.CheckboxWidgetCount++;
-	}
-	void Window::AddComboWidget(Ref<ComboWidget> newWidget)
-	{
-		if (WidgetCounts.ComboWidgetCount == 0)
-		{
-			WidgetCounts.ComboWidgetLocation = static_cast<uint16_t>(Widgets.size());
-			Widgets.push_back(newWidget);
-			WidgetCounts.ComboWidgetCount++;
-			return;
-		}
-
-		Widgets.insert(Widgets.begin() + WidgetCounts.ComboWidgetLocation + WidgetCounts.ComboWidgetCount, newWidget);
-		Window::IncrementIterators(WidgetCounts.ComboWidgetLocation);
-		WidgetCounts.ComboWidgetCount++;
-	}
-	void Window::AddPopupWidget(Ref<PopupWidget> newWidget)
-	{
-		if (WidgetCounts.PopupWidgetCount == 0)
-		{
-			WidgetCounts.PopupWidgetLocation = static_cast<uint16_t>(Widgets.size());
-			Widgets.push_back(newWidget);
-			WidgetCounts.PopupWidgetCount++;
-			return;
-		}
-
-		Widgets.insert(Widgets.begin() + WidgetCounts.PopupWidgetLocation + WidgetCounts.PopupWidgetCount, newWidget);
-		Window::IncrementIterators(WidgetCounts.PopupWidgetLocation);
-		WidgetCounts.PopupWidgetCount++;
+		Widgets.push_back(newWidget);
 	}
 
 	void Window::DeleteWidget(int32_t widgetLocation)
 	{
 		KG_ASSERT(widgetLocation >= 0, "Invalid Location provided to DeleteWidget!");
-		switch (Widgets.at(widgetLocation)->WidgetType)
-		{
-		case WidgetTypes::TextWidget: {WidgetCounts.TextWidgetCount--;  break; }
-		case WidgetTypes::ButtonWidget: {WidgetCounts.ButtonWidgetCount--;  break; }
-		case WidgetTypes::CheckboxWidget: {WidgetCounts.CheckboxWidgetCount--;  break; }
-		case WidgetTypes::ComboWidget: {WidgetCounts.ComboWidgetCount--;  break; }
-		case WidgetTypes::PopupWidget: {WidgetCounts.PopupWidgetCount--;  break; }
-		}
-
-		DecrementIterators(static_cast<int16_t>(widgetLocation));
 
 		Widgets.erase(Widgets.begin() + widgetLocation);
 	}
@@ -840,12 +742,9 @@ namespace Kargono::RuntimeUI
 		// Render Text
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize = (viewportWidth * 0.15f * TextSize) * (resolution.y / resolution.x);
-		//textSize /= RuntimeEngine::s_Engine.m_CurrentFont->GetAverageWidth();
-
 
 		if (TextCentered)
 		{
-			//widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f), widgetTranslation.z);
 			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
 		}
 

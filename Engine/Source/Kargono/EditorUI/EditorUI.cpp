@@ -2339,9 +2339,5 @@ namespace Kargono::EditorUI
 		{
 			ExpandedNodes.insert(nodePath);
 		}
-		
-
-
-
 	}
 }
