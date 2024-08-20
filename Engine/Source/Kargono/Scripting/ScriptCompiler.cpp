@@ -28,8 +28,15 @@ namespace Kargono::Scripting
 		// Get Tokens from Text
 		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
 
+		for (auto& token : tokens)
+		{
+			KG_TRACE_CRITICAL("Token: Type ({}) Value ({}) at {}:{}", 
+				Utility::ScriptTokenTypeToString(token.Type), token.Value, token.Line, token.Column );
+		}
+
 		TokenParser tokenParser{};
 		auto [success, newAST] = tokenParser.ParseTokens(std::move(tokens));
+
 
 		if (!success)
 		{
@@ -64,7 +71,7 @@ namespace Kargono::Scripting
 
 				// Check for keywords
 				bool foundKeyword = false;
-				for (auto& keyword : m_Keywords)
+				for (auto& keyword : s_Keywords)
 				{
 					if (m_TextBuffer == keyword)
 					{
@@ -80,11 +87,11 @@ namespace Kargono::Scripting
 
 				// Check for primitive types
 				bool foundPrimitiveType = false;
-				for (auto& primitiveType : m_PrimitiveTypes)
+				for (auto& primitiveType : s_PrimitiveTypes)
 				{
-					if (m_TextBuffer == primitiveType)
+					if (m_TextBuffer == primitiveType.Name)
 					{
-						AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, {primitiveType});
+						AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, {primitiveType.Name});
 						foundPrimitiveType = true;
 						break;
 					}
@@ -308,11 +315,11 @@ namespace Kargono::Scripting
 			{
 				KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
 			}
-			else if constexpr (std::is_same_v<type, StatementLiteral>)
+			else if constexpr (std::is_same_v<type, StatementExpression>)
 			{
-				KG_INFO("{}Literal Statement", GetIndentation(indentation));
-				KG_INFO("{}Literal Value", GetIndentation(indentation + 1));
-				PrintToken(state.ExpressionValue, indentation + 2);
+				KG_INFO("{}Expression Statement", GetIndentation(indentation));
+				KG_INFO("{}Expression Value", GetIndentation(indentation + 1));
+				PrintToken(state.Value.Value, indentation + 2);
 			}
 			else if constexpr (std::is_same_v<type, StatementDeclaration>)
 			{
@@ -330,7 +337,7 @@ namespace Kargono::Scripting
 				KG_INFO("{}Declared Name/Identifier", GetIndentation(indentation + 1));
 				PrintToken(state.Name, indentation + 2);
 				KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
-				PrintToken(state.Value, indentation + 2);
+				PrintToken(state.Value.Value, indentation + 2);
 			}
 		}, statement);
 	}
@@ -346,9 +353,9 @@ namespace Kargono::Scripting
 		{
 			KG_INFO("{}Parameter:", GetIndentation(indentation + 1));
 			KG_INFO("{}ParameterType:", GetIndentation(indentation + 2));
-			PrintToken(parameter.ParameterType, indentation + 3);
+			PrintToken(parameter.Type, indentation + 3);
 			KG_INFO("{}ParameterName:", GetIndentation(indentation + 2));
-			PrintToken(parameter.ParameterName, indentation + 3);
+			PrintToken(parameter.Identifier, indentation + 3);
 		}
 		for (auto& statement : funcNode.Statements)
 		{
@@ -379,63 +386,67 @@ namespace Kargono::Scripting
 
 	std::tuple<bool, Statement> TokenParser::ParseStatementNode()
 	{
-		Statement newStatementEmpty{};
+		Statement newStatement{};
 
 		ScriptToken tokenBuffer = GetCurrentToken();
-		if (tokenBuffer.Type == ScriptTokenType::Semicolon)
+		
+		// Parse Statement Empty
 		{
-			newStatementEmpty.emplace<StatementEmpty>();
-			Advance();
-			return { true, newStatementEmpty };
-		}
-
-		if ((tokenBuffer.Type == ScriptTokenType::StringLiteral || tokenBuffer.Type == ScriptTokenType::IntegerLiteral) 
-			&& GetCurrentToken(1).Type == ScriptTokenType::Semicolon)
-		{
-			StatementLiteral newStatementLiteral{ tokenBuffer };
-			newStatementEmpty.emplace<StatementLiteral>(newStatementLiteral);
-			Advance(2);
-			return { true, newStatementEmpty };
-		}
-
-		if (tokenBuffer.Type == ScriptTokenType::PrimitiveType && GetCurrentToken(1).Type == ScriptTokenType::Identifier
-			&& GetCurrentToken(2).Type == ScriptTokenType::Semicolon)
-		{
-			StatementDeclaration newStatementDeclaration{ tokenBuffer, GetCurrentToken(1)};
-			newStatementEmpty.emplace<StatementDeclaration>(newStatementDeclaration);
-			Advance(3);
-			return { true, newStatementEmpty };
-		}
-
-		if (tokenBuffer.Type == ScriptTokenType::PrimitiveType && GetCurrentToken(1).Type == ScriptTokenType::Identifier
-			&& GetCurrentToken(2).Type == ScriptTokenType::AssignmentOperator
-			&& (GetCurrentToken(3).Type == ScriptTokenType::StringLiteral || GetCurrentToken(3).Type == ScriptTokenType::IntegerLiteral)
-			&& GetCurrentToken(4).Type == ScriptTokenType::Semicolon)
-		{
-			std::vector<ScriptTokenType> acceptableTypes = Utility::PrimitiveTypeAcceptableInput(GetCurrentToken().Value);
-			bool success = false;
-			for (ScriptTokenType type : acceptableTypes)
+			auto [success, statement] = ParseStatementEmpty();
+			if (success)
 			{
-				if (type == GetCurrentToken(3).Type)
-				{
-					success = true;
-				}
+				return { success, statement };
 			}
-			if (!success)
-			{
-				StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
-				return { false, newStatementEmpty };
-			}
-
-			StatementAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), GetCurrentToken(3) };
-			newStatementEmpty.emplace<StatementAssignment>(newStatementAssignment);
-			Advance(5);
-			return { true, newStatementEmpty };
 		}
 
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
 
+		// Parse Statement Expression
+		{
+			auto [success, statement] = ParseStatementExpression();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
 
-		return { false, newStatementEmpty };
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
+
+		// Parse Statement Declaration
+		{
+			auto [success, statement] = ParseStatementDeclaration();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
+
+		// Parse Statement Assignment
+		{
+			auto [success, statement] = ParseStatementAssignment();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
+
+		return { false, newStatement };
 	}
 
 	std::tuple<bool, FunctionNode> TokenParser::ParseFunctionNode()
@@ -470,13 +481,14 @@ namespace Kargono::Scripting
 		}
 
 		// Parameter List
+		AddStackFrame();
 		Advance();
 		tokenBuffer = GetCurrentToken();
 		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
 		{
 			FunctionParameter newParameter{};
 			// Store type of current parameter
-			newParameter.ParameterType = tokenBuffer;
+			newParameter.Type = tokenBuffer;
 
 			// Check and store parameter name
 			Advance();
@@ -486,9 +498,9 @@ namespace Kargono::Scripting
 				StoreParseError(ParseErrorType::FuncParam, "Expecting an identifier for parameter in function signature");
 				return { false, newFunctionNode };
 			}
-			newParameter.ParameterName = tokenBuffer;
+			newParameter.Identifier = tokenBuffer;
 			newFunctionNode.Parameters.push_back(newParameter);
-
+			StoreStackVariable(newParameter.Type, newParameter.Identifier);
 
 			// Check for comma
 			Advance();
@@ -549,7 +561,154 @@ namespace Kargono::Scripting
 			return { false, newFunctionNode };
 		}
 
+		// Remove current stack variables
+		PopStackFrame();
+
 		return { true, newFunctionNode };
+	}
+	std::tuple<bool, Expression> TokenParser::ParseExpressionNode(uint32_t& expressionSize)
+	{
+		Expression newExpression{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+		if ((tokenBuffer.Type != ScriptTokenType::StringLiteral && 
+			tokenBuffer.Type != ScriptTokenType::IntegerLiteral && 
+			tokenBuffer.Type != ScriptTokenType::Identifier))
+		{
+			return { false, {} };
+		}
+
+		newExpression.Value = tokenBuffer;
+		expressionSize++;
+		return { true, newExpression };
+		
+	}
+	std::tuple<bool, Statement> TokenParser::ParseStatementEmpty()
+	{
+		Statement newStatement{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+
+		if (tokenBuffer.Type != ScriptTokenType::Semicolon)
+		{
+			return { false, {} };
+		}
+
+		newStatement.emplace<StatementEmpty>();
+		Advance();
+		return { true, newStatement };
+	}
+	std::tuple<bool, Statement> TokenParser::ParseStatementExpression()
+	{
+		Statement newStatement{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+
+		// Check for an expression
+		uint32_t expressionSize{ 0 };
+		{
+			auto [success, expression] = ParseExpressionNode(expressionSize);
+
+			if (!success)
+			{
+				return { false, {} };
+			}
+		}
+
+		// Check for a terminating semicolon
+		if (GetCurrentToken(expressionSize).Type != ScriptTokenType::Semicolon)
+		{
+			return { false, {} };
+		}
+
+		if (tokenBuffer.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenBuffer))
+		{
+			StoreParseError(ParseErrorType::StateValue, "Could not locate identifier in current stack!");
+			return { false, newStatement };
+		}
+
+		Expression newExpression{ tokenBuffer };
+		StatementExpression newStatementExpression{ newExpression };
+		newStatement.emplace<StatementExpression>(newStatementExpression);
+		Advance(1 + expressionSize);
+		return { true, newStatement };
+	}
+	std::tuple<bool, Statement> TokenParser::ParseStatementDeclaration()
+	{
+		Statement newStatement{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+
+		if (tokenBuffer.Type != ScriptTokenType::PrimitiveType || 
+			GetCurrentToken(1).Type != ScriptTokenType::Identifier ||
+			GetCurrentToken(2).Type != ScriptTokenType::Semicolon)
+		{
+			return { false, {} };
+		}
+
+		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
+		{
+			StoreParseError(ParseErrorType::StateValue, "Duplicate identifier found during declaration");
+			return { false, newStatement };
+		}
+
+		StatementDeclaration newStatementDeclaration{ tokenBuffer, GetCurrentToken(1) };
+		newStatement.emplace<StatementDeclaration>(newStatementDeclaration);
+		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
+		Advance(3);
+		return { true, newStatement };
+	}
+	std::tuple<bool, Statement> TokenParser::ParseStatementAssignment()
+	{
+		Statement newStatement{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+
+		// Check for Type, Identifier, and Assignment Operator
+		if (tokenBuffer.Type != ScriptTokenType::PrimitiveType || 
+			GetCurrentToken(1).Type != ScriptTokenType::Identifier ||
+			GetCurrentToken(2).Type != ScriptTokenType::AssignmentOperator)
+		{
+			return { false, {} };
+		}
+
+		// Check for an expression
+		uint32_t expressionSize{ 0 };
+		{
+			Advance(3);
+			auto [success, expression] = ParseExpressionNode(expressionSize);
+			Advance(-3);
+			if (!success)
+			{
+				return { false, {} };
+			}
+		}
+
+		// Check for semicolon
+		if (GetCurrentToken(3 + expressionSize).Type != ScriptTokenType::Semicolon)
+		{
+			return { false, {} };
+		}
+
+		bool success = PrimitiveTypeAcceptableToken(GetCurrentToken().Value, GetCurrentToken(3));
+		if (!success)
+		{
+			StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
+			return { false, newStatement };
+		}
+
+		if (GetCurrentToken(3).Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(GetCurrentToken(3)))
+		{
+			StoreParseError(ParseErrorType::StateValue, "Could not locate identifier in the stack!");
+			return { false, newStatement };
+		}
+
+		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
+		{
+			StoreParseError(ParseErrorType::StateValue, "Duplicate identifier found during declaration");
+			return { false, newStatement };
+		}
+		Expression newExpression{ GetCurrentToken(3) };
+		StatementAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), newExpression };
+		newStatement.emplace<StatementAssignment>(newStatementAssignment);
+		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
+		Advance(4 + expressionSize);
+		return { true, newStatement };
 	}
 	ScriptToken TokenParser::GetCurrentToken(int32_t offset)
 	{
@@ -569,6 +728,77 @@ namespace Kargono::Scripting
 	{
 		m_TokenLocation += count;
 	}
+
+	void TokenParser::StoreStackVariable(ScriptToken type, ScriptToken identifier)
+	{
+		KG_ASSERT(m_StackVariables.size() > 0);
+
+		std::vector<StackVariable>& currentStackFrame = m_StackVariables.back();
+		StackVariable newStack{ type, identifier };
+		currentStackFrame.push_back(newStack);
+	}
+
+	void TokenParser::AddStackFrame()
+	{
+		m_StackVariables.push_back({});
+	}
+
+	void TokenParser::PopStackFrame()
+	{
+		m_StackVariables.pop_back();
+	}
+
+	bool TokenParser::CheckStackForIdentifier(ScriptToken identifier)
+	{
+		// Search each stack frame in reverse to check most recent identifiers first
+		for (auto stackIterator = m_StackVariables.rbegin(); stackIterator != m_StackVariables.rend(); ++stackIterator) 
+		{
+			for (auto& stackVariable : *stackIterator)
+			{
+				if (stackVariable.Identifier.Value == identifier.Value)
+				{
+					return true;
+				}
+			}
+		}
+		// Return false if identifier could not be found
+		return false;
+	}
+
+	bool TokenParser::CheckCurrentStackFrameForIdentifier(ScriptToken identifier)
+	{
+		// Get the current stack frame
+		std::vector<StackVariable>& currentFrame = m_StackVariables.back();
+
+		// Search through stack frame for identifier
+		for (auto& stackVariable : currentFrame)
+		{
+			if (stackVariable.Identifier.Value == identifier.Value)
+			{
+				return true;
+			}
+		}
+		// Return false if identifier could not be found
+		return false;
+	}
+
+	StackVariable TokenParser::GetStackVariable(ScriptToken identifier)
+	{
+		// Search each stack frame in reverse to check most recent identifiers first
+		for (auto stackIterator = m_StackVariables.rbegin(); stackIterator != m_StackVariables.rend(); ++stackIterator)
+		{
+			for (auto& stackVariable : *stackIterator)
+			{
+				if (stackVariable.Identifier.Value == identifier.Value)
+				{
+					return stackVariable;
+				}
+			}
+		}
+		// Return false if identifier could not be found
+		return {};
+	}
+	
 	void TokenParser::StoreParseError(ParseErrorType errorType, const std::string& message)
 	{
 		m_Errors.push_back({ errorType , message, GetCurrentToken(), 
@@ -578,6 +808,41 @@ namespace Kargono::Scripting
 	bool TokenParser::CheckForErrors()
 	{
 		return m_Errors.size() > 0;
+	}
+
+	bool TokenParser::PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token)
+	{
+		// Search all primitive types to check if token is acceptable
+		for (auto& primitiveType : s_PrimitiveTypes)
+		{
+			if (type == primitiveType.Name)
+			{
+				if (token.Type == primitiveType.AcceptableLiteral)
+				{
+					return true;
+				}
+				if (token.Type == ScriptTokenType::Identifier)
+				{
+					StackVariable variable = GetStackVariable(token);
+					if (!variable)
+					{
+						StoreParseError(ParseErrorType::PrimTypeAccep, "Could not find StackVariable with specified identifier");
+						return false;
+					}
+
+					if (variable.Type.Type == ScriptTokenType::PrimitiveType && variable.Type.Value == primitiveType.Name)
+					{
+						return true;
+					}
+
+					StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
+					return false;
+				}
+			}
+		}
+
+		StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid primitive type provided");
+		return false;
 	}
 
 }

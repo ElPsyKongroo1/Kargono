@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 #include <variant>
+#include <unordered_map>
 
 namespace Kargono::Scripting
 {
@@ -56,12 +57,32 @@ namespace Kargono::Scripting
 		StatePunc,
 		StateValue,
 
+		// Validation Function Error Codes
+		PrimTypeAccep,
+
+
 		// Program Boundaries
 		ProgEnd
 	};
 
 	static inline uint32_t InvalidLine { std::numeric_limits<uint32_t>::max() };
 	static inline uint32_t InvalidColumn { std::numeric_limits<uint32_t>::max() };
+
+	inline std::vector<std::string> s_Keywords {"return", "void"};
+
+	struct PrimitiveType
+	{
+		std::string Name {};
+		ScriptTokenType AcceptableLiteral{};
+	};
+
+
+
+	inline std::vector<PrimitiveType> s_PrimitiveTypes 
+	{
+		{"String", ScriptTokenType::StringLiteral}, 
+		{ "UInt16", ScriptTokenType::IntegerLiteral }
+	};
 
 }
 
@@ -99,21 +120,6 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline std::vector<Scripting::ScriptTokenType> PrimitiveTypeAcceptableInput(const std::string& type)
-	{
-		if (type == "String")
-		{
-			return { Scripting::ScriptTokenType::StringLiteral };
-		}
-
-		if (type == "UInt16")
-		{
-			return { Scripting::ScriptTokenType::IntegerLiteral };
-		}
-
-		return {};
-	}
-
 	inline std::string ParseErrorTypeToString(Scripting::ParseErrorType type)
 	{
 		switch (type)
@@ -126,6 +132,8 @@ namespace Kargono::Utility
 
 			case Scripting::ParseErrorType::StatePunc: return "StatePunc";
 			case Scripting::ParseErrorType::StateValue: return "StateValue";
+
+			case Scripting::ParseErrorType::PrimTypeAccep: return "PrimTypeAccep";
 
 			case Scripting::ParseErrorType::ProgEnd: return "ProgEnd";
 
@@ -183,18 +191,21 @@ namespace Kargono::Scripting
 		uint32_t m_TextLocation{ 0 };
 		uint32_t m_LineCount{ 1 };
 		uint32_t m_ColumnCount{ 0 };
+	};
 
-		std::vector<std::string> m_Keywords {"return", "void"};
-		std::vector<std::string> m_PrimitiveTypes {"String", "UInt16"};
+
+	struct Expression
+	{
+		ScriptToken Value{};
 	};
 
 	struct StatementEmpty
 	{
 	};
 
-	struct StatementLiteral
+	struct StatementExpression
 	{
-		ScriptToken ExpressionValue{};
+		Expression Value{};
 	};
 
 	struct StatementDeclaration
@@ -207,15 +218,15 @@ namespace Kargono::Scripting
 	{
 		ScriptToken Type{};
 		ScriptToken Name{};
-		ScriptToken Value{};
+		Expression Value{};
 	};
 
-	using Statement = std::variant<StatementEmpty, StatementLiteral, StatementDeclaration, StatementAssignment>;
+	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment>;
 
 	struct FunctionParameter
 	{
-		ScriptToken ParameterType{};
-		ScriptToken ParameterName{};
+		ScriptToken Type{};
+		ScriptToken Identifier{};
 	};
 
 	struct FunctionNode
@@ -273,6 +284,18 @@ namespace Kargono::Scripting
 
 	};
 
+	struct StackVariable 
+	{
+	public:
+		ScriptToken Type{};
+		ScriptToken Identifier{};
+	public:
+		operator bool() const
+		{
+			return Type && Identifier;
+		}
+	};
+
 	class TokenParser
 	{
 	public:
@@ -282,14 +305,28 @@ namespace Kargono::Scripting
 	private:
 		std::tuple<bool, Statement> ParseStatementNode();
 		std::tuple<bool, FunctionNode> ParseFunctionNode();
-
+		std::tuple<bool, Expression> ParseExpressionNode(uint32_t& expressionSize);
+	private:
+		std::tuple<bool, Statement> ParseStatementEmpty();
+		std::tuple<bool, Statement> ParseStatementExpression();
+		std::tuple<bool, Statement> ParseStatementDeclaration();
+		std::tuple<bool, Statement> ParseStatementAssignment();
+	private:
 		ScriptToken GetCurrentToken(int32_t offset = 0);
 		void Advance(uint32_t count = 1);
+		void StoreStackVariable(ScriptToken type, ScriptToken identifier);
+		void AddStackFrame();
+		void PopStackFrame();
+		bool CheckStackForIdentifier(ScriptToken identifier);
+		bool CheckCurrentStackFrameForIdentifier(ScriptToken identifier);
+		StackVariable GetStackVariable(ScriptToken identifier);
 		void StoreParseError(ParseErrorType errorType, const std::string& message);
 		bool CheckForErrors();
+		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
 	private:
 		std::vector<ScriptToken> m_Tokens{};
 		std::vector<ParserError> m_Errors {};
+		std::vector<std::vector<StackVariable>> m_StackVariables{};
 		ScriptAST m_AST{};
 		uint32_t m_TokenLocation{0};
 	};
