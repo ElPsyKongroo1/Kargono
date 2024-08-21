@@ -53,6 +53,9 @@ namespace Kargono::Scripting
 		FuncPunc,
 		FuncBody,
 
+		// Parse Expression Error Codes
+		ExpressionValue,
+
 		// Parse Statement Error Codes
 		StatePunc,
 		StateValue,
@@ -68,20 +71,11 @@ namespace Kargono::Scripting
 	static inline uint32_t InvalidLine { std::numeric_limits<uint32_t>::max() };
 	static inline uint32_t InvalidColumn { std::numeric_limits<uint32_t>::max() };
 
-	inline std::vector<std::string> s_Keywords {"return", "void"};
 
 	struct PrimitiveType
 	{
 		std::string Name {};
 		ScriptTokenType AcceptableLiteral{};
-	};
-
-
-
-	inline std::vector<PrimitiveType> s_PrimitiveTypes 
-	{
-		{"String", ScriptTokenType::StringLiteral}, 
-		{ "UInt16", ScriptTokenType::IntegerLiteral }
 	};
 
 }
@@ -129,6 +123,8 @@ namespace Kargono::Utility
 			case Scripting::ParseErrorType::FuncParam: return "FuncParam";
 			case Scripting::ParseErrorType::FuncPunc: return "FuncPunc";
 			case Scripting::ParseErrorType::FuncBody: return "FuncBody";
+
+			case Scripting::ParseErrorType::ExpressionValue: return "ExpressionValue";
 
 			case Scripting::ParseErrorType::StatePunc: return "StatePunc";
 			case Scripting::ParseErrorType::StateValue: return "StateValue";
@@ -193,10 +189,37 @@ namespace Kargono::Scripting
 		uint32_t m_ColumnCount{ 0 };
 	};
 
+	struct Expression;
+
+	struct FunctionCallNode
+	{
+		ScriptToken Identifier{};
+		ScriptToken ReturnType{};
+		std::vector<ScriptToken> Arguments{};
+	};
 
 	struct Expression
 	{
-		ScriptToken Value{};
+		std::variant<FunctionCallNode, ScriptToken> Value {};
+
+		ScriptToken GetReturnType()
+		{
+			ScriptToken returnType;
+			std::visit([&](auto&& value)
+			{
+				using valueType = std::decay_t<decltype(value)>;
+				if constexpr (std::is_same_v<valueType, FunctionCallNode>)
+				{
+					returnType = value.ReturnType;
+				}
+				else if constexpr (std::is_same_v<valueType, ScriptToken>)
+				{
+					returnType = value;
+				}
+			}, Value);
+
+			return returnType;
+		}
 	};
 
 	struct StatementEmpty
@@ -216,12 +239,18 @@ namespace Kargono::Scripting
 
 	struct StatementAssignment
 	{
+		ScriptToken Name{};
+		Expression Value{};
+	};
+
+	struct StatementDeclarationAssignment
+	{
 		ScriptToken Type{};
 		ScriptToken Name{};
 		Expression Value{};
 	};
 
-	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment>;
+	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment , StatementDeclarationAssignment>;
 
 	struct FunctionParameter
 	{
@@ -307,10 +336,16 @@ namespace Kargono::Scripting
 		std::tuple<bool, FunctionNode> ParseFunctionNode();
 		std::tuple<bool, Expression> ParseExpressionNode(uint32_t& expressionSize);
 	private:
+		
+		std::tuple<bool, Expression> ParseExpressionLiteral(uint32_t& expressionSize);
+		std::tuple<bool, Expression> ParseExpressionIdentifier(uint32_t& expressionSize);
+		std::tuple<bool, Expression> ParseExpressionFunctionCall(uint32_t& expressionSize);
+
 		std::tuple<bool, Statement> ParseStatementEmpty();
 		std::tuple<bool, Statement> ParseStatementExpression();
 		std::tuple<bool, Statement> ParseStatementDeclaration();
 		std::tuple<bool, Statement> ParseStatementAssignment();
+		std::tuple<bool, Statement> ParseStatementDeclarationAssignment();
 	private:
 		ScriptToken GetCurrentToken(int32_t offset = 0);
 		void Advance(uint32_t count = 1);
@@ -322,6 +357,7 @@ namespace Kargono::Scripting
 		StackVariable GetStackVariable(ScriptToken identifier);
 		void StoreParseError(ParseErrorType errorType, const std::string& message);
 		bool CheckForErrors();
+		bool IsLiteralOrIdentifier(ScriptToken token);
 		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
 	private:
 		std::vector<ScriptToken> m_Tokens{};
@@ -331,6 +367,18 @@ namespace Kargono::Scripting
 		uint32_t m_TokenLocation{0};
 	};
 
+	struct LanguageDefinition
+	{
+	public:
+		std::vector<std::string> Keywords {};
+		std::vector<PrimitiveType> PrimitiveTypes {};
+		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
+	public:
+		operator bool() const
+		{
+			return Keywords.size() > 0 || PrimitiveTypes.size() > 0 || FunctionDefinitions.size() > 0;
+		}
+	};
 
 	//==============================
 	// Script Compiler Class
@@ -342,5 +390,8 @@ namespace Kargono::Scripting
 		// External API
 		//==============================
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
+		static void CreateKGScriptLanguageDefinition();
+	public:
+		static LanguageDefinition s_ActiveLanguageDefinition;
 	};
 }
