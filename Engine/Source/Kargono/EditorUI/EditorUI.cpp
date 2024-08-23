@@ -456,23 +456,27 @@ namespace Kargono::EditorUI
 		}
 	}
 
+	static void RecalculateWindowDimensions()
+	{
+		// Calculate Widget Spacing Values
+		EditorUIService::s_PrimaryTextWidth = (EditorUIService::s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f;
+		EditorUIService::s_PrimaryTextIndentedWidth = (EditorUIService::s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f - EditorUIService::s_TextLeftIndentOffset;
+		EditorUIService::s_SecondaryTextSmallWidth = ((EditorUIService::s_SecondaryTextSecondPercentage - EditorUIService::s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 10.0f;
+		EditorUIService::s_SecondaryTextMediumWidth = ((EditorUIService::s_SecondaryTextMiddlePercentage - EditorUIService::s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 30.0f;
+		EditorUIService::s_SecondaryTextLargeWidth = ((EditorUIService::s_SecondaryTextFourthPercentage - EditorUIService::s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) + EditorUIService::s_SecondaryTextSmallWidth;
+
+		EditorUIService::s_SecondaryTextPosOne = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextFirstPercentage;
+		EditorUIService::s_SecondaryTextPosTwo = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextSecondPercentage;
+		EditorUIService::s_SecondaryTextPosThree = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextThirdPercentage;
+		EditorUIService::s_SecondaryTextPosFour = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextFourthPercentage;
+		EditorUIService::s_SecondaryTextPosMiddle = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextMiddlePercentage;
+	}
+
 	void EditorUIService::StartWindow(const std::string& label, bool* closeWindow, int32_t flags)
 	{
 		// Start Window
 		ImGui::Begin(label.c_str(), closeWindow, flags);
-
-		// Calculate Widget Spacing Values
-		s_PrimaryTextWidth = (s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f;
-		s_PrimaryTextIndentedWidth = (s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f - s_TextLeftIndentOffset;
-		s_SecondaryTextSmallWidth = ((s_SecondaryTextSecondPercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 10.0f;
-		s_SecondaryTextMediumWidth = ((s_SecondaryTextMiddlePercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 30.0f;
-		s_SecondaryTextLargeWidth = ((s_SecondaryTextFourthPercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) + s_SecondaryTextSmallWidth;
-
-		s_SecondaryTextPosOne = ImGui::GetContentRegionMax().x * s_SecondaryTextFirstPercentage;
-		s_SecondaryTextPosTwo = ImGui::GetContentRegionMax().x * s_SecondaryTextSecondPercentage;
-		s_SecondaryTextPosThree = ImGui::GetContentRegionMax().x * s_SecondaryTextThirdPercentage;
-		s_SecondaryTextPosFour = ImGui::GetContentRegionMax().x * s_SecondaryTextFourthPercentage;
-		s_SecondaryTextPosMiddle = ImGui::GetContentRegionMax().x * s_SecondaryTextMiddlePercentage;
+		RecalculateWindowDimensions();
 	}
 
 	void EditorUIService::EndWindow()
@@ -753,6 +757,7 @@ namespace Kargono::EditorUI
 		ImGui::SetNextWindowSize(ImVec2(spec.PopupWidth, 0.0f));
 		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
 		{
+			RecalculateWindowDimensions();
 			EditorUI::EditorUIService::TitleText(spec.Label);
 
 			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
@@ -797,6 +802,7 @@ namespace Kargono::EditorUI
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
+			RecalculateWindowDimensions();
 		}
 	}
 
