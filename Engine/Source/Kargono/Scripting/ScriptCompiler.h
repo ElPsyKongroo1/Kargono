@@ -38,7 +38,10 @@ namespace Kargono::Scripting
 
 		// Binary Operators
 		AssignmentOperator,
-		AdditionOperator
+		AdditionOperator,
+		SubtractionOperator,
+		MultiplicationOperator,
+		DivisionOperator
 	};
 
 	enum class ParseErrorType
@@ -103,6 +106,9 @@ namespace Kargono::Utility
 
 		case Scripting::ScriptTokenType::AssignmentOperator: return "Assignment Operator";
 		case Scripting::ScriptTokenType::AdditionOperator: return "Addition Operator";
+		case Scripting::ScriptTokenType::SubtractionOperator: return "Subtraction Operator";
+		case Scripting::ScriptTokenType::DivisionOperator: return "Division Operator";
+		case Scripting::ScriptTokenType::MultiplicationOperator: return "Multiplication Operator";
 
 		case Scripting::ScriptTokenType::None: return "None";
 		default:
@@ -193,14 +199,30 @@ namespace Kargono::Scripting
 
 	struct FunctionCallNode
 	{
+		ScriptToken Namespace{};
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
 		std::vector<ScriptToken> Arguments{};
 	};
 
+	struct UnaryOperationNode
+	{
+		ScriptToken Operator{};
+		ScriptToken ReturnType{};
+		ScriptToken Operand{};
+	};
+
+	struct BinaryOperationNode
+	{
+		ScriptToken Operator{};
+		ScriptToken ReturnType{};
+		ScriptToken Operand1{};
+		ScriptToken Operand2{};
+	};
+
 	struct Expression
 	{
-		std::variant<FunctionCallNode, ScriptToken> Value {};
+		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode , BinaryOperationNode> Value {};
 
 		ScriptToken GetReturnType()
 		{
@@ -212,10 +234,19 @@ namespace Kargono::Scripting
 				{
 					returnType = value.ReturnType;
 				}
+				else if constexpr (std::is_same_v<valueType, UnaryOperationNode>)
+				{
+					returnType = value.ReturnType;
+				}
+				else if constexpr (std::is_same_v<valueType, BinaryOperationNode>)
+				{
+					returnType = value.ReturnType;
+				}
 				else if constexpr (std::is_same_v<valueType, ScriptToken>)
 				{
 					returnType = value;
 				}
+				
 			}, Value);
 
 			return returnType;
@@ -340,6 +371,8 @@ namespace Kargono::Scripting
 		std::tuple<bool, Expression> ParseExpressionLiteral(uint32_t& expressionSize);
 		std::tuple<bool, Expression> ParseExpressionIdentifier(uint32_t& expressionSize);
 		std::tuple<bool, Expression> ParseExpressionFunctionCall(uint32_t& expressionSize);
+		std::tuple<bool, Expression> ParseExpressionBinaryOperation(uint32_t& expressionSize);
+		std::tuple<bool, Expression> ParseExpressionUnaryOperation(uint32_t& expressionSize);
 
 		std::tuple<bool, Statement> ParseStatementEmpty();
 		std::tuple<bool, Statement> ParseStatementExpression();
@@ -358,7 +391,11 @@ namespace Kargono::Scripting
 		void StoreParseError(ParseErrorType errorType, const std::string& message);
 		bool CheckForErrors();
 		bool IsLiteralOrIdentifier(ScriptToken token);
+		bool IsLiteral(ScriptToken token);
+		bool IsUnaryOperator(ScriptToken token);
+		bool IsBinaryOperator(ScriptToken token);
 		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
+		ScriptToken GetPrimitiveTypeFromToken(Scripting::ScriptToken token);
 	private:
 		std::vector<ScriptToken> m_Tokens{};
 		std::vector<ParserError> m_Errors {};

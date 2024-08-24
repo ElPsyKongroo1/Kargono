@@ -234,6 +234,27 @@ namespace Kargono::Scripting
 				continue;
 			}
 
+			if (GetCurrentChar() == '-')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::SubtractionOperator, {});
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '/')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::DivisionOperator, {});
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '*')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::MultiplicationOperator, {});
+				Advance();
+				continue;
+			}
+
 			if (GetCurrentChar() == ',')
 			{
 				AddTokenAndClearBuffer(ScriptTokenType::Comma, {} );
@@ -356,6 +377,8 @@ namespace Kargono::Scripting
 				else if constexpr (std::is_same_v<type, FunctionCallNode>)
 				{
 					KG_INFO("{}Expression Function Call", GetIndentation(indentation));
+					KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Namespace, indentation + 2);
 					KG_INFO("{}Identifier", GetIndentation(indentation + 1));
 					PrintToken(expressionValue.Identifier, indentation + 2);
 					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
@@ -365,6 +388,28 @@ namespace Kargono::Scripting
 						KG_INFO("{}Argument", GetIndentation(indentation + 1));
 						PrintToken(argument, indentation + 2);
 					}
+				}
+				else if constexpr (std::is_same_v<type, UnaryOperationNode>)
+				{
+					KG_INFO("{}Expression Unary Operation", GetIndentation(indentation));
+					KG_INFO("{}Operand", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Operand, indentation + 2);
+					KG_INFO("{}Operator", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Operator, indentation + 2);
+					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.ReturnType, indentation + 2);
+				}
+				else if constexpr (std::is_same_v<type, BinaryOperationNode>)
+				{
+					KG_INFO("{}Expression Binary Operation", GetIndentation(indentation));
+					KG_INFO("{}Operand 1", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Operand1, indentation + 2);
+					KG_INFO("{}Operand 2", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Operand2, indentation + 2);
+					KG_INFO("{}Operator", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.Operator, indentation + 2);
+					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+					PrintToken(expressionValue.ReturnType, indentation + 2);
 				}
 			}, expression.Value);
 	}
@@ -654,6 +699,34 @@ namespace Kargono::Scripting
 	}
 	std::tuple<bool, Expression> TokenParser::ParseExpressionNode(uint32_t& expressionSize)
 	{
+		// Parse Expression Binary Operation
+		{
+			auto [success, statement] = ParseExpressionBinaryOperation(expressionSize);
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
+
+		// Parse Expression Unary Operation
+		{
+			auto [success, statement] = ParseExpressionUnaryOperation(expressionSize);
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			return { false, {} };
+		}
+
 		// Parse Expression Function Call
 		{
 			auto [success, statement] = ParseExpressionFunctionCall(expressionSize);
@@ -738,19 +811,33 @@ namespace Kargono::Scripting
 		Expression newExpression{};
 		FunctionCallNode newFunctionCallNode{};
 
-		// Check for initial Identifier and Open Parentheses
+		// Check for function namespace, namespace resolver symbol, function identifier, and open parentheses
 		ScriptToken tokenBuffer = GetCurrentToken();
-		if (tokenBuffer.Type != ScriptTokenType::Identifier ||
-			GetCurrentToken(1).Type != ScriptTokenType::OpenParentheses)
+		int32_t initialAdvance{ 0 };
+		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(2).Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(3).Type == ScriptTokenType::OpenParentheses)
+		{
+			newFunctionCallNode.Namespace = tokenBuffer;
+			newFunctionCallNode.Identifier = GetCurrentToken(2);
+			initialAdvance = 4;
+		}
+		else if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(1).Type == ScriptTokenType::OpenParentheses)
+		{
+			newFunctionCallNode.Identifier = tokenBuffer;
+			initialAdvance = 2;
+		}
+		else
 		{
 			return { false, {} };
 		}
-		newFunctionCallNode.Identifier = tokenBuffer;
 
 		// Check for arguments and close parentheses
-		uint32_t argumentTokens{ 0 };
+		int32_t argumentTokens{ 0 };
 		bool validSyntax = true;
-		Advance(2);
+		Advance(initialAdvance);
 		while (IsLiteralOrIdentifier(GetCurrentToken()))
 		{
 			newFunctionCallNode.Arguments.push_back(GetCurrentToken());
@@ -768,7 +855,7 @@ namespace Kargono::Scripting
 			Advance(2);
 			argumentTokens += 2;
 		}
-		Advance(-2 + (-(int32_t)argumentTokens));
+		Advance(-initialAdvance + (-argumentTokens));
 
 		if (!validSyntax)
 		{
@@ -808,7 +895,75 @@ namespace Kargono::Scripting
 
 		// Fill the expression buffer and exit
 		newExpression.Value = newFunctionCallNode;
-		expressionSize += 4 + argumentTokens;
+		expressionSize += initialAdvance + argumentTokens + 2;
+		return { true, newExpression };
+	}
+	std::tuple<bool, Expression> TokenParser::ParseExpressionBinaryOperation(uint32_t& expressionSize)
+	{
+		Expression newExpression{};
+		BinaryOperationNode newBinaryOperation{};
+
+		// Check for first operand
+		ScriptToken tokenBuffer = GetCurrentToken();
+		if (!IsLiteralOrIdentifier(tokenBuffer))
+		{
+			return { false, {} };
+		}
+		newBinaryOperation.Operand1 = tokenBuffer;
+
+		// Check for operator (+,-,*,/)
+		if (!IsBinaryOperator(GetCurrentToken(1)))
+		{
+			return { false, {} };
+		}
+		newBinaryOperation.Operator = GetCurrentToken(1);
+
+		// Check for second operand
+		if (!IsLiteralOrIdentifier(GetCurrentToken(2)))
+		{
+			return { false, {} };
+		}
+		newBinaryOperation.Operand2 = GetCurrentToken(2);
+
+		// Ensure the return type of both operands is identical
+		if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1).Value != GetPrimitiveTypeFromToken(newBinaryOperation.Operand2).Value)
+		{
+			StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
+			return { false, {} };
+		}
+
+		newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1);
+
+		// Fill the expression buffer and exit
+		newExpression.Value = newBinaryOperation;
+		expressionSize += 3;
+		return { true, newExpression };
+	}
+	std::tuple<bool, Expression> TokenParser::ParseExpressionUnaryOperation(uint32_t& expressionSize)
+	{
+		Expression newExpression{};
+		UnaryOperationNode newUnaryOperation{};
+
+		// Check for operator
+		if (!IsUnaryOperator(GetCurrentToken()))
+		{
+			return { false, {} };
+		}
+		newUnaryOperation.Operator = GetCurrentToken();
+
+		// Check for operand
+		if (!IsLiteralOrIdentifier(GetCurrentToken(1)))
+		{
+			return { false, {} };
+		}
+		newUnaryOperation.Operand = GetCurrentToken(1);
+
+		// Fill return value
+		newUnaryOperation.ReturnType = GetPrimitiveTypeFromToken(newUnaryOperation.Operand);
+
+		// Fill the expression buffer and exit
+		newExpression.Value = newUnaryOperation;
+		expressionSize += 2;
 		return { true, newExpression };
 	}
 	std::tuple<bool, Statement> TokenParser::ParseStatementEmpty()
@@ -1091,9 +1246,38 @@ namespace Kargono::Scripting
 
 	bool TokenParser::IsLiteralOrIdentifier(ScriptToken token)
 	{
+		if (IsLiteral(token) || token.Type == ScriptTokenType::Identifier)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool TokenParser::IsLiteral(ScriptToken token)
+	{
 		if (token.Type == ScriptTokenType::IntegerLiteral ||
-			token.Type == ScriptTokenType::StringLiteral ||
-			token.Type == ScriptTokenType::Identifier)
+			token.Type == ScriptTokenType::StringLiteral)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool TokenParser::IsUnaryOperator(ScriptToken token)
+	{
+		if (token.Type == ScriptTokenType::SubtractionOperator)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool TokenParser::IsBinaryOperator(ScriptToken token)
+	{
+		if (token.Type == ScriptTokenType::AdditionOperator ||
+			token.Type == ScriptTokenType::SubtractionOperator ||
+			token.Type == ScriptTokenType::MultiplicationOperator ||
+			token.Type == ScriptTokenType::DivisionOperator)
 		{
 			return true;
 		}
@@ -1128,11 +1312,48 @@ namespace Kargono::Scripting
 					StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
 					return false;
 				}
+				if (token.Type == ScriptTokenType::PrimitiveType && token.Value == type)
+				{
+					return true;
+				}
 			}
 		}
 
 		StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid primitive type provided");
 		return false;
+	}
+
+	ScriptToken TokenParser::GetPrimitiveTypeFromToken(Scripting::ScriptToken token)
+	{
+		if (IsLiteral(token))
+		{
+			for (auto& primitiveType : ScriptCompiler::s_ActiveLanguageDefinition.PrimitiveTypes)
+			{
+				if (token.Type == primitiveType.AcceptableLiteral)
+				{
+					return { ScriptTokenType::PrimitiveType, primitiveType.Name };
+				}
+			}
+		}
+
+		if (token.Type == ScriptTokenType::Identifier)
+		{
+			StackVariable variable = GetStackVariable(token);
+			if (!variable)
+			{
+				StoreParseError(ParseErrorType::PrimTypeAccep, "Could not find StackVariable with specified identifier");
+				return {};
+			}
+
+			if (variable.Type.Type == ScriptTokenType::PrimitiveType)
+			{
+				return { ScriptTokenType::PrimitiveType, variable.Type.Value };
+			}
+
+			StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
+			return {};
+		}
+		return {};
 	}
 
 }
