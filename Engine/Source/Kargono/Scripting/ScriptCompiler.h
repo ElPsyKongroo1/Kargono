@@ -7,6 +7,7 @@
 #include <sstream>
 #include <variant>
 #include <unordered_map>
+#include <sstream>
 
 namespace Kargono::Scripting
 {
@@ -79,6 +80,7 @@ namespace Kargono::Scripting
 	{
 		std::string Name {};
 		ScriptTokenType AcceptableLiteral{};
+		std::string EmittedType {};
 	};
 
 }
@@ -360,8 +362,9 @@ namespace Kargono::Scripting
 	class TokenParser
 	{
 	public:
-		std::tuple<bool, ScriptAST> ParseTokens(std::vector<ScriptToken> tokens);
+		std::tuple<bool, ScriptAST> ParseTokens(std::vector<ScriptToken>&& tokens);
 		void PrintAST();
+		void PrintTokens();
 		void PrintErrors();
 	private:
 		std::tuple<bool, Statement> ParseStatementNode();
@@ -407,12 +410,35 @@ namespace Kargono::Scripting
 		uint32_t m_TokenLocation{0};
 	};
 
+	class OutputGenerator
+	{
+	public:
+		std::tuple<bool, std::string> GenerateOutput(ScriptAST&& ast);
+	private:
+		std::stringstream m_OutputText{};
+		ScriptAST m_AST{};
+	};
+
 	struct LanguageDefinition
 	{
 	public:
 		std::vector<std::string> Keywords {};
 		std::vector<PrimitiveType> PrimitiveTypes {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
+	public:
+		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
+		{
+			for (auto& type : PrimitiveTypes)
+			{
+				if (type.Name == name)
+				{
+					return type;
+				}
+			}
+
+			KG_WARN("Could not locate primitive type by name");
+			return {};
+		}
 	public:
 		operator bool() const
 		{

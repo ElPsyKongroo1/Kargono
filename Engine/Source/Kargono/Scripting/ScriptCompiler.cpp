@@ -10,6 +10,7 @@ namespace Kargono::Scripting
 
 	std::string ScriptCompiler::CompileScriptFile(const std::filesystem::path& scriptLocation)
 	{
+		// Lazy loading KGScript language def
 		if (!s_ActiveLanguageDefinition)
 		{
 			CreateKGScriptLanguageDefinition();
@@ -21,7 +22,6 @@ namespace Kargono::Scripting
 			KG_WARN("Failed to compile .kgscript. File does not exist at specified location!");
 			return {};
 		}
-
 		if (scriptLocation.extension() != ".kgscript")
 		{
 			KG_WARN("Failed to compile .kgscript. File uses incorrect extension!");
@@ -32,29 +32,34 @@ namespace Kargono::Scripting
 		std::string scriptFile = Utility::FileSystem::ReadFileString(scriptLocation);
 
 		ScriptTokenizer scriptTokenizer{};
-		// Get Tokens from Text
+		// Get tokens from text
 		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
 
-		for (auto& token : tokens)
-		{
-			KG_TRACE_CRITICAL("Token: Type ({}) Value ({}) at {}:{}", 
-				Utility::ScriptTokenTypeToString(token.Type), token.Value, token.Line, token.Column );
-		}
-
 		TokenParser tokenParser{};
-		auto [success, newAST] = tokenParser.ParseTokens(std::move(tokens));
+		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
 
-
-		if (!success)
+		if (!parseSuccess)
 		{
 			KG_WARN("Token parsing failed");
 			// Print out error messages
 			tokenParser.PrintErrors();
+			tokenParser.PrintTokens();
+			tokenParser.PrintAST();
+			return "Token parsing failed";
 		}
 
-		tokenParser.PrintAST();
+		// Generate output text
+		OutputGenerator outputGenerator{};
+		auto [outputSuccess, outputText] = outputGenerator.GenerateOutput(std::move(newAST));
 
-		return "Hello";
+		if (!outputSuccess)
+		{
+			KG_WARN("Output text generation failed");
+			return "Failed to generate output text";
+		}
+		
+		KG_WARN(outputText);
+		return outputText;
 	}
 	void ScriptCompiler::CreateKGScriptLanguageDefinition()
 	{
@@ -67,8 +72,8 @@ namespace Kargono::Scripting
 
 		s_ActiveLanguageDefinition.PrimitiveTypes = 
 		{
-			{"string", ScriptTokenType::StringLiteral},
-			{ "uint16", ScriptTokenType::IntegerLiteral }
+			{"string", ScriptTokenType::StringLiteral, "std::string"},
+			{ "uint16", ScriptTokenType::IntegerLiteral, "uint16_t"}
 		};
 
 		FunctionNode newFunctionNode{};
@@ -343,7 +348,7 @@ namespace Kargono::Scripting
 		m_TextBuffer.clear();
 	}
 
-	std::tuple<bool, ScriptAST> TokenParser::ParseTokens(std::vector<ScriptToken> tokens)
+	std::tuple<bool, ScriptAST> TokenParser::ParseTokens(std::vector<ScriptToken>&& tokens)
 	{
 		m_Tokens = std::move(tokens);
 
@@ -510,6 +515,14 @@ namespace Kargono::Scripting
 			}
 		}
 	}
+	void TokenParser::PrintTokens()
+	{
+		for (auto& token : m_Tokens)
+		{
+			KG_WARN("Token: Type ({}) Value ({}) at {}:{}",
+				Utility::ScriptTokenTypeToString(token.Type), token.Value, token.Line, token.Column);
+		}
+	}
 	void TokenParser::PrintErrors()
 	{
 		for (auto& error : m_Errors)
@@ -655,15 +668,16 @@ namespace Kargono::Scripting
 			tokenBuffer = GetCurrentToken();
 			if (tokenBuffer.Type == ScriptTokenType::Comma)
 			{
-				if (GetCurrentToken(1).Type != ScriptTokenType::Identifier)
+				if (GetCurrentToken(1).Type != ScriptTokenType::PrimitiveType)
 				{
 					StoreParseError(ParseErrorType::FuncParam,
-						"Expecting an identifier after comma separator for parameter list in function signature");
+						"Expecting an type after comma separator for parameter list in function signature");
 					return { false, newFunctionNode };
 				}
 
 				// Move to next token if comma is present
 				Advance();
+				tokenBuffer = GetCurrentToken();
 			}
 		}
 		// Check for close parentheses
@@ -1451,6 +1465,43 @@ namespace Kargono::Scripting
 			return token;
 		}
 		return {};
+	}
+
+	std::tuple<bool, std::string> OutputGenerator::GenerateOutput(ScriptAST&& ast)
+	{
+		m_AST = std::move(ast);
+		m_OutputText = {};
+
+		// Get Program Node
+		if (!m_AST.ProgramNode)
+		{
+			return { false, {} };
+		}
+
+		FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+		// Emit Function Signature
+		m_OutputText << funcNode.ReturnType.Value << " " << funcNode.Name.Value << '(';
+		uint32_t iteration{ 0 };
+		for (auto& [type, identifier] : funcNode.Parameters)
+		{
+			PrimitiveType primitiveType = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(type.Value);
+			if (primitiveType.Name == "")
+			{
+				return { false, {} };
+			}
+			m_OutputText << primitiveType.EmittedType << ' ' << identifier.Value;
+			if (iteration + 1 < funcNode.Parameters.size())
+			{
+				m_OutputText << ", ";
+			}
+			iteration++;
+		}
+		m_OutputText << ")\n";
+		m_OutputText << "{\n";
+		m_OutputText << "  STATEMENTS\n";
+		m_OutputText << "}\n";
+
+		return { true, m_OutputText.str()};
 	}
 
 }
