@@ -77,6 +77,25 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "str" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
 		newParameter.Type = { ScriptTokenType::PrimitiveType, "uint16"};
+		newParameter.Identifier = { ScriptTokenType::Identifier, "text"};
+		newFunctionNode.Parameters.push_back(newParameter);
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" }; 
+		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" }; 
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -352,7 +371,7 @@ namespace Kargono::Scripting
 		std::string outputIndentation {};
 		for (uint32_t iteration {0}; iteration < count; iteration++)
 		{
-			outputIndentation += " ";
+			outputIndentation += "  ";
 		}
 		return outputIndentation;
 	}
@@ -363,7 +382,7 @@ namespace Kargono::Scripting
 		KG_INFO("{}Value: {}", GetIndentation(indentation), token.Value);
 	}
 
-	static void PrintExpression(const Expression& expression, uint32_t indentation = 0)
+	static void PrintExpression(Ref<Expression> expression, uint32_t indentation = 0)
 	{
 		std::visit([&](auto&& expressionValue)
 			{
@@ -403,15 +422,15 @@ namespace Kargono::Scripting
 				{
 					KG_INFO("{}Expression Binary Operation", GetIndentation(indentation));
 					KG_INFO("{}Operand 1", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Operand1, indentation + 2);
+					PrintExpression(expressionValue.Operand1, indentation + 2);
 					KG_INFO("{}Operand 2", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Operand2, indentation + 2);
+					PrintExpression(expressionValue.Operand2, indentation + 2);
 					KG_INFO("{}Operator", GetIndentation(indentation + 1));
 					PrintToken(expressionValue.Operator, indentation + 2);
 					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
 					PrintToken(expressionValue.ReturnType, indentation + 2);
 				}
-			}, expression.Value);
+			}, expression->Value);
 	}
 
 	static void PrintStatement(const Statement& statement, uint32_t indentation = 0)
@@ -503,7 +522,6 @@ namespace Kargono::Scripting
 	std::tuple<bool, Statement> TokenParser::ParseStatementNode()
 	{
 		Statement newStatement{};
-
 		ScriptToken tokenBuffer = GetCurrentToken();
 		
 		// Parse Statement Empty
@@ -697,100 +715,188 @@ namespace Kargono::Scripting
 
 		return { true, newFunctionNode };
 	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionNode(uint32_t& expressionSize)
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionNode(uint32_t& parentExpressionSize)
 	{
-		// Parse Expression Binary Operation
+		Ref<Expression> newExpression { nullptr };
+
+		// Parse initial expression term / initial operand if within binary expression
 		{
-			auto [success, statement] = ParseExpressionBinaryOperation(expressionSize);
-			if (success)
+			auto [success, expression] = ParseExpressionTerm(parentExpressionSize);
+			if (!success || CheckForErrors())
 			{
-				return { success, statement };
+				return { false, {} };
 			}
+			newExpression = expression;
 		}
 
-		if (CheckForErrors())
+		// Check for addition / subtraction binary operations
+		while (IsAdditionOrSubtraction(GetCurrentToken(parentExpressionSize)))
 		{
-			return { false, {} };
+			Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
+			BinaryOperationNode newBinaryOperation{};
+
+			// Store first operand and operator in newBinaryOperation
+			newBinaryOperation.Operand1 = newExpression;
+			newBinaryOperation.Operator = GetCurrentToken(parentExpressionSize);
+
+			// Parse next operand of binary expression
+			{
+				parentExpressionSize++;
+				auto [success, expression] = ParseExpressionTerm(parentExpressionSize);
+				if (!success || CheckForErrors())
+				{
+					return { false, {} };
+				}
+				newBinaryOperation.Operand2 = expression;
+			}
+
+			// Ensure the return type of both operands is identical
+			if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value  != 
+				GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value)
+			{
+				StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
+				return { false, {} };
+			}
+
+			// Store Return Type
+			newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType());
+
+			newBinaryExpression->Value = newBinaryOperation;
+			newExpression = newBinaryExpression;
 		}
+
+		return { true, newExpression };
+	}
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionTerm(uint32_t& parentExpressionSize, bool checkBinaryOperations)
+	{
+		Ref<Expression> newExpression {nullptr};
+		bool foundValidExpression = false;
 
 		// Parse Expression Unary Operation
+		if (!foundValidExpression)
 		{
-			auto [success, statement] = ParseExpressionUnaryOperation(expressionSize);
+			auto [success, expression] = ParseExpressionUnaryOperation(parentExpressionSize);
 			if (success)
 			{
-				return { success, statement };
+				newExpression = expression;
+				foundValidExpression = true;
 			}
-		}
-
-		if (CheckForErrors())
-		{
-			return { false, {} };
+			if (CheckForErrors())
+			{
+				return { false, {} };
+			}
 		}
 
 		// Parse Expression Function Call
+		if (!foundValidExpression)
 		{
-			auto [success, statement] = ParseExpressionFunctionCall(expressionSize);
+			auto [success, expression] = ParseExpressionFunctionCall(parentExpressionSize);
 			if (success)
 			{
-				return { success, statement };
+				newExpression = expression;
+				foundValidExpression = true;
 			}
-		}
-
-		if (CheckForErrors())
-		{
-			return { false, {} };
+			if (CheckForErrors())
+			{
+				return { false, {} };
+			}
 		}
 
 		// Parse Expression Literal
+		if (!foundValidExpression)
 		{
-			auto [success, statement] = ParseExpressionLiteral(expressionSize);
+			auto [success, expression] = ParseExpressionLiteral(parentExpressionSize);
 			if (success)
 			{
-				return { success, statement };
+				newExpression = expression;
+				foundValidExpression = true;
 			}
-		}
-
-		if (CheckForErrors())
-		{
-			return { false, {} };
+			if (CheckForErrors())
+			{
+				return { false, {} };
+			}
 		}
 
 		// Parse Expression Identifier
+		if (!foundValidExpression)
 		{
-			auto [success, statement] = ParseExpressionIdentifier(expressionSize);
+			auto [success, expression] = ParseExpressionIdentifier(parentExpressionSize);
 			if (success)
 			{
-				return { success, statement };
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				return { false, {} };
 			}
 		}
 
-		if (CheckForErrors())
+		// Initial Expression term not found!
+		if (!foundValidExpression)
 		{
 			return { false, {} };
 		}
+		if (checkBinaryOperations)
+		{
+			// Check for multiplication / division binary operations
+			while (IsMultiplicationOrDivision(GetCurrentToken(parentExpressionSize)))
+			{
+				Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
+				BinaryOperationNode newBinaryOperation{};
 
-		return { false, {} };
+				// Store first operand and operator in newBinaryOperation
+				newBinaryOperation.Operand1 = newExpression;
+				newBinaryOperation.Operator = GetCurrentToken(parentExpressionSize);
+
+				// Parse next operand of binary expression
+				{
+					parentExpressionSize++;
+					auto [success, expression] = ParseExpressionTerm(parentExpressionSize, false);
+					if (!success || CheckForErrors())
+					{
+						return { false, {} };
+					}
+					newBinaryOperation.Operand2 = expression;
+				}
+
+				// Ensure the return type of both operands is identical
+				if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value !=
+					GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value)
+				{
+					StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
+					return { false, {} };
+				}
+
+				// Store Return Type
+				newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType());
+
+				newBinaryExpression->Value = newBinaryOperation;
+				newExpression = newBinaryExpression;
+			}
+		}
+		
+		return { true, newExpression };
 	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionLiteral(uint32_t& expressionSize)
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionLiteral(uint32_t& parentExpressionSize)
 	{
-		Expression newExpression{};
+		Ref<Expression> newExpression {CreateRef<Expression>()};
 		// Check for a single literal/identifier
-		ScriptToken tokenBuffer = GetCurrentToken();
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
 		if ((tokenBuffer.Type != ScriptTokenType::StringLiteral &&
 			tokenBuffer.Type != ScriptTokenType::IntegerLiteral))
 		{
 			return { false, {} };
 		}
-
-		newExpression.Value = tokenBuffer;
-		expressionSize++;
+		newExpression->Value = tokenBuffer;
+		parentExpressionSize++;
 		return { true, newExpression };
 	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionIdentifier(uint32_t& expressionSize)
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionIdentifier(uint32_t& parentExpressionSize)
 	{
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		// Check for a single literal/identifier
-		ScriptToken tokenBuffer = GetCurrentToken();
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
 		if ((tokenBuffer.Type != ScriptTokenType::Identifier))
 		{
 			return { false, {} };
@@ -802,29 +908,29 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
-		newExpression.Value = tokenBuffer;
-		expressionSize++;
+		newExpression->Value = tokenBuffer;
+		parentExpressionSize++;
 		return { true, newExpression };
 	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionFunctionCall(uint32_t& expressionSize)
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionFunctionCall(uint32_t& parentExpressionSize)
 	{
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		FunctionCallNode newFunctionCallNode{};
 
 		// Check for function namespace, namespace resolver symbol, function identifier, and open parentheses
-		ScriptToken tokenBuffer = GetCurrentToken();
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
 		int32_t initialAdvance{ 0 };
 		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
-			GetCurrentToken(1).Type == ScriptTokenType::NamespaceResolver &&
-			GetCurrentToken(2).Type == ScriptTokenType::Identifier &&
-			GetCurrentToken(3).Type == ScriptTokenType::OpenParentheses)
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 3).Type == ScriptTokenType::OpenParentheses)
 		{
 			newFunctionCallNode.Namespace = tokenBuffer;
-			newFunctionCallNode.Identifier = GetCurrentToken(2);
+			newFunctionCallNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
 			initialAdvance = 4;
 		}
 		else if (tokenBuffer.Type == ScriptTokenType::Identifier &&
-			GetCurrentToken(1).Type == ScriptTokenType::OpenParentheses)
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::OpenParentheses)
 		{
 			newFunctionCallNode.Identifier = tokenBuffer;
 			initialAdvance = 2;
@@ -838,17 +944,17 @@ namespace Kargono::Scripting
 		int32_t argumentTokens{ 0 };
 		bool validSyntax = true;
 		Advance(initialAdvance);
-		while (IsLiteralOrIdentifier(GetCurrentToken()))
+		while (IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize)))
 		{
-			newFunctionCallNode.Arguments.push_back(GetCurrentToken());
-			if (GetCurrentToken(1).Type != ScriptTokenType::Comma &&
-				GetCurrentToken(1).Type != ScriptTokenType::CloseParentheses)
+			newFunctionCallNode.Arguments.push_back(GetCurrentToken(parentExpressionSize));
+			if (GetCurrentToken(parentExpressionSize + 1).Type != ScriptTokenType::Comma &&
+				GetCurrentToken(parentExpressionSize + 1).Type != ScriptTokenType::CloseParentheses)
 			{
 				validSyntax = false;
 				break;
 			}
 
-			if (GetCurrentToken(1).Type == ScriptTokenType::CloseParentheses)
+			if (GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::CloseParentheses)
 			{
 				break;
 			}
@@ -869,6 +975,13 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 		FunctionNode& functionNode = ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
+
+		// Ensure namespace of function matches
+		if (functionNode.Namespace.Value != newFunctionCallNode.Namespace.Value)
+		{
+			StoreParseError(ParseErrorType::ExpressionValue, "Could not match namespace for provided function identifier!");
+			return { false, {} };
+		}
 
 		// Ensure number of arguments in function call match the number of arguments in the function
 		if (functionNode.Parameters.size() != newFunctionCallNode.Arguments.size())
@@ -894,76 +1007,35 @@ namespace Kargono::Scripting
 		newFunctionCallNode.ReturnType = functionNode.ReturnType;
 
 		// Fill the expression buffer and exit
-		newExpression.Value = newFunctionCallNode;
-		expressionSize += initialAdvance + argumentTokens + 2;
+		newExpression->Value = newFunctionCallNode;
+		parentExpressionSize += initialAdvance + argumentTokens + 2;
 		return { true, newExpression };
 	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionBinaryOperation(uint32_t& expressionSize)
+	std::tuple<bool, Ref<Expression>> TokenParser::ParseExpressionUnaryOperation(uint32_t& parentExpressionSize)
 	{
-		Expression newExpression{};
-		BinaryOperationNode newBinaryOperation{};
-
-		// Check for first operand
-		ScriptToken tokenBuffer = GetCurrentToken();
-		if (!IsLiteralOrIdentifier(tokenBuffer))
-		{
-			return { false, {} };
-		}
-		newBinaryOperation.Operand1 = tokenBuffer;
-
-		// Check for operator (+,-,*,/)
-		if (!IsBinaryOperator(GetCurrentToken(1)))
-		{
-			return { false, {} };
-		}
-		newBinaryOperation.Operator = GetCurrentToken(1);
-
-		// Check for second operand
-		if (!IsLiteralOrIdentifier(GetCurrentToken(2)))
-		{
-			return { false, {} };
-		}
-		newBinaryOperation.Operand2 = GetCurrentToken(2);
-
-		// Ensure the return type of both operands is identical
-		if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1).Value != GetPrimitiveTypeFromToken(newBinaryOperation.Operand2).Value)
-		{
-			StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
-			return { false, {} };
-		}
-
-		newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1);
-
-		// Fill the expression buffer and exit
-		newExpression.Value = newBinaryOperation;
-		expressionSize += 3;
-		return { true, newExpression };
-	}
-	std::tuple<bool, Expression> TokenParser::ParseExpressionUnaryOperation(uint32_t& expressionSize)
-	{
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		UnaryOperationNode newUnaryOperation{};
 
 		// Check for operator
-		if (!IsUnaryOperator(GetCurrentToken()))
+		if (!IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
 		{
 			return { false, {} };
 		}
-		newUnaryOperation.Operator = GetCurrentToken();
+		newUnaryOperation.Operator = GetCurrentToken(parentExpressionSize);
 
 		// Check for operand
-		if (!IsLiteralOrIdentifier(GetCurrentToken(1)))
+		if (!IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
 		{
 			return { false, {} };
 		}
-		newUnaryOperation.Operand = GetCurrentToken(1);
+		newUnaryOperation.Operand = GetCurrentToken(parentExpressionSize + 1);
 
 		// Fill return value
 		newUnaryOperation.ReturnType = GetPrimitiveTypeFromToken(newUnaryOperation.Operand);
 
 		// Fill the expression buffer and exit
-		newExpression.Value = newUnaryOperation;
-		expressionSize += 2;
+		newExpression->Value = newUnaryOperation;
+		parentExpressionSize += 2;
 		return { true, newExpression };
 	}
 	std::tuple<bool, Statement> TokenParser::ParseStatementEmpty()
@@ -983,7 +1055,7 @@ namespace Kargono::Scripting
 	std::tuple<bool, Statement> TokenParser::ParseStatementExpression()
 	{
 		Statement newStatement{};
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		// Check for an expression
@@ -1041,7 +1113,7 @@ namespace Kargono::Scripting
 	std::tuple<bool, Statement> TokenParser::ParseStatementAssignment()
 	{
 		Statement newStatement{};
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		// Check for Type, Identifier, and Assignment Operator
@@ -1079,7 +1151,7 @@ namespace Kargono::Scripting
 
 		// Ensure expression value is a valid type to be assigned to identifier
 		StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
-		bool success = PrimitiveTypeAcceptableToken(currentIdentifierVariable.Type.Value, newExpression.GetReturnType());
+		bool success = PrimitiveTypeAcceptableToken(currentIdentifierVariable.Type.Value, newExpression->GetReturnType());
 		if (!success)
 		{
 			StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
@@ -1094,7 +1166,7 @@ namespace Kargono::Scripting
 	std::tuple<bool, Statement> TokenParser::ParseStatementDeclarationAssignment()
 	{
 		Statement newStatement{};
-		Expression newExpression{};
+		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		// Check for Type, Identifier, and Assignment Operator
@@ -1125,7 +1197,7 @@ namespace Kargono::Scripting
 		}
 
 		// Ensure expression value is a valid type to be assigned to new identifier
-		bool success = PrimitiveTypeAcceptableToken(GetCurrentToken().Value, newExpression.GetReturnType());
+		bool success = PrimitiveTypeAcceptableToken(GetCurrentToken().Value, newExpression->GetReturnType());
 		if (!success)
 		{
 			StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
@@ -1284,6 +1356,26 @@ namespace Kargono::Scripting
 		return false;
 	}
 
+	bool TokenParser::IsAdditionOrSubtraction(ScriptToken token)
+	{
+		if (token.Type == ScriptTokenType::AdditionOperator ||
+			token.Type == ScriptTokenType::SubtractionOperator)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool TokenParser::IsMultiplicationOrDivision(ScriptToken token)
+	{
+		if (token.Type == ScriptTokenType::MultiplicationOperator ||
+			token.Type == ScriptTokenType::DivisionOperator)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	bool TokenParser::PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token)
 	{
 		// Search all primitive types to check if token is acceptable
@@ -1352,6 +1444,11 @@ namespace Kargono::Scripting
 
 			StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
 			return {};
+		}
+
+		if (token.Type == ScriptTokenType::PrimitiveType)
+		{
+			return token;
 		}
 		return {};
 	}

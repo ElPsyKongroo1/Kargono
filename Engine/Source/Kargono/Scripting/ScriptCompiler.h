@@ -216,8 +216,8 @@ namespace Kargono::Scripting
 	{
 		ScriptToken Operator{};
 		ScriptToken ReturnType{};
-		ScriptToken Operand1{};
-		ScriptToken Operand2{};
+		Ref<Expression> Operand1{};
+		Ref<Expression> Operand2{};
 	};
 
 	struct Expression
@@ -259,7 +259,7 @@ namespace Kargono::Scripting
 
 	struct StatementExpression
 	{
-		Expression Value{};
+		Ref<Expression> Value { nullptr };
 	};
 
 	struct StatementDeclaration
@@ -271,14 +271,14 @@ namespace Kargono::Scripting
 	struct StatementAssignment
 	{
 		ScriptToken Name{};
-		Expression Value{};
+		Ref<Expression> Value { nullptr };
 	};
 
 	struct StatementDeclarationAssignment
 	{
 		ScriptToken Type{};
 		ScriptToken Name{};
-		Expression Value{};
+		Ref<Expression> Value { nullptr };
 	};
 
 	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment , StatementDeclarationAssignment>;
@@ -293,6 +293,7 @@ namespace Kargono::Scripting
 	{
 		ScriptToken Name{};
 		ScriptToken ReturnType{};
+		ScriptToken Namespace{};
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Statement> Statements{};
 
@@ -365,14 +366,14 @@ namespace Kargono::Scripting
 	private:
 		std::tuple<bool, Statement> ParseStatementNode();
 		std::tuple<bool, FunctionNode> ParseFunctionNode();
-		std::tuple<bool, Expression> ParseExpressionNode(uint32_t& expressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionNode(uint32_t& parentExpressionSize);
 	private:
-		
-		std::tuple<bool, Expression> ParseExpressionLiteral(uint32_t& expressionSize);
-		std::tuple<bool, Expression> ParseExpressionIdentifier(uint32_t& expressionSize);
-		std::tuple<bool, Expression> ParseExpressionFunctionCall(uint32_t& expressionSize);
-		std::tuple<bool, Expression> ParseExpressionBinaryOperation(uint32_t& expressionSize);
-		std::tuple<bool, Expression> ParseExpressionUnaryOperation(uint32_t& expressionSize);
+
+		std::tuple<bool, Ref<Expression>> ParseExpressionTerm(uint32_t& parentExpressionSize, bool checkBinaryOperations = true);
+		std::tuple<bool, Ref<Expression>> ParseExpressionLiteral(uint32_t& parentExpressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionIdentifier(uint32_t& parentExpressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionFunctionCall(uint32_t& parentExpressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionUnaryOperation(uint32_t& parentExpressionSize);
 
 		std::tuple<bool, Statement> ParseStatementEmpty();
 		std::tuple<bool, Statement> ParseStatementExpression();
@@ -394,6 +395,8 @@ namespace Kargono::Scripting
 		bool IsLiteral(ScriptToken token);
 		bool IsUnaryOperator(ScriptToken token);
 		bool IsBinaryOperator(ScriptToken token);
+		bool IsAdditionOrSubtraction(ScriptToken token);
+		bool IsMultiplicationOrDivision(ScriptToken token);
 		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
 		ScriptToken GetPrimitiveTypeFromToken(Scripting::ScriptToken token);
 	private:
