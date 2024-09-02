@@ -80,7 +80,8 @@ namespace Kargono::Scripting
 	{
 		std::string Name {};
 		ScriptTokenType AcceptableLiteral{};
-		std::string EmittedType {};
+		std::string EmittedDeclaration {};
+		std::string EmittedParameter {};
 	};
 
 }
@@ -414,6 +415,8 @@ namespace Kargono::Scripting
 	{
 	public:
 		std::tuple<bool, std::string> GenerateOutput(ScriptAST&& ast);
+	private:
+		void GenerateExpression(Ref<Expression> expression);
 	private:
 		std::stringstream m_OutputText{};
 		ScriptAST m_AST{};

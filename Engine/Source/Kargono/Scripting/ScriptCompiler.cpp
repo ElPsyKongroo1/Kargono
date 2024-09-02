@@ -37,6 +37,7 @@ namespace Kargono::Scripting
 
 		TokenParser tokenParser{};
 		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
+		tokenParser.PrintTokens();
 
 		if (!parseSuccess)
 		{
@@ -47,6 +48,8 @@ namespace Kargono::Scripting
 			tokenParser.PrintAST();
 			return "Token parsing failed";
 		}
+
+		tokenParser.PrintAST();
 
 		// Generate output text
 		OutputGenerator outputGenerator{};
@@ -72,8 +75,8 @@ namespace Kargono::Scripting
 
 		s_ActiveLanguageDefinition.PrimitiveTypes = 
 		{
-			{"string", ScriptTokenType::StringLiteral, "std::string"},
-			{ "uint16", ScriptTokenType::IntegerLiteral, "uint16_t"}
+			{"string", ScriptTokenType::StringLiteral, "std::string", "const std::string&"},
+			{ "uint16", ScriptTokenType::IntegerLiteral, "uint16_t", "uint16_t"}
 		};
 
 		FunctionNode newFunctionNode{};
@@ -1489,7 +1492,7 @@ namespace Kargono::Scripting
 			{
 				return { false, {} };
 			}
-			m_OutputText << primitiveType.EmittedType << ' ' << identifier.Value;
+			m_OutputText << primitiveType.EmittedParameter << ' ' << identifier.Value;
 			if (iteration + 1 < funcNode.Parameters.size())
 			{
 				m_OutputText << ", ";
@@ -1498,10 +1501,45 @@ namespace Kargono::Scripting
 		}
 		m_OutputText << ")\n";
 		m_OutputText << "{\n";
-		m_OutputText << "  STATEMENTS\n";
+		for (auto& statement : funcNode.Statements)
+		{
+			std::visit([&](auto&& state)
+			{
+				using type = std::decay_t<decltype(state)>;
+				if constexpr (std::is_same_v<type, StatementEmpty>)
+				{
+					m_OutputText << ";\n";
+				}
+				else if constexpr (std::is_same_v<type, StatementExpression>)
+				{
+					GenerateExpression(state.Value);
+					m_OutputText << "Statement Expression\n";
+					
+				}
+				else if constexpr (std::is_same_v<type, StatementDeclaration>)
+				{
+					m_OutputText << "Statement Declaration\n";
+				
+				}
+				else if constexpr (std::is_same_v<type, StatementAssignment>)
+				{
+					m_OutputText << "Statement Assignment\n";
+					
+				}
+				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
+				{
+					m_OutputText << "Statement Declaration/Assignment\n";
+				}
+			}, statement);
+		}
 		m_OutputText << "}\n";
 
 		return { true, m_OutputText.str()};
+	}
+
+	void OutputGenerator::GenerateExpression(Ref<Expression> expression)
+	{
+		expression->Value
 	}
 
 }
