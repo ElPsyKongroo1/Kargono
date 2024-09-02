@@ -195,6 +195,7 @@ namespace Kargono::Scripting
 			if (GetCurrentChar() == '\"')
 			{
 				// Skip first quotation
+				AddCurrentCharToBuffer();
 				Advance();
 
 				// Fill buffer
@@ -205,6 +206,7 @@ namespace Kargono::Scripting
 				}
 
 				// Move past second quotation
+				AddCurrentCharToBuffer();
 				Advance();
 
 				// Fill in String literal
@@ -214,84 +216,84 @@ namespace Kargono::Scripting
 
 			if (GetCurrentChar() == ';')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::Semicolon, {});
+				AddTokenAndClearBuffer(ScriptTokenType::Semicolon, {';'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '(')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::OpenParentheses, {});
+				AddTokenAndClearBuffer(ScriptTokenType::OpenParentheses, {'('});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ')')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::CloseParentheses, {});
+				AddTokenAndClearBuffer(ScriptTokenType::CloseParentheses, {')'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '{')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::OpenCurlyBrace, {});
+				AddTokenAndClearBuffer(ScriptTokenType::OpenCurlyBrace, {'{'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '}')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::CloseCurlyBrace, {});
+				AddTokenAndClearBuffer(ScriptTokenType::CloseCurlyBrace, {'}'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '=')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::AssignmentOperator, {});
+				AddTokenAndClearBuffer(ScriptTokenType::AssignmentOperator, {'='});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '+')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::AdditionOperator, {});
+				AddTokenAndClearBuffer(ScriptTokenType::AdditionOperator, {'+'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '-')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::SubtractionOperator, {});
+				AddTokenAndClearBuffer(ScriptTokenType::SubtractionOperator, {'-'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '/')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::DivisionOperator, {});
+				AddTokenAndClearBuffer(ScriptTokenType::DivisionOperator, {'/'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == '*')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::MultiplicationOperator, {});
+				AddTokenAndClearBuffer(ScriptTokenType::MultiplicationOperator, {'*'});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ',')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::Comma, {} );
+				AddTokenAndClearBuffer(ScriptTokenType::Comma, {','});
 				Advance();
 				continue;
 			}
 
 			if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, {});
+				AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, {"::"});
 				Advance(2);
 				continue;
 			}
@@ -430,9 +432,9 @@ namespace Kargono::Scripting
 				{
 					KG_INFO("{}Expression Binary Operation", GetIndentation(indentation));
 					KG_INFO("{}Operand 1", GetIndentation(indentation + 1));
-					PrintExpression(expressionValue.Operand1, indentation + 2);
+					PrintExpression(expressionValue.LeftOperand, indentation + 2);
 					KG_INFO("{}Operand 2", GetIndentation(indentation + 1));
-					PrintExpression(expressionValue.Operand2, indentation + 2);
+					PrintExpression(expressionValue.RightOperand, indentation + 2);
 					KG_INFO("{}Operator", GetIndentation(indentation + 1));
 					PrintToken(expressionValue.Operator, indentation + 2);
 					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
@@ -753,7 +755,7 @@ namespace Kargono::Scripting
 			BinaryOperationNode newBinaryOperation{};
 
 			// Store first operand and operator in newBinaryOperation
-			newBinaryOperation.Operand1 = newExpression;
+			newBinaryOperation.LeftOperand = newExpression;
 			newBinaryOperation.Operator = GetCurrentToken(parentExpressionSize);
 
 			// Parse next operand of binary expression
@@ -764,19 +766,19 @@ namespace Kargono::Scripting
 				{
 					return { false, {} };
 				}
-				newBinaryOperation.Operand2 = expression;
+				newBinaryOperation.RightOperand = expression;
 			}
 
 			// Ensure the return type of both operands is identical
-			if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value  != 
-				GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value)
+			if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value  != 
+				GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value)
 			{
 				StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
 				return { false, {} };
 			}
 
 			// Store Return Type
-			newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType());
+			newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
 
 			newBinaryExpression->Value = newBinaryOperation;
 			newExpression = newBinaryExpression;
@@ -863,7 +865,7 @@ namespace Kargono::Scripting
 				BinaryOperationNode newBinaryOperation{};
 
 				// Store first operand and operator in newBinaryOperation
-				newBinaryOperation.Operand1 = newExpression;
+				newBinaryOperation.LeftOperand = newExpression;
 				newBinaryOperation.Operator = GetCurrentToken(parentExpressionSize);
 
 				// Parse next operand of binary expression
@@ -874,19 +876,19 @@ namespace Kargono::Scripting
 					{
 						return { false, {} };
 					}
-					newBinaryOperation.Operand2 = expression;
+					newBinaryOperation.RightOperand = expression;
 				}
 
 				// Ensure the return type of both operands is identical
-				if (GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value !=
-					GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType()).Value)
+				if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value !=
+					GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value)
 				{
 					StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
 					return { false, {} };
 				}
 
 				// Store Return Type
-				newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.Operand1->GetReturnType());
+				newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
 
 				newBinaryExpression->Value = newBinaryOperation;
 				newExpression = newBinaryExpression;
@@ -1501,8 +1503,10 @@ namespace Kargono::Scripting
 		}
 		m_OutputText << ")\n";
 		m_OutputText << "{\n";
+		bool success{ true };
 		for (auto& statement : funcNode.Statements)
 		{
+			m_OutputText << "  ";
 			std::visit([&](auto&& state)
 			{
 				using type = std::decay_t<decltype(state)>;
@@ -1513,24 +1517,43 @@ namespace Kargono::Scripting
 				else if constexpr (std::is_same_v<type, StatementExpression>)
 				{
 					GenerateExpression(state.Value);
-					m_OutputText << "Statement Expression\n";
-					
+					m_OutputText << ";\n";
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclaration>)
 				{
-					m_OutputText << "Statement Declaration\n";
+					PrimitiveType typeValue = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
+					if (typeValue.Name == "")
+					{
+						success = false;
+						return;
+					}
+					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << ";\n";
 				
 				}
 				else if constexpr (std::is_same_v<type, StatementAssignment>)
 				{
-					m_OutputText << "Statement Assignment\n";
+					m_OutputText << state.Name.Value << " = ";
+					GenerateExpression(state.Value);
+					m_OutputText << ";\n";
 					
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
 				{
-					m_OutputText << "Statement Declaration/Assignment\n";
+					PrimitiveType typeValue = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
+					if (typeValue.Name == "")
+					{
+						success = false;
+						return;
+					}
+					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << " = ";
+					GenerateExpression(state.Value);
+					m_OutputText << ";\n";
 				}
 			}, statement);
+			if (!success)
+			{
+				return { false, {} };
+			}
 		}
 		m_OutputText << "}\n";
 
@@ -1539,7 +1562,46 @@ namespace Kargono::Scripting
 
 	void OutputGenerator::GenerateExpression(Ref<Expression> expression)
 	{
-		expression->Value
+		std::visit([&](auto&& expressionValue)
+		{
+			using type = std::decay_t<decltype(expressionValue)>;
+			if constexpr (std::is_same_v<type, ScriptToken>)
+			{
+				m_OutputText << expressionValue.Value;
+			}
+			else if constexpr (std::is_same_v<type, FunctionCallNode>)
+			{
+				if (expressionValue.Namespace)
+				{
+					m_OutputText << expressionValue.Namespace.Value << "::";
+				}
+				m_OutputText << expressionValue.Identifier.Value << '(';
+				uint32_t iteration{ 0 };
+				for (auto argument : expressionValue.Arguments)
+				{
+
+					m_OutputText << argument.Value;
+					if (iteration + 1 < expressionValue.Arguments.size())
+					{
+						m_OutputText << ',';
+					}
+					iteration++;
+				}
+				m_OutputText << ')';
+
+			}
+			else if constexpr (std::is_same_v<type, UnaryOperationNode>)
+			{
+				m_OutputText << expressionValue.Operator.Value << expressionValue.Operand.Value;
+			}
+			else if constexpr (std::is_same_v<type, BinaryOperationNode>)
+			{
+				GenerateExpression(expressionValue.LeftOperand);
+				m_OutputText << " " << expressionValue.Operator.Value << " ";
+				GenerateExpression(expressionValue.RightOperand);
+			}
+		}, expression->Value);
 	}
+
 
 }

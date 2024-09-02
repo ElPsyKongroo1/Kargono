@@ -219,8 +219,8 @@ namespace Kargono::Scripting
 	{
 		ScriptToken Operator{};
 		ScriptToken ReturnType{};
-		Ref<Expression> Operand1{};
-		Ref<Expression> Operand2{};
+		Ref<Expression> LeftOperand{};
+		Ref<Expression> RightOperand{};
 	};
 
 	struct Expression
