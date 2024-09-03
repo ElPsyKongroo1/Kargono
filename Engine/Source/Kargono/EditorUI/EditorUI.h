@@ -152,6 +152,7 @@ namespace Kargono::EditorUI
 		static std::string GetFocusedWindowName();
 		static void SetFocusedWindow(const std::string& windowName);
 		static void BringWindowToFront(const std::string& windowName);
+		static void BringCurrentWindowToFront();
 		static void ClearWindowFocus();
 		static bool IsCurrentWindowVisible();
 		static void HighlightFocusedWindow();

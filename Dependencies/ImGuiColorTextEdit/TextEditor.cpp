@@ -730,7 +730,7 @@ void TextEditor::HandleKeyboardInputs()
 			Undo();
 		else if (!IsReadOnly() && !ctrl && !shift && alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
 			Undo();
-		else if (!IsReadOnly() && ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Y)))
+		else if (!IsReadOnly() && ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
 			Redo();
 		else if (ctrl && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_S)))
 			Save();
@@ -1886,12 +1886,12 @@ void TextEditor::Backspace()
 			while (cindex > 0 && IsUTFSequence(line[cindex].mChar))
 				--cindex;
 
-			//if (cindex > 0 && UTF8CharLength(line[cindex].mChar) > 1)
-			//	--cindex;
-
 			u.mRemovedStart = u.mRemovedEnd = GetActualCursorCoordinates();
 			--u.mRemovedStart.mColumn;
-			--mState.mCursorPosition.mColumn;
+			if (line[cindex].mChar == '\t')
+				mState.mCursorPosition.mColumn -= mTabSize;
+			else
+				--mState.mCursorPosition.mColumn;
 
 			while (cindex < line.size() && cend-- > cindex)
 			{
@@ -2106,7 +2106,9 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 
 std::string TextEditor::GetText() const
 {
-	return GetText(Coordinates(), Coordinates((int)mLines.size(), 0));
+	auto lastLine = (int)mLines.size() - 1;
+	auto lastLineLength = GetLineMaxColumn(lastLine);
+	return GetText(Coordinates(), Coordinates(lastLine, lastLineLength));
 }
 
 std::vector<std::string> TextEditor::GetTextLines() const

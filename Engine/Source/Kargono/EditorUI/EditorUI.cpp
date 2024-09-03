@@ -508,6 +508,12 @@ namespace Kargono::EditorUI
 		ImGui::BringWindowToFront(windowName.c_str());
 	}
 
+	void EditorUIService::BringCurrentWindowToFront()
+	{
+		if (ImGui::IsWindowAppearing())
+			ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
+	}
+
 	void EditorUIService::ClearWindowFocus()
 	{
 		ImGui::FocusWindow(NULL);

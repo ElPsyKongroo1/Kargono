@@ -69,9 +69,9 @@ namespace Kargono::Panels
 
 			Utility::Operations::RemoveCharacterFromString(activeDocument.TextBuffer, '\r');
 
+			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());
 			Utility::FileSystem::WriteFileString(activeDocument.FilePath, activeDocument.TextBuffer);
 			activeDocument.Edited = false;
-			KG_INFO("Saving file in Text Editor: {}", activeDocument.FilePath.filename());
 		};
 		s_TextEditor.SetSaveCallback(s_OnSaveFile);
 
@@ -107,8 +107,6 @@ namespace Kargono::Panels
 			s_ActiveDocument = 0;
 		};
 
-
-
 		s_DeleteWarningSpec.Label = "Delete File";
 		s_DeleteWarningSpec.ConfirmAction = s_OnDeleteFile;
 		s_DeleteWarningSpec.PopupContents = [&]()
@@ -122,8 +120,6 @@ namespace Kargono::Panels
 		{
 			ImGui::Text("Are you sure you want to close this file without saving?");
 		};
-
-
 
 	}
 	void TextEditorPanel::OnEditorUIRender()
