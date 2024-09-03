@@ -79,6 +79,7 @@ namespace Kargono::Scripting
 	struct PrimitiveType
 	{
 		std::string Name {};
+		std::string Description {};
 		ScriptTokenType AcceptableLiteral{};
 		std::string EmittedDeclaration {};
 		std::string EmittedParameter {};
@@ -299,6 +300,8 @@ namespace Kargono::Scripting
 		ScriptToken Namespace{};
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Statement> Statements{};
+		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
+		std::string Description { "Built-in Function"};
 
 		operator bool() const
 		{
@@ -427,6 +430,7 @@ namespace Kargono::Scripting
 	public:
 		std::vector<std::string> Keywords {};
 		std::vector<PrimitiveType> PrimitiveTypes {};
+		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)

@@ -73,11 +73,24 @@ namespace Kargono::Scripting
 			"void" 
 		};
 
-		s_ActiveLanguageDefinition.PrimitiveTypes = 
-		{
-			{"string", ScriptTokenType::StringLiteral, "std::string", "const std::string&"},
-			{ "uint16", ScriptTokenType::IntegerLiteral, "uint16_t", "uint16_t"}
-		};
+		PrimitiveType newPrimitiveType{};
+
+		newPrimitiveType.Name = "string";
+		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
+		newPrimitiveType.EmittedDeclaration = "std::string";
+		newPrimitiveType.EmittedParameter = "const std::string&";
+		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "uint16";
+		newPrimitiveType.Description = "Basic unsigned integer type that is 16 bits wide. This variable can only hold discrete values between 0 to 65,535";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint16_t";
+		newPrimitiveType.EmittedParameter = "uint16_t";
+		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the current runtime user interface.");
 
 		FunctionNode newFunctionNode{};
 		FunctionParameter newParameter{};
@@ -87,6 +100,11 @@ namespace Kargono::Scripting
 		newParameter.Type = { ScriptTokenType::PrimitiveType, "uint16"};
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text"};
 		newFunctionNode.Parameters.push_back(newParameter);
+		newFunctionNode.Description = "Convert basic variable types into a string. Ex: 23 -> \"23\", false -> \"false\"";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node) 
+		{
+			node.Identifier.Value = "std::to_string";
+		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
@@ -105,6 +123,11 @@ namespace Kargono::Scripting
 		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
+		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active runtime user interface. This function takes the window tag, widget tag, and new text as arguments.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
@@ -203,6 +226,11 @@ namespace Kargono::Scripting
 				{
 					AddCurrentCharToBuffer();
 					Advance();
+				}
+
+				if (!CurrentLocationValid())
+				{
+					continue;
 				}
 
 				// Move past second quotation
@@ -306,6 +334,10 @@ namespace Kargono::Scripting
 
 	char ScriptTokenizer::GetCurrentChar(int32_t offset)
 	{
+		if (m_TextLocation + offset >= m_ScriptText.size())
+		{
+			return '\0';
+		}
 		return m_ScriptText.at(m_TextLocation + offset);
 	}
 
@@ -1506,21 +1538,22 @@ namespace Kargono::Scripting
 		bool success{ true };
 		for (auto& statement : funcNode.Statements)
 		{
-			m_OutputText << "  ";
 			std::visit([&](auto&& state)
 			{
 				using type = std::decay_t<decltype(state)>;
 				if constexpr (std::is_same_v<type, StatementEmpty>)
 				{
-					m_OutputText << ";\n";
+					// Do not display anything for an empty statement
 				}
 				else if constexpr (std::is_same_v<type, StatementExpression>)
 				{
+					m_OutputText << "  ";
 					GenerateExpression(state.Value);
 					m_OutputText << ";\n";
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclaration>)
 				{
+					m_OutputText << "  ";
 					PrimitiveType typeValue = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
 					if (typeValue.Name == "")
 					{
@@ -1532,6 +1565,7 @@ namespace Kargono::Scripting
 				}
 				else if constexpr (std::is_same_v<type, StatementAssignment>)
 				{
+					m_OutputText << "  ";
 					m_OutputText << state.Name.Value << " = ";
 					GenerateExpression(state.Value);
 					m_OutputText << ";\n";
@@ -1539,6 +1573,7 @@ namespace Kargono::Scripting
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
 				{
+					m_OutputText << "  ";
 					PrimitiveType typeValue = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
 					if (typeValue.Name == "")
 					{
@@ -1562,6 +1597,7 @@ namespace Kargono::Scripting
 
 	void OutputGenerator::GenerateExpression(Ref<Expression> expression)
 	{
+		bool success{ true };
 		std::visit([&](auto&& expressionValue)
 		{
 			using type = std::decay_t<decltype(expressionValue)>;
@@ -1571,6 +1607,20 @@ namespace Kargono::Scripting
 			}
 			else if constexpr (std::is_same_v<type, FunctionCallNode>)
 			{
+
+				if (!ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.contains(expressionValue.Identifier.Value))
+				{
+					KG_WARN("Invalid function definition name provided when generating function call C++ code");
+					return;
+				}
+				std::function<void(FunctionCallNode&)> onGenerateFunc = 
+					ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.at(expressionValue.Identifier.Value).OnGenerateFunction;
+
+				if (onGenerateFunc)
+				{
+					onGenerateFunc(expressionValue);
+				}
+				
 				if (expressionValue.Namespace)
 				{
 					m_OutputText << expressionValue.Namespace.Value << "::";
@@ -1583,7 +1633,7 @@ namespace Kargono::Scripting
 					m_OutputText << argument.Value;
 					if (iteration + 1 < expressionValue.Arguments.size())
 					{
-						m_OutputText << ',';
+						m_OutputText << ", ";
 					}
 					iteration++;
 				}
@@ -1601,6 +1651,11 @@ namespace Kargono::Scripting
 				GenerateExpression(expressionValue.RightOperand);
 			}
 		}, expression->Value);
+
+		if (!success)
+		{
+			return;
+		}
 	}
 
 

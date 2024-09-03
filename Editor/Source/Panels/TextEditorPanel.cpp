@@ -206,15 +206,7 @@ namespace Kargono::Panels
 					s_ActiveDocument = iteration;
 					Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 					s_TextEditor.SetText(activeDocument.TextBuffer);
-					if (activeDocument.FilePath.extension().string() == ".cpp")
-					{
-						s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
-					}
-					else
-					{
-						// Default Case
-						s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
-					}
+					s_TextEditor.SetLanguageDefinitionByExtension(activeDocument.FilePath.extension().string());
 					document.SetActive = false;
 				}
 
@@ -319,15 +311,7 @@ namespace Kargono::Panels
 			s_AllDocuments.push_back(newDocument);
 			s_ActiveDocument = static_cast<uint32_t>(s_AllDocuments.size() - 1);
 			s_TextEditor.SetText(newDocument.TextBuffer);
-			if (newDocument.FilePath.extension().string() == ".cpp")
-			{
-				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
-			}
-			else
-			{
-				// Default Case
-				s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
-			}
+			s_TextEditor.SetLanguageDefinitionByExtension(newDocument.FilePath.extension().string());
 		}
 	}
 	void TextEditorPanel::ResetPanelResources()

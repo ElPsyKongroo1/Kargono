@@ -164,6 +164,7 @@ public:
 		bool mAutoIndentation;
 
 		TokenizeCallback mTokenize;
+		bool mTokenizeScript{ false };
 
 		TokenRegexStrings mTokenRegexStrings;
 
@@ -181,12 +182,14 @@ public:
 		static const LanguageDefinition& SQL();
 		static const LanguageDefinition& AngelScript();
 		static const LanguageDefinition& Lua();
+		static const LanguageDefinition& KargonoScript();
 	};
 
 	TextEditor();
 	~TextEditor();
 
 	void SetLanguageDefinition(const LanguageDefinition& aLanguageDef);
+	void SetLanguageDefinitionByExtension(const std::string& extension);
 	const LanguageDefinition& GetLanguageDefinition() const { return mLanguageDefinition; }
 
 	const Palette& GetPalette() const { return mPaletteBase; }

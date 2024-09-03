@@ -9,9 +9,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h" // for imGui::GetCurrentWindow()
 #include "Kargono/EditorUI/EditorUI.h"
-
-// TODO
-// - multiline comments vs single-line: latter is blocking start of a ML
+#include "Kargono/Scripting/ScriptCompiler.h"
 
 template<class InputIt1, class InputIt2, class BinaryPredicate>
 bool equals(InputIt1 first1, InputIt1 last1,
@@ -68,6 +66,22 @@ void TextEditor::SetLanguageDefinition(const LanguageDefinition & aLanguageDef)
 		mRegexList.push_back(std::make_pair(std::regex(r.first, std::regex_constants::optimize), r.second));
 
 	Colorize();
+}
+
+void TextEditor::SetLanguageDefinitionByExtension(const std::string& extension)
+{
+	if (extension == ".cpp")
+	{
+		SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+	}
+	else if (extension == ".kgscript")
+	{
+		SetLanguageDefinition(TextEditor::LanguageDefinition::KargonoScript());
+	}
+	else
+	{
+		SetLanguageDefinition(TextEditor::LanguageDefinition::C());
+	}
 }
 
 void TextEditor::SetPalette(const Palette & aValue)
@@ -1084,7 +1098,7 @@ void TextEditor::Render()
 		}
 
 		// Draw a tooltip on known identifiers/preprocessor symbols
-		if (ImGui::IsMousePosValid())
+		if (ImGui::IsWindowHovered())
 		{
 			auto id = GetWordAt(ScreenPosToCoordinates(ImGui::GetMousePos()));
 			if (!id.empty())
@@ -1092,8 +1106,9 @@ void TextEditor::Render()
 				auto it = mLanguageDefinition.mIdentifiers.find(id);
 				if (it != mLanguageDefinition.mIdentifiers.end())
 				{
+					ImGui::SetNextWindowSize({ 200.0f, 0.0f });
 					ImGui::BeginTooltip();
-					ImGui::TextUnformatted(it->second.mDeclaration.c_str());
+					ImGui::TextWrapped(it->second.mDeclaration.c_str());
 					ImGui::EndTooltip();
 				}
 				else
@@ -1101,8 +1116,9 @@ void TextEditor::Render()
 					auto pi = mLanguageDefinition.mPreprocIdentifiers.find(id);
 					if (pi != mLanguageDefinition.mPreprocIdentifiers.end())
 					{
+						ImGui::SetNextWindowSize({ 200.0f, 0.0f });
 						ImGui::BeginTooltip();
-						ImGui::TextUnformatted(pi->second.mDeclaration.c_str());
+						ImGui::TextWrapped(pi->second.mDeclaration.c_str());
 						ImGui::EndTooltip();
 					}
 				}
@@ -2065,8 +2081,8 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2), // Char literal
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor), // Punctuation
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor),	// Preprocessor
-				0xffaaaaaa, // Identifier
-				0xff9bc64d, // Known identifier
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Identifier
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Known identifier
 				0xffc040a0, // Preproc identifier
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (single line)
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (multi line)
@@ -2166,83 +2182,150 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 			col.mColorIndex = PaletteIndex::Default;
 		}
 
-		const char * bufferBegin = &buffer.front();
-		const char * bufferEnd = bufferBegin + buffer.size();
-
-		auto last = bufferEnd;
-
-		for (auto first = bufferBegin; first != last; )
+		if (mLanguageDefinition.mTokenizeScript)
 		{
-			const char * token_begin = nullptr;
-			const char * token_end = nullptr;
-			PaletteIndex token_color = PaletteIndex::Default;
-
-			bool hasTokenizeResult = false;
-
-			if (mLanguageDefinition.mTokenize != nullptr)
+			Kargono::Scripting::ScriptTokenizer tokenizer {};
+			std::vector<Kargono::Scripting::ScriptToken> tokens = tokenizer.TokenizeString(buffer);
+			PaletteIndex tokenColor = PaletteIndex::Default;
+			for (auto& token : tokens)
 			{
-				if (mLanguageDefinition.mTokenize(first, last, token_begin, token_end, token_color))
-					hasTokenizeResult = true;
-			}
-
-			if (hasTokenizeResult == false)
-			{
-				// todo : remove
-				//printf("using regex for %.*s\n", first + 10 < last ? 10 : int(last - first), first);
-
-				for (auto& p : mRegexList)
+				switch (token.Type)
 				{
-					if (std::regex_search(first, last, results, p.first, std::regex_constants::match_continuous))
+				case Kargono::Scripting::ScriptTokenType::Semicolon:
+				case Kargono::Scripting::ScriptTokenType::NamespaceResolver:
+				case Kargono::Scripting::ScriptTokenType::OpenParentheses:
+				case Kargono::Scripting::ScriptTokenType::CloseParentheses:
+				case Kargono::Scripting::ScriptTokenType::OpenCurlyBrace:
+				case Kargono::Scripting::ScriptTokenType::CloseCurlyBrace:
+				case Kargono::Scripting::ScriptTokenType::Comma:
+				case Kargono::Scripting::ScriptTokenType::AssignmentOperator:
+				case Kargono::Scripting::ScriptTokenType::AdditionOperator:
+				case Kargono::Scripting::ScriptTokenType::SubtractionOperator:
+				case Kargono::Scripting::ScriptTokenType::MultiplicationOperator:
+				case Kargono::Scripting::ScriptTokenType::DivisionOperator:
+					tokenColor = PaletteIndex::Punctuation;
+					break;
+				case Kargono::Scripting::ScriptTokenType::Keyword:
+					tokenColor = PaletteIndex::Keyword;
+					break;
+				case Kargono::Scripting::ScriptTokenType::StringLiteral:
+					tokenColor = PaletteIndex::String;
+					break;
+				case Kargono::Scripting::ScriptTokenType::IntegerLiteral:
+					tokenColor = PaletteIndex::Number;
+					break;
+				case Kargono::Scripting::ScriptTokenType::PrimitiveType:
+					if (mLanguageDefinition.mIdentifiers.contains(token.Value))
 					{
-						hasTokenizeResult = true;
-
-						auto& v = *results.begin();
-						token_begin = v.first;
-						token_end = v.second;
-						token_color = p.second;
-						break;
+						tokenColor = PaletteIndex::KnownIdentifier;
 					}
-				}
-			}
-
-			if (hasTokenizeResult == false)
-			{
-				first++;
-			}
-			else
-			{
-				const size_t token_length = token_end - token_begin;
-
-				if (token_color == PaletteIndex::Identifier)
+					break;
+				case Kargono::Scripting::ScriptTokenType::Identifier:
 				{
-					id.assign(token_begin, token_end);
-
-					// todo : allmost all language definitions use lower case to specify keywords, so shouldn't this use ::tolower ?
-					if (!mLanguageDefinition.mCaseSensitive)
-						std::transform(id.begin(), id.end(), id.begin(), ::toupper);
-
-					if (!line[first - bufferBegin].mPreprocessor)
+					if (mLanguageDefinition.mIdentifiers.contains(token.Value))
 					{
-						if (mLanguageDefinition.mKeywords.count(id) != 0)
-							token_color = PaletteIndex::Keyword;
-						else if (mLanguageDefinition.mIdentifiers.count(id) != 0)
-							token_color = PaletteIndex::KnownIdentifier;
-						else if (mLanguageDefinition.mPreprocIdentifiers.count(id) != 0)
-							token_color = PaletteIndex::PreprocIdentifier;
+						tokenColor = PaletteIndex::KnownIdentifier;
+					}
+					else if (mLanguageDefinition.mPreprocIdentifiers.contains(token.Value))
+					{
+						tokenColor = PaletteIndex::PreprocIdentifier;
 					}
 					else
 					{
-						if (mLanguageDefinition.mPreprocIdentifiers.count(id) != 0)
-							token_color = PaletteIndex::PreprocIdentifier;
+						tokenColor = PaletteIndex::Identifier;
+					}
+					break;
+				}
+				default:
+					tokenColor = PaletteIndex::Default;
+					break;
+				}
+				for (size_t iteration = 0; iteration < token.Value.size(); ++iteration)
+				{
+					line[token.Column + iteration].mColorIndex = tokenColor;
+				}
+			}
+		}
+		else
+		{
+			const char* bufferBegin = &buffer.front();
+			const char* bufferEnd = bufferBegin + buffer.size();
+
+			auto last = bufferEnd;
+
+			for (auto first = bufferBegin; first != last; )
+			{
+				const char* token_begin = nullptr;
+				const char* token_end = nullptr;
+				PaletteIndex token_color = PaletteIndex::Default;
+
+				bool hasTokenizeResult = false;
+
+				if (mLanguageDefinition.mTokenize != nullptr)
+				{
+					if (mLanguageDefinition.mTokenize(first, last, token_begin, token_end, token_color))
+						hasTokenizeResult = true;
+				}
+
+				if (hasTokenizeResult == false)
+				{
+
+					for (auto& p : mRegexList)
+					{
+						if (std::regex_search(first, last, results, p.first, std::regex_constants::match_continuous))
+						{
+							hasTokenizeResult = true;
+
+							auto& v = *results.begin();
+							token_begin = v.first;
+							token_end = v.second;
+							token_color = p.second;
+							break;
+						}
 					}
 				}
 
-				for (size_t j = 0; j < token_length; ++j)
-					line[(token_begin - bufferBegin) + j].mColorIndex = token_color;
+				if (hasTokenizeResult == false)
+				{
+					first++;
+				}
+				else
+				{
+					const size_t token_length = token_end - token_begin;
 
-				first = token_end;
+					if (token_color == PaletteIndex::Identifier)
+					{
+						id.assign(token_begin, token_end);
+
+						if (!mLanguageDefinition.mCaseSensitive)
+							std::transform(id.begin(), id.end(), id.begin(), ::toupper);
+
+						if (!line[first - bufferBegin].mPreprocessor)
+						{
+							if (mLanguageDefinition.mKeywords.count(id) != 0)
+								token_color = PaletteIndex::Keyword;
+							else if (mLanguageDefinition.mIdentifiers.count(id) != 0)
+								token_color = PaletteIndex::KnownIdentifier;
+							else if (mLanguageDefinition.mPreprocIdentifiers.count(id) != 0)
+								token_color = PaletteIndex::PreprocIdentifier;
+						}
+						else
+						{
+							if (mLanguageDefinition.mPreprocIdentifiers.count(id) != 0)
+								token_color = PaletteIndex::PreprocIdentifier;
+						}
+					}
+
+					for (size_t j = 0; j < token_length; ++j)
+						line[(token_begin - bufferBegin) + j].mColorIndex = token_color;
+
+					first = token_end;
+				}
 			}
 		}
+
+		
+
 	}
 }
 
@@ -3153,6 +3236,92 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::Lua()
 		langDef.mAutoIndentation = false;
 
 		langDef.mName = "Lua";
+
+		inited = true;
+	}
+	return langDef;
+}
+
+const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScript()
+{
+	static bool inited = false;
+	static LanguageDefinition langDef;
+	if (!inited)
+	{
+		// Lazy loading KGScript language def
+		if (!Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition)
+		{
+			Kargono::Scripting::ScriptCompiler::CreateKGScriptLanguageDefinition();
+		}
+
+		for (auto& keyword : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.Keywords)
+		{
+			langDef.mKeywords.insert(keyword);
+		}
+
+		for (auto& primitiveType : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.PrimitiveTypes)
+		{
+			Identifier id;
+			id.mDeclaration = primitiveType.Description;
+			langDef.mIdentifiers.insert(std::make_pair(primitiveType.Name, id));
+		}
+
+		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions)
+		{
+			Identifier id;
+			id.mDeclaration = funcNode.Description;
+			langDef.mIdentifiers.insert_or_assign(funcName, id);
+
+			if (funcNode.Namespace)
+			{
+				if (Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(funcNode.Namespace.Value))
+				{
+					id.mDeclaration = Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.NamespaceDescriptions.at(funcNode.Namespace.Value);
+				}
+				else
+				{
+					id.mDeclaration = "Built-in Namespace";
+				}
+				langDef.mIdentifiers.insert_or_assign(funcNode.Namespace.Value, id);
+			}
+		}
+		langDef.mTokenizeScript = true;
+
+		langDef.mTokenize = [](const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex) -> bool
+		{
+			paletteIndex = PaletteIndex::Max;
+
+			while (in_begin < in_end && isascii(*in_begin) && isblank(*in_begin))
+				in_begin++;
+
+			if (in_begin == in_end)
+			{
+				out_begin = in_end;
+				out_end = in_end;
+				paletteIndex = PaletteIndex::Default;
+			}
+			else if (TokenizeCStyleString(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::String;
+			else if (TokenizeCStyleCharacterLiteral(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::CharLiteral;
+			else if (TokenizeCStyleIdentifier(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::Identifier;
+			else if (TokenizeCStyleNumber(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::Number;
+			else if (TokenizeCStylePunctuation(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::Punctuation;
+
+			return paletteIndex != PaletteIndex::Max;
+		};
+
+		langDef.mCommentStart = "/*";
+		langDef.mCommentEnd = "*/";
+		langDef.mSingleLineComment = "//";
+
+		langDef.mCaseSensitive = true;
+		langDef.mAutoIndentation = false;
+
+		langDef.mName = "Kargono Script";
 
 		inited = true;
 	}
