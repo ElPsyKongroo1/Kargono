@@ -31,8 +31,8 @@ namespace Kargono::Scripting
 		// Load in script file from disk
 		std::string scriptFile = Utility::FileSystem::ReadFileString(scriptLocation);
 
-		ScriptTokenizer scriptTokenizer{};
 		// Get tokens from text
+		ScriptTokenizer scriptTokenizer{};
 		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
 
 		TokenParser tokenParser{};
@@ -64,6 +64,29 @@ namespace Kargono::Scripting
 		KG_WARN(outputText);
 		return outputText;
 	}
+
+	std::vector<ParserError> ScriptCompiler::CheckForErrors(const std::string& text)
+	{
+		// Lazy loading KGScript language def
+		if (!s_ActiveLanguageDefinition)
+		{
+			CreateKGScriptLanguageDefinition();
+		}
+
+		// Get tokens from text
+		ScriptTokenizer scriptTokenizer{};
+		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(text);
+
+		TokenParser tokenParser{};
+		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
+		if (!parseSuccess)
+		{
+			return tokenParser.GetErrors();
+		}
+		
+		return {};
+	}
+
 	void ScriptCompiler::CreateKGScriptLanguageDefinition()
 	{
 		s_ActiveLanguageDefinition = {};
@@ -401,7 +424,7 @@ namespace Kargono::Scripting
 		ScriptToken tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::None || tokenBuffer.Value != "End of File")
 		{
-			StoreParseError(ParseErrorType::ProgEnd, "Expecting end of file token");
+			StoreParseError(ParseErrorType::Program, "End of file expected", tokenBuffer);
 			return { false, m_AST};
 		}
 
@@ -585,6 +608,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
+			StoreParseError(ParseErrorType::Statement, "Invalid empty statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -599,6 +623,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
+			StoreParseError(ParseErrorType::Statement, "Invalid expression statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -613,6 +638,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
+			StoreParseError(ParseErrorType::Statement, "Invalid declaration statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -627,6 +653,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
+			StoreParseError(ParseErrorType::Statement, "Invalid assignment statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -641,6 +668,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
+			StoreParseError(ParseErrorType::Statement, "Invalid declaration/assignment statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -654,7 +682,7 @@ namespace Kargono::Scripting
 		ScriptToken tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "void")
 		{
-			StoreParseError(ParseErrorType::FuncReturn, "Expecting a return type for function signature");
+			StoreParseError(ParseErrorType::Function, "Invalid/Empty return type provided for function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 		newFunctionNode.ReturnType = tokenBuffer;
@@ -664,7 +692,7 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::Identifier)
 		{
-			StoreParseError(ParseErrorType::FuncName, "Expecting a function name in function signature");
+			StoreParseError(ParseErrorType::Function, "Invalid/Empty function name provided for function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 		newFunctionNode.Name = { tokenBuffer };
@@ -674,7 +702,7 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
 		{
-			StoreParseError(ParseErrorType::FuncPunc, "Expecting an open parentheses in function signature");
+			StoreParseError(ParseErrorType::Function, "Expecting an open parentheses in function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 
@@ -693,7 +721,7 @@ namespace Kargono::Scripting
 			tokenBuffer = GetCurrentToken();
 			if (tokenBuffer.Type != ScriptTokenType::Identifier)
 			{
-				StoreParseError(ParseErrorType::FuncParam, "Expecting an identifier for parameter in function signature");
+				StoreParseError(ParseErrorType::Function, "Expecting an identifier for parameter in function signature", tokenBuffer);
 				return { false, newFunctionNode };
 			}
 			newParameter.Identifier = tokenBuffer;
@@ -707,8 +735,8 @@ namespace Kargono::Scripting
 			{
 				if (GetCurrentToken(1).Type != ScriptTokenType::PrimitiveType)
 				{
-					StoreParseError(ParseErrorType::FuncParam,
-						"Expecting an type after comma separator for parameter list in function signature");
+					StoreParseError(ParseErrorType::Function,
+						"Expecting an type after comma separator for parameter list in function signature", tokenBuffer);
 					return { false, newFunctionNode };
 				}
 
@@ -721,7 +749,12 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
 		{
-			StoreParseError(ParseErrorType::FuncPunc, "Expecting an closing parentheses in function signature");
+			if (tokenBuffer.Type != ScriptTokenType::PrimitiveType)
+			{
+				StoreParseError(ParseErrorType::Function, "Invalid parameter type declaration", tokenBuffer);
+				return { false, newFunctionNode };
+			}
+			StoreParseError(ParseErrorType::Function, "Expecting an closing parentheses in function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 
@@ -730,7 +763,7 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
 		{
-			StoreParseError(ParseErrorType::FuncPunc, "Expecting an opening curly brace in function signature");
+			StoreParseError(ParseErrorType::Function, "Expecting an opening curly brace in function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 
@@ -749,7 +782,7 @@ namespace Kargono::Scripting
 
 		if (CheckForErrors())
 		{
-			StoreParseError(ParseErrorType::FuncBody, "Invalid function statement");
+			StoreParseError(ParseErrorType::Function, "Unable to parse function body statements", newFunctionNode.Name);
 			return { false, newFunctionNode };
 		}
 
@@ -757,7 +790,7 @@ namespace Kargono::Scripting
 		tokenBuffer = GetCurrentToken();
 		if (tokenBuffer.Type != ScriptTokenType::CloseCurlyBrace)
 		{
-			StoreParseError(ParseErrorType::FuncPunc, "Expecting an closing curly brace in function signature");
+			StoreParseError(ParseErrorType::Function, "Expecting a closing curly brace to terminate function body\n Did you forget a semicolon?", tokenBuffer);
 			return { false, newFunctionNode };
 		}
 
@@ -773,8 +806,13 @@ namespace Kargono::Scripting
 		// Parse initial expression term / initial operand if within binary expression
 		{
 			auto [success, expression] = ParseExpressionTerm(parentExpressionSize);
-			if (!success || CheckForErrors())
+			if (!success)
 			{
+				return { false, {} };
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid expression", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 			newExpression = expression;
@@ -794,8 +832,13 @@ namespace Kargono::Scripting
 			{
 				parentExpressionSize++;
 				auto [success, expression] = ParseExpressionTerm(parentExpressionSize);
-				if (!success || CheckForErrors())
+				if (!success )
 				{
+					return { false, {} };
+				}
+				if (CheckForErrors())
+				{
+					StoreParseError(ParseErrorType::Expression, "Invalid right operand in binary expression", GetCurrentToken(parentExpressionSize));
 					return { false, {} };
 				}
 				newBinaryOperation.RightOperand = expression;
@@ -803,9 +846,12 @@ namespace Kargono::Scripting
 
 			// Ensure the return type of both operands is identical
 			if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value  != 
-				GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value)
+				GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
 			{
-				StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
+				std::string errorMessage = fmt::format("Return types do not match in binary expression\n Left operand return type: {}\n Right operand return type: {}",
+					GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
+					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
+				StoreParseError(ParseErrorType::Expression, errorMessage, newBinaryOperation.Operator);
 				return { false, {} };
 			}
 
@@ -834,6 +880,7 @@ namespace Kargono::Scripting
 			}
 			if (CheckForErrors())
 			{
+				StoreParseError(ParseErrorType::Expression, "Invalid unary operation", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -849,6 +896,7 @@ namespace Kargono::Scripting
 			}
 			if (CheckForErrors())
 			{
+				StoreParseError(ParseErrorType::Expression, "Invalid function call", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -864,6 +912,7 @@ namespace Kargono::Scripting
 			}
 			if (CheckForErrors())
 			{
+				StoreParseError(ParseErrorType::Expression, "Invalid literal", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -879,6 +928,7 @@ namespace Kargono::Scripting
 			}
 			if (CheckForErrors())
 			{
+				StoreParseError(ParseErrorType::Expression, "Invalid identifier", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -913,9 +963,12 @@ namespace Kargono::Scripting
 
 				// Ensure the return type of both operands is identical
 				if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value !=
-					GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value)
+					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
 				{
-					StoreParseError(ParseErrorType::ExpressionValue, "Operand return types do not match in binary expression");
+					std::string errorMessage = fmt::format("Return types do not match in binary expression\n Left operand return type: {}\n Right operand return type: {}",
+						GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
+						GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
+					StoreParseError(ParseErrorType::Expression, errorMessage, newBinaryOperation.Operator);
 					return { false, {} };
 				}
 
@@ -955,7 +1008,7 @@ namespace Kargono::Scripting
 
 		if (tokenBuffer.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenBuffer))
 		{
-			StoreParseError(ParseErrorType::StateValue, "Could not locate identifier in current stack!");
+			StoreParseError(ParseErrorType::Expression, "Unknown variable identifier!", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -1022,7 +1075,7 @@ namespace Kargono::Scripting
 		// Ensure function identifier exists and get function node
 		if (!ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
 		{
-			StoreParseError(ParseErrorType::ExpressionValue, "Could not locate function identifier!");
+			StoreParseError(ParseErrorType::Expression, "Invalid identifier for function call", newFunctionCallNode.Identifier);
 			return { false, {} };
 		}
 		FunctionNode& functionNode = ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
@@ -1030,14 +1083,17 @@ namespace Kargono::Scripting
 		// Ensure namespace of function matches
 		if (functionNode.Namespace.Value != newFunctionCallNode.Namespace.Value)
 		{
-			StoreParseError(ParseErrorType::ExpressionValue, "Could not match namespace for provided function identifier!");
+			StoreParseError(ParseErrorType::Expression, "Invalid namespace for function call", newFunctionCallNode.Namespace);
 			return { false, {} };
 		}
 
 		// Ensure number of arguments in function call match the number of arguments in the function
 		if (functionNode.Parameters.size() != newFunctionCallNode.Arguments.size())
 		{
-			StoreParseError(ParseErrorType::ExpressionValue, "Number of arguments in function call does not match the function parameter size");
+			std::string errorMessage =
+				fmt::format("Argument count in function call ({}) does not match the function parameter count ({})", 
+					newFunctionCallNode.Arguments.size(), functionNode.Parameters.size());
+			StoreParseError(ParseErrorType::Expression, errorMessage, newFunctionCallNode.Identifier);
 			return { false, {} };
 		}
 
@@ -1048,7 +1104,10 @@ namespace Kargono::Scripting
 			bool valid = PrimitiveTypeAcceptableToken(parameter.Type.Value, newFunctionCallNode.Arguments.at(parameterIteration));
 			if (!valid)
 			{
-				StoreParseError(ParseErrorType::ExpressionValue, "Argument type is not acceptable for function parameter");
+				std::string errorMessage =
+					fmt::format("Argument type is not acceptable for function parameter\n Parameter Type: {}\n Argument Type: {}",
+						parameter.Type.Value, GetPrimitiveTypeFromToken((newFunctionCallNode.Arguments.at(parameterIteration))).Value);
+				StoreParseError(ParseErrorType::Expression, errorMessage, newFunctionCallNode.Arguments.at(parameterIteration));
 				return { false, {} };
 			}
 			parameterIteration++;
@@ -1121,14 +1180,16 @@ namespace Kargono::Scripting
 			newExpression = expression;
 		}
 
-		if (CheckForErrors())
-		{
-			return { false, {} };
-		}
 
 		// Check for a terminating semicolon
 		if (GetCurrentToken(expressionSize).Type != ScriptTokenType::Semicolon)
 		{
+			return { false, {} };
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in expression statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -1151,7 +1212,7 @@ namespace Kargono::Scripting
 
 		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
-			StoreParseError(ParseErrorType::StateValue, "Duplicate identifier found during declaration");
+			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
 			return { false, newStatement };
 		}
 
@@ -1193,10 +1254,16 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in assignment statement", tokenBuffer);
+			return { false, {} };
+		}
+
 		// Ensure identifer is a valid StackVariable
 		if (!CheckStackForIdentifier(tokenBuffer))
 		{
-			StoreParseError(ParseErrorType::StateValue, "Invalid identifier when attempting to parse assignment statement");
+			StoreParseError(ParseErrorType::Statement, "Unknown variable identifier found in assignment statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -1205,7 +1272,10 @@ namespace Kargono::Scripting
 		bool success = PrimitiveTypeAcceptableToken(currentIdentifierVariable.Type.Value, newExpression->GetReturnType());
 		if (!success)
 		{
-			StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
+			std::string errorMessage = 
+				fmt::format("Invalid expression return type provided in assignment statement\n Declared type: {}\n ExpressionType: {}",
+					currentIdentifierVariable.Type.Value, GetPrimitiveTypeFromToken(newExpression->GetReturnType()).Value);
+			StoreParseError(ParseErrorType::Statement, errorMessage, GetCurrentToken(1));
 			return { false, {} };
 		}
 
@@ -1247,18 +1317,27 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in declaration/assignment statement", tokenBuffer);
+			return { false, {} };
+		}
+
 		// Ensure expression value is a valid type to be assigned to new identifier
 		bool success = PrimitiveTypeAcceptableToken(GetCurrentToken().Value, newExpression->GetReturnType());
 		if (!success)
 		{
-			StoreParseError(ParseErrorType::StateValue, "Invalid assignment statement. Value cannot be assigned to provided type");
+			std::string errorMessage =
+				fmt::format("Invalid expression return type provided in assignment statement\n Declared type: {}\n ExpressionType: {}",
+					tokenBuffer.Value, GetPrimitiveTypeFromToken(newExpression->GetReturnType()).Value);
+			StoreParseError(ParseErrorType::Statement, errorMessage, GetCurrentToken(2));
 			return { false, newStatement };
 		}
 
 		// Ensure identifer is not being declared twice in the current stack frame
 		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
-			StoreParseError(ParseErrorType::StateValue, "Duplicate identifier found during declaration");
+			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
 			return { false, newStatement };
 		}
 		StatementDeclarationAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), newExpression };
@@ -1356,10 +1435,9 @@ namespace Kargono::Scripting
 		return {};
 	}
 	
-	void TokenParser::StoreParseError(ParseErrorType errorType, const std::string& message)
+	void TokenParser::StoreParseError(ParseErrorType errorType, const std::string& message, ScriptToken errorToken)
 	{
-		m_Errors.push_back({ errorType , message, GetCurrentToken(), 
-			GetCurrentToken(-1) });
+		m_Errors.push_back({ errorType , message, errorToken});
 	}
 
 	bool TokenParser::CheckForErrors()
@@ -1443,7 +1521,6 @@ namespace Kargono::Scripting
 					StackVariable variable = GetStackVariable(token);
 					if (!variable)
 					{
-						StoreParseError(ParseErrorType::PrimTypeAccep, "Could not find StackVariable with specified identifier");
 						return false;
 					}
 
@@ -1452,7 +1529,6 @@ namespace Kargono::Scripting
 						return true;
 					}
 
-					StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
 					return false;
 				}
 				if (token.Type == ScriptTokenType::PrimitiveType && token.Value == type)
@@ -1462,7 +1538,6 @@ namespace Kargono::Scripting
 			}
 		}
 
-		StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid primitive type provided");
 		return false;
 	}
 
@@ -1484,7 +1559,6 @@ namespace Kargono::Scripting
 			StackVariable variable = GetStackVariable(token);
 			if (!variable)
 			{
-				StoreParseError(ParseErrorType::PrimTypeAccep, "Could not find StackVariable with specified identifier");
 				return {};
 			}
 
@@ -1493,7 +1567,6 @@ namespace Kargono::Scripting
 				return { ScriptTokenType::PrimitiveType, variable.Type.Value };
 			}
 
-			StoreParseError(ParseErrorType::PrimTypeAccep, "Invalid stack variable type/value provided");
 			return {};
 		}
 

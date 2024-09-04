@@ -102,6 +102,7 @@ namespace Kargono
 
 				s_ActiveEngine->m_UpdateCount++;
 				AppTickService::OnUpdate(k_ConstantFrameTimeStep);
+				Utility::PassiveTimer::OnUpdate(k_ConstantFrameTimeStep);
 
 				ExecuteMainThreadQueue();
 				if (!s_ActiveEngine->m_Minimized)

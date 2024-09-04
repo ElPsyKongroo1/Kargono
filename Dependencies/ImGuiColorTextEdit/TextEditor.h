@@ -31,12 +31,13 @@ public:
 		Background,
 		Cursor,
 		Selection,
-		ErrorMarker,
+		ErrorBackground,
 		Breakpoint,
 		LineNumber,
 		CurrentLineFill,
 		CurrentLineFillInactive,
 		CurrentLineEdge,
+		ErrorText,
 		Max
 	};
 
@@ -126,10 +127,22 @@ public:
 		std::string mDeclaration;
 	};
 
+	struct ErrorLocation
+	{
+		uint32_t Column;
+		uint32_t Length;
+	};
+	
+	struct ErrorMarker
+	{
+		std::string Description;
+		std::vector<ErrorLocation> Locations;
+	};
+
 	typedef std::string String;
 	typedef std::unordered_map<std::string, Identifier> Identifiers;
 	typedef std::unordered_set<std::string> Keywords;
-	typedef std::map<int, std::string> ErrorMarkers;
+	typedef std::map<int, ErrorMarker> ErrorMarkers;
 	typedef std::unordered_set<int> Breakpoints;
 	typedef std::array<ImU32, (unsigned)PaletteIndex::Max> Palette;
 	typedef uint8_t Char;
@@ -321,6 +334,7 @@ private:
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	void ColorizeInternal();
 	float TextDistanceToLineStart(const Coordinates& aFrom) const;
+	float TextDistanceToLineStartWithTab(const Coordinates& aFrom) const;
 	void EnsureCursorVisible();
 	int GetPageSize() const;
 	std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;

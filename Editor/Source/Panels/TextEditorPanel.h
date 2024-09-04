@@ -16,6 +16,7 @@ namespace Kargono::Panels
 
 		void OpenFile(const std::filesystem::path& path);
 		void ResetPanelResources();
+		void CheckForErrors();
 	private:
 		std::string m_PanelName{ "Text Editor" };
 		std::string m_EditorWindowName { "TextEditorChild" };

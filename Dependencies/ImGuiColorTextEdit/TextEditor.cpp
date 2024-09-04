@@ -3,6 +3,7 @@
 #include <string>
 #include <regex>
 #include <cmath>
+#include <format>
 
 #include "TextEditor.h"
 
@@ -910,7 +911,8 @@ void TextEditor::Render()
 	if (!mLines.empty())
 	{
 		float spaceSize = ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, " ", nullptr, nullptr).x;
-
+		bool drawErrorTooltip = false;
+		std::string tooltipMessage[2];
 		while (lineNo <= lineMax)
 		{
 			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + lineNo * mCharAdvance.y);
@@ -956,19 +958,22 @@ void TextEditor::Render()
 			if (errorIt != mErrorMarkers.end())
 			{
 				auto end = ImVec2(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX, lineStartScreenPos.y + mCharAdvance.y);
-				drawList->AddRectFilled(start, end, mPalette[(int)PaletteIndex::ErrorMarker]);
+				drawList->AddRectFilled(start, end, mPalette[(int)PaletteIndex::ErrorBackground]);
+				float width = 1.0f;
+				for (auto& location : errorIt->second.Locations)
+				{
+					float textStart = TextDistanceToLineStartWithTab({lineNo, (int)(location.Column)});
+					float textEnd = TextDistanceToLineStartWithTab({lineNo, (int)(location.Column) + (int)(location.Length) });
+					ImVec2 cstart(textScreenPos.x + textStart, lineStartScreenPos.y + mCharAdvance.y);
+					ImVec2 cend(textScreenPos.x + textEnd, lineStartScreenPos.y + mCharAdvance.y + width);
+					drawList->AddRectFilled(cstart, cend, mPalette[(int)PaletteIndex::ErrorText]);
+				}
 
 				if (ImGui::IsMouseHoveringRect(lineStartScreenPos, end))
 				{
-					ImGui::BeginTooltip();
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-					ImGui::Text("Error at line %d:", errorIt->first);
-					ImGui::PopStyleColor();
-					ImGui::Separator();
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
-					ImGui::Text("%s", errorIt->second.c_str());
-					ImGui::PopStyleColor();
-					ImGui::EndTooltip();
+					drawErrorTooltip = true;
+					tooltipMessage[0] = std::format("Error(s) at line {}:", errorIt->first);
+					tooltipMessage[1] = errorIt->second.Description;
 				}
 			}
 
@@ -976,19 +981,12 @@ void TextEditor::Render()
 			snprintf(buf, 16, "%d  ", lineNo + 1);
 
 			auto lineNoWidth = ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, buf, nullptr, nullptr).x;
-			drawList->AddText(ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth, lineStartScreenPos.y), mPalette[(int)PaletteIndex::LineNumber], buf);
+			drawList->AddText(ImVec2(lineStartScreenPos.x + mTextStart - lineNoWidth, lineStartScreenPos.y),
+				mPalette[(int)(mState.mCursorPosition.mLine == lineNo &&!HasSelection() ? PaletteIndex::KnownIdentifier : PaletteIndex::LineNumber)], buf);
 
 			if (mState.mCursorPosition.mLine == lineNo)
 			{
 				auto focused = ImGui::IsWindowFocused();
-
-				// Highlight the current line (where the cursor is)
-				if (!HasSelection())
-				{
-					auto end = ImVec2(start.x + contentSize.x + scrollX, start.y + mCharAdvance.y);
-					drawList->AddRectFilled(start, end, mPalette[(int)(focused ? PaletteIndex::CurrentLineFill : PaletteIndex::CurrentLineFillInactive)]);
-					drawList->AddRect(start, end, mPalette[(int)PaletteIndex::CurrentLineEdge], 1.0f);
-				}
 
 				// Render the cursor
 				if (focused)
@@ -1106,22 +1104,33 @@ void TextEditor::Render()
 				auto it = mLanguageDefinition.mIdentifiers.find(id);
 				if (it != mLanguageDefinition.mIdentifiers.end())
 				{
-					ImGui::SetNextWindowSize({ 200.0f, 0.0f });
+					ImGui::SetNextWindowSize({ 400.0f, 0.0f });
+					ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIService::s_HighlightColor1);
 					ImGui::BeginTooltip();
 					ImGui::TextWrapped(it->second.mDeclaration.c_str());
+					ImGui::PopStyleColor();
 					ImGui::EndTooltip();
 				}
-				else
+				else if (drawErrorTooltip)
 				{
-					auto pi = mLanguageDefinition.mPreprocIdentifiers.find(id);
-					if (pi != mLanguageDefinition.mPreprocIdentifiers.end())
-					{
-						ImGui::SetNextWindowSize({ 200.0f, 0.0f });
-						ImGui::BeginTooltip();
-						ImGui::TextWrapped(pi->second.mDeclaration.c_str());
-						ImGui::EndTooltip();
-					}
+					ImGui::BeginTooltip();
+					ImGui::PushStyleColor(ImGuiCol_Text, mPalette[(int)PaletteIndex::ErrorText]);
+					ImGui::Text(tooltipMessage[0].c_str());
+					ImGui::Separator();
+					ImGui::Text(tooltipMessage[1].c_str());
+					ImGui::PopStyleColor();
+					ImGui::EndTooltip();
 				}
+			}
+			else if (drawErrorTooltip)
+			{
+				ImGui::BeginTooltip();
+				ImGui::PushStyleColor(ImGuiCol_Text, mPalette[(int)PaletteIndex::ErrorText]);
+				ImGui::Text(tooltipMessage[0].c_str());
+				ImGui::Separator();
+				ImGui::Text(tooltipMessage[1].c_str());
+				ImGui::PopStyleColor();
+				ImGui::EndTooltip();
 			}
 		}
 	}
@@ -1139,6 +1148,7 @@ void TextEditor::Render()
 
 void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 {
+	// Check for errors
 	mWithinRender = true;
 	mTextChanged = false;
 	mCursorPositionChanged = false;
@@ -2089,12 +2099,13 @@ TextEditor::Palette& TextEditor::GetCurrentColorPalette()
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_BackgroundColor), // Background
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Cursor
 				0x80a06020, // Selection
-				0x800020ff, // ErrorMarker
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3_UltraThin), // Error Background
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Breakpoint
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Line number
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DarkBackgroundColor), // Current line fill
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line fill (inactive)
 				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line edge
+				ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3), // Error Text
 		}
 	};
 
@@ -2481,6 +2492,34 @@ float TextEditor::TextDistanceToLineStart(const Coordinates& aFrom) const
 	float spaceSize = ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, " ", nullptr, nullptr).x;
 	int colIndex = GetCharacterIndex(aFrom);
 	for (size_t it = 0u; it < line.size() && it < colIndex; )
+	{
+		if (line[it].mChar == '\t')
+		{
+			distance = (1.0f + std::floor((1.0f + distance) / (float(mTabSize) * spaceSize))) * (float(mTabSize) * spaceSize);
+			++it;
+		}
+		else
+		{
+			auto d = UTF8CharLength(line[it].mChar);
+			char tempCString[7];
+			int i = 0;
+			for (; i < 6 && d-- > 0 && it < (int)line.size(); i++, it++)
+				tempCString[i] = line[it].mChar;
+
+			tempCString[i] = '\0';
+			distance += ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, tempCString, nullptr, nullptr).x;
+		}
+	}
+
+	return distance;
+}
+
+float TextEditor::TextDistanceToLineStartWithTab(const Coordinates& aFrom) const
+{
+	auto& line = mLines[aFrom.mLine];
+	float distance = 0.0f;
+	float spaceSize = ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, " ", nullptr, nullptr).x;
+	for (size_t it = 0u; it < line.size() && it < aFrom.mColumn; )
 	{
 		if (line[it].mChar == '\t')
 		{

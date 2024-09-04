@@ -81,8 +81,23 @@ namespace Kargono::Utility
 		bool m_Done {false};
 		std::atomic<bool> m_ForceStop {false};
 	private:
-		static std::vector<Ref<AsyncBusyTimer>> s_AllTimers;
+		static std::vector<Ref<AsyncBusyTimer>> s_AllBusyTimers;
 		static std::mutex s_BusyTimerMutex;
+	};
+
+	class PassiveTimer
+	{
+	public:
+		static void CreateTimer(float waitTime, std::function<void()> function);
+		static void OnUpdate(Timestep step);
+	public:
+		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function {function} {}
+	private:
+		float m_WaitTime {0.0f};
+		float m_ElapsedTime{0.0f};
+		std::function<void()> m_Function {nullptr};
+	private:
+		static std::vector<PassiveTimer> s_AllPassiveTimers;
 	};
 
 }

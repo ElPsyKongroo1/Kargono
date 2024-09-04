@@ -4,6 +4,8 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/EditorUI/ImGuiColorTextEditorAPI.h"
 #include "Kargono.h"
+#include "Kargono/Scripting/ScriptCompiler.h"
+#include "Kargono/Utility/Timers.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 
@@ -184,6 +186,14 @@ namespace Kargono::Panels
 				Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
 				activeDocument.TextBuffer = s_TextEditor.GetText();
 				activeDocument.Edited = true;
+				if (activeDocument.FilePath.extension().string() == ".kgscript")
+				{
+					CheckForErrors();
+				}
+				else
+				{
+					s_TextEditor.SetErrorMarkers({});
+				}
 			}
 
 			for (auto& document : s_AllDocuments)
@@ -204,6 +214,14 @@ namespace Kargono::Panels
 					s_TextEditor.SetText(activeDocument.TextBuffer);
 					s_TextEditor.SetLanguageDefinitionByExtension(activeDocument.FilePath.extension().string());
 					document.SetActive = false;
+					if (activeDocument.FilePath.extension().string() == ".kgscript")
+					{
+						CheckForErrors();
+					}
+					else
+					{
+						s_TextEditor.SetErrorMarkers({});
+					}
 				}
 
 				bool checkTab = true;
@@ -313,5 +331,55 @@ namespace Kargono::Panels
 	void TextEditorPanel::ResetPanelResources()
 	{
 		s_OnCloseAllFiles();
+	}
+	void TextEditorPanel::CheckForErrors()
+	{
+		static int32_t countOfTimers{0};
+		countOfTimers++;
+		s_TextEditor.SetErrorMarkers({});
+		Utility::PassiveTimer::CreateTimer(1.2f, [&]()
+		{
+			countOfTimers--;
+			if (countOfTimers > 0)
+			{
+				return;
+			}
+			
+			if (s_AllDocuments.size() <= 0)
+			{
+				return;
+			}
+			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
+			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompiler::CheckForErrors(activeDocument.TextBuffer);
+
+			if (errors.size() == 0)
+			{
+				s_TextEditor.SetErrorMarkers({});
+				return;
+			}
+
+			TextEditor::ErrorMarkers markers{};
+			for (Scripting::ParserError& error : errors)
+			{
+				if (markers.contains(error.CurrentToken.Line))
+				{
+					TextEditor::ErrorMarker& existingMarker = markers.at(error.CurrentToken.Line);
+					existingMarker.Description = existingMarker.Description + error.ToString();
+					TextEditor::ErrorLocation newLocation;
+					newLocation.Column = error.CurrentToken.Column;
+					newLocation.Length = (uint32_t)error.CurrentToken.Value.size();
+					existingMarker.Locations.push_back(newLocation);
+					continue;
+				}
+				TextEditor::ErrorMarker marker;
+				marker.Description = error.ToString();
+				TextEditor::ErrorLocation newLocation;
+				newLocation.Column = error.CurrentToken.Column;
+				newLocation.Length = (uint32_t)error.CurrentToken.Value.size();
+				marker.Locations.push_back(newLocation);
+				markers.insert_or_assign(error.CurrentToken.Line, marker);
+			}
+			s_TextEditor.SetErrorMarkers(markers);
+		});
 	}
 }

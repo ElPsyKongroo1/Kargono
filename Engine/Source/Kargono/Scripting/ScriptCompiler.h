@@ -49,27 +49,10 @@ namespace Kargono::Scripting
 	{
 		// Invalid Error Code
 		None = 0,
-
-		// Parse Function Error Codes
-		FuncReturn,
-		FuncName,
-		FuncParam,
-		FuncPunc,
-		FuncBody,
-
-		// Parse Expression Error Codes
-		ExpressionValue,
-
-		// Parse Statement Error Codes
-		StatePunc,
-		StateValue,
-
-		// Validation Function Error Codes
-		PrimTypeAccep,
-
-
-		// Program Boundaries
-		ProgEnd
+		Function,
+		Expression,
+		Statement,
+		Program
 	};
 
 	static inline uint32_t InvalidLine { std::numeric_limits<uint32_t>::max() };
@@ -128,20 +111,13 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
-			case Scripting::ParseErrorType::FuncReturn: return "FuncReturn";
-			case Scripting::ParseErrorType::FuncName: return "FuncName";
-			case Scripting::ParseErrorType::FuncParam: return "FuncParam";
-			case Scripting::ParseErrorType::FuncPunc: return "FuncPunc";
-			case Scripting::ParseErrorType::FuncBody: return "FuncBody";
+			case Scripting::ParseErrorType::Function: return "Function";
 
-			case Scripting::ParseErrorType::ExpressionValue: return "ExpressionValue";
+			case Scripting::ParseErrorType::Expression: return "Expression";
 
-			case Scripting::ParseErrorType::StatePunc: return "StatePunc";
-			case Scripting::ParseErrorType::StateValue: return "StateValue";
+			case Scripting::ParseErrorType::Statement: return "Statement";
 
-			case Scripting::ParseErrorType::PrimTypeAccep: return "PrimTypeAccep";
-
-			case Scripting::ParseErrorType::ProgEnd: return "ProgEnd";
+			case Scripting::ParseErrorType::Program: return "Program";
 
 			case Scripting::ParseErrorType::None:
 			default:
@@ -172,10 +148,9 @@ namespace Kargono::Scripting
 		std::string ToString() const
 		{
 			std::stringstream stringStream {};
-			stringStream << "Type ("
-				<< Utility::ScriptTokenTypeToString(Type)
-				<< ") Value (" << Value
-				<< ") Line/Column (" << Line << "/" << Column << ")";
+			stringStream << "  Type: " << Utility::ScriptTokenTypeToString(Type) << '\n'
+				<< "  Value: " << Value << '\n'
+				<< "  Line/Column: " << Line << "/" << Column << '\n';
 			return stringStream.str();
 		}
 	};
@@ -338,14 +313,12 @@ namespace Kargono::Scripting
 		ParseErrorType Type{ ParseErrorType::None };
 		std::string Message{};
 		ScriptToken CurrentToken{};
-		ScriptToken PreviousToken{};
 	public:
 		std::string ToString() const
 		{
 			std::stringstream stringStream {};
-			stringStream << "[Error " << Utility::ParseErrorTypeToString(Type) <<"]: " << Message << '\n';
-			stringStream << "  Current Token: " << CurrentToken.ToString() << '\n';
-			stringStream << "  Previous Token: " << PreviousToken.ToString();
+			stringStream << "[" << Utility::ParseErrorTypeToString(Type) << " Error]: " << Message << '\n';
+			stringStream << CurrentToken.ToString();
 			return stringStream.str();
 		}
 
@@ -370,6 +343,8 @@ namespace Kargono::Scripting
 		void PrintAST();
 		void PrintTokens();
 		void PrintErrors();
+	public:
+		std::vector<ParserError> GetErrors() { return m_Errors; }
 	private:
 		std::tuple<bool, Statement> ParseStatementNode();
 		std::tuple<bool, FunctionNode> ParseFunctionNode();
@@ -396,7 +371,7 @@ namespace Kargono::Scripting
 		bool CheckStackForIdentifier(ScriptToken identifier);
 		bool CheckCurrentStackFrameForIdentifier(ScriptToken identifier);
 		StackVariable GetStackVariable(ScriptToken identifier);
-		void StoreParseError(ParseErrorType errorType, const std::string& message);
+		void StoreParseError(ParseErrorType errorType, const std::string& message, ScriptToken errorToken);
 		bool CheckForErrors();
 		bool IsLiteralOrIdentifier(ScriptToken token);
 		bool IsLiteral(ScriptToken token);
@@ -464,6 +439,7 @@ namespace Kargono::Scripting
 		//==============================
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
 		static void CreateKGScriptLanguageDefinition();
+		static std::vector<ParserError> CheckForErrors(const std::string& text);
 	public:
 		static LanguageDefinition s_ActiveLanguageDefinition;
 	};

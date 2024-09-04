@@ -4,26 +4,27 @@
 
 namespace Kargono::Utility
 {
-	std::vector<Ref<AsyncBusyTimer>> AsyncBusyTimer::s_AllTimers {};
+	std::vector<Ref<AsyncBusyTimer>> AsyncBusyTimer::s_AllBusyTimers {};
+	std::vector<PassiveTimer> PassiveTimer::s_AllPassiveTimers {};
 	std::mutex AsyncBusyTimer::s_BusyTimerMutex {};
 
 	void AsyncBusyTimer::CreateTimer(float waitTime, std::function<void()> function)
 	{
 		std::scoped_lock lock(s_BusyTimerMutex);
-		s_AllTimers.push_back(CreateRef<AsyncBusyTimer>(waitTime, function));
+		s_AllBusyTimers.push_back(CreateRef<AsyncBusyTimer>(waitTime, function));
 		// TODO: Not amazing solution, but passively cleans up timers
 		CleanUpClosedTimers();
 	}
 	void AsyncBusyTimer::CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction, std::function<void()> terminationFunction)
 	{
 		std::scoped_lock lock(s_BusyTimerMutex);
-		s_AllTimers.push_back(CreateRef<AsyncBusyTimer>(waitTime, reoccurCount, reoccurFunction, terminationFunction));
+		s_AllBusyTimers.push_back(CreateRef<AsyncBusyTimer>(waitTime, reoccurCount, reoccurFunction, terminationFunction));
 		// TODO: Not amazing solution, but passively cleans up timers
 		CleanUpClosedTimers();
 	}
 	void AsyncBusyTimer::CleanUpClosedTimers()
 	{
-		auto iterator = std::remove_if(s_AllTimers.begin(), s_AllTimers.end(), [&](Ref<AsyncBusyTimer> timer)
+		auto iterator = std::remove_if(s_AllBusyTimers.begin(), s_AllBusyTimers.end(), [&](Ref<AsyncBusyTimer> timer)
 			{
 				if (timer->m_Done)
 				{
@@ -32,27 +33,27 @@ namespace Kargono::Utility
 				return false;
 			});
 
-		s_AllTimers.erase(iterator, s_AllTimers.end());
+		s_AllBusyTimers.erase(iterator, s_AllBusyTimers.end());
 	}
 
 	void AsyncBusyTimer::CloseAllTimers()
 	{
 		std::scoped_lock lock(s_BusyTimerMutex);
 
-		for (auto& timer : s_AllTimers)
+		for (auto& timer : s_AllBusyTimers)
 		{
 			timer->ForceStop();
 		}
 
-		for(auto& timer : s_AllTimers)
+		for(auto& timer : s_AllBusyTimers)
 		{
 			if (timer->m_TimerThread.joinable())
 			{
 				timer->m_TimerThread.join();
 			}
 		}
-		s_AllTimers.clear();
-		KG_VERIFY(s_AllTimers.size() == 0, "All async timers closed successfully!")
+		s_AllBusyTimers.clear();
+		KG_VERIFY(s_AllBusyTimers.size() == 0, "All async timers closed successfully!")
 	}
 
 	AsyncBusyTimer::AsyncBusyTimer(float waitTime, std::function<void()> function)
@@ -145,5 +146,29 @@ namespace Kargono::Utility
 		}
 		
 		m_Done = true;
+	}
+	void PassiveTimer::CreateTimer(float waitTime, std::function<void()> function)
+	{
+		s_AllPassiveTimers.push_back({ waitTime, function });
+	}
+	void PassiveTimer::OnUpdate(Timestep step)
+	{
+		std::vector<uint32_t> timersToRemove{};
+		uint32_t iteration{ 0 };
+		for (auto& timer : s_AllPassiveTimers)
+		{
+			timer.m_ElapsedTime += step;
+			if (timer.m_ElapsedTime > timer.m_WaitTime)
+			{
+				timer.m_Function();
+				timersToRemove.push_back(iteration);
+			}
+			iteration++;
+		}
+
+		for (auto it = timersToRemove.rbegin(); it != timersToRemove.rend(); ++it)
+		{
+			s_AllPassiveTimers.erase(s_AllPassiveTimers.begin() + *it);
+		}
 	}
 }
