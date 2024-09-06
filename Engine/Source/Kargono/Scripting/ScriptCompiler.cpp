@@ -882,6 +882,7 @@ namespace Kargono::Scripting
 			{
 				CursorContext newContext;
 				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of addition/subtraction operation", newBinaryOperation.Operator);
 				return { false, {} };
@@ -891,6 +892,7 @@ namespace Kargono::Scripting
 			{
 				CursorContext newContext;
 				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of addition/subtraction operation", newBinaryOperation.Operator);
 				return { false, {} };
@@ -1018,6 +1020,7 @@ namespace Kargono::Scripting
 				{
 					CursorContext newContext;
 					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division operation", newBinaryOperation.Operator);
 					return { false, {} };
@@ -1027,6 +1030,7 @@ namespace Kargono::Scripting
 				{
 					CursorContext newContext;
 					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division operation", newBinaryOperation.Operator);
 					return { false, {} };
@@ -1079,7 +1083,7 @@ namespace Kargono::Scripting
 
 		if (!IsContextProbe(tokenBuffer) && tokenBuffer.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenBuffer))
 		{
-			StoreParseError(ParseErrorType::Expression, "Unknown variable identifier!", tokenBuffer);
+			StoreParseError(ParseErrorType::Expression, "Unknown variable", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -1137,6 +1141,7 @@ namespace Kargono::Scripting
 				}
 				CursorContext newContext;
 				newContext.ReturnType = functionNode.Parameters.at(newFunctionCallNode.Arguments.size()).Type;
+				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside function argument", newFunctionCallNode.Identifier);
 				return { false, {} };
@@ -1280,6 +1285,7 @@ namespace Kargono::Scripting
 			newReturnType.Type = ScriptTokenType::PrimitiveType;
 			newReturnType.Value = "None";
 			newContext.ReturnType = newReturnType;
+			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
 			return { false, {} };
@@ -1358,6 +1364,7 @@ namespace Kargono::Scripting
 			StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
 			CursorContext newContext;
 			newContext.ReturnType = currentIdentifierVariable.Type;
+			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", tokenBuffer);
 			return { false, {} };
@@ -1378,7 +1385,7 @@ namespace Kargono::Scripting
 		// Ensure identifer is a valid StackVariable
 		if (!CheckStackForIdentifier(tokenBuffer))
 		{
-			StoreParseError(ParseErrorType::Statement, "Unknown variable identifier found in assignment statement", tokenBuffer);
+			StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -1431,6 +1438,7 @@ namespace Kargono::Scripting
 		{
 			CursorContext newContext;
 			newContext.ReturnType = tokenBuffer;
+			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement declaration/assignment", tokenBuffer);
 			return { false, {} };

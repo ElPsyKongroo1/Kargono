@@ -613,9 +613,20 @@ namespace Kargono::EditorUI
 			m_Path.at(location) = newValue;
 		}
 
-		void PopNode()
+		void PopBack()
 		{
 			m_Path.pop_back();
+		}
+
+		uint16_t GetBack()
+		{
+			return m_Path.back();
+		}
+
+		void SetBack(uint16_t newNode)
+		{
+			PopBack();
+			m_Path.push_back(newNode);
 		}
 
 		std::size_t GetDepth()
@@ -722,6 +733,12 @@ namespace Kargono::EditorUI
 		std::function<void()> OnRefresh { nullptr };
 	public:
 
+		void MoveUp();
+		void MoveDown();
+		void MoveLeft();
+		void MoveRight();
+
+		void SelectFirstEntry();
 		TreeEntry* SearchFirstLayer(UUID handle);
 
 		void InsertEntry(const TreeEntry& entry)
@@ -745,6 +762,8 @@ namespace Kargono::EditorUI
 		{
 			ExpandedNodes.clear();
 		}
+
+		void ExpandFirstLayer();
 
 		TreeEntry* GetEntryFromPath(TreePath& path);
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);

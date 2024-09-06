@@ -343,9 +343,11 @@ namespace Kargono::Scripting
 	struct CursorContext
 	{
 		ScriptToken ReturnType{};
+		std::vector<std::vector<StackVariable>> StackVariables {};
+
 		operator bool() const
 		{
-			return ReturnType;
+			return ReturnType || StackVariables.size() > 0;
 		}
 	};
 

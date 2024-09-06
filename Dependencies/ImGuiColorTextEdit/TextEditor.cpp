@@ -714,16 +714,48 @@ void TextEditor::RefreshSuggestionsContent()
 	Kargono::Scripting::CursorContext context = Kargono::Scripting::ScriptCompiler::FindCursorContext(text);
 	if (context)
 	{
+		m_OpenTextSuggestions = true;
 		m_SuggestionTree.ClearTree();
-		Kargono::EditorUI::TreeEntry entry;
-		entry.Handle = Kargono::Assets::EmptyHandle;
-		entry.Label = context.ReturnType.Value;
-		entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconBoxCollider;
-		for (std::size_t iteration{0}; iteration < 5; ++iteration)
+		
+		Kargono::EditorUI::TreeEntry variableSection;
+		variableSection.Label = "Variables";
+		variableSection.IconHandle = Kargono::EditorUI::EditorUIService::s_IconGrid;
+		bool allowAllVariableTypes = context.ReturnType.Value == "None";
+		for (auto& stackFrame : context.StackVariables)
 		{
-			entry.SubEntries.push_back(entry);
+			for (auto& variable : stackFrame)
+			{
+				if (allowAllVariableTypes || variable.Type.Value == context.ReturnType.Value )
+				{
+					Kargono::EditorUI::TreeEntry entry;
+					entry.Label = variable.Identifier.Value;
+					entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconPlay;
+					entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry) 
+					{
+						// Remove Buffer Text and add text
+						Coordinates cursorPosition = GetCursorPosition();
+						DeleteRange({cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size()}, cursorPosition);
+						SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
+						cursorPosition = GetCursorPosition();
+						InsertTextAt(cursorPosition, entry.Label.c_str());
+						SetCursorPosition(cursorPosition);
+						m_CloseTextSuggestions = true;
+
+					};
+					variableSection.SubEntries.push_back(entry);
+				}
+			}
 		}
-		m_SuggestionTree.InsertEntry(entry);
+		if (variableSection.SubEntries.size() > 0)
+		{
+			m_SuggestionTree.InsertEntry(variableSection);
+		}
+
+		m_SuggestionTree.ExpandFirstLayer();
+		Kargono::EditorUI::TreePath newPath {};
+		newPath.AddNode(0);
+		newPath.AddNode(0);
+		m_SuggestionTree.SelectedEntry = newPath;
 	}
 	else
 	{
@@ -738,21 +770,33 @@ void TextEditor::RefreshSuggestionsContent()
 
 void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
 {
+
+	bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
+
+	if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
+	{
+		Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.SelectedEntry);
+		if (entry && entry->OnDoubleLeftClick)
+		{
+			entry->OnDoubleLeftClick(*entry);
+		}
+		return;
+	}
+
 	EnterCharacterInternal(aChar, aShift);
 	if (m_SuggestionsWindowEnabled)
 	{
-		bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
 		if (!std::isalpha(aChar) && !std::isdigit(aChar) && aChar != '\"' && aChar != '_')
 		{
 			if (isSuggestionsOpen)
 			{
 				m_CloseTextSuggestions = true;
 			}
+			return;
 		}
 		else if (!isSuggestionsOpen)
 		{
 			m_SuggestionTextBuffer.clear();
-			m_OpenTextSuggestions = true;
 		}
 
 		m_SuggestionTextBuffer.push_back((char)aChar);
@@ -1203,12 +1247,12 @@ void TextEditor::Render()
 				float textStart = TextDistanceToLineStartWithTab(GetCursorPosition());
 				ImVec2 cursorPosition(textScreenPos.x + textStart, lineStartScreenPos.y + mCharAdvance.y + 2.0f);
 				ImGui::SetNextWindowPos(cursorPosition);
-				ImGui::SetNextWindowSize(ImVec2(300, 200));
+				//ImGui::SetNextWindowSize(ImVec2(300, 200));
 				ImGui::OpenPopup("TextEditorSuggestions");
 				m_OpenTextSuggestions = false;
 			}
 
-			if (ImGui::BeginPopup("TextEditorSuggestions", ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing))
+			if (ImGui::BeginPopup("TextEditorSuggestions", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing))
 			{
 				Kargono::EditorUI::EditorUIService::BringCurrentWindowToFront();
 
@@ -1675,7 +1719,8 @@ void TextEditor::MoveUp(int aAmount, bool aSelect)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_CloseTextSuggestions = true;
+		m_SuggestionTree.MoveUp();
+		return;
 	}
 
 	auto oldPos = mState.mCursorPosition;
@@ -1706,7 +1751,8 @@ void TextEditor::MoveDown(int aAmount, bool aSelect)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_CloseTextSuggestions = true;
+		m_SuggestionTree.MoveDown();
+		return;
 	}
 
 	assert(mState.mCursorPosition.mColumn >= 0);
@@ -1744,7 +1790,8 @@ void TextEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_CloseTextSuggestions = true;
+		m_SuggestionTree.MoveLeft();
+		return;
 	}
 
 	if (mLines.empty())
@@ -1815,7 +1862,8 @@ void TextEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_CloseTextSuggestions = true;
+		m_SuggestionTree.MoveRight();
+		return;
 	}
 
 	auto oldPos = mState.mCursorPosition;

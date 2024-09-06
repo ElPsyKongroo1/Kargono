@@ -1942,7 +1942,7 @@ namespace Kargono::EditorUI
 					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
 					ImColor(EditorUIService::s_PrimaryTextColor));
 			}
-			currentPath.PopNode();
+			currentPath.PopBack();
 			iteration++;
 		}
 
@@ -2215,10 +2215,18 @@ namespace Kargono::EditorUI
 				}
 			}
 
-			outputPath.PopNode();
+			outputPath.PopBack();
 			iteration++;
 		}
 		return false;
+	}
+
+	void TreeSpec::ExpandFirstLayer()
+	{
+		for (auto& entry : TreeEntries)
+		{
+			ExpandedNodes.insert(GetPathFromEntryReference(&entry));
+		}
 	}
 
 	TreeEntry* TreeSpec::GetEntryFromPath(TreePath& path)
@@ -2229,7 +2237,6 @@ namespace Kargono::EditorUI
 		{
 			if (node >= currentEntryList->size())
 			{
-				KG_WARN("Node location is out of bounds for current entry list");
 				return {};
 			}
 
@@ -2251,6 +2258,77 @@ namespace Kargono::EditorUI
 		KG_WARN("Could not locate provided entry query");
 		return {};
 		
+	}
+
+	void TreeSpec::MoveUp()
+	{
+		uint16_t currentSelectedBack = SelectedEntry.GetBack();
+		if (currentSelectedBack <= 0)
+		{
+			return;
+		}
+		currentSelectedBack--;
+		TreePath newPath = SelectedEntry;
+		newPath.SetBack(currentSelectedBack);
+		SelectedEntry = newPath;
+	}
+
+	void TreeSpec::MoveDown()
+	{
+		uint16_t currentSelectedBack = SelectedEntry.GetBack();
+		currentSelectedBack++;
+		TreePath newPath = SelectedEntry;
+		newPath.SetBack(currentSelectedBack);
+
+		// Check if new path leads to valid entry
+		if (!GetEntryFromPath(newPath))
+		{
+			return;
+		}
+		SelectedEntry = newPath;
+	}
+
+	void TreeSpec::MoveLeft()
+	{
+		std::size_t currentDepth = SelectedEntry.GetDepth();
+
+		// Exit if we are already at the top level of tree
+		if (currentDepth <= 1)
+		{
+			if (ExpandedNodes.contains(SelectedEntry))
+			{
+				ExpandedNodes.erase(SelectedEntry);
+			}
+			return;
+		}
+
+		TreePath newPath = SelectedEntry;
+		newPath.PopBack();
+		SelectedEntry = newPath;
+	}
+
+	void TreeSpec::MoveRight()
+	{
+		TreeEntry* currentEntry = GetEntryFromPath(SelectedEntry);
+
+		// Exit if current entry node does not contain any sub entries
+		if (!currentEntry || currentEntry->SubEntries.size() == 0)
+		{
+			return;
+		}
+		if (!ExpandedNodes.contains(SelectedEntry))
+		{
+			ExpandedNodes.insert(SelectedEntry);
+		}
+		SelectedEntry.AddNode(0);
+	}
+
+	void TreeSpec::SelectFirstEntry()
+	{
+		if (TreeEntries.size() > 0)
+		{
+			SelectedEntry = GetPathFromEntryReference(&TreeEntries.at(0));
+		}
 	}
 
 	TreeEntry* TreeSpec::SearchFirstLayer(UUID handle)
