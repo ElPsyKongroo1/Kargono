@@ -274,6 +274,7 @@ public:
 	void SelectAll();
 	bool HasSelection() const;
 	void SetSaveCallback(std::function<void()> saveCallback);
+	void CloseSuggestions();
 
 	void Copy();
 	void Cut();

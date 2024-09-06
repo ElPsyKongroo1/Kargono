@@ -9,6 +9,11 @@
 #include <unordered_map>
 #include <sstream>
 
+namespace Kargono::Rendering
+{
+	class Texture2D;
+}
+
 namespace Kargono::Scripting
 {
 	enum class ScriptTokenType
@@ -67,6 +72,7 @@ namespace Kargono::Scripting
 		ScriptTokenType AcceptableLiteral{};
 		std::string EmittedDeclaration {};
 		std::string EmittedParameter {};
+		Ref<Rendering::Texture2D> Icon {};
 	};
 
 }
@@ -344,6 +350,7 @@ namespace Kargono::Scripting
 	{
 		ScriptToken ReturnType{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
+		bool IsFunctionParameter{ false };
 
 		operator bool() const
 		{
@@ -437,7 +444,6 @@ namespace Kargono::Scripting
 				}
 			}
 
-			KG_WARN("Could not locate primitive type by name");
 			return {};
 		}
 	public:

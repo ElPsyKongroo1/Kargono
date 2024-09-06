@@ -54,6 +54,10 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconWindow{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconTextWidget{};
 
+	Ref<Rendering::Texture2D> EditorUIService::s_IconNumber{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconVariable{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconFunction{};
+
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDirectory{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconGenericFile{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconBack{};
@@ -331,6 +335,10 @@ namespace Kargono::EditorUI
 		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
 		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/TextWidget.png").string());
 
+		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Number.png").string());
+		s_IconVariable = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Variable.png").string());
+		s_IconFunction = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Function.png").string());
+
 		s_IconDirectory = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Directory.png");
 		s_IconGenericFile = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GenericFile.png");
 		s_IconBack = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Back.png");
@@ -386,6 +394,10 @@ namespace Kargono::EditorUI
 
 		s_IconWindow.reset();
 		s_IconTextWidget.reset();
+
+		s_IconNumber.reset();
+		s_IconVariable.reset();
+		s_IconFunction.reset();
 
 		s_IconDirectory.reset();
 		s_IconGenericFile.reset();
@@ -1880,6 +1892,11 @@ namespace Kargono::EditorUI
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
 					ImColor(EditorUI::EditorUIService::s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
+				if (spec.SelectionChanged)
+				{
+					ImGui::SetScrollHereY();
+					spec.SelectionChanged = false;
+				}
 			}
 
 			// Display entry icon
@@ -2229,6 +2246,14 @@ namespace Kargono::EditorUI
 		}
 	}
 
+	void TreeSpec::ExpandNodePath(TreePath& path)
+	{
+		if (GetEntryFromPath(path))
+		{
+			ExpandedNodes.insert(path);
+		}
+	}
+
 	TreeEntry* TreeSpec::GetEntryFromPath(TreePath& path)
 	{
 		std::vector<TreeEntry>* currentEntryList = &TreeEntries;
@@ -2263,14 +2288,47 @@ namespace Kargono::EditorUI
 	void TreeSpec::MoveUp()
 	{
 		uint16_t currentSelectedBack = SelectedEntry.GetBack();
+		TreePath newPath = SelectedEntry;
+
+		// Check if we can move up within current parent node
 		if (currentSelectedBack <= 0)
 		{
+			// If we are in the top-most depth, we cannot move up further
+			if (newPath.GetDepth() <= 1)
+			{
+				return;
+			}
+			// If we cannot move up in current parent node, find node above current parent node
+			newPath.PopBack();
+			currentSelectedBack = newPath.GetBack();
+			// Check if a node exists above current parent node
+			if (currentSelectedBack <= 0)
+			{
+				return;
+			}
+			// Set new path to last entry of new parent node
+			currentSelectedBack--;
+			newPath.SetBack(currentSelectedBack);
+			TreeEntry* entry = GetEntryFromPath(newPath);
+			TreePath newParentPath = newPath;
+			newPath.AddNode((uint16_t)entry->SubEntries.size() - 1);
+			// Exit if no final node could be found
+			if (!GetEntryFromPath(newPath))
+			{
+				return;
+			}
+			// Set new SelectedEntry
+			ExpandedNodes.insert(newParentPath);
+			SelectedEntry = newPath;
+			SelectionChanged = true;
 			return;
+
 		}
+		// Move up within current parent node
 		currentSelectedBack--;
-		TreePath newPath = SelectedEntry;
 		newPath.SetBack(currentSelectedBack);
 		SelectedEntry = newPath;
+		SelectionChanged = true;
 	}
 
 	void TreeSpec::MoveDown()
@@ -2283,9 +2341,27 @@ namespace Kargono::EditorUI
 		// Check if new path leads to valid entry
 		if (!GetEntryFromPath(newPath))
 		{
-			return;
+			// If we are in the top-most depth, we cannot move down further
+			if (newPath.GetDepth() <= 1)
+			{
+				return;
+			}
+			// Attempt to move to the next node in the same depth of the tree
+			newPath.PopBack();
+			currentSelectedBack = newPath.GetBack();
+			currentSelectedBack++;
+			newPath.SetBack(currentSelectedBack);
+			TreePath newParentPath = newPath;
+			newPath.AddNode(0);
+			// Exit if no node could be found
+			if (!GetEntryFromPath(newPath))
+			{
+				return;
+			}
+			ExpandedNodes.insert(newParentPath);
 		}
 		SelectedEntry = newPath;
+		SelectionChanged = true;
 	}
 
 	void TreeSpec::MoveLeft()

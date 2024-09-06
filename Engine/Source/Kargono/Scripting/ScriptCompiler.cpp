@@ -4,6 +4,8 @@
 
 #include "Kargono/Utility/FileSystem.h"
 
+#include "Kargono/EditorUI/EditorUI.h"
+
 namespace Kargono::Scripting
 {
 	LanguageDefinition ScriptCompiler::s_ActiveLanguageDefinition {};
@@ -127,6 +129,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
 		newPrimitiveType.EmittedDeclaration = "std::string";
 		newPrimitiveType.EmittedParameter = "const std::string&";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -135,9 +138,10 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
 		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
 
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the current runtime user interface.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
 
 		FunctionNode newFunctionNode{};
 		FunctionParameter newParameter{};
@@ -160,7 +164,7 @@ namespace Kargono::Scripting
 
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
-		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" }; 
 		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" }; 
 		newFunctionNode.Parameters.push_back(newParameter);
@@ -170,7 +174,7 @@ namespace Kargono::Scripting
 		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
-		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active runtime user interface. This function takes the window tag, widget tag, and new text as arguments.";
+		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface. This function takes the window tag, widget tag, and new text as arguments.";
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
@@ -744,6 +748,20 @@ namespace Kargono::Scripting
 		AddStackFrame();
 		Advance();
 		tokenBuffer = GetCurrentToken();
+
+		if (IsContextProbe(tokenBuffer))
+		{
+			CursorContext newContext;
+			ScriptToken newReturnType;
+			newReturnType.Type = ScriptTokenType::PrimitiveType;
+			newReturnType.Value = "None";
+			newContext.ReturnType = newReturnType;
+			newContext.IsFunctionParameter = true;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", tokenBuffer);
+			return { false, {} };
+		}
+
 		while (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
 		{
 			FunctionParameter newParameter{};
@@ -767,10 +785,23 @@ namespace Kargono::Scripting
 			tokenBuffer = GetCurrentToken();
 			if (tokenBuffer.Type == ScriptTokenType::Comma)
 			{
+				if (IsContextProbe(GetCurrentToken(1)))
+				{
+					CursorContext newContext;
+					ScriptToken newReturnType;
+					newReturnType.Type = ScriptTokenType::PrimitiveType;
+					newReturnType.Value = "None";
+					newContext.ReturnType = newReturnType;
+					newContext.IsFunctionParameter = true;
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", GetCurrentToken(1));
+					return { false, {} };
+				}
+
 				if (GetCurrentToken(1).Type != ScriptTokenType::PrimitiveType)
 				{
 					StoreParseError(ParseErrorType::Function,
-						"Expecting an type after comma separator for parameter list in function signature", tokenBuffer);
+						"Expecting a type after comma separator for parameter list in function signature", tokenBuffer);
 					return { false, newFunctionNode };
 				}
 

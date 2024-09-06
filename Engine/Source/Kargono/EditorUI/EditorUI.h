@@ -188,6 +188,8 @@ namespace Kargono::EditorUI
 
 		static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
 
+		static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction;
+
 		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
 			s_IconAudio, s_IconImage, s_IconBinary,
@@ -765,6 +767,8 @@ namespace Kargono::EditorUI
 
 		void ExpandFirstLayer();
 
+		void ExpandNodePath(TreePath& path);
+
 		TreeEntry* GetEntryFromPath(TreePath& path);
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
 	private:
@@ -772,6 +776,7 @@ namespace Kargono::EditorUI
 		std::vector<TreeEntry> TreeEntries{};
 		std::unordered_set<TreePath> ExpandedNodes{};
 		TreeEntry* CurrentRightClick{ nullptr };
+		bool SelectionChanged{ false };
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
