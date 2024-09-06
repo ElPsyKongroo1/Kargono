@@ -637,21 +637,6 @@ namespace Kargono::Panels
 						"::" + script->m_SectionLabel, script->m_ScriptName, handle);
 				}
 			}
-
-			uint32_t iteration{ 0 };
-			for (auto& widget : m_ActiveWindow->Widgets)
-			{
-				switch (widget->WidgetType)
-				{
-				case RuntimeUI::WidgetTypes::TextWidget:
-					s_WidgetOnPress.AddToOptions("Text Widget", widget->Tag, iteration);
-					break;
-				default:
-					KG_ERROR("Invalid widge type provided to UIEditorPanel");
-					break;
-				}
-				iteration++;
-			}
 		};
 
 		s_WidgetOnPress.ConfirmAction = [&](const EditorUI::OptionEntry& entry)

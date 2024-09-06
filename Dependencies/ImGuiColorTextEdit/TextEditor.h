@@ -11,6 +11,8 @@
 #include <functional>
 #include "imgui.h"
 
+#include "Kargono/EditorUI/EditorUI.h"
+
 class TextEditor
 {
 public:
@@ -356,8 +358,12 @@ private:
 	void RemoveLine(int aStart, int aEnd);
 	void RemoveLine(int aIndex);
 	Line& InsertLine(int aIndex);
+	void SetSuggestionsWindowEnabled(bool isEnabled);
+	void RefreshSuggestionsContent();
 	void EnterCharacter(ImWchar aChar, bool aShift);
+	void EnterCharacterInternal(ImWchar aChar, bool aShift);
 	void Backspace();
+	void BackspaceInternal();
 	void DeleteSelection();
 	std::string GetWordUnderCursor() const;
 	std::string GetWordAt(const Coordinates& aCoords) const;
@@ -390,6 +396,11 @@ private:
 	bool mHandleMouseInputs;
 	bool mIgnoreImGuiChild;
 	bool mShowWhitespaces;
+	bool m_CloseTextSuggestions{false};
+	bool m_OpenTextSuggestions{false};
+	bool m_SuggestionsWindowEnabled{ false };
+	std::string m_SuggestionTextBuffer {};
+	Kargono::EditorUI::TreeSpec m_SuggestionTree{};
 	std::function<void()> mSaveCallback;
 
 	Palette mPaletteBase;

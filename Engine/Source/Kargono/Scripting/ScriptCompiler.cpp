@@ -87,6 +87,30 @@ namespace Kargono::Scripting
 		return {};
 	}
 
+	CursorContext ScriptCompiler::FindCursorContext(const std::string& text)
+	{
+		// Lazy loading KGScript language def
+		if (!s_ActiveLanguageDefinition)
+		{
+			CreateKGScriptLanguageDefinition();
+		}
+
+		// Get tokens from text
+		ScriptTokenizer scriptTokenizer{};
+		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(text);
+
+		// Parse tokens and check for generated cursor context
+		TokenParser tokenParser{};
+		tokenParser.ParseTokens(std::move(tokens));
+		auto [success, context] = tokenParser.GetCursorContext();
+		if (success)
+		{
+			return context;
+		}
+
+		return {};
+	}
+
 	void ScriptCompiler::CreateKGScriptLanguageDefinition()
 	{
 		s_ActiveLanguageDefinition = {};
@@ -591,6 +615,16 @@ namespace Kargono::Scripting
 		}
 	}
 
+	std::tuple<bool, CursorContext> TokenParser::GetCursorContext()
+	{
+		if (m_CursorContext)
+		{
+			return { true, m_CursorContext };
+		}
+		
+		return { false, {} };
+	}
+
 
 	std::tuple<bool, Statement> TokenParser::ParseStatementNode()
 	{
@@ -844,6 +878,24 @@ namespace Kargono::Scripting
 				newBinaryOperation.RightOperand = expression;
 			}
 
+			if (IsContextProbe(newBinaryOperation.LeftOperand))
+			{
+				CursorContext newContext;
+				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of addition/subtraction operation", newBinaryOperation.Operator);
+				return { false, {} };
+			}
+
+			if (IsContextProbe(newBinaryOperation.RightOperand))
+			{
+				CursorContext newContext;
+				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of addition/subtraction operation", newBinaryOperation.Operator);
+				return { false, {} };
+			}
+
 			// Ensure the return type of both operands is identical
 			if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value  != 
 				GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
@@ -961,6 +1013,25 @@ namespace Kargono::Scripting
 					newBinaryOperation.RightOperand = expression;
 				}
 
+				// Check for Context Probe
+				if (IsContextProbe(newBinaryOperation.LeftOperand))
+				{
+					CursorContext newContext;
+					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division operation", newBinaryOperation.Operator);
+					return { false, {} };
+				}
+
+				if (IsContextProbe(newBinaryOperation.RightOperand))
+				{
+					CursorContext newContext;
+					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division operation", newBinaryOperation.Operator);
+					return { false, {} };
+				}
+
 				// Ensure the return type of both operands is identical
 				if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value !=
 					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
@@ -1006,7 +1077,7 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
-		if (tokenBuffer.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenBuffer))
+		if (!IsContextProbe(tokenBuffer) && tokenBuffer.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenBuffer))
 		{
 			StoreParseError(ParseErrorType::Expression, "Unknown variable identifier!", tokenBuffer);
 			return { false, {} };
@@ -1050,6 +1121,26 @@ namespace Kargono::Scripting
 		Advance(initialAdvance);
 		while (IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize)))
 		{
+			if (IsContextProbe(GetCurrentToken(parentExpressionSize)))
+			{
+				// Ensure function identifier exists and get function node
+				if (!ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
+				{
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, function node is invalid", newFunctionCallNode.Identifier);
+					return { false, {} };
+				}
+				FunctionNode& functionNode = ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
+				if (newFunctionCallNode.Arguments.size() > functionNode.Parameters.size())
+				{
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, there are too many arguments for function node", newFunctionCallNode.Identifier);
+					return { false, {} };
+				}
+				CursorContext newContext;
+				newContext.ReturnType = functionNode.Parameters.at(newFunctionCallNode.Arguments.size()).Type;
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside function argument", newFunctionCallNode.Identifier);
+				return { false, {} };
+			}
 			newFunctionCallNode.Arguments.push_back(GetCurrentToken(parentExpressionSize));
 			if (GetCurrentToken(parentExpressionSize + 1).Type != ScriptTokenType::Comma &&
 				GetCurrentToken(parentExpressionSize + 1).Type != ScriptTokenType::CloseParentheses)
@@ -1101,6 +1192,7 @@ namespace Kargono::Scripting
 		uint32_t parameterIteration{ 0 };
 		for (auto& parameter : functionNode.Parameters)
 		{
+
 			bool valid = PrimitiveTypeAcceptableToken(parameter.Type.Value, newFunctionCallNode.Arguments.at(parameterIteration));
 			if (!valid)
 			{
@@ -1180,6 +1272,18 @@ namespace Kargono::Scripting
 			newExpression = expression;
 		}
 
+		// Check for context probe
+		if (IsContextProbe(newExpression))
+		{
+			CursorContext newContext;
+			ScriptToken newReturnType;
+			newReturnType.Type = ScriptTokenType::PrimitiveType;
+			newReturnType.Value = "None";
+			newContext.ReturnType = newReturnType;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
+			return { false, {} };
+		}
 
 		// Check for a terminating semicolon
 		if (GetCurrentToken(expressionSize).Type != ScriptTokenType::Semicolon)
@@ -1248,6 +1352,17 @@ namespace Kargono::Scripting
 			newExpression = expression;
 		}
 
+		// Check for context probe
+		if (IsContextProbe(newExpression) && CheckStackForIdentifier(tokenBuffer))
+		{
+			StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
+			CursorContext newContext;
+			newContext.ReturnType = currentIdentifierVariable.Type;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", tokenBuffer);
+			return { false, {} };
+		}
+
 		// Check for semicolon
 		if (GetCurrentToken(2 + expressionSize).Type != ScriptTokenType::Semicolon)
 		{
@@ -1309,6 +1424,16 @@ namespace Kargono::Scripting
 				return { false, {} };
 			}
 			newExpression = expression;
+		}
+
+		// Check for context probe
+		if (IsContextProbe(newExpression))
+		{
+			CursorContext newContext;
+			newContext.ReturnType = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement declaration/assignment", tokenBuffer);
+			return { false, {} };
 		}
 
 		// Check for semicolon
@@ -1397,6 +1522,7 @@ namespace Kargono::Scripting
 				}
 			}
 		}
+
 		// Return false if identifier could not be found
 		return false;
 	}
@@ -1502,6 +1628,30 @@ namespace Kargono::Scripting
 		{
 			return true;
 		}
+		return false;
+	}
+
+	bool TokenParser::IsContextProbe(ScriptToken token)
+	{
+		
+		if (token.Type == ScriptTokenType::Identifier && token.Value == ContextProbe)
+		{
+			return true;
+		}
+	
+		return false;
+	}
+
+	bool TokenParser::IsContextProbe(Ref<Expression> expression)
+	{
+		if (const ScriptToken* token = std::get_if<ScriptToken>(&expression->Value))
+		{
+			if (token->Type == ScriptTokenType::Identifier && token->Value == ContextProbe)
+			{
+				return true;
+			}
+		}
+
 		return false;
 	}
 

@@ -52,6 +52,8 @@ TextEditor::TextEditor()
 	SetPalette(GetDefaultColorPalette());
 	SetLanguageDefinition(LanguageDefinition::HLSL());
 	mLines.push_back(Line());
+
+	m_SuggestionTree.Label = "Suggestions";
 }
 
 TextEditor::~TextEditor()
@@ -74,14 +76,17 @@ void TextEditor::SetLanguageDefinitionByExtension(const std::string& extension)
 	if (extension == ".cpp")
 	{
 		SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+		SetSuggestionsWindowEnabled(false);
 	}
 	else if (extension == ".kgscript")
 	{
 		SetLanguageDefinition(TextEditor::LanguageDefinition::KargonoScript());
+		SetSuggestionsWindowEnabled(true);
 	}
 	else
 	{
 		SetLanguageDefinition(TextEditor::LanguageDefinition::C());
+		SetSuggestionsWindowEnabled(false);
 	}
 }
 
@@ -668,6 +673,93 @@ TextEditor::Line& TextEditor::InsertLine(int aIndex)
 	return result;
 }
 
+void TextEditor::SetSuggestionsWindowEnabled(bool isEnabled)
+{
+	if (isEnabled)
+	{
+		m_SuggestionsWindowEnabled = true;
+		m_CloseTextSuggestions = false;
+		m_OpenTextSuggestions = false;
+		m_SuggestionTextBuffer.clear();
+	}
+	else
+	{
+		m_SuggestionsWindowEnabled = false;
+		m_CloseTextSuggestions = false;
+		m_OpenTextSuggestions = false;
+		m_SuggestionTextBuffer.clear();
+	}
+}
+
+void TextEditor::RefreshSuggestionsContent()
+{
+	std::string text = GetText();
+
+	// Insert ContextProbe into editor text
+	{
+		Coordinates cursorCoordinate = GetCursorPosition();
+		uint32_t positionToInsert{ 0 };
+		for (std::size_t iteration{0}; iteration < cursorCoordinate.mLine; iteration++)
+		{
+			positionToInsert += (uint32_t)mLines.at(iteration).size();
+			// Additional insert for newline character
+			positionToInsert++;
+		}
+		positionToInsert += GetCharacterIndex(cursorCoordinate);
+		text.insert(positionToInsert, Kargono::Scripting::ContextProbe);
+		text.erase(positionToInsert - m_SuggestionTextBuffer.size(), m_SuggestionTextBuffer.size());
+	}
+
+	// Find cursor context with ContextProbe inserted
+	Kargono::Scripting::CursorContext context = Kargono::Scripting::ScriptCompiler::FindCursorContext(text);
+	if (context)
+	{
+		m_SuggestionTree.ClearTree();
+		Kargono::EditorUI::TreeEntry entry;
+		entry.Handle = Kargono::Assets::EmptyHandle;
+		entry.Label = context.ReturnType.Value;
+		entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconBoxCollider;
+		for (std::size_t iteration{0}; iteration < 5; ++iteration)
+		{
+			entry.SubEntries.push_back(entry);
+		}
+		m_SuggestionTree.InsertEntry(entry);
+	}
+	else
+	{
+		// Close the window
+		if (ImGui::IsPopupOpen("TextEditorSuggestions"))
+		{
+			m_SuggestionTextBuffer.clear();
+			m_CloseTextSuggestions = true;
+		}
+	}
+}
+
+void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
+{
+	EnterCharacterInternal(aChar, aShift);
+	if (m_SuggestionsWindowEnabled)
+	{
+		bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
+		if (!std::isalpha(aChar) && !std::isdigit(aChar) && aChar != '\"' && aChar != '_')
+		{
+			if (isSuggestionsOpen)
+			{
+				m_CloseTextSuggestions = true;
+			}
+		}
+		else if (!isSuggestionsOpen)
+		{
+			m_SuggestionTextBuffer.clear();
+			m_OpenTextSuggestions = true;
+		}
+
+		m_SuggestionTextBuffer.push_back((char)aChar);
+		RefreshSuggestionsContent();
+	}
+}
+
 std::string TextEditor::GetWordUnderCursor() const
 {
 	auto c = GetCursorPosition();
@@ -776,7 +868,9 @@ void TextEditor::HandleKeyboardInputs()
 		else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_A)))
 			SelectAll();
 		else if (!IsReadOnly() && !ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+		{
 			EnterCharacter('\n', false);
+		}
 		else if (!IsReadOnly() && !ctrl && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Tab)))
 			EnterCharacter('\t', shift);
 
@@ -849,6 +943,10 @@ void TextEditor::HandleMouseInputs()
 			*/
 			else if (click)
 			{
+				if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+				{
+					m_CloseTextSuggestions = true;
+				}
 				mState.mCursorPosition = mInteractiveStart = mInteractiveEnd = ScreenPosToCoordinates(ImGui::GetMousePos());
 				if (ctrl)
 					mSelectionMode = SelectionMode::Word;
@@ -1095,6 +1193,37 @@ void TextEditor::Render()
 			++lineNo;
 		}
 
+		// Draw Suggestions Window
+		if (m_SuggestionsWindowEnabled)
+		{
+			if (m_OpenTextSuggestions)
+			{
+				ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + GetCursorPosition().mLine * mCharAdvance.y);
+				ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + mTextStart, lineStartScreenPos.y);
+				float textStart = TextDistanceToLineStartWithTab(GetCursorPosition());
+				ImVec2 cursorPosition(textScreenPos.x + textStart, lineStartScreenPos.y + mCharAdvance.y + 2.0f);
+				ImGui::SetNextWindowPos(cursorPosition);
+				ImGui::SetNextWindowSize(ImVec2(300, 200));
+				ImGui::OpenPopup("TextEditorSuggestions");
+				m_OpenTextSuggestions = false;
+			}
+
+			if (ImGui::BeginPopup("TextEditorSuggestions", ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing))
+			{
+				Kargono::EditorUI::EditorUIService::BringCurrentWindowToFront();
+
+				ImGui::PopStyleVar();
+				Kargono::EditorUI::EditorUIService::Tree(m_SuggestionTree);
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+				if (m_CloseTextSuggestions)
+				{
+					ImGui::CloseCurrentPopup();
+					m_CloseTextSuggestions = false;
+					m_SuggestionTextBuffer.clear();
+				}
+				ImGui::EndPopup();
+			}
+		}
 		// Draw a tooltip on known identifiers/preprocessor symbols
 		if (ImGui::IsWindowHovered())
 		{
@@ -1240,10 +1369,9 @@ void TextEditor::SetTextLines(const std::vector<std::string> & aLines)
 	Colorize();
 }
 
-void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
+void TextEditor::EnterCharacterInternal(ImWchar aChar, bool aShift)
 {
 	assert(!mReadOnly);
-
 	UndoRecord u;
 
 	u.mBefore = mState;
@@ -1413,6 +1541,23 @@ void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
 	EnsureCursorVisible();
 }
 
+void TextEditor::Backspace()
+{
+	BackspaceInternal();
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		if (m_SuggestionTextBuffer.size() > 1)
+		{
+			m_SuggestionTextBuffer.pop_back();
+			RefreshSuggestionsContent();
+		}
+		else
+		{
+			m_CloseTextSuggestions = true;
+		}
+	}
+}
+
 void TextEditor::SetReadOnly(bool aValue)
 {
 	mReadOnly = aValue;
@@ -1422,6 +1567,7 @@ void TextEditor::SetColorizerEnable(bool aValue)
 {
 	mColorizerEnabled = aValue;
 }
+
 
 void TextEditor::SetCursorPosition(const Coordinates & aPosition)
 {
@@ -1527,6 +1673,11 @@ void TextEditor::DeleteSelection()
 
 void TextEditor::MoveUp(int aAmount, bool aSelect)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
+
 	auto oldPos = mState.mCursorPosition;
 	mState.mCursorPosition.mLine = std::max(0, mState.mCursorPosition.mLine - aAmount);
 	if (oldPos != mState.mCursorPosition)
@@ -1553,6 +1704,11 @@ void TextEditor::MoveUp(int aAmount, bool aSelect)
 
 void TextEditor::MoveDown(int aAmount, bool aSelect)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
+
 	assert(mState.mCursorPosition.mColumn >= 0);
 	auto oldPos = mState.mCursorPosition;
 	mState.mCursorPosition.mLine = std::max(0, std::min((int)mLines.size() - 1, mState.mCursorPosition.mLine + aAmount));
@@ -1586,6 +1742,11 @@ static bool IsUTFSequence(char c)
 
 void TextEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
+
 	if (mLines.empty())
 		return;
 
@@ -1652,6 +1813,11 @@ void TextEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode)
 
 void TextEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
+
 	auto oldPos = mState.mCursorPosition;
 
 	if (mLines.empty() || oldPos.mLine >= mLines.size())
@@ -1842,7 +2008,7 @@ void TextEditor::Delete()
 	AddUndo(u);
 }
 
-void TextEditor::Backspace()
+void TextEditor::BackspaceInternal()
 {
 	assert(!mReadOnly);
 
@@ -1987,6 +2153,10 @@ void TextEditor::Cut()
 
 void TextEditor::Paste()
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
 	if (IsReadOnly())
 		return;
 
@@ -2027,12 +2197,20 @@ bool TextEditor::CanRedo() const
 
 void TextEditor::Undo(int aSteps)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
 	while (CanUndo() && aSteps-- > 0)
 		mUndoBuffer[--mUndoIndex].Undo(this);
 }
 
 void TextEditor::Redo(int aSteps)
 {
+	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+	{
+		m_CloseTextSuggestions = true;
+	}
 	while (CanRedo() && aSteps-- > 0)
 		mUndoBuffer[mUndoIndex++].Redo(this);
 }

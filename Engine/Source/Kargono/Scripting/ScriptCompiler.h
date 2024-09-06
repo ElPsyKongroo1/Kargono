@@ -52,6 +52,7 @@ namespace Kargono::Scripting
 		Function,
 		Expression,
 		Statement,
+		ContextProbe,
 		Program
 	};
 
@@ -116,6 +117,7 @@ namespace Kargono::Utility
 			case Scripting::ParseErrorType::Expression: return "Expression";
 
 			case Scripting::ParseErrorType::Statement: return "Statement";
+			case Scripting::ParseErrorType::ContextProbe: return "Context Probe";
 
 			case Scripting::ParseErrorType::Program: return "Program";
 
@@ -336,6 +338,17 @@ namespace Kargono::Scripting
 		}
 	};
 
+	inline std::string ContextProbe {"CONTEXT_PROBE_INTERNAL"};
+
+	struct CursorContext
+	{
+		ScriptToken ReturnType{};
+		operator bool() const
+		{
+			return ReturnType;
+		}
+	};
+
 	class TokenParser
 	{
 	public:
@@ -343,6 +356,7 @@ namespace Kargono::Scripting
 		void PrintAST();
 		void PrintTokens();
 		void PrintErrors();
+		std::tuple<bool, CursorContext> GetCursorContext();
 	public:
 		std::vector<ParserError> GetErrors() { return m_Errors; }
 	private:
@@ -379,6 +393,8 @@ namespace Kargono::Scripting
 		bool IsBinaryOperator(ScriptToken token);
 		bool IsAdditionOrSubtraction(ScriptToken token);
 		bool IsMultiplicationOrDivision(ScriptToken token);
+		bool IsContextProbe(ScriptToken token);
+		bool IsContextProbe(Ref<Expression> expression);
 		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
 		ScriptToken GetPrimitiveTypeFromToken(Scripting::ScriptToken token);
 	private:
@@ -387,6 +403,7 @@ namespace Kargono::Scripting
 		std::vector<std::vector<StackVariable>> m_StackVariables{};
 		ScriptAST m_AST{};
 		uint32_t m_TokenLocation{0};
+		CursorContext m_CursorContext{};
 	};
 
 	class OutputGenerator
@@ -440,6 +457,7 @@ namespace Kargono::Scripting
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
 		static void CreateKGScriptLanguageDefinition();
 		static std::vector<ParserError> CheckForErrors(const std::string& text);
+		static CursorContext FindCursorContext(const std::string& text);
 	public:
 		static LanguageDefinition s_ActiveLanguageDefinition;
 	};

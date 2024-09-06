@@ -62,11 +62,21 @@ namespace Kargono::Panels
 
 		ImGuiWindowFlags popupFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing;
 
+		bool closePopup = false;
+		if (ImGui::Button("HSDHASDJ"))
+		{
+			closePopup = true;
+		}
+
 		if (ImGui::BeginPopup("The Test Popup", popupFlags))
 		{
 			EditorUI::EditorUIService::BringCurrentWindowToFront();
 			
 			ImGui::Text("Ayooo, the popup is open");
+			if (closePopup)
+			{
+				ImGui::CloseCurrentPopup();
+			}
 			ImGui::EndPopup();
 		}
 

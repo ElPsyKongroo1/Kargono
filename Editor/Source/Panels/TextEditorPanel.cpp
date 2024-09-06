@@ -20,7 +20,7 @@ namespace Kargono::Panels
 		bool SetActive{ false };
 	};
 
-	static TextEditor s_TextEditor {};
+	static TextEditor s_TextEditor;
 	static uint32_t s_ActiveDocument = 0;
 	static std::vector<Document> s_AllDocuments {};
 	static std::function<void()> s_OnOpenFile { nullptr };
@@ -39,6 +39,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
+		s_TextEditor = {};
 		s_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
 		s_TextEditor.SetPalette(TextEditor::GetCurrentColorPalette());
 		s_OnCreateFile = [&]()
@@ -350,6 +351,10 @@ namespace Kargono::Panels
 				return;
 			}
 			Document& activeDocument = s_AllDocuments.at(s_ActiveDocument);
+			if (activeDocument.FilePath.extension().string() != ".kgscript")
+			{
+				return;
+			}
 			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompiler::CheckForErrors(activeDocument.TextBuffer);
 
 			if (errors.size() == 0)
