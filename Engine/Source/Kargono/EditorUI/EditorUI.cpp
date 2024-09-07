@@ -57,6 +57,7 @@ namespace Kargono::EditorUI
 	Ref<Rendering::Texture2D> EditorUIService::s_IconNumber{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconVariable{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconFunction{};
+	Ref<Rendering::Texture2D> EditorUIService::s_IconBoolean{};
 
 	Ref<Rendering::Texture2D> EditorUIService::s_IconDirectory{};
 	Ref<Rendering::Texture2D> EditorUIService::s_IconGenericFile{};
@@ -338,6 +339,7 @@ namespace Kargono::EditorUI
 		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Number.png").string());
 		s_IconVariable = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Variable.png").string());
 		s_IconFunction = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Function.png").string());
+		s_IconBoolean = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Boolean.png").string());
 
 		s_IconDirectory = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Directory.png");
 		s_IconGenericFile = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GenericFile.png");
@@ -398,6 +400,7 @@ namespace Kargono::EditorUI
 		s_IconNumber.reset();
 		s_IconVariable.reset();
 		s_IconFunction.reset();
+		s_IconBoolean.reset();
 
 		s_IconDirectory.reset();
 		s_IconGenericFile.reset();

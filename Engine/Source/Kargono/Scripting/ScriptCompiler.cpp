@@ -115,14 +115,33 @@ namespace Kargono::Scripting
 
 	void ScriptCompiler::CreateKGScriptLanguageDefinition()
 	{
+		static std::vector<ScriptToken> s_AllLiterals
+		{
+			{ ScriptTokenType::PrimitiveType, "uint16" },
+			{ ScriptTokenType::PrimitiveType, "string" }
+		};
+		static std::vector<ScriptToken> s_AllLiteralsWithoutString
+		{
+			{ ScriptTokenType::PrimitiveType, "uint16" }
+		};
+
+
 		s_ActiveLanguageDefinition = {};
 		s_ActiveLanguageDefinition.Keywords = 
 		{ 
 			"return", 
-			"void" 
+			"void"
 		};
 
 		PrimitiveType newPrimitiveType{};
+
+		newPrimitiveType.Name = "bool";
+		newPrimitiveType.Description = "Basic 8 bit type representing either true or false. Ex: false";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::BooleanLiteral;
+		newPrimitiveType.EmittedDeclaration = "bool";
+		newPrimitiveType.EmittedParameter = "bool";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconBoolean;
+		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
 
 		newPrimitiveType.Name = "string";
 		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
@@ -142,15 +161,20 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
 
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameState", "This namespace provides functions that can manage and interact with the active game state");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scenes", "This namespace provides functions that can manage the active scene.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input mode/mapping");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
 
 		FunctionNode newFunctionNode{};
 		FunctionParameter newParameter{};
 
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "str" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
-		newParameter.Type = { ScriptTokenType::PrimitiveType, "uint16"};
+		newParameter.AllTypes = s_AllLiteralsWithoutString;
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text"};
 		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
 		newFunctionNode.Description = "Convert basic variable types into a string. Ex: 23 -> \"23\", false -> \"false\"";
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node) 
 		{
@@ -165,19 +189,182 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" }; 
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" }; 
 		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
 		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter.Type = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
 		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface. This function takes the window tag, widget tag, and new text as arguments.";
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadUI" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "uiName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Change the currently open user interface. This function takes the name of the new user inteface as an argument.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "LoadUserInterfaceFromName";
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "DisplayWindow" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "bool" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "setDisplay" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Set whether a specified window is displayed in the active user interface. This function takes the name of the window to modify as a string and a boolean representing the display option as arguments.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SetDisplayWindow";
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameState" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetField" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes = s_AllLiterals;
+		newParameter.Identifier = { ScriptTokenType::Identifier, "fieldValue" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Set the specified field in the active Game State. This function requires the name of the field and the value it will be set to.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SetGameStateField";
+			
+			if (node.Arguments.at(1).Type == ScriptTokenType::Identifier)
+			{
+				node.Arguments.at(1).Value = "&" + node.Arguments.at(1).Value;
+			}
+			else if (IsLiteral(node.Arguments.at(1)))
+			{
+				node.Arguments.at(1).Value = "(void*)&RValueToLValue(" + node.Arguments.at(1).Value + ")";
+			}
+			else
+			{
+				KG_WARN("Invalid argument type provided to GameState::SetField");
+				return;
+			}
+			
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scenes" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadScene" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "sceneName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Change the active scene to the scene specified. This function takes the name of the scene that should be transitioned towards as an argument.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "TransitionSceneFromName";
+
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadInputMode" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "inputModeName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Change the active input mapping/mode. The input mode maps user input to functionality/scripts. This function takes the name of the new input mode as an argument.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "LoadInputModeByName";
+
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Audio" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlaySound" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "soundName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Play a sound file. This function call is intended for short sound segments that play as mono. This function takes the name of the sound file as an argument.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "PlaySoundFromName";
+
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Audio" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlayMusic" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "musicName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Play a music file. This function call is intended to play a single song file, preferebly in stereo. This function takes the name of the sound file as an argument.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "PlayStereoSoundFromName";
+
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -219,6 +406,13 @@ namespace Kargono::Scripting
 				}
 				if (foundKeyword)
 				{
+					continue;
+				}
+
+				// Check for boolean literals
+				if (m_TextBuffer == "true" || m_TextBuffer == "false")
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::BooleanLiteral, { m_TextBuffer });
 					continue;
 				}
 
@@ -581,7 +775,10 @@ namespace Kargono::Scripting
 		{
 			KG_INFO("{}Parameter:", GetIndentation(indentation + 1));
 			KG_INFO("{}ParameterType:", GetIndentation(indentation + 2));
-			PrintToken(parameter.Type, indentation + 3);
+			for (auto& token : parameter.AllTypes)
+			{
+				PrintToken(token, indentation + 3);
+			}
 			KG_INFO("{}ParameterName:", GetIndentation(indentation + 2));
 			PrintToken(parameter.Identifier, indentation + 3);
 		}
@@ -755,7 +952,7 @@ namespace Kargono::Scripting
 			ScriptToken newReturnType;
 			newReturnType.Type = ScriptTokenType::PrimitiveType;
 			newReturnType.Value = "None";
-			newContext.ReturnType = newReturnType;
+			newContext.AllReturnTypes.push_back(newReturnType);
 			newContext.IsFunctionParameter = true;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", tokenBuffer);
@@ -766,7 +963,7 @@ namespace Kargono::Scripting
 		{
 			FunctionParameter newParameter{};
 			// Store type of current parameter
-			newParameter.Type = tokenBuffer;
+			newParameter.AllTypes.push_back(tokenBuffer);
 
 			// Check and store parameter name
 			Advance();
@@ -778,7 +975,7 @@ namespace Kargono::Scripting
 			}
 			newParameter.Identifier = tokenBuffer;
 			newFunctionNode.Parameters.push_back(newParameter);
-			StoreStackVariable(newParameter.Type, newParameter.Identifier);
+			StoreStackVariable(newParameter.AllTypes.at(0), newParameter.Identifier);
 
 			// Check for comma
 			Advance();
@@ -791,7 +988,7 @@ namespace Kargono::Scripting
 					ScriptToken newReturnType;
 					newReturnType.Type = ScriptTokenType::PrimitiveType;
 					newReturnType.Value = "None";
-					newContext.ReturnType = newReturnType;
+					newContext.AllReturnTypes.push_back(newReturnType);
 					newContext.IsFunctionParameter = true;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", GetCurrentToken(1));
@@ -884,7 +1081,7 @@ namespace Kargono::Scripting
 		}
 
 		// Check for addition / subtraction binary operations
-		while (IsAdditionOrSubtraction(GetCurrentToken(parentExpressionSize)))
+		while (ScriptCompiler::IsAdditionOrSubtraction(GetCurrentToken(parentExpressionSize)))
 		{
 			Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 			BinaryOperationNode newBinaryOperation{};
@@ -912,7 +1109,7 @@ namespace Kargono::Scripting
 			if (IsContextProbe(newBinaryOperation.LeftOperand))
 			{
 				CursorContext newContext;
-				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+				newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()));
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of addition/subtraction operation", newBinaryOperation.Operator);
@@ -922,7 +1119,7 @@ namespace Kargono::Scripting
 			if (IsContextProbe(newBinaryOperation.RightOperand))
 			{
 				CursorContext newContext;
-				newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()));
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of addition/subtraction operation", newBinaryOperation.Operator);
@@ -1026,7 +1223,7 @@ namespace Kargono::Scripting
 		if (checkBinaryOperations)
 		{
 			// Check for multiplication / division binary operations
-			while (IsMultiplicationOrDivision(GetCurrentToken(parentExpressionSize)))
+			while (ScriptCompiler::IsMultiplicationOrDivision(GetCurrentToken(parentExpressionSize)))
 			{
 				Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 				BinaryOperationNode newBinaryOperation{};
@@ -1050,7 +1247,7 @@ namespace Kargono::Scripting
 				if (IsContextProbe(newBinaryOperation.LeftOperand))
 				{
 					CursorContext newContext;
-					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()));
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division operation", newBinaryOperation.Operator);
@@ -1060,7 +1257,7 @@ namespace Kargono::Scripting
 				if (IsContextProbe(newBinaryOperation.RightOperand))
 				{
 					CursorContext newContext;
-					newContext.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()));
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division operation", newBinaryOperation.Operator);
@@ -1093,8 +1290,7 @@ namespace Kargono::Scripting
 		Ref<Expression> newExpression {CreateRef<Expression>()};
 		// Check for a single literal/identifier
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
-		if ((tokenBuffer.Type != ScriptTokenType::StringLiteral &&
-			tokenBuffer.Type != ScriptTokenType::IntegerLiteral))
+		if (!ScriptCompiler::IsLiteral(tokenBuffer))
 		{
 			return { false, {} };
 		}
@@ -1154,7 +1350,7 @@ namespace Kargono::Scripting
 		int32_t argumentTokens{ 0 };
 		bool validSyntax = true;
 		Advance(initialAdvance);
-		while (IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize)))
+		while (ScriptCompiler::IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize)))
 		{
 			if (IsContextProbe(GetCurrentToken(parentExpressionSize)))
 			{
@@ -1171,7 +1367,7 @@ namespace Kargono::Scripting
 					return { false, {} };
 				}
 				CursorContext newContext;
-				newContext.ReturnType = functionNode.Parameters.at(newFunctionCallNode.Arguments.size()).Type;
+				newContext.AllReturnTypes = functionNode.Parameters.at(newFunctionCallNode.Arguments.size()).AllTypes;
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside function argument", newFunctionCallNode.Identifier);
@@ -1202,7 +1398,7 @@ namespace Kargono::Scripting
 		// Ensure function identifier exists and get function node
 		if (!ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Invalid identifier for function call", newFunctionCallNode.Identifier);
+			StoreParseError(ParseErrorType::Expression, "Unknown function identifier", newFunctionCallNode.Identifier);
 			return { false, {} };
 		}
 		FunctionNode& functionNode = ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
@@ -1210,7 +1406,7 @@ namespace Kargono::Scripting
 		// Ensure namespace of function matches
 		if (functionNode.Namespace.Value != newFunctionCallNode.Namespace.Value)
 		{
-			StoreParseError(ParseErrorType::Expression, "Invalid namespace for function call", newFunctionCallNode.Namespace);
+			StoreParseError(ParseErrorType::Expression, "Unknown function namespace identifier", newFunctionCallNode.Namespace);
 			return { false, {} };
 		}
 
@@ -1228,13 +1424,24 @@ namespace Kargono::Scripting
 		uint32_t parameterIteration{ 0 };
 		for (auto& parameter : functionNode.Parameters)
 		{
-
-			bool valid = PrimitiveTypeAcceptableToken(parameter.Type.Value, newFunctionCallNode.Arguments.at(parameterIteration));
+			bool valid = false;
+				
+			for (auto& type : parameter.AllTypes)
+			{
+				if (PrimitiveTypeAcceptableToken(type.Value, newFunctionCallNode.Arguments.at(parameterIteration)))
+				{
+					valid = true;
+				}
+			}
 			if (!valid)
 			{
 				std::string errorMessage =
-					fmt::format("Argument type is not acceptable for function parameter\n Parameter Type: {}\n Argument Type: {}",
-						parameter.Type.Value, GetPrimitiveTypeFromToken((newFunctionCallNode.Arguments.at(parameterIteration))).Value);
+					fmt::format("Argument type is not acceptable for function parameter\n Argument Type: {}\n Parameter Type(s):",
+						GetPrimitiveTypeFromToken((newFunctionCallNode.Arguments.at(parameterIteration))).Value);
+				for (auto& type : parameter.AllTypes)
+				{
+					errorMessage = errorMessage + "\n " + type.Value;
+				}
 				StoreParseError(ParseErrorType::Expression, errorMessage, newFunctionCallNode.Arguments.at(parameterIteration));
 				return { false, {} };
 			}
@@ -1255,14 +1462,14 @@ namespace Kargono::Scripting
 		UnaryOperationNode newUnaryOperation{};
 
 		// Check for operator
-		if (!IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
+		if (!ScriptCompiler::IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
 		{
 			return { false, {} };
 		}
 		newUnaryOperation.Operator = GetCurrentToken(parentExpressionSize);
 
 		// Check for operand
-		if (!IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
+		if (!ScriptCompiler::IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
 		{
 			return { false, {} };
 		}
@@ -1315,7 +1522,7 @@ namespace Kargono::Scripting
 			ScriptToken newReturnType;
 			newReturnType.Type = ScriptTokenType::PrimitiveType;
 			newReturnType.Value = "None";
-			newContext.ReturnType = newReturnType;
+			newContext.AllReturnTypes.push_back(newReturnType);
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
@@ -1394,7 +1601,7 @@ namespace Kargono::Scripting
 		{
 			StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
 			CursorContext newContext;
-			newContext.ReturnType = currentIdentifierVariable.Type;
+			newContext.AllReturnTypes.push_back(currentIdentifierVariable.Type);
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", tokenBuffer);
@@ -1468,7 +1675,7 @@ namespace Kargono::Scripting
 		if (IsContextProbe(newExpression))
 		{
 			CursorContext newContext;
-			newContext.ReturnType = tokenBuffer;
+			newContext.AllReturnTypes.push_back(tokenBuffer);
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement declaration/assignment", tokenBuffer);
@@ -1610,7 +1817,7 @@ namespace Kargono::Scripting
 		return m_Errors.size() > 0;
 	}
 
-	bool TokenParser::IsLiteralOrIdentifier(ScriptToken token)
+	bool ScriptCompiler::IsLiteralOrIdentifier(ScriptToken token)
 	{
 		if (IsLiteral(token) || token.Type == ScriptTokenType::Identifier)
 		{
@@ -1619,17 +1826,18 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool TokenParser::IsLiteral(ScriptToken token)
+	bool ScriptCompiler::IsLiteral(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::IntegerLiteral ||
-			token.Type == ScriptTokenType::StringLiteral)
+			token.Type == ScriptTokenType::StringLiteral ||
+			token.Type == ScriptTokenType::BooleanLiteral)
 		{
 			return true;
 		}
 		return false;
 	}
 
-	bool TokenParser::IsUnaryOperator(ScriptToken token)
+	bool ScriptCompiler::IsUnaryOperator(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::SubtractionOperator)
 		{
@@ -1638,7 +1846,7 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool TokenParser::IsBinaryOperator(ScriptToken token)
+	bool ScriptCompiler::IsBinaryOperator(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::AdditionOperator ||
 			token.Type == ScriptTokenType::SubtractionOperator ||
@@ -1650,7 +1858,7 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool TokenParser::IsAdditionOrSubtraction(ScriptToken token)
+	bool ScriptCompiler::IsAdditionOrSubtraction(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::AdditionOperator ||
 			token.Type == ScriptTokenType::SubtractionOperator)
@@ -1660,7 +1868,7 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool TokenParser::IsMultiplicationOrDivision(ScriptToken token)
+	bool ScriptCompiler::IsMultiplicationOrDivision(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::MultiplicationOperator ||
 			token.Type == ScriptTokenType::DivisionOperator)
@@ -1732,7 +1940,7 @@ namespace Kargono::Scripting
 
 	ScriptToken TokenParser::GetPrimitiveTypeFromToken(Scripting::ScriptToken token)
 	{
-		if (IsLiteral(token))
+		if (ScriptCompiler::IsLiteral(token))
 		{
 			for (auto& primitiveType : ScriptCompiler::s_ActiveLanguageDefinition.PrimitiveTypes)
 			{
@@ -1781,9 +1989,9 @@ namespace Kargono::Scripting
 		// Emit Function Signature
 		m_OutputText << funcNode.ReturnType.Value << " " << funcNode.Name.Value << '(';
 		uint32_t iteration{ 0 };
-		for (auto& [type, identifier] : funcNode.Parameters)
+		for (auto& [allTypes, identifier] : funcNode.Parameters)
 		{
-			PrimitiveType primitiveType = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(type.Value);
+			PrimitiveType primitiveType = ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(allTypes.at(0).Value);
 			if (primitiveType.Name == "")
 			{
 				return { false, {} };

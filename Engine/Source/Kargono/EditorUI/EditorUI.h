@@ -188,7 +188,7 @@ namespace Kargono::EditorUI
 
 		static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
 
-		static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction;
+		static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean;
 
 		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,

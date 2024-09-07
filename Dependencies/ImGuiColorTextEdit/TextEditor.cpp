@@ -718,7 +718,7 @@ void TextEditor::RefreshSuggestionsContent()
 	{
 		m_OpenTextSuggestions = true;
 		m_SuggestionTree.ClearTree();
-		bool allowAllVariableTypes = context.ReturnType.Value == "None";
+		bool allowAllVariableTypes = context.AllReturnTypes.size() == 0 || context.AllReturnTypes.at(0).Value == "None";
 		std::size_t highestRegexCount{ 0 };
 		std::string highestRegexCountName{};
 		
@@ -777,7 +777,17 @@ void TextEditor::RefreshSuggestionsContent()
 			{
 				for (auto& variable : stackFrame)
 				{
-					if (allowAllVariableTypes || variable.Type.Value == context.ReturnType.Value)
+					bool returnTypesMatch = false;
+					for (auto& type : context.AllReturnTypes)
+					{
+						if (variable.Type.Value == type.Value)
+						{
+							returnTypesMatch = true;
+							break;
+						}
+					}
+
+					if (allowAllVariableTypes || returnTypesMatch)
 					{
 						Kargono::EditorUI::TreeEntry entry;
 						entry.Label = variable.Identifier.Value;
@@ -822,7 +832,18 @@ void TextEditor::RefreshSuggestionsContent()
 
 			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions)
 			{
-				if (allowAllVariableTypes || funcNode.ReturnType.Value == context.ReturnType.Value)
+
+				bool returnTypesMatch = false;
+				for (auto& type : context.AllReturnTypes)
+				{
+					if (funcNode.ReturnType.Value == type.Value)
+					{
+						returnTypesMatch = true;
+						break;
+					}
+				}
+
+				if (allowAllVariableTypes || returnTypesMatch)
 				{
 					Kargono::EditorUI::TreeEntry entry;
 					entry.Label = funcName;
@@ -953,10 +974,19 @@ void TextEditor::RefreshSuggestionsContent()
 				m_SuggestionTree.InsertEntry(entry);
 			}
 		}
+
+		if (m_SuggestionTree.GetTreeEntries().size() <= 0)
+		{
+			m_SuggestionTextBuffer.clear();
+			m_OpenTextSuggestions = false;
+			if (ImGui::IsPopupOpen("TextEditorSuggestions"))
+			{
+				m_CloseTextSuggestions = true;
+			}
+			return;
+		}
 		
-
 		// Expand all tree nodes and select the first available option
-
 		Kargono::EditorUI::TreePath expandNode {};
 		expandNode.AddNode(0);
 		m_SuggestionTree.ExpandNodePath(expandNode);
@@ -2669,6 +2699,9 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 					break;
 				case Kargono::Scripting::ScriptTokenType::IntegerLiteral:
 					tokenColor = PaletteIndex::Number;
+					break;
+				case Kargono::Scripting::ScriptTokenType::BooleanLiteral:
+					tokenColor = PaletteIndex::String;
 					break;
 				case Kargono::Scripting::ScriptTokenType::PrimitiveType:
 					if (mLanguageDefinition.mIdentifiers.contains(token.Value))

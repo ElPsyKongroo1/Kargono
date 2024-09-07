@@ -23,6 +23,7 @@ namespace Kargono::Scripting
 		// Literals
 		IntegerLiteral,
 		StringLiteral,
+		BooleanLiteral,
 
 		// Keywords
 		Keyword,
@@ -83,6 +84,7 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
+		case Scripting::ScriptTokenType::BooleanLiteral: return "Boolean Literal";
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 
@@ -272,7 +274,7 @@ namespace Kargono::Scripting
 
 	struct FunctionParameter
 	{
-		ScriptToken Type{};
+		std::vector<ScriptToken> AllTypes{};
 		ScriptToken Identifier{};
 	};
 
@@ -348,13 +350,13 @@ namespace Kargono::Scripting
 
 	struct CursorContext
 	{
-		ScriptToken ReturnType{};
+		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
 		bool IsFunctionParameter{ false };
 
 		operator bool() const
 		{
-			return ReturnType || StackVariables.size() > 0;
+			return AllReturnTypes.size() > 0 || StackVariables.size() > 0;
 		}
 	};
 
@@ -396,12 +398,6 @@ namespace Kargono::Scripting
 		StackVariable GetStackVariable(ScriptToken identifier);
 		void StoreParseError(ParseErrorType errorType, const std::string& message, ScriptToken errorToken);
 		bool CheckForErrors();
-		bool IsLiteralOrIdentifier(ScriptToken token);
-		bool IsLiteral(ScriptToken token);
-		bool IsUnaryOperator(ScriptToken token);
-		bool IsBinaryOperator(ScriptToken token);
-		bool IsAdditionOrSubtraction(ScriptToken token);
-		bool IsMultiplicationOrDivision(ScriptToken token);
 		bool IsContextProbe(ScriptToken token);
 		bool IsContextProbe(Ref<Expression> expression);
 		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
@@ -466,6 +462,13 @@ namespace Kargono::Scripting
 		static void CreateKGScriptLanguageDefinition();
 		static std::vector<ParserError> CheckForErrors(const std::string& text);
 		static CursorContext FindCursorContext(const std::string& text);
+	public:
+		static bool IsLiteralOrIdentifier(ScriptToken token);
+		static bool IsLiteral(ScriptToken token);
+		static bool IsUnaryOperator(ScriptToken token);
+		static bool IsBinaryOperator(ScriptToken token);
+		static bool IsAdditionOrSubtraction(ScriptToken token);
+		static bool IsMultiplicationOrDivision(ScriptToken token);
 	public:
 		static LanguageDefinition s_ActiveLanguageDefinition;
 	};
