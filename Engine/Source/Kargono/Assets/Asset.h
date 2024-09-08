@@ -4,7 +4,7 @@
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Kargono/Scripting/ScriptingResources.h"
+#include "Kargono/Scripting/ScriptingCommon.h"
 
 #include <filesystem>
 #include <vector>

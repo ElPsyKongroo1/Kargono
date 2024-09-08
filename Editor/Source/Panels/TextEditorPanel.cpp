@@ -4,7 +4,7 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/EditorUI/ImGuiColorTextEditorAPI.h"
 #include "Kargono.h"
-#include "Kargono/Scripting/ScriptCompiler.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Timers.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
@@ -355,7 +355,7 @@ namespace Kargono::Panels
 			{
 				return;
 			}
-			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompiler::CheckForErrors(activeDocument.TextBuffer);
+			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompilerService::CheckForErrors(activeDocument.TextBuffer);
 
 			if (errors.size() == 0)
 			{

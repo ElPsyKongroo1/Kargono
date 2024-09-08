@@ -11,7 +11,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h" // for imGui::GetCurrentWindow()
 #include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/Scripting/ScriptCompiler.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Utility/Regex.h"
 
 template<class InputIt1, class InputIt2, class BinaryPredicate>
@@ -713,7 +714,7 @@ void TextEditor::RefreshSuggestionsContent()
 	}
 
 	// Find cursor context with ContextProbe inserted
-	Kargono::Scripting::CursorContext context = Kargono::Scripting::ScriptCompiler::FindCursorContext(text);
+	Kargono::Scripting::CursorContext context = Kargono::Scripting::ScriptCompilerService::FindCursorContext(text);
 	if (context)
 	{
 		m_OpenTextSuggestions = true;
@@ -729,7 +730,7 @@ void TextEditor::RefreshSuggestionsContent()
 			std::vector<Kargono::EditorUI::TreeEntry> failNamespaceBuffer;
 			dataSection.Label = "Data Types";
 			dataSection.IconHandle = Kargono::EditorUI::EditorUIService::s_IconEntity;
-			for (auto& primitiveType : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 			{
 				
 				Kargono::EditorUI::TreeEntry entry;
@@ -791,7 +792,7 @@ void TextEditor::RefreshSuggestionsContent()
 					{
 						Kargono::EditorUI::TreeEntry entry;
 						entry.Label = variable.Identifier.Value;
-						entry.IconHandle = Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(variable.Type.Value).Icon;
+						entry.IconHandle = Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(variable.Type.Value).Icon;
 						entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 						{
 							// Remove Buffer Text and add text
@@ -830,7 +831,7 @@ void TextEditor::RefreshSuggestionsContent()
 		{
 			std::unordered_map<std::string, std::vector<Kargono::EditorUI::TreeEntry>> failNamespaceBuffer;
 
-			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions)
+			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 			{
 
 				bool returnTypesMatch = false;
@@ -849,7 +850,7 @@ void TextEditor::RefreshSuggestionsContent()
 					entry.Label = funcName;
 					entry.IconHandle = funcNode.ReturnType.Type == Kargono::Scripting::ScriptTokenType::None ?
 						Kargono::EditorUI::EditorUIService::s_IconCircleCollider :
-						Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(funcNode.ReturnType.Value).Icon;
+						Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(funcNode.ReturnType.Value).Icon;
 					entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 					{
 						// Remove Buffer Text and add text
@@ -1481,14 +1482,18 @@ void TextEditor::Render()
 		{
 			if (m_OpenTextSuggestions)
 			{
+				ImGui::OpenPopup("TextEditorSuggestions");
+				m_OpenTextSuggestions = false;
+			}
+
+			if (ImGui::IsPopupOpen("TextEditorSuggestions"))
+			{
 				ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + GetCursorPosition().mLine * mCharAdvance.y);
 				ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + mTextStart, lineStartScreenPos.y);
 				float textStart = TextDistanceToLineStartWithTab(GetCursorPosition());
 				ImVec2 cursorPosition(textScreenPos.x + textStart, lineStartScreenPos.y + mCharAdvance.y + 2.0f);
 				ImGui::SetNextWindowPos(cursorPosition);
 				ImGui::SetNextWindowSize(ImVec2(0, 200.0f));
-				ImGui::OpenPopup("TextEditorSuggestions");
-				m_OpenTextSuggestions = false;
 			}
 
 			if (ImGui::BeginPopup("TextEditorSuggestions", ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing))
@@ -2692,7 +2697,7 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 					tokenColor = PaletteIndex::Punctuation;
 					break;
 				case Kargono::Scripting::ScriptTokenType::Keyword:
-					tokenColor = PaletteIndex::Keyword;
+					tokenColor = PaletteIndex::Keyword; 
 					break;
 				case Kargono::Scripting::ScriptTokenType::StringLiteral:
 					tokenColor = PaletteIndex::String;
@@ -2700,8 +2705,17 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 				case Kargono::Scripting::ScriptTokenType::IntegerLiteral:
 					tokenColor = PaletteIndex::Number;
 					break;
+				case Kargono::Scripting::ScriptTokenType::FloatLiteral:
+					tokenColor = PaletteIndex::Number;
+					break;
 				case Kargono::Scripting::ScriptTokenType::BooleanLiteral:
 					tokenColor = PaletteIndex::String;
+					break;
+				case Kargono::Scripting::ScriptTokenType::SingleLineComment:
+					tokenColor = PaletteIndex::Comment;
+					break;
+				case Kargono::Scripting::ScriptTokenType::MultiLineComment:
+					tokenColor = PaletteIndex::MultiLineComment;
 					break;
 				case Kargono::Scripting::ScriptTokenType::PrimitiveType:
 					if (mLanguageDefinition.mIdentifiers.contains(token.Value))
@@ -3766,24 +3780,24 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 	if (!inited)
 	{
 		// Lazy loading KGScript language def
-		if (!Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition)
+		if (!Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition)
 		{
-			Kargono::Scripting::ScriptCompiler::CreateKGScriptLanguageDefinition();
+			Kargono::Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 		}
 
-		for (auto& keyword : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.Keywords)
+		for (auto& keyword : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
 		{
 			langDef.mKeywords.insert(keyword);
 		}
 
-		for (auto& primitiveType : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.PrimitiveTypes)
+		for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
 			Identifier id;
 			id.mDeclaration = primitiveType.Description;
 			langDef.mIdentifiers.insert(std::make_pair(primitiveType.Name, id));
 		}
 
-		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.FunctionDefinitions)
+		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
 			Identifier id;
 			id.mDeclaration = funcNode.Description;
@@ -3791,9 +3805,9 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 
 			if (funcNode.Namespace)
 			{
-				if (Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(funcNode.Namespace.Value))
+				if (Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(funcNode.Namespace.Value))
 				{
-					id.mDeclaration = Kargono::Scripting::ScriptCompiler::s_ActiveLanguageDefinition.NamespaceDescriptions.at(funcNode.Namespace.Value);
+					id.mDeclaration = Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.at(funcNode.Namespace.Value);
 				}
 				else
 				{

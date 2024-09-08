@@ -8,7 +8,7 @@
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Input/InputMode.h"
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Scenes/EntityClass.h"
 

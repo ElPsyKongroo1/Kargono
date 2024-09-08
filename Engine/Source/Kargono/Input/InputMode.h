@@ -3,7 +3,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 #include <vector>
 #include <unordered_map>

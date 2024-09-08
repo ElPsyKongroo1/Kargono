@@ -149,6 +149,27 @@ namespace Kargono::Panels
 		{
 			ImGui::PopStyleColor(2);
 		}
+		if (backActive && ImGui::BeginDragDropTarget())
+		{
+			static std::array<std::string, 6> acceptablePayloads
+			{
+				"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
+					"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
+			};
+
+			for (auto& payloadName : acceptablePayloads)
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+				{
+					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
+					std::filesystem::path payloadPath(payloadPathPointer);
+					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+					break;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
 
 		ImGui::SameLine();
@@ -178,7 +199,6 @@ namespace Kargono::Panels
 		{
 			ImGui::PopStyleColor(2);
 		}
-		ImGui::PopStyleColor();
 		if (forwardActive && ImGui::BeginDragDropTarget())
 		{
 			static std::array<std::string, 6> acceptablePayloads
@@ -193,12 +213,20 @@ namespace Kargono::Panels
 				{
 					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 					std::filesystem::path payloadPath(payloadPathPointer);
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+					std::filesystem::path currentIterationPath{m_LongestRecentPath};
+					std::filesystem::path recentIterationPath{m_LongestRecentPath};
+					while (currentIterationPath != m_CurrentDirectory)
+					{
+						recentIterationPath = currentIterationPath;
+						currentIterationPath = currentIterationPath.parent_path();
+					}
+					Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
 					break;
 				}
 			}
 			ImGui::EndDragDropTarget();
 		}
+		ImGui::PopStyleColor();
 
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
 

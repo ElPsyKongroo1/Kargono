@@ -62,7 +62,7 @@
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//

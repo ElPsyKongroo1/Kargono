@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -8,6 +9,8 @@
 #include <variant>
 #include <unordered_map>
 #include <sstream>
+
+#include "Kargono/Core/Base.h"
 
 namespace Kargono::Rendering
 {
@@ -24,6 +27,7 @@ namespace Kargono::Scripting
 		IntegerLiteral,
 		StringLiteral,
 		BooleanLiteral,
+		FloatLiteral,
 
 		// Keywords
 		Keyword,
@@ -48,7 +52,11 @@ namespace Kargono::Scripting
 		AdditionOperator,
 		SubtractionOperator,
 		MultiplicationOperator,
-		DivisionOperator
+		DivisionOperator,
+
+		// Comments
+		SingleLineComment,
+		MultiLineComment
 	};
 
 	enum class ParseErrorType
@@ -87,6 +95,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::BooleanLiteral: return "Boolean Literal";
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
+		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -106,6 +115,9 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::DivisionOperator: return "Division Operator";
 		case Scripting::ScriptTokenType::MultiplicationOperator: return "Multiplication Operator";
 
+		case Scripting::ScriptTokenType::SingleLineComment: return "Single Line Comment";
+		case Scripting::ScriptTokenType::MultiLineComment: return "Multi Line Comment";
+
 		case Scripting::ScriptTokenType::None: return "None";
 		default:
 		{
@@ -120,22 +132,22 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
-			case Scripting::ParseErrorType::Function: return "Function";
+		case Scripting::ParseErrorType::Function: return "Function";
 
-			case Scripting::ParseErrorType::Expression: return "Expression";
+		case Scripting::ParseErrorType::Expression: return "Expression";
 
-			case Scripting::ParseErrorType::Statement: return "Statement";
-			case Scripting::ParseErrorType::ContextProbe: return "Context Probe";
+		case Scripting::ParseErrorType::Statement: return "Statement";
+		case Scripting::ParseErrorType::ContextProbe: return "Context Probe";
 
-			case Scripting::ParseErrorType::Program: return "Program";
+		case Scripting::ParseErrorType::Program: return "Program";
 
-			case Scripting::ParseErrorType::None:
-			default:
-			{
-				KG_CRITICAL("Unknown ParseErrorType");
-				return {"Unknown Error"};
+		case Scripting::ParseErrorType::None:
+		default:
+		{
+			KG_CRITICAL("Unknown ParseErrorType");
+			return { "Unknown Error" };
 
-			}
+		}
 		}
 	}
 }
@@ -165,25 +177,6 @@ namespace Kargono::Scripting
 		}
 	};
 
-	class ScriptTokenizer
-	{
-	public:
-		std::vector<ScriptToken> TokenizeString(std::string m_ScriptText);
-	private:
-		char GetCurrentChar(int32_t offset = 0);
-		bool CurrentLocationValid();
-		void AddCurrentCharToBuffer();
-		void Advance(uint32_t count = 1);
-		void AddTokenAndClearBuffer(ScriptTokenType type, const std::string& value);
-	private:
-		std::string m_ScriptText{};
-		std::string m_TextBuffer{};
-		std::vector<ScriptToken> m_Tokens {};
-		uint32_t m_TextLocation{ 0 };
-		uint32_t m_LineCount{ 1 };
-		uint32_t m_ColumnCount{ 0 };
-	};
-
 	struct Expression;
 
 	struct FunctionCallNode
@@ -191,7 +184,7 @@ namespace Kargono::Scripting
 		ScriptToken Namespace{};
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
-		std::vector<ScriptToken> Arguments{};
+		std::vector<Ref<Expression>> Arguments{};
 	};
 
 	struct UnaryOperationNode
@@ -209,34 +202,51 @@ namespace Kargono::Scripting
 		Ref<Expression> RightOperand{};
 	};
 
+	struct InitializationListNode
+	{
+		std::vector<Ref<Expression>> Arguments{};
+		ScriptToken ReturnType{};
+	};
+
+	struct ExpressionGenerationAffixes
+	{
+		std::string Prefix;
+		std::string Postfix;
+	};
+
 	struct Expression
 	{
-		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode , BinaryOperationNode> Value {};
+		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode> Value {};
+		Ref<ExpressionGenerationAffixes> GenerationAffixes {nullptr};
 
 		ScriptToken GetReturnType()
 		{
 			ScriptToken returnType;
 			std::visit([&](auto&& value)
-			{
-				using valueType = std::decay_t<decltype(value)>;
-				if constexpr (std::is_same_v<valueType, FunctionCallNode>)
 				{
-					returnType = value.ReturnType;
-				}
-				else if constexpr (std::is_same_v<valueType, UnaryOperationNode>)
-				{
-					returnType = value.ReturnType;
-				}
-				else if constexpr (std::is_same_v<valueType, BinaryOperationNode>)
-				{
-					returnType = value.ReturnType;
-				}
-				else if constexpr (std::is_same_v<valueType, ScriptToken>)
-				{
-					returnType = value;
-				}
-				
-			}, Value);
+					using valueType = std::decay_t<decltype(value)>;
+					if constexpr (std::is_same_v<valueType, FunctionCallNode>)
+					{
+						returnType = value.ReturnType;
+					}
+					else if constexpr (std::is_same_v<valueType, UnaryOperationNode>)
+					{
+						returnType = value.ReturnType;
+					}
+					else if constexpr (std::is_same_v<valueType, BinaryOperationNode>)
+					{
+						returnType = value.ReturnType;
+					}
+					else if constexpr (std::is_same_v<valueType, InitializationListNode>)
+					{
+						returnType = value.ReturnType;
+					}
+					else if constexpr (std::is_same_v<valueType, ScriptToken>)
+					{
+						returnType = value;
+					}
+
+				}, Value);
 
 			return returnType;
 		}
@@ -270,7 +280,7 @@ namespace Kargono::Scripting
 		Ref<Expression> Value { nullptr };
 	};
 
-	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment , StatementDeclarationAssignment>;
+	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment, StatementDeclarationAssignment>;
 
 	struct FunctionParameter
 	{
@@ -308,12 +318,12 @@ namespace Kargono::Scripting
 	struct ScriptAST
 	{
 	public:
-		ProgramNode ProgramNode {};
+		ProgramNode ProgramNode{};
 
 	public:
-		operator bool() const 
-		{ 
-			return ProgramNode; 
+		operator bool() const
+		{
+			return ProgramNode;
 		}
 	};
 
@@ -331,10 +341,9 @@ namespace Kargono::Scripting
 			stringStream << CurrentToken.ToString();
 			return stringStream.str();
 		}
-
 	};
 
-	struct StackVariable 
+	struct StackVariable
 	{
 	public:
 		ScriptToken Type{};
@@ -360,75 +369,20 @@ namespace Kargono::Scripting
 		}
 	};
 
-	class TokenParser
+	struct InitializationListType
 	{
-	public:
-		std::tuple<bool, ScriptAST> ParseTokens(std::vector<ScriptToken>&& tokens);
-		void PrintAST();
-		void PrintTokens();
-		void PrintErrors();
-		std::tuple<bool, CursorContext> GetCursorContext();
-	public:
-		std::vector<ParserError> GetErrors() { return m_Errors; }
-	private:
-		std::tuple<bool, Statement> ParseStatementNode();
-		std::tuple<bool, FunctionNode> ParseFunctionNode();
-		std::tuple<bool, Ref<Expression>> ParseExpressionNode(uint32_t& parentExpressionSize);
-	private:
-
-		std::tuple<bool, Ref<Expression>> ParseExpressionTerm(uint32_t& parentExpressionSize, bool checkBinaryOperations = true);
-		std::tuple<bool, Ref<Expression>> ParseExpressionLiteral(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionIdentifier(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionFunctionCall(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionUnaryOperation(uint32_t& parentExpressionSize);
-
-		std::tuple<bool, Statement> ParseStatementEmpty();
-		std::tuple<bool, Statement> ParseStatementExpression();
-		std::tuple<bool, Statement> ParseStatementDeclaration();
-		std::tuple<bool, Statement> ParseStatementAssignment();
-		std::tuple<bool, Statement> ParseStatementDeclarationAssignment();
-	private:
-		ScriptToken GetCurrentToken(int32_t offset = 0);
-		void Advance(uint32_t count = 1);
-		void StoreStackVariable(ScriptToken type, ScriptToken identifier);
-		void AddStackFrame();
-		void PopStackFrame();
-		bool CheckStackForIdentifier(ScriptToken identifier);
-		bool CheckCurrentStackFrameForIdentifier(ScriptToken identifier);
-		StackVariable GetStackVariable(ScriptToken identifier);
-		void StoreParseError(ParseErrorType errorType, const std::string& message, ScriptToken errorToken);
-		bool CheckForErrors();
-		bool IsContextProbe(ScriptToken token);
-		bool IsContextProbe(Ref<Expression> expression);
-		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
-		ScriptToken GetPrimitiveTypeFromToken(Scripting::ScriptToken token);
-	private:
-		std::vector<ScriptToken> m_Tokens{};
-		std::vector<ParserError> m_Errors {};
-		std::vector<std::vector<StackVariable>> m_StackVariables{};
-		ScriptAST m_AST{};
-		uint32_t m_TokenLocation{0};
-		CursorContext m_CursorContext{};
-	};
-
-	class OutputGenerator
-	{
-	public:
-		std::tuple<bool, std::string> GenerateOutput(ScriptAST&& ast);
-	private:
-		void GenerateExpression(Ref<Expression> expression);
-	private:
-		std::stringstream m_OutputText{};
-		ScriptAST m_AST{};
+		std::vector<ScriptToken> ParameterTypes {};
+		ScriptToken ReturnType{};
 	};
 
 	struct LanguageDefinition
 	{
 	public:
-		std::vector<std::string> Keywords {};
+		std::vector<std::string> Keywords{};
 		std::vector<PrimitiveType> PrimitiveTypes {};
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
+		std::vector<InitializationListType> InitListTypes {};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{
@@ -447,29 +401,5 @@ namespace Kargono::Scripting
 		{
 			return Keywords.size() > 0 || PrimitiveTypes.size() > 0 || FunctionDefinitions.size() > 0;
 		}
-	};
-
-	//==============================
-	// Script Compiler Class
-	//==============================
-	class ScriptCompiler
-	{
-	public:
-		//==============================
-		// External API
-		//==============================
-		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
-		static void CreateKGScriptLanguageDefinition();
-		static std::vector<ParserError> CheckForErrors(const std::string& text);
-		static CursorContext FindCursorContext(const std::string& text);
-	public:
-		static bool IsLiteralOrIdentifier(ScriptToken token);
-		static bool IsLiteral(ScriptToken token);
-		static bool IsUnaryOperator(ScriptToken token);
-		static bool IsBinaryOperator(ScriptToken token);
-		static bool IsAdditionOrSubtraction(ScriptToken token);
-		static bool IsMultiplicationOrDivision(ScriptToken token);
-	public:
-		static LanguageDefinition s_ActiveLanguageDefinition;
 	};
 }

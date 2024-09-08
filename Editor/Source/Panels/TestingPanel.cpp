@@ -3,6 +3,7 @@
 #include "EditorApp.h"
 #include "Kargono.h"
 #include "Kargono/Utility/Timers.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 
@@ -39,7 +40,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Compile File"))
 		{
-			Scripting::ScriptCompiler::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.CurrentOption);
+			Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.CurrentOption);
 		}
 
 		if (ImGui::Button("Test Popup"))

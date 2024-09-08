@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/WrappedData.h"
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 #include <vector>
 #include <string>

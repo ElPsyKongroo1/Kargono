@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"

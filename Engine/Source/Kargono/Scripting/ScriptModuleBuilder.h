@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Scripting/ScriptCompiler.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 namespace Kargono::Scripting
 {

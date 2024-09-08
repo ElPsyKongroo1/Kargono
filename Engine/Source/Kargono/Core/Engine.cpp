@@ -13,7 +13,7 @@
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Network/Client.h"
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 
 namespace Kargono
