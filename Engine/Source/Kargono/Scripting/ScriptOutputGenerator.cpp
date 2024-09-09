@@ -36,106 +36,104 @@ namespace Kargono::Scripting
 		}
 		m_OutputText << ")\n";
 		m_OutputText << "{\n";
-		bool success{ true };
-		for (auto& statement : funcNode.Statements)
+		for (auto statement : funcNode.Statements)
 		{
-			std::visit([&](auto&& state)
-				{
-					using type = std::decay_t<decltype(state)>;
-					if constexpr (std::is_same_v<type, StatementEmpty>)
-					{
-						// Do not display anything for an empty statement
-					}
-					else if constexpr (std::is_same_v<type, StatementExpression>)
-					{
-						m_OutputText << "  ";
-						GenerateExpression(state.Value);
-						m_OutputText << ";\n";
-					}
-					else if constexpr (std::is_same_v<type, StatementDeclaration>)
-					{
-						m_OutputText << "  ";
-						PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
-						if (typeValue.Name == "")
-						{
-							success = false;
-							return;
-						}
-						m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << ";\n";
-
-					}
-					else if constexpr (std::is_same_v<type, StatementAssignment>)
-					{
-						m_OutputText << "  ";
-						m_OutputText << state.Name.Value << " = ";
-						GenerateExpression(state.Value);
-						m_OutputText << ";\n";
-
-					}
-					else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
-					{
-						m_OutputText << "  ";
-						PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
-						if (typeValue.Name == "")
-						{
-							success = false;
-							return;
-						}
-						m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << " = ";
-						GenerateExpression(state.Value);
-						m_OutputText << ";\n";
-					}
-
-					else if constexpr (std::is_same_v<type, StatementConditional>)
-					{
-						switch (state.Type)
-						{
-						case ConditionalType::IF:
-							m_OutputText << "if (";
-							break;
-						case ConditionalType::ELSEIF:
-							m_OutputText << "else if (";
-							break;
-						case ConditionalType::ELSE:
-							m_OutputText << "else\n";
-							break;
-						case ConditionalType::None:
-						default:
-							KG_WARN("Invalid conditional type provided to ScriptOutputGenerator");
-							return;
-						}
-
-						if (state.Type == ConditionalType::IF || state.Type == ConditionalType::ELSEIF)
-						{
-							GenerateExpression(state.ConditionExpression);
-							m_OutputText << "\n";
-						}
-
-						m_OutputText << "{\n";
-
-						/*for (auto& statement : state.BodyStatements)
-						{
-							Generate
-						}*/
-
-						m_OutputText << "}";
-
-
-					}
-				}, statement->Value);
-			if (!success)
-			{
-				return { false, {} };
-			}
+			GenerateStatement(statement);
 		}
 		m_OutputText << "}\n";
 
 		return { true, m_OutputText.str() };
 	}
 
-	void ScriptOutputGenerator::GenerateStatement(Ref<Statement> expression)
+	void ScriptOutputGenerator::GenerateStatement(Ref<Statement> statement)
 	{
+		std::visit([&](auto&& state)
+			{
+				using type = std::decay_t<decltype(state)>;
+				if constexpr (std::is_same_v<type, StatementEmpty>)
+				{
+					// Do not display anything for an empty statement
+				}
+				else if constexpr (std::is_same_v<type, StatementExpression>)
+				{
+					m_OutputText << "  ";
+					GenerateExpression(state.Value);
+					m_OutputText << ";\n";
+				}
+				else if constexpr (std::is_same_v<type, StatementDeclaration>)
+				{
+					m_OutputText << "  ";
+					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
+					if (typeValue.Name == "")
+					{
+						return;
+					}
+					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << ";\n";
 
+				}
+				else if constexpr (std::is_same_v<type, StatementAssignment>)
+				{
+					m_OutputText << "  ";
+					m_OutputText << state.Name.Value << " = ";
+					GenerateExpression(state.Value);
+					m_OutputText << ";\n";
+
+				}
+				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
+				{
+					m_OutputText << "  ";
+					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
+					if (typeValue.Name == "")
+					{
+						return;
+					}
+					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << " = ";
+					GenerateExpression(state.Value);
+					m_OutputText << ";\n";
+				}
+
+				else if constexpr (std::is_same_v<type, StatementConditional>)
+				{
+					m_OutputText << "  ";
+					switch (state.Type)
+					{
+					case ConditionalType::IF:
+						m_OutputText << "if (";
+						break;
+					case ConditionalType::ELSEIF:
+						m_OutputText << "else if (";
+						break;
+					case ConditionalType::ELSE:
+						m_OutputText << "else\n";
+						break;
+					case ConditionalType::None:
+					default:
+						KG_WARN("Invalid conditional type provided to ScriptOutputGenerator");
+						return;
+					}
+
+					if (state.Type == ConditionalType::IF || state.Type == ConditionalType::ELSEIF)
+					{
+						GenerateExpression(state.ConditionExpression);
+						m_OutputText << ")\n";
+					}
+
+					m_OutputText << "{\n";
+
+					for (auto& statement : state.BodyStatements)
+					{
+						GenerateStatement(statement);
+					}
+
+					m_OutputText << "}\n";
+
+					for (auto& statement : state.ChainedConditionals)
+					{
+						GenerateStatement(statement);
+					}
+
+				}
+			}, statement->Value);
 	}
 
 	void ScriptOutputGenerator::GenerateExpression(Ref<Expression> expression)
@@ -224,5 +222,14 @@ namespace Kargono::Scripting
 		{
 			return;
 		}
+	}
+	std::string ScriptOutputGenerator::GetIndentation()
+	{
+		std::string outputIndentation{};
+		for (uint32_t iteration{ 0 }; iteration < m_IndentLevel; iteration++)
+		{
+			outputIndentation += "  ";
+		}
+		return outputIndentation;
 	}
 }

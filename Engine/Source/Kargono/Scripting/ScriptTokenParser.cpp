@@ -22,6 +22,10 @@ namespace Kargono::Utility
 
 	static void PrintExpression(Ref<Scripting::Expression> expression, uint32_t indentation = 0)
 	{
+		if (!expression)
+		{
+			return;
+		}
 		std::visit([&](auto&& expressionValue)
 			{
 				using type = std::decay_t<decltype(expressionValue)>;
@@ -83,6 +87,10 @@ namespace Kargono::Utility
 
 	static void PrintStatement(const Ref<Scripting::Statement> statement, uint32_t indentation = 0)
 	{
+		if (!statement)
+		{
+			return;
+		}
 		std::visit([&](auto&& state)
 			{
 				using type = std::decay_t<decltype(state)>;
@@ -121,6 +129,26 @@ namespace Kargono::Utility
 					PrintToken(state.Name, indentation + 2);
 					KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
 					PrintExpression(state.Value, indentation + 2);
+				}
+				else if constexpr (std::is_same_v<type, Scripting::StatementConditional>)
+				{
+					KG_INFO("{}Conditional Statement", GetIndentation(indentation));
+					KG_INFO("{}Type", GetIndentation(indentation + 1));
+					KG_INFO("{}{}", GetIndentation(indentation + 2), Utility::ConditionalTypeToString(state.Type));
+					KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
+					PrintExpression(state.ConditionExpression, indentation + 2);
+					KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
+					for (auto bodyStatement : state.BodyStatements)
+					{
+						PrintStatement(bodyStatement, indentation + 2);
+					}
+					KG_INFO("{}Chained Conditional Statements", GetIndentation(indentation + 1));
+					for (auto chainedStatement : state.ChainedConditionals)
+					{
+						PrintStatement(chainedStatement, indentation + 2);
+					}
+					
+					
 				}
 			}, statement->Value);
 	}

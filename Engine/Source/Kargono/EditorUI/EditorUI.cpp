@@ -2387,6 +2387,7 @@ namespace Kargono::EditorUI
 		TreePath newPath = SelectedEntry;
 		newPath.PopBack();
 		SelectedEntry = newPath;
+		SelectionChanged = true;
 	}
 
 	void TreeSpec::MoveRight()
@@ -2403,6 +2404,7 @@ namespace Kargono::EditorUI
 			ExpandedNodes.insert(SelectedEntry);
 		}
 		SelectedEntry.AddNode(0);
+		SelectionChanged = true;
 	}
 
 	void TreeSpec::SelectFirstEntry()

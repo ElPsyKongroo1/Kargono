@@ -158,7 +158,7 @@ namespace Kargono::Scripting
 	{
 	public:
 		ScriptTokenType Type{ ScriptTokenType::None };
-		std::string Value {};
+		std::string Value{};
 		uint32_t Line{ InvalidLine };
 		uint32_t Column{ InvalidColumn };
 	public:
@@ -169,7 +169,7 @@ namespace Kargono::Scripting
 
 		std::string ToString() const
 		{
-			std::stringstream stringStream {};
+			std::stringstream stringStream{};
 			stringStream << "  Type: " << Utility::ScriptTokenTypeToString(Type) << '\n'
 				<< "  Value: " << Value << '\n'
 				<< "  Line/Column: " << Line << "/" << Column << '\n';
@@ -216,8 +216,8 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode> Value {};
-		Ref<ExpressionGenerationAffixes> GenerationAffixes {nullptr};
+		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode> Value{};
+		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
 		{
@@ -260,7 +260,7 @@ namespace Kargono::Scripting
 
 	struct StatementExpression
 	{
-		Ref<Expression> Value { nullptr };
+		Ref<Expression> Value{ nullptr };
 	};
 
 	struct StatementDeclaration
@@ -272,14 +272,14 @@ namespace Kargono::Scripting
 	struct StatementAssignment
 	{
 		ScriptToken Name{};
-		Ref<Expression> Value { nullptr };
+		Ref<Expression> Value{ nullptr };
 	};
 
 	struct StatementDeclarationAssignment
 	{
 		ScriptToken Type{};
 		ScriptToken Name{};
-		Ref<Expression> Value { nullptr };
+		Ref<Expression> Value{ nullptr };
 	};
 
 	enum class ConditionalType
@@ -293,10 +293,38 @@ namespace Kargono::Scripting
 	struct StatementConditional
 	{
 		ConditionalType Type{ ConditionalType::None };
-		Ref<Expression> ConditionExpression { nullptr };
+		Ref<Expression> ConditionExpression{ nullptr };
 		std::vector<Ref<Statement>> BodyStatements{};
 		std::vector<Ref<Statement>> ChainedConditionals{};
 	};
+
+}
+
+namespace Kargono::Utility
+{
+	inline std::string ConditionalTypeToString(Scripting::ConditionalType type)
+	{
+		switch (type)
+		{
+		case Scripting::ConditionalType::IF: return "IF";
+
+		case Scripting::ConditionalType::ELSE: return "ELSE";
+
+		case Scripting::ConditionalType::ELSEIF: return "ELSE IF";
+
+		case Scripting::ConditionalType::None:
+		default:
+		{
+			KG_CRITICAL("Unknown ConditionalType");
+			return { "Unknown Error" };
+
+		}
+		}
+	}
+}
+
+namespace Kargono::Scripting
+{
 
 	struct Statement
 	{
