@@ -8,6 +8,7 @@ namespace Kargono::Scripting
 	public:
 		std::tuple<bool, std::string> GenerateOutput(ScriptAST&& ast);
 	private:
+		void GenerateStatement(Ref<Statement> expression);
 		void GenerateExpression(Ref<Expression> expression);
 	private:
 		std::stringstream m_OutputText{};

@@ -81,7 +81,7 @@ namespace Kargono::Utility
 			}, expression->Value);
 	}
 
-	static void PrintStatement(const Scripting::Statement& statement, uint32_t indentation = 0)
+	static void PrintStatement(const Ref<Scripting::Statement> statement, uint32_t indentation = 0)
 	{
 		std::visit([&](auto&& state)
 			{
@@ -122,7 +122,7 @@ namespace Kargono::Utility
 					KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
 					PrintExpression(state.Value, indentation + 2);
 				}
-			}, statement);
+			}, statement->Value);
 	}
 
 	static void PrintFunction(const Scripting::FunctionNode& funcNode, uint32_t indentation = 0)
@@ -214,9 +214,8 @@ namespace Kargono::Scripting
 	}
 
 
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementNode()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementNode()
 	{
-		Statement newStatement{};
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		// Parse Statement Empty
@@ -231,6 +230,21 @@ namespace Kargono::Scripting
 		if (CheckForErrors())
 		{
 			StoreParseError(ParseErrorType::Statement, "Invalid empty statement", tokenBuffer);
+			return { false, {} };
+		}
+
+		// Parse Conditional Statement
+		{
+			auto [success, statement] = ParseStatementConditional(false);
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid if/else/else-if statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -293,7 +307,7 @@ namespace Kargono::Scripting
 			StoreParseError(ParseErrorType::Statement, "Invalid declaration/assignment statement", tokenBuffer);
 			return { false, {} };
 		}
-
+		Ref<Statement> newStatement = CreateRef<Statement>();
 		return { false, newStatement };
 	}
 
@@ -419,7 +433,7 @@ namespace Kargono::Scripting
 		// Parse Statements
 		Advance();
 		bool success = false;
-		Statement statement;
+		Ref<Statement> statement {nullptr};
 		do
 		{
 			std::tie(success, statement) = ParseStatementNode();
@@ -913,7 +927,7 @@ namespace Kargono::Scripting
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
 		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
 		{
-			return { false, {} };
+			return { false, nullptr };
 		}
 
 		// Check for arguments and commas
@@ -946,7 +960,7 @@ namespace Kargono::Scripting
 				if (CheckForErrors())
 				{
 					StoreParseError(ParseErrorType::Expression, "Invalid initialization list argument", GetCurrentToken(currentArgumentLocation));
-					return { false, {} };
+					return { false, nullptr };
 				}
 
 				// Decide whether to continue looking for more arguments
@@ -962,7 +976,7 @@ namespace Kargono::Scripting
 		// Check for closing curly brace
 		if (GetCurrentToken(currentArgumentLocation).Type != ScriptTokenType::CloseCurlyBrace)
 		{
-			return { false, {} };
+			return { false, nullptr };
 		}
 		currentArgumentLocation++;
 
@@ -990,7 +1004,7 @@ namespace Kargono::Scripting
 		if (!foundListType)
 		{
 			StoreParseError(ParseErrorType::Expression, "Could not locate matching type for arguments provided", GetCurrentToken(parentExpressionSize));
-			return { false, {} };
+			return { false, nullptr };
 		}
 
 		// Get return type from function node and emplace it into the initListNode
@@ -1001,23 +1015,22 @@ namespace Kargono::Scripting
 		parentExpressionSize = currentArgumentLocation;
 		return { true, newInitListExpression };
 	}
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementEmpty()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementEmpty()
 	{
-		Statement newStatement{};
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		if (tokenBuffer.Type != ScriptTokenType::Semicolon)
 		{
-			return { false, {} };
+			return { false, nullptr };
 		}
 
-		newStatement.emplace<StatementEmpty>();
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = StatementEmpty();
 		Advance();
 		return { true, newStatement };
 	}
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementExpression()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementExpression()
 	{
-		Statement newStatement{};
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
@@ -1028,7 +1041,7 @@ namespace Kargono::Scripting
 
 			if (!success)
 			{
-				return { false, {} };
+				return { false, nullptr };
 			}
 			newExpression = expression;
 		}
@@ -1044,53 +1057,52 @@ namespace Kargono::Scripting
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
-			return { false, {} };
+			return { false, nullptr };
 		}
 
 		// Check for a terminating semicolon
 		if (GetCurrentToken(expressionSize).Type != ScriptTokenType::Semicolon)
 		{
-			return { false, {} };
+			return { false, nullptr };
 		}
 
 		if (CheckForErrors())
 		{
 			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in expression statement", tokenBuffer);
-			return { false, {} };
+			return { false, nullptr };
 		}
 
+		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementExpression newStatementExpression{ newExpression };
-		newStatement.emplace<StatementExpression>(newStatementExpression);
+		newStatement->Value = newStatementExpression;
 		Advance(1 + expressionSize);
 		return { true, newStatement };
 	}
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementDeclaration()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementDeclaration()
 	{
-		Statement newStatement{};
 		ScriptToken tokenBuffer = GetCurrentToken();
 
 		if (tokenBuffer.Type != ScriptTokenType::PrimitiveType ||
 			GetCurrentToken(1).Type != ScriptTokenType::Identifier ||
 			GetCurrentToken(2).Type != ScriptTokenType::Semicolon)
 		{
-			return { false, {} };
+			return { false, nullptr };
 		}
 
 		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
 			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
-			return { false, newStatement };
+			return { false, nullptr };
 		}
-
+		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementDeclaration newStatementDeclaration{ tokenBuffer, GetCurrentToken(1) };
-		newStatement.emplace<StatementDeclaration>(newStatementDeclaration);
+		newStatement->Value = newStatementDeclaration;
 		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
 		Advance(3);
 		return { true, newStatement };
 	}
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementAssignment()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementAssignment()
 	{
-		Statement newStatement{};
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
@@ -1157,14 +1169,14 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
+		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementAssignment newStatementAssignment{ tokenBuffer, newExpression };
-		newStatement.emplace<StatementAssignment>(newStatementAssignment);
+		newStatement->Value = newStatementAssignment;
 		Advance(3 + expressionSize);
 		return { true, newStatement };
 	}
-	std::tuple<bool, Statement> ScriptTokenParser::ParseStatementDeclarationAssignment()
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementDeclarationAssignment()
 	{
-		Statement newStatement{};
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		ScriptToken tokenBuffer = GetCurrentToken();
 
@@ -1220,19 +1232,209 @@ namespace Kargono::Scripting
 				fmt::format("Invalid expression return type provided in assignment statement\n Declared type: {}\n ExpressionType: {}",
 					tokenBuffer.Value, GetPrimitiveTypeFromToken(newExpression->GetReturnType()).Value);
 			StoreParseError(ParseErrorType::Statement, errorMessage, GetCurrentToken(2));
-			return { false, newStatement };
+			return { false, nullptr };
 		}
 
 		// Ensure identifer is not being declared twice in the current stack frame
 		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
 			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
-			return { false, newStatement };
+			return { false, nullptr };
 		}
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementDeclarationAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), newExpression };
-		newStatement.emplace<StatementDeclarationAssignment>(newStatementAssignment);
+		newStatement->Value = newStatementAssignment;
 		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
 		Advance(4 + expressionSize);
+		return { true, newStatement };
+	}
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementConditional(bool isCurrentConditionChained)
+	{
+		StatementConditional newStatementConditional{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+		uint32_t initialAdvance{ 0 };
+		uint32_t initialKeywordLocation = m_TokenLocation;
+		
+		// Only allow else/else-if if predicate says this new conditional is part of a chain
+		if (isCurrentConditionChained)
+		{
+			// Check for if/else/else-if
+			if (tokenBuffer.Type != ScriptTokenType::Keyword ||
+				(tokenBuffer.Value != "if" && tokenBuffer.Value != "else"))
+			{
+				// Exit peacefully
+				return { false, nullptr };
+			}
+			// Store conditional type
+			if (tokenBuffer.Value == "else" && GetCurrentToken(1).Value == "if")
+			{
+				newStatementConditional.Type = ConditionalType::ELSEIF;
+				initialAdvance = 2;
+			}
+			else if (tokenBuffer.Value == "if")
+			{
+				newStatementConditional.Type = ConditionalType::IF;
+				initialAdvance = 1;
+			}
+			else
+			{
+				newStatementConditional.Type = ConditionalType::ELSE;
+				initialAdvance = 1;
+			}
+		}
+		else
+		{
+			// Check only for if type
+			if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "if")
+			{
+				// Attempt to start if/else/else-if chain with else/else-if
+				if (tokenBuffer.Type == ScriptTokenType::Keyword && tokenBuffer.Value == "else")
+				{
+					StoreParseError(ParseErrorType::Statement, "Cannot start an if/else/else-if chain with an else/else-if", tokenBuffer);
+					return { false, nullptr };
+				}
+
+				// Exit peacefully
+				return { false, {} };
+			}
+
+			newStatementConditional.Type = ConditionalType::IF;
+			initialAdvance = 1;
+		}
+		Advance(initialAdvance);
+
+		if (newStatementConditional.Type != ConditionalType::ELSE)
+		{
+			// Check for opening parentheses
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
+			{
+				StoreParseError(ParseErrorType::Statement, "Expecting an open parentheses for if/else-if statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+			Advance();
+
+			// Parse Condition Expression
+			tokenBuffer = GetCurrentToken();
+			uint32_t conditionExpressionSize{ 0 };
+			{
+				auto [success, expression] = ParseExpressionNode(conditionExpressionSize);
+
+				// Error checking for general errors/invalid return type for condition expression
+				if (!success || CheckForErrors())
+				{
+					StoreParseError(ParseErrorType::Statement, "Could not parse condition for if/else-if statement", GetToken(initialKeywordLocation));
+					return { false, nullptr };
+				}
+
+				if (IsContextProbe(expression))
+				{
+					CursorContext newContext;
+					ScriptToken newReturnType;
+					newReturnType.Type = ScriptTokenType::PrimitiveType;
+					newReturnType.Value = "bool";
+					newContext.AllReturnTypes.push_back(newReturnType);
+					newContext.StackVariables = m_StackVariables;
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in if/else-if condition", tokenBuffer);
+					return { false, nullptr };
+				}
+
+				if (GetPrimitiveTypeFromToken(expression->GetReturnType()).Value != "bool")
+				{
+					StoreParseError(ParseErrorType::Statement, "Condition does not return a true/false value in if/else-if statement", GetToken(initialKeywordLocation));
+					return { false, nullptr };
+				}
+				// Store expression if successful
+				newStatementConditional.ConditionExpression = expression;
+			}
+			Advance(conditionExpressionSize);
+
+			// Check for closing parentheses
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
+			{
+				StoreParseError(ParseErrorType::Statement, "Expecting an closing parentheses for if/else-if statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+			Advance();
+		}
+
+		// Check for opening curly brace
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting an opening curly for if/else/else-if statement", GetToken(initialKeywordLocation));
+			return { false, nullptr };
+		}
+		Advance();
+
+		// Parse conditional statement's body statements
+		{
+			AddStackFrame();
+			bool success = false;
+			tokenBuffer = GetCurrentToken();
+			Ref<Statement> statement {nullptr};
+			do
+			{
+				std::tie(success, statement) = ParseStatementNode();
+				if (success)
+				{
+					newStatementConditional.BodyStatements.push_back(statement);
+				}
+			} while (success);
+
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Statement, "Could not parse body statements for if/else/else-if statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+
+			// Check for close curly braces
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type != ScriptTokenType::CloseCurlyBrace)
+			{
+				if (tokenBuffer.Type == ScriptTokenType::None && tokenBuffer.Value == "End of File")
+				{
+					StoreParseError(ParseErrorType::Statement, "Expecting an closing curly brace for if/else/else-if statement, however, the file ended abruptly\n Did you forget a closing curly brace somewhere?", GetToken(initialKeywordLocation));
+				}
+				else
+				{
+					StoreParseError(ParseErrorType::Statement, "Expecting an closing curly brace for if/else/else-if statement\n Did you forget a semicolon?", tokenBuffer);
+				}
+				return { false, nullptr };
+			}
+
+			// Remove current stack variables
+			PopStackFrame();
+			Advance();
+		}
+
+		// Parse chained conditional statements
+		{
+			bool success = false;
+			tokenBuffer = GetCurrentToken();
+			Ref<Statement> statement {nullptr};
+			do
+			{
+				std::tie(success, statement) = ParseStatementConditional(true);
+				if (success)
+				{
+					newStatementConditional.ChainedConditionals.push_back(statement);
+				}
+			} while (success);
+
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Statement, "Could not parse chained if/else/else-if statements", tokenBuffer);
+				return { false, nullptr };
+			}
+		}
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = newStatementConditional;
+
 		return { true, newStatement };
 	}
 	ScriptToken ScriptTokenParser::GetToken(int32_t location)

@@ -15,7 +15,7 @@ namespace Kargono::Scripting
 	public:
 		std::vector<ParserError> GetErrors() { return m_Errors; }
 	private:
-		std::tuple<bool, Statement> ParseStatementNode();
+		std::tuple<bool, Ref<Statement>> ParseStatementNode();
 		std::tuple<bool, FunctionNode> ParseFunctionNode();
 		std::tuple<bool, Ref<Expression>> ParseExpressionNode(uint32_t& parentExpressionSize);
 	private:
@@ -27,11 +27,12 @@ namespace Kargono::Scripting
 		std::tuple<bool, Ref<Expression>> ParseExpressionUnaryOperation(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionInitializationList(uint32_t& parentExpressionSize);
 
-		std::tuple<bool, Statement> ParseStatementEmpty();
-		std::tuple<bool, Statement> ParseStatementExpression();
-		std::tuple<bool, Statement> ParseStatementDeclaration();
-		std::tuple<bool, Statement> ParseStatementAssignment();
-		std::tuple<bool, Statement> ParseStatementDeclarationAssignment();
+		std::tuple<bool, Ref<Statement>> ParseStatementEmpty();
+		std::tuple<bool, Ref<Statement>> ParseStatementExpression();
+		std::tuple<bool, Ref<Statement>> ParseStatementDeclaration();
+		std::tuple<bool, Ref<Statement>> ParseStatementAssignment();
+		std::tuple<bool, Ref<Statement>> ParseStatementDeclarationAssignment();
+		std::tuple<bool, Ref<Statement>> ParseStatementConditional(bool chainConditions);
 	private:
 		ScriptToken GetToken(int32_t location);
 		ScriptToken GetCurrentToken(int32_t offset = 0);

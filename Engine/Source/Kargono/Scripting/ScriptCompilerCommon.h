@@ -252,6 +252,8 @@ namespace Kargono::Scripting
 		}
 	};
 
+	struct Statement;
+
 	struct StatementEmpty
 	{
 	};
@@ -280,7 +282,26 @@ namespace Kargono::Scripting
 		Ref<Expression> Value { nullptr };
 	};
 
-	using Statement = std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment, StatementDeclarationAssignment>;
+	enum class ConditionalType
+	{
+		None = 0,
+		IF,
+		ELSE,
+		ELSEIF
+	};
+
+	struct StatementConditional
+	{
+		ConditionalType Type{ ConditionalType::None };
+		Ref<Expression> ConditionExpression { nullptr };
+		std::vector<Ref<Statement>> BodyStatements{};
+		std::vector<Ref<Statement>> ChainedConditionals{};
+	};
+
+	struct Statement
+	{
+		std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment, StatementDeclarationAssignment, StatementConditional> Value;
+	};
 
 	struct FunctionParameter
 	{
@@ -294,7 +315,7 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 		ScriptToken Namespace{};
 		std::vector<FunctionParameter> Parameters{};
-		std::vector<Statement> Statements{};
+		std::vector<Ref<Statement>> Statements{};
 		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
 		std::string Description { "Built-in Function"};
 

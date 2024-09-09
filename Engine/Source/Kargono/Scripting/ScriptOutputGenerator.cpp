@@ -85,7 +85,44 @@ namespace Kargono::Scripting
 						GenerateExpression(state.Value);
 						m_OutputText << ";\n";
 					}
-				}, statement);
+
+					else if constexpr (std::is_same_v<type, StatementConditional>)
+					{
+						switch (state.Type)
+						{
+						case ConditionalType::IF:
+							m_OutputText << "if (";
+							break;
+						case ConditionalType::ELSEIF:
+							m_OutputText << "else if (";
+							break;
+						case ConditionalType::ELSE:
+							m_OutputText << "else\n";
+							break;
+						case ConditionalType::None:
+						default:
+							KG_WARN("Invalid conditional type provided to ScriptOutputGenerator");
+							return;
+						}
+
+						if (state.Type == ConditionalType::IF || state.Type == ConditionalType::ELSEIF)
+						{
+							GenerateExpression(state.ConditionExpression);
+							m_OutputText << "\n";
+						}
+
+						m_OutputText << "{\n";
+
+						/*for (auto& statement : state.BodyStatements)
+						{
+							Generate
+						}*/
+
+						m_OutputText << "}";
+
+
+					}
+				}, statement->Value);
 			if (!success)
 			{
 				return { false, {} };
@@ -94,6 +131,11 @@ namespace Kargono::Scripting
 		m_OutputText << "}\n";
 
 		return { true, m_OutputText.str() };
+	}
+
+	void ScriptOutputGenerator::GenerateStatement(Ref<Statement> expression)
+	{
+
 	}
 
 	void ScriptOutputGenerator::GenerateExpression(Ref<Expression> expression)
