@@ -182,7 +182,84 @@ namespace Kargono::Scripting
 
 			if (GetCurrentChar() == '=')
 			{
+				if (!CurrentLocationValid(1))
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::AssignmentOperator, { '=' });
+					Advance();
+					continue;
+				}
+
+				if (GetCurrentChar(1) == '=')
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::EqualToOperator, { "==" });
+					Advance(2);
+					continue;
+				}
+
 				AddTokenAndClearBuffer(ScriptTokenType::AssignmentOperator, { '=' });
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '>')
+			{
+				if (!CurrentLocationValid(1))
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::GreaterThan, { '>' });
+					Advance();
+					continue;
+				}
+
+				if (GetCurrentChar(1) == '=')
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::GreaterThanOrEqual, { ">=" });
+					Advance(2);
+					continue;
+				}
+
+				AddTokenAndClearBuffer(ScriptTokenType::GreaterThan, { '>' });
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '<')
+			{
+				if (!CurrentLocationValid(1))
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::LessThan, { '<' });
+					Advance();
+					continue;
+				}
+
+				if (GetCurrentChar(1) == '=')
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::LessThanOrEqual, { "<=" });
+					Advance(2);
+					continue;
+				}
+
+				AddTokenAndClearBuffer(ScriptTokenType::LessThan, { '<' });
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '!')
+			{
+				if (!CurrentLocationValid(1))
+				{
+					KG_WARN("Invalid token provided to kargono script compiler");
+					Advance();
+					continue;
+				}
+
+				if (GetCurrentChar(1) == '=')
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::NotEqualToOperator, { "!=" });
+					Advance(2);
+					continue;
+				}
+
+				KG_WARN("Invalid token provided to kargono script compiler");
 				Advance();
 				continue;
 			}
@@ -268,7 +345,7 @@ namespace Kargono::Scripting
 				continue;
 			}
 
-			KG_CRITICAL("Could not identify character!");
+			KG_CRITICAL("Could not identify token!");
 			Advance();
 		}
 		return m_Tokens;

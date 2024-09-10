@@ -21,8 +21,9 @@ namespace Kargono::Scripting
 		static bool IsLiteral(ScriptToken token);
 		static bool IsUnaryOperator(ScriptToken token);
 		static bool IsBinaryOperator(ScriptToken token);
-		static bool IsAdditionOrSubtraction(ScriptToken token);
-		static bool IsMultiplicationOrDivision(ScriptToken token);
+		static bool IsAdditionOrSubtractionOperator(ScriptToken token);
+		static bool IsMultiplicationOrDivisionOperator(ScriptToken token);
+		static bool IsComparisonOperator(ScriptToken token);
 	public:
 		static LanguageDefinition s_ActiveLanguageDefinition;
 	};

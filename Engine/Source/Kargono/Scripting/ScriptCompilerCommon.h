@@ -47,12 +47,20 @@ namespace Kargono::Scripting
 		CloseCurlyBrace,
 		Comma,
 
-		// Binary Operators
+		// Arithmetic Operators
 		AssignmentOperator,
 		AdditionOperator,
 		SubtractionOperator,
 		MultiplicationOperator,
 		DivisionOperator,
+
+		// Comparison Operators
+		EqualToOperator,
+		NotEqualToOperator,
+		GreaterThan,
+		GreaterThanOrEqual,
+		LessThan,
+		LessThanOrEqual,
 
 		// Comments
 		SingleLineComment,

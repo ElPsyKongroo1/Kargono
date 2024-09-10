@@ -100,7 +100,7 @@ namespace Kargono::Scripting
 		}
 
 		// Get tokens from text
-		ScriptTokenizer scriptTokenizer{};
+		ScriptTokenizer scriptTokenizer{}; 
 		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(text);
 
 		// Parse tokens and check for generated cursor context
@@ -667,17 +667,25 @@ namespace Kargono::Scripting
 
 	bool ScriptCompilerService::IsBinaryOperator(ScriptToken token)
 	{
-		if (token.Type == ScriptTokenType::AdditionOperator ||
-			token.Type == ScriptTokenType::SubtractionOperator ||
-			token.Type == ScriptTokenType::MultiplicationOperator ||
-			token.Type == ScriptTokenType::DivisionOperator)
+		switch (token.Type)
 		{
+		case ScriptTokenType::AdditionOperator:
+		case ScriptTokenType::SubtractionOperator:
+		case ScriptTokenType::MultiplicationOperator:
+		case ScriptTokenType::DivisionOperator:
+		case ScriptTokenType::EqualToOperator:
+		case ScriptTokenType::NotEqualToOperator:
+		case ScriptTokenType::GreaterThan:
+		case ScriptTokenType::GreaterThanOrEqual:
+		case ScriptTokenType::LessThan:
+		case ScriptTokenType::LessThanOrEqual:
 			return true;
+		default:
+			return false;
 		}
-		return false;
 	}
 
-	bool ScriptCompilerService::IsAdditionOrSubtraction(ScriptToken token)
+	bool ScriptCompilerService::IsAdditionOrSubtractionOperator(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::AdditionOperator ||
 			token.Type == ScriptTokenType::SubtractionOperator)
@@ -687,7 +695,7 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool ScriptCompilerService::IsMultiplicationOrDivision(ScriptToken token)
+	bool ScriptCompilerService::IsMultiplicationOrDivisionOperator(ScriptToken token)
 	{
 		if (token.Type == ScriptTokenType::MultiplicationOperator ||
 			token.Type == ScriptTokenType::DivisionOperator)
@@ -697,5 +705,19 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-
+	bool ScriptCompilerService::IsComparisonOperator(ScriptToken token)
+	{
+		switch (token.Type)
+		{
+		case ScriptTokenType::EqualToOperator:
+		case ScriptTokenType::NotEqualToOperator:
+		case ScriptTokenType::GreaterThan:
+		case ScriptTokenType::GreaterThanOrEqual:
+		case ScriptTokenType::LessThan:
+		case ScriptTokenType::LessThanOrEqual:
+			return true;
+		default:
+			return false;
+		}
+	}
 }

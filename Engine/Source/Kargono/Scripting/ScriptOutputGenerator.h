@@ -10,7 +10,7 @@ namespace Kargono::Scripting
 	private:
 		void GenerateStatement(Ref<Statement> expression);
 		void GenerateExpression(Ref<Expression> expression);
-		std::string GetIndentation();
+		void AddIndentation();
 	private:
 		std::stringstream m_OutputText{};
 		ScriptAST m_AST{};

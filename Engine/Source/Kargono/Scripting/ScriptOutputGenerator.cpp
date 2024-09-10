@@ -56,13 +56,13 @@ namespace Kargono::Scripting
 				}
 				else if constexpr (std::is_same_v<type, StatementExpression>)
 				{
-					m_OutputText << "  ";
+					AddIndentation();
 					GenerateExpression(state.Value);
 					m_OutputText << ";\n";
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclaration>)
 				{
-					m_OutputText << "  ";
+					AddIndentation();
 					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
 					if (typeValue.Name == "")
 					{
@@ -73,7 +73,7 @@ namespace Kargono::Scripting
 				}
 				else if constexpr (std::is_same_v<type, StatementAssignment>)
 				{
-					m_OutputText << "  ";
+					AddIndentation();
 					m_OutputText << state.Name.Value << " = ";
 					GenerateExpression(state.Value);
 					m_OutputText << ";\n";
@@ -81,7 +81,7 @@ namespace Kargono::Scripting
 				}
 				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
 				{
-					m_OutputText << "  ";
+					AddIndentation();
 					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
 					if (typeValue.Name == "")
 					{
@@ -94,7 +94,7 @@ namespace Kargono::Scripting
 
 				else if constexpr (std::is_same_v<type, StatementConditional>)
 				{
-					m_OutputText << "  ";
+					AddIndentation();
 					switch (state.Type)
 					{
 					case ConditionalType::IF:
@@ -117,14 +117,16 @@ namespace Kargono::Scripting
 						GenerateExpression(state.ConditionExpression);
 						m_OutputText << ")\n";
 					}
-
+					AddIndentation();
 					m_OutputText << "{\n";
 
+					m_IndentLevel++;
 					for (auto& statement : state.BodyStatements)
 					{
 						GenerateStatement(statement);
 					}
-
+					m_IndentLevel--;
+					AddIndentation();
 					m_OutputText << "}\n";
 
 					for (auto& statement : state.ChainedConditionals)
@@ -223,13 +225,12 @@ namespace Kargono::Scripting
 			return;
 		}
 	}
-	std::string ScriptOutputGenerator::GetIndentation()
+	void ScriptOutputGenerator::AddIndentation()
 	{
 		std::string outputIndentation{};
 		for (uint32_t iteration{ 0 }; iteration < m_IndentLevel; iteration++)
 		{
-			outputIndentation += "  ";
+			m_OutputText << "  ";
 		}
-		return outputIndentation;
 	}
 }

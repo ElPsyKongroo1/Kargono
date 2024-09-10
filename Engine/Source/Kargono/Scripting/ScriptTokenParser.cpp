@@ -517,7 +517,7 @@ namespace Kargono::Scripting
 		}
 
 		// Check for addition / subtraction binary operations
-		while (ScriptCompilerService::IsAdditionOrSubtraction(GetCurrentToken(parentExpressionSize)))
+		while (ScriptCompilerService::IsAdditionOrSubtractionOperator(GetCurrentToken(parentExpressionSize)))
 		{
 			Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 			BinaryOperationNode newBinaryOperation{};
@@ -674,8 +674,9 @@ namespace Kargono::Scripting
 		}
 		if (checkBinaryOperations)
 		{
-			// Check for multiplication / division binary operations
-			while (ScriptCompilerService::IsMultiplicationOrDivision(GetCurrentToken(parentExpressionSize)))
+			// Check for multiplication / division / comparison binary operations
+			while (ScriptCompilerService::IsMultiplicationOrDivisionOperator(GetCurrentToken(parentExpressionSize)) ||
+				ScriptCompilerService::IsComparisonOperator(GetCurrentToken(parentExpressionSize)))
 			{
 				Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 				BinaryOperationNode newBinaryOperation{};
@@ -702,7 +703,7 @@ namespace Kargono::Scripting
 					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()));
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
-					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division operation", newBinaryOperation.Operator);
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
 				}
 
@@ -712,7 +713,7 @@ namespace Kargono::Scripting
 					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()));
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
-					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division operation", newBinaryOperation.Operator);
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
 				}
 
@@ -728,7 +729,17 @@ namespace Kargono::Scripting
 				}
 
 				// Store Return Type
-				newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				if (ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
+				{
+					ScriptToken boolToken;
+					boolToken.Type = ScriptTokenType::PrimitiveType;
+					boolToken.Value = "bool";
+					newBinaryOperation.ReturnType = boolToken;
+				}
+				else
+				{
+					newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				}
 
 				newBinaryExpression->Value = newBinaryOperation;
 				newExpression = newBinaryExpression;
@@ -1287,9 +1298,8 @@ namespace Kargono::Scripting
 		// Only allow else/else-if if predicate says this new conditional is part of a chain
 		if (isCurrentConditionChained)
 		{
-			// Check for if/else/else-if
-			if (tokenBuffer.Type != ScriptTokenType::Keyword ||
-				(tokenBuffer.Value != "if" && tokenBuffer.Value != "else"))
+			// Check for else/else-if
+			if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "else")
 			{
 				// Exit peacefully
 				return { false, nullptr };
@@ -1299,11 +1309,6 @@ namespace Kargono::Scripting
 			{
 				newStatementConditional.Type = ConditionalType::ELSEIF;
 				initialAdvance = 2;
-			}
-			else if (tokenBuffer.Value == "if")
-			{
-				newStatementConditional.Type = ConditionalType::IF;
-				initialAdvance = 1;
 			}
 			else
 			{
@@ -1440,6 +1445,7 @@ namespace Kargono::Scripting
 		}
 
 		// Parse chained conditional statements
+		if (newStatementConditional.Type != ConditionalType::ELSE)
 		{
 			bool success = false;
 			tokenBuffer = GetCurrentToken();
@@ -1450,6 +1456,14 @@ namespace Kargono::Scripting
 				if (success)
 				{
 					newStatementConditional.ChainedConditionals.push_back(statement);
+				}
+
+				if (StatementConditional* conditional = std::get_if<StatementConditional>(&statement->Value))
+				{
+					if (conditional->Type == ConditionalType::ELSE)
+					{
+						break;
+					}
 				}
 			} while (success);
 

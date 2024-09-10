@@ -14,6 +14,7 @@
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Utility/Regex.h"
+#include "Kargono/Core/Base.h"
 
 template<class InputIt1, class InputIt2, class BinaryPredicate>
 bool equals(InputIt1 first1, InputIt1 last1,
@@ -320,8 +321,14 @@ int TextEditor::InsertTextAt(Coordinates& /* inout */ aWhere, const char * aValu
 			auto& line = mLines[aWhere.mLine];
 			auto d = UTF8CharLength(*aValue);
 			while (d-- > 0 && *aValue != '\0')
-				line.insert(line.begin() + cindex++, Glyph(*aValue++, PaletteIndex::Default));
-			++aWhere.mColumn;
+				line.insert(line.begin() + cindex++, Glyph(*aValue, PaletteIndex::Default));
+
+			if (*aValue == '\t')
+				aWhere.mColumn += mTabSize;
+			else
+				++aWhere.mColumn;
+
+			++aValue;
 		}
 
 		mTextChanged = true;
@@ -715,129 +722,56 @@ void TextEditor::RefreshSuggestionsContent()
 
 	// Find cursor context with ContextProbe inserted
 	Kargono::Scripting::CursorContext context = Kargono::Scripting::ScriptCompilerService::FindCursorContext(text);
-	if (context)
+	if (!context)
 	{
-		m_OpenTextSuggestions = true;
-		m_SuggestionTree.ClearTree();
-		bool allowAllVariableTypes = context.AllReturnTypes.size() == 0 || context.AllReturnTypes.at(0).Value == "None";
-		std::size_t highestRegexCount{ 0 };
-		std::string highestRegexCountName{};
+		// Close suggestions
+		m_SuggestionTextBuffer.clear();
+		m_CloseTextSuggestions = true;
+		return;
+	}
+	m_OpenTextSuggestions = true;
+	m_SuggestionTree.ClearTree();
+	bool allowAllVariableTypes = context.AllReturnTypes.size() == 0 || context.AllReturnTypes.at(0).Value == "None";
+	std::vector<Kargono::EditorUI::TreeEntry> failRegexBuffer {};
 		
-		// Handle Data Types
-		Kargono::EditorUI::TreeEntry dataSection;
-		if (allowAllVariableTypes || context.IsFunctionParameter)
+	// Handle Data Types
+	if (allowAllVariableTypes || context.IsFunctionParameter)
+	{
+		for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
-			std::vector<Kargono::EditorUI::TreeEntry> failNamespaceBuffer;
-			dataSection.Label = "Data Types";
-			dataSection.IconHandle = Kargono::EditorUI::EditorUIService::s_IconEntity;
-			for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			Kargono::EditorUI::TreeEntry entry;
+			entry.Label = primitiveType.Name;
+			entry.ProvidedData = Kargono::CreateRef<std::string>(primitiveType.Name);
+			entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconEntity;
+			entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
-				
-				Kargono::EditorUI::TreeEntry entry;
-				entry.Label = primitiveType.Name;
-				entry.IconHandle = primitiveType.Icon;
-				entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
-				{
-					// Remove Buffer Text and add text
-					Coordinates cursorPosition = GetCursorPosition();
-					DeleteRange({ cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
-					SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
-					cursorPosition = GetCursorPosition();
-					InsertTextAt(cursorPosition, entry.Label.c_str());
-					SetCursorPosition(cursorPosition);
-					m_CloseTextSuggestions = true;
-				};
-				if (Kargono::Utility::Regex::GetMatchSuccess(entry.Label, m_SuggestionTextBuffer, false))
-				{
-					dataSection.SubEntries.push_back(entry);
-				}
-				else
-				{
-					failNamespaceBuffer.push_back(std::move(entry));
-				}
-				
-				
-			}
-			// Combine the temporary buffer
-			if (dataSection.SubEntries.size() > highestRegexCount)
+				// Remove Buffer Text and add text
+				Coordinates cursorPosition = GetCursorPosition();
+				DeleteRange({ cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
+				SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
+				cursorPosition = GetCursorPosition();
+				InsertTextAt(cursorPosition, (*(std::string*)(entry.ProvidedData.get())).c_str());
+				SetCursorPosition(cursorPosition);
+				m_CloseTextSuggestions = true;
+			};
+			if (Kargono::Utility::Regex::GetMatchSuccess(entry.Label, m_SuggestionTextBuffer, false))
 			{
-				highestRegexCount = dataSection.SubEntries.size();
-				highestRegexCountName = dataSection.Label;
+				m_SuggestionTree.InsertEntry(std::move(entry));
 			}
-			dataSection.SubEntries.insert(std::end(dataSection.SubEntries), std::begin(failNamespaceBuffer), std::end(failNamespaceBuffer));
 		}
+	}
 
-		// Handle Variable Identifiers
-		Kargono::EditorUI::TreeEntry variableSection;
-		if (!context.IsFunctionParameter)
+	// Handle Variable Identifiers
+	if (!context.IsFunctionParameter)
+	{
+		for (auto& stackFrame : context.StackVariables)
 		{
-			std::vector<Kargono::EditorUI::TreeEntry> failNamespaceBuffer;
-			variableSection.Label = "Variables";
-			variableSection.IconHandle = Kargono::EditorUI::EditorUIService::s_IconVariable;
-			for (auto& stackFrame : context.StackVariables)
+			for (auto& variable : stackFrame)
 			{
-				for (auto& variable : stackFrame)
-				{
-					bool returnTypesMatch = false;
-					for (auto& type : context.AllReturnTypes)
-					{
-						if (variable.Type.Value == type.Value)
-						{
-							returnTypesMatch = true;
-							break;
-						}
-					}
-
-					if (allowAllVariableTypes || returnTypesMatch)
-					{
-						Kargono::EditorUI::TreeEntry entry;
-						entry.Label = variable.Identifier.Value;
-						entry.IconHandle = Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(variable.Type.Value).Icon;
-						entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
-						{
-							// Remove Buffer Text and add text
-							Coordinates cursorPosition = GetCursorPosition();
-							DeleteRange({ cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
-							SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
-							cursorPosition = GetCursorPosition();
-							InsertTextAt(cursorPosition, entry.Label.c_str());
-							SetCursorPosition(cursorPosition);
-							m_CloseTextSuggestions = true;
-
-						};
-						if (Kargono::Utility::Regex::GetMatchSuccess(entry.Label, m_SuggestionTextBuffer, false))
-						{
-							variableSection.SubEntries.push_back(entry);
-						}
-						else
-						{
-							failNamespaceBuffer.push_back(std::move(entry));
-						}
-					}
-				}
-			}
-			// Combine the temporary buffer
-			if (variableSection.SubEntries.size() > highestRegexCount)
-			{
-				highestRegexCount = variableSection.SubEntries.size();
-				highestRegexCountName = variableSection.Label;
-			}
-			variableSection.SubEntries.insert(std::end(variableSection.SubEntries), std::begin(failNamespaceBuffer), std::end(failNamespaceBuffer));
-		}
-
-		// Handle Functions Identifiers
-		std::map<std::string, Kargono::EditorUI::TreeEntry> allFunctionNamespaces;
-		if (!context.IsFunctionParameter)
-		{
-			std::unordered_map<std::string, std::vector<Kargono::EditorUI::TreeEntry>> failNamespaceBuffer;
-
-			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
-			{
-
 				bool returnTypesMatch = false;
 				for (auto& type : context.AllReturnTypes)
 				{
-					if (funcNode.ReturnType.Value == type.Value)
+					if (variable.Type.Value == type.Value)
 					{
 						returnTypesMatch = true;
 						break;
@@ -847,10 +781,9 @@ void TextEditor::RefreshSuggestionsContent()
 				if (allowAllVariableTypes || returnTypesMatch)
 				{
 					Kargono::EditorUI::TreeEntry entry;
-					entry.Label = funcName;
-					entry.IconHandle = funcNode.ReturnType.Type == Kargono::Scripting::ScriptTokenType::None ?
-						Kargono::EditorUI::EditorUIService::s_IconCircleCollider :
-						Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(funcNode.ReturnType.Value).Icon;
+					entry.Label = variable.Identifier.Value;
+					entry.ProvidedData = Kargono::CreateRef<std::string>(variable.Identifier.Value);
+					entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconEntity;
 					entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 					{
 						// Remove Buffer Text and add text
@@ -858,158 +791,81 @@ void TextEditor::RefreshSuggestionsContent()
 						DeleteRange({ cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
 						SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
 						cursorPosition = GetCursorPosition();
-						std::string functionOutput;
-						if (funcNode.Namespace)
-						{
-							functionOutput = funcNode.Namespace.Value + "::" + entry.Label + "()";
-						}
-						else
-						{
-							functionOutput = entry.Label + "()";
-						}
-						InsertTextAt(cursorPosition, functionOutput.c_str());
-						SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - 1 });
+						InsertTextAt(cursorPosition, (*(std::string*)(entry.ProvidedData.get())).c_str());
+						SetCursorPosition(cursorPosition);
 						m_CloseTextSuggestions = true;
+
 					};
-
-					// Create new function section if it does not already exist
-					if (!allFunctionNamespaces.contains(funcNode.Namespace.Value))
-					{
-						Kargono::EditorUI::TreeEntry functionSection;
-						std::vector<Kargono::EditorUI::TreeEntry> failNamespaceBuffer;
-						functionSection.Label = funcNode.Namespace.Value.empty() ? "Language Function(s)" : funcNode.Namespace.Value;
-						functionSection.IconHandle = Kargono::EditorUI::EditorUIService::s_IconFunction;
-						allFunctionNamespaces.insert_or_assign(funcNode.Namespace.Value, functionSection);
-					}
-
-					// Decide whether to insert function directly into section or cache it if regex fails
 					if (Kargono::Utility::Regex::GetMatchSuccess(entry.Label, m_SuggestionTextBuffer, false))
 					{
-						allFunctionNamespaces.at(funcNode.Namespace.Value).SubEntries.push_back(entry);
-					}
-					else
-					{
-						// Create new function cache if it does not already exist
-						if (!failNamespaceBuffer.contains(funcNode.Namespace.Value))
-						{
-							std::vector<Kargono::EditorUI::TreeEntry> newBuffer{};
-							failNamespaceBuffer.insert_or_assign(funcNode.Namespace.Value, newBuffer);
-						}
-						// Cache failed regex entry
-						failNamespaceBuffer.at(funcNode.Namespace.Value).push_back(std::move(entry));
+						m_SuggestionTree.InsertEntry(std::move(entry));
 					}
 				}
 			}
-			// Combine the function namespace sections with their respective caches
-			for (auto& [name, entry] : allFunctionNamespaces)
-			{
-				if (entry.SubEntries.size() > highestRegexCount)
-				{
-					highestRegexCount = entry.SubEntries.size();
-					highestRegexCountName = name;
-				}
-
-				if (failNamespaceBuffer.contains(name))
-				{
-					entry.SubEntries.insert(std::end(entry.SubEntries), std::begin(failNamespaceBuffer.at(name)), std::end(failNamespaceBuffer.at(name)));
-				}
-			}
 		}
-
-		// Insert section with highest regex count first
-		bool dataSelected = false;
-		bool variableSelected = false;
-		if (highestRegexCount > 0)
-		{
-			if (highestRegexCountName == dataSection.Label)
-			{
-				if (dataSection.SubEntries.size() > 0)
-				{
-					m_SuggestionTree.InsertEntry(dataSection);
-				}
-				dataSelected = true;
-			}
-			else if (highestRegexCountName == variableSection.Label)
-			{
-				if (variableSection.SubEntries.size() > 0)
-				{
-					m_SuggestionTree.InsertEntry(variableSection);
-				}
-				variableSelected = true;
-			}
-				
-			else
-			{
-				if (allFunctionNamespaces.contains(highestRegexCountName))
-				{
-					if (allFunctionNamespaces.at(highestRegexCountName).SubEntries.size() > 0)
-					{
-						m_SuggestionTree.InsertEntry(allFunctionNamespaces.at(highestRegexCountName));
-					}
-					allFunctionNamespaces.erase(highestRegexCountName);
-				}
-			}
-		}
-			
-		// Insert remaining sections
-		if (!dataSelected)
-		{
-			if (dataSection.SubEntries.size() > 0)
-			{
-				m_SuggestionTree.InsertEntry(dataSection);
-			}
-		}
-
-		if (!variableSelected)
-		{
-			if (variableSection.SubEntries.size() > 0)
-			{
-				m_SuggestionTree.InsertEntry(variableSection);
-			}
-		}
-			
-		for (auto& [name, entry] : allFunctionNamespaces)
-		{
-			if (entry.SubEntries.size() > 0)
-			{
-				m_SuggestionTree.InsertEntry(entry);
-			}
-		}
-
-		if (m_SuggestionTree.GetTreeEntries().size() <= 0)
-		{
-			m_SuggestionTextBuffer.clear();
-			m_OpenTextSuggestions = false;
-			if (ImGui::IsPopupOpen("TextEditorSuggestions"))
-			{
-				m_CloseTextSuggestions = true;
-			}
-			return;
-		}
-		
-		// Expand all tree nodes and select the first available option
-		Kargono::EditorUI::TreePath expandNode {};
-		expandNode.AddNode(0);
-		m_SuggestionTree.ExpandNodePath(expandNode);
-		Kargono::EditorUI::TreePath selectPath {};
-		selectPath.AddNode(0);
-		selectPath.AddNode(0);
-		m_SuggestionTree.SelectedEntry = selectPath;
 	}
-	else
+
+	// Handle Functions Identifiers
+	if (!context.IsFunctionParameter)
 	{
-		// Close the window
+		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
+		{
+			bool returnTypesMatch = false;
+			for (auto& type : context.AllReturnTypes)
+			{
+				if (funcNode.ReturnType.Value == type.Value)
+				{
+					returnTypesMatch = true;
+					break;
+				}
+			}
+
+			if (allowAllVariableTypes || returnTypesMatch)
+			{
+				Kargono::EditorUI::TreeEntry entry;
+				entry.Label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
+				entry.ProvidedData = Kargono::CreateRef<std::string>(funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value + "()" : funcNode.Name.Value + "()");
+				entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconFunction;
+				entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
+				{
+					// Remove Buffer Text and add text
+					Coordinates cursorPosition = GetCursorPosition();
+					DeleteRange({ cursorPosition.mLine, cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
+					SetCursorPosition({ cursorPosition.mLine,cursorPosition.mColumn - (int)m_SuggestionTextBuffer.size() });
+					cursorPosition = GetCursorPosition();
+					InsertTextAt(cursorPosition, (*(std::string*)(entry.ProvidedData.get())).c_str());
+					SetCursorPosition(cursorPosition);
+					m_CloseTextSuggestions = true;
+				};
+
+				// Decide whether to insert function
+				if (Kargono::Utility::Regex::GetMatchSuccess(entry.Label, m_SuggestionTextBuffer, false))
+				{
+					m_SuggestionTree.InsertEntry(std::move(entry));
+				}
+			}
+		}
+	}
+
+	if (m_SuggestionTree.GetTreeEntries().size() <= 0)
+	{
+		m_SuggestionTextBuffer.clear();
+		m_OpenTextSuggestions = false;
 		if (ImGui::IsPopupOpen("TextEditorSuggestions"))
 		{
-			m_SuggestionTextBuffer.clear();
 			m_CloseTextSuggestions = true;
 		}
+		return;
 	}
+		
+	// Select the first available option
+	Kargono::EditorUI::TreePath selectPath {};
+	selectPath.AddNode(0);
+	m_SuggestionTree.SelectedEntry = selectPath;
 }
 
 void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
 {
-
 	bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
 
 	if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
@@ -1019,6 +875,8 @@ void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
 		{
 			entry->OnDoubleLeftClick(*entry);
 		}
+		Colorize(GetCursorPosition().mLine, 3);
+		EnsureCursorVisible();
 		return;
 	}
 
@@ -1769,6 +1627,7 @@ void TextEditor::EnterCharacterInternal(ImWchar aChar, bool aShift)
 
 	if (aChar == '\n')
 	{
+		// Insert new line in text editor
 		InsertLine(coord.mLine + 1);
 		auto& line = mLines[coord.mLine];
 		auto& newLine = mLines[coord.mLine + 1];
@@ -2034,10 +1893,8 @@ void TextEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_SuggestionTree.MoveLeft();
-		return;
+		m_CloseTextSuggestions = true;
 	}
-
 	if (mLines.empty())
 		return;
 
@@ -2106,8 +1963,7 @@ void TextEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode)
 {
 	if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 	{
-		m_SuggestionTree.MoveRight();
-		return;
+		m_CloseTextSuggestions = true;
 	}
 
 	auto oldPos = mState.mCursorPosition;
@@ -2357,7 +2213,7 @@ void TextEditor::BackspaceInternal()
 			u.mRemovedStart = u.mRemovedEnd = GetActualCursorCoordinates();
 			--u.mRemovedStart.mColumn;
 			if (line[cindex].mChar == '\t')
-				mState.mCursorPosition.mColumn -= mTabSize;
+				mState.mCursorPosition.mColumn -= (pos.mColumn % mTabSize);
 			else
 				--mState.mCursorPosition.mColumn;
 
@@ -3850,7 +3706,7 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 		langDef.mSingleLineComment = "//";
 
 		langDef.mCaseSensitive = true;
-		langDef.mAutoIndentation = false;
+		langDef.mAutoIndentation = true;
 
 		langDef.mName = "Kargono Script";
 
