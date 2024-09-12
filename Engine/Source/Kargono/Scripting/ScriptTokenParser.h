@@ -26,6 +26,7 @@ namespace Kargono::Scripting
 		std::tuple<bool, Ref<Expression>> ParseExpressionFunctionCall(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionUnaryOperation(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionInitializationList(uint32_t& parentExpressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionMember(uint32_t& parentExpressionSize, bool dataMemberOnly = false);
 
 		std::tuple<bool, Ref<Statement>> ParseStatementEmpty();
 		std::tuple<bool, Ref<Statement>> ParseStatementExpression();
@@ -47,7 +48,7 @@ namespace Kargono::Scripting
 		bool CheckForErrors();
 		bool IsContextProbe(ScriptToken token);
 		bool IsContextProbe(Ref<Expression> expression);
-		bool PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token);
+		bool PrimitiveTypeAcceptableToken(const std::string& queryType, Scripting::ScriptToken queryToken);
 		ScriptToken GetPrimitiveTypeFromToken(Scripting::ScriptToken token);
 	private:
 		std::vector<ScriptToken> m_Tokens{};

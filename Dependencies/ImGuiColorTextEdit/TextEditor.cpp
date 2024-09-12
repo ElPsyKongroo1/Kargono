@@ -737,7 +737,7 @@ void TextEditor::RefreshSuggestionsContent()
 	// Handle Data Types
 	if (allowAllVariableTypes || context.IsFunctionParameter)
 	{
-		for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+		for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
 			Kargono::EditorUI::TreeEntry entry;
 			entry.Label = primitiveType.Name;
@@ -3646,7 +3646,7 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 			langDef.mKeywords.insert(keyword);
 		}
 
-		for (auto& primitiveType : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+		for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
 			Identifier id;
 			id.mDeclaration = primitiveType.Description;

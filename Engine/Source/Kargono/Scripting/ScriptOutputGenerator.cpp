@@ -74,7 +74,8 @@ namespace Kargono::Scripting
 				else if constexpr (std::is_same_v<type, StatementAssignment>)
 				{
 					AddIndentation();
-					m_OutputText << state.Name.Value << " = ";
+					GenerateExpression(state.Name);
+					m_OutputText << " = ";
 					GenerateExpression(state.Value);
 					m_OutputText << ";\n";
 
@@ -140,89 +141,111 @@ namespace Kargono::Scripting
 
 	void ScriptOutputGenerator::GenerateExpression(Ref<Expression> expression)
 	{
-		bool success{ true };
 		if (expression->GenerationAffixes)
 		{
 			m_OutputText << expression->GenerationAffixes->Prefix;
 		}
-		std::visit([&](auto&& expressionValue)
+
+		if (ScriptToken* token = std::get_if<ScriptToken>(&expression->Value))
+		{
+			m_OutputText << token->Value;
+		}
+		else if (FunctionCallNode* funcNode = std::get_if<FunctionCallNode>(&expression->Value))
+		{
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.contains(funcNode->Identifier.Value))
 			{
-				using type = std::decay_t<decltype(expressionValue)>;
-				if constexpr (std::is_same_v<type, ScriptToken>)
+				KG_WARN("Invalid function definition name provided when generating function call C++ code");
+				return;
+			}
+			std::function<void(FunctionCallNode&)> onGenerateFunc =
+				ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(funcNode->Identifier.Value).OnGenerateFunction;
+
+			if (onGenerateFunc)
+			{
+				onGenerateFunc(*funcNode);
+			}
+
+			if (funcNode->Namespace)
+			{
+				m_OutputText << funcNode->Namespace.Value << "::";
+			}
+			m_OutputText << funcNode->Identifier.Value << '(';
+			uint32_t iteration{ 0 };
+			for (auto argument : funcNode->Arguments)
+			{
+				GenerateExpression(argument);
+				if (iteration + 1 < funcNode->Arguments.size())
 				{
-					m_OutputText << expressionValue.Value;
+					m_OutputText << ", ";
 				}
-				else if constexpr (std::is_same_v<type, FunctionCallNode>)
+				iteration++;
+			}
+			m_OutputText << ')';
+		}
+		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))
+		{
+			m_OutputText << '{';
+			uint32_t iteration{ 0 };
+			for (auto argument : initListNode->Arguments)
+			{
+				GenerateExpression(argument);
+				if (iteration + 1 < initListNode->Arguments.size())
 				{
-
-					if (!ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.contains(expressionValue.Identifier.Value))
-					{
-						KG_WARN("Invalid function definition name provided when generating function call C++ code");
-						return;
-					}
-					std::function<void(FunctionCallNode&)> onGenerateFunc =
-						ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(expressionValue.Identifier.Value).OnGenerateFunction;
-
-					if (onGenerateFunc)
-					{
-						onGenerateFunc(expressionValue);
-					}
-
-					if (expressionValue.Namespace)
-					{
-						m_OutputText << expressionValue.Namespace.Value << "::";
-					}
-					m_OutputText << expressionValue.Identifier.Value << '(';
+					m_OutputText << ", ";
+				}
+				iteration++;
+			}
+			m_OutputText << '}';
+		}
+		else if (UnaryOperationNode* unaryOperationNode = std::get_if<UnaryOperationNode>(&expression->Value))
+		{
+			m_OutputText << unaryOperationNode->Operator.Value << unaryOperationNode->Operand.Value;
+		}
+		else if (BinaryOperationNode* binaryOperationNode = std::get_if<BinaryOperationNode>(&expression->Value))
+		{
+			GenerateExpression(binaryOperationNode->LeftOperand);
+			m_OutputText << " " << binaryOperationNode->Operator.Value << " ";
+			GenerateExpression(binaryOperationNode->RightOperand);
+		}
+		else if (MemberNode* memberNode = std::get_if<MemberNode>(&expression->Value))
+		{
+			// Generate text for member node
+			GenerateExpression(memberNode->CurrentNodeExpression);
+			Ref<MemberNode> currentNode = memberNode->ChildMemberNode;
+			while (currentNode)
+			{
+				// Generate expression code for each MemberNode in linkedlist
+				m_OutputText << '.';
+				if (ScriptToken* expressionToken = std::get_if<ScriptToken>(&currentNode->CurrentNodeExpression->Value))
+				{
+					GenerateExpression(currentNode->CurrentNodeExpression);
+				}
+				else if (FunctionCallNode* expressionFunctionCall = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
+				{
+					m_OutputText << expressionFunctionCall->Identifier.Value << '(';
 					uint32_t iteration{ 0 };
-					for (auto argument : expressionValue.Arguments)
+					for (auto argument : expressionFunctionCall->Arguments)
 					{
 						GenerateExpression(argument);
-						if (iteration + 1 < expressionValue.Arguments.size())
+						if (iteration + 1 < expressionFunctionCall->Arguments.size())
 						{
 							m_OutputText << ", ";
 						}
 						iteration++;
 					}
 					m_OutputText << ')';
-
 				}
-				else if constexpr (std::is_same_v<type, InitializationListNode>)
+				else
 				{
-
-					m_OutputText << '{';
-					uint32_t iteration{ 0 };
-					for (auto argument : expressionValue.Arguments)
-					{
-						GenerateExpression(argument);
-						if (iteration + 1 < expressionValue.Arguments.size())
-						{
-							m_OutputText << ", ";
-						}
-						iteration++;
-					}
-					m_OutputText << '}';
-
+					KG_WARN("Invalid current expression inside MemberNode when generating output");
 				}
-				else if constexpr (std::is_same_v<type, UnaryOperationNode>)
-				{
-					m_OutputText << expressionValue.Operator.Value << expressionValue.Operand.Value;
-				}
-				else if constexpr (std::is_same_v<type, BinaryOperationNode>)
-				{
-					GenerateExpression(expressionValue.LeftOperand);
-					m_OutputText << " " << expressionValue.Operator.Value << " ";
-					GenerateExpression(expressionValue.RightOperand);
-				}
-			}, expression->Value);
+				currentNode = currentNode->ChildMemberNode;
+			}
+		}
 
 		if (expression->GenerationAffixes)
 		{
 			m_OutputText << expression->GenerationAffixes->Postfix;
-		}
-
-		if (!success)
-		{
-			return;
 		}
 	}
 	void ScriptOutputGenerator::AddIndentation()

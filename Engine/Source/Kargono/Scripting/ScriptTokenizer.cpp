@@ -50,18 +50,10 @@ namespace Kargono::Scripting
 				}
 
 				// Check for primitive types
-				bool foundPrimitiveType = false;
-				for (auto& primitiveType : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+				if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(m_TextBuffer))
 				{
-					if (m_TextBuffer == primitiveType.Name)
-					{
-						AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, { primitiveType.Name });
-						foundPrimitiveType = true;
-						break;
-					}
-				}
-				if (foundPrimitiveType)
-				{
+					PrimitiveType primitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(m_TextBuffer);
+					AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, { primitiveType.Name });
 					continue;
 				}
 
@@ -148,6 +140,13 @@ namespace Kargono::Scripting
 			if (GetCurrentChar() == ';')
 			{
 				AddTokenAndClearBuffer(ScriptTokenType::Semicolon, { ';' });
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '.')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::DotOperator, { '.' });
 				Advance();
 				continue;
 			}

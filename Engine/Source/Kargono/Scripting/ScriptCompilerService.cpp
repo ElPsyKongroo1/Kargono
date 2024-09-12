@@ -12,6 +12,24 @@ namespace Kargono::Scripting
 {
 	LanguageDefinition ScriptCompilerService::s_ActiveLanguageDefinition {};
 
+	static std::vector<ScriptToken> s_AllLiterals
+	{
+		{ ScriptTokenType::PrimitiveType, "int32" },
+		{ ScriptTokenType::PrimitiveType, "uint16" },
+		{ ScriptTokenType::PrimitiveType, "uint64" },
+		{ ScriptTokenType::PrimitiveType, "uint32" },
+		{ ScriptTokenType::PrimitiveType, "float" },
+		{ ScriptTokenType::PrimitiveType, "string" }
+	};
+	static std::vector<ScriptToken> s_AllLiteralsWithoutString
+	{
+		{ ScriptTokenType::PrimitiveType, "int32" },
+		{ ScriptTokenType::PrimitiveType, "uint16" },
+		{ ScriptTokenType::PrimitiveType, "uint32" },
+		{ ScriptTokenType::PrimitiveType, "uint64" },
+		{ ScriptTokenType::PrimitiveType, "float" }
+	};
+
 	std::string ScriptCompilerService::CompileScriptFile(const std::filesystem::path& scriptLocation)
 	{
 		// Lazy loading KGScript language def
@@ -115,36 +133,36 @@ namespace Kargono::Scripting
 		return {};
 	}
 
+
+
 	void ScriptCompilerService::CreateKGScriptLanguageDefinition()
 	{
-		static std::vector<ScriptToken> s_AllLiterals
-		{
-			{ ScriptTokenType::PrimitiveType, "int32" },
-			{ ScriptTokenType::PrimitiveType, "uint16" },
-			{ ScriptTokenType::PrimitiveType, "uint64" },
-			{ ScriptTokenType::PrimitiveType, "uint32" },
-			{ ScriptTokenType::PrimitiveType, "float" },
-			{ ScriptTokenType::PrimitiveType, "string" }
-		};
-		static std::vector<ScriptToken> s_AllLiteralsWithoutString
-		{
-			{ ScriptTokenType::PrimitiveType, "int32" },
-			{ ScriptTokenType::PrimitiveType, "uint16" },
-			{ ScriptTokenType::PrimitiveType, "uint32" },
-			{ ScriptTokenType::PrimitiveType, "uint64" },
-			{ ScriptTokenType::PrimitiveType, "float" }
-		};
+		CreateKGScriptKeywords();
 
-		// Add keywords
+		CreateKGScriptInitializationPrototypes();
+
+		CreateKGScriptPrimitiveTypes();
+
+		CreateKGScriptNamespaces();
+
+		CreateKGScriptFunctionDefinitions();
+
+	}
+
+	void ScriptCompilerService::CreateKGScriptKeywords()
+	{
 		s_ActiveLanguageDefinition = {};
-		s_ActiveLanguageDefinition.Keywords = 
-		{ 
-			"return", 
+		s_ActiveLanguageDefinition.Keywords =
+		{
+			"return",
 			"void",
 			"if",
 			"else"
 		};
+	}
 
+	void ScriptCompilerService::CreateKGScriptInitializationPrototypes()
+	{
 		// Add initialization list constructor prototypes
 		InitializationListType newInitListType{};
 		ScriptToken newInitListValue{};
@@ -187,9 +205,16 @@ namespace Kargono::Scripting
 
 		newInitListType = {};
 		newInitListValue = {};
+	}
 
+	void ScriptCompilerService::CreateKGScriptPrimitiveTypes()
+	{
 		// Add basic/primitive data types
 		PrimitiveType newPrimitiveType{};
+		DataMember newDataMember{};
+		FunctionNode newFunctionMember{};
+		FunctionParameter newMemberParameter{};
+		ScriptToken dataMemberPrimitiveType{};
 
 		newPrimitiveType.Name = "bool";
 		newPrimitiveType.Description = "Basic 8 bit type representing either true or false. Ex: false";
@@ -197,15 +222,16 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "bool";
 		newPrimitiveType.EmittedParameter = "bool";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconBoolean;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "string";
 		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
 		newPrimitiveType.EmittedDeclaration = "std::string";
 		newPrimitiveType.EmittedParameter = "const std::string&";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "int32";
@@ -214,7 +240,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint32_t";
 		newPrimitiveType.EmittedParameter = "uint32_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint16";
@@ -223,7 +249,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint32";
@@ -232,7 +258,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint32_t";
 		newPrimitiveType.EmittedParameter = "uint32_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint64";
@@ -241,7 +267,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "entity";
@@ -250,7 +276,17 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldFloat" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
+		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns floats. The argument is the name of the field.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newMemberParameter = {};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "float";
@@ -259,7 +295,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "float";
 		newPrimitiveType.EmittedParameter = "float";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "vector2";
@@ -268,33 +304,57 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "Math::vec2";
 		newPrimitiveType.EmittedParameter = "Math::vec2";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		newDataMember.Name = "x";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "float";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "y";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "float";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
 		newPrimitiveType.Name = "vector3";
 		newPrimitiveType.Description = "A series of three contiguous floats (32 bit decimal numbers)";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec3";
 		newPrimitiveType.EmittedParameter = "Math::vec3";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
 		newPrimitiveType.Name = "vector4";
 		newPrimitiveType.Description = "A series of four contiguous floats (32 bit decimal numbers)";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec4";
 		newPrimitiveType.EmittedParameter = "Math::vec4";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
-		s_ActiveLanguageDefinition.PrimitiveTypes.push_back(newPrimitiveType);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+	}
 
+	void ScriptCompilerService::CreateKGScriptNamespaces()
+	{
 		// Add namespace descriptions
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameState", "This namespace provides functions that can manage and interact with the active game state");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scenes", "This namespace provides functions that can manage the active scene.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input mode/mapping");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
+	}
 
+	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
+	{
 		// Add function declarations
 		FunctionNode newFunctionNode{};
 		FunctionParameter newParameter{};
@@ -302,11 +362,11 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "str" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
 		newParameter.AllTypes = s_AllLiteralsWithoutString;
-		newParameter.Identifier = { ScriptTokenType::Identifier, "text"};
+		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Convert basic variable types into a string. Ex: 23 -> \"23\", false -> \"false\"";
-		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node) 
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Identifier.Value = "std::to_string";
 		};
@@ -320,7 +380,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" }; 
+		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -632,7 +692,6 @@ namespace Kargono::Scripting
 
 		newFunctionNode = {};
 		newParameter = {};
-
 	}
 
 	bool ScriptCompilerService::IsLiteralOrIdentifier(ScriptToken token)

@@ -46,6 +46,7 @@ namespace Kargono::Scripting
 		OpenCurlyBrace,
 		CloseCurlyBrace,
 		Comma,
+		DotOperator,
 
 		// Arithmetic Operators
 		AssignmentOperator,
@@ -81,6 +82,7 @@ namespace Kargono::Scripting
 	static inline uint32_t InvalidLine { std::numeric_limits<uint32_t>::max() };
 	static inline uint32_t InvalidColumn { std::numeric_limits<uint32_t>::max() };
 
+	struct MemberType;
 
 	struct PrimitiveType
 	{
@@ -90,6 +92,7 @@ namespace Kargono::Scripting
 		std::string EmittedDeclaration {};
 		std::string EmittedParameter {};
 		Ref<Rendering::Texture2D> Icon {};
+		std::unordered_map<std::string, Ref<MemberType>> Members{};
 	};
 
 }
@@ -116,6 +119,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::OpenCurlyBrace: return "Open Curly Brace";
 		case Scripting::ScriptTokenType::CloseCurlyBrace: return "Close Curly Brace";
 		case Scripting::ScriptTokenType::Comma: return "Comma";
+		case Scripting::ScriptTokenType::DotOperator: return "Dot Operator";
 
 		case Scripting::ScriptTokenType::AssignmentOperator: return "Assignment Operator";
 		case Scripting::ScriptTokenType::AdditionOperator: return "Addition Operator";
@@ -187,6 +191,13 @@ namespace Kargono::Scripting
 
 	struct Expression;
 
+	struct MemberNode
+	{
+		Ref<MemberNode> ChildMemberNode{};
+		Ref<Expression> CurrentNodeExpression{};
+		ScriptToken ReturnType{};
+	};
+
 	struct FunctionCallNode
 	{
 		ScriptToken Namespace{};
@@ -224,39 +235,44 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode> Value{};
+		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
 		{
-			ScriptToken returnType;
-			std::visit([&](auto&& value)
-				{
-					using valueType = std::decay_t<decltype(value)>;
-					if constexpr (std::is_same_v<valueType, FunctionCallNode>)
-					{
-						returnType = value.ReturnType;
-					}
-					else if constexpr (std::is_same_v<valueType, UnaryOperationNode>)
-					{
-						returnType = value.ReturnType;
-					}
-					else if constexpr (std::is_same_v<valueType, BinaryOperationNode>)
-					{
-						returnType = value.ReturnType;
-					}
-					else if constexpr (std::is_same_v<valueType, InitializationListNode>)
-					{
-						returnType = value.ReturnType;
-					}
-					else if constexpr (std::is_same_v<valueType, ScriptToken>)
-					{
-						returnType = value;
-					}
+			if (FunctionCallNode* functionCallNodePtr = std::get_if<FunctionCallNode>(&Value))
+			{
+				FunctionCallNode& functionCallNode = *functionCallNodePtr;
+				return functionCallNode.ReturnType;
+			}
+			else if (UnaryOperationNode* unaryOperationNodePtr = std::get_if<UnaryOperationNode>(&Value))
+			{
+				UnaryOperationNode& unaryOperationNode = *unaryOperationNodePtr;
+				return unaryOperationNode.ReturnType;
+			}
+			else if (BinaryOperationNode* binaryOperationNodePtr = std::get_if<BinaryOperationNode>(&Value))
+			{
+				BinaryOperationNode& binaryOperationNode = *binaryOperationNodePtr;
+				return binaryOperationNode.ReturnType;
+			}
+			else if (InitializationListNode* initializationListNodePtr = std::get_if<InitializationListNode>(&Value))
+			{
+				InitializationListNode& initializationListNode = *initializationListNodePtr;
+				return initializationListNode.ReturnType;
+			}
+			else if (ScriptToken* scriptTokenPtr = std::get_if<ScriptToken>(&Value))
+			{
+				ScriptToken& scriptToken = *scriptTokenPtr;
+				return scriptToken;
+			}
+			else if (MemberNode* memberNodePtr = std::get_if<MemberNode>(&Value))
+			{
+				MemberNode& memberNode = *memberNodePtr;
+				return memberNode.ReturnType;
+			}
 
-				}, Value);
-
-			return returnType;
+			KG_WARN("Invalid expression type attempted to be parsed");
+			return {};
 		}
 	};
 
@@ -279,7 +295,7 @@ namespace Kargono::Scripting
 
 	struct StatementAssignment
 	{
-		ScriptToken Name{};
+		Ref<Expression> Name{};
 		Ref<Expression> Value{ nullptr };
 	};
 
@@ -432,23 +448,31 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 	};
 
+	struct DataMember
+	{
+		ScriptToken PrimitiveType{};
+		std::string Name{};
+	};
+
+	struct MemberType
+	{
+		std::variant<FunctionNode, DataMember> Value {};
+	};
+
 	struct LanguageDefinition
 	{
 	public:
 		std::vector<std::string> Keywords{};
-		std::vector<PrimitiveType> PrimitiveTypes {};
+		std::unordered_map<std::string, PrimitiveType> PrimitiveTypes {};
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{
-			for (auto& type : PrimitiveTypes)
+			if (PrimitiveTypes.contains(name))
 			{
-				if (type.Name == name)
-				{
-					return type;
-				}
+				return PrimitiveTypes.at(name);
 			}
 
 			return {};

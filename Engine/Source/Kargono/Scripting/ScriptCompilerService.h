@@ -13,9 +13,16 @@ namespace Kargono::Scripting
 		// External API
 		//==============================
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
-		static void CreateKGScriptLanguageDefinition();
 		static std::vector<ParserError> CheckForErrors(const std::string& text);
 		static CursorContext FindCursorContext(const std::string& text);
+	public:
+		static void CreateKGScriptLanguageDefinition();
+	private:
+		static void CreateKGScriptKeywords();
+		static void CreateKGScriptInitializationPrototypes();
+		static void CreateKGScriptPrimitiveTypes();
+		static void CreateKGScriptNamespaces();
+		static void CreateKGScriptFunctionDefinitions();
 	public:
 		static bool IsLiteralOrIdentifier(ScriptToken token);
 		static bool IsLiteral(ScriptToken token);

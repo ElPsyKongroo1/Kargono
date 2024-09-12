@@ -26,63 +26,78 @@ namespace Kargono::Utility
 		{
 			return;
 		}
-		std::visit([&](auto&& expressionValue)
+		if (Scripting::ScriptToken* tokenExpression = std::get_if<Scripting::ScriptToken>(&expression->Value))
+		{
+			KG_INFO("{}Expression Token", GetIndentation(indentation));
+			KG_INFO("{}Expression Value", GetIndentation(indentation + 1));
+			PrintToken(*tokenExpression, indentation + 2);
+		}
+		else if (Scripting::FunctionCallNode* functionCallExpression = std::get_if<Scripting::FunctionCallNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Function Call", GetIndentation(indentation));
+			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+			PrintToken(functionCallExpression->Namespace, indentation + 2);
+			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
+			PrintToken(functionCallExpression->Identifier, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(functionCallExpression->ReturnType, indentation + 2);
+			for (auto& argument : functionCallExpression->Arguments)
 			{
-				using type = std::decay_t<decltype(expressionValue)>;
-				if constexpr (std::is_same_v<type, Scripting::ScriptToken>)
-				{
-					KG_INFO("{}Expression Token", GetIndentation(indentation));
-					KG_INFO("{}Expression Value", GetIndentation(indentation + 1));
-					PrintToken(expressionValue, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::FunctionCallNode>)
-				{
-					KG_INFO("{}Expression Function Call", GetIndentation(indentation));
-					KG_INFO("{}Namespace", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Namespace, indentation + 2);
-					KG_INFO("{}Identifier", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Identifier, indentation + 2);
-					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.ReturnType, indentation + 2);
-					for (auto& argument : expressionValue.Arguments)
-					{
-						KG_INFO("{}Argument", GetIndentation(indentation + 1));
-						PrintExpression(argument, indentation + 2);
-					}
-				}
-				else if constexpr (std::is_same_v<type, Scripting::InitializationListNode>)
-				{
-					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.ReturnType, indentation + 2);
-					for (auto& argument : expressionValue.Arguments)
-					{
-						KG_INFO("{}Argument", GetIndentation(indentation + 1));
-						PrintExpression(argument, indentation + 2);
-					}
-				}
-				else if constexpr (std::is_same_v<type, Scripting::UnaryOperationNode>)
-				{
-					KG_INFO("{}Expression Unary Operation", GetIndentation(indentation));
-					KG_INFO("{}Operand", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Operand, indentation + 2);
-					KG_INFO("{}Operator", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Operator, indentation + 2);
-					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.ReturnType, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::BinaryOperationNode>)
-				{
-					KG_INFO("{}Expression Binary Operation", GetIndentation(indentation));
-					KG_INFO("{}Operand 1", GetIndentation(indentation + 1));
-					PrintExpression(expressionValue.LeftOperand, indentation + 2);
-					KG_INFO("{}Operand 2", GetIndentation(indentation + 1));
-					PrintExpression(expressionValue.RightOperand, indentation + 2);
-					KG_INFO("{}Operator", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.Operator, indentation + 2);
-					KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-					PrintToken(expressionValue.ReturnType, indentation + 2);
-				}
-			}, expression->Value);
+				KG_INFO("{}Argument", GetIndentation(indentation + 1));
+				PrintExpression(argument, indentation + 2);
+			}
+		}
+		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Initialization List", GetIndentation(indentation));
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(initListExpression->ReturnType, indentation + 2);
+			for (auto& argument : initListExpression->Arguments)
+			{
+				KG_INFO("{}Argument", GetIndentation(indentation + 1));
+				PrintExpression(argument, indentation + 2);
+			}
+		}
+		else if (Scripting::MemberNode* memberNodeExpression = std::get_if<Scripting::MemberNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Member Node", GetIndentation(indentation));
+			KG_INFO("{}Expression", GetIndentation(indentation + 1));
+			PrintExpression(memberNodeExpression->CurrentNodeExpression, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(memberNodeExpression->ReturnType, indentation + 2);
+			KG_INFO("{}All Child Nodes", GetIndentation(indentation + 1));
+			Ref<Scripting::MemberNode> currentNode = memberNodeExpression->ChildMemberNode;
+			while (currentNode)
+			{
+				KG_INFO("{}Child Expression", GetIndentation(indentation + 2));
+				PrintExpression(currentNode->CurrentNodeExpression, indentation + 3);
+				KG_INFO("{}Child Return Type", GetIndentation(indentation + 2));
+				PrintToken(currentNode->ReturnType, indentation + 3);
+				currentNode = currentNode->ChildMemberNode;
+			}
+		}
+		else if (Scripting::UnaryOperationNode* unaryOperationExpression = std::get_if<Scripting::UnaryOperationNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Unary Operation", GetIndentation(indentation));
+			KG_INFO("{}Operand", GetIndentation(indentation + 1));
+			PrintToken(unaryOperationExpression->Operand, indentation + 2);
+			KG_INFO("{}Operator", GetIndentation(indentation + 1));
+			PrintToken(unaryOperationExpression->Operator, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(unaryOperationExpression->ReturnType, indentation + 2);
+		}
+		else if (Scripting::BinaryOperationNode* binaryOperationExpression = std::get_if<Scripting::BinaryOperationNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Binary Operation", GetIndentation(indentation));
+			KG_INFO("{}Operand 1", GetIndentation(indentation + 1));
+			PrintExpression(binaryOperationExpression->LeftOperand, indentation + 2);
+			KG_INFO("{}Operand 2", GetIndentation(indentation + 1));
+			PrintExpression(binaryOperationExpression->RightOperand, indentation + 2);
+			KG_INFO("{}Operator", GetIndentation(indentation + 1));
+			PrintToken(binaryOperationExpression->Operator, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(binaryOperationExpression->ReturnType, indentation + 2);
+		}
 	}
 
 	static void PrintStatement(const Ref<Scripting::Statement> statement, uint32_t indentation = 0)
@@ -91,66 +106,60 @@ namespace Kargono::Utility
 		{
 			return;
 		}
-		std::visit([&](auto&& state)
+		if (Scripting::StatementEmpty* emptyStatement = std::get_if<Scripting::StatementEmpty>(&statement->Value))
+		{
+			KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
+		}
+		else if (Scripting::StatementExpression* expressionStatement = std::get_if<Scripting::StatementExpression>(&statement->Value))
+		{
+			KG_INFO("{}Expression Statement", GetIndentation(indentation));
+			KG_INFO("{}Expression Value", GetIndentation(indentation + 1));
+			PrintExpression(expressionStatement->Value, indentation + 2);
+		}
+		else if (Scripting::StatementDeclaration* declarationStatement = std::get_if<Scripting::StatementDeclaration>(&statement->Value))
+		{
+			KG_INFO("{}Declaration Statement", GetIndentation(indentation));
+			KG_INFO("{}Declaration Type", GetIndentation(indentation + 1));
+			PrintToken(declarationStatement->Type, indentation + 2);
+			KG_INFO("{}Declaration Name/Identifier", GetIndentation(indentation + 1));
+			PrintToken(declarationStatement->Name, indentation + 2);
+		}
+		else if (Scripting::StatementAssignment* assignmentStatement = std::get_if<Scripting::StatementAssignment>(&statement->Value))
+		{
+			KG_INFO("{}Assignment Statement", GetIndentation(indentation));
+			KG_INFO("{}Assignment Identifier", GetIndentation(indentation + 1));
+			PrintExpression(assignmentStatement->Name, indentation + 2);
+			KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
+			PrintExpression(assignmentStatement->Value, indentation + 2);
+		}
+		else if (Scripting::StatementDeclarationAssignment* declarationAssignmentStatement = std::get_if<Scripting::StatementDeclarationAssignment>(&statement->Value))
+		{
+			KG_INFO("{}Declaration/Assignment Statement", GetIndentation(indentation));
+			KG_INFO("{}Declared Type", GetIndentation(indentation + 1));
+			PrintToken(declarationAssignmentStatement->Type, indentation + 2);
+			KG_INFO("{}Declared Identifier", GetIndentation(indentation + 1));
+			PrintToken(declarationAssignmentStatement->Name, indentation + 2);
+			KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
+			PrintExpression(declarationAssignmentStatement->Value, indentation + 2);
+		}
+		else if (Scripting::StatementConditional* conditionalStatement = std::get_if<Scripting::StatementConditional>(&statement->Value))
+		{
+			KG_INFO("{}Conditional Statement", GetIndentation(indentation));
+			KG_INFO("{}Type", GetIndentation(indentation + 1));
+			KG_INFO("{}{}", GetIndentation(indentation + 2), Utility::ConditionalTypeToString(conditionalStatement->Type));
+			KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
+			PrintExpression(conditionalStatement->ConditionExpression, indentation + 2);
+			KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
+			for (auto bodyStatement : conditionalStatement->BodyStatements)
 			{
-				using type = std::decay_t<decltype(state)>;
-				if constexpr (std::is_same_v<type, Scripting::StatementEmpty>)
-				{
-					KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
-				}
-				else if constexpr (std::is_same_v<type, Scripting::StatementExpression>)
-				{
-					KG_INFO("{}Expression Statement", GetIndentation(indentation));
-					KG_INFO("{}Expression Value", GetIndentation(indentation + 1));
-					PrintExpression(state.Value, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::StatementDeclaration>)
-				{
-					KG_INFO("{}Declaration Statement", GetIndentation(indentation));
-					KG_INFO("{}Declaration Type", GetIndentation(indentation + 1));
-					PrintToken(state.Type, indentation + 2);
-					KG_INFO("{}Declaration Name/Identifier", GetIndentation(indentation + 1));
-					PrintToken(state.Name, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::StatementAssignment>)
-				{
-					KG_INFO("{}Assignment Statement", GetIndentation(indentation));
-					KG_INFO("{}Assignment Identifier", GetIndentation(indentation + 1));
-					PrintToken(state.Name, indentation + 2);
-					KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
-					PrintExpression(state.Value, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::StatementDeclarationAssignment>)
-				{
-					KG_INFO("{}Declaration/Assignment Statement", GetIndentation(indentation));
-					KG_INFO("{}Declared Type", GetIndentation(indentation + 1));
-					PrintToken(state.Type, indentation + 2);
-					KG_INFO("{}Declared Identifier", GetIndentation(indentation + 1));
-					PrintToken(state.Name, indentation + 2);
-					KG_INFO("{}Assignment Value", GetIndentation(indentation + 1));
-					PrintExpression(state.Value, indentation + 2);
-				}
-				else if constexpr (std::is_same_v<type, Scripting::StatementConditional>)
-				{
-					KG_INFO("{}Conditional Statement", GetIndentation(indentation));
-					KG_INFO("{}Type", GetIndentation(indentation + 1));
-					KG_INFO("{}{}", GetIndentation(indentation + 2), Utility::ConditionalTypeToString(state.Type));
-					KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
-					PrintExpression(state.ConditionExpression, indentation + 2);
-					KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
-					for (auto bodyStatement : state.BodyStatements)
-					{
-						PrintStatement(bodyStatement, indentation + 2);
-					}
-					KG_INFO("{}Chained Conditional Statements", GetIndentation(indentation + 1));
-					for (auto chainedStatement : state.ChainedConditionals)
-					{
-						PrintStatement(chainedStatement, indentation + 2);
-					}
-					
-					
-				}
-			}, statement->Value);
+				PrintStatement(bodyStatement, indentation + 2);
+			}
+			KG_INFO("{}Chained Conditional Statements", GetIndentation(indentation + 1));
+			for (auto chainedStatement : conditionalStatement->ChainedConditionals)
+			{
+				PrintStatement(chainedStatement, indentation + 2);
+			}
+		}
 	}
 
 	static void PrintFunction(const Scripting::FunctionNode& funcNode, uint32_t indentation = 0)
@@ -563,8 +572,8 @@ namespace Kargono::Scripting
 			}
 
 			// Ensure the return type of both operands is identical
-			if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value !=
-				GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
+			if (!PrimitiveTypeAcceptableToken(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value, 
+				GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
 			{
 				std::string errorMessage = fmt::format("Return types do not match in binary expression\n Left operand return type: {}\n Right operand return type: {}",
 					GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
@@ -631,6 +640,22 @@ namespace Kargono::Scripting
 			if (CheckForErrors())
 			{
 				StoreParseError(ParseErrorType::Expression, "Invalid initialization list", GetCurrentToken(parentExpressionSize));
+				return { false, {} };
+			}
+		}
+
+		// Parse Expression Member
+		if (!foundValidExpression)
+		{
+			auto [success, expression] = ParseExpressionMember(parentExpressionSize);
+			if (success)
+			{
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid member", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -718,8 +743,8 @@ namespace Kargono::Scripting
 				}
 
 				// Ensure the return type of both operands is identical
-				if (GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value !=
-					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value)
+				if (!PrimitiveTypeAcceptableToken(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
+					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
 				{
 					std::string errorMessage = fmt::format("Return types do not match in binary expression\n Left operand return type: {}\n Right operand return type: {}",
 						GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
@@ -1054,6 +1079,180 @@ namespace Kargono::Scripting
 		parentExpressionSize = currentArgumentLocation;
 		return { true, newInitListExpression };
 	}
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionMember(uint32_t& parentExpressionSize, bool dataMemberOnly)
+	{
+		Ref<Expression> newMemberExpression{ CreateRef<Expression>() };
+		uint32_t currentLocation = parentExpressionSize;
+		MemberNode returnMemberNode{};
+
+		// Look for primitive type and first dot operator
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Identifier ||
+			GetCurrentToken(currentLocation + 1).Type != ScriptTokenType::DotOperator ||
+			GetCurrentToken(currentLocation + 2).Type != ScriptTokenType::Identifier)
+		{
+			return { false, nullptr };
+		}
+
+
+		// Get stack variable from identifier
+		StackVariable currentStackVariable = GetStackVariable(GetCurrentToken(currentLocation));
+
+		// Ensure stack variable is valid
+		if (!currentStackVariable)
+		{
+			StoreParseError(ParseErrorType::Expression, "Could not locate stack variable from member declaration", GetCurrentToken(currentLocation));
+			return { false, nullptr };
+		}
+
+		// Get primitive type and ensure it is valid
+		PrimitiveType currentPrimitiveType;
+		Ref<MemberType> currentMemberType;
+		if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(currentStackVariable.Type.Value))
+		{
+			StoreParseError(ParseErrorType::Expression, "Invalid primitive type of stack variable found when parsing data member", GetCurrentToken(currentLocation));
+			return { false, nullptr };
+		}
+		currentPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(currentStackVariable.Type.Value);
+
+		// Get member type from primitive type and ensure it is valid
+		if (!currentPrimitiveType.Members.contains(GetCurrentToken(currentLocation + 2).Value))
+		{
+			std::string errorMessage =
+				fmt::format("Could not locate data member for provided primitive type\n Primitive Type: {}\n Data Member: {}",
+					currentPrimitiveType.Name, GetCurrentToken(currentLocation + 2).Value);
+			StoreParseError(ParseErrorType::Expression, errorMessage, GetCurrentToken(1));
+			return { false, nullptr };
+		}
+
+		currentMemberType = currentPrimitiveType.Members.at(GetCurrentToken(currentLocation + 2).Value);
+
+		if (DataMember* dataMemberPtr = std::get_if<DataMember>(&currentMemberType->Value))
+		{
+			// Fill member node's data
+			DataMember currentDataMember = *dataMemberPtr;
+			returnMemberNode.CurrentNodeExpression = CreateRef<Expression>();
+			returnMemberNode.CurrentNodeExpression->Value = GetCurrentToken(currentLocation);
+			returnMemberNode.ReturnType = currentDataMember.PrimitiveType;
+			Ref<MemberNode> childNode = CreateRef<MemberNode>();
+			childNode->ChildMemberNode = nullptr;
+			childNode->CurrentNodeExpression = CreateRef<Expression>();
+			childNode->CurrentNodeExpression->Value = GetCurrentToken(currentLocation + 2);
+			returnMemberNode.ChildMemberNode = childNode;
+			currentLocation += 3;
+		}
+		else if (FunctionNode* functionMemberPtr = std::get_if<FunctionNode>(&currentMemberType->Value))
+		{
+			if (dataMemberOnly)
+			{
+				return { false, nullptr };
+			}
+			// Fill function call node
+			FunctionNode currentFunctionMember = *functionMemberPtr;
+			FunctionCallNode newFunctionCall;
+			// Fill function call node
+			returnMemberNode.CurrentNodeExpression = CreateRef<Expression>();
+			returnMemberNode.CurrentNodeExpression->Value = GetCurrentToken(currentLocation);
+			returnMemberNode.ReturnType = currentFunctionMember.ReturnType;
+			newFunctionCall.Identifier = GetCurrentToken(currentLocation + 2);
+			newFunctionCall.ReturnType = currentFunctionMember.ReturnType;
+			// Check for opening parentheses
+			if (GetCurrentToken(currentLocation + 3).Type != ScriptTokenType::OpenParentheses)
+			{
+				return { false, {} };
+			}
+			currentLocation += 4;
+			
+			// Check for arguments and commas
+			bool continueLoop;
+			do
+			{
+				continueLoop = false;
+				// Parse Expression Node, store expression, and check for context probe
+				auto [success, expression] = ParseExpressionNode(currentLocation);
+				if (success)
+				{
+					newFunctionCall.Arguments.push_back(expression);
+				}
+
+				if (CheckForErrors())
+				{
+					StoreParseError(ParseErrorType::Expression, "Invalid function argument", GetCurrentToken(currentLocation));
+					return { false, {} };
+				}
+
+				// Decide whether to continue looking for more arguments
+				if (success && GetCurrentToken(currentLocation).Type == ScriptTokenType::Comma)
+				{
+					currentLocation++;
+					continueLoop = true;
+				}
+
+			} while (continueLoop);
+
+			// Check for closing parentheses
+			if (GetCurrentToken(currentLocation).Type != ScriptTokenType::CloseParentheses)
+			{
+				return { false, {} };
+			}
+			currentLocation++;
+
+			// Ensure number of arguments in function call match the number of arguments in the function
+			if (currentFunctionMember.Parameters.size() != newFunctionCall.Arguments.size())
+			{
+				std::string errorMessage =
+					fmt::format("Argument count in function call ({}) does not match the function parameter count ({})",
+						newFunctionCall.Arguments.size(), currentFunctionMember.Parameters.size());
+				StoreParseError(ParseErrorType::Expression, errorMessage, newFunctionCall.Identifier);
+				return { false, {} };
+			}
+
+			// Ensure each argument type matches the parameter type
+			uint32_t parameterIteration{ 0 };
+			for (auto& parameter : currentFunctionMember.Parameters)
+			{
+				bool valid = false;
+
+				for (auto& type : parameter.AllTypes)
+				{
+					if (PrimitiveTypeAcceptableToken(type.Value, newFunctionCall.Arguments.at(parameterIteration)->GetReturnType()))
+					{
+						valid = true;
+					}
+				}
+				if (!valid)
+				{
+					std::string errorMessage =
+						fmt::format("Argument type is not acceptable for member function parameter\n Argument Type: {}\n Parameter Type(s):",
+							GetPrimitiveTypeFromToken((newFunctionCall.Arguments.at(parameterIteration)->GetReturnType())).Value);
+					for (auto& type : parameter.AllTypes)
+					{
+						errorMessage = errorMessage + "\n " + type.Value;
+					}
+					StoreParseError(ParseErrorType::Expression, errorMessage, newFunctionCall.Arguments.at(parameterIteration)->GetReturnType());
+					return { false, {} };
+				}
+				parameterIteration++;
+			}
+
+			Ref<MemberNode> childNode = CreateRef<MemberNode>();
+			childNode->ChildMemberNode = nullptr;
+			childNode->CurrentNodeExpression = CreateRef<Expression>();
+			childNode->CurrentNodeExpression->Value = newFunctionCall;
+			returnMemberNode.ChildMemberNode = childNode;
+		}
+		else
+		{
+			KG_TRACE_CRITICAL("Could not get data/function member");
+			return { false, nullptr };
+		}
+
+		// Recursively look for more members and dot operators
+
+		// Fill the expression buffer and exit
+		newMemberExpression->Value = returnMemberNode;
+		parentExpressionSize = currentLocation;
+		return { true, newMemberExpression };
+	}
 	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementEmpty()
 	{
 		ScriptToken tokenBuffer = GetCurrentToken();
@@ -1142,76 +1341,119 @@ namespace Kargono::Scripting
 	}
 	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementAssignment()
 	{
-		Ref<Expression> newExpression{ CreateRef<Expression>() };
-		ScriptToken tokenBuffer = GetCurrentToken();
+		uint32_t currentLocation{ 0 };
+		StatementAssignment newStatementAssignment;
 
-		// Check for Type, Identifier, and Assignment Operator
-		if (tokenBuffer.Type != ScriptTokenType::Identifier ||
-			GetCurrentToken(1).Type != ScriptTokenType::AssignmentOperator)
+		// Check for name that is either a member expression or an individual identifier (name = value;)
 		{
-			return { false, {} };
+			
+			uint32_t expressionSize{ currentLocation };
+			auto [success, expression] = ParseExpressionMember(expressionSize, true);
+			if (success)
+			{
+				// Store member expression
+				newStatementAssignment.Name = expression;
+				currentLocation = expressionSize;
+			}
+			else if (GetCurrentToken(currentLocation).Type == ScriptTokenType::Identifier)
+			{
+				// Store individual identifier
+				newStatementAssignment.Name = CreateRef<Expression>();
+				newStatementAssignment.Name->Value = GetCurrentToken(currentLocation);
+				currentLocation++;
+			}
+			else
+			{
+				// Exit if other
+				return { false, nullptr };
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Unable to parse assignment expression name", GetCurrentToken(currentLocation));
+				return { false, {} };
+			}
 		}
 
-		// Check for an expression
-		uint32_t expressionSize{ 0 };
+		// Check for assignment operator
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::AssignmentOperator)
 		{
-			Advance(2);
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		// Check for assignment statement value (name = value;)
+		{
+			uint32_t expressionSize{ currentLocation };
 			auto [success, expression] = ParseExpressionNode(expressionSize);
-			Advance(-2);
 			if (!success)
 			{
 				return { false, {} };
 			}
-			newExpression = expression;
-		}
-
-		// Check for context probe
-		if (IsContextProbe(newExpression) && CheckStackForIdentifier(tokenBuffer))
-		{
-			StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
-			CursorContext newContext;
-			newContext.AllReturnTypes.push_back(currentIdentifierVariable.Type);
-			newContext.StackVariables = m_StackVariables;
-			m_CursorContext = newContext;
-			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", tokenBuffer);
-			return { false, {} };
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Unable to parse value expression in assignment statement", GetCurrentToken(currentLocation));
+				return { false, {} };
+			}
+			// Check for context probe
+			if (IsContextProbe(expression))
+			{
+				ScriptToken returnType = GetPrimitiveTypeFromToken(newStatementAssignment.Name->GetReturnType());
+				CursorContext newContext;
+				newContext.AllReturnTypes.push_back(returnType);
+				newContext.StackVariables = m_StackVariables;
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", GetCurrentToken(currentLocation));
+				return { false, {} };
+			}
+			newStatementAssignment.Value = expression;
+			currentLocation = expressionSize;
 		}
 
 		// Check for semicolon
-		if (GetCurrentToken(2 + expressionSize).Type != ScriptTokenType::Semicolon)
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Semicolon)
 		{
 			return { false, {} };
 		}
+		currentLocation++;
 
-		if (CheckForErrors())
+		// Get the return type of the Name and Value
+		ScriptToken statementNameType;
+		if (MemberNode* currentStatementName = std::get_if<MemberNode>(&newStatementAssignment.Name->Value))
 		{
-			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in assignment statement", tokenBuffer);
+			// Add logic for storing member node
+			statementNameType = currentStatementName->ReturnType;
+		}
+		else if (ScriptToken* currentStatementName = std::get_if<ScriptToken>(&newStatementAssignment.Name->Value))
+		{
+			// Ensure identifer is a valid StackVariable
+			if (!CheckStackForIdentifier(*currentStatementName))
+			{
+				StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", *currentStatementName);
+				return { false, {} };
+			}
+			StackVariable statementNameVariable = GetStackVariable(*currentStatementName);
+			statementNameType = statementNameVariable.Type;
+		}
+		else
+		{
+			StoreParseError(ParseErrorType::Statement, "Unknown assignment statement name expression", GetCurrentToken());
 			return { false, {} };
 		}
 
-		// Ensure identifer is a valid StackVariable
-		if (!CheckStackForIdentifier(tokenBuffer))
-		{
-			StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", tokenBuffer);
-			return { false, {} };
-		}
-
-		// Ensure expression value is a valid type to be assigned to identifier
-		StackVariable currentIdentifierVariable = GetStackVariable(tokenBuffer);
-		bool success = PrimitiveTypeAcceptableToken(currentIdentifierVariable.Type.Value, newExpression->GetReturnType());
+		// Ensure statement value is a valid to be assigned to the statement name
+		bool success = PrimitiveTypeAcceptableToken(statementNameType.Value, newStatementAssignment.Value->GetReturnType());
 		if (!success)
 		{
 			std::string errorMessage =
 				fmt::format("Invalid expression return type provided in assignment statement\n Declared type: {}\n ExpressionType: {}",
-					currentIdentifierVariable.Type.Value, GetPrimitiveTypeFromToken(newExpression->GetReturnType()).Value);
+					statementNameType.Value, GetPrimitiveTypeFromToken(newStatementAssignment.Value->GetReturnType()).Value);
 			StoreParseError(ParseErrorType::Statement, errorMessage, GetCurrentToken(1));
 			return { false, {} };
 		}
 
 		Ref<Statement> newStatement = CreateRef<Statement>();
-		StatementAssignment newStatementAssignment{ tokenBuffer, newExpression };
 		newStatement->Value = newStatementAssignment;
-		Advance(3 + expressionSize);
+		Advance(currentLocation);
 		return { true, newStatement };
 	}
 	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementDeclarationAssignment()
@@ -1612,33 +1854,57 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool ScriptTokenParser::PrimitiveTypeAcceptableToken(const std::string& type, Scripting::ScriptToken token)
+	bool ScriptTokenParser::PrimitiveTypeAcceptableToken(const std::string& queryType, Scripting::ScriptToken queryToken)
 	{
-		// Search all primitive types to check if token is acceptable
-		for (auto& primitiveType : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+		// Get primitive type associated with the parameter string type
+		if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryType))
 		{
-			if (type == primitiveType.Name)
+			PrimitiveType queryPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryType);
+			// Check whether the provided token is literal (string literal, integer literal, etc...) that matches the primitiveType's requirements
+			if (queryToken.Type == queryPrimitiveType.AcceptableLiteral)
 			{
-				if (token.Type == primitiveType.AcceptableLiteral)
+				return true;
+			}
+			// Check if token is an identifier
+			if (queryToken.Type == ScriptTokenType::Identifier)
+			{
+				// Get associated stack variable
+				StackVariable queryTokenVariable = GetStackVariable(queryToken);
+				if (!queryTokenVariable)
+				{
+					return false;
+				}
+				// Ensure return type is PrimitiveType (it should always be, but you never know ^0^)
+				if (queryTokenVariable.Type.Type != ScriptTokenType::PrimitiveType)
+				{
+					return false;
+				}
+				// Ensure token primitive type is valid
+				if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryTokenVariable.Type.Value))
+				{
+					return false;
+				}
+
+				// Make sure that the literal types match
+				PrimitiveType variablePrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryTokenVariable.Type.Value);
+				if (queryPrimitiveType.AcceptableLiteral == variablePrimitiveType.AcceptableLiteral)
 				{
 					return true;
 				}
-				if (token.Type == ScriptTokenType::Identifier)
+				
+			}
+			// If token is a primitive type, simply assure that the types match
+			if (queryToken.Type == ScriptTokenType::PrimitiveType)
+			{
+				// Ensure token primitive type is valid
+				if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryToken.Value))
 				{
-					StackVariable variable = GetStackVariable(token);
-					if (!variable)
-					{
-						return false;
-					}
-
-					if (variable.Type.Type == ScriptTokenType::PrimitiveType && variable.Type.Value == primitiveType.Name)
-					{
-						return true;
-					}
-
 					return false;
 				}
-				if (token.Type == ScriptTokenType::PrimitiveType && token.Value == type)
+
+				// Make sure that the literal types match
+				PrimitiveType tokenPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryToken.Value);
+				if (queryPrimitiveType.AcceptableLiteral == tokenPrimitiveType.AcceptableLiteral)
 				{
 					return true;
 				}
@@ -1652,7 +1918,7 @@ namespace Kargono::Scripting
 	{
 		if (ScriptCompilerService::IsLiteral(token))
 		{
-			for (auto& primitiveType : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 			{
 				if (token.Type == primitiveType.AcceptableLiteral)
 				{
