@@ -110,6 +110,12 @@ namespace Kargono::Utility
 		{
 			KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
 		}
+		else if (Scripting::StatementReturn* expressionStatement = std::get_if<Scripting::StatementReturn>(&statement->Value))
+		{
+			KG_INFO("{}Return Statement", GetIndentation(indentation));
+			KG_INFO("{}Return Value", GetIndentation(indentation + 1));
+			PrintExpression(expressionStatement->ReturnValue, indentation + 2);
+		}
 		else if (Scripting::StatementExpression* expressionStatement = std::get_if<Scripting::StatementExpression>(&statement->Value))
 		{
 			KG_INFO("{}Expression Statement", GetIndentation(indentation));
@@ -270,6 +276,21 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
+		// Parse Statement Return
+		{
+			auto [success, statement] = ParseStatementReturn();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid return statement", tokenBuffer);
+			return { false, {} };
+		}
+
 		// Parse Conditional Statement
 		{
 			auto [success, statement] = ParseStatementConditional(false);
@@ -353,12 +374,22 @@ namespace Kargono::Scripting
 		FunctionNode newFunctionNode{};
 		// Store return value
 		ScriptToken tokenBuffer = GetCurrentToken();
-		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "void")
+		if (tokenBuffer.Type == ScriptTokenType::Keyword && tokenBuffer.Value == "void")
+		{
+			newFunctionNode.ReturnType = tokenBuffer;
+			m_CurrentReturnType = tokenBuffer;
+		}
+		else if (tokenBuffer.Type == ScriptTokenType::PrimitiveType)
+		{
+			newFunctionNode.ReturnType = tokenBuffer;
+			m_CurrentReturnType = tokenBuffer;
+		}
+		else
 		{
 			StoreParseError(ParseErrorType::Function, "Invalid/Empty return type provided for function signature", tokenBuffer);
 			return { false, newFunctionNode };
 		}
-		newFunctionNode.ReturnType = tokenBuffer;
+		
 
 		// Get Function Name
 		Advance();
@@ -741,29 +772,58 @@ namespace Kargono::Scripting
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
 				}
+				PrimitiveType leftOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value);
+				PrimitiveType rightOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
 
 				// Ensure the return type of both operands is identical
-				if (!PrimitiveTypeAcceptableToken(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
-					GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
+				if (PrimitiveTypeAcceptableToken(leftOperandType.Name, GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
+				{
+					// Store Return Type
+					if (ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
+					{
+						ScriptToken boolToken;
+						boolToken.Type = ScriptTokenType::PrimitiveType;
+						boolToken.Value = "bool";
+						newBinaryOperation.ReturnType = boolToken;
+					}
+					else
+					{
+						newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+					}
+				}
+				// If not, check if either primitive type accepts a different type of data to do arithmetic operations
+				else if (leftOperandType.AcceptableArithmetic.contains(rightOperandType.Name) || rightOperandType.AcceptableArithmetic.contains(leftOperandType.Name))
+				{
+					// Store Return Type
+					if (!ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
+					{
+						bool leftFocused = leftOperandType.AcceptableArithmetic.contains(rightOperandType.Name);
+						bool rightFocused = rightOperandType.AcceptableArithmetic.contains(leftOperandType.Name);
+						if ((leftFocused && rightFocused) || leftFocused)
+						{
+							newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+						}
+						else
+						{
+							newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+						}
+					}
+					else
+					{
+						std::string errorMessage = fmt::format("Cannot use comparison operators for acceptable arithmetic list of primitive types\n Left operand return type: {}\n Right operand return type: {}",
+							GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
+							GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
+						StoreParseError(ParseErrorType::Expression, errorMessage, newBinaryOperation.Operator);
+						return { false, {} };
+					}
+				}
+				else
 				{
 					std::string errorMessage = fmt::format("Return types do not match in binary expression\n Left operand return type: {}\n Right operand return type: {}",
 						GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value,
 						GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
 					StoreParseError(ParseErrorType::Expression, errorMessage, newBinaryOperation.Operator);
 					return { false, {} };
-				}
-
-				// Store Return Type
-				if (ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
-				{
-					ScriptToken boolToken;
-					boolToken.Type = ScriptTokenType::PrimitiveType;
-					boolToken.Value = "bool";
-					newBinaryOperation.ReturnType = boolToken;
-				}
-				else
-				{
-					newBinaryOperation.ReturnType = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
 				}
 
 				newBinaryExpression->Value = newBinaryOperation;
@@ -1083,7 +1143,9 @@ namespace Kargono::Scripting
 	{
 		Ref<Expression> newMemberExpression{ CreateRef<Expression>() };
 		uint32_t currentLocation = parentExpressionSize;
-		MemberNode returnMemberNode{};
+		Ref<MemberNode> returnMemberNode = CreateRef<MemberNode>();
+		ScriptToken initialVariable{};
+		std::vector<ScriptToken> memberList{};
 
 		// Look for primitive type and first dot operator
 		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Identifier ||
@@ -1093,52 +1155,118 @@ namespace Kargono::Scripting
 			return { false, nullptr };
 		}
 
+		// Store variable and first member identifier
+		initialVariable = GetCurrentToken(currentLocation);
+		memberList.push_back(GetCurrentToken(currentLocation + 2));
+		currentLocation += 3;
 
-		// Get stack variable from identifier
-		StackVariable currentStackVariable = GetStackVariable(GetCurrentToken(currentLocation));
+		// Store all subsequent identifiers
+		while (GetCurrentToken(currentLocation).Type == ScriptTokenType::DotOperator &&
+			GetCurrentToken(currentLocation + 1).Type == ScriptTokenType::Identifier)
+		{
+			memberList.push_back(GetCurrentToken(currentLocation + 1));
+			currentLocation += 2;
+		}
 
-		// Ensure stack variable is valid
+		// Get stack variable from identifier and ensure it is valid
+		StackVariable currentStackVariable = GetStackVariable(initialVariable);
 		if (!currentStackVariable)
 		{
-			StoreParseError(ParseErrorType::Expression, "Could not locate stack variable from member declaration", GetCurrentToken(currentLocation));
+			StoreParseError(ParseErrorType::Expression, "Could not locate stack variable from member declaration", initialVariable);
 			return { false, nullptr };
 		}
 
 		// Get primitive type and ensure it is valid
 		PrimitiveType currentPrimitiveType;
-		Ref<MemberType> currentMemberType;
 		if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(currentStackVariable.Type.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Invalid primitive type of stack variable found when parsing data member", GetCurrentToken(currentLocation));
+			StoreParseError(ParseErrorType::Expression, "Invalid primitive type of stack variable found when parsing data member", initialVariable);
 			return { false, nullptr };
 		}
 		currentPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(currentStackVariable.Type.Value);
 
-		// Get member type from primitive type and ensure it is valid
-		if (!currentPrimitiveType.Members.contains(GetCurrentToken(currentLocation + 2).Value))
+		// Store initial variable identifier
+		returnMemberNode->CurrentNodeExpression = CreateRef<Expression>();
+		returnMemberNode->CurrentNodeExpression->Value = initialVariable;
+
+		// Get first member type from primitive type and ensure it is valid
+		Ref<MemberType> currentMemberType;
+		if (!currentPrimitiveType.Members.contains(memberList.at(0).Value))
 		{
 			std::string errorMessage =
-				fmt::format("Could not locate data member for provided primitive type\n Primitive Type: {}\n Data Member: {}",
-					currentPrimitiveType.Name, GetCurrentToken(currentLocation + 2).Value);
-			StoreParseError(ParseErrorType::Expression, errorMessage, GetCurrentToken(1));
+				fmt::format("Could not locate member for provided primitive type\n Primitive Type: {}\n Member: {}",
+					currentPrimitiveType.Name, memberList.at(0).Value);
+			StoreParseError(ParseErrorType::Expression, errorMessage, memberList.at(0));
 			return { false, nullptr };
 		}
+		currentMemberType = currentPrimitiveType.Members.at(memberList.at(0).Value);
+		
+		Ref<MemberNode> finalParentNode;
+		ScriptToken finalToken{};
+		if (memberList.size() > 1)
+		{
+			DataMember* currentDataMember = std::get_if<DataMember>(&currentMemberType->Value);
+			if (!currentDataMember)
+			{
+				std::string errorMessage =
+					fmt::format("Found intermediate member that is invalid\n Member: {}", memberList.at(0).Value);
+				StoreParseError(ParseErrorType::Expression, errorMessage, memberList.at(0));
+				return { false, nullptr };
+			}
 
-		currentMemberType = currentPrimitiveType.Members.at(GetCurrentToken(currentLocation + 2).Value);
-
+			Ref<MemberNode> childNode = CreateRef<MemberNode>();
+			childNode->ChildMemberNode = nullptr;
+			childNode->CurrentNodeExpression = CreateRef<Expression>();
+			childNode->CurrentNodeExpression->Value = memberList.at(0);
+			returnMemberNode->ChildMemberNode = childNode;
+			for (std::size_t iteration {1}; iteration < memberList.size() - 1; iteration++)
+			{
+				if (!currentDataMember->Members.contains(memberList.at(iteration).Value))
+				{
+					StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(iteration));
+					return { false, nullptr };
+				}
+				currentMemberType = currentDataMember->Members.at(memberList.at(iteration).Value);
+				currentDataMember = std::get_if<DataMember>(&currentMemberType->Value);
+				if (!currentDataMember)
+				{
+					std::string errorMessage =
+						fmt::format("Found intermediate member that is invalid\n Member: {}", memberList.at(0).Value);
+					StoreParseError(ParseErrorType::Expression, errorMessage, memberList.at(0));
+					return { false, nullptr };
+				}
+				Ref<MemberNode> newNode = CreateRef<MemberNode>();
+				newNode->ChildMemberNode = nullptr;
+				newNode->CurrentNodeExpression = CreateRef<Expression>();
+				newNode->CurrentNodeExpression->Value = memberList.at(iteration);
+				childNode->ChildMemberNode = newNode;
+				childNode = newNode;
+			}
+			if (!currentDataMember->Members.contains(memberList.at(memberList.size() - 1).Value))
+			{
+				StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(memberList.size() - 1));
+				return { false, nullptr };
+			}
+			currentMemberType = currentDataMember->Members.at(memberList.at(memberList.size() - 1).Value);
+			finalParentNode = childNode;
+			finalToken = memberList.at(memberList.size() - 1);
+		}
+		else
+		{
+			finalParentNode = returnMemberNode;
+			finalToken = memberList.at(0);
+		}
+		
 		if (DataMember* dataMemberPtr = std::get_if<DataMember>(&currentMemberType->Value))
 		{
 			// Fill member node's data
 			DataMember currentDataMember = *dataMemberPtr;
-			returnMemberNode.CurrentNodeExpression = CreateRef<Expression>();
-			returnMemberNode.CurrentNodeExpression->Value = GetCurrentToken(currentLocation);
-			returnMemberNode.ReturnType = currentDataMember.PrimitiveType;
+			returnMemberNode->ReturnType = currentDataMember.PrimitiveType;
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>();
-			childNode->CurrentNodeExpression->Value = GetCurrentToken(currentLocation + 2);
-			returnMemberNode.ChildMemberNode = childNode;
-			currentLocation += 3;
+			childNode->CurrentNodeExpression->Value = finalToken;
+			finalParentNode->ChildMemberNode = childNode;
 		}
 		else if (FunctionNode* functionMemberPtr = std::get_if<FunctionNode>(&currentMemberType->Value))
 		{
@@ -1150,17 +1278,15 @@ namespace Kargono::Scripting
 			FunctionNode currentFunctionMember = *functionMemberPtr;
 			FunctionCallNode newFunctionCall;
 			// Fill function call node
-			returnMemberNode.CurrentNodeExpression = CreateRef<Expression>();
-			returnMemberNode.CurrentNodeExpression->Value = GetCurrentToken(currentLocation);
-			returnMemberNode.ReturnType = currentFunctionMember.ReturnType;
-			newFunctionCall.Identifier = GetCurrentToken(currentLocation + 2);
+			returnMemberNode->ReturnType = currentFunctionMember.ReturnType;
 			newFunctionCall.ReturnType = currentFunctionMember.ReturnType;
+			newFunctionCall.Identifier = finalToken;
 			// Check for opening parentheses
-			if (GetCurrentToken(currentLocation + 3).Type != ScriptTokenType::OpenParentheses)
+			if (GetCurrentToken(currentLocation).Type != ScriptTokenType::OpenParentheses)
 			{
 				return { false, {} };
 			}
-			currentLocation += 4;
+			currentLocation++;
 			
 			// Check for arguments and commas
 			bool continueLoop;
@@ -1234,11 +1360,12 @@ namespace Kargono::Scripting
 				parameterIteration++;
 			}
 
+			newFunctionCall.FunctionNode = functionMemberPtr;
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>();
 			childNode->CurrentNodeExpression->Value = newFunctionCall;
-			returnMemberNode.ChildMemberNode = childNode;
+			finalParentNode->ChildMemberNode = childNode;
 		}
 		else
 		{
@@ -1246,10 +1373,8 @@ namespace Kargono::Scripting
 			return { false, nullptr };
 		}
 
-		// Recursively look for more members and dot operators
-
 		// Fill the expression buffer and exit
-		newMemberExpression->Value = returnMemberNode;
+		newMemberExpression->Value = *returnMemberNode;
 		parentExpressionSize = currentLocation;
 		return { true, newMemberExpression };
 	}
@@ -1719,6 +1844,82 @@ namespace Kargono::Scripting
 		Ref<Statement> newStatement = CreateRef<Statement>();
 		newStatement->Value = newStatementConditional;
 
+		return { true, newStatement };
+	}
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementReturn()
+	{
+		StatementReturn newStatementReturn{};
+		uint32_t currentLocation{ 0 };
+
+		// Check for a return keyword
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Keyword || GetCurrentToken(currentLocation).Value != "return")
+		{
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		if (m_CurrentReturnType.Type == ScriptTokenType::None)
+		{
+			StoreParseError(ParseErrorType::Statement, "Attempt to add return statement for a function with a void return type", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		// Check for an expression
+		{
+			auto [success, expression] = ParseExpressionNode(currentLocation);
+
+			if (!success)
+			{
+				return { false, nullptr };
+			}
+			newStatementReturn.ReturnValue = expression;
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid expression provided in return statement", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		// Check for context probe
+		if (IsContextProbe(newStatementReturn.ReturnValue))
+		{
+			CursorContext newContext;
+			ScriptToken newReturnType;
+			if (m_CurrentReturnType.Type == ScriptTokenType::PrimitiveType)
+			{
+				newReturnType = m_CurrentReturnType;
+			}
+			else
+			{
+				newReturnType.Type = ScriptTokenType::PrimitiveType;
+				newReturnType.Value = "None";
+			}
+			
+			newContext.AllReturnTypes.push_back(newReturnType);
+			newContext.StackVariables = m_StackVariables;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement return", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		// Check for a terminating semicolon
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Semicolon)
+		{
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		// Ensure return type of the function is equivalent to the returnExpression type
+		if (m_CurrentReturnType.Value != GetPrimitiveTypeFromToken(newStatementReturn.ReturnValue->GetReturnType()).Value)
+		{
+			StoreParseError(ParseErrorType::Statement, "Return statement expression type does not match function return type", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = newStatementReturn;
+		Advance(currentLocation);
 		return { true, newStatement };
 	}
 	ScriptToken ScriptTokenParser::GetToken(int32_t location)

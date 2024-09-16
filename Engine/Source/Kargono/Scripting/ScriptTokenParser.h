@@ -34,6 +34,7 @@ namespace Kargono::Scripting
 		std::tuple<bool, Ref<Statement>> ParseStatementAssignment();
 		std::tuple<bool, Ref<Statement>> ParseStatementDeclarationAssignment();
 		std::tuple<bool, Ref<Statement>> ParseStatementConditional(bool chainConditions);
+		std::tuple<bool, Ref<Statement>> ParseStatementReturn();
 	private:
 		ScriptToken GetToken(int32_t location);
 		ScriptToken GetCurrentToken(int32_t offset = 0);
@@ -56,6 +57,7 @@ namespace Kargono::Scripting
 		std::vector<std::vector<StackVariable>> m_StackVariables{};
 		ScriptAST m_AST{};
 		uint32_t m_TokenLocation{ 0 };
+		ScriptToken m_CurrentReturnType{};
 		CursorContext m_CursorContext{};
 	};
 }

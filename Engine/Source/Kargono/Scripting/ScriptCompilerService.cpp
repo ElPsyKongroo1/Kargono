@@ -237,8 +237,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.Name = "int32";
 		newPrimitiveType.Description = "Basic signed integer type that is 32 bits wide. This variable can only hold discrete values between -2,147,483,648 to 2,147,483,647";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
-		newPrimitiveType.EmittedDeclaration = "uint32_t";
-		newPrimitiveType.EmittedParameter = "uint32_t";
+		newPrimitiveType.EmittedDeclaration = "int32_t";
+		newPrimitiveType.EmittedParameter = "int32_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -276,6 +276,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
+
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldFloat" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
@@ -283,9 +284,117 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "*(float*)GetEntityFieldByName(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
 		newMemberParameter = {};
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldVector3" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector3" };
+		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns vector3 fields. The argument is the name of the field.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "*(Math::vec3*)GetEntityFieldByName(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newDataMember.Name = "Transform";
+		newDataMember.Description = "This entity member is a transform component. This component stores the location, size, and rotation of the provided entity.";
+		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
+		newDataMember.PrimitiveType.Value = "None";
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetTranslation" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function sets the position for the selected entity. This function takes a vector3 to denote the entity's new x, y, and z position.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newPosition" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+			
+			generator.m_OutputText << "TransformComponent_SetTranslation(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+
+		newDataMember.Name = "RigidBody";
+		newDataMember.Description = "This entity member is a rigid body component. This component provides an interface to interact with the 2D physics body associated with this entity.";
+		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
+		newDataMember.PrimitiveType.Value = "None";
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetLinearVelocity" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function sets the current linear velocity of the 2D physics object associated with this entity. This function takes a vector2 to denote the entity's new x and y velocity.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newVelocity" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "Rigidbody2DComponent_SetLinearVelocity(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+
+		newDataMember.Name = "Tag";
+		newDataMember.Description = "This entity member is a tag component. This component provides a name that can be used to identify this entity. Note that tags are not necessarily unique!";
+		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
+		newDataMember.PrimitiveType.Value = "None";
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetTag" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
+		newFunctionMember.Description = "This functions gets the current tag of the entity as a string.";
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "TagComponent_GetTag(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -318,6 +427,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
+		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -329,6 +439,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "Math::vec3";
 		newPrimitiveType.EmittedParameter = "Math::vec3";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -340,6 +451,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "Math::vec4";
 		newPrimitiveType.EmittedParameter = "Math::vec4";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 	}
 

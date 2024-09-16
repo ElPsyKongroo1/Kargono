@@ -47,96 +47,99 @@ namespace Kargono::Scripting
 
 	void ScriptOutputGenerator::GenerateStatement(Ref<Statement> statement)
 	{
-		std::visit([&](auto&& state)
+		if (StatementEmpty* emptyStatement = std::get_if<StatementEmpty>(&statement->Value))
+		{
+			// Do not display anything for an empty statement
+		}
+		else if (StatementExpression* expressionStatement = std::get_if<StatementExpression>(&statement->Value))
+		{
+			AddIndentation();
+			GenerateExpression(expressionStatement->Value);
+			m_OutputText << ";\n";
+		}
+		else if (StatementReturn* returnStatement = std::get_if<StatementReturn>(&statement->Value))
+		{
+			AddIndentation();
+			m_OutputText << "return ";
+			GenerateExpression(returnStatement->ReturnValue);
+			m_OutputText << ";\n";
+		}
+		else if (StatementDeclaration* declarationStatement = std::get_if<StatementDeclaration>(&statement->Value))
+		{
+			AddIndentation();
+			PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(declarationStatement->Type.Value);
+			if (typeValue.Name == "")
 			{
-				using type = std::decay_t<decltype(state)>;
-				if constexpr (std::is_same_v<type, StatementEmpty>)
-				{
-					// Do not display anything for an empty statement
-				}
-				else if constexpr (std::is_same_v<type, StatementExpression>)
-				{
-					AddIndentation();
-					GenerateExpression(state.Value);
-					m_OutputText << ";\n";
-				}
-				else if constexpr (std::is_same_v<type, StatementDeclaration>)
-				{
-					AddIndentation();
-					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
-					if (typeValue.Name == "")
-					{
-						return;
-					}
-					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << ";\n";
+				return;
+			}
+			m_OutputText << typeValue.EmittedDeclaration << " " << declarationStatement->Name.Value << ";\n";
 
-				}
-				else if constexpr (std::is_same_v<type, StatementAssignment>)
-				{
-					AddIndentation();
-					GenerateExpression(state.Name);
-					m_OutputText << " = ";
-					GenerateExpression(state.Value);
-					m_OutputText << ";\n";
+		}
+		else if (StatementAssignment* assignmentStatement = std::get_if<StatementAssignment>(&statement->Value))
+		{
+			AddIndentation();
+			GenerateExpression(assignmentStatement->Name);
+			m_OutputText << " = ";
+			GenerateExpression(assignmentStatement->Value);
+			m_OutputText << ";\n";
 
-				}
-				else if constexpr (std::is_same_v<type, StatementDeclarationAssignment>)
-				{
-					AddIndentation();
-					PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(state.Type.Value);
-					if (typeValue.Name == "")
-					{
-						return;
-					}
-					m_OutputText << typeValue.EmittedDeclaration << " " << state.Name.Value << " = ";
-					GenerateExpression(state.Value);
-					m_OutputText << ";\n";
-				}
+		}
+		else if (StatementDeclarationAssignment* declarationAssignmentStatement = std::get_if<StatementDeclarationAssignment>(&statement->Value))
+		{
+			AddIndentation();
+			PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(declarationAssignmentStatement->Type.Value);
+			if (typeValue.Name == "")
+			{
+				return;
+			}
+			m_OutputText << typeValue.EmittedDeclaration << " " << declarationAssignmentStatement->Name.Value << " = ";
+			GenerateExpression(declarationAssignmentStatement->Value);
+			m_OutputText << ";\n";
+		}
 
-				else if constexpr (std::is_same_v<type, StatementConditional>)
-				{
-					AddIndentation();
-					switch (state.Type)
-					{
-					case ConditionalType::IF:
-						m_OutputText << "if (";
-						break;
-					case ConditionalType::ELSEIF:
-						m_OutputText << "else if (";
-						break;
-					case ConditionalType::ELSE:
-						m_OutputText << "else\n";
-						break;
-					case ConditionalType::None:
-					default:
-						KG_WARN("Invalid conditional type provided to ScriptOutputGenerator");
-						return;
-					}
+		else if (StatementConditional* conditionalStatement = std::get_if<StatementConditional>(&statement->Value))
+		{
+			AddIndentation();
+			switch (conditionalStatement->Type)
+			{
+			case ConditionalType::IF:
+				m_OutputText << "if (";
+				break;
+			case ConditionalType::ELSEIF:
+				m_OutputText << "else if (";
+				break;
+			case ConditionalType::ELSE:
+				m_OutputText << "else\n";
+				break;
+			case ConditionalType::None:
+			default:
+				KG_WARN("Invalid conditional type provided to ScriptOutputGenerator");
+				return;
+			}
 
-					if (state.Type == ConditionalType::IF || state.Type == ConditionalType::ELSEIF)
-					{
-						GenerateExpression(state.ConditionExpression);
-						m_OutputText << ")\n";
-					}
-					AddIndentation();
-					m_OutputText << "{\n";
+			if (conditionalStatement->Type == ConditionalType::IF || conditionalStatement->Type == ConditionalType::ELSEIF)
+			{
+				GenerateExpression(conditionalStatement->ConditionExpression);
+				m_OutputText << ")\n";
+			}
+			AddIndentation();
+			m_OutputText << "{\n";
 
-					m_IndentLevel++;
-					for (auto& statement : state.BodyStatements)
-					{
-						GenerateStatement(statement);
-					}
-					m_IndentLevel--;
-					AddIndentation();
-					m_OutputText << "}\n";
+			m_IndentLevel++;
+			for (auto& statement : conditionalStatement->BodyStatements)
+			{
+				GenerateStatement(statement);
+			}
+			m_IndentLevel--;
+			AddIndentation();
+			m_OutputText << "}\n";
 
-					for (auto& statement : state.ChainedConditionals)
-					{
-						GenerateStatement(statement);
-					}
+			for (auto& statement : conditionalStatement->ChainedConditionals)
+			{
+				GenerateStatement(statement);
+			}
 
-				}
-			}, statement->Value);
+		}
 	}
 
 	void ScriptOutputGenerator::GenerateExpression(Ref<Expression> expression)
@@ -209,38 +212,65 @@ namespace Kargono::Scripting
 		}
 		else if (MemberNode* memberNode = std::get_if<MemberNode>(&expression->Value))
 		{
-			// Generate text for member node
-			GenerateExpression(memberNode->CurrentNodeExpression);
+			// Find terminal node
 			Ref<MemberNode> currentNode = memberNode->ChildMemberNode;
-			while (currentNode)
 			{
-				// Generate expression code for each MemberNode in linkedlist
-				m_OutputText << '.';
-				if (ScriptToken* expressionToken = std::get_if<ScriptToken>(&currentNode->CurrentNodeExpression->Value))
+				while (currentNode->ChildMemberNode)
 				{
-					GenerateExpression(currentNode->CurrentNodeExpression);
+					currentNode = currentNode->ChildMemberNode;
 				}
-				else if (FunctionCallNode* expressionFunctionCall = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
-				{
-					m_OutputText << expressionFunctionCall->Identifier.Value << '(';
-					uint32_t iteration{ 0 };
-					for (auto argument : expressionFunctionCall->Arguments)
-					{
-						GenerateExpression(argument);
-						if (iteration + 1 < expressionFunctionCall->Arguments.size())
-						{
-							m_OutputText << ", ";
-						}
-						iteration++;
-					}
-					m_OutputText << ')';
-				}
-				else
-				{
-					KG_WARN("Invalid current expression inside MemberNode when generating output");
-				}
-				currentNode = currentNode->ChildMemberNode;
+
 			}
+			bool useOnGenerate = false;
+			FunctionCallNode* funcCallNode;
+			if (funcCallNode = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
+			{
+				if (funcCallNode->FunctionNode && funcCallNode->FunctionNode->OnGenerateMemberFunction)
+				{
+					useOnGenerate = true;
+				}
+			}
+			if (useOnGenerate)
+			{
+				funcCallNode->FunctionNode->OnGenerateMemberFunction(*this, *memberNode);
+			}
+			else
+			{
+				// Generate text for member node
+				GenerateExpression(memberNode->CurrentNodeExpression);
+				currentNode = memberNode->ChildMemberNode;
+				while (currentNode)
+				{
+					// Generate expression code for each MemberNode in linkedlist
+					m_OutputText << '.';
+					if (ScriptToken* expressionToken = std::get_if<ScriptToken>(&currentNode->CurrentNodeExpression->Value))
+					{
+						GenerateExpression(currentNode->CurrentNodeExpression);
+					}
+					else if (FunctionCallNode* expressionFunctionCall = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
+					{
+						m_OutputText << expressionFunctionCall->Identifier.Value << '(';
+						uint32_t iteration{ 0 };
+						for (auto argument : expressionFunctionCall->Arguments)
+						{
+							GenerateExpression(argument);
+							if (iteration + 1 < expressionFunctionCall->Arguments.size())
+							{
+								m_OutputText << ", ";
+							}
+							iteration++;
+						}
+						m_OutputText << ')';
+					}
+					else
+					{
+						KG_WARN("Invalid current expression inside MemberNode when generating output");
+					}
+					currentNode = currentNode->ChildMemberNode;
+				}
+			}
+
+			
 		}
 
 		if (expression->GenerationAffixes)

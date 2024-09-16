@@ -3629,6 +3629,26 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::Lua()
 	return langDef;
 }
 
+static void processMemberType(TextEditor::LanguageDefinition& langDef, Kargono::Ref<Kargono::Scripting::MemberType> member)
+{
+	if (Kargono::Scripting::DataMember* dataMember = std::get_if<Kargono::Scripting::DataMember>(&member->Value))
+	{
+		TextEditor::Identifier id;
+		id.mDeclaration = dataMember->Description;
+		langDef.mIdentifiers.insert_or_assign(dataMember->Name, id);
+		for (auto& [childName, childMember] : dataMember->Members)
+		{
+			processMemberType(langDef, childMember);
+		}
+	}
+	if (Kargono::Scripting::FunctionNode* function = std::get_if<Kargono::Scripting::FunctionNode>(&member->Value))
+	{
+		TextEditor::Identifier id;
+		id.mDeclaration = function->Description;
+		langDef.mIdentifiers.insert_or_assign(function->Name.Value, id);
+	}
+}
+
 const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScript()
 {
 	static bool inited = false;
@@ -3670,6 +3690,14 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 					id.mDeclaration = "Built-in Namespace";
 				}
 				langDef.mIdentifiers.insert_or_assign(funcNode.Namespace.Value, id);
+			}
+		}
+
+		for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+		{
+			for (auto& [memberName, member] : primitiveType.Members)
+			{
+				processMemberType(langDef, member);
 			}
 		}
 		langDef.mTokenizeScript = true;

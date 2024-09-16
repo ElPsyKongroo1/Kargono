@@ -232,7 +232,6 @@ namespace Kargono::Panels
 		constexpr float iconSize{ 36.0f };
 
 		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
-		// {0.2f, 0.2f, 0.2f, 0.63f} // OLD BACKGROUND COLOR
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
@@ -996,9 +995,9 @@ namespace Kargono::Panels
 					DrawFrustrum(selectedEntity);
 				}
 			}
+			DrawWorldAxis(); 
 		}
 
-		DrawWorldAxis(); 
 
 		Rendering::RenderingService::EndScene();
 	}

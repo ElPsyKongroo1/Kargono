@@ -93,6 +93,7 @@ namespace Kargono::Scripting
 		std::string EmittedParameter {};
 		Ref<Rendering::Texture2D> Icon {};
 		std::unordered_map<std::string, Ref<MemberType>> Members{};
+		std::unordered_set<std::string> AcceptableArithmetic{};
 	};
 
 }
@@ -198,12 +199,15 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 	};
 
+	struct FunctionNode;
+
 	struct FunctionCallNode
 	{
 		ScriptToken Namespace{};
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
 		std::vector<Ref<Expression>> Arguments{};
+		FunctionNode* FunctionNode{};
 	};
 
 	struct UnaryOperationNode
@@ -282,6 +286,11 @@ namespace Kargono::Scripting
 	{
 	};
 
+	struct StatementReturn
+	{
+		Ref<Expression> ReturnValue{ nullptr };
+	};
+
 	struct StatementExpression
 	{
 		Ref<Expression> Value{ nullptr };
@@ -352,7 +361,10 @@ namespace Kargono::Scripting
 
 	struct Statement
 	{
-		std::variant<StatementEmpty, StatementExpression, StatementDeclaration, StatementAssignment, StatementDeclarationAssignment, StatementConditional> Value;
+		std::variant<StatementEmpty, StatementExpression, 
+			StatementDeclaration, StatementAssignment, 
+			StatementDeclarationAssignment, StatementConditional,
+			StatementReturn> Value;
 	};
 
 	struct FunctionParameter
@@ -360,6 +372,8 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> AllTypes{};
 		ScriptToken Identifier{};
 	};
+
+	class ScriptOutputGenerator;
 
 	struct FunctionNode
 	{
@@ -369,6 +383,7 @@ namespace Kargono::Scripting
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Ref<Statement>> Statements{};
 		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
+		std::function<void(ScriptOutputGenerator& generator, MemberNode&)> OnGenerateMemberFunction { nullptr };
 		std::string Description { "Built-in Function"};
 
 		operator bool() const
@@ -448,10 +463,14 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 	};
 
+	struct MemberType;
+
 	struct DataMember
 	{
 		ScriptToken PrimitiveType{};
 		std::string Name{};
+		std::string Description{};
+		std::unordered_map<std::string, Ref<MemberType>> Members{};
 	};
 
 	struct MemberType
