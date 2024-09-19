@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "Kargono/Core/Base.h"
+#include "Kargono/Core/WrappedData.h"
 
 namespace Kargono::Rendering
 {
@@ -28,6 +29,7 @@ namespace Kargono::Scripting
 		StringLiteral,
 		BooleanLiteral,
 		FloatLiteral,
+		InputKeyLiteral,
 
 		// Keywords
 		Keyword,
@@ -41,6 +43,8 @@ namespace Kargono::Scripting
 		// Punctuation
 		Semicolon,
 		NamespaceResolver,
+		OrOperator,
+		AndOperator,
 		OpenParentheses,
 		CloseParentheses,
 		OpenCurlyBrace,
@@ -62,6 +66,9 @@ namespace Kargono::Scripting
 		GreaterThanOrEqual,
 		LessThan,
 		LessThanOrEqual,
+		ConditionalOperator,
+		PrecedenceOperator,
+		NegationOperator,
 
 		// Comments
 		SingleLineComment,
@@ -108,6 +115,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
+		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -121,12 +129,23 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::CloseCurlyBrace: return "Close Curly Brace";
 		case Scripting::ScriptTokenType::Comma: return "Comma";
 		case Scripting::ScriptTokenType::DotOperator: return "Dot Operator";
+		case Scripting::ScriptTokenType::OrOperator: return "Or Operator";
+		case Scripting::ScriptTokenType::AndOperator: return "And Operator";
 
 		case Scripting::ScriptTokenType::AssignmentOperator: return "Assignment Operator";
 		case Scripting::ScriptTokenType::AdditionOperator: return "Addition Operator";
 		case Scripting::ScriptTokenType::SubtractionOperator: return "Subtraction Operator";
 		case Scripting::ScriptTokenType::DivisionOperator: return "Division Operator";
 		case Scripting::ScriptTokenType::MultiplicationOperator: return "Multiplication Operator";
+
+		case Scripting::ScriptTokenType::EqualToOperator: return "Equal To Operator";
+		case Scripting::ScriptTokenType::NotEqualToOperator: return "Not Equal To Operator";
+		case Scripting::ScriptTokenType::GreaterThan: return "Greater Than";
+		case Scripting::ScriptTokenType::GreaterThanOrEqual: return "Greater Than Or Equal";
+		case Scripting::ScriptTokenType::LessThan: return "Less Than";
+		case Scripting::ScriptTokenType::LessThanOrEqual: return "Less Than Or Equal";
+		case Scripting::ScriptTokenType::ConditionalOperator: return "Conditional Operator";
+		case Scripting::ScriptTokenType::PrecedenceOperator: return "Precedence Operator";
 
 		case Scripting::ScriptTokenType::SingleLineComment: return "Single Line Comment";
 		case Scripting::ScriptTokenType::MultiLineComment: return "Multi Line Comment";
@@ -231,6 +250,20 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 	};
 
+	struct TernaryOperationNode
+	{
+		Ref<Expression> Conditional {};
+		Ref<Expression> OptionOne {};
+		Ref<Expression> OptionTwo {};
+		ScriptToken ReturnType{};
+	};
+
+	struct TokenExpressionNode
+	{
+		ScriptToken Value{};
+		ScriptToken ReturnType{};
+	};
+
 	struct ExpressionGenerationAffixes
 	{
 		std::string Prefix;
@@ -239,7 +272,7 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, ScriptToken, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode> Value{};
+		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
@@ -264,10 +297,15 @@ namespace Kargono::Scripting
 				InitializationListNode& initializationListNode = *initializationListNodePtr;
 				return initializationListNode.ReturnType;
 			}
-			else if (ScriptToken* scriptTokenPtr = std::get_if<ScriptToken>(&Value))
+			else if (TernaryOperationNode* ternaryOperationNodePtr = std::get_if<TernaryOperationNode>(&Value))
 			{
-				ScriptToken& scriptToken = *scriptTokenPtr;
-				return scriptToken;
+				TernaryOperationNode& ternaryOperationNode = *ternaryOperationNodePtr;
+				return ternaryOperationNode.ReturnType;
+			}
+			else if (TokenExpressionNode* scriptTokenPtr = std::get_if<TokenExpressionNode>(&Value))
+			{
+				TokenExpressionNode& tokenExpressionNode = *scriptTokenPtr;
+				return tokenExpressionNode.ReturnType;
 			}
 			else if (MemberNode* memberNodePtr = std::get_if<MemberNode>(&Value))
 			{

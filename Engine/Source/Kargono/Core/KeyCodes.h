@@ -16,6 +16,7 @@ namespace Kargono::Key
 	enum : KeyCode
 	{
 		// From glfw3.h
+		None = 0,
 		Space = 32,
 		Apostrophe = 39, /* ' */
 		Comma = 44, /* , */
@@ -418,6 +419,7 @@ namespace Kargono::Utility
 		if (codeString == "RightAlt")			{ return Key::RightAlt; }
 		if (codeString == "RightSuper")			{ return Key::RightSuper; }
 		if (codeString == "Menu")				{ return Key::Menu;}
+		return { Key::None };
 	}
 	
 }

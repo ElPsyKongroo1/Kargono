@@ -2,6 +2,7 @@
 
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Core/KeyCodes.h"
 
 namespace Kargono::Scripting
 {
@@ -49,6 +50,29 @@ namespace Kargono::Scripting
 					continue;
 				}
 
+				// Check for key literals
+				if (m_TextBuffer == "Key")
+				{
+					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+					{
+						Advance(2);
+						ClearBuffer();
+						// Fill remainder of buffer
+						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						{
+							AddCurrentCharToBuffer();
+							Advance();
+						}
+						if (Utility::StringToKeyCode(m_TextBuffer) == Key::None)
+						{
+							ClearBuffer();
+							continue;
+						}
+						AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer});
+						continue;
+					}
+				}
+
 				// Check for primitive types
 				if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(m_TextBuffer))
 				{
@@ -61,7 +85,7 @@ namespace Kargono::Scripting
 				AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
 				continue;
 			}
-
+			
 			if (std::isdigit(GetCurrentChar()))
 			{
 				// Add first digit to buffer
@@ -140,6 +164,12 @@ namespace Kargono::Scripting
 			if (GetCurrentChar() == ';')
 			{
 				AddTokenAndClearBuffer(ScriptTokenType::Semicolon, { ';' });
+				Advance();
+				continue;
+			}
+			if (GetCurrentChar() == '!')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::NegationOperator, { '!' });
 				Advance();
 				continue;
 			}
@@ -330,6 +360,13 @@ namespace Kargono::Scripting
 				continue;
 			}
 
+			if (GetCurrentChar() == '?')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::ConditionalOperator, { '?' });
+				Advance();
+				continue;
+			}
+
 			if (GetCurrentChar() == ',')
 			{
 				AddTokenAndClearBuffer(ScriptTokenType::Comma, { ',' });
@@ -337,9 +374,29 @@ namespace Kargono::Scripting
 				continue;
 			}
 
-			if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+			if (GetCurrentChar() == ':')
 			{
-				AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
+				if (GetCurrentChar(1) == ':')
+				{
+					AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
+					Advance(2);
+					continue;
+				}
+				AddTokenAndClearBuffer(ScriptTokenType::PrecedenceOperator, { ':' });
+				Advance();
+				continue;
+			}
+
+			if (GetCurrentChar() == '|' && GetCurrentChar(1) == '|')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::OrOperator, { "||" });
+				Advance(2);
+				continue;
+			}
+
+			if (GetCurrentChar() == '&' && GetCurrentChar(1) == '&')
+			{
+				AddTokenAndClearBuffer(ScriptTokenType::AndOperator, { "&&" });
 				Advance(2);
 				continue;
 			}
@@ -400,6 +457,10 @@ namespace Kargono::Scripting
 	{
 		ScriptToken newToken{ type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size() };
 		m_Tokens.push_back(newToken);
+		m_TextBuffer.clear();
+	}
+	void ScriptTokenizer::ClearBuffer()
+	{
 		m_TextBuffer.clear();
 	}
 }

@@ -31,6 +31,7 @@ namespace Kargono::Scripting
 		static bool IsAdditionOrSubtractionOperator(ScriptToken token);
 		static bool IsMultiplicationOrDivisionOperator(ScriptToken token);
 		static bool IsComparisonOperator(ScriptToken token);
+		static bool IsBooleanOperator(ScriptToken token);
 	public:
 		static LanguageDefinition s_ActiveLanguageDefinition;
 	};

@@ -149,9 +149,16 @@ namespace Kargono::Scripting
 			m_OutputText << expression->GenerationAffixes->Prefix;
 		}
 
-		if (ScriptToken* token = std::get_if<ScriptToken>(&expression->Value))
+		if (TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
-			m_OutputText << token->Value;
+			if (token->Value.Type == ScriptTokenType::InputKeyLiteral)
+			{
+				m_OutputText << "Key::" + token->Value.Value;
+			}
+			else
+			{
+				m_OutputText << token->Value.Value;
+			}
 		}
 		else if (FunctionCallNode* funcNode = std::get_if<FunctionCallNode>(&expression->Value))
 		{
@@ -210,6 +217,14 @@ namespace Kargono::Scripting
 			m_OutputText << " " << binaryOperationNode->Operator.Value << " ";
 			GenerateExpression(binaryOperationNode->RightOperand);
 		}
+		else if (TernaryOperationNode* ternaryOperationNode = std::get_if<TernaryOperationNode>(&expression->Value))
+		{
+			GenerateExpression(ternaryOperationNode->Conditional);
+			m_OutputText << " ? ";
+			GenerateExpression(ternaryOperationNode->OptionOne);
+			m_OutputText << " : ";
+			GenerateExpression(ternaryOperationNode->OptionTwo);
+		}
 		else if (MemberNode* memberNode = std::get_if<MemberNode>(&expression->Value))
 		{
 			// Find terminal node
@@ -243,7 +258,7 @@ namespace Kargono::Scripting
 				{
 					// Generate expression code for each MemberNode in linkedlist
 					m_OutputText << '.';
-					if (ScriptToken* expressionToken = std::get_if<ScriptToken>(&currentNode->CurrentNodeExpression->Value))
+					if (TokenExpressionNode* expressionToken = std::get_if<TokenExpressionNode>(&currentNode->CurrentNodeExpression->Value))
 					{
 						GenerateExpression(currentNode->CurrentNodeExpression);
 					}

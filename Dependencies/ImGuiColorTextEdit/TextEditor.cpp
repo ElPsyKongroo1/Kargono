@@ -1377,7 +1377,7 @@ void TextEditor::Render()
 			if (!id.empty())
 			{
 				auto it = mLanguageDefinition.mIdentifiers.find(id);
-				if (it != mLanguageDefinition.mIdentifiers.end())
+				if (it != mLanguageDefinition.mIdentifiers.end() && !it->second.mDeclaration.empty())
 				{
 					ImGui::SetNextWindowSize({ 400.0f, 0.0f });
 					ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIService::s_HighlightColor1);
@@ -2564,6 +2564,9 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 				case Kargono::Scripting::ScriptTokenType::FloatLiteral:
 					tokenColor = PaletteIndex::Number;
 					break;
+				case Kargono::Scripting::ScriptTokenType::InputKeyLiteral:
+					tokenColor = PaletteIndex::Number;
+					break;
 				case Kargono::Scripting::ScriptTokenType::BooleanLiteral:
 					tokenColor = PaletteIndex::String;
 					break;
@@ -3676,7 +3679,10 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::KargonoScr
 		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
 			Identifier id;
-			id.mDeclaration = funcNode.Description;
+			if (!funcNode.Description.empty())
+			{
+				id.mDeclaration = funcNode.Description;
+			}
 			langDef.mIdentifiers.insert_or_assign(funcName, id);
 
 			if (funcNode.Namespace)

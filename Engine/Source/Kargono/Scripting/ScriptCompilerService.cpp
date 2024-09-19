@@ -7,6 +7,29 @@
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptTokenParser.h"
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Utility
+{
+	inline Scripting::ScriptToken WrappedVarTypeToPrimitiveType(WrappedVarType type)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer32: return { Scripting::ScriptTokenType::PrimitiveType, "int32" };
+		case WrappedVarType::UInteger16: return { Scripting::ScriptTokenType::PrimitiveType, "uint16" };
+		case WrappedVarType::UInteger32: return { Scripting::ScriptTokenType::PrimitiveType, "uint32" };
+		case WrappedVarType::UInteger64: return { Scripting::ScriptTokenType::PrimitiveType, "uint64" };
+		case WrappedVarType::Vector3: return { Scripting::ScriptTokenType::PrimitiveType, "vector3" };
+		case WrappedVarType::String: return { Scripting::ScriptTokenType::PrimitiveType, "string" };
+		case WrappedVarType::Bool: return { Scripting::ScriptTokenType::PrimitiveType, "bool" };
+		case WrappedVarType::Float: return { Scripting::ScriptTokenType::PrimitiveType, "float" };
+		case WrappedVarType::Void: return { Scripting::ScriptTokenType::None, "" };
+		case WrappedVarType::None: return { Scripting::ScriptTokenType::None, "" };
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return { Scripting::ScriptTokenType::None, "" };
+	}
+}
 
 namespace Kargono::Scripting
 {
@@ -14,6 +37,7 @@ namespace Kargono::Scripting
 
 	static std::vector<ScriptToken> s_AllLiterals
 	{
+		{ ScriptTokenType::PrimitiveType, "bool" },
 		{ ScriptTokenType::PrimitiveType, "int32" },
 		{ ScriptTokenType::PrimitiveType, "uint16" },
 		{ ScriptTokenType::PrimitiveType, "uint64" },
@@ -21,8 +45,17 @@ namespace Kargono::Scripting
 		{ ScriptTokenType::PrimitiveType, "float" },
 		{ ScriptTokenType::PrimitiveType, "string" }
 	};
+
+	static std::vector<ScriptToken> s_AllIntegerTypes
+	{
+		{ ScriptTokenType::PrimitiveType, "int32" },
+		{ ScriptTokenType::PrimitiveType, "uint16" },
+		{ ScriptTokenType::PrimitiveType, "uint32" },
+		{ ScriptTokenType::PrimitiveType, "uint64" }
+	};
 	static std::vector<ScriptToken> s_AllLiteralsWithoutString
 	{
+		{ ScriptTokenType::PrimitiveType, "bool" },
 		{ ScriptTokenType::PrimitiveType, "int32" },
 		{ ScriptTokenType::PrimitiveType, "uint16" },
 		{ ScriptTokenType::PrimitiveType, "uint32" },
@@ -224,6 +257,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconBoolean;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		newPrimitiveType.Name = "keycode";
+		newPrimitiveType.Description = "A predefined type that contains all available input keys. Ex: Key::RightShift or Key::A";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::InputKeyLiteral;
+		newPrimitiveType.EmittedDeclaration = "KeyCode";
+		newPrimitiveType.EmittedParameter = "KeyCode";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "string";
 		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
@@ -277,6 +318,27 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
 
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "HasComponent" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newFunctionMember.Description = "This member function checks whether the selected entity has the provided component. This function takes the name of the component as an argument and returns a boolean indicating whether the entity has indicated the component.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "componentName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "CheckHasComponent(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldFloat" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
@@ -319,10 +381,91 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldUInt32" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "uint32" };
+		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns uint32 fields. The argument is the name of the field.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "*(uint32_t*)GetEntityFieldByName(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetFieldUInt32" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = {};
+		newFunctionMember.Description = "This member function sets the field denoted by its name to the value provided. This function takes any available primitive type.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newMemberParameter = {};
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newMemberParameter = {};
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "SetEntityFieldByName(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ", ";
+			generator.m_OutputText << "(void*)&RValueToLValue(";
+			generator.GenerateExpression(funcCall->Arguments.at(1));
+			generator.m_OutputText << "))";
+		};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetFieldVector3" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = {};
+		newFunctionMember.Description = "This member function sets the field denoted by its name to the value provided. This function takes a vector3 as the newValue.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newMemberParameter = {};
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newMemberParameter = {};
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "SetEntityFieldByName(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ", ";
+			generator.m_OutputText << "(void*)&RValueToLValue(";
+			generator.GenerateExpression(funcCall->Arguments.at(1));
+			generator.m_OutputText << "))";
+		};
+		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		
+
 		newDataMember.Name = "Transform";
 		newDataMember.Description = "This entity member is a transform component. This component stores the location, size, and rotation of the provided entity.";
 		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
 		newDataMember.PrimitiveType.Value = "None";
+
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetTranslation" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
@@ -343,6 +486,20 @@ namespace Kargono::Scripting
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetTranslation" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector3" };
+		newFunctionMember.Description = "This function gets the position for the selected entity. This function takes no parameters and returns a vector3.";
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			generator.m_OutputText << "TransformComponent_GetTranslation(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
@@ -350,6 +507,7 @@ namespace Kargono::Scripting
 		newDataMember.Description = "This entity member is a rigid body component. This component provides an interface to interact with the 2D physics body associated with this entity.";
 		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
 		newDataMember.PrimitiveType.Value = "None";
+
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetLinearVelocity" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
@@ -370,6 +528,22 @@ namespace Kargono::Scripting
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetLinearVelocity" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector2" };
+		newFunctionMember.Description = "This function gets the current linear velocity of the 2D physics object associated with this entity.";
+		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "Rigidbody2DComponent_GetLinearVelocity(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
@@ -439,6 +613,27 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "Math::vec3";
 		newPrimitiveType.EmittedParameter = "Math::vec3";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newDataMember.Name = "x";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "float";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "y";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "float";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "z";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "float";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
 		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -463,6 +658,9 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scenes", "This namespace provides functions that can manage the active scene.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input mode/mapping");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides function that interact with the active network connection between the current client and the server.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
@@ -631,9 +829,28 @@ namespace Kargono::Scripting
 			node.Namespace = {};
 			node.Identifier.Value = "SetWidgetBackgroundColor";
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetSelectedWidget" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Set the provided widget as selected in the current in-game user interface. This function takes the name of the window and the name of the widget as parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SetSelectedWidget";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -654,15 +871,15 @@ namespace Kargono::Scripting
 			node.Namespace = {};
 			node.Identifier.Value = "SetGameStateField";
 
-			if (ScriptToken* token = std::get_if<ScriptToken>(&node.Arguments.at(1)->Value))
+			if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&node.Arguments.at(1)->Value))
 			{
-				if (token->Type == ScriptTokenType::Identifier)
+				if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
 				{
-					token->Value = "&" + token->Value;
+					tokenExpression->Value.Value = "&" + tokenExpression->Value;
 				}
-				else if (IsLiteral(*token))
+				else if (IsLiteral(tokenExpression->Value))
 				{
-					token->Value = "(void*)&RValueToLValue(" + token->Value + ")";
+					tokenExpression->Value.Value = "(void*)&RValueToLValue(" + tokenExpression->Value.Value + ")";
 				}
 				else
 				{
@@ -675,9 +892,24 @@ namespace Kargono::Scripting
 				node.Arguments.at(1)->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
 			}
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameState" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetFieldUInt16" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Get the specified field in the active Game State and returns it as a uint16. This function requires the name of the field as a parameter.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "*(uint16_t*)GetGameStateField";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -735,9 +967,24 @@ namespace Kargono::Scripting
 			node.Identifier.Value = "LoadInputModeByName";
 
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsKeyPressed" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "keycode" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "queryKey" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Check if the provided key is current pressed on the keyboard. This function takes a keycode as a parameter.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "IsKeyPressed";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -799,11 +1046,208 @@ namespace Kargono::Scripting
 			node.Identifier.Value = "GenerateRandomNumber";
 
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
-
 		newFunctionNode = {};
 		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Math" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "NormalizeVector2" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "vector2" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "vectorToNormalize" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Normalize a provided vector. This function ensures that the magnitude (length) of the vector is 1. The ratios between component vectors (x,y,z) remain unchanged. This function takes in a single vector2.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "glm::normalize";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Math" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "MaxUInt16" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
+		newFunctionNode.Description = "This function returns the maximum value for a uint16.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "std::numeric_limits<uint16_t>().max()";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetActiveSessionSlot" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
+		newFunctionNode.Description = "This function retreives the slot of the current client inside the active application session. This function takes no parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "GetActiveSessionSlot";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "PushAllEntityLocation" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "providedEntity" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "providedLocation" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This function sends the provided location to the server and all other clients in the current session for the provided entity. This function takes an entity and a vector3 as parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SendAllEntityLocation";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "RequestJoinSession" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newFunctionNode.Description = "This function sends a request message to the server to join a session. This function takes no parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "RequestJoinSession";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "LeaveCurrentSession" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newFunctionNode.Description = "This function sends a message to the server to leave the active session. This function takes no parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "LeaveCurrentSession";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendAllEntityPhysics" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "providedEntity" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newLocation" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newLinearVelocity" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This functions sends all other clients on the network new translation and linear velocity for the provided entity. This function takes an entity to update, a new translation as a vector3, and a new linear velocity as a vector2.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SendAllEntityPhysics";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SignalAll" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newParameter.AllTypes = s_AllIntegerTypes;
+		newParameter.Identifier = { ScriptTokenType::Identifier, "signal" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This function sends a signal to the server, which is then sent to all other clients. This signal can be interpretted in different ways depending on your application's needs.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "SignalAll";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "RequestUserCount" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newFunctionNode.Description = "This function sends a request to the server to find out the number of users currently online. Note that a function needs to be set up to receive the user count request.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "RequestUserCount";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "EnableReadyCheck" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
+		newFunctionNode.Description = "This function sends a signal to the server indicating this client is ready. This can be intepretted differently depending on your application.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "EnableReadyCheck";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+		{
+			
+			newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scripts" };
+			newFunctionNode.Name = { ScriptTokenType::Identifier, script->m_ScriptName };
+			newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(Utility::WrappedFuncTypeToReturnType(script->m_FuncType));
+
+			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType))
+			{
+				ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(parameter);
+				if (currentToken.Value == "uint64")
+				{
+					newParameter.AllTypes.push_back(currentToken);
+					newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
+				}
+				else
+				{
+					newParameter.AllTypes.push_back(currentToken);
+				}
+				newParameter.Identifier = { ScriptTokenType::Identifier, "emptyName" };
+				newFunctionNode.Parameters.push_back(newParameter);
+				newParameter = {};
+			}
+
+			newFunctionNode.Description = "";
+			newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+			{
+				node.Namespace = {};
+			};
+			s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			newFunctionNode = {};
+			newParameter = {};
+		}
 	}
 
 	bool ScriptCompilerService::IsLiteralOrIdentifier(ScriptToken token)
@@ -820,7 +1264,8 @@ namespace Kargono::Scripting
 		if (token.Type == ScriptTokenType::IntegerLiteral ||
 			token.Type == ScriptTokenType::StringLiteral ||
 			token.Type == ScriptTokenType::BooleanLiteral ||
-			token.Type == ScriptTokenType::FloatLiteral)
+			token.Type == ScriptTokenType::FloatLiteral ||
+			token.Type == ScriptTokenType::InputKeyLiteral)
 		{
 			return true;
 		}
@@ -829,7 +1274,8 @@ namespace Kargono::Scripting
 
 	bool ScriptCompilerService::IsUnaryOperator(ScriptToken token)
 	{
-		if (token.Type == ScriptTokenType::SubtractionOperator)
+		if (token.Type == ScriptTokenType::SubtractionOperator ||
+			token.Type == ScriptTokenType::NegationOperator)
 		{
 			return true;
 		}
@@ -886,6 +1332,17 @@ namespace Kargono::Scripting
 		case ScriptTokenType::GreaterThanOrEqual:
 		case ScriptTokenType::LessThan:
 		case ScriptTokenType::LessThanOrEqual:
+			return true;
+		default:
+			return false;
+		}
+	}
+	bool ScriptCompilerService::IsBooleanOperator(ScriptToken token)
+	{
+		switch (token.Type)
+		{
+		case ScriptTokenType::AndOperator:
+		case ScriptTokenType::OrOperator:
 			return true;
 		default:
 			return false;
