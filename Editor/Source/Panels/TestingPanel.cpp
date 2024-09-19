@@ -40,7 +40,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Compile File"))
 		{
-			Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.CurrentOption);
+			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.CurrentOption));
 		}
 
 		if (ImGui::Button("Test Popup"))

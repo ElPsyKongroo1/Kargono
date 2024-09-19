@@ -92,7 +92,7 @@ namespace Kargono::Scripting
 
 		ScriptTokenParser tokenParser{};
 		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
-		tokenParser.PrintTokens();
+		//tokenParser.PrintTokens();
 
 		if (!parseSuccess)
 		{
@@ -104,7 +104,7 @@ namespace Kargono::Scripting
 			return "Token parsing failed";
 		}
 
-		tokenParser.PrintAST();
+		//tokenParser.PrintAST();
 
 		// Generate output text
 		ScriptOutputGenerator outputGenerator{};
@@ -116,7 +116,7 @@ namespace Kargono::Scripting
 			return "Failed to generate output text";
 		}
 		
-		KG_WARN(outputText);
+		//KG_WARN(outputText);
 		return outputText;
 	}
 
@@ -875,7 +875,7 @@ namespace Kargono::Scripting
 			{
 				if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
 				{
-					tokenExpression->Value.Value = "&" + tokenExpression->Value;
+					tokenExpression->Value.Value = "&" + tokenExpression->Value.Value;
 				}
 				else if (IsLiteral(tokenExpression->Value))
 				{
@@ -1075,7 +1075,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "std::numeric_limits<uint16_t>().max()";
+			node.Identifier.Value = "std::numeric_limits<uint16_t>().max";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

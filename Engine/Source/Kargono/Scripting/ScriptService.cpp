@@ -16,6 +16,7 @@
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Random.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
@@ -710,7 +711,8 @@ namespace Kargono::Scripting
 			{
 				continue;
 			}
-			outputStream << Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+			
+			outputStream << ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 			outputStream << '\n';
 		}
 		outputStream << "}\n";

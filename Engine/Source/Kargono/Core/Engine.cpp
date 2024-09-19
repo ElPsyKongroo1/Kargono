@@ -368,14 +368,17 @@ namespace Kargono
 	void EngineService::ProcessEventQueue()
 	{
 		KG_PROFILE_FUNCTION();
+		std::vector<Ref<Events::Event>> localEventCache;
+		{
+			std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_EventQueueMutex);
+			localEventCache = std::move(s_ActiveEngine->m_EventQueue);
+			s_ActiveEngine->m_EventQueue.clear();
+		}
 
-		std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_EventQueueMutex);
-
-		for (auto& event : s_ActiveEngine->m_EventQueue)
+		for (auto& event : localEventCache)
 		{
 			OnEvent(event.get());
 		}
-		s_ActiveEngine->m_EventQueue.clear();
 	}
 
 }
