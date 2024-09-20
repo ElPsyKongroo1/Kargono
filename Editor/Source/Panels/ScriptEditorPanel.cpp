@@ -84,6 +84,8 @@ namespace Kargono::Panels
 				};
 				s_AllScriptsTable.InsertTableEntry(newEntry);
 			}
+
+			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 		s_AllScriptsTable.OnRefresh();
 

@@ -190,6 +190,7 @@ namespace Kargono::Scenes
 		//====================
 		// Manage Scene
 		//====================
+		static bool IsSceneActive(const std::string& sceneName);
 		static void TransitionScene(Assets::AssetHandle newSceneHandle);
 		static void TransitionScene(Ref<Scene> newScene);
 		static void TransitionSceneFromName(const std::string& sceneName);

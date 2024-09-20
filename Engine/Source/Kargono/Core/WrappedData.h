@@ -504,6 +504,25 @@ namespace Kargono
 			return "";
 		}
 
+		inline std::string WrappedVarTypeToKGScript(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32: return "int32";
+			case WrappedVarType::UInteger16: return "uint16";
+			case WrappedVarType::UInteger32: return "uint32";
+			case WrappedVarType::UInteger64: return "uint64";
+			case WrappedVarType::Vector3: return "vector3";
+			case WrappedVarType::String: return "string";
+			case WrappedVarType::Void: return "void";
+			case WrappedVarType::Bool: return "bool";
+			case WrappedVarType::Float: return "float";
+			case WrappedVarType::None: return "None";
+			}
+			KG_ERROR("Unknown Type of WrappedVariableType.");
+			return "";
+		}
+
 		inline WrappedVarType StringToWrappedVarType(std::string type)
 		{
 			if (type == "Integer32") { return WrappedVarType::Integer32; }

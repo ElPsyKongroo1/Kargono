@@ -136,6 +136,7 @@ namespace Kargono::RuntimeUI
 		RuntimeUIService::RefreshDisplayedWindows();
 	}
 
+
 	void RuntimeUIService::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		if (!s_ActiveUI)
@@ -235,108 +236,108 @@ namespace Kargono::RuntimeUI
 		s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = color;
 	}
 
+	bool RuntimeUIService::IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag)
+	{
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
+		{
+			KG_WARN("Could not locate widget when checking the widget is selected");
+			return false;
+		}
+
+		if (s_ActiveUI->m_SelectedWidget == currentWidget.get())
+		{
+			return true;
+		}
+		return false;
+	}
+
 	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
 		{
-			if (window.Tag == windowTag)
-			{
-				for (auto& widget : window.Widgets)
-				{
-					if (widget->Tag == widgetTag)
-					{
-						if (widget->WidgetType == WidgetTypes::TextWidget)
-						{
-							TextWidget* textWidget = (TextWidget*)widget.get();
-							textWidget->Text = newText;
-							return;
-						}
-					}
-				}
-			}
+			KG_WARN("Could not locate widget when attempting to set a widget's text");
+			return;
 		}
+
+		if (currentWidget->WidgetType != WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to change the text of a widget that is not a text widget");
+			return;
+		}
+
+		TextWidget* textWidget = (TextWidget*)currentWidget.get();
+		textWidget->Text = newText;
 	}
 
 	void RuntimeUIService::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
 		{
-			if (window.Tag == windowTag)
-			{
-				for (auto& widget : window.Widgets)
-				{
-					if (widget->Tag == widgetTag)
-					{
-						s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->DefaultBackgroundColor;
-						s_ActiveUI->m_SelectedWidget = widget.get();
-						s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-						if (s_ActiveUI->m_FunctionPointers.OnMove)
-						{
-							((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
-						}
-						return;
-					}
-				}
-			}
+			KG_WARN("Could not locate widget when attempting to set a widget as selected");
+			return;
+		}
+
+		s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->DefaultBackgroundColor;
+		s_ActiveUI->m_SelectedWidget = currentWidget.get();
+		s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
+		if (s_ActiveUI->m_FunctionPointers.OnMove)
+		{
+			((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
 		}
 	}
 
 	void RuntimeUIService::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
 		{
-			if (window.Tag == windowTag)
-			{
-				for (auto& widget : window.Widgets)
-				{
-					if (widget->Tag == widgetTag)
-					{
-						if (widget->WidgetType == WidgetTypes::TextWidget)
-						{
-							TextWidget* textWidget = (TextWidget*)widget.get();
-							textWidget->TextColor = color;
-							return;
-						}
-					}
-				}
-			}
+			KG_WARN("Could not locate widget when attempting to set a widget's text color");
+			return;
 		}
+
+		if (currentWidget->WidgetType != WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to set text color on widget that is not a TextWidget");
+			return;
+		}
+
+		TextWidget* textWidget = (TextWidget*)currentWidget.get();
+		textWidget->TextColor = color;
 	}
 
 	void RuntimeUIService::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
 		{
-			if (window.Tag == windowTag)
-			{
-				for (auto& widget : window.Widgets)
-				{
-					if (widget->Tag == widgetTag)
-					{
-						widget->DefaultBackgroundColor = color;
-						widget->ActiveBackgroundColor = color;
-					}
-				}
-			}
+			KG_WARN("Could not locate widget when attempting to set a widget's background color");
+			return;
 		}
+
+		currentWidget->DefaultBackgroundColor = color;
+		currentWidget->ActiveBackgroundColor = color;
 	}
 
 	void RuntimeUIService::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		if (!currentWidget)
 		{
-			if (window.Tag == windowTag)
-			{
-				for (auto& widget : window.Widgets)
-				{
-					if (widget->Tag == widgetTag)
-					{
-						widget->Selectable = selectable;
-						CalculateDirections();
-					}
-				}
-			}
+			KG_WARN("Could not locate widget when attempting to set a widget as selectable");
+			return;
 		}
+
+		currentWidget->Selectable = selectable;
+		CalculateDirections();
 	}
 
 	void RuntimeUIService::SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
@@ -686,6 +687,24 @@ namespace Kargono::RuntimeUI
 
 			}
 		}
+	}
+
+	Ref<Widget> RuntimeUIService::GetWidget(const std::string& windowTag, const std::string& widgetTag)
+	{
+		for (auto& window : s_ActiveUI->m_Windows)
+		{
+			if (window.Tag == windowTag)
+			{
+				for (auto& widget : window.Widgets)
+				{
+					if (widget->Tag == widgetTag)
+					{
+						return widget;
+					}
+				}
+			}
+		}
+		return nullptr;
 	}
 
 	void Window::DisplayWindow()

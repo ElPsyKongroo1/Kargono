@@ -60,7 +60,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveUp->m_ID = Utility::GeneratePseudoRandomNumber();
 		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveUp->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
 		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
 		engineScripts.push_back(RuntimeUI_MoveUp);
 
@@ -69,7 +69,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveDown->m_ID = Utility::GeneratePseudoRandomNumber();
 		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveDown->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
 		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
 		engineScripts.push_back(RuntimeUI_MoveDown);
 
@@ -78,7 +78,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveLeft->m_ID = Utility::GeneratePseudoRandomNumber();
 		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveLeft->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
 		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
 		engineScripts.push_back(RuntimeUI_MoveLeft);
 
@@ -87,7 +87,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveRight->m_ID = Utility::GeneratePseudoRandomNumber();
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveRight->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
 		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
 		engineScripts.push_back(RuntimeUI_MoveRight);
 
@@ -96,7 +96,7 @@ namespace Kargono::Scripting
 		RuntimeUI_OnPress->m_ID = Utility::GeneratePseudoRandomNumber();
 		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_OnPress->m_SectionLabel = "RuntimeUI";
+		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
 		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
 		engineScripts.push_back(RuntimeUI_OnPress);
 
@@ -105,7 +105,7 @@ namespace Kargono::Scripting
 		EngineCore_CloseApplication->m_ID = Utility::GeneratePseudoRandomNumber();
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
-		EngineCore_CloseApplication->m_SectionLabel = "EngineCore";
+		EngineCore_CloseApplication->m_SectionLabel = "Engine";
 		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineService::SubmitApplicationCloseEvent);
 		engineScripts.push_back(EngineCore_CloseApplication);
 
@@ -114,9 +114,18 @@ namespace Kargono::Scripting
 		Client_SessionReadyCheck->m_ID = Utility::GeneratePseudoRandomNumber();
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
-		Client_SessionReadyCheck->m_SectionLabel = "Client";
+		Client_SessionReadyCheck->m_SectionLabel = "Network";
 		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::SessionReadyCheck);
 		engineScripts.push_back(Client_SessionReadyCheck);
+
+		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
+		Client_RequestUserCount->m_ScriptName = "RequestUserCount";
+		Client_RequestUserCount->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
+		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
+		Client_RequestUserCount->m_SectionLabel = "Network";
+		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::RequestUserCount);
+		engineScripts.push_back(Client_RequestUserCount);
 	}
 
 	void ScriptService::Init()
@@ -408,8 +417,10 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+	DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(BoolUInt16, bool, uint16_t)
+	DefineInsertFunction(BoolString, bool, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
 	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
@@ -515,8 +526,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&) 
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
 		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t) 
+		AddImportFunctionToHeaderFile(BoolString, bool, const std::string&) 
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
 		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
@@ -575,6 +588,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
@@ -585,6 +599,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomNumber, int32_t, int32_t, int32_t)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
@@ -659,6 +674,10 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
 		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolStringString, bool, const std::string&, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
+		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt16None, uint16_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GetActiveSessionSlot)
@@ -698,6 +717,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(BoolUInt16, bool, uint16_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(IsKeyPressed)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolString, bool, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Scenes_IsSceneActive)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
 		outputStream << "{\n";
@@ -830,8 +853,10 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(VoidUInt64Vec2)
 		ImportInsertFunction(VoidUInt64Vec3Vec2)
+		ImportInsertFunction(BoolStringString)
 		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(BoolUInt16)
+		ImportInsertFunction(BoolString)
 		ImportInsertFunction(UInt16None)
 		ImportInsertFunction(UInt64String)
 		ImportInsertFunction(Int32Int32Int32)
@@ -861,10 +886,12 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor,VoidStringStringVec4) 
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
+		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelected,BoolStringString)
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
 		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
 		AddEngineFunctionPointerToDll(GetEntityFieldByName, Scenes::SceneService::GetEntityFieldByName, VoidPtrUInt64String)
 		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
+		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolString)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
 		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)

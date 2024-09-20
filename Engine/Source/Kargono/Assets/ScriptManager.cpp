@@ -599,8 +599,8 @@ namespace Kargono::Assets
 
 	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
 	{
-		// Create cpp file
-		std::string intermediatePath = "Scripting/" + spec.Name + ".cpp";
+		// Create script file
+		std::string intermediatePath = "Scripting/" + spec.Name + ".kgscript";
 		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
 
 		Utility::FileSystem::WriteFileString(intermediateFullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));

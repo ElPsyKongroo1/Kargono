@@ -170,6 +170,8 @@ namespace Kargono::Scripting
 
 	void ScriptCompilerService::CreateKGScriptLanguageDefinition()
 	{
+		s_ActiveLanguageDefinition = {};
+
 		CreateKGScriptKeywords();
 
 		CreateKGScriptInitializationPrototypes();
@@ -775,9 +777,28 @@ namespace Kargono::Scripting
 			node.Namespace = {};
 			node.Identifier.Value = "SetWidgetSelectable";
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsWidgetSelected" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Check if the indicated widget is currently selected in the active UI. This function takes the name of the window the widget exists inside and the name of the widget itself.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_IsWidgetSelected";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -947,9 +968,25 @@ namespace Kargono::Scripting
 			node.Identifier.Value = "FindEntityHandleByName";
 
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scenes" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsSceneActive" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "sceneName" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This function indicates whether the provided scene is currently active. This function takes a string which is the local filepath to the scene and returns a bool.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Scenes_IsSceneActive";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1217,7 +1254,10 @@ namespace Kargono::Scripting
 
 		for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
 		{
-			
+			if (script->m_ScriptType == ScriptType::Engine)
+			{
+				continue;
+			}
 			newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scripts" };
 			newFunctionNode.Name = { ScriptTokenType::Identifier, script->m_ScriptName };
 			newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(Utility::WrappedFuncTypeToReturnType(script->m_FuncType));

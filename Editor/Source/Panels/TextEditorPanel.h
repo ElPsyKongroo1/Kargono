@@ -14,6 +14,8 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
+		void RefreshKGScriptEditor();
+
 		void OpenFile(const std::filesystem::path& path);
 		void ResetPanelResources();
 		void CheckForErrors();

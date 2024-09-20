@@ -272,6 +272,12 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndWindow();
 	}
+
+	void TextEditorPanel::RefreshKGScriptEditor()
+	{
+		Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+	}
+
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);

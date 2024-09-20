@@ -86,13 +86,13 @@ namespace Kargono::Utility
 		std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(funcType);
 		// Write out return value and function name
 		std::stringstream outputStream {};
-		outputStream << Utility::WrappedVarTypeToCPPString(returnType) << " " << name<< "(";
+		outputStream << Utility::WrappedVarTypeToKGScript(returnType) << " " << name<< "(";
 
 		// Write out parameters into function signature
 		char letterIteration{ 'a' };
 		for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
 		{
-			outputStream << Utility::WrappedVarTypeToCPPString(parameterTypes.at(iteration)) << " " << letterIteration;
+			outputStream << Utility::WrappedVarTypeToKGScript(parameterTypes.at(iteration)) << " " << letterIteration;
 			if (iteration != parameterTypes.size() - 1)
 			{
 				outputStream << ',';

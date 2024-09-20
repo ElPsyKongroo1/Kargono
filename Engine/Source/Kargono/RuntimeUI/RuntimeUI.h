@@ -225,6 +225,11 @@ namespace Kargono::RuntimeUI
 		static void DeleteActiveWindow(uint32_t windowLocation);
 
 		//==============================
+		// Query Active UI
+		//==============================
+		static bool IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag);
+
+		//==============================
 		// Interact With Active UI
 		//==============================
 		static void MoveRight();
@@ -237,6 +242,7 @@ namespace Kargono::RuntimeUI
 		// Internal Functionality
 		//==============================
 		static void CalculateDirections();
+		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 
 		//==============================
 		// Getters/Setters

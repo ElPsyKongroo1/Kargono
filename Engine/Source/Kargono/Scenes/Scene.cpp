@@ -9,6 +9,7 @@
 #include "Kargono/Input/InputService.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Events/SceneEvent.h"
+#include "Kargono/Projects/Project.h"
 
 
 namespace Kargono::Utility
@@ -538,6 +539,22 @@ namespace Kargono::Scenes
 		Entity activeEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(activeEntity);
 		return Utility::s_EntityHasComponentFunc.at(componentName)(activeEntity);
+	}
+	bool SceneService::IsSceneActive(const std::string& sceneName)
+	{
+		KG_ASSERT(s_ActiveScene);
+		if (!Assets::AssetManager::GetSceneRegistry().contains(s_ActiveSceneHandle))
+		{
+			KG_WARN("Could not locate active scene in asset manager using current scene handle");
+			return false;
+		}
+
+		Assets::Asset sceneAsset = Assets::AssetManager::GetSceneRegistry().at(s_ActiveSceneHandle);
+		if (sceneAsset.Data.IntermediateLocation == sceneName)
+		{
+			return true;
+		}
+		return false;
 	}
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
