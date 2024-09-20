@@ -12,7 +12,7 @@
 namespace Kargono::Network
 {
 	class Server;
-	class TCPServerConnection;
+	class ServerTCPConnection;
 
 	struct SessionInitCache
 	{
@@ -38,18 +38,18 @@ namespace Kargono::Network
 
 		void ReadyCheck(uint32_t clientID);
 
-		uint16_t AddClient(Ref<TCPServerConnection> newClient);
+		uint16_t AddClient(Ref<ServerTCPConnection> newClient);
 		uint16_t RemoveClient(uint32_t clientID);
 		uint32_t GetClientCount() const { return static_cast<uint32_t>(m_ConnectedClients.size()); }
 		void EnableReadyCheck() { m_UseReadyCheck = true; }
 		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
 		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		std::unordered_map<uint32_t, Ref<TCPServerConnection>>& GetAllClients() { return m_ConnectedClients; }
+		std::unordered_map<uint32_t, Ref<ServerTCPConnection>>& GetAllClients() { return m_ConnectedClients; }
 		std::unordered_map<uint16_t, uint32_t>& GetAllSlots() { return m_SessionSlots; }
 
 	private:
 		uint16_t m_SlotMax = 0;
-		std::unordered_map<uint32_t, Ref<TCPServerConnection>> m_ConnectedClients {};
+		std::unordered_map<uint32_t, Ref<ServerTCPConnection>> m_ConnectedClients {};
 		std::unordered_map<uint16_t, uint32_t> m_SessionSlots{};
 		std::unordered_set<uint32_t> m_ReadyCheck{};
 		bool m_UseReadyCheck = false;

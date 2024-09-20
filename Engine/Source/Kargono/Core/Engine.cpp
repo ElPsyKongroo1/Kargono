@@ -104,7 +104,7 @@ namespace Kargono
 				AppTickService::OnUpdate(k_ConstantFrameTimeStep);
 				Utility::PassiveTimer::OnUpdate(k_ConstantFrameTimeStep);
 
-				ExecuteMainThreadQueue();
+				ProcessFunctionQueue();
 				if (!s_ActiveEngine->m_Minimized)
 				{
 					s_ActiveEngine->m_CurrentApp->OnUpdate(k_ConstantFrameTimeStep);
@@ -306,11 +306,7 @@ namespace Kargono
 
 	bool EngineService::OnAppTickEvent(Events::AppTickEvent& e)
 	{
-		auto client = Network::ClientService::GetActiveClient();
-		if (client)
-		{
-			client->SubmitToEventQueue(CreateRef<Events::AppTickEvent>(e));
-		}
+		Network::ClientService::SubmitToEventQueue(CreateRef<Events::AppTickEvent>(e));
 		return false;
 	}
 
@@ -353,7 +349,7 @@ namespace Kargono
 		});
 	}
 
-	void EngineService::ExecuteMainThreadQueue()
+	void EngineService::ProcessFunctionQueue()
 	{
 		KG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_MainThreadQueueMutex);

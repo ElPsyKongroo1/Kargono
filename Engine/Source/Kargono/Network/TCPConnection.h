@@ -22,11 +22,11 @@ namespace Kargono::Network
 
 	public:
 		void WakeUpNetworkThread();
-		void Send(const Message& msg);
-		void ReadHeader();
-		void ReadBody();
-		void WriteHeader();
-		void WriteBody();
+		void SendTCPMessage(const Message& msg);
+		void ReadMessageHeader();
+		void ReadMessageBody();
+		void WriteMessageHeader();
+		void WriteMessageBody();
 		virtual void Disconnect() = 0;
 		virtual void AddToIncomingMessageQueue() = 0;
 		uint64_t Scramble(uint64_t nInput);
@@ -44,29 +44,29 @@ namespace Kargono::Network
 		asio::ip::tcp::socket m_TCPSocket;
 
 		// This context is shared with the whole asio instance
-		asio::io_context& m_asioContext;
+		asio::io_context& m_AsioContext;
 
 		// This queue holds all message to be sent to the remote
 		// side of this connection
-		TSQueue<Message> m_qMessagesOut;
+		TSQueue<Message> m_OutgoingMessageQueue;
 
 		// This queue holds all messages that have been received from
 		// the remote side of this connection. Note it is a reference
 		// as the owner of this connection is expected to provide a queue
-		TSQueue<owned_message>& m_qMessagesIn;
+		TSQueue<owned_message>& m_IncomingMessageQueue;
 
 		asio::ip::udp::endpoint m_UDPLocalEndpoint;
 		asio::ip::udp::endpoint m_UDPRemoteSendEndpoint;
 		asio::ip::udp::endpoint m_UDPRemoteReceiveEndpoint;
 
-		Message m_msgTemporaryIn;
+		Message m_MessageCache;
 
-		// Handshake Validation
+		// Validation Cache
 		uint64_t m_nHandshakeOut = 0;
 		uint64_t m_nHandshakeIn = 0;
 
 		// These Variables reference the main client or server mutex/condition_variables
 		std::condition_variable& m_BlockThreadCV;
-		std::mutex& m_BlockThreadMx;
+		std::mutex& m_BlockThreadMutex;
 	};
 }

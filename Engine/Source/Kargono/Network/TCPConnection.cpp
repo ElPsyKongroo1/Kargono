@@ -12,29 +12,29 @@ namespace Kargono::Network
 
 
 	TCPConnection::TCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
-		: m_asioContext(asioContext), m_TCPSocket(std::move(socket)), m_qMessagesIn(qIn), m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
+		: m_AsioContext(asioContext), m_TCPSocket(std::move(socket)), m_IncomingMessageQueue(qIn), m_BlockThreadCV(newCV), m_BlockThreadMutex(newMutex)
 	{
 	}
 	void TCPConnection::WakeUpNetworkThread()
 	{
-		std::unique_lock<std::mutex> lock(m_BlockThreadMx);
+		std::unique_lock<std::mutex> lock(m_BlockThreadMutex);
 		m_BlockThreadCV.notify_one();
 	}
-	void TCPConnection::Send(const Message& msg)
+	void TCPConnection::SendTCPMessage(const Message& msg)
 	{
-		asio::post(m_asioContext, [this, msg]()
+		asio::post(m_AsioContext, [this, msg]()
 			{
-				bool bWritingMessage = !m_qMessagesOut.IsEmpty();
-				m_qMessagesOut.PushBack(msg);
+				bool bWritingMessage = !m_OutgoingMessageQueue.IsEmpty();
+				m_OutgoingMessageQueue.PushBack(msg);
 				if (!bWritingMessage)
 				{
-					WriteHeader();
+					WriteMessageHeader();
 				}
 			});
 	}
-	void TCPConnection::ReadHeader()
+	void TCPConnection::ReadMessageHeader()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(&m_msgTemporaryIn.Header, sizeof(MessageHeader)),
+		asio::async_read(m_TCPSocket, asio::buffer(&m_MessageCache.Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (ec)
@@ -44,16 +44,16 @@ namespace Kargono::Network
 					return;
 				}
 
-				if (m_msgTemporaryIn.Header.PayloadSize > 0)
+				if (m_MessageCache.Header.PayloadSize > 0)
 				{
-					if (m_msgTemporaryIn.Header.PayloadSize > k_MaxBufferSize)
+					if (m_MessageCache.Header.PayloadSize > k_MaxBufferSize)
 					{
 						KG_WARN("Payload sent that is too large. Malformed message!");
 						Disconnect();
 						return;
 					}
-					m_msgTemporaryIn.Body.resize(m_msgTemporaryIn.Header.PayloadSize);
-					ReadBody();
+					m_MessageCache.Body.resize(m_MessageCache.Header.PayloadSize);
+					ReadMessageBody();
 				}
 				else
 				{
@@ -61,9 +61,9 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void TCPConnection::ReadBody()
+	void TCPConnection::ReadMessageBody()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(m_msgTemporaryIn.Body.data(), m_msgTemporaryIn.Body.size()),
+		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.Body.data(), m_MessageCache.Body.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (ec)
@@ -76,31 +76,31 @@ namespace Kargono::Network
 				AddToIncomingMessageQueue();
 			});
 	}
-	void TCPConnection::WriteHeader()
+	void TCPConnection::WriteMessageHeader()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(&m_qMessagesOut.GetFront().Header, sizeof(MessageHeader)),
+		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (!ec)
 				{
-					if (m_qMessagesOut.GetFront().Body.size() > 0)
+					if (m_OutgoingMessageQueue.GetFront().Body.size() > 0)
 					{
-						if (m_qMessagesOut.GetFront().Body.size() > k_MaxBufferSize)
+						if (m_OutgoingMessageQueue.GetFront().Body.size() > k_MaxBufferSize)
 						{
 							KG_ERROR("Attempt to send message that is larger than maximum buffer size!");
 							Disconnect();
 							return;
 						}
 
-						WriteBody();
+						WriteMessageBody();
 					}
 					else
 					{
-						m_qMessagesOut.PopFront();
+						m_OutgoingMessageQueue.PopFront();
 
-						if (!m_qMessagesOut.IsEmpty())
+						if (!m_OutgoingMessageQueue.IsEmpty())
 						{
-							WriteHeader();
+							WriteMessageHeader();
 						}
 					}
 				}
@@ -111,18 +111,18 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void TCPConnection::WriteBody()
+	void TCPConnection::WriteMessageBody()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(m_qMessagesOut.GetFront().Body.data(), m_qMessagesOut.GetFront().Body.size()),
+		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Body.data(), m_OutgoingMessageQueue.GetFront().Body.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (!ec)
 				{
-					m_qMessagesOut.PopFront();
+					m_OutgoingMessageQueue.PopFront();
 
-					if (!m_qMessagesOut.IsEmpty())
+					if (!m_OutgoingMessageQueue.IsEmpty())
 					{
-						WriteHeader();
+						WriteMessageHeader();
 					}
 				}
 				else

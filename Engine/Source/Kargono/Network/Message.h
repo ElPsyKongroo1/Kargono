@@ -50,7 +50,7 @@ namespace Kargono::Network
 		ReceiveSignal
 	};
 
-	class TCPServerConnection;
+	class ServerTCPConnection;
 
 	//============================================================
 	// Message Struct
@@ -110,7 +110,7 @@ namespace Kargono::Network
 
 	struct owned_message
 	{
-		Ref<TCPServerConnection> remote = nullptr;
+		Ref<ServerTCPConnection> remote = nullptr;
 		Message msg;
 
 		//==============================

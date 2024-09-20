@@ -40,27 +40,16 @@ namespace Kargono
 			return;
 		}
 #endif
-
-
-		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
-
-		Network::ServerService::SetActiveServer(CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort(), isLocal));
-
-		if (!Network::ServerService::GetActiveServer()->StartServer())
+		if (!Network::ServerService::Init())
 		{
-			KG_CRITICAL("Failed to start server");
-			Network::ServerService::GetActiveServer()->StopServer();
-			Network::ServerService::GetActiveServer().reset();
 			EngineService::EndRun();
 			return;
 		}
 
 #ifndef KG_TESTING
-		Network::ServerService::GetActiveServer()->RunServer();
+		Network::ServerService::Run();
 #endif
-		Network::ServerService::GetActiveServer()->StopServer();
-		Network::ServerService::GetActiveServer().reset();
-		Network::ServerService::GetActiveServer() = nullptr;
+		Network::ServerService::Terminate();
 	}
 
 	bool ServerApp::OpenProject()

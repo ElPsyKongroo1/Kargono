@@ -903,8 +903,7 @@ namespace Kargono
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::SetActiveClient(CreateRef<Network::Client>());
-			Network::ClientService::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::ClientService::GetActiveClient().get()));
+			Network::ClientService::Init();
 		}
 
 		AppTickService::LoadGeneratorsFromProject();
@@ -957,11 +956,7 @@ namespace Kargono
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
-
-			Network::ClientService::GetActiveClient()->StopClient();
-			Network::ClientService::GetActiveNetworkThread()->join();
-			Network::ClientService::GetActiveNetworkThread().reset();
-			Network::ClientService::GetActiveClient().reset();
+			Network::ClientService::Terminate();
 		}
 
 		AppTickService::ClearGenerators();

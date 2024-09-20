@@ -51,7 +51,7 @@ namespace Kargono
 	//==============================
 	class Engine
 	{
-	private: // (Singleton)
+	private:
 		//==============================
 		// Constructor/Destructor
 		//==============================
@@ -143,7 +143,7 @@ namespace Kargono
 		//==============================
 		// Internal Functionality
 		//==============================
-		static void ExecuteMainThreadQueue();
+		static void ProcessFunctionQueue();
 		static void ProcessEventQueue();
 	private:
 		//==============================

@@ -21,25 +21,25 @@
 
 namespace Kargono::Network
 {
-	class TCPServerConnection;
+	class ServerTCPConnection;
 
-	class UDPServerConnection : public std::enable_shared_from_this<UDPServerConnection>, public UDPConnection
+	class ServerUDPConnection : public std::enable_shared_from_this<ServerUDPConnection>, public UDPConnection
 	{
 	public:
-		UDPServerConnection(asio::io_context& asioContext, asio::ip::udp::socket&& socket, TSQueue<owned_message>& qIn,
+		ServerUDPConnection(asio::io_context& asioContext, asio::ip::udp::socket&& socket, TSQueue<owned_message>& qIn,
 			std::condition_variable& newCV, std::mutex& newMutex,
-			std::unordered_map<asio::ip::udp::endpoint, Ref<TCPServerConnection>>& ipMap)
+			std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& ipMap)
 			: UDPConnection(asioContext, std::move(socket), qIn, newCV, newMutex), m_IPAddressToConnection(ipMap)
 		{
 		}
-		virtual ~UDPServerConnection() override = default;
+		virtual ~ServerUDPConnection() override = default;
 	public:
 		virtual void AddToIncomingMessageQueue() override;
 
 		virtual void Disconnect(asio::ip::udp::endpoint key) override;
 
 	protected:
-		std::unordered_map<asio::ip::udp::endpoint, Ref<TCPServerConnection>>& m_IPAddressToConnection;
+		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& m_IPAddressToConnection;
 	};
 
 
@@ -47,7 +47,7 @@ namespace Kargono::Network
 	// TCP Server Connection Class
 	//============================================================
 
-	class TCPServerConnection : public std::enable_shared_from_this<TCPServerConnection>, public TCPConnection
+	class ServerTCPConnection : public std::enable_shared_from_this<ServerTCPConnection>, public TCPConnection
 	{
 	public:
 
@@ -55,11 +55,11 @@ namespace Kargono::Network
 		// Constructors/Destructors
 		//==============================
 
-		TCPServerConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
+		ServerTCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
 			TSQueue<owned_message>& qIn, std::condition_variable& newCV,
 			std::mutex& newMutex);
 
-		virtual ~TCPServerConnection() override {}
+		virtual ~ServerTCPConnection() override {}
 
 		//==============================
 		// Getter/Setters
@@ -68,7 +68,7 @@ namespace Kargono::Network
 		float GetTCPLatency() const { return m_TCPLatency; }
 		void SetTCPLatency(float newLatency) { m_TCPLatency = newLatency; }
 
-		uint32_t GetID() const { return id; }
+		uint32_t GetID() const { return m_ID; }
 
 		//==============================
 		// LifeCycle Functions
@@ -97,13 +97,13 @@ namespace Kargono::Network
 		void ReadValidation();
 
 	protected:
-		uint32_t id = 0;
+		uint32_t m_ID { 0 };
 
 		// Handshake Validation
-		uint64_t m_nHandshakeCheck = 0;
+		uint64_t m_ValidationCache { 0 };
 
 		// Latency Variables
-		float m_TCPLatency{};
+		float m_TCPLatency { 0.0f };
 
 	};
 
@@ -119,113 +119,103 @@ namespace Kargono::Network
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		bool Start();
-
-		void Stop();
-
-		void Update(size_t nMaxMessages = -1);
-
-		void Wait();
-
-		void WakeUpNetworkThread();
-
-		void CheckConnectionsValid();
-
-	public:
-		//==============================
-		// Main API (Send Messages)
-		//==============================
-
-		// Send a message to a specific client
-		void MessageClient(Ref<TCPServerConnection> client, const Message& msg);
-
-		void MessageClientUDP(Ref<TCPServerConnection> client, Message& msg);
-
-		// Send message to all clients
-		void MessageAllClients(const Message& msg, Ref<TCPServerConnection> pIgnoreClient = nullptr);
-
-	public:
-
 		bool StartServer();
-
-		void RunServer();
-
 		void StopServer();
 
+	public:
+		//==============================
+		// Send Messages
+		//==============================
+		void SendTCPMessage(Ref<ServerTCPConnection> client, const Message& msg);
+		void SendUDPMessage(Ref<ServerTCPConnection> client, Message& msg);
+		void SendTCPMessageAll(const Message& msg, Ref<ServerTCPConnection> ignoreClient = nullptr);
+
+		//==============================
+		// Send Messages
+		//==============================
+		void CheckForMessages(size_t nMaxMessages = -1);
+		void OpenMessageFromClient(std::shared_ptr<Kargono::Network::ServerTCPConnection> client, Kargono::Network::Message& incomingMessage);
+
+		//==============================
+		// Manage Session
+		//==============================
 		void SessionClock();
 
-		void SubmitToEventQueue(Ref<Events::Event> e);
-
+		//==============================
+		// Manage Server Network Thread
+		//==============================
+		void NetworkThreadSleep();
+		void NetworkThreadWakeUp();
 
 	private:
 		//==============================
-		// Internal Functionality
+		// Manage Clients Connections
 		//==============================
-
-		// Called when a client is validated
-		void OnClientValidated(Ref<TCPServerConnection> client) {}
-
-		// Called when a client connects, you can veto the connection by returning false
-		bool OnClientConnect(std::shared_ptr<Kargono::Network::TCPServerConnection> client);
-
-		// Called when a client appears to have disconnected
-		void OnClientDisconnect(std::shared_ptr<Kargono::Network::TCPServerConnection> client);
-
-		// Called when a message arrives
-		void OnMessage(std::shared_ptr<Kargono::Network::TCPServerConnection> client, Kargono::Network::Message& incomingMessage);
-
-		void ProcessEventQueue();
-		void OnEvent(Events::Event* e);
-		bool OnStartSession(Events::StartSession event);
-
-		// ASYNC - Instruct asio to wait for connection
+		void OnClientValidated(Ref<ServerTCPConnection> client) {}
+		bool OnClientConnect(std::shared_ptr<Kargono::Network::ServerTCPConnection> client);
+		void OnClientDisconnect(std::shared_ptr<Kargono::Network::ServerTCPConnection> client);
+		void CheckConnectionsValid();
 		void WaitForClientConnection();
+
 	private:
-		// TODO: This is very temporary. Only support one session currently!
+		// Session Data
 		Session m_OnlySession{};
 		Scope<std::thread> m_TimingThread { nullptr };
 		bool m_StopThread = false;
 		std::atomic<uint64_t> m_UpdateCount{ 0 };
 
+		// Event queue
 		std::vector<Ref<Events::Event>> m_EventQueue {};
 		std::mutex m_EventQueueMutex {};
 
 		// Thread safe Queue for incoming message packets
-		TSQueue<owned_message> m_qMessagesIn;
+		TSQueue<owned_message> m_IncomingMessageQueue;
 
-		std::deque<Ref<TCPServerConnection>> m_Connections;
-		Ref<UDPServerConnection> m_UDPServer { nullptr };
-		std::unordered_map<asio::ip::udp::endpoint, Ref<TCPServerConnection>> m_IPAddressToConnection{};
+		// Storage for all connections and ancillary data
+		std::deque<Ref<ServerTCPConnection>> m_AllClientConnections {};
+		Ref<ServerUDPConnection> m_UDPServer { nullptr };
+		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>> m_IPAddressToConnection {};
+		uint32_t m_ClientIDCounter = 10000;
 
 		// Order of declaration is important = it is also the order of initialization
-		asio::io_context m_Context;
-		std::thread m_threadContext;
-
-		// These things need an asio context
+		asio::io_context m_AsioContext;
+		std::thread m_AsioThread;
 		asio::ip::tcp::acceptor m_TCPAcceptor;
 
-		// Clients will be identified in the "wider system" via an ID
-		uint32_t nIDCounter = 10000;
-
-		// Variables for sleeping thread until a notify command is received
+		// Variables used to manage active server thread. Currently, the active thread is the main thread.
 		std::condition_variable m_BlockThreadCV {};
-		std::mutex m_BlockThreadMx {};
+		std::mutex m_BlockThreadMutex {};
+	private:
+		friend class ServerService;
 	};
 
 	class ServerService
 	{
 	public:
 		//==============================
-		// Getters/Setters
+		// LifeCycle Functions
 		//==============================
-		static Ref<Network::Server> GetActiveServer()
-		{
-			return s_Server;
-		}
-		static void SetActiveServer(Ref<Network::Server> newServer)
-		{
-			s_Server = newServer;
-		}
+		static bool Init();
+		static void Terminate();
+		static void Run();
+
+		//==============================
+		// Submit Server Events 
+		//==============================
+		static void SubmitToEventQueue(Ref<Events::Event> e);
+
+	private:
+		//==============================
+		// Process Events
+		//==============================
+		static void OnEvent(Events::Event* e);
+		static bool OnStartSession(Events::StartSession event);
+
+		//==============================
+		// Internal Functionality
+		//==============================
+		static void ProcessEventQueue();
+
 	private:
 		//==============================
 		// Internal Fields
