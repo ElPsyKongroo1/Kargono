@@ -11,37 +11,40 @@ namespace Kargono::Network
 	std::vector<uint8_t> s_SocketReceiveBuffer {};
 	std::vector<uint8_t> s_SocketSendBuffer {};
 
-	UDPConnection::UDPConnection(asio::io_context& asioContext, asio::ip::udp::socket socket, 
-		TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
-		: m_AsioContext(asioContext), m_Socket(std::move(socket)), m_qMessagesIn(qIn),
-		m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
+	UDPConnection::UDPConnection(NetworkContext* networkContext, asio::ip::udp::socket socket)
+		: m_NetworkContextPtr(networkContext), m_Socket(std::move(socket))
 	{
 		s_SocketReceiveBuffer.resize(k_MaxBufferSize);
 		s_SocketSendBuffer.resize(k_MaxBufferSize);
 	}
 
-	void UDPConnection::WakeUpNetworkThread()
+	void UDPConnection::NetworkThreadWakeUp()
 	{
-		std::unique_lock<std::mutex> lock(m_BlockThreadMx);
-		m_BlockThreadCV.notify_one();
+		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->BlockThreadMutex);
+		m_NetworkContextPtr->BlockThreadCondVar.notify_one();
 	}
 
-	void UDPConnection::Send(const LabeledMessage& msg)
+	void UDPConnection::NetworkThreadSleep()
 	{
-		asio::post(m_AsioContext, [this, msg]()
+	}
+
+	void UDPConnection::SendUDPMessage(const LabeledMessage& msg)
+	{
+		
+		asio::post(m_NetworkContextPtr->AsioContext, [this, msg]()
 		{
-			bool bWritingMessage = !m_qMessagesOut.IsEmpty();
-			m_qMessagesOut.PushBack(msg);
+			bool bWritingMessage = !m_OutgoingMessagesQueue.IsEmpty();
+			m_OutgoingMessagesQueue.PushBack(msg);
 			if (!bWritingMessage)
 			{
-				WriteMessage();
+				WriteMessageAsync();
 			}
 		});
 	}
 
 	void UDPConnection::Start()
 	{
-		ReadMessage();
+		ReadMessageAsync();
 	}
 
 	void UDPConnection::Stop()
@@ -49,11 +52,13 @@ namespace Kargono::Network
 	}
 
 
-	void UDPConnection::ReadMessage()
+	void UDPConnection::ReadMessageAsync()
 	{
+		// Asynchronous lambda that is handled by the active asio thread to read a message
 		m_Socket.async_receive_from(asio::buffer(s_SocketReceiveBuffer.data(), k_MaxBufferSize), m_CurrentEndpoint,
 			[this](std::error_code ec, std::size_t length)
 			{
+				// Check if an error present in the asio context
 				if (ec)
 				{
 					KG_WARN("Failure to read UDP Message! {}", ec.message());
@@ -62,25 +67,25 @@ namespace Kargono::Network
 						return;
 					}
 					//Disconnect(m_CurrentEndpoint);
-					ReadMessage();
+					ReadMessageAsync();
 					return;
 				}
 
 				// Make sure CRC and Header can be read. Packet might have been broken apart.
 				if (length < (sizeof(uint32_t) + sizeof(MessageHeader)))
 				{
-					ReadMessage();
+					ReadMessageAsync();
 					return;
 				}
 
 				// Load in Message header from buffer
-				memcpy_s(&m_MsgTemporaryIn.Header,
+				memcpy_s(&m_MessageCache.Header,
 					sizeof(MessageHeader),
 					s_SocketReceiveBuffer.data() + sizeof(uint32_t),
 					sizeof(MessageHeader));
 
 				// Get Payload Size
-				uint64_t payloadSize = m_MsgTemporaryIn.Header.PayloadSize;
+				uint64_t payloadSize = m_MessageCache.Header.PayloadSize;
 
 				// Calculate Cyclic Redundency Check and compare with received value
 				uint32_t receivedCRC{};
@@ -93,7 +98,7 @@ namespace Kargono::Network
 				// If cyclic redundency check fails, move on! It happens...
 				if (currentCRC != receivedCRC)
 				{
-					ReadMessage();
+					ReadMessageAsync();
 					return;
 				}
 
@@ -108,25 +113,25 @@ namespace Kargono::Network
 				// Load in Payload into outgoing message!
 				if (payloadSize > 0)
 				{
-					m_MsgTemporaryIn.Body.resize(payloadSize);
-					memcpy_s(m_MsgTemporaryIn.Body.data(),
+					m_MessageCache.Payload.resize(payloadSize);
+					memcpy_s(m_MessageCache.Payload.data(),
 						payloadSize,
 						s_SocketReceiveBuffer.data() + sizeof(MessageHeader) + sizeof(uint32_t),
 						payloadSize);
 				}
 				
-				AddToIncomingMessageQueue();
+				AddMessageToIncomingMessageQueue();
 				
 			});
 	}
 
-	void UDPConnection::WriteMessage()
+	void UDPConnection::WriteMessageAsync()
 	{
-		uint64_t payloadSize = m_qMessagesOut.GetFront().msg.Header.PayloadSize;
+		uint64_t payloadSize = m_OutgoingMessagesQueue.GetFront().msg.Header.PayloadSize;
 
-		if (m_qMessagesOut.GetFront().msg.Size() > k_MaxBufferSize)
+		if (m_OutgoingMessagesQueue.GetFront().msg.GetEntireMessageSize() > k_MaxBufferSize)
 		{
-			KG_ERROR("Attempt to write UDP message that is large that max buffer size!");
+			KG_WARN("Attempt to write UDP message that is larger than the max buffer size!");
 			Disconnect(m_CurrentEndpoint);
 			return;
 		}
@@ -134,7 +139,7 @@ namespace Kargono::Network
 		// Load Header after CRC location
 		memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t),
 			sizeof(MessageHeader),
-			&m_qMessagesOut.GetFront().msg.Header,
+			&m_OutgoingMessagesQueue.GetFront().msg.Header,
 			sizeof(MessageHeader));
 
 		// Load Buffer after Header
@@ -142,10 +147,11 @@ namespace Kargono::Network
 		{
 			memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t) + sizeof(MessageHeader),
 				payloadSize,
-				m_qMessagesOut.GetFront().msg.Body.data(),
+				m_OutgoingMessagesQueue.GetFront().msg.Payload.data(),
 				payloadSize);
 		}
 
+		// Generate CRC hash from completed buffer
 		uint32_t hash = Utility::FileSystem::CRCFromBuffer(s_SocketSendBuffer.data() + sizeof(uint32_t),
 			sizeof(MessageHeader) + payloadSize);
 
@@ -155,20 +161,20 @@ namespace Kargono::Network
 		/*KG_TRACE("The local endpoint address/port are {} {} and remote is {} {}", m_Socket.local_endpoint().address().to_string(), m_Socket.local_endpoint().port(),
 			m_qMessagesOut.front().endpoint.address().to_string(), m_qMessagesOut.front().endpoint.port());*/
 
-		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_qMessagesOut.GetFront().endpoint, [this](std::error_code ec, std::size_t length)
+		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_OutgoingMessagesQueue.GetFront().endpoint, [this](std::error_code ec, std::size_t length)
 		{
 			if (!ec)
 			{
-				m_qMessagesOut.PopFront();
+				m_OutgoingMessagesQueue.PopFront();
 
-				if (!m_qMessagesOut.IsEmpty())
+				if (!m_OutgoingMessagesQueue.IsEmpty())
 				{
-					WriteMessage();
+					WriteMessageAsync();
 				}
 			}
 			else
 			{
-				KG_ERROR("Failure to write Header!");
+				KG_WARN("Failure to write Header!");
 				Disconnect(m_CurrentEndpoint);
 			}
 		});

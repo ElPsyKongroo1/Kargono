@@ -80,7 +80,7 @@ namespace Kargono::Utility
 
 		return shaderSources;
 	}
-#ifndef KG_EXPORT
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 	static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
 	{
 		switch (stage)
@@ -444,14 +444,14 @@ namespace Kargono::Assets
 	void AssetManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
 		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
 	{
-#ifdef KG_EXPORT
+#if defined(KG_EXPORT_SERVER) || defined(KG_EXPORT_RUNTIME)
 		KG_ERROR("Attempt to create/compile new shader during runtime!");
 #endif
 		// Create Shader Binary
 		auto shaderSources = Utility::PreProcess(shaderSource);
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
-#ifndef KG_EXPORT
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 		Utility::CompileBinaries(newAsset.Handle, shaderSources, openGLSPIRV);
 #endif
 

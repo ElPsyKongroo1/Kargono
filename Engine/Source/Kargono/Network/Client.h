@@ -14,7 +14,6 @@
 #include <limits>
 #include <cstdint>
 #include <mutex>
-#include <atomic>
 #include <condition_variable>
 
 
@@ -23,24 +22,21 @@ namespace Kargono::Network
 
 	class ClientTCPConnection;
 
-	class ClientUDPConnection : public std::enable_shared_from_this<ClientUDPConnection>, public UDPConnection
+	class ClientUDPConnection : public UDPConnection
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ClientUDPConnection(asio::io_context& asioContext, asio::ip::udp::socket&& socket, TSQueue<owned_message>& qIn,
-			std::condition_variable& newCV, std::mutex& newMutex, Ref<ClientTCPConnection> connection)
-			: UDPConnection(asioContext, std::move(socket), qIn, newCV, newMutex), m_ActiveTCPConnection(connection)
-		{
-
-		}
+		ClientUDPConnection(NetworkContext* networkContext, asio::ip::udp::socket&& socket, Ref<ClientTCPConnection> connection)
+			: UDPConnection(networkContext, std::move(socket)), m_ActiveTCPConnection(connection) {}
 		virtual ~ClientUDPConnection() override = default;
 	public:
-
+		//==============================
+		// Client Connection Specific Functionality
+		//==============================
 		virtual void Disconnect(asio::ip::udp::endpoint key) override;
-
-		virtual void AddToIncomingMessageQueue() override;
+		virtual void AddMessageToIncomingMessageQueue() override;
 	private:
 		Ref<ClientTCPConnection> m_ActiveTCPConnection{ nullptr };
 	};
@@ -49,41 +45,36 @@ namespace Kargono::Network
 	// TCP Client Connection Class
 	//============================================================
 
-	class ClientTCPConnection : public std::enable_shared_from_this<ClientTCPConnection>, public TCPConnection
+	class ClientTCPConnection : public TCPConnection
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ClientTCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
-			TSQueue<owned_message>& qIn, std::condition_variable& newCV,
-			std::mutex& newMutex);
+		ClientTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket) : TCPConnection(networkContext, std::move(socket)) {}
 		virtual ~ClientTCPConnection() override {}
 
 		//==============================
 		// LifeCycle Functions
 		//==============================
-
 		bool Connect(const asio::ip::tcp::resolver::results_type& endpoints);
-
 		virtual void Disconnect() override;
-
-		bool IsConnected() const { return m_TCPSocket.is_open(); }
+		bool IsConnected() const 
+		{ 
+			return m_TCPSocket.is_open(); 
+		}
 
 	private:
 		//==============================
-		// Extra Internal Functionality
+		// Client Connection Specific Functionality
 		//==============================
+		virtual void AddMessageToIncomingMessageQueue() override;
 
-		virtual void AddToIncomingMessageQueue() override;
-
 		//==============================
-		// ASIO ASYNC Functions
+		// Client Validation Functions
 		//==============================
-		// ASYNC - Used to write validation packets to server
-	private:
-		void WriteValidation();
-		void ReadValidation();
+		void WriteValidationAsync();
+		void ReadValidationAsync();
 
 	};
 
@@ -99,7 +90,7 @@ namespace Kargono::Network
 		//==============================
 		// Manage Connection to Server
 		//==============================
-		bool ConnectToServer(const std::string& host, const uint16_t port, bool remote = false);
+		bool ConnectToServer(const std::string& serverIP, const uint16_t serverPort, bool remote = false);
 		void DisconnectFromServer();
 		bool IsConnected();
 
@@ -119,22 +110,12 @@ namespace Kargono::Network
 		//==============================
 		// Manage Main Network Thread
 		//==============================
-		void Wait();
-		void WakeUpNetworkThread();
+		void NetworkThreadSleep();
+		void NetworkThreadWakeUp();
 
 	private:
 		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
-		asio::io_context m_AsioContext;
-		std::thread m_AsioThread;
-
-		// Main network thread that continously processes incoming network data from the m_AsioContext 
-		//		and outgoing network data from this client's engine code
-		Ref<std::thread> m_NetworkThread { nullptr };
-
-		// These atomic variables help manage the network thread
-		std::atomic<bool> m_Quit = false;
-		std::condition_variable m_BlockThreadCV {};
-		std::mutex m_BlockThreadMutex {};
+		NetworkContext m_NetworkContext{};
 
 		// Function and Event Queue for m_NetworkThread to handle
 		std::vector<std::function<void()>> m_FunctionQueue;
@@ -150,9 +131,6 @@ namespace Kargono::Network
 		Ref<ClientTCPConnection> m_ClientTCPConnection { nullptr };
 		Ref<ClientUDPConnection> m_ClientUDPConnection { nullptr };
 		std::atomic<bool> m_UDPConnectionSuccessful;
-
-		// This is the thread safe queue of incoming messages from the server
-		TSQueue<owned_message> m_MessageInQueue;
 
 	private:
 		friend class ClientService;

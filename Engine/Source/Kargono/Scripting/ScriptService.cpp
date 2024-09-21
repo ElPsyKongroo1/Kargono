@@ -126,6 +126,15 @@ namespace Kargono::Scripting
 		Client_RequestUserCount->m_SectionLabel = "Network";
 		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::RequestUserCount);
 		engineScripts.push_back(Client_RequestUserCount);
+
+		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
+		Client_RequestJoinSession->m_ScriptName = "RequestJoinSession";
+		Client_RequestJoinSession->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
+		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
+		Client_RequestJoinSession->m_SectionLabel = "Network";
+		Client_RequestJoinSession->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::RequestJoinSession);
+		engineScripts.push_back(Client_RequestJoinSession);
 	}
 
 	void ScriptService::Init()

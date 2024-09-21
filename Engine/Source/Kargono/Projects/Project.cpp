@@ -204,7 +204,14 @@ namespace Kargono::Projects
 		// Access visual studio toolset console
 		outputStream << "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"";
 
-		outputStream << " && set ExternalCompilerOptions=KG_EXPORT ";
+		if (createServer)
+		{
+			outputStream << " && set ExternalCompilerOptions=KG_EXPORT_SERVER ";
+		}
+		else
+		{
+			outputStream << " && set ExternalCompilerOptions=KG_EXPORT_RUNTIME ";
+		}
 
 		// Start Next Command
 		outputStream << " && "; // Combine commands
@@ -230,7 +237,14 @@ namespace Kargono::Projects
 		outputStream << "-p:Configuration=Dist "; // Run Dist configuration
 
 		// Specify the preprocessor define(s)
-		outputStream << "-p:KG_EXPORT=1" << " "; // Add KG_EXPORT define
+		if (createServer)
+		{
+			outputStream << "-p:KG_EXPORT_SERVER=1" << " "; // Add KG_EXPORT define
+		}
+		else
+		{
+			outputStream << "-p:KG_EXPORT_RUNTIME=1" << " "; // Add KG_EXPORT define
+		}
 
 		outputStream << ")"; // Parentheses to group all function calls together
 

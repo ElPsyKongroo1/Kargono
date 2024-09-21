@@ -44,7 +44,7 @@ project "Server"
 
     defines 
     {
-        "KG_RUNTIME",
+        "KG_SERVER",
 		"_CRT_SECURE_NO_WARNINGS"
     }
 

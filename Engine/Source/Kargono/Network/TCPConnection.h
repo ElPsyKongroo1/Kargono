@@ -1,72 +1,83 @@
 #pragma once
-
-#include "Kargono/Core/DataStructures.h"
-#include "Kargono/Network/Message.h"
-#include "Kargono/Network/TCPConnection.h"
-
-#include "API/Network/AsioAPI.h"
+#include "Kargono/Network/NetworkCommon.h"
 
 #include <memory>
-#include <cstdint>
-#include <mutex>
-#include <condition_variable>
 
 namespace Kargono::Network
 {
 	class TCPConnection
 	{
 	public:
-		TCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn,
-		    std::condition_variable& newCV, std::mutex& newMutex);
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		TCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket);
 		virtual ~TCPConnection() = default;
 
 	public:
-		void WakeUpNetworkThread();
-		void SendTCPMessage(const Message& msg);
-		void ReadMessageHeader();
-		void ReadMessageBody();
-		void WriteMessageHeader();
-		void WriteMessageBody();
-		virtual void Disconnect() = 0;
-		virtual void AddToIncomingMessageQueue() = 0;
-		uint64_t Scramble(uint64_t nInput);
+		//==============================
+		// Manage Global Network Thread
+		//==============================
+		void NetworkThreadWakeUp();
+		void NetworkThreadSleep();
 
-	public:
+		//==============================
+		// Receive Messages
+		//==============================
+		void ReadMessageHeaderAsync();
+		void ReadMessageBodyAsync();
+
+		//==============================
+		// Send Messages
+		//==============================
+		void SendTCPMessage(const Message& msg);
+		void WriteMessageHeaderAsync();
+		void WriteMessageBodyAsync();
+
+		//==============================
+		// Getter/Setters
+		//==============================
 		asio::ip::udp::endpoint& GetUDPLocalEndpoint() { return m_UDPLocalEndpoint; }
 		asio::ip::udp::endpoint& GetUDPRemoteSendEndpoint() { return m_UDPRemoteSendEndpoint; }
 		asio::ip::udp::endpoint& GetUDPRemoteReceiveEndpoint() { return m_UDPRemoteReceiveEndpoint; }
-
 		void SetUDPLocalEndpoint(asio::ip::udp::endpoint& endpoint) { m_UDPLocalEndpoint = endpoint; }
 		void SetUDPRemoteSendEndpoint(asio::ip::udp::endpoint& endpoint) { m_UDPRemoteSendEndpoint = endpoint; }
 		void SetUDPRemoteReceiveEndpoint(asio::ip::udp::endpoint& endpoint) { m_UDPRemoteReceiveEndpoint = endpoint; }
+
 	protected:
+		//==============================
+		// Client/Server Specific Functionality
+		//==============================
+		virtual void Disconnect() = 0;
+		virtual void AddMessageToIncomingMessageQueue() = 0;
+
+		//==============================
+		// Internal Functionality
+		//==============================
+		uint64_t GenerateValidationToken(uint64_t nInput);
+
+	protected:
+
+		// Pointer to active network context
+		NetworkContext* m_NetworkContextPtr { nullptr };
+
 		// Each connection has a unique socket to a remote
 		asio::ip::tcp::socket m_TCPSocket;
-
-		// This context is shared with the whole asio instance
-		asio::io_context& m_AsioContext;
 
 		// This queue holds all message to be sent to the remote
 		// side of this connection
 		TSQueue<Message> m_OutgoingMessageQueue;
-
-		// This queue holds all messages that have been received from
-		// the remote side of this connection. Note it is a reference
-		// as the owner of this connection is expected to provide a queue
-		TSQueue<owned_message>& m_IncomingMessageQueue;
-
+		
+		// UDP endpoint used in processes
 		asio::ip::udp::endpoint m_UDPLocalEndpoint;
 		asio::ip::udp::endpoint m_UDPRemoteSendEndpoint;
 		asio::ip::udp::endpoint m_UDPRemoteReceiveEndpoint;
 
+		// Simple cache when processing messages
 		Message m_MessageCache;
 
 		// Validation Cache
-		uint64_t m_nHandshakeOut = 0;
-		uint64_t m_nHandshakeIn = 0;
-
-		// These Variables reference the main client or server mutex/condition_variables
-		std::condition_variable& m_BlockThreadCV;
-		std::mutex& m_BlockThreadMutex;
+		uint64_t m_ValidationOutput {0};
+		uint64_t m_ValidationInput {0};
 	};
 }

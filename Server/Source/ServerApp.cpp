@@ -15,7 +15,7 @@ namespace Kargono
 		Scenes::SceneService::Init();
 #ifdef KG_TESTING
 	OpenProject("../Projects/Pong/Pong.kproj");
-#elif defined KG_EXPORT
+#elif defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
 			".kproj");

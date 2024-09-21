@@ -1,50 +1,50 @@
 #include "kgpch.h"
 
-#include "Kargono/Network/Message.h"
+#include "Kargono/Network/NetworkCommon.h"
 
 namespace Kargono::Network
 {
-	size_t Message::Size() const
+	size_t Message::GetEntireMessageSize() const
 	{
-		return sizeof(MessageHeader) + Body.size();
+		return sizeof(MessageHeader) + Payload.size();
 	}
-	void Message::PushBuffer(void* buffer, uint64_t size)
+	void Message::StorePayload(void* buffer, uint64_t size)
 	{
 		// Cache current size of vector, as this will be the point we insert the data
-		size_t currentBufferSize = Body.size();
+		size_t currentBufferSize = Payload.size();
 
 		// Resize the vector to contain the new data being added
-		Body.resize(Body.size() + size + sizeof(uint64_t));
+		Payload.resize(Payload.size() + size + sizeof(uint64_t));
 
 		// Copy the data over
-		std::memcpy(Body.data() + currentBufferSize, buffer, size);
+		std::memcpy(Payload.data() + currentBufferSize, buffer, size);
 
 		// Copy the data size over
-		std::memcpy(Body.data() + currentBufferSize + size, &size, sizeof(uint64_t));
+		std::memcpy(Payload.data() + currentBufferSize + size, &size, sizeof(uint64_t));
 
 		// Update message header size
 		Header.PayloadSize = size;
 
 		// Update message header size
-		Header.PayloadSize = Body.size();
+		Header.PayloadSize = Payload.size();
 
 	}
-	std::vector<uint8_t> Message::GetBuffer(uint64_t size)
+	std::vector<uint8_t> Message::GetPayloadCopy(uint64_t size)
 	{
 		std::vector<uint8_t> newBuffer{};
 		newBuffer.resize(size);
 
 		// Cache current size of vector, as this will be the point we insert the data
-		size_t bufferSizeAfterRemoval = Body.size() - size;
+		size_t bufferSizeAfterRemoval = Payload.size() - size;
 
 		// Copy the data over
-		std::memcpy((void*)newBuffer.data(), Body.data() + bufferSizeAfterRemoval, size);
+		std::memcpy((void*)newBuffer.data(), Payload.data() + bufferSizeAfterRemoval, size);
 
 		// Shrink the vector to remove the read bytes
-		Body.resize(bufferSizeAfterRemoval);
+		Payload.resize(bufferSizeAfterRemoval);
 
 		// Update message header size
-		Header.PayloadSize = Body.size();
+		Header.PayloadSize = Payload.size();
 
 		return newBuffer;
 	}

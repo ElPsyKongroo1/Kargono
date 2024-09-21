@@ -36,7 +36,6 @@ namespace Kargono
 				generator.Accumulator -= generator.DelaySeconds;
 				Events::AppTickEvent event = Events::AppTickEvent(generator.DelayMilliSeconds);
 				s_AppTickCallback(&event);
-				KG_INFO("An App Tick has been generated with a delay of {}", Utility::Time::GetStringFromMilliseconds(generator.DelayMilliSeconds));
 			}
 		}
 	}

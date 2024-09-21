@@ -19,7 +19,8 @@ namespace Kargono::Utility
 	class OSCommands
 	{
 	public:
-#ifndef KG_EXPORT
+
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 		// This function opens a file explorer window at the provided absolute
 		//		path. This is operating system dependent and only works on windows.
 		static void OpenFileExplorer(const std::filesystem::path& path);
@@ -31,4 +32,5 @@ namespace Kargono::Utility
 		static void OpenProfiler();
 #endif
 	};
+
 }

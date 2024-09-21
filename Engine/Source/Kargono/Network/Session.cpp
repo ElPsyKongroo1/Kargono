@@ -52,7 +52,7 @@ namespace Kargono::Network
 		m_InitCache.LatencyCache.at(clientID).push_back(singleDirectionLatency);
 
 		// Check if latency cache for current client is full
-		if (m_InitCache.LatencyCache.at(clientID).size() >= m_InitCache.MaxSyncPings)
+		if (m_InitCache.LatencyCache.at(clientID).size() >= k_MaxSyncPings)
 		{
 			m_InitCache.LatencyCacheFilled.insert_or_assign(clientID, true);
 
@@ -165,9 +165,12 @@ namespace Kargono::Network
 	void Session::EndSession()
 	{
 	}
-	void Session::ReadyCheck(uint32_t clientID)
+	void Session::StoreClientReadyCheck(uint32_t clientID)
 	{
-		if (m_ReadyCheck.contains(clientID) || !m_UseReadyCheck){ return; }
+		if (m_ReadyCheck.contains(clientID) || !m_UseReadyCheck)
+		{ 
+			return; 
+		}
 		m_ReadyCheck.insert(clientID);
 
 		if (m_ReadyCheck.size() >= m_ConnectedClients.size())
@@ -203,7 +206,7 @@ namespace Kargono::Network
 			m_ReadyCheck.clear();
 		}
 	}
-	uint16_t Session::AddClient(Ref<ServerTCPConnection> newClient)
+	uint16_t Session::AddClient(ServerTCPConnection* newClient)
 	{
 		// Session already contains client, this is an error
 		if (m_ConnectedClients.contains(newClient->GetID()))
