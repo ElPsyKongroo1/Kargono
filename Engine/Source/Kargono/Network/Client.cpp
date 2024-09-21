@@ -105,35 +105,34 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
 			[this](std::error_code ec, std::size_t length)
 		{
-			if (!ec)
+			if (ec)
 			{
-				ReadMessageHeaderAsync();
-			}
-			else
-			{
+				KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
 				m_TCPSocket.close();
+				return;
 			}
+			
+			ReadMessageHeaderAsync();
 		});
 	}
 	void ClientTCPConnection::ReadValidationAsync()
 	{
 		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
 			[&](std::error_code ec, std::size_t length)
+		{
+			if (ec)
 			{
-				if (!ec)
-				{
-					// Connection is a client, so solve puzzle
-					m_ValidationOutput = GenerateValidationToken(m_ValidationInput);
-
-					// Write the result
-					WriteValidationAsync();
-				}
-				else
-				{
-					KG_INFO("Client Disconnected (ReadValidation)");
-					Disconnect();
-				}
-			});
+				KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
+				Disconnect();
+				return;
+					
+			}
+				
+			// Connection is a client, so solve puzzle
+			m_ValidationOutput = GenerateValidationToken(m_ValidationInput);
+			// Write the result
+			WriteValidationAsync();
+		});
 	}
 
 

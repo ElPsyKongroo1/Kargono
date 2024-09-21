@@ -25,14 +25,14 @@ namespace Kargono::Network
 		// Receive Messages
 		//==============================
 		void ReadMessageHeaderAsync();
-		void ReadMessageBodyAsync();
+		void ReadMessagePayloadAsync();
 
 		//==============================
 		// Send Messages
 		//==============================
 		void SendTCPMessage(const Message& msg);
 		void WriteMessageHeaderAsync();
-		void WriteMessageBodyAsync();
+		void WriteMessagePayloadAsync();
 
 		//==============================
 		// Getter/Setters

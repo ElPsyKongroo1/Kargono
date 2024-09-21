@@ -44,7 +44,7 @@ namespace Kargono::Network
 			{
 				if (ec)
 				{
-					KG_WARN("Failure to read Header!");
+					KG_WARN("Error occurred while attempting to read TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
 					return;
 				}
@@ -58,7 +58,7 @@ namespace Kargono::Network
 						return;
 					}
 					m_MessageCache.Payload.resize(m_MessageCache.Header.PayloadSize);
-					ReadMessageBodyAsync();
+					ReadMessagePayloadAsync();
 				}
 				else
 				{
@@ -66,14 +66,14 @@ namespace Kargono::Network
 				}
 			});
 	}
-	void TCPConnection::ReadMessageBodyAsync()
+	void TCPConnection::ReadMessagePayloadAsync()
 	{
 		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.Payload.data(), m_MessageCache.Payload.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (ec)
 				{
-					KG_WARN("Failure to read body!");
+					KG_WARN("Error occurred while attempting to read TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
 					return;
 				}
@@ -86,42 +86,25 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
-				if (!ec)
+				if (ec)
 				{
-					if (m_OutgoingMessageQueue.GetFront().Payload.size() > 0)
-					{
-						if (m_OutgoingMessageQueue.GetFront().Payload.size() > k_MaxBufferSize)
-						{
-							KG_WARN("Attempt to send message that is larger than maximum buffer size!");
-							Disconnect();
-							return;
-						}
+					KG_WARN("Error occurred while attempting to write a TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
+					Disconnect();
+					return;
+				}
 
-						WriteMessageBodyAsync();
-					}
-					else
+				if (m_OutgoingMessageQueue.GetFront().Payload.size() > 0)
+				{
+					if (m_OutgoingMessageQueue.GetFront().Payload.size() > k_MaxBufferSize)
 					{
-						m_OutgoingMessageQueue.PopFront();
-
-						if (!m_OutgoingMessageQueue.IsEmpty())
-						{
-							WriteMessageHeaderAsync();
-						}
+						KG_WARN("Attempt to send message that is larger than maximum buffer size!");
+						Disconnect();
+						return;
 					}
+
+					WriteMessagePayloadAsync();
 				}
 				else
-				{
-					KG_WARN("Failure to write Header!");
-					Disconnect();
-				}
-			});
-	}
-	void TCPConnection::WriteMessageBodyAsync()
-	{
-		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Payload.data(), m_OutgoingMessageQueue.GetFront().Payload.size()),
-			[this](std::error_code ec, std::size_t length)
-			{
-				if (!ec)
 				{
 					m_OutgoingMessageQueue.PopFront();
 
@@ -130,10 +113,24 @@ namespace Kargono::Network
 						WriteMessageHeaderAsync();
 					}
 				}
-				else
+			});
+	}
+	void TCPConnection::WriteMessagePayloadAsync()
+	{
+		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Payload.data(), m_OutgoingMessageQueue.GetFront().Payload.size()),
+			[this](std::error_code ec, std::size_t length)
+			{
+				if (ec)
 				{
-					KG_WARN("Failure to write Body!");
+					KG_WARN("Error occurred while attempting to write a TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
+					return;
+				}
+
+				m_OutgoingMessageQueue.PopFront();
+				if (!m_OutgoingMessageQueue.IsEmpty())
+				{
+					WriteMessageHeaderAsync();
 				}
 			});
 	}

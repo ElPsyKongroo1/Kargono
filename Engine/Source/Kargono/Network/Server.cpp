@@ -128,11 +128,9 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
 			[this](std::error_code ec, std::size_t length)
 			{
-				if (!ec)
+				if (ec)
 				{
-				}
-				else
-				{
+					KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					m_TCPSocket.close();
 				}
 			});
@@ -142,27 +140,26 @@ namespace Kargono::Network
 		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
 			[&](std::error_code ec, std::size_t length)
 			{
-				if (!ec)
+				if (ec)
 				{
-					if (m_ValidationInput == m_ValidationCache)
-					{
-						// Client has provided valid solution, so allow it to connect properly
-						KG_INFO("Client Validation Successful");
-						// TODO: Add post client validation back
-						//server->OnClientValidated(this->shared_from_this());
+					KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
+					Disconnect();
+					return;
+				}
 
-						// Sit waiting to receive data now
-						ReadMessageHeaderAsync();
-					}
-					else
-					{
-						KG_INFO("Client Disconnected (Failed Validation)");
-						Disconnect();
-					}
+				if (m_ValidationInput == m_ValidationCache)
+				{
+					// Client has provided valid solution, so allow it to connect properly
+					KG_INFO("Client Validation Successful");
+					// TODO: Add post client validation back
+					//server->OnClientValidated(this->shared_from_this());
+
+					// Sit waiting to receive data now
+					ReadMessageHeaderAsync();
 				}
 				else
 				{
-					KG_INFO("Client Disconnected (ReadValidation)");
+					KG_WARN("Client failed validation");
 					Disconnect();
 				}
 			});

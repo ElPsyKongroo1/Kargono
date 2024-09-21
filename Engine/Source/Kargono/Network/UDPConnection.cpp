@@ -61,7 +61,7 @@ namespace Kargono::Network
 				// Check if an error present in the asio context
 				if (ec)
 				{
-					KG_WARN("Failure to read UDP Message! {}", ec.message());
+					KG_WARN("Error occurred while attempting read a UDP Message. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					if (ec.value() == 995) // Application requests termination
 					{
 						return;
@@ -163,19 +163,17 @@ namespace Kargono::Network
 
 		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_OutgoingMessagesQueue.GetFront().endpoint, [this](std::error_code ec, std::size_t length)
 		{
-			if (!ec)
+			if (ec)
 			{
-				m_OutgoingMessagesQueue.PopFront();
-
-				if (!m_OutgoingMessagesQueue.IsEmpty())
-				{
-					WriteMessageAsync();
-				}
-			}
-			else
-			{
-				KG_WARN("Failure to write Header!");
+				KG_WARN("Error occurred while attempting write a UDP Message. Error Code: [{}] Message: {}", ec.value(), ec.message());
 				Disconnect(m_CurrentEndpoint);
+				return;
+			}
+
+			m_OutgoingMessagesQueue.PopFront();
+			if (!m_OutgoingMessagesQueue.IsEmpty())
+			{
+				WriteMessageAsync();
 			}
 		});
 	}
