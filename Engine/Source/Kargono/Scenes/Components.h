@@ -16,6 +16,12 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::Scenes
 {
+	struct AIComponent
+	{
+		AIComponent() = default;
+		AIComponent(const IDComponent&) = default;
+	};
+
 	struct IDComponent
 	{
 		UUID ID;
@@ -258,7 +264,8 @@ namespace Kargono::Scenes
 		CircleCollider2D,
 		ClassInstance,
 		Shape,
-		Network
+		Network,
+		AI
 	};
 
 	template<typename... Components>
@@ -266,7 +273,7 @@ namespace Kargono::Scenes
 	{
 	};
 
-	using AllComponents = ComponentGroup<TransformComponent, CameraComponent,
+	using AllComponents = ComponentGroup<AIComponent, TransformComponent, CameraComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }

@@ -4,6 +4,9 @@
 //		(Editor and Runtime) as an easy single include to provide all of
 //		the core engine functionality.
 
+//-----------------AI-----------------//
+#include "Kargono/AI/AIService.h"
+
 //-----------------Assets-----------------//
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Assets/AssetManager.h"

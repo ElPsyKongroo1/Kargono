@@ -80,6 +80,7 @@ namespace Kargono
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
+
 		// Render
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
@@ -273,6 +274,9 @@ namespace Kargono
 
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
+		// Process AI
+		AI::AIService::OnUpdate(ts);
+
 		// Update
 		Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);

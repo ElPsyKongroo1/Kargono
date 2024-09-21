@@ -63,9 +63,13 @@ namespace Kargono::Panels
 		{
 			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
 			{
-				// Update Scripts
+				// Process AI
+				AI::AIService::OnUpdate(ts);
+				// Process Input Mode
 				Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
+				// Process entity OnUpdate
 				Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
+				// Process physics
 				Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
 			}
 			OnUpdateRuntime(ts);
@@ -739,7 +743,6 @@ namespace Kargono::Panels
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
-
 		// Render 
 		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
