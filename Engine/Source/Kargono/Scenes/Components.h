@@ -16,11 +16,11 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::Scenes
 {
-	struct AIComponent
+	/*struct AIComponent
 	{
 		AIComponent() = default;
-		AIComponent(const IDComponent&) = default;
-	};
+		AIComponent(const AIComponent&) = default;
+	};*/
 
 	struct IDComponent
 	{
@@ -76,8 +76,7 @@ namespace Kargono::Scenes
 	struct CameraComponent
 	{
 		SceneCamera Camera;
-		bool Primary = true; // TODO: Think about moving to scene
-		//bool FixedAspectRatio = true;
+		bool Primary = true;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
@@ -265,7 +264,7 @@ namespace Kargono::Scenes
 		ClassInstance,
 		Shape,
 		Network,
-		AI
+		//AI
 	};
 
 	template<typename... Components>
@@ -273,7 +272,7 @@ namespace Kargono::Scenes
 	{
 	};
 
-	using AllComponents = ComponentGroup<AIComponent, TransformComponent, CameraComponent,
+	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, //AIComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }

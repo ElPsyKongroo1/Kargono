@@ -12,7 +12,8 @@ namespace Kargono
 	{
 		std::filesystem::path projectPath {};
 #ifdef KG_TESTING
-		projectPath = "../Projects/Pong/Pong.kproj";
+		Assets::AssetManager::CreateNewProject("TestProject", "./../Projects");
+		projectPath = "../Projects/TestProject/TestProject.kproj";
 #else
 		EngineSpec launcherSpec;
 		launcherSpec.Name = "Editor Launcher";

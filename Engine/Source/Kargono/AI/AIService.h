@@ -5,7 +5,7 @@ namespace Kargono::AI
 {
 	struct AIState
 	{
-
+		// Hold script for OnUpdate?
 	};
 
 	class AIService
