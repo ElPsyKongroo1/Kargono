@@ -151,7 +151,11 @@ namespace Kargono::Utility
 		system(outputString.c_str());
 	}
 
-
+	void Kargono::Utility::OSCommands::DownloadGitProject(const std::filesystem::path& downloadPath, const std::string& projectURI)
+	{
+		std::string outputString = "git clone " + projectURI + " " + downloadPath.string();
+		system(outputString.c_str());
+	}
 
 #endif
 

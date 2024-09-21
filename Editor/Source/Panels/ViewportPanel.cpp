@@ -242,7 +242,6 @@ namespace Kargono::Panels
 		
 		windowSize = ImGui::GetWindowSize();
 		Ref<Rendering::Texture2D> icon {nullptr};
-
 		if (toolbarEnabled)
 		{
 			// Draw Play/Simulate/Step Background

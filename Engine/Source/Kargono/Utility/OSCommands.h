@@ -30,6 +30,7 @@ namespace Kargono::Utility
 		static void OpenScriptProject(const std::filesystem::path& path);
 		// This function opens the profiler associated with this engine (optick).
 		static void OpenProfiler();
+		static void DownloadGitProject(const std::filesystem::path& downloadPath, const std::string& projectURI);
 #endif
 	};
 
