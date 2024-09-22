@@ -8,6 +8,7 @@
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Scenes/EntityClass.h"
+#include "Kargono/AI/AIService.h"
 
 #include <string>
 #include <unordered_map>
@@ -16,11 +17,21 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::Scenes
 {
-	/*struct AIComponent
+	struct AIStateComponent
 	{
-		AIComponent() = default;
-		AIComponent(const AIComponent&) = default;
-	};*/
+		// Main state that undergoes state transitions
+		Assets::AssetHandle CurrentStateHandle{ Assets::EmptyHandle };
+		Ref<AI::AIState> CurrentStateReference{ nullptr };
+		// This state allows transitioning into a temporary state for the CurrentState and easily reverting back
+		Assets::AssetHandle PreviousStateHandle{ Assets::EmptyHandle };
+		Ref<AI::AIState> PreviousStateReference{ nullptr };
+		// Globally held state that is ubiquitously available and ran in the OnUpdate() function
+		Assets::AssetHandle GlobalStateHandle{ Assets::EmptyHandle };
+		Ref<AI::AIState> GlobalStateReference{ nullptr };
+
+		AIStateComponent() = default;
+		AIStateComponent(const AIStateComponent&) = default;
+	};
 
 	struct IDComponent
 	{
@@ -264,7 +275,7 @@ namespace Kargono::Scenes
 		ClassInstance,
 		Shape,
 		Network,
-		//AI
+		AIState
 	};
 
 	template<typename... Components>
@@ -272,7 +283,7 @@ namespace Kargono::Scenes
 	{
 	};
 
-	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, //AIComponent,
+	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, AIStateComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
 	TagComponent, NetworkComponent>;
 }
