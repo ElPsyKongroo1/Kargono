@@ -660,6 +660,72 @@ namespace Kargono
 			return WrappedFuncType::None;
 		}
 
+		inline void CallWrappedVoidNone(Ref<WrappedFunction> wrappedFunction)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_None, "Invalid wrapped function type provided");
+			((WrappedVoidNone*)wrappedFunction.get())->m_Value();
+		}
+
+		inline void CallWrappedVoidString(Ref<WrappedFunction> wrappedFunction, const std::string& argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_String, "Invalid wrapped function type provided");
+			((WrappedVoidString*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline void CallWrappedVoidFloat(Ref<WrappedFunction> wrappedFunction, float argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_Float, "Invalid wrapped function type provided");
+			((WrappedVoidFloat*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline void CallWrappedVoidUInt16(Ref<WrappedFunction> wrappedFunction, uint16_t argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_UInt16, "Invalid wrapped function type provided");
+			((WrappedVoidUInt16*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline void CallWrappedVoidUInt32(Ref<WrappedFunction> wrappedFunction, uint32_t argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_UInt32, "Invalid wrapped function type provided");
+			((WrappedVoidUInt32*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline void CallWrappedVoidUInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_UInt64, "Invalid wrapped function type provided");
+			((WrappedVoidUInt64*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline void CallWrappedVoidUInt64Float(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, float argumentTwo)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_UInt64Float, "Invalid wrapped function type provided");
+			((WrappedVoidUInt64Float*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo);
+		}
+
+		inline bool CallWrappedBoolNone(Ref<WrappedFunction> wrappedFunction)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_None, "Invalid wrapped function type provided");
+			return ((WrappedBoolNone*)wrappedFunction.get())->m_Value();
+		}
+
+		inline bool CallWrappedBoolUInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_UInt64, "Invalid wrapped function type provided");
+			return ((WrappedBoolUInt64*)wrappedFunction.get())->m_Value(argumentOne);
+		}
+
+		inline bool CallWrappedBoolUInt64UInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, uint64_t argumentTwo)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_UInt64UInt64, "Invalid wrapped function type provided");
+			return ((WrappedBoolUInt64UInt64*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo);
+		}
+
+		inline bool CallWrappedBoolUInt64UInt16UInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, uint16_t argumentTwo, uint64_t argumentThree)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_UInt64UInt16UInt64, "Invalid wrapped function type provided");
+			return ((WrappedBoolUInt64UInt16UInt64*)wrappedFunction.get())->m_Value(argumentOne,argumentTwo, argumentThree);
+		}
+
 		inline WrappedVarType WrappedFuncTypeToReturnType(WrappedFuncType type)
 		{
 			switch (type)

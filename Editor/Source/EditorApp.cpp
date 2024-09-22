@@ -560,7 +560,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -571,7 +571,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -596,7 +596,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -607,7 +607,7 @@ namespace Kargono
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+			 	collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -618,7 +618,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCount();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+			Utility::CallWrappedVoidUInt32(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
 
 		return false;
@@ -629,7 +629,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -640,7 +640,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlot();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -651,7 +651,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
@@ -661,7 +661,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInit();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -671,7 +671,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminated();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -681,7 +681,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -691,7 +691,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -701,7 +701,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignal();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
 	}
@@ -898,7 +898,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
 		if (scriptHandle != 0)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
 		}
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())

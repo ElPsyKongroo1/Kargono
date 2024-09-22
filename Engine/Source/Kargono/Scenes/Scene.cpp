@@ -181,7 +181,7 @@ namespace Kargono::Scenes
 			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnCreateHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				((WrappedVoidUInt64*)entityClass->GetScripts().OnCreate->m_Function.get())->m_Value(entity.GetUUID());
+				Utility::CallWrappedVoidUInt64(entityClass->GetScripts().OnCreate->m_Function, entity.GetUUID());
 			}
 		}
 
@@ -336,7 +336,7 @@ namespace Kargono::Scenes
 			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnUpdateHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				((WrappedVoidUInt64Float*)entityClass->GetScripts().OnUpdate->m_Function.get())->m_Value(entity.GetUUID(), ts);
+				Utility::CallWrappedVoidUInt64Float(entityClass->GetScripts().OnUpdate->m_Function, entity.GetUUID(), ts);
 			}
 		}
 	}
@@ -353,11 +353,11 @@ namespace Kargono::Scenes
 					if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
 					if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 					{
-						((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+						Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
 					}
 					else
 					{
-						((WrappedVoidFloat*)keyboardBinding->GetScript()->m_Function.get())->m_Value(ts);
+						Utility::CallWrappedVoidFloat(keyboardBinding->GetScript()->m_Function, ts);
 					}
 				}
 				else
@@ -371,11 +371,11 @@ namespace Kargono::Scenes
 					{
 						if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_UInt64)
 						{
-							((WrappedVoidUInt64*)keyboardBinding->GetScript()->m_Function.get())->m_Value(entity);
+							Utility::CallWrappedVoidUInt64(keyboardBinding->GetScript()->m_Function, entity);
 						}
 						else
 						{
-							((WrappedVoidUInt64Float*)keyboardBinding->GetScript()->m_Function.get())->m_Value(entity, ts);
+							Utility::CallWrappedVoidUInt64Float(keyboardBinding->GetScript()->m_Function, entity, ts);
 						}
 					}
 				}
@@ -393,7 +393,7 @@ namespace Kargono::Scenes
 				{
 					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 					if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
-					((WrappedVoidNone*)keyboardBinding->GetScript()->m_Function.get())->m_Value();
+					Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
 				}
 			}
 		}

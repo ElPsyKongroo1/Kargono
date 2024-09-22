@@ -36,17 +36,13 @@ namespace Kargono::AI
 			// Call Global State OnUpdate
 			if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnUpdate)
 			{
-				KG_ASSERT(aiComponent.GlobalStateReference->OnUpdate->m_FuncType == WrappedFuncType::Void_UInt64, 
-					"Attempt to call invalid function type for global state");
-				((WrappedVoidUInt64*)aiComponent.GlobalStateReference->OnUpdate->m_Function.get())->m_Value(entity.GetUUID());
+				Utility::CallWrappedVoidUInt64(aiComponent.GlobalStateReference->OnUpdate->m_Function, entity.GetUUID());
 			}
 
 			// Call Current State OnUpdate
 			if (aiComponent.CurrentStateReference)
 			{
-				KG_ASSERT(aiComponent.CurrentStateReference->OnUpdate->m_FuncType == WrappedFuncType::Void_UInt64,
-					"Attempt to call invalid function type for current state");
-				((WrappedVoidUInt64*)aiComponent.CurrentStateReference->OnUpdate->m_Function.get())->m_Value(entity.GetUUID());
+				Utility::CallWrappedVoidUInt64(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID());
 			}
 		}
 
@@ -70,12 +66,11 @@ namespace Kargono::AI
 		// Call OnExitState() for active global AIState
 		if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnExitState)
 		{
-			((WrappedVoidUInt64*)aiComponent.GlobalStateReference->OnExitState->m_Function.get())->m_Value(entityID);
+			Utility::CallWrappedVoidUInt64(aiComponent.GlobalStateReference->OnExitState->m_Function, entityID);
 		}
 
-		
-
 		// Switch to new global AIState
+
 
 		// Call OnEnter for new global state
 

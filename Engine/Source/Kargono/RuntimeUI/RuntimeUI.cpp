@@ -288,7 +288,7 @@ namespace Kargono::RuntimeUI
 		s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
 		if (s_ActiveUI->m_FunctionPointers.OnMove)
 		{
-			((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.OnMove->m_Function);
 		}
 	}
 
@@ -385,7 +385,7 @@ namespace Kargono::RuntimeUI
 			s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
 			if (s_ActiveUI->m_FunctionPointers.OnMove)
 			{
-				((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.OnMove->m_Function);
 			}
 		}
 	}
@@ -400,7 +400,7 @@ namespace Kargono::RuntimeUI
 			s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
 			if (s_ActiveUI->m_FunctionPointers.OnMove)
 			{
-				((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.OnMove->m_Function);
 			}
 		}
 	}
@@ -415,7 +415,7 @@ namespace Kargono::RuntimeUI
 			s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
 			if (s_ActiveUI->m_FunctionPointers.OnMove)
 			{
-				((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.OnMove->m_Function);
 			}
 		}
 	}
@@ -430,7 +430,7 @@ namespace Kargono::RuntimeUI
 			s_ActiveUI->m_SelectedWidget->ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
 			if (s_ActiveUI->m_FunctionPointers.OnMove)
 			{
-				((WrappedVoidNone*)s_ActiveUI->m_FunctionPointers.OnMove->m_Function.get())->m_Value();
+				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.OnMove->m_Function);
 			}
 			
 		}
@@ -441,7 +441,7 @@ namespace Kargono::RuntimeUI
 		if (!s_ActiveUI->m_SelectedWidget) { return; }
 		if (s_ActiveUI->m_SelectedWidget->FunctionPointers.OnPress)
 		{
-			((WrappedVoidNone*)s_ActiveUI->m_SelectedWidget->FunctionPointers.OnPress->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(s_ActiveUI->m_SelectedWidget->FunctionPointers.OnPress->m_Function);
 		}
 	}
 
