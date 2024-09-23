@@ -259,6 +259,7 @@ namespace Kargono::EditorUI
 		inline static float s_MediumButtonRightOffset = 28.0f;
 
 		inline static float s_TextLeftIndentOffset = 30.5f;
+		inline static float s_TextBackgroundHeight = 21.0f;
 
 		// These values represent the percentage location
 		//		of text relative to the size of the current window
@@ -274,6 +275,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Active Window Fields
 		//==============================
+		inline static ImVec2 s_WindowPosition{ 0.0f, 0.0f };
 		inline static float s_PrimaryTextWidth{ 0.0f };
 		inline static float s_PrimaryTextIndentedWidth{ 0.0f };
 		inline static float s_SecondaryTextSmallWidth{ 0.0f };

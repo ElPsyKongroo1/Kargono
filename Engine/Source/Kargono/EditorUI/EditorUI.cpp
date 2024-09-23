@@ -293,6 +293,8 @@ namespace Kargono::EditorUI
 
 		style.WindowMenuButtonPosition = -1;
 		style.WindowPadding = { 7.0f, 4.0f };
+		style.ItemSpacing = { 8.0f, 6.0f };
+
 		SetColorDefaults();
 
 		// Setup Platform/Renderer backends
@@ -477,6 +479,7 @@ namespace Kargono::EditorUI
 	static void RecalculateWindowDimensions()
 	{
 		// Calculate Widget Spacing Values
+		EditorUIService::s_WindowPosition = ImGui::GetWindowPos();
 		EditorUIService::s_PrimaryTextWidth = (EditorUIService::s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f;
 		EditorUIService::s_PrimaryTextIndentedWidth = (EditorUIService::s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f - EditorUIService::s_TextLeftIndentOffset;
 		EditorUIService::s_SecondaryTextSmallWidth = ((EditorUIService::s_SecondaryTextSecondPercentage - EditorUIService::s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 10.0f;
@@ -721,6 +724,7 @@ namespace Kargono::EditorUI
 		std::string previewRemainder{ text };
 		uint32_t iteration{ 0 };
 		int32_t lineEndPosition;
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
 		do 
 		{
@@ -729,10 +733,20 @@ namespace Kargono::EditorUI
 			ImGui::SetCursorPosY({ ImGui::GetCursorPosY() + yOffset + (iteration * 20.0f) });
 			if (lineEndPosition == -1)
 			{
+				// Draw backgrounds
+				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
 				ImGui::Text(previewRemainder.c_str());
 			}
 			else
 			{
+				// Draw backgrounds
+				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
 				previewOutput = previewRemainder.substr(0, lineEndPosition);
 				previewRemainder = previewRemainder.substr(lineEndPosition, std::string::npos);
 				ImGui::Text(previewOutput.c_str());
@@ -898,6 +912,12 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+			draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
 			// Display Menu Item
 			if (spec.Flags & SelectOption_Indented)
 			{
@@ -1143,6 +1163,13 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		// Draw background
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + 21.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
 		if (spec.Flags & Checkbox_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
@@ -1217,11 +1244,20 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		// Draw background
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+
 		// Display Item
 		if (spec.Flags & EditFloat_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
+
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), 
@@ -1281,6 +1317,16 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+
+		// Draw backgrounds
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.Flags & EditVec2_Indented)
@@ -1374,6 +1420,20 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+
+		// Draw backgrounds
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
 		// Display Item
 		if (spec.Flags & EditVec3_Indented)
 		{
@@ -1491,6 +1551,23 @@ namespace Kargono::EditorUI
 		// Local Variables
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
+
+		// Draw backgrounds
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
 		// Display Item
 		if (spec.Flags & EditVec4_Indented)
 		{
@@ -1640,6 +1717,16 @@ namespace Kargono::EditorUI
 		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		// Draw backgrounds
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextMediumWidth + 19.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosMiddle - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosMiddle + s_SecondaryTextMediumWidth + 19.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
 		if (spec.Flags & RadioSelector_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
@@ -1673,7 +1760,7 @@ namespace Kargono::EditorUI
 			}, s_SmallCheckboxButton, spec.SelectedOption == 0, s_HighlightColor1);
 			ImGui::SameLine();
 
-			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), s_SecondaryTextMediumWidth);
+			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), s_SecondaryTextMediumWidth - 18.0f);
 			TruncateText(spec.FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 			
 			ImGui::SameLine(s_SecondaryTextPosMiddle - 2.5f);
@@ -1690,7 +1777,7 @@ namespace Kargono::EditorUI
 				spec.SelectAction();
 			}, s_SmallCheckboxButton, spec.SelectedOption == 1, s_HighlightColor2);
 			ImGui::SameLine();
-			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), s_SecondaryTextMediumWidth);
+			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), s_SecondaryTextMediumWidth - 18.0f);
 			TruncateText(spec.SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 
 			ImGui::PopStyleColor(3);
@@ -1705,14 +1792,14 @@ namespace Kargono::EditorUI
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 0, s_SecondaryTextColor);
 			ImGui::SameLine();
 
-			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), s_SecondaryTextMediumWidth);
+			int32_t position = ImGui::FindPositionAfterLength(spec.FirstOptionLabel.c_str(), s_SecondaryTextMediumWidth - 18.0f);
 			TruncateText(spec.FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 
 			ImGui::SameLine(s_SecondaryTextPosMiddle - 2.5f);
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 				s_SmallCheckboxDisabledButton, spec.SelectedOption == 1, s_SecondaryTextColor);
 			ImGui::SameLine();
-			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), s_SecondaryTextMediumWidth);
+			position = ImGui::FindPositionAfterLength(spec.SecondOptionLabel.c_str(), s_SecondaryTextMediumWidth - 18.0f);
 			TruncateText(spec.SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 			ImGui::PopStyleColor(4);
 		}
@@ -1803,6 +1890,7 @@ namespace Kargono::EditorUI
 			for (auto& tableEntry : spec.TableValues)
 			{
 				smallButtonCount = 0;
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 42.5f : 12.0f);
 				CreateImage(s_IconDash, 8, s_DisabledColor);
 				ImGui::SameLine();
@@ -1856,7 +1944,7 @@ namespace Kargono::EditorUI
 			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
-			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, 21.0f };
+			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.Label.c_str()).x + 34.0f, EditorUI::EditorUIService::s_TextBackgroundHeight };
 
 			// Create Invisible Button for Interation with current node
 			if (ImGui::InvisibleButton(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), buttonDimensions))
