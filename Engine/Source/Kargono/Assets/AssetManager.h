@@ -24,116 +24,113 @@ namespace Kargono
 	namespace Projects { class Project; }
 }
 
-
-class AssetManagerTemp 
+namespace Kargono::Assets
 {
-	// Functions to call
-
-	// Virtual functions to inject functionality
-
-
-	//==============================
-	// Manage Registry
-	//==============================
-	
-	// DeserializeRegistry
-	// SerializeRegistry
-	// Clear Registry
-	// GetAssetRegistry()
-
-	//==============================
-	// Import Asset
-	//==============================
-
-	// ImportNewAssetFromFile
-	// ImportNewAssetFromData()
-	
-	//==============================
-	// Read Asset from Registry
-	//==============================
-	
-	// GetAsset(handle)
-
-};
-
-class AudioManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class EntityClassManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class FontManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class GameStateManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class InputModeManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class ProjectManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class SceneManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class ScriptManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class ShaderManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class TextureManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-class UserInterfaceManager : public AssetManagerTemp
-{
-	// Override virtual functions
-
-	// Store actual data
-};
-
-class AssetServiceTemp
-{
-	template<typename AssetType>
-	AssetType GetAsset()
+	class AssetManagerTemp
 	{
-		return 
-	}
-	// Access to global functions
-};
+		// Functions to call
+
+		// Virtual functions to inject functionality
 
 
+		//==============================
+		// Manage Registry
+		//==============================
+
+		// DeserializeRegistry
+		// SerializeRegistry
+		// Clear Registry
+		// GetAssetRegistry()
+
+		//==============================
+		// Import Asset
+		//==============================
+
+		// ImportNewAssetFromFile
+		// ImportNewAssetFromData()
+
+		//==============================
+		// Read Asset from Registry
+		//==============================
+
+		// GetAsset(handle)
+
+	};
+
+	class AudioManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class EntityClassManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class FontManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class GameStateManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class InputModeManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class ProjectManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class SceneManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class ScriptManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class ShaderManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class TextureManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+	class UserInterfaceManager : public AssetManagerTemp
+	{
+		// Override virtual functions
+
+		// Store actual data
+	};
+
+	class AssetServiceTemp
+	{
+		//static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
+
+		// Access to global functions
+	};
+}
 
 
 

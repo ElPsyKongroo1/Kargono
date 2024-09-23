@@ -60,7 +60,7 @@ namespace Kargono::Assets
 		std::filesystem::path IntermediateLocation;
 		std::string CheckSum;
 		Assets::AssetType Type = Assets::AssetType::None;
-		Ref<void> SpecificFileData = nullptr;
+		Ref<void> SpecificFileData { nullptr };
 	public:
 		template <typename T>
 		T* GetSpecificFileData()
