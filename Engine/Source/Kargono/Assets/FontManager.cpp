@@ -111,7 +111,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving font specific metadata 
-				if (newAsset.Data.Type == Assets::Font)
+				if (newAsset.Data.Type == Assets::AssetType::Font)
 				{
 					Ref<Assets::FontMetaData> fontMetaData = CreateRef<Assets::FontMetaData>();
 

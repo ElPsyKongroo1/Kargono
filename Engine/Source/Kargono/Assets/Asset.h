@@ -23,7 +23,7 @@ namespace Kargono::Assets
 
 	// This enum provides a method to distinguish between different specific
 	//		asset types in an Asset. The metadata struct will hold an AssetType.
-	enum AssetType
+	enum class AssetType
 	{
 		None = 0,
 		Texture = 1,

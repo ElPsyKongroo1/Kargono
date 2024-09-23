@@ -56,7 +56,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving uiobject specific metadata 
-				if (newAsset.Data.Type == Assets::UserInterface)
+				if (newAsset.Data.Type == Assets::AssetType::UserInterface)
 				{
 					Ref<Assets::UserInterfaceMetaData> userInterfaceMetaData = CreateRef<Assets::UserInterfaceMetaData>();
 					newAsset.Data.SpecificFileData = userInterfaceMetaData;

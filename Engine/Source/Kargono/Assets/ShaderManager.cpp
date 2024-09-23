@@ -183,7 +183,7 @@ namespace Kargono::Assets
 				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 				// Retrieving shader specific metadata 
-				if (newAsset.Data.Type == Assets::Shader)
+				if (newAsset.Data.Type == Assets::AssetType::Shader)
 				{
 					Ref<Assets::ShaderMetaData> shaderMetaData = CreateRef<Assets::ShaderMetaData>();
 

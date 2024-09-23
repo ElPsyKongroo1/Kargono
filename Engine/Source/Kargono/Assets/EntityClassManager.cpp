@@ -109,7 +109,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving EntityClass specific metadata 
-				if (newAsset.Data.Type == Assets::EntityClass)
+				if (newAsset.Data.Type == Assets::AssetType::EntityClass)
 				{
 					Ref<Assets::EntityClassMetaData> EntityClassMetaData = CreateRef<Assets::EntityClassMetaData>();
 					EntityClassMetaData->Name = metadata["Name"].as<std::string>();

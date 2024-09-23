@@ -58,7 +58,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving texture specific metadata 
-				if (newAsset.Data.Type == Assets::Texture)
+				if (newAsset.Data.Type == Assets::AssetType::Texture)
 				{
 					Ref<Assets::TextureMetaData> texMetaData = CreateRef<Assets::TextureMetaData>();
 

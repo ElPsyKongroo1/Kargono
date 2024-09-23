@@ -99,7 +99,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving Script specific metadata 
-				if (newAsset.Data.Type == Assets::Script)
+				if (newAsset.Data.Type == Assets::AssetType::Script)
 				{
 					Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
 

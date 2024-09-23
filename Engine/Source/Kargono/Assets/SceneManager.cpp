@@ -242,7 +242,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving shader specific metadata 
-				if (newAsset.Data.Type == Assets::Scene)
+				if (newAsset.Data.Type == Assets::AssetType::Scene)
 				{
 					Ref<Assets::SceneMetaData> sceneMetaData = CreateRef<Assets::SceneMetaData>();
 					newAsset.Data.SpecificFileData = sceneMetaData;

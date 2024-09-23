@@ -57,7 +57,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving audio specific metadata 
-				if (newAsset.Data.Type == Assets::Audio)
+				if (newAsset.Data.Type == Assets::AssetType::Audio)
 				{
 					Ref<Assets::AudioMetaData> audioMetaData = CreateRef<Assets::AudioMetaData>();
 

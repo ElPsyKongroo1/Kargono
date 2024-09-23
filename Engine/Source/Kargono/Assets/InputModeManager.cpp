@@ -56,7 +56,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving inputMode specific metadata 
-				if (newAsset.Data.Type == Assets::InputMode)
+				if (newAsset.Data.Type == Assets::AssetType::InputMode)
 				{
 					Ref<Assets::InputModeMetaData> inputModeMetaData = CreateRef<Assets::InputModeMetaData>();
 					newAsset.Data.SpecificFileData = inputModeMetaData;

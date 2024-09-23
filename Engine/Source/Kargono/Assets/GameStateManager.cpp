@@ -54,7 +54,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving GameState specific metadata 
-				if (newAsset.Data.Type == Assets::GameState)
+				if (newAsset.Data.Type == Assets::AssetType::GameState)
 				{
 					Ref<Assets::GameStateMetaData> GameStateMetaData = CreateRef<Assets::GameStateMetaData>();
 					GameStateMetaData->Name = metadata["Name"].as<std::string>();
