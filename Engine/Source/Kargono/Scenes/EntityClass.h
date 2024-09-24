@@ -8,8 +8,6 @@
 #include <set>
 #include <map>
 
-namespace Kargono::Assets { class AssetManager; }
-
 namespace Kargono::Scenes
 {
 	struct EntityScripts
@@ -135,11 +133,9 @@ namespace Kargono::Scenes
 		{
 			return m_Name;
 		}
-	private:
+	public:
 		std::string m_Name{};
 		EntityScripts m_Scripts{};
 		std::vector<ClassField> m_FieldTypes {};
-	private:
-		friend class Assets::AssetManager;
 	};
 }

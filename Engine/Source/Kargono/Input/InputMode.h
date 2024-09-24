@@ -11,12 +11,6 @@
 #include <functional>
 #include <string>
 
-
-namespace Kargono::Assets
-{
-	class AssetManager;
-}
-
 namespace Kargono::Input
 {
 	//=========================
@@ -97,7 +91,7 @@ namespace Kargono::Input
 		{
 			return m_KeyboardPolling;
 		}
-	private:
+	public:
 		//=========================
 		// Input Polling Bindings
 		//=========================
@@ -109,8 +103,6 @@ namespace Kargono::Input
 		//=========================
 		std::vector<Ref<InputActionBinding>> m_OnUpdateBindings{};
 		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
-	private:
-		friend class Assets::AssetManager;
 	};
 
 	class InputModeService

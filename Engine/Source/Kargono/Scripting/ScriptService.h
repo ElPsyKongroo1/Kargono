@@ -35,7 +35,7 @@ namespace Kargono::Scripting
 		//==============================
 		static void LoadActiveScriptModule();
 		static void CloseActiveScriptModule();
-	private:
+
 		//==============================
 		// Manage Individual Scripts
 		//==============================
