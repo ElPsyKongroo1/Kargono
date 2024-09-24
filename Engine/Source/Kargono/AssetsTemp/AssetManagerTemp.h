@@ -77,6 +77,16 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
+		std::filesystem::path GetAssetIntermediateLocation(const AssetHandle& handle)
+		{
+			if (!m_AssetRegistry.contains(handle))
+			{
+				KG_ERROR("Could not locate asset when attempting to retrieve it's intermediate location");
+				return std::filesystem::path();
+			}
+			return m_AssetRegistry[handle].Data.IntermediateLocation;
+		}
+
 		virtual Ref<AssetType> InstantiateAssetIntoMemory(Assets::Asset& asset) = 0;
 
 

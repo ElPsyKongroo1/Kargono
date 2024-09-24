@@ -213,4 +213,9 @@ namespace Kargono::Assets
 	{
 		return s_SceneManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetSceneIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_SceneManager.GetAssetIntermediateLocation(handle);
+	}
 }

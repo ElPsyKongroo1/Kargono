@@ -30,4 +30,9 @@ namespace Kargono::Assets
 	{
 		return s_ScriptManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetScriptIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_ScriptManager.GetAssetIntermediateLocation(handle);
+	}
 }

@@ -150,4 +150,9 @@ namespace Kargono::Assets
 	{
 		return s_UserInterfaceManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetUserInterfaceIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_UserInterfaceManager.GetAssetIntermediateLocation(handle);
+	}
 }

@@ -97,4 +97,9 @@ namespace Kargono::Assets
 	{
 		return s_FontManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetFontIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_FontManager.GetAssetIntermediateLocation(handle);
+	}
 }

@@ -107,4 +107,8 @@ namespace Kargono::Assets
 	{
 		return s_EntityClassManager.GetAsset(handle);
 	}
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetEntityClassIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_EntityClassManager.GetAssetIntermediateLocation(handle);
+	}
 }

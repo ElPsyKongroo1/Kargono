@@ -24,4 +24,8 @@ namespace Kargono::Assets
 	{
 		return s_AudioManager.GetAsset(handle);
 	}
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetAudioIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_AudioManager.GetAssetIntermediateLocation(handle);
+	}
 }

@@ -126,4 +126,9 @@ namespace Kargono::Assets
 	{
 		return s_InputModeManager.GetAsset(handle);
 	}
+
+	std::filesystem::path AssetServiceTemp::GetInputModeIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_InputModeManager.GetAssetIntermediateLocation(handle);
+	}
 }

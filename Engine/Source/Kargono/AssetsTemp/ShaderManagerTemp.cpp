@@ -178,4 +178,9 @@ namespace Kargono::Assets
 	{
 		return s_ShaderManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetShaderIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_ShaderManager.GetAssetIntermediateLocation(handle);
+	}
 }

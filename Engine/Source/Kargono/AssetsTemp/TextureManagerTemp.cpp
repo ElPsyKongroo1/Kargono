@@ -24,4 +24,9 @@ namespace Kargono::Assets
 	{
 		return s_TextureManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetTextureIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_TextureManager.GetAssetIntermediateLocation(handle);
+	}
 }

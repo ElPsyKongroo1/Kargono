@@ -29,8 +29,6 @@ namespace Kargono::Assets
 		//==============================
 		// Retrieve Assets
 		//==============================
-		static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
-		static Ref<Kargono::Rendering::Shader> GetShader(const AssetHandle& handle);
 		static Ref<Audio::AudioBuffer> GetAudio(const AssetHandle& handle);
 		static Ref<Scenes::EntityClass> GetEntityClass(const AssetHandle& handle);
 		static Ref<RuntimeUI::Font> GetFont(const AssetHandle& handle);
@@ -38,6 +36,22 @@ namespace Kargono::Assets
 		static Ref<Input::InputMode> GetInputMode(const AssetHandle& handle);
 		static Ref<Scenes::Scene> GetScene(const AssetHandle& handle);
 		static Ref<Scripting::Script> GetScript(const AssetHandle& handle);
+		static Ref<Kargono::Rendering::Shader> GetShader(const AssetHandle& handle);
+		static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
 		static Ref<RuntimeUI::UserInterface> GetUserInterface(const AssetHandle& handle);
+
+		//==============================
+		// Query Asset Metadata
+		//==============================
+		static std::filesystem::path GetAudioIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetEntityClassIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetFontIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetGameStateIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetInputModeIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetSceneIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetScriptIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetShaderIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetTextureIntermediateLocation(const AssetHandle& handle);
+		static std::filesystem::path GetUserInterfaceIntermediateLocation(const AssetHandle& handle);
 	};
 }

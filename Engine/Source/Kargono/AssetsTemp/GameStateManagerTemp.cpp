@@ -57,4 +57,10 @@ namespace Kargono::Assets
 	{
 		return s_GameStateManager.GetAsset(handle);
 	}
+
+	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetGameStateIntermediateLocation(const AssetHandle& handle)
+	{
+		return s_GameStateManager.GetAssetIntermediateLocation(handle);
+	}
+	
 }
