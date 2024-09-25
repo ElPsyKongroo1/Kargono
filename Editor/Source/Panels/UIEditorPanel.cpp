@@ -207,7 +207,7 @@ namespace Kargono::Panels
 			s_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetUserInterfaceRegistry())
 			{
-				s_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
@@ -228,7 +228,7 @@ namespace Kargono::Panels
 			m_EditorUIHandle = selection.Handle;
 			s_MainHeader.EditColorActive = false;
 			s_MainHeader.Label = Assets::AssetManager::GetUserInterfaceRegistry().at(
-				m_EditorUIHandle).Data.IntermediateLocation.string();
+				m_EditorUIHandle).Data.FileLocation.string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 		};
@@ -254,7 +254,7 @@ namespace Kargono::Panels
 			m_EditorUI = Assets::AssetManager::GetUserInterface(m_EditorUIHandle);
 			s_MainHeader.EditColorActive = false;
 			s_MainHeader.Label = Assets::AssetManager::GetUserInterfaceRegistry().at(
-				m_EditorUIHandle).Data.IntermediateLocation.string();
+				m_EditorUIHandle).Data.FileLocation.string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 		};

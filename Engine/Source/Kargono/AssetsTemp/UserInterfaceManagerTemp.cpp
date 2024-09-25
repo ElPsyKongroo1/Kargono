@@ -7,48 +7,49 @@
 
 namespace Kargono::Assets
 {
-	bool UserInterfaceManager::DeserializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath)
+	Ref<RuntimeUI::UserInterface> UserInterfaceManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
+		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
 		KG_INFO("Deserializing user interface object");
 
 		// Get SelectColor
-		userInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
+		newUserInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
 		// Function Pointers
-		userInterface->m_FunctionPointers.OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (userInterface->m_FunctionPointers.OnMoveHandle == Assets::EmptyHandle)
+		newUserInterface->m_FunctionPointers.OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
+		if (newUserInterface->m_FunctionPointers.OnMoveHandle == Assets::EmptyHandle)
 		{
-			userInterface->m_FunctionPointers.OnMove = nullptr;
+			newUserInterface->m_FunctionPointers.OnMove = nullptr;
 		}
 		else
 		{
-			Ref<Scripting::Script> onMoveScript = AssetServiceTemp::GetScript(userInterface->m_FunctionPointers.OnMoveHandle);
+			Ref<Scripting::Script> onMoveScript = AssetServiceTemp::GetScript(newUserInterface->m_FunctionPointers.OnMoveHandle);
 			if (!onMoveScript)
 			{
 				KG_ERROR("Unable to locate OnMove Script!");
-				return false;
+				return nullptr;
 			}
-			userInterface->m_FunctionPointers.OnMove = onMoveScript;
+			newUserInterface->m_FunctionPointers.OnMove = onMoveScript;
 		}
 
 		// Get Font
-		userInterface->m_FontHandle = data["Font"].as<uint64_t>();
-		userInterface->m_Font = AssetServiceTemp::GetFont(userInterface->m_FontHandle);
+		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
+		newUserInterface->m_Font = AssetServiceTemp::GetFont(newUserInterface->m_FontHandle);
 		// Get Windows
 		auto windows = data["Windows"];
 		if (windows)
 		{
-			auto& newWindowsList = userInterface->m_Windows;
+			auto& newWindowsList = newUserInterface->m_Windows;
 			for (auto window : windows)
 			{
 				RuntimeUI::Window newWindow{};
@@ -89,7 +90,7 @@ namespace Kargono::Assets
 						default:
 						{
 							KG_ASSERT("Invalid Widget Type in UserInterface Deserialization");
-							return false;
+							return nullptr;
 						}
 						}
 
@@ -115,7 +116,7 @@ namespace Kargono::Assets
 							if (!onPressScript)
 							{
 								KG_ERROR("Unable to locate OnPress Script!");
-								return false;
+								return nullptr;
 							}
 							newWidget->FunctionPointers.OnPress = onPressScript;
 						}
@@ -131,28 +132,6 @@ namespace Kargono::Assets
 
 			}
 		}
-		return true;
-
-	}
-
-
-	Ref<RuntimeUI::UserInterface> UserInterfaceManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
-	{
-		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
-		DeserializeUserInterface(newUserInterface, (Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation).string());
 		return newUserInterface;
-	}
-
-
-	static UserInterfaceManager s_UserInterfaceManager;
-
-	Ref<RuntimeUI::UserInterface> AssetServiceTemp::GetUserInterface(const AssetHandle& handle)
-	{
-		return s_UserInterfaceManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetUserInterfaceIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_UserInterfaceManager.GetAssetIntermediateLocation(handle);
 	}
 }

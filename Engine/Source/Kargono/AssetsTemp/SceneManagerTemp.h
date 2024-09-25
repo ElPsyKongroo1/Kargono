@@ -8,14 +8,12 @@ namespace Kargono::Assets
 	public:
 		SceneManager() : AssetManagerTemp<Scenes::Scene>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~SceneManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Scenes::Scene> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
 
 		// Class specific functions
-		bool DeserializeScene(Ref<Scenes::Scene> Scene, const std::filesystem::path& filepath);
+		virtual Ref<Scenes::Scene> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

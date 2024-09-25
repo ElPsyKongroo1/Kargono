@@ -550,7 +550,7 @@ namespace Kargono::Scenes
 		}
 
 		Assets::Asset sceneAsset = Assets::AssetManager::GetSceneRegistry().at(s_ActiveSceneHandle);
-		if (sceneAsset.Data.IntermediateLocation == sceneName)
+		if (sceneAsset.Data.FileLocation == sceneName)
 		{
 			return true;
 		}

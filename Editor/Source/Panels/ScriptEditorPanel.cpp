@@ -72,7 +72,7 @@ namespace Kargono::Panels
 						return;
 					}
 					Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 				};
 				EditorUI::TableEntry newEntry
 				{
@@ -122,7 +122,7 @@ namespace Kargono::Panels
 			{
 				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
 					{
 						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
@@ -190,7 +190,7 @@ namespace Kargono::Panels
 			{
 				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
 				{
-					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
+					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
 					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
 				}
 			}
@@ -253,8 +253,8 @@ namespace Kargono::Panels
 			{
 				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
-						|| asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == originalLabel)
+					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
+						|| asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == originalLabel)
 					{
 						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
@@ -346,7 +346,7 @@ namespace Kargono::Panels
 			{
 				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 				{
-					if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == sectionLabel)
+					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == sectionLabel)
 					{
 						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
 						break;
@@ -425,7 +425,7 @@ namespace Kargono::Panels
 			{
 				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
 				{
-					s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name;
+					s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
 					s_EditScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
 				}
 			}

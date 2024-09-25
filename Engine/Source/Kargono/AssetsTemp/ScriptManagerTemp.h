@@ -6,10 +6,14 @@ namespace Kargono::Assets
 	class ScriptManager : public AssetManagerTemp<Scripting::Script>
 	{
 	public:
-		ScriptManager() = default;
+		ScriptManager() : AssetManagerTemp<Scripting::Script>()
+		{
+			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+		}
 		virtual ~ScriptManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Scripting::Script> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
+
+		// Class specific functions
+		virtual Ref<Scripting::Script> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

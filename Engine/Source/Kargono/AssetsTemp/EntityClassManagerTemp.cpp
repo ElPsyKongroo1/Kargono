@@ -8,34 +8,36 @@
 
 namespace Kargono::Assets
 {
-	bool EntityClassManager::DeserializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath)
+	Ref<Scenes::EntityClass> EntityClassManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
+		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
+		
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
 		KG_INFO("Deserializing entity class");
 
-		EntityClass->m_Name = data["Name"].as<std::string>();
+		newEntityClass->m_Name = data["Name"].as<std::string>();
 
 		// Get Fields
 		{
 			auto fields = data["FieldTypes"];
 			if (fields)
 			{
-				auto& newFieldsMap = EntityClass->m_FieldTypes;
+				auto& newFieldsMap = newEntityClass->m_FieldTypes;
 				for (auto field : fields)
 				{
 					std::string fieldName = field["Name"].as<std::string>();
 					WrappedVarType fieldType = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
-					if (!EntityClass->AddField(fieldName, fieldType))
+					if (!newEntityClass->AddField(fieldName, fieldType))
 					{
 						KG_WARN("Unable to add field inside deserialize entity class function");
 					}
@@ -46,7 +48,7 @@ namespace Kargono::Assets
 
 		// Get Function Slots
 		{
-			Scenes::EntityScripts& scripts = EntityClass->m_Scripts;
+			Scenes::EntityScripts& scripts = newEntityClass->m_Scripts;
 			scripts.OnPhysicsCollisionStartHandle =
 				static_cast<Assets::AssetHandle>(data["OnPhysicsCollisionStart"].as<uint64_t>());
 			if (scripts.OnPhysicsCollisionStartHandle != Assets::EmptyHandle)
@@ -82,7 +84,7 @@ namespace Kargono::Assets
 			auto allScripts = data["AllScripts"];
 			if (allScripts)
 			{
-				std::set<Assets::AssetHandle>& classScripts = EntityClass->m_Scripts.AllClassScripts;
+				std::set<Assets::AssetHandle>& classScripts = newEntityClass->m_Scripts.AllClassScripts;
 				for (auto script : allScripts)
 				{
 					classScripts.insert(static_cast<Assets::AssetHandle>(script.as<uint64_t>()));
@@ -90,25 +92,6 @@ namespace Kargono::Assets
 			}
 		}
 
-		return true;
-
-	}
-
-	Ref<Scenes::EntityClass> EntityClassManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
-	{
-		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
-		DeserializeEntityClass(newEntityClass, (Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation).string());
 		return newEntityClass;
-	}
-
-	static EntityClassManager s_EntityClassManager;
-
-	Ref<Scenes::EntityClass> AssetServiceTemp::GetEntityClass(const AssetHandle& handle)
-	{
-		return s_EntityClassManager.GetAsset(handle);
-	}
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetEntityClassIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_EntityClassManager.GetAssetIntermediateLocation(handle);
 	}
 }

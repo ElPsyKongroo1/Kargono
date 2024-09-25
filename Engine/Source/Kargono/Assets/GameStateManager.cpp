@@ -50,7 +50,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving GameState specific metadata 
@@ -85,7 +85,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 			if (asset.Data.Type == Assets::AssetType::GameState)
 			{
@@ -159,42 +159,6 @@ namespace Kargono::Assets
 		return false;
 	}
 
-	bool AssetManager::DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
-	{
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(filepath.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
-		}
-
-		KG_INFO("Deserializing game state");
-
-		GameState->m_Name = data["Name"].as<std::string>();
-
-		// Get Fields
-		{
-			auto fields = data["Fields"];
-			if (fields)
-			{
-				auto& newFieldsMap = GameState->m_Fields;
-				for (auto field : fields)
-				{
-					std::string fieldName = field["Name"].as<std::string>();
-					WrappedVarType fieldType = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
-					Ref<WrappedVariable> wrappedVariable = Utility::DeserializeWrappedVariableData(fieldType, field);
-					newFieldsMap.insert_or_assign(fieldName, wrappedVariable);
-				}
-			}
-		}
-		return true;
-
-	}
-
 	AssetHandle AssetManager::CreateNewGameState(const std::string& GameStateName)
 	{
 		// Create Checksum
@@ -240,7 +204,7 @@ namespace Kargono::Assets
 			return;
 		}
 		Assets::Asset GameStateAsset = s_GameStateRegistry[GameStateHandle];
-		SerializeGameState(GameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
+		SerializeGameState(GameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.FileLocation).string());
 	}
 
 	void AssetManager::DeleteGameState(AssetHandle handle)
@@ -252,35 +216,11 @@ namespace Kargono::Assets
 		}
 
 		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
-			s_GameStateRegistry.at(handle).Data.IntermediateLocation);
+			s_GameStateRegistry.at(handle).Data.FileLocation);
 
 		s_GameStateRegistry.erase(handle);
 
 		SerializeGameStateRegistry();
-	}
-
-	std::filesystem::path AssetManager::GetGameStateLocation(const AssetHandle& handle)
-	{
-		if (!s_GameStateRegistry.contains(handle))
-		{
-			KG_ERROR("Attempt to save GameState that does not exist in registry");
-			return "";
-		}
-		return s_GameStateRegistry[handle].Data.IntermediateLocation;
-	}
-
-	Ref<Kargono::Scenes::GameState> AssetManager::GetGameState(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving GameState!");
-
-		if (s_GameStateRegistry.contains(handle))
-		{
-			auto asset = s_GameStateRegistry[handle];
-			return InstantiateGameState(asset);
-		}
-
-		KG_ERROR("No GameState is associated with provided handle!");
-		return nullptr;
 	}
 	std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> AssetManager::GetGameState(const std::filesystem::path& filepath)
 	{
@@ -295,7 +235,7 @@ namespace Kargono::Assets
 
 		for (auto& [assetHandle, asset] : s_GameStateRegistry)
 		{
-			if (asset.Data.IntermediateLocation.compare(GameStatePath) == 0)
+			if (asset.Data.FileLocation.compare(GameStatePath) == 0)
 			{
 				return std::make_tuple(assetHandle, InstantiateGameState(asset));
 			}
@@ -306,35 +246,95 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetGameState(newHandle));
 	}
 
-	Ref<Scenes::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
-	{
-		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
-		DeserializeGameState(newGameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.IntermediateLocation).string());
-		return newGameState;
-	}
-
-
-	void AssetManager::ClearGameStateRegistry()
-	{
-		s_GameStateRegistry.clear();
-	}
-
 	void AssetManager::CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset)
 	{
 		// Create Temporary GameState
 		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
 		temporaryGameState->SetName(GameStateName);
 
-		// Save Binary Intermediate into File
+		// Save Binary into File
 		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
-		SerializeGameState(temporaryGameState, intermediateFullPath.string());
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
+		SerializeGameState(temporaryGameState, fullPath.string());
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::GameState;
-		newAsset.Data.IntermediateLocation = GameStatePath;
+		newAsset.Data.FileLocation = GameStatePath;
 		Ref<Assets::GameStateMetaData> metadata = CreateRef<Assets::GameStateMetaData>();
 		metadata->Name = GameStateName;
 		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
+	void AssetManager::ClearGameStateRegistry()
+	{
+		s_GameStateRegistry.clear();
+	}
+	
+	Ref<Scenes::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
+	{
+		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
+		DeserializeGameState(newGameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.FileLocation).string());
+		return newGameState;
+	}
+
+	bool AssetManager::DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
+	{
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
+			return false;
+		}
+
+		KG_INFO("Deserializing game state");
+
+		GameState->m_Name = data["Name"].as<std::string>();
+
+		// Get Fields
+		{
+			auto fields = data["Fields"];
+			if (fields)
+			{
+				auto& newFieldsMap = GameState->m_Fields;
+				for (auto field : fields)
+				{
+					std::string fieldName = field["Name"].as<std::string>();
+					WrappedVarType fieldType = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
+					Ref<WrappedVariable> wrappedVariable = Utility::DeserializeWrappedVariableData(fieldType, field);
+					newFieldsMap.insert_or_assign(fieldName, wrappedVariable);
+				}
+			}
+		}
+		return true;
+
+	}
+
+	std::filesystem::path AssetManager::GetGameStateLocation(const AssetHandle& handle)
+	{
+		if (!s_GameStateRegistry.contains(handle))
+		{
+			KG_ERROR("Attempt to save GameState that does not exist in registry");
+			return "";
+		}
+		return s_GameStateRegistry[handle].Data.FileLocation;
+	}
+
+	Ref<Kargono::Scenes::GameState> AssetManager::GetGameState(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving GameState!");
+
+		if (s_GameStateRegistry.contains(handle))
+		{
+			auto asset = s_GameStateRegistry[handle];
+			return InstantiateGameState(asset);
+		}
+
+		KG_ERROR("No GameState is associated with provided handle!");
+		return nullptr;
 	}
 }

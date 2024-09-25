@@ -158,7 +158,7 @@ namespace Kargono::Panels
 			s_OpenInputModePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetInputModeRegistry())
 			{
-				s_OpenInputModePopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenInputModePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
@@ -179,7 +179,7 @@ namespace Kargono::Panels
 			m_EditorInputModeHandle = selection.Handle;
 			s_MainHeader.EditColorActive = false;
 			s_MainHeader.Label = Assets::AssetManager::GetInputModeRegistry().at(
-				m_EditorInputModeHandle).Data.IntermediateLocation.string();
+				m_EditorInputModeHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
 
@@ -204,7 +204,7 @@ namespace Kargono::Panels
 			m_EditorInputMode = Assets::AssetManager::GetInputMode(m_EditorInputModeHandle);
 			s_MainHeader.EditColorActive = false;
 			s_MainHeader.Label = Assets::AssetManager::GetInputModeRegistry().at(
-				m_EditorInputModeHandle).Data.IntermediateLocation.string();
+				m_EditorInputModeHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
 		s_CreateInputModePopupSpec.PopupContents = [&]()

@@ -53,6 +53,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
@@ -65,7 +66,6 @@ namespace Kargono::Assets
 					audioMetaData->SampleRate = metadata["SampleRate"].as<uint32_t>();
 					audioMetaData->TotalPcmFrameCount = metadata["TotalPcmFrameCount"].as<uint64_t>();
 					audioMetaData->TotalSize = metadata["TotalSize"].as<uint64_t>();
-					audioMetaData->InitialFileLocation = metadata["InitialFileLocation"].as<std::string>();
 
 					newAsset.Data.SpecificFileData = audioMetaData;
 				}
@@ -96,6 +96,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
@@ -106,7 +107,6 @@ namespace Kargono::Assets
 				out << YAML::Key << "SampleRate" << YAML::Value << metadata->SampleRate;
 				out << YAML::Key << "TotalPcmFrameCount" << YAML::Value << metadata->TotalPcmFrameCount;
 				out << YAML::Key << "TotalSize" << YAML::Value << metadata->TotalSize;
-				out << YAML::Key << "InitialFileLocation" << YAML::Value << metadata->InitialFileLocation.string();
 			}
 
 			out << YAML::EndMap; // MetaData Map
@@ -165,36 +165,6 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	Ref<Audio::AudioBuffer> AssetManager::InstantiateAudioIntoMemory(Assets::Asset& asset)
-	{
-		Assets::AudioMetaData metadata = *static_cast<Assets::AudioMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<Audio::AudioBuffer> newAudio = CreateRef<Audio::AudioBuffer>();
-		CallAndCheckALError(alBufferData(newAudio->m_BufferID, metadata.Channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.Data, static_cast<ALsizei>(currentResource.Size), metadata.SampleRate));
-
-		currentResource.Release();
-		return newAudio;
-	}
-
-	Ref<Audio::AudioBuffer> AssetManager::GetAudio(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving audio!");
-
-		if (s_Audio.contains(handle)) { return s_Audio[handle]; }
-
-		if (s_AudioRegistry.contains(handle))
-		{
-			auto asset = s_AudioRegistry[handle];
-
-			Ref<Audio::AudioBuffer> newAudio = InstantiateAudioIntoMemory(asset);
-			s_Audio.insert({ asset.Handle, newAudio });
-			return newAudio;
-		}
-
-		KG_ERROR("No audio is associated with provided handle!");
-		return nullptr;
-	}
 
 	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)
 	{
@@ -202,8 +172,7 @@ namespace Kargono::Assets
 
 		for (auto& [assetHandle, asset] : s_AudioRegistry)
 		{
-			auto metadata = (Assets::AudioMetaData*)asset.Data.SpecificFileData.get();
-			if (metadata->InitialFileLocation.compare(filepath) == 0)
+			if (asset.Data.FileLocation.compare(filepath) == 0)
 			{
 				return std::make_tuple(assetHandle, GetAudio(assetHandle));
 			}
@@ -211,12 +180,6 @@ namespace Kargono::Assets
 		// Return empty audio if audio does not exist
 		KG_INFO("Invalid filepath provided to GetAudio {}", filepath.string());
 		return std::make_tuple(0, nullptr);
-	}
-
-	void AssetManager::ClearAudioRegistry()
-	{
-		s_AudioRegistry.clear();
-		s_Audio.clear();
 	}
 
 	void AssetManager::CreateAudioIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
@@ -259,14 +222,53 @@ namespace Kargono::Assets
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Audio;
+		newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::AudioMetaData> metadata = CreateRef<Assets::AudioMetaData>();
 		metadata->Channels = channels;
 		metadata->SampleRate = sampleRate;;
 		metadata->TotalPcmFrameCount = totalPcmFrameCount;
 		metadata->TotalSize = totalSize;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 		pcmData.Release();
+	}
+
+	//===================================================================================================================================================
+
+	void AssetManager::ClearAudioRegistry()
+	{
+		s_AudioRegistry.clear();
+		s_Audio.clear();
+	}
+
+	Ref<Audio::AudioBuffer> AssetManager::InstantiateAudioIntoMemory(Assets::Asset& asset)
+	{
+		Assets::AudioMetaData metadata = *static_cast<Assets::AudioMetaData*>(asset.Data.SpecificFileData.get());
+		Buffer currentResource{};
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+		Ref<Audio::AudioBuffer> newAudio = CreateRef<Audio::AudioBuffer>();
+		CallAndCheckALError(alBufferData(newAudio->m_BufferID, metadata.Channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.Data, static_cast<ALsizei>(currentResource.Size), metadata.SampleRate));
+
+		currentResource.Release();
+		return newAudio;
+	}
+
+	Ref<Audio::AudioBuffer> AssetManager::GetAudio(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving audio!");
+
+		if (s_Audio.contains(handle)) { return s_Audio[handle]; }
+
+		if (s_AudioRegistry.contains(handle))
+		{
+			auto asset = s_AudioRegistry[handle];
+
+			Ref<Audio::AudioBuffer> newAudio = InstantiateAudioIntoMemory(asset);
+			s_Audio.insert({ asset.Handle, newAudio });
+			return newAudio;
+		}
+
+		KG_ERROR("No audio is associated with provided handle!");
+		return nullptr;
 	}
 }

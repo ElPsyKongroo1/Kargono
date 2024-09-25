@@ -50,7 +50,7 @@ namespace Kargono::Panels
 			s_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
 			{
-				s_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
@@ -71,7 +71,7 @@ namespace Kargono::Panels
 			s_GameStatePanel->m_EditorGameStateHandle = selection.Handle;
 			s_TagHeader.EditColorActive = false;
 			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
-				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
+				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
 
@@ -89,7 +89,7 @@ namespace Kargono::Panels
 
 			for (auto& [id, asset] : Assets::AssetManager::GetGameStateRegistry())
 			{
-				if (asset.Data.GetSpecificFileData<Assets::GameStateMetaData>()->Name == s_SelectGameStateNameSpec.CurrentOption)
+				if (asset.Data.GetSpecificMetaData<Assets::GameStateMetaData>()->Name == s_SelectGameStateNameSpec.CurrentOption)
 				{
 					return;
 				}
@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
 			s_TagHeader.EditColorActive = false;
 			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
-				s_GameStatePanel->m_EditorGameStateHandle).Data.IntermediateLocation.string();
+				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
 		s_CreateGameStatePopupSpec.PopupContents = [&]()

@@ -180,6 +180,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 				// Retrieving shader specific metadata 
@@ -248,6 +249,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
@@ -353,25 +355,6 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	Ref<Kargono::Rendering::Shader> AssetManager::GetShader(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
-
-		if (s_Shaders.contains(handle)) { return s_Shaders[handle]; }
-
-		if (s_ShaderRegistry.contains(handle))
-		{
-			auto asset = s_ShaderRegistry[handle];
-
-			Ref<Kargono::Rendering::Shader> newShader = InstantiateShaderIntoMemory(asset);
-			s_Shaders.insert({ asset.Handle, newShader });
-			return newShader;
-		}
-
-		//KG_CORE_INFO("No Shader is associated with provided asset handle!");
-		return nullptr;
-	}
-
 	std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> AssetManager::GetShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
@@ -400,46 +383,6 @@ namespace Kargono::Assets
 		return std::make_tuple(newShaderHandle, GetShader(newShaderHandle));
 
 	}
-
-	void AssetManager::ClearShaderRegistry()
-	{
-		s_ShaderRegistry.clear();
-		s_Shaders.clear();
-	}
-
-	Ref<Kargono::Rendering::Shader> AssetManager::InstantiateShaderIntoMemory(Assets::Asset& asset)
-	{
-		Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
-		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
-		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
-		std::vector<std::string> stageTypes = { "vertex", "fragment" };
-
-		for (const auto& stage : stageTypes)
-		{
-			std::filesystem::path fullPath = intermediatePath.string() + Utility::ShaderBinaryFileExtension(Utility::ShaderTypeFromString(stage));
-
-			std::ifstream in(fullPath, std::ios::in | std::ios::binary);
-
-			if (in.is_open())
-			{
-				in.seekg(0, std::ios::end);
-				auto size = in.tellg();
-				in.seekg(0, std::ios::beg);
-
-				auto& data = openGLSPIRV[Utility::ShaderTypeFromString(stage)];
-				data.resize(size / sizeof(uint32_t));
-				in.read((char*)data.data(), size);
-			}
-		}
-
-		Ref<Kargono::Rendering::Shader> newShader = Rendering::Shader::Create(static_cast<std::string>(asset.Handle), openGLSPIRV);
-		newShader->SetSpecification(metadata.ShaderSpec);
-		newShader->SetInputLayout(metadata.InputLayout);
-		newShader->SetUniformList(metadata.UniformList);
-		openGLSPIRV.clear();
-		return newShader;
-	}
-
 
 	void AssetManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
 		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
@@ -474,20 +417,78 @@ namespace Kargono::Assets
 			}
 		}
 
-		// Debug Only
-#ifdef KG_DEBUG
+		// File Location
 		std::string debugString = shaderSource;
-		std::filesystem::path debugPath = Projects::ProjectService::GetActiveAssetDirectory() / (intermediatePath + ".source");
-		Utility::FileSystem::WriteFileString(debugPath, debugString);
-#endif
+		std::filesystem::path shaderTextFile = Projects::ProjectService::GetActiveAssetDirectory() / (intermediatePath + ".source");
+		Utility::FileSystem::WriteFileString(shaderTextFile, debugString);
 
 		// Load In-Memory Metadata Object
 		newAsset.Data.Type = Assets::AssetType::Shader;
+		newAsset.Data.FileLocation = shaderTextFile;
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::ShaderMetaData> metadata = CreateRef<Assets::ShaderMetaData>();
 		metadata->ShaderSpec = shaderSpec;
 		metadata->InputLayout = inputLayout;
 		metadata->UniformList = uniformLayout;
 		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
+	void AssetManager::ClearShaderRegistry()
+	{
+		s_ShaderRegistry.clear();
+		s_Shaders.clear();
+	}
+	
+	Ref<Kargono::Rendering::Shader> AssetManager::InstantiateShaderIntoMemory(Assets::Asset& asset)
+	{
+		Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
+		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+		std::vector<std::string> stageTypes = { "vertex", "fragment" };
+
+		for (const auto& stage : stageTypes)
+		{
+			std::filesystem::path fullPath = intermediatePath.string() + Utility::ShaderBinaryFileExtension(Utility::ShaderTypeFromString(stage));
+
+			std::ifstream in(fullPath, std::ios::in | std::ios::binary);
+
+			if (in.is_open())
+			{
+				in.seekg(0, std::ios::end);
+				auto size = in.tellg();
+				in.seekg(0, std::ios::beg);
+
+				auto& data = openGLSPIRV[Utility::ShaderTypeFromString(stage)];
+				data.resize(size / sizeof(uint32_t));
+				in.read((char*)data.data(), size);
+			}
+		}
+
+		Ref<Kargono::Rendering::Shader> newShader = Rendering::Shader::Create(static_cast<std::string>(asset.Handle), openGLSPIRV);
+		newShader->SetSpecification(metadata.ShaderSpec);
+		newShader->SetInputLayout(metadata.InputLayout);
+		newShader->SetUniformList(metadata.UniformList);
+		openGLSPIRV.clear();
+		return newShader;
+	}
+
+	Ref<Kargono::Rendering::Shader> AssetManager::GetShader(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
+
+		if (s_Shaders.contains(handle)) { return s_Shaders[handle]; }
+
+		if (s_ShaderRegistry.contains(handle))
+		{
+			auto asset = s_ShaderRegistry[handle];
+
+			Ref<Kargono::Rendering::Shader> newShader = InstantiateShaderIntoMemory(asset);
+			s_Shaders.insert({ asset.Handle, newShader });
+			return newShader;
+		}
+
+		//KG_CORE_INFO("No Shader is associated with provided asset handle!");
+		return nullptr;
 	}
 }

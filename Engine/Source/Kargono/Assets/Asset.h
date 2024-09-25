@@ -57,13 +57,14 @@ namespace Kargono::Assets
 	struct Metadata
 	{
 	public:
+		std::filesystem::path FileLocation;
 		std::filesystem::path IntermediateLocation;
 		std::string CheckSum;
 		Assets::AssetType Type = Assets::AssetType::None;
 		Ref<void> SpecificFileData { nullptr };
 	public:
 		template <typename T>
-		T* GetSpecificFileData()
+		T* GetSpecificMetaData()
 		{
 			return static_cast<T*>(SpecificFileData.get());
 		}
@@ -86,7 +87,6 @@ namespace Kargono::Assets
 	struct TextureMetaData
 	{
 		int32_t Width, Height, Channels;
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================
@@ -99,7 +99,6 @@ namespace Kargono::Assets
 	{
 		uint32_t Channels, SampleRate;
 		uint64_t TotalPcmFrameCount, TotalSize;
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================
@@ -137,7 +136,6 @@ namespace Kargono::Assets
 		float AtlasHeight;
 		float LineHeight{};
 		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================

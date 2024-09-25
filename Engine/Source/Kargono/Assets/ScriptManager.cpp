@@ -28,7 +28,7 @@ namespace Kargono::Assets
 			newAsset.Handle = script->m_ID;
 
 			newAsset.Data.CheckSum = "";
-			newAsset.Data.IntermediateLocation = "";
+			newAsset.Data.FileLocation = "";
 			newAsset.Data.Type = AssetType::Script;
 
 			// Insert ScriptMetaData
@@ -95,7 +95,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving Script specific metadata 
@@ -147,7 +147,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
-			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->ScriptType == Scripting::ScriptType::Engine)
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->ScriptType == Scripting::ScriptType::Engine)
 			{
 				continue;
 			}
@@ -157,7 +157,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
 			if (asset.Data.Type == Assets::AssetType::Script)
@@ -215,7 +215,7 @@ namespace Kargono::Assets
 			bool isValid = false;
 			for (auto& [handle, asset] : s_EntityClassRegistry)
 			{
-				if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
 				{
 					isValid = true;
 					classHandle = handle;
@@ -251,7 +251,7 @@ namespace Kargono::Assets
 			SaveEntityClass(classHandle, entityClass);
 		}
 
-		// Create Intermediate
+		// Create Script File
 		FillScriptMetadata(spec, newAsset);
 		newAsset.Data.CheckSum = currentCheckSum;
 
@@ -268,7 +268,7 @@ namespace Kargono::Assets
 	{
 		// Get original asset/metadata
 		Asset asset = s_ScriptRegistry.at(scriptHandle);
-		ScriptMetaData* metadata = asset.Data.GetSpecificFileData<ScriptMetaData>();
+		ScriptMetaData* metadata = asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
 		// Check if script exists in registry
 		if (!s_ScriptRegistry.contains(scriptHandle))
@@ -284,7 +284,7 @@ namespace Kargono::Assets
 		{
 			for (auto& [handle, asset] : s_EntityClassRegistry)
 			{
-				if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
+				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
 				{
 					classHandle = handle;
 					break;
@@ -305,7 +305,7 @@ namespace Kargono::Assets
 		if (metadata->FunctionType != spec.FunctionType)
 		{
 			// Load file into scriptFile
-			scriptFile = Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+			scriptFile = Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 			if (scriptFile.empty())
 			{
 				KG_WARN("Attempt to open script file failed");
@@ -376,7 +376,7 @@ namespace Kargono::Assets
 				Utility::GenerateFunctionSignature(spec.FunctionType, spec.Name));
 			
 			// Write back out to file
-			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation, output);
+			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation, output);
 		}
 
 		// Update registry metadata
@@ -425,7 +425,7 @@ namespace Kargono::Assets
 		}
 
 		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
-			s_ScriptRegistry.at(scriptHandle).Data.IntermediateLocation);
+			s_ScriptRegistry.at(scriptHandle).Data.FileLocation);
 
 		s_ScriptRegistry.erase(scriptHandle);
 		if (s_Scripts.contains(scriptHandle))
@@ -484,9 +484,9 @@ namespace Kargono::Assets
 
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
-			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel == oldLabel)
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel == oldLabel)
 			{
-				asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel = newLabel;
+				asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel = newLabel;
 			}
 		}
 
@@ -515,9 +515,9 @@ namespace Kargono::Assets
 
 		for (auto& [handle, asset] : s_ScriptRegistry)
 		{
-			if (asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel == label)
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel == label)
 			{
-				asset.Data.GetSpecificFileData<ScriptMetaData>()->SectionLabel = "None";
+				asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel = "None";
 			}
 		}
 
@@ -526,19 +526,62 @@ namespace Kargono::Assets
 		return true;
 	}
 
-	Ref<Scripting::Script> AssetManager::InstantiateScriptIntoMemory(Assets::Asset& asset)
+	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
 	{
-		Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
-		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 
-		newScript->m_ID = asset.Handle;
-		newScript->m_ScriptName = metadata.Name;
-		newScript->m_FuncType = metadata.FunctionType;
-		newScript->m_ScriptType = metadata.ScriptType;
-		newScript->m_SectionLabel = metadata.SectionLabel;
-		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
+		std::filesystem::path ScriptPath = filepath;
 
-		return newScript;
+		if (filepath.is_absolute())
+		{
+			ScriptPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
+		}
+
+		for (auto& [assetHandle, asset] : s_ScriptRegistry)
+		{
+			if (asset.Data.FileLocation.compare(ScriptPath) == 0)
+			{
+				if (s_Scripts.contains(assetHandle))
+				{
+					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
+				}
+				else
+				{
+					s_Scripts.insert_or_assign(assetHandle, InstantiateScriptIntoMemory(asset));
+					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
+				}
+			}
+		}
+		// Return empty Script if Script does not exist
+		KG_WARN("No Script Associated with provided handle. Returned empty Script");
+		return std::make_tuple(0, nullptr);
+	}
+
+	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
+	{
+		// Create script file
+		std::string scriptPath = "Scripting/" + spec.Name + ".kgscript";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scriptPath;
+
+		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Script;
+		newAsset.Data.FileLocation = scriptPath;
+		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
+		metadata->Name = spec.Name;
+		metadata->ScriptType = spec.Type;
+		metadata->SectionLabel = spec.SectionLabel;
+		metadata->FunctionType = spec.FunctionType;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+//===================================================================================================================================================
+
+	void AssetManager::ClearScriptRegistry()
+	{
+		s_ScriptRegistry.clear();
+		s_Scripts.clear();
 	}
 
 	Ref<Scripting::Script> AssetManager::GetScript(const AssetHandle& handle)
@@ -560,59 +603,18 @@ namespace Kargono::Assets
 		return nullptr;
 	}
 
-	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
+	Ref<Scripting::Script> AssetManager::InstantiateScriptIntoMemory(Assets::Asset& asset)
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
+		Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
+		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 
-		std::filesystem::path ScriptPath = filepath;
+		newScript->m_ID = asset.Handle;
+		newScript->m_ScriptName = metadata.Name;
+		newScript->m_FuncType = metadata.FunctionType;
+		newScript->m_ScriptType = metadata.ScriptType;
+		newScript->m_SectionLabel = metadata.SectionLabel;
+		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
 
-		if (filepath.is_absolute())
-		{
-			ScriptPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-
-		for (auto& [assetHandle, asset] : s_ScriptRegistry)
-		{
-			if (asset.Data.IntermediateLocation.compare(ScriptPath) == 0)
-			{
-				if (s_Scripts.contains(assetHandle))
-				{
-					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
-				}
-				else
-				{
-					s_Scripts.insert_or_assign(assetHandle, InstantiateScriptIntoMemory(asset));
-					return std::make_tuple(assetHandle, s_Scripts.at(assetHandle));
-				}
-			}
-		}
-		// Return empty Script if Script does not exist
-		KG_WARN("No Script Associated with provided handle. Returned empty Script");
-		return std::make_tuple(0, nullptr);
-	}
-
-	void AssetManager::ClearScriptRegistry()
-	{
-		s_ScriptRegistry.clear();
-		s_Scripts.clear();
-	}
-
-	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
-	{
-		// Create script file
-		std::string intermediatePath = "Scripting/" + spec.Name + ".kgscript";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
-
-		Utility::FileSystem::WriteFileString(intermediateFullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Script;
-		newAsset.Data.IntermediateLocation = intermediatePath;
-		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
-		metadata->Name = spec.Name;
-		metadata->ScriptType = spec.Type;
-		metadata->SectionLabel = spec.SectionLabel;
-		metadata->FunctionType = spec.FunctionType;
-		newAsset.Data.SpecificFileData = metadata;
+		return newScript;
 	}
 }

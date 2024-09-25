@@ -62,12 +62,11 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	Ref<RuntimeUI::Font> FontManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
+	Ref<RuntimeUI::Font> Assets::FontManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
 		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
+		Assets::FontMetaData metadata = *asset.Data.GetSpecificMetaData<FontMetaData>();
+		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 		auto& fontCharacters = newFont->GetCharacters();
 
 		// Create Texture
@@ -89,17 +88,5 @@ namespace Kargono::Assets
 
 		currentResource.Release();
 		return newFont;
-	}
-
-	static FontManager s_FontManager;
-
-	Ref<RuntimeUI::Font> AssetServiceTemp::GetFont(const AssetHandle& handle)
-	{
-		return s_FontManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetFontIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_FontManager.GetAssetIntermediateLocation(handle);
 	}
 }

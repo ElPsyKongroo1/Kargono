@@ -8,11 +8,10 @@
 
 namespace Kargono::Assets
 {
-
-	Ref<Scripting::Script> ScriptManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
+	Ref<Scripting::Script> ScriptManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
+		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
 		newScript->m_ID = asset.Handle;
 		newScript->m_ScriptName = metadata.Name;
@@ -22,17 +21,5 @@ namespace Kargono::Assets
 		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
 
 		return newScript;
-	}
-
-	static ScriptManager s_ScriptManager;
-
-	Ref<Scripting::Script> AssetServiceTemp::GetScript(const AssetHandle& handle)
-	{
-		return s_ScriptManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetScriptIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_ScriptManager.GetAssetIntermediateLocation(handle);
 	}
 }

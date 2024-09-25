@@ -105,7 +105,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving EntityClass specific metadata 
@@ -141,7 +141,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 			if (asset.Data.Type == Assets::AssetType::EntityClass)
 			{
@@ -232,6 +232,193 @@ namespace Kargono::Assets
 		return false;
 	}
 
+
+	AssetHandle AssetManager::CreateNewEntityClass(const std::string& EntityClassName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate entity class asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create File
+		CreateEntityClassFile(EntityClassName, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and return handle.
+		s_EntityClassRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeEntityClassRegistry(); // Update Registry File on Disk
+
+		return newHandle;
+	}
+
+	void AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref<Scenes::EntityClass> entityClass, Ref<Scenes::Scene> editorScene)
+	{
+		if (!s_EntityClassRegistry.contains(entityClassHandle))
+		{
+			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
+			return;
+		}
+		// Store Field Location for Processing ClassInstanceComponent Data
+		std::vector<Scenes::ClassField> oldFields = GetEntityClass(entityClassHandle)->GetFields();
+		std::vector<Scenes::ClassField> newFields = entityClass->GetFields();
+
+		Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];
+		SerializeEntityClass(entityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.FileLocation).string());
+
+		// Create map that associates old data locations with new data locations for ClassInstanceComponents
+		std::unordered_map<uint32_t, uint32_t> transferFieldDataMap {};
+		uint32_t newFieldsIteration{ 0 };
+		for (auto& [newName, newType] : newFields)
+		{
+			uint32_t oldFieldsIteration{ 0 };
+			for (auto& [oldName, oldType] : oldFields)
+			{
+				if (oldName == newName && oldType == newType)
+				{
+					transferFieldDataMap.insert_or_assign(oldFieldsIteration, newFieldsIteration);
+					break;
+				}
+				oldFieldsIteration++;
+			}
+			newFieldsIteration++;
+		}
+
+		// Update Active Scene
+		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+
+		Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);
+		// Update Editor Scene if applicable
+		if (editorScene)
+		{
+			Utility::TransferClassInstanceFieldData(editorScene, newEntityClass,entityClassHandle, transferFieldDataMap);
+		}
+
+		for (auto& [handle, asset] : s_SceneRegistry)
+		{
+			const Ref<Scenes::Scene> scene = GetScene(handle);
+			if (!scene)
+			{
+				KG_WARN("Unable to load scene in SaveEntityClass");
+				continue;
+			}
+
+			Utility::TransferClassInstanceFieldData(scene, newEntityClass, entityClassHandle, transferFieldDataMap);
+			SaveScene(handle, scene);
+		}
+		
+	}
+
+	void AssetManager::DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene)
+	{
+		if (!s_EntityClassRegistry.contains(handle))
+		{
+			KG_WARN("Failed to delete EntityClass in AssetManager");
+			return;
+		}
+
+		// Remove entity class references from all scenes
+		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(handle);
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+
+		// Update Active Scene if applicable
+		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);
+		// Update Editor Scene if applicable
+		if (editorScene)
+		{
+			Utility::ClearClassReferenceFromScene(editorScene, newEntityClass, handle);
+		}
+		// Update all scenes in scene registry
+		for (auto& [handle, asset] : s_SceneRegistry)
+		{
+			const Ref<Scenes::Scene> scene = GetScene(handle);
+			if (!scene)
+			{
+				KG_WARN("Unable to load scene in SaveEntityClass");
+				continue;
+			}
+
+			Utility::ClearClassReferenceFromScene(scene, newEntityClass, handle);
+			SaveScene(handle, scene);
+		}
+
+
+		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
+			s_EntityClassRegistry.at(handle).Data.FileLocation);
+
+		s_EntityClassRegistry.erase(handle);
+
+		SerializeEntityClassRegistry();
+	}
+
+	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
+
+		std::filesystem::path EntityClassPath = filepath;
+
+		if (filepath.is_absolute())
+		{
+			EntityClassPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
+		}
+
+		for (auto& [assetHandle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.FileLocation.compare(EntityClassPath) == 0)
+			{
+				return std::make_tuple(assetHandle, InstantiateEntityClass(asset));
+			}
+		}
+		// Return empty EntityClass if EntityClass does not exist
+		KG_WARN("No EntityClass Associated with provided handle. Returned new empty EntityClass");
+		AssetHandle newHandle = CreateNewEntityClass(filepath.stem().string());
+		return std::make_tuple(newHandle, GetEntityClass(newHandle));
+	}
+
+	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
+	{
+		// Create Temporary EntityClass
+		Ref<Scenes::EntityClass> temporaryEntityClass = CreateRef<Scenes::EntityClass>();
+		temporaryEntityClass->SetName(EntityClassName);
+
+		// Save Binary into File
+		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / EntityClassPath;
+		SerializeEntityClass(temporaryEntityClass, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::EntityClass;
+		newAsset.Data.FileLocation = EntityClassPath;
+		Ref<Assets::EntityClassMetaData> metadata = CreateRef<Assets::EntityClassMetaData>();
+		metadata->Name = EntityClassName;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
+	void AssetManager::ClearEntityClassRegistry()
+	{
+		s_EntityClassRegistry.clear();
+	}
+	
 	bool AssetManager::DeserializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
@@ -318,143 +505,6 @@ namespace Kargono::Assets
 
 	}
 
-	AssetHandle AssetManager::CreateNewEntityClass(const std::string& EntityClassName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_EntityClassRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate entity class asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateEntityClassFile(EntityClassName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and return handle.
-		s_EntityClassRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeEntityClassRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::SaveEntityClass(AssetHandle entityClassHandle, Ref<Scenes::EntityClass> entityClass, Ref<Scenes::Scene> editorScene)
-	{
-		if (!s_EntityClassRegistry.contains(entityClassHandle))
-		{
-			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
-			return;
-		}
-		// Store Field Location for Processing ClassInstanceComponent Data
-		std::vector<Scenes::ClassField> oldFields = GetEntityClass(entityClassHandle)->GetFields();
-		std::vector<Scenes::ClassField> newFields = entityClass->GetFields();
-
-		Assets::Asset EntityClassAsset = s_EntityClassRegistry[entityClassHandle];
-		SerializeEntityClass(entityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
-
-		// Create map that associates old data locations with new data locations for ClassInstanceComponents
-		std::unordered_map<uint32_t, uint32_t> transferFieldDataMap {};
-		uint32_t newFieldsIteration{ 0 };
-		for (auto& [newName, newType] : newFields)
-		{
-			uint32_t oldFieldsIteration{ 0 };
-			for (auto& [oldName, oldType] : oldFields)
-			{
-				if (oldName == newName && oldType == newType)
-				{
-					transferFieldDataMap.insert_or_assign(oldFieldsIteration, newFieldsIteration);
-					break;
-				}
-				oldFieldsIteration++;
-			}
-			newFieldsIteration++;
-		}
-
-		// Update Active Scene
-		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(entityClassHandle);
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
-
-		Utility::TransferClassInstanceFieldData(activeScene, newEntityClass, entityClassHandle, transferFieldDataMap);
-		// Update Editor Scene if applicable
-		if (editorScene)
-		{
-			Utility::TransferClassInstanceFieldData(editorScene, newEntityClass,entityClassHandle, transferFieldDataMap);
-		}
-
-		for (auto& [handle, asset] : s_SceneRegistry)
-		{
-			const Ref<Scenes::Scene> scene = GetScene(handle);
-			if (!scene)
-			{
-				KG_WARN("Unable to load scene in SaveEntityClass");
-				continue;
-			}
-
-			Utility::TransferClassInstanceFieldData(scene, newEntityClass, entityClassHandle, transferFieldDataMap);
-			SaveScene(handle, scene);
-		}
-		
-	}
-
-	void AssetManager::DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene)
-	{
-		if (!s_EntityClassRegistry.contains(handle))
-		{
-			KG_WARN("Failed to delete EntityClass in AssetManager");
-			return;
-		}
-
-		// Remove entity class references from all scenes
-		Ref<Scenes::EntityClass> newEntityClass = GetEntityClass(handle);
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
-
-		// Update Active Scene if applicable
-		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);
-		// Update Editor Scene if applicable
-		if (editorScene)
-		{
-			Utility::ClearClassReferenceFromScene(editorScene, newEntityClass, handle);
-		}
-		// Update all scenes in scene registry
-		for (auto& [handle, asset] : s_SceneRegistry)
-		{
-			const Ref<Scenes::Scene> scene = GetScene(handle);
-			if (!scene)
-			{
-				KG_WARN("Unable to load scene in SaveEntityClass");
-				continue;
-			}
-
-			Utility::ClearClassReferenceFromScene(scene, newEntityClass, handle);
-			SaveScene(handle, scene);
-		}
-
-
-		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
-			s_EntityClassRegistry.at(handle).Data.IntermediateLocation);
-
-		s_EntityClassRegistry.erase(handle);
-
-		SerializeEntityClassRegistry();
-	}
-
 	std::filesystem::path AssetManager::GetEntityClassLocation(const AssetHandle& handle)
 	{
 		if (!s_EntityClassRegistry.contains(handle))
@@ -462,7 +512,7 @@ namespace Kargono::Assets
 			KG_ERROR("Attempt to save EntityClass that does not exist in registry");
 			return "";
 		}
-		return s_EntityClassRegistry[handle].Data.IntermediateLocation;
+		return s_EntityClassRegistry[handle].Data.FileLocation;
 	}
 
 	Ref<Scenes::EntityClass> AssetManager::GetEntityClass(const AssetHandle& handle)
@@ -478,59 +528,11 @@ namespace Kargono::Assets
 		KG_WARN("No EntityClass is associated with provided handle!");
 		return nullptr;
 	}
-	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		std::filesystem::path EntityClassPath = filepath;
-
-		if (filepath.is_absolute())
-		{
-			EntityClassPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-
-		for (auto& [assetHandle, asset] : s_EntityClassRegistry)
-		{
-			if (asset.Data.IntermediateLocation.compare(EntityClassPath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateEntityClass(asset));
-			}
-		}
-		// Return empty EntityClass if EntityClass does not exist
-		KG_WARN("No EntityClass Associated with provided handle. Returned new empty EntityClass");
-		AssetHandle newHandle = CreateNewEntityClass(filepath.stem().string());
-		return std::make_tuple(newHandle, GetEntityClass(newHandle));
-	}
 
 	Ref<Scenes::EntityClass> AssetManager::InstantiateEntityClass(const Assets::Asset& EntityClassAsset)
 	{
 		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
-		DeserializeEntityClass(newEntityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.IntermediateLocation).string());
+		DeserializeEntityClass(newEntityClass, (Projects::ProjectService::GetActiveAssetDirectory() / EntityClassAsset.Data.FileLocation).string());
 		return newEntityClass;
-	}
-
-
-	void AssetManager::ClearEntityClassRegistry()
-	{
-		s_EntityClassRegistry.clear();
-	}
-
-	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
-	{
-		// Create Temporary EntityClass
-		Ref<Scenes::EntityClass> temporaryEntityClass = CreateRef<Scenes::EntityClass>();
-		temporaryEntityClass->SetName(EntityClassName);
-
-		// Save Binary Intermediate into File
-		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / EntityClassPath;
-		SerializeEntityClass(temporaryEntityClass, intermediateFullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::EntityClass;
-		newAsset.Data.IntermediateLocation = EntityClassPath;
-		Ref<Assets::EntityClassMetaData> metadata = CreateRef<Assets::EntityClassMetaData>();
-		metadata->Name = EntityClassName;
-		newAsset.Data.SpecificFileData = metadata;
 	}
 }

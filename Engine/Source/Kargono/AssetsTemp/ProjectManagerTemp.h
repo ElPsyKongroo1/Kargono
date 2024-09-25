@@ -8,11 +8,11 @@ namespace Kargono::Assets
 	public:
 		ProjectManager() : AssetManagerTemp<Projects::Project>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~ProjectManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Projects::Project> InstantiateAssetIntoMemory(Assets::Asset& asset) override { return nullptr; };
+		// Class specific functions
+		virtual Ref<Projects::Project> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

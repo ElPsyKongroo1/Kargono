@@ -3,13 +3,16 @@
 
 namespace Kargono::Assets
 {
-	class AudioManager : public AssetManagerTemp<Kargono::Audio::AudioBuffer>
+	class AudioManager : public AssetManagerTemp<Audio::AudioBuffer>
 	{
 	public:
-		AudioManager() = default;
+		AudioManager() : AssetManagerTemp<Audio::AudioBuffer>()
+		{
+			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+		}
 		virtual ~AudioManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Kargono::Audio::AudioBuffer> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
+		// Functions specific to this manager type
+		virtual Ref<Audio::AudioBuffer> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

@@ -6,10 +6,13 @@ namespace Kargono::Assets
 	class ShaderManager : public AssetManagerTemp<Rendering::Shader>
 	{
 	public:
-		ShaderManager() = default;
+		ShaderManager() : AssetManagerTemp<Rendering::Shader>()
+		{
+			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+		}
 		virtual ~ShaderManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Rendering::Shader> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
+		// Class specific functions
+		virtual Ref<Rendering::Shader> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

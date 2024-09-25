@@ -238,7 +238,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
 				// Retrieving shader specific metadata 
@@ -272,7 +272,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
 			out << YAML::EndMap; // MetaData Map
@@ -346,6 +346,105 @@ namespace Kargono::Assets
 		}
 
 		return false;
+	}
+
+	AssetHandle AssetManager::CreateNewScene(const std::string& sceneName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_SceneRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create File
+		CreateSceneFile(sceneName, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Scene
+		s_SceneRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeSceneRegistry(); // Update Registry File on Disk
+
+		return newHandle;
+	}
+
+	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
+	{
+		if (!s_SceneRegistry.contains(sceneHandle))
+		{
+			KG_ERROR("Attempt to save scene that does not exist in registry");
+			return;
+		}
+		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
+		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
+	}
+
+	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
+
+		std::filesystem::path scenePath {};
+
+		if (Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), filepath))
+		{
+			scenePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
+		}
+		else
+		{
+			scenePath = filepath;
+		}
+
+		for (auto& [assetHandle, asset] : s_SceneRegistry)
+		{
+			if (asset.Data.FileLocation.compare(scenePath) == 0)
+			{
+				return std::make_tuple(assetHandle, InstantiateScene(asset));
+			}
+		}
+		// Return empty scene if scene does not exist
+		KG_WARN("No Scene Associated with provided handle. Returned new empty scene");
+		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
+		return std::make_tuple(newHandle, GetScene(newHandle));
+	}
+
+	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
+	{
+		// Create Temporary Scene
+		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
+
+		// Save Binary into File
+		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
+		SerializeScene(temporaryScene, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Scene;
+		newAsset.Data.FileLocation = scenePath;
+		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+//===================================================================================================================================================
+	void AssetManager::ClearSceneRegistry()
+	{
+		s_SceneRegistry.clear();
 	}
 
 	bool AssetManager::DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
@@ -538,53 +637,11 @@ namespace Kargono::Assets
 		return true;
 
 	}
-
-	AssetHandle AssetManager::CreateNewScene(const std::string& sceneName)
+	Ref<Scenes::Scene> AssetManager::InstantiateScene(const Assets::Asset& sceneAsset)
 	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateSceneFile(sceneName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Scene
-		s_SceneRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeSceneRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
-	{
-		if (!s_SceneRegistry.contains(sceneHandle))
-		{
-			KG_ERROR("Attempt to save scene that does not exist in registry");
-			return;
-		}
-		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
-		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
+		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
+		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
+		return newScene;
 	}
 
 	Ref<Scenes::Scene> AssetManager::GetScene(const AssetHandle& handle)
@@ -599,62 +656,5 @@ namespace Kargono::Assets
 
 		KG_ERROR("No scene is associated with provided handle!");
 		return nullptr;
-	}
-	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		std::filesystem::path scenePath {};
-
-		if (Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), filepath))
-		{
-			scenePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-		else
-		{
-			scenePath = filepath;
-		}
-
-		for (auto& [assetHandle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.IntermediateLocation.compare(scenePath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateScene(asset));
-			}
-		}
-		// Return empty scene if scene does not exist
-		KG_WARN("No Scene Associated with provided handle. Returned new empty scene");
-		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
-		return std::make_tuple(newHandle, GetScene(newHandle));
-	}
-
-	Ref<Scenes::Scene> AssetManager::InstantiateScene(const Assets::Asset& sceneAsset)
-	{
-		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
-		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
-		return newScene;
-	}
-
-
-	void AssetManager::ClearSceneRegistry()
-	{
-		s_SceneRegistry.clear();
-	}
-
-	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
-	{
-		// Create Temporary Scene
-		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
-
-		// Save Binary Intermediate into File
-		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
-		SerializeScene(temporaryScene, intermediateFullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Scene;
-		newAsset.Data.IntermediateLocation = scenePath;
-		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
 	}
 }

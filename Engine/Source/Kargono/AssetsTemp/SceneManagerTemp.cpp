@@ -8,23 +8,24 @@
 
 namespace Kargono::Assets
 {
-	bool SceneManager::DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
+	Ref<Scenes::Scene> SceneManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
+		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
 		KG_INFO("Deserializing scene");
 
 		auto physics = data["Physics"];
-		scene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
+		newScene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -38,7 +39,7 @@ namespace Kargono::Assets
 				if (tagComponent) { name = tagComponent["Tag"].as<std::string>(); }
 				//KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
 
-				Scenes::Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, name);
+				Scenes::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -56,10 +57,10 @@ namespace Kargono::Assets
 					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
 					if (cInstComp.ClassHandle != Assets::EmptyHandle)
 					{
-						if (!m_AssetRegistry.contains(cInstComp.ClassHandle))
+						if (!AssetServiceTemp::HasEntityClass(cInstComp.ClassHandle))
 						{
 							KG_ERROR("Could not find entity class for class instance component");
-							return false;
+							return nullptr;
 						}
 						cInstComp.ClassReference = AssetServiceTemp::GetEntityClass(cInstComp.ClassHandle);
 
@@ -195,27 +196,7 @@ namespace Kargono::Assets
 				}
 			}
 		}
-		return true;
 
-	}
-	
-
-	Ref<Scenes::Scene> SceneManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
-	{
-		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
-		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation).string());
 		return newScene;
-	}
-
-	static SceneManager s_SceneManager;
-
-	Ref<Scenes::Scene> AssetServiceTemp::GetScene(const AssetHandle& handle)
-	{
-		return s_SceneManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetSceneIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_SceneManager.GetAssetIntermediateLocation(handle);
 	}
 }

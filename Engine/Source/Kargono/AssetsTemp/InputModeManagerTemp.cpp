@@ -7,17 +7,18 @@
 
 namespace Kargono::Assets
 {
-	bool InputModeManager::DeserializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath)
+	Ref<Input::InputMode> InputModeManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
+		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
 		KG_INFO("Deserializing input mode");
@@ -27,7 +28,7 @@ namespace Kargono::Assets
 			auto keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
-				auto& keyboardPollingNew = inputMode->m_KeyboardPolling;
+				auto& keyboardPollingNew = newInputMode->m_KeyboardPolling;
 				for (auto binding : keyboardPolling)
 				{
 					uint16_t slot = (uint16_t)binding["Slot"].as<uint32_t>();
@@ -42,7 +43,7 @@ namespace Kargono::Assets
 			auto onUpdate = data["OnUpdate"];
 			if (onUpdate)
 			{
-				auto& onUpdateNew = inputMode->m_OnUpdateBindings;
+				auto& onUpdateNew = newInputMode->m_OnUpdateBindings;
 				for (auto binding : onUpdate)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
@@ -82,7 +83,7 @@ namespace Kargono::Assets
 			auto onKeyPressed = data["OnKeyPressed"];
 			if (onKeyPressed)
 			{
-				auto& onKeyPressedNew = inputMode->m_OnKeyPressedBindings;
+				auto& onKeyPressedNew = newInputMode->m_OnKeyPressedBindings;
 				for (auto binding : onKeyPressed)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
@@ -109,26 +110,6 @@ namespace Kargono::Assets
 			}
 		}
 
-		return true;
-
-	}
-
-	Ref<Input::InputMode> InputModeManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
-	{
-		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
-		DeserializeInputMode(newInputMode, (Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation).string());
 		return newInputMode;
-	}
-
-	static InputModeManager s_InputModeManager;
-
-	Ref<Input::InputMode> AssetServiceTemp::GetInputMode(const AssetHandle& handle)
-	{
-		return s_InputModeManager.GetAsset(handle);
-	}
-
-	std::filesystem::path AssetServiceTemp::GetInputModeIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_InputModeManager.GetAssetIntermediateLocation(handle);
 	}
 }

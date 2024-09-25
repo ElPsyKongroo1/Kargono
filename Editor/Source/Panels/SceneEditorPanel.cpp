@@ -509,7 +509,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
 				s_SelectClassOption.AddToOptions("All Options",
-					asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name, handle);
+					asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name, handle);
 			}
 		};
 		s_SelectClassOption.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
@@ -1285,7 +1285,7 @@ namespace Kargono::Panels
 				{
 					s_ShapeSetTexture.CurrentOption = 
 					{
-						Assets::AssetManager::GetTextureRegistry().at(component.TextureHandle).Data.GetSpecificFileData<Assets::TextureMetaData>()->InitialFileLocation.string(),
+						Assets::AssetManager::GetTextureRegistry().at(component.TextureHandle).Data.FileLocation.string(),
 						component.TextureHandle
 					};
 				}
@@ -1533,7 +1533,7 @@ namespace Kargono::Panels
 			s_ShapeSetTexture.ClearOptions();
 			for (auto& [handle, asset] : Assets::AssetManager::GetTextureRegistry())
 			{
-				s_ShapeSetTexture.AddToOptions("All Textures", asset.Data.GetSpecificFileData<Assets::TextureMetaData>()->InitialFileLocation.string(), handle);
+				s_ShapeSetTexture.AddToOptions("All Textures", asset.Data.FileLocation.string(), handle);
 			}
 		};
 		s_ShapeSetTexture.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
@@ -1673,7 +1673,7 @@ namespace Kargono::Panels
 		if (Scenes::SceneService::GetActiveScene())
 		{
 			s_MainSceneHeader.Label = Assets::AssetManager::GetSceneRegistry().at(
-				Scenes::SceneService::GetActiveSceneHandle()).Data.IntermediateLocation.string();
+				Scenes::SceneService::GetActiveSceneHandle()).Data.FileLocation.string();
 			
 			EditorUI::EditorUIService::PanelHeader(s_MainSceneHeader);
 

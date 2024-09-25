@@ -8,14 +8,12 @@ namespace Kargono::Assets
 	public:
 		EntityClassManager() : AssetManagerTemp<Scenes::EntityClass>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~EntityClassManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Scenes::EntityClass> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
 
 		// Class specific functions
-		bool DeserializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath);
+		virtual Ref<Scenes::EntityClass> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

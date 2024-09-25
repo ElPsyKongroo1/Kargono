@@ -38,7 +38,8 @@
 enum AssetManagerOptions : uint8_t
 {
 	None = 0,
-	UseRuntimeCache = 1
+	UseAssetCache = 1,
+	CreateAssetIntermediate = 2
 };
 
 namespace Kargono::Assets
@@ -51,24 +52,25 @@ namespace Kargono::Assets
 	public:
 		Ref<AssetType> GetAsset(const AssetHandle& handle)
 		{
-			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving asset!");
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving asset!");
 
-			if (m_Flags.test(AssetManagerOptions::UseRuntimeCache))
+			if (m_Flags.test(AssetManagerOptions::UseAssetCache))
 			{
-				if (m_RuntimeCache.contains(handle))
+				if (m_AssetCache.contains(handle))
 				{
-					return m_RuntimeCache[handle];
+					return m_AssetCache[handle];
 				}
 			}
 
 			if (m_AssetRegistry.contains(handle))
 			{
 				auto asset = m_AssetRegistry[handle];
-
-				Ref<AssetType> newAsset = InstantiateAssetIntoMemory(asset);
-				if (m_Flags.test(AssetManagerOptions::UseRuntimeCache))
+				std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() / 
+					(m_Flags.test(AssetManagerOptions::CreateAssetIntermediate) ? asset.Data.IntermediateLocation : asset.Data.FileLocation);
+				Ref<AssetType> newAsset = InstantiateAssetIntoMemory(asset, assetPath);
+				if (m_Flags.test(AssetManagerOptions::UseAssetCache))
 				{
-					m_RuntimeCache.insert({ asset.Handle, newAsset });
+					m_AssetCache.insert({ asset.Handle, newAsset });
 				}
 				return newAsset;
 			}
@@ -87,12 +89,25 @@ namespace Kargono::Assets
 			return m_AssetRegistry[handle].Data.IntermediateLocation;
 		}
 
-		virtual Ref<AssetType> InstantiateAssetIntoMemory(Assets::Asset& asset) = 0;
+		bool HasAsset(const AssetHandle& handle)
+		{
+			return m_AssetRegistry.contains(handle);
+		}
 
+		void ClearAssetRegistry()
+		{
+			if (m_Flags.test(AssetManagerOptions::UseAssetCache))
+			{
+				m_AssetCache.clear();
+			}
+			m_AssetRegistry.clear();
+		}
+
+		virtual Ref<AssetType> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) = 0;
 
 	protected:
 		std::unordered_map<AssetHandle, Assets::Asset> m_AssetRegistry{};
-		std::unordered_map<AssetHandle, Ref<AssetType>> m_RuntimeCache{};
-		std::bitset<8> m_Flags {0b00000001};
+		std::unordered_map<AssetHandle, Ref<AssetType>> m_AssetCache{};
+		std::bitset<8> m_Flags {0b00000000};
 	};
 }

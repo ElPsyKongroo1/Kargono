@@ -54,6 +54,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
@@ -65,7 +66,6 @@ namespace Kargono::Assets
 					texMetaData->Height = metadata["TextureHeight"].as<int32_t>();
 					texMetaData->Width = metadata["TextureWidth"].as<int32_t>();
 					texMetaData->Channels = metadata["TextureChannels"].as<int32_t>();
-					texMetaData->InitialFileLocation = metadata["InitialFileLocation"].as<std::string>();
 
 					newAsset.Data.SpecificFileData = texMetaData;
 				}
@@ -96,6 +96,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
@@ -105,7 +106,6 @@ namespace Kargono::Assets
 				out << YAML::Key << "TextureHeight" << YAML::Value << metadata->Height;
 				out << YAML::Key << "TextureWidth" << YAML::Value << metadata->Width;
 				out << YAML::Key << "TextureChannels" << YAML::Value << metadata->Channels;
-				out << YAML::Key << "InitialFileLocation" << YAML::Value << metadata->InitialFileLocation.string();
 			}
 
 			out << YAML::EndMap; // MetaData Map
@@ -251,12 +251,12 @@ namespace Kargono::Assets
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Texture;
+		newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
 		metadata->Width = width;
 		metadata->Height = height;
 		metadata->Channels = channels;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 
 		buffer.Release();
@@ -272,13 +272,20 @@ namespace Kargono::Assets
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Texture;
+		newAsset.Data.FileLocation = "None";
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
 		metadata->Width = width;
 		metadata->Height = height;
 		metadata->Channels = channels;
-		metadata->InitialFileLocation = "None";
 		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
+	void AssetManager::ClearTextureRegistry()
+	{
+		s_TextureRegistry.clear();
+		s_Textures.clear();
 	}
 
 	Ref<Rendering::Texture2D> AssetManager::InstantiateTextureIntoMemory(Assets::Asset& asset)
@@ -311,11 +318,4 @@ namespace Kargono::Assets
 		return nullptr;
 
 	}
-
-	void AssetManager::ClearTextureRegistry()
-	{
-		s_TextureRegistry.clear();
-		s_Textures.clear();
-	}
-
 }

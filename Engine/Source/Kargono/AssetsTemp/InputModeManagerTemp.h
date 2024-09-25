@@ -8,14 +8,12 @@ namespace Kargono::Assets
 	public:
 		InputModeManager() : AssetManagerTemp<Input::InputMode>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~InputModeManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Input::InputMode> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
 
 		// Class specific functions
-		bool DeserializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath);
+		virtual Ref<Input::InputMode> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

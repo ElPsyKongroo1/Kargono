@@ -107,6 +107,7 @@ namespace Kargono::Assets
 				// Retrieving metadata for asset 
 				auto metadata = asset["MetaData"];
 				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
 				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
 				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
 
@@ -133,7 +134,6 @@ namespace Kargono::Assets
 						characterVector.push_back(std::pair<unsigned char, RuntimeUI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
 					}
 
-					fontMetaData->InitialFileLocation = metadata["InitialFileLocation"].as<std::string>();
 					newAsset.Data.SpecificFileData = fontMetaData;
 
 				}
@@ -164,6 +164,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "MetaData" << YAML::Value;
 			out << YAML::BeginMap; // MetaData Map
 			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
 			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
 			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
 
@@ -171,7 +172,6 @@ namespace Kargono::Assets
 			{
 				Assets::FontMetaData* metadata = static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
 
-				out << YAML::Key << "InitialFileLocation" << YAML::Value << metadata->InitialFileLocation.string();
 
 				out << YAML::Key << "AtlasWidth" << YAML::Value << metadata->AtlasWidth;
 				out << YAML::Key << "AtlasHeight" << YAML::Value << metadata->AtlasHeight;
@@ -242,61 +242,6 @@ namespace Kargono::Assets
 		s_Fonts.insert({ newHandle, InstantiateFontIntoMemory(newAsset) });
 
 		return newHandle;
-	}
-
-	Ref<RuntimeUI::Font> AssetManager::InstantiateFontIntoMemory(Assets::Asset& asset)
-	{
-		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
-		auto& fontCharacters = newFont->GetCharacters();
-
-		// Create Texture
-		Rendering::TextureSpecification spec;
-		spec.Width = static_cast<uint32_t>(metadata.AtlasWidth);
-		spec.Height = static_cast<uint32_t>(metadata.AtlasHeight);
-		spec.Format = Rendering::ImageFormat::RGB8;
-		spec.GenerateMipMaps = false;
-		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
-		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
-		newFont->m_AtlasTexture = texture;
-
-		newFont->SetLineHeight(metadata.LineHeight);
-
-		for (auto& [character, characterStruct] : metadata.Characters)
-		{
-			fontCharacters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
-		}
-
-		currentResource.Release();
-		return newFont;
-
-	}
-
-	Ref<RuntimeUI::Font> AssetManager::GetFont(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving font!");
-
-		if (s_Fonts.contains(handle)) { return s_Fonts[handle]; }
-
-		if (s_FontRegistry.contains(handle))
-		{
-			auto asset = s_FontRegistry[handle];
-
-			Ref<RuntimeUI::Font> newFont = InstantiateFontIntoMemory(asset);
-			s_Fonts.insert({ asset.Handle, newFont });
-			return newFont;
-		}
-
-		KG_WARN("No font is associated with provided handle!");
-		return nullptr;
-	}
-
-	void AssetManager::ClearFontRegistry()
-	{
-		s_FontRegistry.clear();
-		s_Fonts.clear();
 	}
 
 	void AssetManager::CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
@@ -423,15 +368,72 @@ namespace Kargono::Assets
 
 		// Load data into In-Memory Metadata object
 		newAsset.Data.Type = Assets::AssetType::Font;
+		newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::FontMetaData> metadata = CreateRef<Assets::FontMetaData>();
 		metadata->AtlasWidth = static_cast<float>(textureSpec.Width);
 		metadata->AtlasHeight = static_cast<float>(textureSpec.Height);
 		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
-		metadata->InitialFileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
 		newAsset.Data.SpecificFileData = metadata;
 
 		buffer.Release();
+	}
+
+	//===================================================================================================================================================
+	
+	void AssetManager::ClearFontRegistry()
+	{
+		s_FontRegistry.clear();
+		s_Fonts.clear();
+	}
+	
+	Ref<RuntimeUI::Font> AssetManager::InstantiateFontIntoMemory(Assets::Asset& asset)
+	{
+		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
+		Buffer currentResource{};
+		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
+		auto& fontCharacters = newFont->GetCharacters();
+
+		// Create Texture
+		Rendering::TextureSpecification spec;
+		spec.Width = static_cast<uint32_t>(metadata.AtlasWidth);
+		spec.Height = static_cast<uint32_t>(metadata.AtlasHeight);
+		spec.Format = Rendering::ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
+		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
+		newFont->m_AtlasTexture = texture;
+
+		newFont->SetLineHeight(metadata.LineHeight);
+
+		for (auto& [character, characterStruct] : metadata.Characters)
+		{
+			fontCharacters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
+		}
+
+		currentResource.Release();
+		return newFont;
+
+	}
+
+	Ref<RuntimeUI::Font> AssetManager::GetFont(const AssetHandle& handle)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving font!");
+
+		if (s_Fonts.contains(handle)) { return s_Fonts[handle]; }
+
+		if (s_FontRegistry.contains(handle))
+		{
+			auto asset = s_FontRegistry[handle];
+
+			Ref<RuntimeUI::Font> newFont = InstantiateFontIntoMemory(asset);
+			s_Fonts.insert({ asset.Handle, newFont });
+			return newFont;
+		}
+
+		KG_WARN("No font is associated with provided handle!");
+		return nullptr;
 	}
 }

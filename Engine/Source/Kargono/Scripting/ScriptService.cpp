@@ -739,12 +739,12 @@ namespace Kargono::Scripting
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
 		{
-			if (asset.Data.GetSpecificFileData<Assets::ScriptMetaData>()->ScriptType == ScriptType::Engine)
+			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}
 			
-			outputStream << ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+			outputStream << ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 			outputStream << '\n';
 		}
 		outputStream << "}\n";

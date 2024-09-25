@@ -6,5 +6,8 @@
 
 namespace Kargono::Assets
 {
-	static ProjectManager s_ProjectManager;
+	Ref<Projects::Project> ProjectManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	{
+		return Ref<Projects::Project>();
+	}
 }

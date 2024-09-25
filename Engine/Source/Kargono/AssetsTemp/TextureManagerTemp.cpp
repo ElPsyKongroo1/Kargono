@@ -7,26 +7,12 @@
 
 namespace Kargono::Assets
 {
-	Ref<Rendering::Texture2D> TextureManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
+	Ref<Rendering::Texture2D> TextureManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Assets::TextureMetaData metadata = *static_cast<Assets::TextureMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+		Assets::TextureMetaData metadata = *asset.Data.GetSpecificMetaData<TextureMetaData>();
+		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 		Ref<Rendering::Texture2D> newTexture = Rendering::Texture2D::Create(currentResource, metadata);
-
 		currentResource.Release();
 		return newTexture;
-	}
-
-	static TextureManager s_TextureManager;
-
-	Ref<Rendering::Texture2D> AssetServiceTemp::GetTexture(const AssetHandle& handle)
-	{
-		return s_TextureManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetTextureIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_TextureManager.GetAssetIntermediateLocation(handle);
 	}
 }

@@ -7,25 +7,14 @@
 #include "API/Audio/drwavAPI.h"
 namespace Kargono::Assets
 {
-	Ref<Audio::AudioBuffer> AudioManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
+	Ref<Audio::AudioBuffer> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Assets::AudioMetaData metadata = *static_cast<Assets::AudioMetaData*>(asset.Data.SpecificFileData.get());
+		Assets::AudioMetaData metadata = *asset.Data.GetSpecificMetaData<Assets::AudioMetaData>();
 		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+		currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 		Ref<Audio::AudioBuffer> newAudio = CreateRef<Audio::AudioBuffer>();
 		CallAndCheckALError(alBufferData(newAudio->m_BufferID, metadata.Channels > 1 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.Data, static_cast<ALsizei>(currentResource.Size), metadata.SampleRate));
 		currentResource.Release();
 		return newAudio;
-	}
-
-	static AudioManager s_AudioManager;
-
-	Ref<Audio::AudioBuffer> AssetServiceTemp::GetAudio(const AssetHandle& handle)
-	{
-		return s_AudioManager.GetAsset(handle);
-	}
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetAudioIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_AudioManager.GetAssetIntermediateLocation(handle);
 	}
 }

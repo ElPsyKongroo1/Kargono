@@ -8,14 +8,12 @@ namespace Kargono::Assets
 	public:
 		GameStateManager() : AssetManagerTemp<Scenes::GameState>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~GameStateManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<Scenes::GameState> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
 
 		// Class specific functions
-		bool DeserializeGameState(Ref<Scenes::GameState> GameState, const std::filesystem::path& filepath);
+		virtual Ref<Scenes::GameState> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }

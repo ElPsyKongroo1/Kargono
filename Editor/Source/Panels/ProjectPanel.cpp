@@ -31,17 +31,17 @@ namespace Kargono::Panels
 		s_SelectStartSceneSpec.LineCount = 2;
 		
 		s_SelectStartSceneSpec.CurrentOption = {
-			 Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.IntermediateLocation.string(),
+			 Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.FileLocation.string(),
 			Projects::ProjectService::GetActiveStartSceneHandle()};
 		s_SelectStartSceneSpec.PopupAction = []()
 		{
 			s_SelectStartSceneSpec.GetAllOptions().clear();
 			for (auto& [handle, asset] : Assets::AssetManager::GetSceneRegistry())
 			{
-				s_SelectStartSceneSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_SelectStartSceneSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 			s_SelectStartSceneSpec.CurrentOption = {
-				Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.IntermediateLocation.string(),
+				Assets::AssetManager::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.FileLocation.string(),
 			Projects::ProjectService::GetActiveStartSceneHandle()};
 		};
 		s_SelectStartSceneSpec.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
@@ -104,7 +104,7 @@ namespace Kargono::Panels
 		if (Projects::ProjectService::GetActiveStartGameState() != 0)
 		{
 			s_SelectStartGameStateSpec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
-			(Projects::ProjectService::GetActiveStartGameState()).Data.IntermediateLocation.string(),
+			(Projects::ProjectService::GetActiveStartGameState()).Data.FileLocation.string(),
 			Projects::ProjectService::GetActiveStartGameState()};
 		}
 		else
@@ -117,13 +117,13 @@ namespace Kargono::Panels
 			s_SelectStartGameStateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
 			{
-				s_SelectStartGameStateSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_SelectStartGameStateSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 
 			if (Projects::ProjectService::GetActiveStartGameState() != Assets::EmptyHandle)
 			{
 				s_SelectStartGameStateSpec.CurrentOption = { Assets::AssetManager::GetGameStateRegistry().at
-				(Projects::ProjectService::GetActiveStartGameState()).Data.IntermediateLocation.string(),
+				(Projects::ProjectService::GetActiveStartGameState()).Data.FileLocation.string(),
 				Projects::ProjectService::GetActiveStartGameState() };
 			}
 			else

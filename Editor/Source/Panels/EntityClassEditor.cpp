@@ -83,7 +83,7 @@ namespace Kargono::Panels
 			s_OpenClassPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
-				s_OpenClassPopupSpec.AddToOptions("All Options", asset.Data.IntermediateLocation.string(), handle);
+				s_OpenClassPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
@@ -103,7 +103,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(selection.Handle);
 			s_EditorEntityClassHandle = selection.Handle;
 			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
-				selection.Handle).Data.IntermediateLocation.string();
+				selection.Handle).Data.FileLocation.string();
 			s_TagHeader.EditColorActive = false;
 			s_OnRefreshData();
 		};
@@ -122,7 +122,7 @@ namespace Kargono::Panels
 
 			for (auto& [id, asset] : Assets::AssetManager::GetEntityClassRegistry())
 			{
-				if (asset.Data.GetSpecificFileData<Assets::EntityClassMetaData>()->Name == s_SelectClassNameSpec.CurrentOption)
+				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == s_SelectClassNameSpec.CurrentOption)
 				{
 					return;
 				}
@@ -131,7 +131,7 @@ namespace Kargono::Panels
 			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(s_EditorEntityClassHandle);
 			s_TagHeader.EditColorActive = false;
 			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
-				s_EditorEntityClassHandle).Data.IntermediateLocation.string();
+				s_EditorEntityClassHandle).Data.FileLocation.string();
 			s_OnRefreshData();
 		};
 		s_CreateClassPopupSpec.PopupContents = [&]()
@@ -514,7 +514,7 @@ namespace Kargono::Panels
 							return;
 						}
 						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
-						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 					};
 
 					EditorUI::TableEntry newEntry

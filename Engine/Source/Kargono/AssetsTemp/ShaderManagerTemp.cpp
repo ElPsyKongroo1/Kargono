@@ -139,12 +139,12 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	Ref<Rendering::Shader> ShaderManager::InstantiateAssetIntoMemory(Assets::Asset& asset)
+	Ref<Rendering::Shader> Assets::ShaderManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
+		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
 		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
-		std::vector<std::string> stageTypes = { "vertex", "fragment" };
+		static std::array<std::string, 2> stageTypes = { "vertex", "fragment" };
 
 		for (const auto& stage : stageTypes)
 		{
@@ -170,17 +170,5 @@ namespace Kargono::Assets
 		newShader->SetUniformList(metadata.UniformList);
 		openGLSPIRV.clear();
 		return newShader;
-	}
-
-	static ShaderManager s_ShaderManager;
-
-	Ref<Kargono::Rendering::Shader> AssetServiceTemp::GetShader(const AssetHandle& handle)
-	{
-		return s_ShaderManager.GetAsset(handle);
-	}
-
-	std::filesystem::path Kargono::Assets::AssetServiceTemp::GetShaderIntermediateLocation(const AssetHandle& handle)
-	{
-		return s_ShaderManager.GetAssetIntermediateLocation(handle);
 	}
 }

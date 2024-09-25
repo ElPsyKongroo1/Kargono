@@ -8,14 +8,11 @@ namespace Kargono::Assets
 	public:
 		UserInterfaceManager() : AssetManagerTemp<RuntimeUI::UserInterface>()
 		{
-			m_Flags.set(AssetManagerOptions::UseRuntimeCache, false);
+			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
 		}
 		virtual ~UserInterfaceManager() = default;
 	public:
-		// Override virtual functions
-		virtual Ref<RuntimeUI::UserInterface> InstantiateAssetIntoMemory(Assets::Asset& asset) override;
-
-		// Functions specific to this manager type
-		bool DeserializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath);
+		// Class specific functions
+		virtual Ref<RuntimeUI::UserInterface> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 	};
 }
