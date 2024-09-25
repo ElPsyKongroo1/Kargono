@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		ProjectManager() : AssetManagerTemp<Projects::Project>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~ProjectManager() = default;
 	public:

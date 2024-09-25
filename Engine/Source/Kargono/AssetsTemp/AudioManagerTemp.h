@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		AudioManager() : AssetManagerTemp<Audio::AudioBuffer>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, true);
 		}
 		virtual ~AudioManager() = default;
 	public:

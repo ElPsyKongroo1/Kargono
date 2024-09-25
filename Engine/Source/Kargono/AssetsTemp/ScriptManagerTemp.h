@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		ScriptManager() : AssetManagerTemp<Scripting::Script>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~ScriptManager() = default;
 	public:

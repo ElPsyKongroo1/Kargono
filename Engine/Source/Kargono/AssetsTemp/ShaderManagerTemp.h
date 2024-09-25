@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		ShaderManager() : AssetManagerTemp<Rendering::Shader>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, true);
 		}
 		virtual ~ShaderManager() = default;
 	public:

@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		InputModeManager() : AssetManagerTemp<Input::InputMode>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~InputModeManager() = default;
 	public:

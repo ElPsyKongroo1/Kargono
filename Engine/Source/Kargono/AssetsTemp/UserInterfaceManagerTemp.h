@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		UserInterfaceManager() : AssetManagerTemp<RuntimeUI::UserInterface>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~UserInterfaceManager() = default;
 	public:

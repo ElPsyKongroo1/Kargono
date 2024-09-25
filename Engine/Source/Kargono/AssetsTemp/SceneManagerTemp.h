@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		SceneManager() : AssetManagerTemp<Scenes::Scene>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~SceneManager() = default;
 	public:

@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		FontManager() : AssetManagerTemp<RuntimeUI::Font>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, true);
 		}
 		virtual ~FontManager() = default;
 	public:

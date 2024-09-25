@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		TextureManager() : AssetManagerTemp<Rendering::Texture2D>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, true);
 		}
 		virtual ~TextureManager() = default;
 	public:

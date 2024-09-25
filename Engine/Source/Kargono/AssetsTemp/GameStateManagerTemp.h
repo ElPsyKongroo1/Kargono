@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		GameStateManager() : AssetManagerTemp<Scenes::GameState>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~GameStateManager() = default;
 	public:

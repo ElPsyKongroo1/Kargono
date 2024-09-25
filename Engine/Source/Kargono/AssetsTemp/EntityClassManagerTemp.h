@@ -9,6 +9,7 @@ namespace Kargono::Assets
 		EntityClassManager() : AssetManagerTemp<Scenes::EntityClass>()
 		{
 			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
+			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
 		}
 		virtual ~EntityClassManager() = default;
 	public:
