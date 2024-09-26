@@ -8,8 +8,12 @@ namespace Kargono::Assets
 	public:
 		ProjectManager() : AssetManagerTemp<Projects::Project>()
 		{
-			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
-			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
+			m_AssetName = "Project";
+			m_FileExtension = ".kproj";
+			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
+			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
+			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
 		}
 		virtual ~ProjectManager() = default;
 	public:

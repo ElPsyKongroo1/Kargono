@@ -8,8 +8,12 @@ namespace Kargono::Assets
 	public:
 		EntityClassManager() : AssetManagerTemp<Scenes::EntityClass>()
 		{
-			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
-			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
+			m_AssetName = "Entity Class";
+			m_FileExtension = ".kgclass";
+			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
+			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
+			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
 		}
 		virtual ~EntityClassManager() = default;
 	public:

@@ -526,6 +526,27 @@ namespace Kargono::Assets
 		return true;
 	}
 
+	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
+	{
+		// Create script file
+		std::string scriptPath = "Scripting/" + spec.Name + ".kgscript";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scriptPath;
+
+		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Script;
+		newAsset.Data.FileLocation = scriptPath;
+		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
+		metadata->Name = spec.Name;
+		metadata->ScriptType = spec.Type;
+		metadata->SectionLabel = spec.SectionLabel;
+		metadata->FunctionType = spec.FunctionType;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+//===================================================================================================================================================
+
 	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
@@ -556,27 +577,6 @@ namespace Kargono::Assets
 		KG_WARN("No Script Associated with provided handle. Returned empty Script");
 		return std::make_tuple(0, nullptr);
 	}
-
-	void AssetManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
-	{
-		// Create script file
-		std::string scriptPath = "Scripting/" + spec.Name + ".kgscript";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scriptPath;
-
-		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Script;
-		newAsset.Data.FileLocation = scriptPath;
-		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
-		metadata->Name = spec.Name;
-		metadata->ScriptType = spec.Type;
-		metadata->SectionLabel = spec.SectionLabel;
-		metadata->FunctionType = spec.FunctionType;
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-//===================================================================================================================================================
 
 	void AssetManager::ClearScriptRegistry()
 	{

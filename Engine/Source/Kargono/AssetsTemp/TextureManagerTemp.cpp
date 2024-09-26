@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<Rendering::Texture2D> TextureManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Rendering::Texture2D> Texture2DManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::TextureMetaData metadata = *asset.Data.GetSpecificMetaData<TextureMetaData>();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);

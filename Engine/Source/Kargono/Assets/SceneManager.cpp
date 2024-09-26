@@ -396,6 +396,24 @@ namespace Kargono::Assets
 		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
 	}
 
+	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
+	{
+		// Create Temporary Scene
+		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
+
+		// Save Binary into File
+		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
+		SerializeScene(temporaryScene, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Scene;
+		newAsset.Data.FileLocation = scenePath;
+		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+//===================================================================================================================================================
 	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
@@ -423,25 +441,7 @@ namespace Kargono::Assets
 		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
 		return std::make_tuple(newHandle, GetScene(newHandle));
 	}
-
-	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
-	{
-		// Create Temporary Scene
-		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
-
-		// Save Binary into File
-		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
-		SerializeScene(temporaryScene, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Scene;
-		newAsset.Data.FileLocation = scenePath;
-		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-//===================================================================================================================================================
+	
 	void AssetManager::ClearSceneRegistry()
 	{
 		s_SceneRegistry.clear();

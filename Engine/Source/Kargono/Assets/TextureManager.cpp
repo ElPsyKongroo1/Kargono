@@ -122,56 +122,6 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::ImportNewTextureFromFile(const std::filesystem::path& filePath)
-	{
-		// Create Checksum
-		std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		bool isAssetDuplicate = false;
-		AssetHandle currentHandle{};
-		for (const auto& [handle, asset] : s_TextureRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				isAssetDuplicate = true;
-				currentHandle = handle;
-				break;
-			}
-		}
-
-		if (isAssetDuplicate)
-		{
-			KG_INFO("Duplicate asset found");
-			return currentHandle;
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateTextureIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeTextureRegistry(); // Update Registry File on Disk
-
-		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
-
-		return newHandle;
-
-	}
-
 	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
 	{
 		// Create Checksum
@@ -282,6 +232,56 @@ namespace Kargono::Assets
 	}
 
 	//===================================================================================================================================================
+	AssetHandle AssetManager::ImportNewTextureFromFile(const std::filesystem::path& filePath)
+	{
+		// Create Checksum
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		bool isAssetDuplicate = false;
+		AssetHandle currentHandle{};
+		for (const auto& [handle, asset] : s_TextureRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				isAssetDuplicate = true;
+				currentHandle = handle;
+				break;
+			}
+		}
+
+		if (isAssetDuplicate)
+		{
+			KG_INFO("Duplicate asset found");
+			return currentHandle;
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		CreateTextureIntermediateFromFile(filePath, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Texture
+		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeTextureRegistry(); // Update Registry File on Disk
+
+		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
+
+		return newHandle;
+
+	}
+	
 	void AssetManager::ClearTextureRegistry()
 	{
 		s_TextureRegistry.clear();

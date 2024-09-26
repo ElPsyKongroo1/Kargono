@@ -8,8 +8,12 @@ namespace Kargono::Assets
 	public:
 		SceneManager() : AssetManagerTemp<Scenes::Scene>()
 		{
-			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
-			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
+			m_AssetName = "Scene";
+			m_FileExtension = ".kgscene";
+			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
+			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
+			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
 		}
 		virtual ~SceneManager() = default;
 	public:

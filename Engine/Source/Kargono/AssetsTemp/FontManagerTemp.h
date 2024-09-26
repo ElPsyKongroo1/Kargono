@@ -8,8 +8,13 @@ namespace Kargono::Assets
 	public:
 		FontManager() : AssetManagerTemp<RuntimeUI::Font>()
 		{
-			m_Flags.set(AssetManagerOptions::UseAssetCache, true);
-			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, true);
+			m_AssetName = "Font";
+			m_FileExtension = ".kgfont";
+			m_ValidImportFileExtensions = { ".ttf" };
+			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
+			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileImporting, true);
 		}
 		virtual ~FontManager() = default;
 	public:

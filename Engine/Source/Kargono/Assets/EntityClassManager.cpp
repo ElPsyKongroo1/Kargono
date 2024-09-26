@@ -370,6 +370,26 @@ namespace Kargono::Assets
 		SerializeEntityClassRegistry();
 	}
 
+	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
+	{
+		// Create Temporary EntityClass
+		Ref<Scenes::EntityClass> temporaryEntityClass = CreateRef<Scenes::EntityClass>();
+		temporaryEntityClass->SetName(EntityClassName);
+
+		// Save Binary into File
+		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / EntityClassPath;
+		SerializeEntityClass(temporaryEntityClass, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::EntityClass;
+		newAsset.Data.FileLocation = EntityClassPath;
+		Ref<Assets::EntityClassMetaData> metadata = CreateRef<Assets::EntityClassMetaData>();
+		metadata->Name = EntityClassName;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
 	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
@@ -393,27 +413,7 @@ namespace Kargono::Assets
 		AssetHandle newHandle = CreateNewEntityClass(filepath.stem().string());
 		return std::make_tuple(newHandle, GetEntityClass(newHandle));
 	}
-
-	void AssetManager::CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset)
-	{
-		// Create Temporary EntityClass
-		Ref<Scenes::EntityClass> temporaryEntityClass = CreateRef<Scenes::EntityClass>();
-		temporaryEntityClass->SetName(EntityClassName);
-
-		// Save Binary into File
-		std::string EntityClassPath = "EntityClass/" + EntityClassName + ".kgclass";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / EntityClassPath;
-		SerializeEntityClass(temporaryEntityClass, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::EntityClass;
-		newAsset.Data.FileLocation = EntityClassPath;
-		Ref<Assets::EntityClassMetaData> metadata = CreateRef<Assets::EntityClassMetaData>();
-		metadata->Name = EntityClassName;
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	//===================================================================================================================================================
+	
 	void AssetManager::ClearEntityClassRegistry()
 	{
 		s_EntityClassRegistry.clear();

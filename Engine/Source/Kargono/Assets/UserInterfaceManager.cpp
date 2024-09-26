@@ -269,6 +269,24 @@ namespace Kargono::Assets
 		SerializeUserInterface(userInterface, (Projects::ProjectService::GetActiveAssetDirectory() / userInterfaceAsset.Data.FileLocation).string());
 	}
 
+	void AssetManager::CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset)
+	{
+		// Create Temporary UserInterface
+		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
+
+		// Save into File
+		std::string userInterfacePath = "UserInterface/" + userInterfaceName + ".kgui";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / userInterfacePath;
+		SerializeUserInterface(temporaryUserInterface, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::UserInterface;
+		newAsset.Data.FileLocation = userInterfacePath;
+		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
 	std::tuple<AssetHandle, Ref<RuntimeUI::UserInterface>> AssetManager::GetUserInterface(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
@@ -291,25 +309,7 @@ namespace Kargono::Assets
 		AssetHandle newHandle = CreateNewUserInterface(filepath.stem().string());
 		return std::make_tuple(newHandle, GetUserInterface(newHandle));
 	}
-
-	void AssetManager::CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset)
-	{
-		// Create Temporary UserInterface
-		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
-
-		// Save into File
-		std::string userInterfacePath = "UserInterface/" + userInterfaceName + ".kgui";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / userInterfacePath;
-		SerializeUserInterface(temporaryUserInterface, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::UserInterface;
-		newAsset.Data.FileLocation = userInterfacePath;
-		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	//===================================================================================================================================================
+	
 	void AssetManager::ClearUserInterfaceRegistry()
 	{
 		s_UserInterfaceRegistry.clear();

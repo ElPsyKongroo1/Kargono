@@ -205,45 +205,6 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::ImportNewFontFromFile(const std::filesystem::path& filePath)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_FontRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateFontIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Font
-		s_FontRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeFontRegistry(); // Update Registry File on Disk
-
-		s_Fonts.insert({ newHandle, InstantiateFontIntoMemory(newAsset) });
-
-		return newHandle;
-	}
-
 	void AssetManager::CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
 	{
 		// Create Buffers
@@ -382,6 +343,45 @@ namespace Kargono::Assets
 
 	//===================================================================================================================================================
 	
+	AssetHandle AssetManager::ImportNewFontFromFile(const std::filesystem::path& filePath)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_FontRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		CreateFontIntermediateFromFile(filePath, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Font
+		s_FontRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeFontRegistry(); // Update Registry File on Disk
+
+		s_Fonts.insert({ newHandle, InstantiateFontIntoMemory(newAsset) });
+
+		return newHandle;
+	}
+
 	void AssetManager::ClearFontRegistry()
 	{
 		s_FontRegistry.clear();

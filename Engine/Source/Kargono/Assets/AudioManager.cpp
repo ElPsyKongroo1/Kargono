@@ -121,67 +121,6 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::ImportNewAudioFromFile(const std::filesystem::path& filePath)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_AudioRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate audio asset");
-				return handle;
-			}
-		}
-		if (filePath.extension().string() != ".wav")
-		{
-			KG_ERROR("Invalid file extension. Can only process .wav filetypes.");
-			return {};
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateAudioIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_AudioRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeAudioRegistry(); // Update Registry File on Disk
-
-		s_Audio.insert({ newHandle, InstantiateAudioIntoMemory(newAsset) });
-
-		return newHandle;
-	}
-
-
-	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		for (auto& [assetHandle, asset] : s_AudioRegistry)
-		{
-			if (asset.Data.FileLocation.compare(filepath) == 0)
-			{
-				return std::make_tuple(assetHandle, GetAudio(assetHandle));
-			}
-		}
-		// Return empty audio if audio does not exist
-		KG_INFO("Invalid filepath provided to GetAudio {}", filepath.string());
-		return std::make_tuple(0, nullptr);
-	}
-
 	void AssetManager::CreateAudioIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
 	{
 		// Create Buffers
@@ -234,6 +173,66 @@ namespace Kargono::Assets
 	}
 
 	//===================================================================================================================================================
+
+	AssetHandle AssetManager::ImportNewAudioFromFile(const std::filesystem::path& filePath)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_AudioRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate audio asset");
+				return handle;
+			}
+		}
+		if (filePath.extension().string() != ".wav")
+		{
+			KG_ERROR("Invalid file extension. Can only process .wav filetypes.");
+			return {};
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		CreateAudioIntermediateFromFile(filePath, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Texture
+		s_AudioRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeAudioRegistry(); // Update Registry File on Disk
+
+		s_Audio.insert({ newHandle, InstantiateAudioIntoMemory(newAsset) });
+
+		return newHandle;
+	}
+
+	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
+
+		for (auto& [assetHandle, asset] : s_AudioRegistry)
+		{
+			if (asset.Data.FileLocation.compare(filepath) == 0)
+			{
+				return std::make_tuple(assetHandle, GetAudio(assetHandle));
+			}
+		}
+		// Return empty audio if audio does not exist
+		KG_INFO("Invalid filepath provided to GetAudio {}", filepath.string());
+		return std::make_tuple(0, nullptr);
+	}
 
 	void AssetManager::ClearAudioRegistry()
 	{

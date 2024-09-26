@@ -8,8 +8,12 @@ namespace Kargono::Assets
 	public:
 		GameStateManager() : AssetManagerTemp<Scenes::GameState>()
 		{
-			m_Flags.set(AssetManagerOptions::UseAssetCache, false);
-			m_Flags.set(AssetManagerOptions::CreateAssetIntermediate, false);
+			m_AssetName = "Game State";
+			m_FileExtension = ".kgstate";
+			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
+			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
+			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
+			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
 		}
 		virtual ~GameStateManager() = default;
 	public:
