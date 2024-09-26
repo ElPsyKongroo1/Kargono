@@ -42,18 +42,19 @@ enum AssetManagerOptions : uint8_t
 	HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
 	HasIntermediateLocation = 2, // Specify that this asset manager generates an intermediate file to be stored in the project's Intermediates directory
 	HasFileLocation = 3, // Specify that this asset manager stores a file somewhere in the project's Assets directory
-	HasFileImporting = 4 // Specify that this asset manager is capable of importing the asset into the system from an external file
+	HasFileImporting = 4, // Specify that this asset manager is capable of importing the asset into the system from an external file
+	HasAssetModification = 5 // Specify that this asset manager is capable of creating or updating/saving the underlying file data
 };
 
 namespace Kargono::Assets
 {
 	using AssetRegistry = std::unordered_map<AssetHandle, Assets::Asset>;
 
-	template <typename AssetType>
+	template <typename AssetValue>
 	class AssetManagerTemp
 	{
 	public:
-		Ref<AssetType> GetAsset(const AssetHandle& handle)
+		Ref<AssetValue> GetAsset(const AssetHandle& handle)
 		{
 			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving asset!");
 
@@ -70,7 +71,7 @@ namespace Kargono::Assets
 				auto asset = m_AssetRegistry[handle];
 				std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() / 
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? asset.Data.IntermediateLocation : asset.Data.FileLocation);
-				Ref<AssetType> newAsset = InstantiateAssetIntoMemory(asset, assetPath);
+				Ref<AssetValue> newAsset = DeserializeAsset(asset, assetPath);
 				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 				{
 					m_AssetCache.insert({ asset.Handle, newAsset });
@@ -82,7 +83,7 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
-		std::tuple<AssetHandle, Ref<AssetType>> GetAsset(const std::filesystem::path& fileLocation)
+		std::tuple<AssetHandle, Ref<AssetValue>> GetAsset(const std::filesystem::path& fileLocation)
 		{
 			KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
@@ -134,6 +135,113 @@ namespace Kargono::Assets
 		bool HasAsset(const AssetHandle& handle)
 		{
 			return m_AssetRegistry.contains(handle);
+		}
+
+		// TODO: Redo this API, I hate it
+		bool HasAsset(const std::string& assetName)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
+				"Attempt to query the state of an asset using an asset name when asset type does not support using a file location.");
+			
+			// Calculate checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
+
+			// Ensure checksum is generated correctly
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Failed to generate checksum from asset name!");
+				return false;
+			}
+
+			// Check for a matching checksum
+			for (const auto& [handle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.CheckSum == currentCheckSum)
+				{
+					KG_WARN("Attempt to instantiate duplicate asset");
+					return true;
+				}
+			}
+
+			// Exit if no match is found
+			return false;
+		}
+
+		void SaveAsset(AssetHandle assetHandle, Ref<AssetValue> assetReference)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetModification), "Attempt to save an asset who's type does not support data modification");
+
+			// Ensure handle exists inside registry
+			if (!m_AssetRegistry.contains(assetHandle))
+			{
+				KG_WARN("Attempt to save asset of type {} that does not exist in the asset registry", m_AssetName);
+				return;
+			}
+
+			// Find location of asset's data
+			Assets::Asset& asset = m_AssetRegistry[assetHandle];
+			std::filesystem::path dataLocation {};
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+			}
+			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+			}
+			else
+			{
+				KG_ASSERT(false, "Attempt to save an asset that does not have a specified file nor intermediate location");
+			}
+
+			// Update in memory asset if applicable
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.at(assetHandle) = assetReference;
+			}
+
+			// Save asset data on-disk
+			//SerializeAsset(assetReference, dataLocation);
+		}
+
+		void DeleteAsset(AssetHandle assetHandle)
+		{
+			if (!m_AssetRegistry.contains(assetHandle))
+			{
+				KG_WARN("Failed to delete {} asset. Asset was not found in registry.");
+				return;
+			}
+
+			// Find location of asset's data
+			Assets::Asset& asset = m_AssetRegistry[assetHandle];
+			std::filesystem::path dataLocation {};
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+			}
+			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+			}
+			else
+			{
+				KG_ASSERT(false, "Attempt to save an asset that does not have a specified file nor intermediate location");
+			}
+
+			// Delete the asset's data on-disk
+			Utility::FileSystem::DeleteSelectedFile(dataLocation);
+
+			// Delete the asset inside the registry
+			m_AssetRegistry.erase(assetHandle);
+
+			// Delete in-memory copy of this asset
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.erase(assetHandle);
+			}
+
+			// Save the modified registry to disk
+			SerializeAssetRegistry();
 		}
 
 		void ClearAssetRegistry()
@@ -195,16 +303,19 @@ namespace Kargono::Assets
 			AssetHandle newHandle { Assets::EmptyHandle };
 			Assets::Asset newAsset{};
 			newAsset.Handle = newHandle;
-
+			newAsset.Data.Type = m_AssetType;
+			
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				//CreateAssetIntermediateFromFile(filePath, newAsset);
+				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
+				newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension);
+				CreateAssetIntermediateFromFile(newAsset, filePath, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
 			else
 			{
-				KG_ASSERT(true, "Attempt to import a file that does not generate an intermediate. I have not decided what happens in this case.");
+				KG_ASSERT(false, "Attempt to import a file that does not generate an intermediate. I have not decided what happens in this case.");
 			}
 			// TODO: Make sure to modify the code below if fixing the asset above
 			std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() /
@@ -212,24 +323,147 @@ namespace Kargono::Assets
 
 			// Add new asset into asset registry
 			m_AssetRegistry.insert({ newHandle, newAsset });
-			//SerializeAssetRegistry();
+			SerializeAssetRegistry();
 
 			// Fill in-memory cache if appropriate
 			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 			{
-				m_AssetCache.insert({ newHandle, InstantiateAssetIntoMemory(newAsset, assetPath) });
+				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 			}
 			return newHandle;
 		}
+		void SerializeAssetRegistry()
+		{
+			// Get registry path
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
+			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveAssetDirectory() / m_RegistryLocation;
+			
+			// Set up serializer
+			YAML::Emitter serializer;
+			serializer << YAML::BeginMap;
+			serializer << YAML::Key << "Registry" << YAML::Value << m_AssetName;
+			serializer << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 
-		virtual Ref<AssetType> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) = 0;
+			// Serialize other registry specific data
+			SerializeRegistrySpecificData(serializer);
+
+			// Asset
+			for (auto& [handle, asset] : m_AssetRegistry)
+			{
+				serializer << YAML::BeginMap; // Asset Map
+				serializer << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+
+				serializer << YAML::Key << "MetaData" << YAML::Value;
+				serializer << YAML::BeginMap; // MetaData Map
+				serializer << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+				if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+				{
+					serializer << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+				}
+				if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+				{
+					serializer << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+				}
+				serializer << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+				SerializeAssetSpecificMetadata(serializer);
+				
+				serializer << YAML::EndMap; // Close metadata map
+				serializer << YAML::EndMap; // Close asset map
+			}
+			serializer << YAML::EndSeq; // Close asset sequence
+			serializer << YAML::EndMap; // Close registry map
+
+			Utility::FileSystem::CreateNewDirectory(registryPath.parent_path());
+
+			std::ofstream fout(registryPath);
+			fout << serializer.c_str();
+		}
+
+		void DeserializeAssetRegistry()
+		{
+			// Clear current registry
+			m_AssetRegistry.clear();
+
+			// Get on-disk registry path
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
+			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveAssetDirectory() / m_RegistryLocation;
+
+			if (!std::filesystem::exists(registryPath))
+			{
+				KG_WARN("No .kgreg file found at provided registry path {}", registryPath.string());
+				return;
+			}
+			YAML::Node data;
+			try
+			{
+				data = YAML::LoadFile(registryPath.string());
+			}
+			catch (YAML::ParserException e)
+			{
+				KG_WARN("Failed to load {} file {}\n  {}", m_FileExtension , registryPath.string(), e.what());
+				return;
+			}
+			// Opening registry node 
+			if (!data["Registry"]) 
+			{ 
+				KG_WARN("Could not validate initial registry node for the file: {}", registryPath.string());
+				return; 
+			}
+
+			std::string registryName = data["Registry"].as<std::string>();
+			KG_INFO("Deserializing {} Registry", registryName);
+
+			// Open registry specific data
+			DeserializeRegistrySpecificData(data);
+
+			// Opening all assets 
+			auto assets = data["Assets"];
+			if (assets)
+			{
+				for (auto asset : assets)
+				{
+					Assets::Asset newAsset{};
+					newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+					// Retrieving metadata for asset 
+					auto metadata = asset["MetaData"];
+					newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+					newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+					if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+					{
+						newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+					}
+					if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+					{
+						newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+					}
+
+					// Open registry specific metadata
+					DeserializeAssetSpecificMetadata(metadata, newAsset);
+
+					// Add asset to in memory registry 
+					m_AssetRegistry.insert({ newAsset.Handle, newAsset });
+
+				}
+			}
+		}
+
+		virtual Ref<AssetValue> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) = 0;
+		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) {};
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) = 0;
+		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) {};
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) = 0;
+		virtual void CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) {};
 
 	protected:
 		std::string m_AssetName{ "Uninitialized Asset Name" };
 		std::string m_FileExtension { ".kgfile" };
+		AssetType m_AssetType{ AssetType::None };
+		std::filesystem::path m_RegistryLocation{""};
 		std::vector<std::string> m_ValidImportFileExtensions{};
 		std::unordered_map<AssetHandle, Assets::Asset> m_AssetRegistry{};
-		std::unordered_map<AssetHandle, Ref<AssetType>> m_AssetCache{};
+		std::unordered_map<AssetHandle, Ref<AssetValue>> m_AssetCache{};
 		std::bitset<8> m_Flags {0b00000000};
 	};
 }

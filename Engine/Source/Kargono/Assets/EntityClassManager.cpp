@@ -62,106 +62,6 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_EntityClassRegistry {};
-
-	void AssetManager::DeserializeEntityClassRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_EntityClassRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
-
-		if (!std::filesystem::exists(EntityClassRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(EntityClassRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgstate file '{0}'\n     {1}", EntityClassRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing EntityClass Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving EntityClass specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::EntityClass)
-				{
-					Ref<Assets::EntityClassMetaData> EntityClassMetaData = CreateRef<Assets::EntityClassMetaData>();
-					EntityClassMetaData->Name = metadata["Name"].as<std::string>();
-
-					newAsset.Data.SpecificFileData = EntityClassMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_EntityClassRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-
-	void AssetManager::SerializeEntityClassRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "EntityClass";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_EntityClassRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-			if (asset.Data.Type == Assets::AssetType::EntityClass)
-			{
-				Assets::EntityClassMetaData* metadata = static_cast<Assets::EntityClassMetaData*>(asset.Data.SpecificFileData.get());
-
-				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
-			}
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(EntityClassRegistryLocation.parent_path());
-
-		std::ofstream fout(EntityClassRegistryLocation);
-		fout << out.c_str();
-	}
-
 	void AssetManager::SerializeEntityClass(Ref<Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
@@ -207,29 +107,6 @@ namespace Kargono::Assets
 		std::ofstream fout(filepath);
 		fout << out.c_str();
 		KG_INFO("Successfully Serialized EntityClass at {}", filepath);
-	}
-
-	bool AssetManager::CheckEntityClassExists(const std::string& EntityClassName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_EntityClassRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 
@@ -390,6 +267,128 @@ namespace Kargono::Assets
 	}
 
 	//===================================================================================================================================================
+	
+	bool AssetManager::CheckEntityClassExists(const std::string& EntityClassName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(EntityClassName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	void AssetManager::DeserializeEntityClassRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_EntityClassRegistry.clear();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+
+		if (!std::filesystem::exists(EntityClassRegistryLocation))
+		{
+			KG_WARN("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(EntityClassRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgstate file '{0}'\n     {1}", EntityClassRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing EntityClass Registry");
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving EntityClass specific metadata 
+				if (newAsset.Data.Type == Assets::AssetType::EntityClass)
+				{
+					Ref<Assets::EntityClassMetaData> EntityClassMetaData = CreateRef<Assets::EntityClassMetaData>();
+					EntityClassMetaData->Name = metadata["Name"].as<std::string>();
+
+					newAsset.Data.SpecificFileData = EntityClassMetaData;
+				}
+
+				// Add asset to in memory registry 
+				s_EntityClassRegistry.insert({ newAsset.Handle, newAsset });
+			}
+		}
+	}
+	
+	void AssetManager::SerializeEntityClassRegistry()
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& EntityClassRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "EntityClass/EntityClassRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "EntityClass";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+		// Asset
+		for (auto& [handle, asset] : s_EntityClassRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+			if (asset.Data.Type == Assets::AssetType::EntityClass)
+			{
+				Assets::EntityClassMetaData* metadata = static_cast<Assets::EntityClassMetaData*>(asset.Data.SpecificFileData.get());
+
+				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
+			}
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		Utility::FileSystem::CreateNewDirectory(EntityClassRegistryLocation.parent_path());
+
+		std::ofstream fout(EntityClassRegistryLocation);
+		fout << out.c_str();
+	}
+	
 	std::tuple<AssetHandle, Ref<Scenes::EntityClass>> AssetManager::GetEntityClass(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");

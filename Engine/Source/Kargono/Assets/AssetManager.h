@@ -117,10 +117,10 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_TextureRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_TextureRegistry;
 		// This map holds all of the textures that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> s_Textures;
+		static inline std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> s_Textures;
 
 	//============================================================
 	// Shaders
@@ -179,10 +179,10 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_ShaderRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_ShaderRegistry;
 		// This map holds all of the shaders that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> s_Shaders;
+		static inline std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> s_Shaders;
 
 
 	//============================================================
@@ -247,10 +247,10 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_AudioRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_AudioRegistry;
 		// This map holds all of the audio that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<Audio::AudioBuffer>> s_Audio;
+		static inline std::unordered_map<AssetHandle, Ref<Audio::AudioBuffer>> s_Audio;
 
 	//============================================================
 	// Font
@@ -310,10 +310,10 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_FontRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_FontRegistry;
 		// This map holds all of the audio that have been fully loaded into memory and are ready
 		//		to use.
-		static std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> s_Fonts;
+		static inline std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> s_Fonts;
 
 	//============================================================
 	// Scene
@@ -395,7 +395,7 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_SceneRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_SceneRegistry;
 
 	//============================================================
 	// UserInterface
@@ -481,7 +481,7 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_UserInterfaceRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_UserInterfaceRegistry;
 
 	//============================================================
 	// InputMode
@@ -567,7 +567,7 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_InputModeRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_InputModeRegistry;
 
 	//============================================================
 	// GameState
@@ -653,7 +653,7 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_GameStateRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_GameStateRegistry;
 
 
 		//============================================================
@@ -740,7 +740,7 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_EntityClassRegistry;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_EntityClassRegistry;
 
 	//============================================================
 	// Script
@@ -831,9 +831,9 @@ namespace Kargono::Assets
 		//		Since the registry only holds references, it does not instantiate any of the objects
 		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
 		//		metadata that is necessary to load the intermediate file correctly.
-		static std::unordered_map<AssetHandle, Assets::Asset> s_ScriptRegistry;
-		static std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
-		static std::unordered_set<std::string> s_ScriptSectionLabels;
+		static inline std::unordered_map<AssetHandle, Assets::Asset> s_ScriptRegistry;
+		static inline std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
+		static inline std::unordered_set<std::string> s_ScriptSectionLabels;
 
 		friend class Scripting::ScriptService;
 		friend class Scripting::ScriptModuleBuilder;

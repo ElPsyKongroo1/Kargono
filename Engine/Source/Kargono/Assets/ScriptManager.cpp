@@ -9,179 +9,6 @@
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_ScriptRegistry {};
-	std::unordered_map<AssetHandle, Ref<Scripting::Script>> AssetManager::s_Scripts {};
-	std::unordered_set<std::string> AssetManager::s_ScriptSectionLabels {};
-
-	void AssetManager::DeserializeScriptRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_ScriptRegistry.clear();
-		s_Scripts.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
-
-		// Load in Engine Scripts
-		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
-		{
-			Assets::Asset newAsset{};
-			newAsset.Handle = script->m_ID;
-
-			newAsset.Data.CheckSum = "";
-			newAsset.Data.FileLocation = "";
-			newAsset.Data.Type = AssetType::Script;
-
-			// Insert ScriptMetaData
-			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
-
-			std::string Name{};
-			std::vector<WrappedVarType> Parameters{};
-
-			ScriptMetaData->Name = script->m_ScriptName;
-			ScriptMetaData->SectionLabel = script->m_SectionLabel;
-			ScriptMetaData->ScriptType = script->m_ScriptType;
-			ScriptMetaData->FunctionType = script->m_FuncType;
-			newAsset.Data.SpecificFileData = ScriptMetaData;
-
-			// Insert Engine Script into registry/in-memory
-			s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
-			s_Scripts.insert({ newAsset.Handle, script });
-		}
-
-		if (!std::filesystem::exists(ScriptRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(ScriptRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", ScriptRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Script Registry");
-
-		// Get Section Labels
-		{
-			s_ScriptSectionLabels.clear();
-			auto sectionLabels = data["SectionLabels"];
-			if (sectionLabels)
-			{
-				for (auto label : sectionLabels)
-				{
-					s_ScriptSectionLabels.insert(label.as<std::string>());
-				}
-			}
-		}
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving Script specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::Script)
-				{
-					Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
-
-					std::string Name{};
-					std::vector<WrappedVarType> Parameters{};
-
-					ScriptMetaData->Name = metadata["Name"].as<std::string>();
-
-					ScriptMetaData->SectionLabel = metadata["SectionLabel"].as<std::string>();
-					ScriptMetaData->ScriptType = Utility::StringToScriptType(metadata["ScriptType"].as<std::string>());
-					ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadata["FunctionType"].as<std::string>());
-					newAsset.Data.SpecificFileData = ScriptMetaData;
-
-				}
-
-				// Add asset to in memory registry 
-				s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
-
-				s_Scripts.insert({ newAsset.Handle, InstantiateScriptIntoMemory(newAsset) });
-			}
-		}
-	}
-
-	void AssetManager::SerializeScriptRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Script";
-
-		// Section Labels
-		out << YAML::Key << "SectionLabels" << YAML::Value;
-		out << YAML::BeginSeq; // Start SectionLabels
-
-		for (auto& section : s_ScriptSectionLabels)
-		{
-			out << YAML::Value << section; // Section Name
-		}
-
-		out << YAML::EndSeq; // End SectionLabels
-
-		// Assets
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-		for (auto& [handle, asset] : s_ScriptRegistry)
-		{
-			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->ScriptType == Scripting::ScriptType::Engine)
-			{
-				continue;
-			}
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			if (asset.Data.Type == Assets::AssetType::Script)
-			{
-				Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
-
-				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
-				out << YAML::Key << "SectionLabel" << YAML::Value << metadata->SectionLabel;
-				out << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->ScriptType);
-				out << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->FunctionType);
-			}
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(ScriptRegistryLocation.parent_path());
-
-		std::ofstream fout(ScriptRegistryLocation);
-		fout << out.c_str();
-	}
-
 	std::tuple<AssetHandle, bool> AssetManager::CreateNewScript(ScriptSpec& spec)
 	{
 		// Ensure all scripts have unique names
@@ -546,6 +373,175 @@ namespace Kargono::Assets
 	}
 
 //===================================================================================================================================================
+
+	void AssetManager::DeserializeScriptRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_ScriptRegistry.clear();
+		s_Scripts.clear();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+
+		// Load in Engine Scripts
+		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
+		{
+			Assets::Asset newAsset{};
+			newAsset.Handle = script->m_ID;
+
+			newAsset.Data.CheckSum = "";
+			newAsset.Data.FileLocation = "";
+			newAsset.Data.Type = AssetType::Script;
+
+			// Insert ScriptMetaData
+			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+
+			std::string Name{};
+			std::vector<WrappedVarType> Parameters{};
+
+			ScriptMetaData->Name = script->m_ScriptName;
+			ScriptMetaData->SectionLabel = script->m_SectionLabel;
+			ScriptMetaData->ScriptType = script->m_ScriptType;
+			ScriptMetaData->FunctionType = script->m_FuncType;
+			newAsset.Data.SpecificFileData = ScriptMetaData;
+
+			// Insert Engine Script into registry/in-memory
+			s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
+			s_Scripts.insert({ newAsset.Handle, script });
+		}
+
+		if (!std::filesystem::exists(ScriptRegistryLocation))
+		{
+			KG_WARN("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(ScriptRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", ScriptRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing Script Registry");
+
+		// Get Section Labels
+		{
+			s_ScriptSectionLabels.clear();
+			auto sectionLabels = data["SectionLabels"];
+			if (sectionLabels)
+			{
+				for (auto label : sectionLabels)
+				{
+					s_ScriptSectionLabels.insert(label.as<std::string>());
+				}
+			}
+		}
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving Script specific metadata 
+				if (newAsset.Data.Type == Assets::AssetType::Script)
+				{
+					Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+
+					std::string Name{};
+					std::vector<WrappedVarType> Parameters{};
+
+					ScriptMetaData->Name = metadata["Name"].as<std::string>();
+
+					ScriptMetaData->SectionLabel = metadata["SectionLabel"].as<std::string>();
+					ScriptMetaData->ScriptType = Utility::StringToScriptType(metadata["ScriptType"].as<std::string>());
+					ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadata["FunctionType"].as<std::string>());
+					newAsset.Data.SpecificFileData = ScriptMetaData;
+
+				}
+
+				// Add asset to in memory registry 
+				s_ScriptRegistry.insert({ newAsset.Handle, newAsset });
+
+				s_Scripts.insert({ newAsset.Handle, InstantiateScriptIntoMemory(newAsset) });
+			}
+		}
+	}
+
+	void AssetManager::SerializeScriptRegistry()
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& ScriptRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/ScriptRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "Script";
+
+		// Section Labels
+		out << YAML::Key << "SectionLabels" << YAML::Value;
+		out << YAML::BeginSeq; // Start SectionLabels
+
+		for (auto& section : s_ScriptSectionLabels)
+		{
+			out << YAML::Value << section; // Section Name
+		}
+
+		out << YAML::EndSeq; // End SectionLabels
+
+		// Assets
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+		for (auto& [handle, asset] : s_ScriptRegistry)
+		{
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->ScriptType == Scripting::ScriptType::Engine)
+			{
+				continue;
+			}
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+			if (asset.Data.Type == Assets::AssetType::Script)
+			{
+				Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
+
+				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
+				out << YAML::Key << "SectionLabel" << YAML::Value << metadata->SectionLabel;
+				out << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->ScriptType);
+				out << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->FunctionType);
+			}
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		Utility::FileSystem::CreateNewDirectory(ScriptRegistryLocation.parent_path());
+
+		std::ofstream fout(ScriptRegistryLocation);
+		fout << out.c_str();
+	}
 
 	std::tuple<AssetHandle, Ref<Scripting::Script>> AssetManager::GetScript(const std::filesystem::path& filepath)
 	{

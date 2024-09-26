@@ -9,97 +9,6 @@
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_InputModeRegistry {};
-
-	void AssetManager::DeserializeInputModeRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_InputModeRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
-
-		if (!std::filesystem::exists(inputModeRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(inputModeRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kginputMode file '{0}'\n     {1}", inputModeRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing InputMode Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving inputMode specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::InputMode)
-				{
-					Ref<Assets::InputModeMetaData> inputModeMetaData = CreateRef<Assets::InputModeMetaData>();
-					newAsset.Data.SpecificFileData = inputModeMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_InputModeRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-
-	void AssetManager::SerializeInputModeRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "UserInterface";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_InputModeRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(inputModeRegistryLocation.parent_path());
-
-		std::ofstream fout(inputModeRegistryLocation);
-		fout << out.c_str();
-	}
 
 	void AssetManager::SerializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath)
 	{
@@ -197,29 +106,6 @@ namespace Kargono::Assets
 		KG_INFO("Successfully Serialized InputMode at {}", filepath);
 	}
 
-	bool AssetManager::CheckInputModeExists(const std::string& inputModeName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(inputModeName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_InputModeRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	AssetHandle AssetManager::CreateNewInputMode(const std::string& inputModeName)
 	{
 		// Create Checksum
@@ -284,6 +170,105 @@ namespace Kargono::Assets
 		SerializeInputModeRegistry();
 	}
 
+	void AssetManager::CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset)
+	{
+		// Create Temporary InputMode
+		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
+
+		// Save Binary into File
+		std::string inputModePath = "Input/" + inputModeName + ".kginput";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / inputModePath;
+		SerializeInputMode(temporaryInputMode, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::InputMode;
+		newAsset.Data.FileLocation = inputModePath;
+		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+//===================================================================================================================================================
+	
+	bool AssetManager::CheckInputModeExists(const std::string& inputModeName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(inputModeName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_InputModeRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	void AssetManager::DeserializeInputModeRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_InputModeRegistry.clear();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
+
+		if (!std::filesystem::exists(inputModeRegistryLocation))
+		{
+			KG_WARN("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(inputModeRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kginputMode file '{0}'\n     {1}", inputModeRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing InputMode Registry");
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving inputMode specific metadata 
+				if (newAsset.Data.Type == Assets::AssetType::InputMode)
+				{
+					Ref<Assets::InputModeMetaData> inputModeMetaData = CreateRef<Assets::InputModeMetaData>();
+					newAsset.Data.SpecificFileData = inputModeMetaData;
+				}
+
+				// Add asset to in memory registry 
+				s_InputModeRegistry.insert({ newAsset.Handle, newAsset });
+			}
+		}
+	}
+	
 	std::tuple<AssetHandle, Ref<Input::InputMode>> AssetManager::GetInputMode(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
@@ -308,24 +293,39 @@ namespace Kargono::Assets
 		return std::make_tuple(newHandle, GetInputMode(newHandle));
 	}
 
-	void AssetManager::CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset)
+	void AssetManager::SerializeInputModeRegistry()
 	{
-		// Create Temporary InputMode
-		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& inputModeRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Input/InputRegistry.kgreg";
+		YAML::Emitter out;
 
-		// Save Binary into File
-		std::string inputModePath = "Input/" + inputModeName + ".kginput";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / inputModePath;
-		SerializeInputMode(temporaryInputMode, fullPath.string());
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "UserInterface";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::InputMode;
-		newAsset.Data.FileLocation = inputModePath;
-		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
+		// Asset
+		for (auto& [handle, asset] : s_InputModeRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		Utility::FileSystem::CreateNewDirectory(inputModeRegistryLocation.parent_path());
+
+		std::ofstream fout(inputModeRegistryLocation);
+		fout << out.c_str();
 	}
-
-//===================================================================================================================================================
+	
 	void AssetManager::ClearInputModeRegistry()
 	{
 		s_InputModeRegistry.clear();

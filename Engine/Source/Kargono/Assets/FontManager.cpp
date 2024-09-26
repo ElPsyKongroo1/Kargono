@@ -32,40 +32,12 @@ namespace Kargono::Utility
 		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
 		memcpy_s(buffer.Data, buffer.Size, bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
 	}
-
-
-	/*template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
-	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
-		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
-	{
-		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
-		msdf_atlas::GeneratorAttributes attributes;
-		attributes.config.overlapSupport = true;
-		attributes.scanlinePass = true;
-		msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
-		generator.setAttributes(attributes);
-		generator.setThreadCount(numAvailableThread);
-		generator.generate(glyphs.data(), (int32_t)glyphs.size());
-
-		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
-
-		TextureSpecification spec;
-		spec.Width = bitmap.width;
-		spec.Height = bitmap.height;
-		spec.Format = ImageFormat::RGB8;
-		spec.GenerateMipMaps = false;
-		Ref<Texture2D> texture = Texture2D::Create(spec);
-		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(spec.Format));
-		return texture;
-	}*/
-
 }
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_FontRegistry {};
-	std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> AssetManager::s_Fonts {};
-
+	//===================================================================================================================================================
+	
 	void AssetManager::DeserializeFontRegistry()
 	{
 		// Clear current registry and open registry in current project 
@@ -341,8 +313,6 @@ namespace Kargono::Assets
 		buffer.Release();
 	}
 
-	//===================================================================================================================================================
-	
 	AssetHandle AssetManager::ImportNewFontFromFile(const std::filesystem::path& filePath)
 	{
 		// Create Checksum

@@ -9,16 +9,21 @@ namespace Kargono::Assets
 		GameStateManager() : AssetManagerTemp<Scenes::GameState>()
 		{
 			m_AssetName = "Game State";
+			m_AssetType = AssetType::GameState;
 			m_FileExtension = ".kgstate";
+			m_RegistryLocation = "GameState/GameStateRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
+			m_Flags.set(AssetManagerOptions::HasAssetModification, true);
 		}
 		virtual ~GameStateManager() = default;
 	public:
 
 		// Class specific functions
-		virtual Ref<Scenes::GameState> InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual Ref<Scenes::GameState> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
 	};
 }

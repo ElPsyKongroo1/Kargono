@@ -9,97 +9,6 @@
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_UserInterfaceRegistry {};
-
-	void AssetManager::DeserializeUserInterfaceRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_UserInterfaceRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
-
-		if (!std::filesystem::exists(userInterfaceRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(userInterfaceRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", userInterfaceRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing UserInterface Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving uiobject specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::UserInterface)
-				{
-					Ref<Assets::UserInterfaceMetaData> userInterfaceMetaData = CreateRef<Assets::UserInterfaceMetaData>();
-					newAsset.Data.SpecificFileData = userInterfaceMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_UserInterfaceRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-
-	void AssetManager::SerializeUserInterfaceRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "UserInterface";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(userInterfaceRegistryLocation.parent_path());
-
-		std::ofstream fout(userInterfaceRegistryLocation);
-		fout << out.c_str();
-	}
 
 	void AssetManager::SerializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath)
 	{
@@ -180,29 +89,6 @@ namespace Kargono::Assets
 		std::ofstream fout(filepath);
 		fout << out.c_str();
 		KG_INFO("Successfully Serialized UserInterface at {}", filepath);
-	}
-
-	bool AssetManager::CheckUserInterfaceExists(const std::string& userInterfaceName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	AssetHandle AssetManager::CreateNewUserInterface(const std::string& userInterfaceName)
@@ -287,6 +173,119 @@ namespace Kargono::Assets
 	}
 
 	//===================================================================================================================================================
+	bool AssetManager::CheckUserInterfaceExists(const std::string& userInterfaceName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	void AssetManager::DeserializeUserInterfaceRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_UserInterfaceRegistry.clear();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
+
+		if (!std::filesystem::exists(userInterfaceRegistryLocation))
+		{
+			KG_WARN("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(userInterfaceRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", userInterfaceRegistryLocation.string(), e.what());
+			return;
+		}
+
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing UserInterface Registry");
+
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+
+				// Retrieving uiobject specific metadata 
+				if (newAsset.Data.Type == Assets::AssetType::UserInterface)
+				{
+					Ref<Assets::UserInterfaceMetaData> userInterfaceMetaData = CreateRef<Assets::UserInterfaceMetaData>();
+					newAsset.Data.SpecificFileData = userInterfaceMetaData;
+				}
+
+				// Add asset to in memory registry 
+				s_UserInterfaceRegistry.insert({ newAsset.Handle, newAsset });
+			}
+		}
+	}
+	
+	void AssetManager::SerializeUserInterfaceRegistry()
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "UserInterface";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+		// Asset
+		for (auto& [handle, asset] : s_UserInterfaceRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+			out << YAML::EndMap; // MetaData Map
+			out << YAML::EndMap; // Asset Map
+		}
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		Utility::FileSystem::CreateNewDirectory(userInterfaceRegistryLocation.parent_path());
+
+		std::ofstream fout(userInterfaceRegistryLocation);
+		fout << out.c_str();
+	}
+	
 	std::tuple<AssetHandle, Ref<RuntimeUI::UserInterface>> AssetManager::GetUserInterface(const std::filesystem::path& filepath)
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");

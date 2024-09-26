@@ -6,9 +6,61 @@
 #include "Kargono/Scenes/Entity.h"
 #include "Kargono/Scenes/EntityClass.h"
 
+namespace Kargono::Utility
+{
+	static void TransferClassInstanceFieldData(Ref<Scenes::Scene> scene, Ref<Scenes::EntityClass> entityClass, Assets::AssetHandle entityHandle,
+		const std::unordered_map<uint32_t, uint32_t>& transferMap)
+	{
+		if (scene)
+		{
+			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
+			{
+				Scenes::Entity currentEntity { entity, scene.get() };
+				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
+				if (component.ClassHandle == entityHandle)
+				{
+					component.ClassReference = entityClass;
+					auto oldVariables = component.Fields;
+					component.Fields.clear();
+					for (auto& [name, type] : entityClass->GetFields())
+					{
+						component.Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
+					}
+
+					// Transfer Data
+					for (auto [oldLoc, newLoc] : transferMap)
+					{
+						component.Fields.at(newLoc)->SetValue(oldVariables.at(oldLoc)->GetValue());
+					}
+				}
+
+			}
+		}
+	}
+
+	static void ClearClassReferenceFromScene(Ref<Scenes::Scene> scene, Ref<Scenes::EntityClass> entityClass, Assets::AssetHandle entityHandle)
+	{
+		if (scene)
+		{
+			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
+			{
+				Scenes::Entity currentEntity { entity, scene.get() };
+				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
+				if (component.ClassHandle == entityHandle)
+				{
+					component.ClassHandle = Assets::EmptyHandle;
+					component.ClassReference = nullptr;
+					bool success = component.Fields.empty();
+				}
+
+			}
+		}
+	}
+}
+
 namespace Kargono::Assets
 {
-	Ref<Scenes::EntityClass> EntityClassManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Scenes::EntityClass> EntityClassManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::EntityClass> newEntityClass = CreateRef<Scenes::EntityClass>();
 		
@@ -93,5 +145,16 @@ namespace Kargono::Assets
 		}
 
 		return newEntityClass;
+	}
+	void EntityClassManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+		Assets::EntityClassMetaData* metadata = currentAsset.Data.GetSpecificMetaData<EntityClassMetaData>();
+		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
+	}
+	void Assets::EntityClassManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::EntityClassMetaData> EntityClassMetaData = CreateRef<Assets::EntityClassMetaData>();
+		EntityClassMetaData->Name = metadataNode["Name"].as<std::string>();
+		currentAsset.Data.SpecificFileData = EntityClassMetaData;
 	}
 }

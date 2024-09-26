@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<Scenes::GameState> GameStateManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Scenes::GameState> GameStateManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
 		YAML::Node data;
@@ -42,5 +42,16 @@ namespace Kargono::Assets
 		}
 
 		return newGameState;
+	}
+	void GameStateManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+		Assets::GameStateMetaData* metadata = currentAsset.Data.GetSpecificMetaData<GameStateMetaData>();
+		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
+	}
+	void GameStateManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::GameStateMetaData> GameStateMetaData = CreateRef<Assets::GameStateMetaData>();
+		GameStateMetaData->Name = metadataNode["Name"].as<std::string>();
+		currentAsset.Data.SpecificFileData = GameStateMetaData;
 	}
 }

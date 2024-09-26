@@ -139,7 +139,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	Ref<Rendering::Shader> Assets::ShaderManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Rendering::Shader> Assets::ShaderManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
@@ -170,5 +170,83 @@ namespace Kargono::Assets
 		newShader->SetUniformList(metadata.UniformList);
 		openGLSPIRV.clear();
 		return newShader;
+	}
+	void Assets::ShaderManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+		// ShaderSpecification Section
+		Assets::ShaderMetaData* metadata = static_cast<Assets::ShaderMetaData*>(currentAsset.Data.SpecificFileData.get());
+		serializer << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(metadata->ShaderSpec.ColorInput);
+		serializer << YAML::Key << "AddProjectionMatrix" << YAML::Value << metadata->ShaderSpec.AddProjectionMatrix;
+		serializer << YAML::Key << "AddEntityID" << YAML::Value << metadata->ShaderSpec.AddEntityID;
+		serializer << YAML::Key << "AddCircleShape" << YAML::Value << metadata->ShaderSpec.AddCircleShape;
+		serializer << YAML::Key << "TextureInput" << YAML::Value << Utility::TextureInputTypeToString(metadata->ShaderSpec.TextureInput);
+		serializer << YAML::Key << "DrawOutline" << YAML::Value << metadata->ShaderSpec.DrawOutline;
+		serializer << YAML::Key << "RenderType" << YAML::Value << Utility::RenderingTypeToString(metadata->ShaderSpec.RenderType);
+
+		// InputBufferLayout Section
+		serializer << YAML::Key << "InputBufferLayout" << YAML::Value << YAML::BeginMap; // Input Buffer Layout Map
+		serializer << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+		for (const auto& element : metadata->InputLayout.GetElements())
+		{
+			serializer << YAML::BeginMap; // Input Element Map
+			serializer << YAML::Key << "Name" << YAML::Value << element.Name;
+			serializer << YAML::Key << "Type" << YAML::Value << Utility::InputDataTypeToString(element.Type);
+			serializer << YAML::EndMap; // Input Element Map
+		}
+		serializer << YAML::EndSeq;
+		serializer << YAML::EndMap; // Input Buffer Layout Map
+
+		// UniformBufferList Section
+		serializer << YAML::Key << "UniformBufferList" << YAML::Value << YAML::BeginMap; // Uniform Buffer Layout Map
+		serializer << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+		for (const auto& element : metadata->UniformList.GetElements())
+		{
+			serializer << YAML::BeginMap; // Uniform Element Map
+			serializer << YAML::Key << "Name" << YAML::Value << element.Name;
+			serializer << YAML::Key << "Type" << YAML::Value << Utility::UniformDataTypeToString(element.Type);
+			serializer << YAML::EndMap; // Uniform Element Map
+		}
+		serializer << YAML::EndSeq;
+		serializer << YAML::EndMap; // Uniform Buffer Layout Map
+	}
+	void Assets::ShaderManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::ShaderMetaData> shaderMetaData = CreateRef<Assets::ShaderMetaData>();
+
+		// ShaderSpecification Section
+		shaderMetaData->ShaderSpec.ColorInput = Utility::StringToColorInputType(metadataNode["ColorInputType"].as<std::string>());
+		shaderMetaData->ShaderSpec.AddProjectionMatrix = metadataNode["AddProjectionMatrix"].as<bool>();
+		shaderMetaData->ShaderSpec.AddEntityID = metadataNode["AddEntityID"].as<bool>();
+		shaderMetaData->ShaderSpec.AddCircleShape = metadataNode["AddCircleShape"].as<bool>();
+		shaderMetaData->ShaderSpec.TextureInput = Utility::StringToTextureInputType(metadataNode["TextureInput"].as<std::string>());
+		shaderMetaData->ShaderSpec.DrawOutline = metadataNode["DrawOutline"].as<bool>();
+		shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadataNode["RenderType"].as<std::string>());
+
+		KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+		{
+			// InputBufferLayout Section
+			auto inputBufferLayout = metadataNode["InputBufferLayout"];
+			auto elementList = inputBufferLayout["Elements"];
+			for (const auto& element : elementList)
+			{
+				shaderMetaData->InputLayout.AddBufferElement(Rendering::InputBufferElement(
+					Utility::StringToInputDataType(element["Type"].as<std::string>()),
+					element["Name"].as<std::string>()
+				));
+			}
+		}
+		{
+			// InputBufferLayout Section
+			auto uniformBufferList = metadataNode["UniformBufferList"];
+			auto elementList = uniformBufferList["Elements"];
+			for (const auto& element : elementList)
+			{
+				shaderMetaData->UniformList.AddBufferElement(Rendering::UniformElement(
+					Utility::StringToUniformDataType(element["Type"].as<std::string>()),
+					element["Name"].as<std::string>()
+				));
+			}
+		}
+		currentAsset.Data.SpecificFileData = shaderMetaData;
 	}
 }

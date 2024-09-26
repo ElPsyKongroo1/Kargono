@@ -10,9 +10,7 @@
 
 namespace Kargono::Assets
 {
-
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_AudioRegistry {};
-	std::unordered_map<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::s_Audio {};
+	//===================================================================================================================================================
 
 	void AssetManager::DeserializeAudioRegistry()
 	{
@@ -120,6 +118,50 @@ namespace Kargono::Assets
 		std::ofstream fout(audioRegistryLocation);
 		fout << out.c_str();
 	}
+	
+	AssetHandle AssetManager::ImportNewAudioFromFile(const std::filesystem::path& filePath)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		for (const auto& [handle, asset] : s_AudioRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate audio asset");
+				return handle;
+			}
+		}
+		if (filePath.extension().string() != ".wav")
+		{
+			KG_ERROR("Invalid file extension. Can only process .wav filetypes.");
+			return {};
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		CreateAudioIntermediateFromFile(filePath, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Texture
+		s_AudioRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeAudioRegistry(); // Update Registry File on Disk
+
+		s_Audio.insert({ newHandle, InstantiateAudioIntoMemory(newAsset) });
+
+		return newHandle;
+	}
 
 	void AssetManager::CreateAudioIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
 	{
@@ -165,57 +207,11 @@ namespace Kargono::Assets
 		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::AudioMetaData> metadata = CreateRef<Assets::AudioMetaData>();
 		metadata->Channels = channels;
-		metadata->SampleRate = sampleRate;;
+		metadata->SampleRate = sampleRate;
 		metadata->TotalPcmFrameCount = totalPcmFrameCount;
 		metadata->TotalSize = totalSize;
 		newAsset.Data.SpecificFileData = metadata;
 		pcmData.Release();
-	}
-
-	//===================================================================================================================================================
-
-	AssetHandle AssetManager::ImportNewAudioFromFile(const std::filesystem::path& filePath)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_AudioRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate audio asset");
-				return handle;
-			}
-		}
-		if (filePath.extension().string() != ".wav")
-		{
-			KG_ERROR("Invalid file extension. Can only process .wav filetypes.");
-			return {};
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateAudioIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_AudioRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeAudioRegistry(); // Update Registry File on Disk
-
-		s_Audio.insert({ newHandle, InstantiateAudioIntoMemory(newAsset) });
-
-		return newHandle;
 	}
 
 	std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> AssetManager::GetAudio(const std::filesystem::path& filepath)

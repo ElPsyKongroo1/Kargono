@@ -10,9 +10,76 @@
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_TextureRegistry {};
-	std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> AssetManager::s_Textures {};
+	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
+	{
+		// Create Checksum
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromBuffer(buffer);
 
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		bool isAssetDuplicate = false;
+		AssetHandle currentHandle{};
+		for (const auto& [handle, asset] : s_TextureRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				isAssetDuplicate = true;
+				currentHandle = handle;
+				break;
+			}
+		}
+
+		if (isAssetDuplicate)
+		{
+			//KG_ERROR("THERE IS A DUPLICATE!");
+			return currentHandle;
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create Intermediate
+		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Texture
+		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeTextureRegistry(); // Update Registry File on Disk
+
+		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
+
+		return newHandle;
+
+	}
+
+	void AssetManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset)
+	{
+		// Save Binary Intermediate into File
+		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
+		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::Texture;
+		newAsset.Data.FileLocation = "None";
+		newAsset.Data.IntermediateLocation = intermediatePath;
+		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
+		metadata->Width = width;
+		metadata->Height = height;
+		metadata->Channels = channels;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	//===================================================================================================================================================
+	
 	void AssetManager::DeserializeTextureRegistry()
 	{
 		// Clear current registry and open registry in current project 
@@ -76,7 +143,7 @@ namespace Kargono::Assets
 			}
 		}
 	}
-
+	
 	void AssetManager::SerializeTextureRegistry()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
@@ -122,56 +189,6 @@ namespace Kargono::Assets
 		fout << out.c_str();
 	}
 
-	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
-	{
-		// Create Checksum
-		std::string currentCheckSum = Utility::FileSystem::ChecksumFromBuffer(buffer);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		bool isAssetDuplicate = false;
-		AssetHandle currentHandle{};
-		for (const auto& [handle, asset] : s_TextureRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				isAssetDuplicate = true;
-				currentHandle = handle;
-				break;
-			}
-		}
-
-		if (isAssetDuplicate)
-		{
-			//KG_ERROR("THERE IS A DUPLICATE!");
-			return currentHandle;
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		s_TextureRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeTextureRegistry(); // Update Registry File on Disk
-
-		s_Textures.insert({ newHandle, InstantiateTextureIntoMemory(newAsset) });
-
-		return newHandle;
-
-	}
-
 	void AssetManager::CreateTextureIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
 	{
 		// Create Texture Binary Intermediate
@@ -208,30 +225,9 @@ namespace Kargono::Assets
 		metadata->Height = height;
 		metadata->Channels = channels;
 		newAsset.Data.SpecificFileData = metadata;
-
 		buffer.Release();
-
 	}
-
-	void AssetManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset)
-	{
-		// Save Binary Intermediate into File
-		std::string intermediatePath = "Textures/Intermediates/" + (std::string)newAsset.Handle + ".kgtexture";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
-		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Texture;
-		newAsset.Data.FileLocation = "None";
-		newAsset.Data.IntermediateLocation = intermediatePath;
-		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
-		metadata->Width = width;
-		metadata->Height = height;
-		metadata->Channels = channels;
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	//===================================================================================================================================================
+	
 	AssetHandle AssetManager::ImportNewTextureFromFile(const std::filesystem::path& filePath)
 	{
 		// Create Checksum

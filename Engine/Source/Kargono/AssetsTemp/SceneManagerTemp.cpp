@@ -8,7 +8,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<Scenes::Scene> SceneManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;
@@ -57,12 +57,12 @@ namespace Kargono::Assets
 					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
 					if (cInstComp.ClassHandle != Assets::EmptyHandle)
 					{
-						if (!AssetServiceTemp::HasEntityClass(cInstComp.ClassHandle))
+						if (!AssetService::HasEntityClass(cInstComp.ClassHandle))
 						{
 							KG_ERROR("Could not find entity class for class instance component");
 							return nullptr;
 						}
-						cInstComp.ClassReference = AssetServiceTemp::GetEntityClass(cInstComp.ClassHandle);
+						cInstComp.ClassReference = AssetService::GetEntityClass(cInstComp.ClassHandle);
 
 						auto instanceFields = classInstanceComponent["InstanceFields"];
 						if (instanceFields)
@@ -198,5 +198,13 @@ namespace Kargono::Assets
 		}
 
 		return newScene;
+	}
+	void SceneManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+	}
+	void SceneManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::SceneMetaData> sceneMetaData = CreateRef<Assets::SceneMetaData>();
+		currentAsset.Data.SpecificFileData = sceneMetaData;
 	}
 }

@@ -138,174 +138,6 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_ShaderRegistry {};
-	std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> AssetManager::s_Shaders {};
-
-	void AssetManager::DeserializeShaderRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_ShaderRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
-
-		if (!std::filesystem::exists(shaderRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(shaderRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgreg file '{0}'\n     {1}", shaderRegistryLocation.string(), e.what());
-			return;
-		}
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Shader Registry");
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-				// Retrieving shader specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::Shader)
-				{
-					Ref<Assets::ShaderMetaData> shaderMetaData = CreateRef<Assets::ShaderMetaData>();
-
-					// ShaderSpecification Section
-					shaderMetaData->ShaderSpec.ColorInput = Utility::StringToColorInputType(metadata["ColorInputType"].as<std::string>());
-					shaderMetaData->ShaderSpec.AddProjectionMatrix = metadata["AddProjectionMatrix"].as<bool>();
-					shaderMetaData->ShaderSpec.AddEntityID = metadata["AddEntityID"].as<bool>();
-					shaderMetaData->ShaderSpec.AddCircleShape = metadata["AddCircleShape"].as<bool>();
-					shaderMetaData->ShaderSpec.TextureInput = Utility::StringToTextureInputType(metadata["TextureInput"].as<std::string>());
-					shaderMetaData->ShaderSpec.DrawOutline = metadata["DrawOutline"].as<bool>();
-					shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadata["RenderType"].as<std::string>());
-
-					KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
-					{
-						// InputBufferLayout Section
-						auto inputBufferLayout = metadata["InputBufferLayout"];
-						auto elementList = inputBufferLayout["Elements"];
-						for (const auto& element : elementList)
-						{
-							shaderMetaData->InputLayout.AddBufferElement(Rendering::InputBufferElement(
-								Utility::StringToInputDataType(element["Type"].as<std::string>()),
-								element["Name"].as<std::string>()
-							));
-						}
-					}
-					{
-						// InputBufferLayout Section
-						auto uniformBufferList = metadata["UniformBufferList"];
-						auto elementList = uniformBufferList["Elements"];
-						for (const auto& element : elementList)
-						{
-							shaderMetaData->UniformList.AddBufferElement(Rendering::UniformElement(
-								Utility::StringToUniformDataType(element["Type"].as<std::string>()),
-								element["Name"].as<std::string>()
-							));
-						}
-					}
-					newAsset.Data.SpecificFileData = shaderMetaData;
-				}
-				// Add asset to in memory registry 
-				s_ShaderRegistry.insert({ newAsset.Handle, newAsset });
-
-			}
-		}
-	}
-
-	void AssetManager::SerializeShaderRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Untitled";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_ShaderRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			if (asset.Data.Type == Assets::AssetType::Shader)
-			{
-				// ShaderSpecification Section
-				Assets::ShaderMetaData* metadata = static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
-				out << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(metadata->ShaderSpec.ColorInput);
-				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << metadata->ShaderSpec.AddProjectionMatrix;
-				out << YAML::Key << "AddEntityID" << YAML::Value << metadata->ShaderSpec.AddEntityID;
-				out << YAML::Key << "AddCircleShape" << YAML::Value << metadata->ShaderSpec.AddCircleShape;
-				out << YAML::Key << "TextureInput" << YAML::Value << Utility::TextureInputTypeToString(metadata->ShaderSpec.TextureInput);
-				out << YAML::Key << "DrawOutline" << YAML::Value << metadata->ShaderSpec.DrawOutline;
-				out << YAML::Key << "RenderType" << YAML::Value << Utility::RenderingTypeToString(metadata->ShaderSpec.RenderType);
-
-				// InputBufferLayout Section
-				out << YAML::Key << "InputBufferLayout" << YAML::Value << YAML::BeginMap; // Input Buffer Layout Map
-				out << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
-				for (const auto& element : metadata->InputLayout.GetElements())
-				{
-					out << YAML::BeginMap; // Input Element Map
-					out << YAML::Key << "Name" << YAML::Value << element.Name;
-					out << YAML::Key << "Type" << YAML::Value << Utility::InputDataTypeToString(element.Type);
-					out << YAML::EndMap; // Input Element Map
-				}
-				out << YAML::EndSeq;
-				out << YAML::EndMap; // Input Buffer Layout Map
-
-				// UniformBufferList Section
-				out << YAML::Key << "UniformBufferList" << YAML::Value << YAML::BeginMap; // Uniform Buffer Layout Map
-				out << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
-				for (const auto& element : metadata->UniformList.GetElements())
-				{
-					out << YAML::BeginMap; // Uniform Element Map
-					out << YAML::Key << "Name" << YAML::Value << element.Name;
-					out << YAML::Key << "Type" << YAML::Value << Utility::UniformDataTypeToString(element.Type);
-					out << YAML::EndMap; // Uniform Element Map
-				}
-				out << YAML::EndSeq;
-				out << YAML::EndMap; // Uniform Buffer Layout Map
-			}
-
-			out << YAML::EndMap; // MetaData Map
-
-			out << YAML::EndMap; // Asset Map
-		}
-
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(shaderRegistryLocation.parent_path());
-
-		std::ofstream fout(shaderRegistryLocation);
-		fout << out.c_str();
-	}
-
 	AssetHandle AssetManager::CreateNewShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
 		// Create Checksum
@@ -434,6 +266,170 @@ namespace Kargono::Assets
 	}
 
 	//===================================================================================================================================================
+	void AssetManager::DeserializeShaderRegistry()
+	{
+		// Clear current registry and open registry in current project 
+		s_ShaderRegistry.clear();
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
+		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
+
+		if (!std::filesystem::exists(shaderRegistryLocation))
+		{
+			KG_WARN("No .kgregistry file exists in project path!");
+			return;
+		}
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(shaderRegistryLocation.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_ERROR("Failed to load .kgreg file '{0}'\n     {1}", shaderRegistryLocation.string(), e.what());
+			return;
+		}
+		// Opening registry node 
+		if (!data["Registry"]) { return; }
+
+		std::string registryName = data["Registry"].as<std::string>();
+		KG_INFO("Deserializing Shader Registry");
+		// Opening all assets 
+		auto assets = data["Assets"];
+		if (assets)
+		{
+			for (auto asset : assets)
+			{
+				Assets::Asset newAsset{};
+				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+				// Retrieving metadata for asset 
+				auto metadata = asset["MetaData"];
+				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+				// Retrieving shader specific metadata 
+				if (newAsset.Data.Type == Assets::AssetType::Shader)
+				{
+					Ref<Assets::ShaderMetaData> shaderMetaData = CreateRef<Assets::ShaderMetaData>();
+
+					// ShaderSpecification Section
+					shaderMetaData->ShaderSpec.ColorInput = Utility::StringToColorInputType(metadata["ColorInputType"].as<std::string>());
+					shaderMetaData->ShaderSpec.AddProjectionMatrix = metadata["AddProjectionMatrix"].as<bool>();
+					shaderMetaData->ShaderSpec.AddEntityID = metadata["AddEntityID"].as<bool>();
+					shaderMetaData->ShaderSpec.AddCircleShape = metadata["AddCircleShape"].as<bool>();
+					shaderMetaData->ShaderSpec.TextureInput = Utility::StringToTextureInputType(metadata["TextureInput"].as<std::string>());
+					shaderMetaData->ShaderSpec.DrawOutline = metadata["DrawOutline"].as<bool>();
+					shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadata["RenderType"].as<std::string>());
+
+					KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+					{
+						// InputBufferLayout Section
+						auto inputBufferLayout = metadata["InputBufferLayout"];
+						auto elementList = inputBufferLayout["Elements"];
+						for (const auto& element : elementList)
+						{
+							shaderMetaData->InputLayout.AddBufferElement(Rendering::InputBufferElement(
+								Utility::StringToInputDataType(element["Type"].as<std::string>()),
+								element["Name"].as<std::string>()
+							));
+						}
+					}
+					{
+						// InputBufferLayout Section
+						auto uniformBufferList = metadata["UniformBufferList"];
+						auto elementList = uniformBufferList["Elements"];
+						for (const auto& element : elementList)
+						{
+							shaderMetaData->UniformList.AddBufferElement(Rendering::UniformElement(
+								Utility::StringToUniformDataType(element["Type"].as<std::string>()),
+								element["Name"].as<std::string>()
+							));
+						}
+					}
+					newAsset.Data.SpecificFileData = shaderMetaData;
+				}
+				// Add asset to in memory registry 
+				s_ShaderRegistry.insert({ newAsset.Handle, newAsset });
+
+			}
+		}
+	}
+	
+	void AssetManager::SerializeShaderRegistry()
+	{
+		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
+		const auto& shaderRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Shaders/Intermediates/ShaderRegistry.kgreg";
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Registry" << YAML::Value << "Untitled";
+		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+		// Asset
+		for (auto& [handle, asset] : s_ShaderRegistry)
+		{
+			out << YAML::BeginMap; // Asset Map
+			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+			out << YAML::Key << "MetaData" << YAML::Value;
+			out << YAML::BeginMap; // MetaData Map
+			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+			if (asset.Data.Type == Assets::AssetType::Shader)
+			{
+				// ShaderSpecification Section
+				Assets::ShaderMetaData* metadata = static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
+				out << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(metadata->ShaderSpec.ColorInput);
+				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << metadata->ShaderSpec.AddProjectionMatrix;
+				out << YAML::Key << "AddEntityID" << YAML::Value << metadata->ShaderSpec.AddEntityID;
+				out << YAML::Key << "AddCircleShape" << YAML::Value << metadata->ShaderSpec.AddCircleShape;
+				out << YAML::Key << "TextureInput" << YAML::Value << Utility::TextureInputTypeToString(metadata->ShaderSpec.TextureInput);
+				out << YAML::Key << "DrawOutline" << YAML::Value << metadata->ShaderSpec.DrawOutline;
+				out << YAML::Key << "RenderType" << YAML::Value << Utility::RenderingTypeToString(metadata->ShaderSpec.RenderType);
+
+				// InputBufferLayout Section
+				out << YAML::Key << "InputBufferLayout" << YAML::Value << YAML::BeginMap; // Input Buffer Layout Map
+				out << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+				for (const auto& element : metadata->InputLayout.GetElements())
+				{
+					out << YAML::BeginMap; // Input Element Map
+					out << YAML::Key << "Name" << YAML::Value << element.Name;
+					out << YAML::Key << "Type" << YAML::Value << Utility::InputDataTypeToString(element.Type);
+					out << YAML::EndMap; // Input Element Map
+				}
+				out << YAML::EndSeq;
+				out << YAML::EndMap; // Input Buffer Layout Map
+
+				// UniformBufferList Section
+				out << YAML::Key << "UniformBufferList" << YAML::Value << YAML::BeginMap; // Uniform Buffer Layout Map
+				out << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+				for (const auto& element : metadata->UniformList.GetElements())
+				{
+					out << YAML::BeginMap; // Uniform Element Map
+					out << YAML::Key << "Name" << YAML::Value << element.Name;
+					out << YAML::Key << "Type" << YAML::Value << Utility::UniformDataTypeToString(element.Type);
+					out << YAML::EndMap; // Uniform Element Map
+				}
+				out << YAML::EndSeq;
+				out << YAML::EndMap; // Uniform Buffer Layout Map
+			}
+
+			out << YAML::EndMap; // MetaData Map
+
+			out << YAML::EndMap; // Asset Map
+		}
+
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		Utility::FileSystem::CreateNewDirectory(shaderRegistryLocation.parent_path());
+
+		std::ofstream fout(shaderRegistryLocation);
+		fout << out.c_str();
+	}
+	
 	void AssetManager::ClearShaderRegistry()
 	{
 		s_ShaderRegistry.clear();

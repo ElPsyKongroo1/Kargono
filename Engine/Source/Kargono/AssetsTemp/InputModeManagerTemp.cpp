@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<Input::InputMode> InputModeManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Input::InputMode> InputModeManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
 		YAML::Node data;
@@ -111,5 +111,13 @@ namespace Kargono::Assets
 		}
 
 		return newInputMode;
+	}
+	void InputModeManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+	}
+	void InputModeManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::InputModeMetaData> inputModeMetaData = CreateRef<Assets::InputModeMetaData>();
+		currentAsset.Data.SpecificFileData = inputModeMetaData;
 	}
 }

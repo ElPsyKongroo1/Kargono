@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<RuntimeUI::UserInterface> UserInterfaceManager::InstantiateAssetIntoMemory(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
 		YAML::Node data;
@@ -33,7 +33,7 @@ namespace Kargono::Assets
 		}
 		else
 		{
-			Ref<Scripting::Script> onMoveScript = AssetServiceTemp::GetScript(newUserInterface->m_FunctionPointers.OnMoveHandle);
+			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(newUserInterface->m_FunctionPointers.OnMoveHandle);
 			if (!onMoveScript)
 			{
 				KG_ERROR("Unable to locate OnMove Script!");
@@ -44,7 +44,7 @@ namespace Kargono::Assets
 
 		// Get Font
 		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
-		newUserInterface->m_Font = AssetServiceTemp::GetFont(newUserInterface->m_FontHandle);
+		newUserInterface->m_Font = AssetService::GetFont(newUserInterface->m_FontHandle);
 		// Get Windows
 		auto windows = data["Windows"];
 		if (windows)
@@ -133,5 +133,13 @@ namespace Kargono::Assets
 			}
 		}
 		return newUserInterface;
+	}
+	void UserInterfaceManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+	}
+	void UserInterfaceManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::UserInterfaceMetaData> userInterfaceMetaData = CreateRef<Assets::UserInterfaceMetaData>();
+		currentAsset.Data.SpecificFileData = userInterfaceMetaData;
 	}
 }
