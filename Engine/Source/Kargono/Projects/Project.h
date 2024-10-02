@@ -125,14 +125,26 @@ namespace Kargono::Projects
 	class ProjectService
 	{
 	public:
+
+		//==============================
+		// Modify Active Project
+		//==============================
+
+		static std::filesystem::path CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation);
+		static Ref<Projects::Project> OpenProject(const std::filesystem::path& path);
+		static bool SaveActiveProject(const std::filesystem::path& path);
+		static bool SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+		static bool DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
+	private:
+		static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
 		//=========================
-		// External API
+		// Exporting API
 		//=========================
+	public:
 		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
-		//=========================
-		// Internal Functionality
-		//=========================
 		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory, bool createServer);
 	public:
 		//=========================

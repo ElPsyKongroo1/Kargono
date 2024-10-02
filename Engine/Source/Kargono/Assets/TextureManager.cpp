@@ -10,6 +10,8 @@
 
 namespace Kargono::Assets
 {
+	//===================================================================================================================================================
+	
 	AssetHandle AssetManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
 	{
 		// Create Checksum
@@ -78,8 +80,6 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
-	//===================================================================================================================================================
-	
 	void AssetManager::DeserializeTextureRegistry()
 	{
 		// Clear current registry and open registry in current project 

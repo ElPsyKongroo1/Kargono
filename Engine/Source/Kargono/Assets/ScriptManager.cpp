@@ -9,6 +9,8 @@
 
 namespace Kargono::Assets
 {
+//===================================================================================================================================================
+
 	std::tuple<AssetHandle, bool> AssetManager::CreateNewScript(ScriptSpec& spec)
 	{
 		// Ensure all scripts have unique names
@@ -150,7 +152,7 @@ namespace Kargono::Assets
 					std::string("\\w+") + std::string("\\s*") + std::string(",?") };
 				parameters << parameterRegex;
 			}
-			matchingExpression =  "^" + std::string("\\s*") + returnType +
+			matchingExpression = "^" + std::string("\\s*") + returnType +
 				std::string("\\s+") + functionName +
 				std::string("\\s*") + "\\(" + parameters.str() +
 				"\\)";
@@ -199,9 +201,9 @@ namespace Kargono::Assets
 		if (metadata->FunctionType != spec.FunctionType)
 		{
 			// Replace with new signature
-			std::string output = Utility::Regex::ReplaceMatches(scriptFile, matchingExpression, 
+			std::string output = Utility::Regex::ReplaceMatches(scriptFile, matchingExpression,
 				Utility::GenerateFunctionSignature(spec.FunctionType, spec.Name));
-			
+
 			// Write back out to file
 			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation, output);
 		}
@@ -371,8 +373,6 @@ namespace Kargono::Assets
 		metadata->FunctionType = spec.FunctionType;
 		newAsset.Data.SpecificFileData = metadata;
 	}
-
-//===================================================================================================================================================
 
 	void AssetManager::DeserializeScriptRegistry()
 	{

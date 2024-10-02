@@ -9,7 +9,62 @@
 
 namespace Kargono::Assets
 {
+	//===================================================================================================================================================
 
+	AssetHandle AssetManager::CreateNewUserInterface(const std::string& userInterfaceName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate font asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create File
+		CreateUserInterfaceFile(userInterfaceName, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and return handle.
+		s_UserInterfaceRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeUserInterfaceRegistry(); // Update Registry File on Disk
+
+		return newHandle;
+	}
+
+	void AssetManager::CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset)
+	{
+		// Create Temporary UserInterface
+		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
+
+		// Save into File
+		std::string userInterfacePath = "UserInterface/" + userInterfaceName + ".kgui";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / userInterfacePath;
+		SerializeUserInterface(temporaryUserInterface, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::UserInterface;
+		newAsset.Data.FileLocation = userInterfacePath;
+		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+	
 	void AssetManager::SerializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
@@ -91,43 +146,6 @@ namespace Kargono::Assets
 		KG_INFO("Successfully Serialized UserInterface at {}", filepath);
 	}
 
-	AssetHandle AssetManager::CreateNewUserInterface(const std::string& userInterfaceName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateUserInterfaceFile(userInterfaceName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and return handle.
-		s_UserInterfaceRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeUserInterfaceRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
 	void AssetManager::DeleteUserInterface(AssetHandle handle)
 	{
 		if (!s_UserInterfaceRegistry.contains(handle))
@@ -154,25 +172,7 @@ namespace Kargono::Assets
 		Assets::Asset userInterfaceAsset = s_UserInterfaceRegistry[userInterfaceHandle];
 		SerializeUserInterface(userInterface, (Projects::ProjectService::GetActiveAssetDirectory() / userInterfaceAsset.Data.FileLocation).string());
 	}
-
-	void AssetManager::CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset)
-	{
-		// Create Temporary UserInterface
-		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
-
-		// Save into File
-		std::string userInterfacePath = "UserInterface/" + userInterfaceName + ".kgui";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / userInterfacePath;
-		SerializeUserInterface(temporaryUserInterface, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::UserInterface;
-		newAsset.Data.FileLocation = userInterfacePath;
-		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	//===================================================================================================================================================
+	
 	bool AssetManager::CheckUserInterfaceExists(const std::string& userInterfaceName)
 	{
 		// Create Checksum

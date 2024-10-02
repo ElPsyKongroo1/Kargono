@@ -7,6 +7,48 @@
 
 namespace Kargono::Assets
 {
+	void GameStateManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		// Create Temporary GameState
+		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
+		temporaryGameState->SetName(name);
+
+		SerializeAsset(temporaryGameState, assetPath);
+
+		// Load data into In-Memory Metadata object
+		Ref<Assets::GameStateMetaData> metadata = CreateRef<Assets::GameStateMetaData>();
+		metadata->Name = name;
+		asset.Data.SpecificFileData = metadata;
+	}
+	void GameStateManager::SerializeAsset(Ref<Scenes::GameState> assetReference, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+
+		out << YAML::Key << "Name" << YAML::Value << assetReference->m_Name; // Output State Name
+
+		out << YAML::Key << "Fields" << YAML::Value;
+		out << YAML::BeginSeq; // Start Fields
+
+		for (auto& [name, field] : assetReference->m_Fields)
+		{
+			out << YAML::BeginMap; // Start Field
+
+			out << YAML::Key << "Name" << YAML::Value << name; // Name/Map Key
+			out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(field->Type()); // Field Type
+			Utility::SerializeWrappedVariableData(field, out); // Field Value
+
+			out << YAML::EndMap; // End Field
+		}
+
+		out << YAML::EndSeq; // End Fields
+
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully Serialized GameState at {}", assetPath);
+	}
 	Ref<Scenes::GameState> GameStateManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
@@ -17,11 +59,9 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
 			return nullptr;
 		}
-
-		KG_INFO("Deserializing game state");
 
 		newGameState->m_Name = data["Name"].as<std::string>();
 

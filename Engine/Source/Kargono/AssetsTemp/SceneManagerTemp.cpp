@@ -6,8 +6,242 @@
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Scenes/Entity.h"
 
+namespace Kargono::Utility
+{
+	static bool SerializeEntity(YAML::Emitter& out, Scenes::Entity entity)
+	{
+		KG_ASSERT(entity.HasComponent<Scenes::IDComponent>(), "Entity does not have a component");
+		out << YAML::BeginMap; // Entity Map
+		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
+
+		if (entity.HasComponent<Scenes::TagComponent>())
+		{
+			out << YAML::Key << "TagComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
+			out << YAML::Key << "Tag" << YAML::Value << tag;
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+		{
+			out << YAML::Key << "ClassInstanceComponent";
+			Scenes::ClassInstanceComponent& comp = entity.GetComponent<Scenes::ClassInstanceComponent>();
+			out << YAML::BeginMap; // Component Map
+			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
+			if (comp.ClassHandle != Assets::EmptyHandle)
+			{
+				Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+				if (!entityClass)
+				{
+					KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
+					return false;
+				}
+				if (entityClass->GetFields().size() != comp.Fields.size())
+				{
+					KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
+					return false;
+				}
+
+				out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
+				uint32_t iteration{ 0 };
+				for (auto& fieldValue : comp.Fields)
+				{
+					const Scenes::ClassField& fieldType = entityClass->GetFields().at(iteration);
+					if (fieldType.Type != fieldValue->Type())
+					{
+						KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
+						return false;
+					}
+					out << YAML::BeginMap; // Begin Field Map
+					out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
+					out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
+					SerializeWrappedVariableData(fieldValue, out);
+					out << YAML::EndMap; // End Field Map
+					iteration++;
+				}
+				out << YAML::EndSeq; // End Fields
+			}
+
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::TransformComponent>())
+		{
+			out << YAML::Key << "TransformComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& tc = entity.GetComponent<Scenes::TransformComponent>();
+			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
+			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
+			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+
+			out << YAML::EndMap; // Component Map
+		}
+		if (entity.HasComponent<Scenes::CameraComponent>())
+		{
+			out << YAML::Key << "CameraComponent";
+			out << YAML::BeginMap; // Component Map
+
+			auto& cameraComponent = entity.GetComponent<Scenes::CameraComponent>();
+			auto& camera = cameraComponent.Camera;
+
+			out << YAML::Key << "Camera" << YAML::Value;
+			out << YAML::BeginMap;
+			out << YAML::Key << "ProjectionType" << YAML::Value << (int)camera.GetProjectionType();
+			out << YAML::Key << "PerspectiveFOV" << YAML::Value << camera.GetPerspectiveVerticalFOV();
+			out << YAML::Key << "PerspectiveNear" << YAML::Value << camera.GetPerspectiveNearClip();
+			out << YAML::Key << "PerspectiveFar" << YAML::Value << camera.GetPerspectiveFarClip();
+
+			out << YAML::Key << "OrthographicSize" << YAML::Value << camera.GetOrthographicSize();
+			out << YAML::Key << "OrthographicNear" << YAML::Value << camera.GetOrthographicNearClip();
+			out << YAML::Key << "OrthographicFar" << YAML::Value << camera.GetOrthographicFarClip();
+			out << YAML::EndMap;
+
+			out << YAML::Key << "Primary" << YAML::Value << cameraComponent.Primary;
+
+
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::ShapeComponent>())
+		{
+			out << YAML::Key << "ShapeComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& shapeComponent = entity.GetComponent<Scenes::ShapeComponent>();
+			out << YAML::Key << "CurrentShape" << YAML::Value << Utility::ShapeTypeToString(shapeComponent.CurrentShape);
+			if (shapeComponent.VertexColors)
+			{
+				out << YAML::Key << "VertexColors" << YAML::Value << YAML::BeginSeq;
+				for (const auto& color : *shapeComponent.VertexColors)
+				{
+					out << YAML::BeginMap;
+					out << YAML::Key << "Color" << YAML::Value << color;
+					out << YAML::EndMap;
+				}
+				out << YAML::EndSeq;
+			}
+			if (shapeComponent.Texture)
+			{
+				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
+			}
+			KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+			if (shapeComponent.Shader)
+			{
+				// Add Shader Handle
+				out << YAML::Key << "ShaderHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.ShaderHandle);
+				// Add Shader Specification
+				const Rendering::ShaderSpecification& shaderSpec = shapeComponent.Shader->GetSpecification();
+				out << YAML::Key << "ShaderSpecification" << YAML::Value;
+				out << YAML::BeginMap;
+				out << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(shaderSpec.ColorInput);
+				out << YAML::Key << "AddProjectionMatrix" << YAML::Value << shaderSpec.AddProjectionMatrix;
+				out << YAML::Key << "AddEntityID" << YAML::Value << shaderSpec.AddEntityID;
+				out << YAML::Key << "AddCircleShape" << YAML::Value << shaderSpec.AddCircleShape;
+				out << YAML::Key << "TextureInput" << YAML::Value << Utility::TextureInputTypeToString(shaderSpec.TextureInput);
+				out << YAML::Key << "DrawOutline" << YAML::Value << shaderSpec.DrawOutline;
+				out << YAML::Key << "RenderType" << YAML::Value << Utility::RenderingTypeToString(shaderSpec.RenderType);
+
+				out << YAML::EndMap;
+				// Add Buffer
+				out << YAML::Key << "Buffer" << YAML::Value << YAML::Binary(shapeComponent.ShaderData.Data, shapeComponent.ShaderData.Size);
+			}
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		{
+			out << YAML::Key << "Rigidbody2DComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& rb2dComponent = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(rb2dComponent.Type);
+			out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+		{
+			out << YAML::Key << "BoxCollider2DComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& bc2dComponent = entity.GetComponent<Scenes::BoxCollider2DComponent>();
+			out << YAML::Key << "Offset" << YAML::Value << bc2dComponent.Offset;
+			out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
+			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
+			out << YAML::Key << "Friction" << YAML::Value << bc2dComponent.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << bc2dComponent.RestitutionThreshold;
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+		{
+			out << YAML::Key << "CircleCollider2DComponent";
+			out << YAML::BeginMap; // Component Map
+			auto& cc2dComponent = entity.GetComponent<Scenes::CircleCollider2DComponent>();
+			out << YAML::Key << "Offset" << YAML::Value << cc2dComponent.Offset;
+			out << YAML::Key << "Radius" << YAML::Value << cc2dComponent.Radius;
+			out << YAML::Key << "Density" << YAML::Value << cc2dComponent.Density;
+			out << YAML::Key << "Friction" << YAML::Value << cc2dComponent.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << cc2dComponent.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2dComponent.RestitutionThreshold;
+			out << YAML::EndMap; // Component Map
+		}
+
+
+		out << YAML::EndMap; // Entity
+		return true;
+	}
+}
+
 namespace Kargono::Assets
 {
+	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		// Create Temporary Scene
+		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
+
+		// Save Binary into File
+		SerializeAsset(temporaryScene, assetPath);
+
+		// Load data into In-Memory Metadata object
+		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
+		asset.Data.SpecificFileData = metadata;
+	}
+	void SceneManager::SerializeAsset(Ref<Scenes::Scene> assetReference, const std::filesystem::path& assetPath)
+	{
+		bool submitScene = true;
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		{ // Physics
+			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
+			out << YAML::Key << "Gravity" << YAML::Value << assetReference->m_PhysicsSpecification.Gravity;
+			out << YAML::EndMap; // Physics Maps
+		}
+
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+		assetReference->m_Registry.each([&](auto entityID)
+			{
+				Scenes::Entity entity = { entityID, assetReference.get() };
+				if (!entity) { return; }
+
+				bool success = Utility::SerializeEntity(out, entity);
+				if (!success)
+				{
+					submitScene = false;
+				}
+			});
+		out << YAML::EndSeq;
+		out << YAML::EndMap; // Start of File Map
+		if (submitScene)
+		{
+			std::ofstream fout(assetPath);
+			fout << out.c_str();
+			KG_INFO("Successfully Serialized Scene at {}", assetPath.string());
+		}
+		else
+		{
+			KG_WARN("Failed to Serialize Scene");
+		}
+	}
 	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
@@ -18,11 +252,9 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", assetPath, e.what());
+			KG_WARN("Failed to load .kgscene file '{0}'\n     {1}", assetPath, e.what());
 			return nullptr;
 		}
-
-		KG_INFO("Deserializing scene");
 
 		auto physics = data["Physics"];
 		newScene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
@@ -36,8 +268,10 @@ namespace Kargono::Assets
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
-				if (tagComponent) { name = tagComponent["Tag"].as<std::string>(); }
-				//KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
+				if (tagComponent) 
+				{ 
+					name = tagComponent["Tag"].as<std::string>(); 
+				}
 
 				Scenes::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
@@ -59,7 +293,7 @@ namespace Kargono::Assets
 					{
 						if (!AssetService::HasEntityClass(cInstComp.ClassHandle))
 						{
-							KG_ERROR("Could not find entity class for class instance component");
+							KG_WARN("Could not find entity class for class instance component");
 							return nullptr;
 						}
 						cInstComp.ClassReference = AssetService::GetEntityClass(cInstComp.ClassHandle);
@@ -198,13 +432,5 @@ namespace Kargono::Assets
 		}
 
 		return newScene;
-	}
-	void SceneManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
-	{
-	}
-	void SceneManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
-	{
-		Ref<Assets::SceneMetaData> sceneMetaData = CreateRef<Assets::SceneMetaData>();
-		currentAsset.Data.SpecificFileData = sceneMetaData;
 	}
 }

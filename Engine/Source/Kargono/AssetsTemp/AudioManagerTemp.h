@@ -17,7 +17,8 @@ namespace Kargono::Assets
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, true);
-			m_Flags.set(AssetManagerOptions::HasAssetModification, false);
+			m_Flags.set(AssetManagerOptions::HasAssetSaving, false);
+			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, false);
 		}
 		virtual ~AudioBufferManager() = default;
 	public:

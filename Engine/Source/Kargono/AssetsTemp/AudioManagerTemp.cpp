@@ -38,14 +38,14 @@ namespace Kargono::Assets
 		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(fullFileLocation.string().c_str(), &channels, &sampleRate, &totalPcmFrameCount, nullptr);
 		if (!pSampleData)
 		{
-			KG_ERROR("Failed to load audio file");
+			KG_WARN("Failed to load audio file");
 			drwav_free(pSampleData, nullptr);
 			return;
 		}
 		totalSize = totalPcmFrameCount * channels * 2;
 		if ((totalSize) > drwav_uint64(std::numeric_limits<size_t>::max()))
 		{
-			KG_ERROR("Too much data in file for 32bit addressed vector");
+			KG_WARN("Too much data in file for 32bit addressed vector");
 			drwav_free(pSampleData, nullptr);
 			return;
 		}
@@ -59,7 +59,7 @@ namespace Kargono::Assets
 		// Check that save was successful
 		if (!pcmData)
 		{
-			KG_ERROR("Failed to load data from file in audio importer!");
+			KG_WARN("Failed to load data from file in audio importer!");
 			return;
 		}
 

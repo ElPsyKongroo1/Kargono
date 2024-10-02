@@ -16,14 +16,15 @@ namespace Kargono::Assets
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetModification, true);
+			m_Flags.set(AssetManagerOptions::HasAssetSaving, true);
+			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
 		}
 		virtual ~SceneManager() = default;
 	public:
 
 		// Class specific functions
+		virtual void CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual void SerializeAsset(Ref<Scenes::Scene> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<Scenes::Scene> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
-		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
-		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
 	};
 }

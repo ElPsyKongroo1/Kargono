@@ -23,7 +23,7 @@ namespace Kargono
 		};
 		s_CreateProjectSpec.ConfirmAction = [&]()
 		{
-			s_LauncherApp->SetSelectedProject(Assets::AssetManager::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
+			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::EndRun();

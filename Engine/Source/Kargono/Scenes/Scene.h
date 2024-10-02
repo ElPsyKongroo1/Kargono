@@ -135,7 +135,7 @@ namespace Kargono::Scenes
 		}
 		// Underlying ECS registry that holds actual entities and their components
 		entt::registry m_Registry;
-	private:
+	public:
 		// Entity Map that holds easy to access reference to all entities in the scene.
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		// This map holds lists of entitys (UUID) using the key of a script class.

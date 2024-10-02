@@ -7,36 +7,9 @@
 
 namespace Kargono::Assets
 {
-	void AssetManager::SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
-	{
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
 
-		out << YAML::Key << "Name" << YAML::Value << GameState->m_Name; // Output State Name
-
-		out << YAML::Key << "Fields" << YAML::Value;
-		out << YAML::BeginSeq; // Start Fields
-
-		for (auto& [name, field] : GameState->m_Fields)
-		{
-			out << YAML::BeginMap; // Start Field
-
-			out << YAML::Key << "Name" << YAML::Value << name; // Name/Map Key
-			out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(field->Type()); // Field Type
-			Utility::SerializeWrappedVariableData(field, out); // Field Value
-
-			out << YAML::EndMap; // End Field
-		}
-
-		out << YAML::EndSeq; // End Fields
-
-		out << YAML::EndMap; // End of File Map
-
-		std::ofstream fout(filepath);
-		fout << out.c_str();
-		KG_INFO("Successfully Serialized GameState at {}", filepath);
-	}
-
+	//===================================================================================================================================================
+	
 	AssetHandle AssetManager::CreateNewGameState(const std::string& GameStateName)
 	{
 		// Create Checksum
@@ -74,6 +47,55 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
+	void AssetManager::CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset)
+	{
+		// Create Temporary GameState
+		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
+		temporaryGameState->SetName(GameStateName);
+
+		// Save Binary into File
+		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
+		SerializeGameState(temporaryGameState, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::GameState;
+		newAsset.Data.FileLocation = GameStatePath;
+		Ref<Assets::GameStateMetaData> metadata = CreateRef<Assets::GameStateMetaData>();
+		metadata->Name = GameStateName;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
+	void AssetManager::SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+
+		out << YAML::Key << "Name" << YAML::Value << GameState->m_Name; // Output State Name
+
+		out << YAML::Key << "Fields" << YAML::Value;
+		out << YAML::BeginSeq; // Start Fields
+
+		for (auto& [name, field] : GameState->m_Fields)
+		{
+			out << YAML::BeginMap; // Start Field
+
+			out << YAML::Key << "Name" << YAML::Value << name; // Name/Map Key
+			out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(field->Type()); // Field Type
+			Utility::SerializeWrappedVariableData(field, out); // Field Value
+
+			out << YAML::EndMap; // End Field
+		}
+
+		out << YAML::EndSeq; // End Fields
+
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(filepath);
+		fout << out.c_str();
+		KG_INFO("Successfully Serialized GameState at {}", filepath);
+	}
+
 	void AssetManager::SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::Scenes::GameState> GameState)
 	{
 		if (!s_GameStateRegistry.contains(GameStateHandle))
@@ -101,27 +123,6 @@ namespace Kargono::Assets
 		SerializeGameStateRegistry();
 	}
 
-	void AssetManager::CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset)
-	{
-		// Create Temporary GameState
-		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
-		temporaryGameState->SetName(GameStateName);
-
-		// Save Binary into File
-		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
-		SerializeGameState(temporaryGameState, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::GameState;
-		newAsset.Data.FileLocation = GameStatePath;
-		Ref<Assets::GameStateMetaData> metadata = CreateRef<Assets::GameStateMetaData>();
-		metadata->Name = GameStateName;
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-	//===================================================================================================================================================
-	
 	bool AssetManager::CheckGameStateExists(const std::string& GameStateName)
 	{
 		// Create Checksum

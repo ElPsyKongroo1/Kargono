@@ -86,7 +86,10 @@ namespace Kargono
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		OnUpdateRuntime(ts);
+		// Draw all scene entities
+ 		OnUpdateRuntime(ts);
+
+		// Draw runtimeUI, if applicable
 		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
@@ -405,7 +408,7 @@ namespace Kargono
 
 	void RuntimeApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path))
+		if (Projects::ProjectService::OpenProject(path))
 		{
 			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{

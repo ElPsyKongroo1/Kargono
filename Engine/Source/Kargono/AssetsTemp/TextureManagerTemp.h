@@ -17,7 +17,8 @@ namespace Kargono::Assets
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, true);
-			m_Flags.set(AssetManagerOptions::HasAssetModification, false);
+			m_Flags.set(AssetManagerOptions::HasAssetSaving, false);
+			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, false);
 		}
 		virtual ~Texture2DManager() = default;
 	public:
@@ -26,5 +27,8 @@ namespace Kargono::Assets
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
 		virtual void CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+
+		AssetHandle ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels);
+		void CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset);
 	};
 }

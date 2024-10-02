@@ -7,6 +7,9 @@
 
 #include "API/Serialization/yamlcppAPI.h"
 
+
+//===================================================================================================================================================
+
 namespace Kargono::Utility
 {
 	static bool SerializeEntity(YAML::Emitter& out, Scenes::Entity entity)
@@ -195,43 +198,6 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	void AssetManager::SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
-	{
-		bool submitScene = true;
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		{ // Physics
-			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
-			out << YAML::Key << "Gravity" << YAML::Value << scene->m_PhysicsSpecification.Gravity;
-			out << YAML::EndMap; // Physics Maps
-		}
-
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		scene->m_Registry.each([&](auto entityID)
-		{
-			Scenes::Entity entity = { entityID, scene.get() };
-			if (!entity) { return; }
-
-			bool success = Utility::SerializeEntity(out, entity);
-			if (!success)
-			{
-				submitScene = false;
-			}
-		});
-		out << YAML::EndSeq;
-		out << YAML::EndMap; // Start of File Map
-		if (submitScene)
-		{
-			std::ofstream fout(filepath);
-			fout << out.c_str();
-			KG_INFO("Successfully Serialized Scene at {}", filepath);
-		}
-		else
-		{
-			KG_WARN("Failed to Serialize Scene");
-		}
-		
-	}
 
 	AssetHandle AssetManager::CreateNewScene(const std::string& sceneName)
 	{
@@ -270,17 +236,6 @@ namespace Kargono::Assets
 		return newHandle;
 	}
 
-	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
-	{
-		if (!s_SceneRegistry.contains(sceneHandle))
-		{
-			KG_ERROR("Attempt to save scene that does not exist in registry");
-			return;
-		}
-		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
-		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
-	}
-
 	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
 	{
 		// Create Temporary Scene
@@ -298,7 +253,55 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
-//===================================================================================================================================================
+	void AssetManager::SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
+	{
+		bool submitScene = true;
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		{ // Physics
+			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
+			out << YAML::Key << "Gravity" << YAML::Value << scene->m_PhysicsSpecification.Gravity;
+			out << YAML::EndMap; // Physics Maps
+		}
+
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+		scene->m_Registry.each([&](auto entityID)
+			{
+				Scenes::Entity entity = { entityID, scene.get() };
+				if (!entity) { return; }
+
+				bool success = Utility::SerializeEntity(out, entity);
+				if (!success)
+				{
+					submitScene = false;
+				}
+			});
+		out << YAML::EndSeq;
+		out << YAML::EndMap; // Start of File Map
+		if (submitScene)
+		{
+			std::ofstream fout(filepath);
+			fout << out.c_str();
+			KG_INFO("Successfully Serialized Scene at {}", filepath);
+		}
+		else
+		{
+			KG_WARN("Failed to Serialize Scene");
+		}
+
+	}
+
+	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
+	{
+		if (!s_SceneRegistry.contains(sceneHandle))
+		{
+			KG_ERROR("Attempt to save scene that does not exist in registry");
+			return;
+		}
+		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
+		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
+	}
+
 	bool AssetManager::CheckSceneExists(const std::string& sceneName)
 	{
 		// Create Checksum

@@ -3,6 +3,14 @@
 
 namespace Kargono::Assets
 {
+	struct ScriptSpec
+	{
+		std::string Name {};
+		Scripting::ScriptType Type {Scripting::ScriptType::None };
+		std::string SectionLabel {};
+		WrappedFuncType FunctionType{ WrappedFuncType::None };
+	};
+
 	class ScriptManager : public AssetManagerTemp<Scripting::Script>
 	{
 	public:
@@ -16,7 +24,8 @@ namespace Kargono::Assets
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetModification, true);
+			m_Flags.set(AssetManagerOptions::HasAssetSaving, false);
+			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
 		}
 		virtual ~ScriptManager() = default;
 	public:
@@ -26,8 +35,15 @@ namespace Kargono::Assets
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
 		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+		virtual void DeleteAssetValidation(AssetHandle assetHandle) override;
 
-	private:
+		std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec);
+		bool SaveScript(AssetHandle scriptHandle, ScriptSpec& spec);
+		bool AddScriptSectionLabel(const std::string& newLabel);
+		bool EditScriptSectionLabel(const std::string& oldLabel, const std::string& newLabel);
+		bool DeleteScriptSectionLabel(const std::string& label);
+		void FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset);
+	public:
 		std::unordered_set<std::string> m_ScriptSectionLabels{};
 	};
 }

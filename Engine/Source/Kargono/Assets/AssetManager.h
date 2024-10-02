@@ -838,39 +838,6 @@ namespace Kargono::Assets
 		friend class Scripting::ScriptService;
 		friend class Scripting::ScriptModuleBuilder;
 
-	//============================================================
-	// Project
-	//============================================================
-	public:
-
-	//==============================
-	// Create New Project
-	//==============================
-
-	// This function simply instantiates a new project in the s_ActiveProject reference
-	//		since only one project can exist at a time and there is no registry
-	//		for projects.
-	static std::filesystem::path CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation);
-
-
-	//==============================
-	// Save and Load a Project
-	//==============================
-
-	static Ref<Projects::Project> OpenProject(const std::filesystem::path& path);
-	static bool SaveActiveProject(const std::filesystem::path& path);
-	// Save a single project
-	static bool SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
-	// Load a single project
-	static bool DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
-
-	private:
-	//==============================
-	// Internal Functionality
-	//==============================
-
-	static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
-
 	//==============================
 	// General API
 	//==============================

@@ -739,7 +739,7 @@ namespace Kargono
 
 	void EditorApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path))
+		if (Projects::ProjectService::OpenProject(path))
 		{
 			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
@@ -771,7 +771,7 @@ namespace Kargono
 
 	void EditorApp::SaveProject()
 	{
-		Assets::AssetManager::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
+		Projects::ProjectService::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
 	}
 
 	void EditorApp::NewScene()

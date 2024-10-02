@@ -7,6 +7,113 @@
 
 namespace Kargono::Assets
 {
+	void InputModeManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		// Create Temporary InputMode
+		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
+
+		// Save Binary into File
+		SerializeAsset(temporaryInputMode, assetPath);
+
+		// Load data into In-Memory Metadata object
+		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
+		asset.Data.SpecificFileData = metadata;
+	}
+	void InputModeManager::SerializeAsset(Ref<Input::InputMode> assetReference, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+
+		{
+			// Keyboard Polling
+			out << YAML::Key << "KeyboardPolling" << YAML::Value;
+			out << YAML::BeginSeq; // Start of KeyboardPolling Seq
+			uint32_t iteration{ 0 };
+			for (auto keyCode : assetReference->m_KeyboardPolling)
+			{
+				out << YAML::BeginMap; // Start Polling Combo
+
+				out << YAML::Key << "Slot" << YAML::Value << iteration;
+				out << YAML::Key << "KeyCode" << YAML::Value << keyCode;
+
+				out << YAML::EndMap; // End Polling Combo
+				iteration++;
+			}
+			out << YAML::EndSeq; // End of KeyboardPolling Seq
+		}
+
+		{
+			// OnUpdate
+			out << YAML::Key << "OnUpdate" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnUpdate Seq
+
+			for (auto& inputBinding : assetReference->m_OnUpdateBindings)
+			{
+				out << YAML::BeginMap; // InputActionBinding Start
+
+				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
+
+				switch (inputBinding->GetActionType())
+				{
+				case Input::InputActionTypes::KeyboardAction:
+				{
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
+					break;
+				}
+				case Input::InputActionTypes::None:
+				default:
+				{
+					KG_ERROR("Invalid InputMode provided to InputMode serialization");
+					break;
+				}
+				}
+
+				out << YAML::EndMap; // InputActionBinding End
+			}
+			out << YAML::EndSeq; // End of OnUpdate Seq
+		}
+
+		{
+			// OnKeyPressed
+			out << YAML::Key << "OnKeyPressed" << YAML::Value;
+			out << YAML::BeginSeq; // Start of OnKeyPressed Seq
+
+			for (auto& inputBinding : assetReference->m_OnKeyPressedBindings)
+			{
+				out << YAML::BeginMap; // InputActionBinding Start
+
+				out << YAML::Key << "BindingType" << YAML::Value << Utility::InputActionTypeToString(inputBinding->GetActionType());
+				out << YAML::Key << "ScriptHandle" << YAML::Value << static_cast<uint64_t>(inputBinding->GetScriptHandle());
+
+				switch (inputBinding->GetActionType())
+				{
+				case Input::InputActionTypes::KeyboardAction:
+				{
+					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
+					break;
+				}
+				case Input::InputActionTypes::None:
+				default:
+				{
+					KG_ASSERT("Invalid InputMode provided to InputMode serialization");
+					break;
+				}
+				}
+
+				out << YAML::EndMap; // InputActionBinding End
+			}
+			out << YAML::EndSeq; // End of OnKeyPressed Seq
+		}
+
+		out << YAML::EndMap; // Start of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully Serialized InputMode at {}", assetPath.string());
+	}
 	Ref<Input::InputMode> InputModeManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
@@ -17,11 +124,9 @@ namespace Kargono::Assets
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
 			return nullptr;
 		}
-
-		KG_INFO("Deserializing input mode");
 
 		// Get Keyboard Polling!
 		{
@@ -111,13 +216,5 @@ namespace Kargono::Assets
 		}
 
 		return newInputMode;
-	}
-	void InputModeManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
-	{
-	}
-	void InputModeManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
-	{
-		Ref<Assets::InputModeMetaData> inputModeMetaData = CreateRef<Assets::InputModeMetaData>();
-		currentAsset.Data.SpecificFileData = inputModeMetaData;
 	}
 }

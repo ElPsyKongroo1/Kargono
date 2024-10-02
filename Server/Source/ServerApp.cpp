@@ -68,7 +68,7 @@ namespace Kargono
 
 	void ServerApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path)) {}
+		if (Projects::ProjectService::OpenProject(path)) {}
 	}
 
 

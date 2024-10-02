@@ -10,6 +10,62 @@
 namespace Kargono::Assets
 {
 
+//===================================================================================================================================================
+	
+	AssetHandle AssetManager::CreateNewInputMode(const std::string& inputModeName)
+	{
+		// Create Checksum
+		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(inputModeName);
+
+		if (currentCheckSum.empty())
+		{
+			KG_ERROR("Failed to generate checksum from file!");
+			return {};
+		}
+
+		// Compare currentChecksum to registered assets
+		for (const auto& [handle, asset] : s_InputModeRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_INFO("Attempt to instantiate duplicate input asset");
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{};
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+
+		// Create File
+		CreateInputModeFile(inputModeName, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and return handle.
+		s_InputModeRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
+		SerializeInputModeRegistry(); // Update Registry File on Disk
+
+		return newHandle;
+	}
+
+	void AssetManager::CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset)
+	{
+		// Create Temporary InputMode
+		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
+
+		// Save Binary into File
+		std::string inputModePath = "Input/" + inputModeName + ".kginput";
+		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / inputModePath;
+		SerializeInputMode(temporaryInputMode, fullPath.string());
+
+		// Load data into In-Memory Metadata object
+		newAsset.Data.Type = Assets::AssetType::InputMode;
+		newAsset.Data.FileLocation = inputModePath;
+		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
 	void AssetManager::SerializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
@@ -106,43 +162,6 @@ namespace Kargono::Assets
 		KG_INFO("Successfully Serialized InputMode at {}", filepath);
 	}
 
-	AssetHandle AssetManager::CreateNewInputMode(const std::string& inputModeName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(inputModeName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_InputModeRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate input asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateInputModeFile(inputModeName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and return handle.
-		s_InputModeRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeInputModeRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
 	void AssetManager::SaveInputMode(AssetHandle inputModeHandle, Ref<Input::InputMode> inputMode)
 	{
 		if (!s_InputModeRegistry.contains(inputModeHandle))
@@ -170,25 +189,6 @@ namespace Kargono::Assets
 		SerializeInputModeRegistry();
 	}
 
-	void AssetManager::CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset)
-	{
-		// Create Temporary InputMode
-		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
-
-		// Save Binary into File
-		std::string inputModePath = "Input/" + inputModeName + ".kginput";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / inputModePath;
-		SerializeInputMode(temporaryInputMode, fullPath.string());
-
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::InputMode;
-		newAsset.Data.FileLocation = inputModePath;
-		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
-	}
-
-//===================================================================================================================================================
-	
 	bool AssetManager::CheckInputModeExists(const std::string& inputModeName)
 	{
 		// Create Checksum

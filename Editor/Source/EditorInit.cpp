@@ -12,7 +12,7 @@ namespace Kargono
 	{
 		std::filesystem::path projectPath {};
 #ifdef KG_TESTING
-		Assets::AssetManager::CreateNewProject("TestProject", "./../Projects");
+		Projects::ProjectService::CreateNewProject("TestProject", "./../Projects");
 		projectPath = "../Projects/TestProject/TestProject.kproj";
 #else
 		EngineSpec launcherSpec;

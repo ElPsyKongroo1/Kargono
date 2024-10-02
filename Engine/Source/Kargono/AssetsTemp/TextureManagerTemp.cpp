@@ -7,6 +7,71 @@
 
 namespace Kargono::Assets
 {
+
+	AssetHandle Texture2DManager::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
+	{
+		// Create Checksum
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromBuffer(buffer);
+
+		// Ensure checksum is valid
+		if (currentCheckSum.empty())
+		{
+			KG_WARN("Generated empty checksum from data buffer");
+			return Assets::EmptyHandle;
+		}
+
+		// Ensure duplicate asset is not found in registry.
+		for (const auto& [handle, asset] : m_AssetRegistry)
+		{
+			if (asset.Data.CheckSum == currentCheckSum)
+			{
+				KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
+				return handle;
+			}
+		}
+
+		// Create New Asset/Handle
+		AssetHandle newHandle{ Assets::EmptyHandle };
+		Assets::Asset newAsset{};
+		newAsset.Handle = newHandle;
+		newAsset.Data.Type = m_AssetType;
+		newAsset.Data.CheckSum = currentCheckSum;
+		newAsset.Data.FileLocation = "";
+		newAsset.Data.IntermediateLocation = m_AssetName + ((std::string)newAsset.Handle + m_FileExtension);
+
+		// Create Intermediate
+		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
+		newAsset.Data.CheckSum = currentCheckSum;
+
+		// Register New Asset and Create Texture
+		m_AssetRegistry.insert({ newHandle, newAsset });
+		SerializeAssetRegistry(); // Update Registry File on Disk
+
+		// Fill in-memory cache if appropriate
+		if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+		{
+			std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation;
+			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
+		}
+
+		return newHandle;
+
+	}
+
+	void Texture2DManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset)
+	{
+		// Save Binary Intermediate into File
+		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation;
+		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
+
+		// Load data into In-Memory Metadata object
+		Ref<Assets::TextureMetaData> metadata = CreateRef<Assets::TextureMetaData>();
+		metadata->Width = width;
+		metadata->Height = height;
+		metadata->Channels = channels;
+		newAsset.Data.SpecificFileData = metadata;
+	}
+
 	Ref<Rendering::Texture2D> Texture2DManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::TextureMetaData metadata = *asset.Data.GetSpecificMetaData<TextureMetaData>();

@@ -138,6 +138,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
+	//===================================================================================================================================================
 	AssetHandle AssetManager::CreateNewShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
 		// Create Checksum
@@ -264,8 +265,7 @@ namespace Kargono::Assets
 		metadata->UniformList = uniformLayout;
 		newAsset.Data.SpecificFileData = metadata;
 	}
-
-	//===================================================================================================================================================
+	
 	void AssetManager::DeserializeShaderRegistry()
 	{
 		// Clear current registry and open registry in current project 
