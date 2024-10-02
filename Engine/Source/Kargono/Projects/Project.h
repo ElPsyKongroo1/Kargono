@@ -54,6 +54,8 @@ namespace Kargono::Projects
 		// AssetDirectory holds a relative path from the project directory to its
 		//		asset directory which is displayed by default in the content browser.
 		std::filesystem::path AssetDirectory {};
+
+		std::filesystem::path IntermediateDirectory {};
 		// ScriptModulePath describes the path from the asset directory to the script
 		//		.dll that holds the scripts for the project.
 		std::filesystem::path ScriptModulePath {};
@@ -164,6 +166,12 @@ namespace Kargono::Projects
 			return GetActiveProjectDirectory() / s_ActiveProject->AssetDirectory;
 		}
 
+		static std::filesystem::path GetActiveIntermediateDirectory()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return GetActiveProjectDirectory() / s_ActiveProject->IntermediateDirectory;
+		}
+
 		// This function returns the current ScriptModulePath associated with the active
 		//		project in s_ActiveProject.
 		static std::filesystem::path GetActiveScriptModulePath(bool isAbsolute = true)
@@ -172,7 +180,7 @@ namespace Kargono::Projects
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->ScriptModulePath;
+				return GetActiveIntermediateDirectory() / s_ActiveProject->ScriptModulePath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->ScriptModulePath;
@@ -184,7 +192,7 @@ namespace Kargono::Projects
 			if (absolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->ScriptDLLPath;
+				return GetActiveIntermediateDirectory() / s_ActiveProject->ScriptDLLPath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->ScriptDLLPath;

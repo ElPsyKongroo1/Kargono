@@ -13,7 +13,7 @@ namespace Kargono::Assets
 		{
 			m_AssetName = "Shader";
 			m_AssetType = AssetType::Shader;
-			m_RegistryLocation = "Shaders/Intermediates/ShaderRegistry.kgreg";
+			m_RegistryLocation = "Shader/ShaderRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, false);

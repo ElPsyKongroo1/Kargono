@@ -13,7 +13,7 @@ namespace Kargono::Assets
 			m_AssetName = "Font";
 			m_AssetType = AssetType::Font;
 			m_FileExtension = ".kgfont";
-			m_RegistryLocation = "Fonts/Intermediates/FontRegistry.kgreg";
+			m_RegistryLocation = "Font/FontRegistry.kgreg";
 			m_ValidImportFileExtensions = { ".ttf" };
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);

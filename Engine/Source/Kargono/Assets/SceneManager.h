@@ -13,7 +13,7 @@ namespace Kargono::Assets
 			m_AssetName = "Scene";
 			m_AssetType = AssetType::Scene;
 			m_FileExtension = ".kgscene";
-			m_RegistryLocation = "Scenes/SceneRegistry.kgreg";
+			m_RegistryLocation = "Scene/SceneRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);

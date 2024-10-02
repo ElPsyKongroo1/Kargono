@@ -333,6 +333,7 @@ namespace Kargono::Projects
 		newProject->Name = projectName;
 		newProject->m_ProjectDirectory = projectLocation / projectName;
 		newProject->AssetDirectory = "Assets";
+		newProject->IntermediateDirectory = "Intermediates";
 
 		if (exists(newProject->m_ProjectDirectory))
 		{
@@ -353,16 +354,17 @@ namespace Kargono::Projects
 
 		// Create all asset folders
 		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory);
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Audio");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "EntityClass");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Fonts");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "GameState");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Input");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Scenes");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Scripting");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Shaders");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "Textures");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory / "UserInterface");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory);
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "AudioBuffer");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "EntityClass");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Font");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "GameState");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Input");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Scene");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Script");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Shader");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Texture2D");
+		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "UserInterface");
 
 		return projectFileLocation;
 
@@ -403,6 +405,7 @@ namespace Kargono::Projects
 				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(project->StartSceneHandle);
 				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(project->StartGameState);
 				out << YAML::Key << "AssetDirectory" << YAML::Value << project->AssetDirectory.string();
+				out << YAML::Key << "IntermediateDirectory" << YAML::Value << project->IntermediateDirectory.string();
 				out << YAML::Key << "ScriptModulePath" << YAML::Value << project->ScriptModulePath.string();
 				out << YAML::Key << "ScriptDLLPath" << YAML::Value << project->ScriptDLLPath.string();
 				out << YAML::Key << "DefaultFullscreen" << YAML::Value << project->DefaultFullscreen;
@@ -462,6 +465,7 @@ namespace Kargono::Projects
 		project->StartSceneHandle = static_cast<Assets::AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
 		project->StartGameState = static_cast<Assets::AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
 		project->AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
+		project->IntermediateDirectory = projectNode["IntermediateDirectory"].as<std::string>();
 		project->ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
 		project->ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
 		project->DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();

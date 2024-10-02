@@ -22,7 +22,7 @@ namespace Kargono::Assets
 			m_AssetName = "Script";
 			m_AssetType = AssetType::Script;
 			m_FileExtension = ".kgscript";
-			m_RegistryLocation = "Scripting/ScriptRegistry.kgreg";
+			m_RegistryLocation = "Script/ScriptRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);

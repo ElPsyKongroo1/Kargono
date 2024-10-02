@@ -13,7 +13,7 @@ namespace Kargono::Assets
 			m_AssetName = "Texture";
 			m_AssetType = AssetType::Texture;
 			m_FileExtension = ".kgtexture";
-			m_RegistryLocation = "Textures/Intermediates/TextureRegistry.kgreg";
+			m_RegistryLocation = "Texture2D/TextureRegistry.kgreg";
 			m_ValidImportFileExtensions = { ".png" };
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);

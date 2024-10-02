@@ -176,7 +176,7 @@ namespace Kargono::Assets
 		// Register New Asset and Create Shader
 		m_AssetRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
 		SerializeAssetRegistry(); // Update Registry File on Disk
-		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation);
+		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 		m_AssetCache.insert({ newHandle, newShader });
 
 		return newHandle;
@@ -200,7 +200,7 @@ namespace Kargono::Assets
 			if (metadata.ShaderSpec == shaderSpec)
 			{
 				Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(asset, 
-					Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
+					Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation);
 				m_AssetCache.insert({ asset.Handle, newShader });
 				return std::make_tuple(assetHandle, newShader);
 			}
@@ -230,7 +230,7 @@ namespace Kargono::Assets
 		for (const auto& [stage, source] : openGLSPIRV)
 		{
 			std::string intermediatePathWithExtension = newAsset.Data.IntermediateLocation.string() + Utility::ShaderBinaryFileExtension(stage);
-			std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePathWithExtension;
+			std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveIntermediateDirectory() / intermediatePathWithExtension;
 
 			Utility::FileSystem::CreateNewDirectory(intermediateFullPath.parent_path());
 			std::ofstream out(intermediateFullPath, std::ios::out | std::ios::binary);
@@ -246,7 +246,7 @@ namespace Kargono::Assets
 
 		// File Location
 		std::string debugString = shaderSource;
-		std::filesystem::path shaderTextFile = Projects::ProjectService::GetActiveAssetDirectory() / (newAsset.Data.IntermediateLocation.string() + ".source");
+		std::filesystem::path shaderTextFile = Projects::ProjectService::GetActiveIntermediateDirectory() / (newAsset.Data.IntermediateLocation.string() + ".source");
 		Utility::FileSystem::WriteFileString(shaderTextFile, debugString);
 
 		// Load In-Memory Metadata Object
@@ -263,7 +263,7 @@ namespace Kargono::Assets
 	{
 		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
-		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
 		static std::array<std::string, 2> stageTypes = { "vertex", "fragment" };
 
 		for (const auto& stage : stageTypes)

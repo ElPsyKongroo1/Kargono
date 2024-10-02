@@ -13,7 +13,7 @@ namespace Kargono::Assets
 			m_AssetName = "Input Mode";
 			m_AssetType = AssetType::InputMode;
 			m_FileExtension = ".kginput";
-			m_RegistryLocation = "Input/InputRegistry.kgreg";
+			m_RegistryLocation = "InputMode/InputRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);

@@ -14,7 +14,7 @@ namespace Kargono::Assets
 			m_AssetType = AssetType::Audio;
 			m_FileExtension = ".kgaudio";
 			m_ValidImportFileExtensions = { ".wav" };
-			m_RegistryLocation = "Audio/Intermediates/AudioRegistry.kgreg";
+			m_RegistryLocation = "AudioBuffer/AudioRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);

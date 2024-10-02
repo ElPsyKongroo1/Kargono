@@ -162,9 +162,9 @@ namespace Kargono::Scripting
 	void ScriptService::LoadActiveScriptModule()
 	{
 #ifdef KG_DEBUG
-		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBodyDebug.dll" };
+		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
 #else
-		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting\\Binary\\ExportBody.dll" };
+		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBody.dll" };
 #endif
 		
 		// Rebuild shared library if no library exists
@@ -572,7 +572,7 @@ namespace Kargono::Scripting
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
 
-		std::filesystem::path headerFile = { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportHeader.h" };
+		std::filesystem::path headerFile = { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportHeader.h" };
 
 		std::string outputString = outputStream.str();
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
@@ -749,7 +749,7 @@ namespace Kargono::Scripting
 		}
 		outputStream << "}\n";
 
-		std::filesystem::path file = { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
+		std::filesystem::path file = { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp" };
 
 		std::string outputString = outputStream.str();
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
@@ -759,8 +759,8 @@ namespace Kargono::Scripting
 
 	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)
 	{
-		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary");
-		std::filesystem::path binaryPath { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/" };
+		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/");
+		std::filesystem::path binaryPath { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/" };
 		std::filesystem::path binaryFile;
 		std::filesystem::path objectPath;
 		if (createDebug)
@@ -777,7 +777,7 @@ namespace Kargono::Scripting
 		UUID pdbID = UUID();
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
-		std::filesystem::path sourcePath { Projects::ProjectService::GetActiveAssetDirectory() / "Scripting/Binary/ExportBody.cpp" };
+		std::filesystem::path sourcePath { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
 		outputStream << "("; // Parentheses to group all function calls together
