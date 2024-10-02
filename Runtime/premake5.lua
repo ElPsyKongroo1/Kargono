@@ -20,6 +20,7 @@ project "Runtime"
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
@@ -37,7 +38,7 @@ project "Runtime"
 
     links 
     { 
-        "Engine"  
+        "Engine"
     }
 
     defines 

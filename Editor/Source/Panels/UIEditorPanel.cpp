@@ -172,7 +172,7 @@ namespace Kargono::Panels
 				Assets::AssetHandle onPressHandle = activeTextWidget.FunctionPointers.OnPressHandle;
 				s_WidgetOnPress.CurrentOption =
 				{
-					onPressHandle == Assets::EmptyHandle ? "None" : Utility::ScriptToString(Assets::AssetManager::GetScript(onPressHandle)),
+					onPressHandle == Assets::EmptyHandle ? "None" : Utility::ScriptToString(Assets::AssetService::GetScript(onPressHandle)),
 					onPressHandle
 				};
 				EditorUI::EditorUIService::SelectOption(s_WidgetOnPress);
@@ -205,7 +205,7 @@ namespace Kargono::Panels
 			s_OpenUIPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
 			s_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetManager::GetUserInterfaceRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
 			{
 				s_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
@@ -218,16 +218,16 @@ namespace Kargono::Panels
 				KG_WARN("No User Interface Selected");
 				return;
 			}
-			if (!Assets::AssetManager::GetUserInterfaceRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetUserInterfaceRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not find the user interface specified");
 				return;
 			}
 
-			m_EditorUI = Assets::AssetManager::GetUserInterface(selection.Handle);
+			m_EditorUI = Assets::AssetService::GetUserInterface(selection.Handle);
 			m_EditorUIHandle = selection.Handle;
 			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetUserInterfaceRegistry().at(
+			s_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 				m_EditorUIHandle).Data.FileLocation.string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
@@ -245,15 +245,15 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorUIHandle = Assets::AssetManager::CreateNewUserInterface(s_SelectUINameSpec.CurrentOption);
+			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(s_SelectUINameSpec.CurrentOption);
 			if (m_EditorUIHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("User Interface was not created");
 				return;
 			}
-			m_EditorUI = Assets::AssetManager::GetUserInterface(m_EditorUIHandle);
+			m_EditorUI = Assets::AssetService::GetUserInterface(m_EditorUIHandle);
 			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetUserInterfaceRegistry().at(
+			s_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 				m_EditorUIHandle).Data.FileLocation.string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
@@ -289,7 +289,7 @@ namespace Kargono::Panels
 		s_DeleteUIWarning.ConfirmAction = [&]()
 		{
 			// TODO: Remove UI from asset manager
-			Assets::AssetManager::DeleteUserInterface(m_EditorUIHandle);
+			Assets::AssetService::DeleteUserInterface(m_EditorUIHandle);
 			m_EditorUIHandle = 0;
 			m_EditorUI = nullptr;
 			RuntimeUI::RuntimeUIService::ClearActiveUI();
@@ -321,7 +321,7 @@ namespace Kargono::Panels
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetManager::SaveUserInterface(m_EditorUIHandle, m_EditorUI);
+			Assets::AssetService::SaveUserInterface(m_EditorUIHandle, m_EditorUI);
 			s_MainHeader.EditColorActive = false;
 		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
@@ -616,7 +616,7 @@ namespace Kargono::Panels
 			s_WidgetOnPress.ClearOptions();
 			s_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
@@ -650,7 +650,7 @@ namespace Kargono::Panels
 			}
 
 			m_ActiveWidget->FunctionPointers.OnPressHandle = entry.Handle;
-			m_ActiveWidget->FunctionPointers.OnPress = Assets::AssetManager::GetScript(entry.Handle);
+			m_ActiveWidget->FunctionPointers.OnPress = Assets::AssetService::GetScript(entry.Handle);
 			
 			s_MainHeader.EditColorActive = true;
 		};

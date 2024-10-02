@@ -506,7 +506,7 @@ namespace Kargono::Panels
 		{
 			s_SelectClassOption.ClearOptions();
 			s_SelectClassOption.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
 			{
 				s_SelectClassOption.AddToOptions("All Options",
 					asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name, handle);
@@ -1198,7 +1198,7 @@ namespace Kargono::Panels
 			Buffer oldBuffer = component.ShaderData;
 			Ref<Rendering::Shader> oldShader = component.Shader;
 			// Get New Shader
-			auto [newShaderAssetHandle, newShader] = Assets::AssetManager::GetShader(component.ShaderSpecification);
+			auto [newShaderAssetHandle, newShader] = Assets::AssetService::GetShader(component.ShaderSpecification);
 			// Assign New Shader to Component
 			component.ShaderHandle = newShaderAssetHandle;
 			component.Shader = newShader;
@@ -1285,7 +1285,7 @@ namespace Kargono::Panels
 				{
 					s_ShapeSetTexture.CurrentOption = 
 					{
-						Assets::AssetManager::GetTextureRegistry().at(component.TextureHandle).Data.FileLocation.string(),
+						Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.string(),
 						component.TextureHandle
 					};
 				}
@@ -1531,7 +1531,7 @@ namespace Kargono::Panels
 		s_ShapeSetTexture.PopupAction = [&]()
 		{
 			s_ShapeSetTexture.ClearOptions();
-			for (auto& [handle, asset] : Assets::AssetManager::GetTextureRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
 			{
 				s_ShapeSetTexture.AddToOptions("All Textures", asset.Data.FileLocation.string(), handle);
 			}
@@ -1544,19 +1544,19 @@ namespace Kargono::Panels
 			{
 				Buffer textureBuffer{ 4 };
 				textureBuffer.SetDataToByte(0xff);
-				component.TextureHandle = Assets::AssetManager::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
-				component.Texture = Assets::AssetManager::GetTexture(component.TextureHandle);
+				component.TextureHandle = Assets::AssetService::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
+				component.Texture = Assets::AssetService::GetTexture2D(component.TextureHandle);
 				textureBuffer.Release();
 			}
 
-			if (!Assets::AssetManager::GetTextureRegistry().contains(entry.Handle))
+			if (!Assets::AssetService::GetTexture2DRegistry().contains(entry.Handle))
 			{
 				KG_WARN("Could not locate texture in asset registry!");
 				return;
 			}
 
 			component.TextureHandle = entry.Handle;
-			component.Texture = Assets::AssetManager::GetTexture(entry.Handle);
+			component.Texture = Assets::AssetService::GetTexture2D(entry.Handle);
 		};
 
 		s_ShapeTilingFactor.Label = "Tiling Factor";
@@ -1672,7 +1672,7 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene())
 		{
-			s_MainSceneHeader.Label = Assets::AssetManager::GetSceneRegistry().at(
+			s_MainSceneHeader.Label = Assets::AssetService::GetSceneRegistry().at(
 				Scenes::SceneService::GetActiveSceneHandle()).Data.FileLocation.string();
 			
 			EditorUI::EditorUIService::PanelHeader(s_MainSceneHeader);
@@ -1824,7 +1824,7 @@ namespace Kargono::Panels
 		if (currentEntity.HasComponent<Scenes::ClassInstanceComponent>())
 		{
 			auto& comp = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
-			if (!Assets::AssetManager::GetEntityClass(comp.ClassHandle))
+			if (!Assets::AssetService::GetEntityClass(comp.ClassHandle))
 			{
 				comp.ClassHandle = Assets::EmptyHandle;
 				comp.Fields.clear();

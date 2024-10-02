@@ -51,7 +51,7 @@ namespace Kargono::Panels
 		s_AllScriptsTable.OnRefresh = [&]()
 		{
 			s_AllScriptsTable.ClearTable();
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Engine)
 				{
@@ -66,12 +66,12 @@ namespace Kargono::Panels
 				};
 				auto onLink = [&](EditorUI::TableEntry& entry)
 				{
-					if (!Assets::AssetManager::GetScriptRegistryMap().contains(entry.Handle))
+					if (!Assets::AssetService::GetScriptRegistry().contains(entry.Handle))
 					{
 						KG_WARN("Unable to open script in text editor. Script does not exist in registry");
 						return;
 					}
-					Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
+					Assets::Asset& asset = Assets::AssetService::GetScriptRegistry().at(entry.Handle);
 					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 				};
 				EditorUI::TableEntry newEntry
@@ -107,12 +107,12 @@ namespace Kargono::Panels
 		};
 		s_CreateScriptPopup.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::ScriptSpec spec {};
+			Assets::ScriptSpec spec {};
 			spec.Name = s_CreateScriptName.CurrentOption;
 			spec.Type = s_CreateScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_CreateScriptSectionLabel.CurrentOption.Label;
 			spec.FunctionType = (WrappedFuncType)(uint64_t)s_CreateScriptFuncType.CurrentOption.Handle;
-			auto [handle, successful] = Assets::AssetManager::CreateNewScript(spec);
+			auto [handle, successful] = Assets::AssetService::CreateNewScript(spec);
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
@@ -120,7 +120,7 @@ namespace Kargono::Panels
 
 			if (spec.Type == Scripting::ScriptType::Class)
 			{
-				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
 				{
 					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
 					{
@@ -188,10 +188,10 @@ namespace Kargono::Panels
 			// If we set the option to 'Class', try to get the first entity class option
 			if (s_CreateScriptType.SelectedOption == 0)
 			{
-				if (!Assets::AssetManager::GetEntityClassRegistry().empty())
+				if (!Assets::AssetService::GetEntityClassRegistry().empty())
 				{
-					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
-					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
+					s_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
+					s_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetService::GetEntityClassRegistry().begin()->first;
 				}
 			}
 			else
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 			{
 				s_CreateScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
+				for (auto& [handle, entityClass] : Assets::AssetService::GetEntityClassRegistry())
 				{
 					s_CreateScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
@@ -222,7 +222,7 @@ namespace Kargono::Panels
 			{
 				s_CreateScriptSectionLabel.ClearOptions();
 				s_CreateScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
+				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 				{
 					s_CreateScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
@@ -231,7 +231,7 @@ namespace Kargono::Panels
 
 		s_UpdateScript = [&]()
 		{
-			Ref<Scripting::Script> script = Assets::AssetManager::GetScript(s_ActiveScriptHandle);
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(s_ActiveScriptHandle);
 			if (!script)
 			{
 				KG_WARN("No script pointer available from asset manager when editing script in script editor");
@@ -239,19 +239,19 @@ namespace Kargono::Panels
 			}
 			Scripting::ScriptType originalType = script->m_ScriptType;
 			std::string originalLabel = script->m_SectionLabel;
-			Assets::AssetManager::ScriptSpec spec {};
+			Assets::ScriptSpec spec {};
 			spec.Name = s_EditScriptName.CurrentOption;
 			spec.Type = s_EditScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
 			spec.SectionLabel = s_EditScriptSectionLabel.CurrentOption.Label;
 			spec.FunctionType = (WrappedFuncType)(uint64_t)s_EditScriptFuncType.CurrentOption.Handle;
-			auto successful = Assets::AssetManager::UpdateScript(s_ActiveScriptHandle, spec);
+			auto successful = Assets::AssetService::SaveScript(s_ActiveScriptHandle, spec);
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
 			}
 			if (spec.Type == Scripting::ScriptType::Class || originalType == Scripting::ScriptType::Class)
 			{
-				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
 				{
 					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
 						|| asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == originalLabel)
@@ -269,14 +269,14 @@ namespace Kargono::Panels
 		s_EditScriptPopup.PopupWidth = 420.0f;
 		s_EditScriptPopup.PopupAction = [&]()
 		{
-			s_EditScriptName.CurrentOption = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName;
-			s_EditScriptType.SelectedOption = Assets::AssetManager::GetScript(
+			s_EditScriptName.CurrentOption = Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_ScriptName;
+			s_EditScriptType.SelectedOption = Assets::AssetService::GetScript(
 				s_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
-			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
+			s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_SectionLabel;
 
 			if (s_EditScriptType.SelectedOption == 0)
 			{
-				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				WrappedFuncType currentFuncType = Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_FuncType;
 				std::string funcDisplayName;
 
 				if (Utility::WrappedFuncTypeToParameterTypes(currentFuncType).size() == 1)
@@ -294,14 +294,14 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				WrappedFuncType currentFuncType = Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType;
+				WrappedFuncType currentFuncType = Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_FuncType;
 				s_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
 					(uint64_t)currentFuncType };
 			}
 		};
 		s_EditScriptPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_ScriptName);
+			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_ScriptName);
 			//EditorUI::Editor::EditText(s_EditScriptName);
 			EditorUI::EditorUIService::SelectOption(s_EditScriptFuncType);
 			EditorUI::EditorUIService::RadioSelector(s_EditScriptType);
@@ -314,7 +314,7 @@ namespace Kargono::Panels
 		s_EditScriptPopup.ConfirmAction = [&]()
 		{
 			if (Utility::StringToWrappedFuncType(s_EditScriptFuncType.CurrentOption.Label) != 
-				Assets::AssetManager::GetScript(s_ActiveScriptHandle)->m_FuncType)
+				Assets::AssetService::GetScript(s_ActiveScriptHandle)->m_FuncType)
 			{
 				s_EditScriptFuncTypeWarning.PopupActive = true;
 			}
@@ -331,11 +331,11 @@ namespace Kargono::Panels
 		};
 		s_DeleteScriptWarning.ConfirmAction = [&]()
 		{
-			Ref<Scripting::Script> script = Assets::AssetManager::GetScript(s_ActiveScriptHandle);
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(s_ActiveScriptHandle);
 			Scripting::ScriptType type = script->m_ScriptType;
 			std::string sectionLabel = script->m_SectionLabel;
 
-			bool success = Assets::AssetManager::DeleteScript(s_ActiveScriptHandle);
+			bool success = Assets::AssetService::DeleteScript(s_ActiveScriptHandle);
 			if (!success)
 			{
 				KG_WARN("Unable to delete script!");
@@ -344,7 +344,7 @@ namespace Kargono::Panels
 
 			if (type == Scripting::ScriptType::Class)
 			{
-				for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
 				{
 					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == sectionLabel)
 					{
@@ -423,10 +423,10 @@ namespace Kargono::Panels
 		{
 			if (s_EditScriptType.SelectedOption == 0)
 			{
-				if (Assets::AssetManager::GetEntityClassRegistry().size() > 0)
+				if (Assets::AssetService::GetEntityClassRegistry().size() > 0)
 				{
-					s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetManager::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
-					s_EditScriptSectionLabel.CurrentOption.Handle = Assets::AssetManager::GetEntityClassRegistry().begin()->first;
+					s_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
+					s_EditScriptSectionLabel.CurrentOption.Handle = Assets::AssetService::GetEntityClassRegistry().begin()->first;
 				}
 			}
 			else
@@ -446,7 +446,7 @@ namespace Kargono::Panels
 			{
 				s_EditScriptSectionLabel.ClearOptions();
 				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& [handle, entityClass] : Assets::AssetManager::GetEntityClassRegistry())
+				for (auto& [handle, entityClass] : Assets::AssetService::GetEntityClassRegistry())
 				{
 					s_EditScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
 						handle);
@@ -456,7 +456,7 @@ namespace Kargono::Panels
 			{
 				s_EditScriptSectionLabel.ClearOptions();
 				s_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
+				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 				{
 					s_EditScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
 				}
@@ -476,7 +476,7 @@ namespace Kargono::Panels
 		s_GroupLabelsTable.OnRefresh = [&]()
 		{
 			s_GroupLabelsTable.ClearTable();
-			for (auto& label : Assets::AssetManager::GetScriptSectionLabels())
+			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
 				s_GroupLabelsTable.InsertTableEntry(label,"", [&](EditorUI::TableEntry& entry)
 				{
@@ -492,7 +492,7 @@ namespace Kargono::Panels
 		s_CreateGroupLabelPopup.ConfirmAction = [&]()
 		{
 			// Create new group label
-			bool success = Assets::AssetManager::AddScriptSectionLabel(s_CreateGroupLabelPopup.CurrentOption);
+			bool success = Assets::AssetService::AddScriptSectionLabel(s_CreateGroupLabelPopup.CurrentOption);
 			if (!success)
 			{
 				KG_WARN("Failed to create group label");
@@ -510,7 +510,7 @@ namespace Kargono::Panels
 		s_EditGroupLabelPopup.ConfirmAction = [&]()
 		{
 			// Create new group label
-			bool success = Assets::AssetManager::EditScriptSectionLabel(
+			bool success = Assets::AssetService::EditScriptSectionLabel(
 				s_ActiveLabel, s_EditGroupLabelText.CurrentOption);
 			if (!success)
 			{
@@ -522,7 +522,7 @@ namespace Kargono::Panels
 		};
 		s_EditGroupLabelPopup.DeleteAction = [&]()
 		{
-			bool success = Assets::AssetManager::DeleteScriptSectionLabel(s_ActiveLabel);
+			bool success = Assets::AssetService::DeleteScriptSectionLabel(s_ActiveLabel);
 			if (!success)
 			{
 				KG_WARN("Failed to delete section label");

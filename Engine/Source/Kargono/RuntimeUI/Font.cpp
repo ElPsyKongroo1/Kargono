@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/RuntimeUI/Font.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Scenes/Components.h"
@@ -54,7 +54,7 @@ namespace Kargono::RuntimeUI
 		{
 			// TODO: Unreleased Heap Data with Buffer
 			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, false, Rendering::RenderingType::DrawTriangle, false};
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(textShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);

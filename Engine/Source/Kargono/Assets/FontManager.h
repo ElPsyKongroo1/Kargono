@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::RuntimeUI { class Font; }
 
 namespace Kargono::Assets
 {
-	class FontManager : public AssetManagerTemp<RuntimeUI::Font>
+	class FontManager : public AssetManager<RuntimeUI::Font>
 	{
 	public:
-		FontManager() : AssetManagerTemp<RuntimeUI::Font>()
+		FontManager() : AssetManager<RuntimeUI::Font>()
 		{
 			m_AssetName = "Font";
 			m_AssetType = AssetType::Font;

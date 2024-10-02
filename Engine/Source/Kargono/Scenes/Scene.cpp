@@ -7,9 +7,11 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Input/InputService.h"
+#include "Kargono/Input/InputMode.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/Assets/AssetService.h"
 
 
 namespace Kargono::Utility
@@ -176,7 +178,7 @@ namespace Kargono::Scenes
 		{
 			Scenes::Entity entity = { e, this };
 			ClassInstanceComponent& classInstanceComp = entity.GetComponent<ClassInstanceComponent>();
-			Ref<EntityClass> entityClass = Assets::AssetManager::GetEntityClass(classInstanceComp.ClassHandle);
+			Ref<EntityClass> entityClass = Assets::AssetService::GetEntityClass(classInstanceComp.ClassHandle);
 			KG_ASSERT(entityClass);
 			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnCreateHandle;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -543,13 +545,13 @@ namespace Kargono::Scenes
 	bool SceneService::IsSceneActive(const std::string& sceneName)
 	{
 		KG_ASSERT(s_ActiveScene);
-		if (!Assets::AssetManager::GetSceneRegistry().contains(s_ActiveSceneHandle))
+		if (!Assets::AssetService::GetSceneRegistry().contains(s_ActiveSceneHandle))
 		{
 			KG_WARN("Could not locate active scene in asset manager using current scene handle");
 			return false;
 		}
 
-		Assets::Asset sceneAsset = Assets::AssetManager::GetSceneRegistry().at(s_ActiveSceneHandle);
+		Assets::Asset sceneAsset = Assets::AssetService::GetSceneRegistry().at(s_ActiveSceneHandle);
 		if (sceneAsset.Data.FileLocation == sceneName)
 		{
 			return true;
@@ -558,7 +560,7 @@ namespace Kargono::Scenes
 	}
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
-		Ref<Scene> newScene = Assets::AssetManager::GetScene(newSceneHandle);
+		Ref<Scene> newScene = Assets::AssetService::GetScene(newSceneHandle);
 		if (!newScene)
 		{
 			KG_WARN("Could not locate scene by scene handle");
@@ -589,7 +591,7 @@ namespace Kargono::Scenes
 
 	void SceneService::TransitionSceneFromName(const std::string& sceneName)
 	{
-		auto [handle, sceneReference] = Assets::AssetManager::GetScene(sceneName);
+		auto [handle, sceneReference] = Assets::AssetService::GetScene(sceneName);
 		if (sceneReference)
 		{
 			TransitionScene(sceneReference);

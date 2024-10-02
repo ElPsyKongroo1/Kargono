@@ -9,7 +9,7 @@
 
 //-----------------Assets-----------------//
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 
 //-----------------Audio-----------------//
 #include "Kargono/Audio/Audio.h"

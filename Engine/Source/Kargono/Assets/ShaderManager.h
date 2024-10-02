@@ -1,12 +1,15 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+
+namespace Kargono::Rendering { class Shader; }
 
 namespace Kargono::Assets
 {
-	class ShaderManager : public AssetManagerTemp<Rendering::Shader>
+	class ShaderManager : public AssetManager<Rendering::Shader>
 	{
 	public:
-		ShaderManager() : AssetManagerTemp<Rendering::Shader>()
+		ShaderManager() : AssetManager<Rendering::Shader>()
 		{
 			m_AssetName = "Shader";
 			m_AssetType = AssetType::Shader;

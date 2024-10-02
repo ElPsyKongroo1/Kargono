@@ -4,7 +4,7 @@
 
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Projects/Project.h"
@@ -450,10 +450,10 @@ namespace Kargono::Scripting
 		ScriptService::CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded
-		if (Assets::AssetManager::s_ScriptRegistry.size() == 0)
+		if (Assets::AssetService::GetScriptRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetManager::DeserializeScriptRegistry();
+			Assets::AssetService::DeserializeScriptRegistry();
 		}
 
 		bool buildSuccessful = true;
@@ -469,7 +469,7 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Failed to compile debug script module");
 			ScriptService::LoadActiveScriptModule();
-			Assets::AssetManager::DeserializeScriptRegistry();
+			Assets::AssetService::DeserializeScriptRegistry();
 			return;
 		}
 		KG_INFO("Clearing previous compilation logs...");
@@ -480,13 +480,13 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Failed to compile release script module");
 			ScriptService::LoadActiveScriptModule();
-			Assets::AssetManager::DeserializeScriptRegistry();
+			Assets::AssetService::DeserializeScriptRegistry();
 			return;
 		}
 
 		KG_INFO("Opening New Scripting Module...");
 		ScriptService::LoadActiveScriptModule();
-		Assets::AssetManager::DeserializeScriptRegistry();
+		Assets::AssetService::DeserializeScriptRegistry();
 		KG_INFO("Successfully build and loaded new script module");
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
@@ -546,7 +546,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
 		// Add Script Function Declarations
-		for (auto& [handle, script] : Assets::AssetManager::s_Scripts)
+		for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 		{
 			WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
 			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
@@ -737,7 +737,7 @@ namespace Kargono::Scripting
 		outputStream << "}\n";	
 
 		// Write scripts into a single cpp file
-		for (auto& [handle, asset] : Assets::AssetManager::s_ScriptRegistry)
+		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
 			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->ScriptType == ScriptType::Engine)
 			{

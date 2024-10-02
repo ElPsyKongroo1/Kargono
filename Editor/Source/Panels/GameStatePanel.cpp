@@ -48,7 +48,7 @@ namespace Kargono::Panels
 			s_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
 			s_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetManager::GetGameStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
 				s_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
@@ -61,16 +61,16 @@ namespace Kargono::Panels
 				KG_WARN("No Game State Selected");
 				return;
 			}
-			if (!Assets::AssetManager::GetGameStateRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetGameStateRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not find on game state in game state editor");
 				return;
 			}
 
-			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(selection.Handle);
+			s_GameStatePanel->m_EditorGameState = Assets::AssetService::GetGameState(selection.Handle);
 			s_GameStatePanel->m_EditorGameStateHandle = selection.Handle;
 			s_TagHeader.EditColorActive = false;
-			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+			s_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
 				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
@@ -87,17 +87,17 @@ namespace Kargono::Panels
 				return;
 			}
 
-			for (auto& [id, asset] : Assets::AssetManager::GetGameStateRegistry())
+			for (auto& [id, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
 				if (asset.Data.GetSpecificMetaData<Assets::GameStateMetaData>()->Name == s_SelectGameStateNameSpec.CurrentOption)
 				{
 					return;
 				}
 			}
-			s_GameStatePanel->m_EditorGameStateHandle = Assets::AssetManager::CreateNewGameState(s_SelectGameStateNameSpec.CurrentOption);
-			s_GameStatePanel->m_EditorGameState = Assets::AssetManager::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
+			s_GameStatePanel->m_EditorGameStateHandle = Assets::AssetService::CreateGameState(s_SelectGameStateNameSpec.CurrentOption);
+			s_GameStatePanel->m_EditorGameState = Assets::AssetService::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
 			s_TagHeader.EditColorActive = false;
-			s_TagHeader.Label = Assets::AssetManager::GetGameStateRegistry().at(
+			s_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
 				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
 			s_FieldsTable.OnRefresh();
 		};
@@ -113,7 +113,7 @@ namespace Kargono::Panels
 		s_DeleteGameStateWarning.Label = "Delete Game State";
 		s_DeleteGameStateWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::DeleteGameState(s_GameStatePanel->m_EditorGameStateHandle);
+			Assets::AssetService::DeleteGameState(s_GameStatePanel->m_EditorGameStateHandle);
 			s_GameStatePanel->m_EditorGameStateHandle = 0;
 			s_GameStatePanel->m_EditorGameState = nullptr;
 		};
@@ -135,7 +135,7 @@ namespace Kargono::Panels
 
 		s_TagHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetManager::SaveGameState(s_GameStatePanel->m_EditorGameStateHandle, s_GameStatePanel->m_EditorGameState);
+				Assets::AssetService::SaveGameState(s_GameStatePanel->m_EditorGameStateHandle, s_GameStatePanel->m_EditorGameState);
 				s_TagHeader.EditColorActive = false;
 			});
 		s_TagHeader.AddToSelectionList("Close", [&]()

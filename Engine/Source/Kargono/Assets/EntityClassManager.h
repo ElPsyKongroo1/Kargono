@@ -1,12 +1,15 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Scenes { class EntityClass; }
+namespace Kargono::Scenes { class Scene; }
 
 namespace Kargono::Assets
 {
-	class EntityClassManager : public AssetManagerTemp<Scenes::EntityClass>
+	class EntityClassManager : public AssetManager<Scenes::EntityClass>
 	{
 	public:
-		EntityClassManager() : AssetManagerTemp<Scenes::EntityClass>()
+		EntityClassManager() : AssetManager<Scenes::EntityClass>()
 		{
 			m_AssetName = "Entity Class";
 			m_AssetType = AssetType::EntityClass;

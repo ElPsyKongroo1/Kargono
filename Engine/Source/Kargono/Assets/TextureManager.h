@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Rendering { class Rendering::Texture2D; }
 
 namespace Kargono::Assets
 {
-	class Texture2DManager : public AssetManagerTemp<Rendering::Texture2D>
+	class Texture2DManager : public AssetManager<Rendering::Texture2D>
 	{
 	public:
-		Texture2DManager() : AssetManagerTemp<Rendering::Texture2D>()
+		Texture2DManager() : AssetManager<Rendering::Texture2D>()
 		{
 			m_AssetName = "Texture";
 			m_AssetType = AssetType::Texture;

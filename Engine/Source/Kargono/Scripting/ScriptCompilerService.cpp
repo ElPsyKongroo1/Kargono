@@ -7,7 +7,7 @@
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptTokenParser.h"
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 
 namespace Kargono::Utility
 {
@@ -1252,7 +1252,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+		for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 		{
 			if (script->m_ScriptType == ScriptType::Engine)
 			{

@@ -156,7 +156,7 @@ namespace Kargono::Panels
 			s_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
 			s_OpenInputModePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetManager::GetInputModeRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetInputModeRegistry())
 			{
 				s_OpenInputModePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
@@ -169,16 +169,16 @@ namespace Kargono::Panels
 				KG_WARN("No Input Mode Selected");
 				return;
 			}
-			if (!Assets::AssetManager::GetInputModeRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetInputModeRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not find the input mode specified");
 				return;
 			}
 
-			m_EditorInputMode = Assets::AssetManager::GetInputMode(selection.Handle);
+			m_EditorInputMode = Assets::AssetService::GetInputMode(selection.Handle);
 			m_EditorInputModeHandle = selection.Handle;
 			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetInputModeRegistry().at(
+			s_MainHeader.Label = Assets::AssetService::GetInputModeRegistry().at(
 				m_EditorInputModeHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
@@ -195,15 +195,15 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorInputModeHandle = Assets::AssetManager::CreateNewInputMode(s_SelectInputModeNameSpec.CurrentOption);
+			m_EditorInputModeHandle = Assets::AssetService::CreateInputMode(s_SelectInputModeNameSpec.CurrentOption);
 			if (m_EditorInputModeHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("Input Mode was not created");
 				return;
 			}
-			m_EditorInputMode = Assets::AssetManager::GetInputMode(m_EditorInputModeHandle);
+			m_EditorInputMode = Assets::AssetService::GetInputMode(m_EditorInputModeHandle);
 			s_MainHeader.EditColorActive = false;
-			s_MainHeader.Label = Assets::AssetManager::GetInputModeRegistry().at(
+			s_MainHeader.Label = Assets::AssetService::GetInputModeRegistry().at(
 				m_EditorInputModeHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
@@ -219,7 +219,7 @@ namespace Kargono::Panels
 		s_DeleteInputModeWarning.Label = "Delete Input Mode";
 		s_DeleteInputModeWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::DeleteInputMode(m_EditorInputModeHandle);
+			Assets::AssetService::DeleteInputMode(m_EditorInputModeHandle);
 			m_EditorInputModeHandle = 0;
 			m_EditorInputMode = nullptr;
 		};
@@ -241,7 +241,7 @@ namespace Kargono::Panels
 
 		s_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetManager::SaveInputMode(m_EditorInputModeHandle, m_EditorInputMode);
+			Assets::AssetService::SaveInputMode(m_EditorInputModeHandle, m_EditorInputMode);
 			s_MainHeader.EditColorActive = false;
 		});
 		s_MainHeader.AddToSelectionList("Close", [&]()
@@ -300,7 +300,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						Utility::ScriptToString(script),
@@ -346,7 +346,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetManager::GetScript(s_KeyboardOnUpdateAddFunction.CurrentOption.Handle);
+				script = Assets::AssetService::GetScript(s_KeyboardOnUpdateAddFunction.CurrentOption.Handle);
 			}
 			newBinding->SetScript(script, s_KeyboardOnUpdateAddFunction.CurrentOption.Handle);
 
@@ -371,7 +371,7 @@ namespace Kargono::Panels
 		{
 			s_KeyboardOnUpdateAddFunction.ClearOptions();
 			s_KeyboardOnUpdateAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
@@ -436,7 +436,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetManager::GetScript(s_KeyboardOnUpdateEditFunction.CurrentOption.Handle);
+				script = Assets::AssetService::GetScript(s_KeyboardOnUpdateEditFunction.CurrentOption.Handle);
 			}
 			newBinding->SetScript(script, s_KeyboardOnUpdateEditFunction.CurrentOption.Handle);
 
@@ -460,7 +460,7 @@ namespace Kargono::Panels
 		{
 			s_KeyboardOnUpdateEditFunction.ClearOptions();
 			s_KeyboardOnUpdateEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
@@ -520,7 +520,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					Ref<Scripting::Script> script = Assets::AssetManager::GetScript(scriptHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						Utility::ScriptToString(script),
@@ -566,7 +566,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetManager::GetScript(s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle);
+				script = Assets::AssetService::GetScript(s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle);
 			}
 			newBinding->SetScript(script, s_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle);
 
@@ -591,7 +591,7 @@ namespace Kargono::Panels
 		{
 			s_KeyboardOnKeyPressedAddFunction.ClearOptions();
 			s_KeyboardOnKeyPressedAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{
@@ -657,7 +657,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetManager::GetScript(s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle);
+				script = Assets::AssetService::GetScript(s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle);
 			}
 			newBinding->SetScript(script, s_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle);
 
@@ -681,7 +681,7 @@ namespace Kargono::Panels
 		{
 			s_KeyboardOnKeyPressedEditFunction.ClearOptions();
 			s_KeyboardOnKeyPressedEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_ScriptType == Scripting::ScriptType::Class)
 				{

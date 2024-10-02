@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Scenes { class GameState; }
 
 namespace Kargono::Assets
 {
-	class GameStateManager : public AssetManagerTemp<Scenes::GameState>
+	class GameStateManager : public AssetManager<Scenes::GameState>
 	{
 	public:
-		GameStateManager() : AssetManagerTemp<Scenes::GameState>()
+		GameStateManager() : AssetManager<Scenes::GameState>()
 		{
 			m_AssetName = "Game State";
 			m_AssetType = AssetType::GameState;

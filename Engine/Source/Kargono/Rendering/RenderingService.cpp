@@ -2,6 +2,7 @@
 
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
+#include "Kargono/Rendering/Texture.h"
 #include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"

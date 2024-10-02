@@ -1,14 +1,10 @@
 #include "kgpch.h"
 
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Projects/Project.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/SceneManager.h"
+
+#include "Kargono/Scenes/Scene.h"
 #include "Kargono/Scenes/Entity.h"
-
-#include "API/Serialization/yamlcppAPI.h"
-
-
-//===================================================================================================================================================
 
 namespace Kargono::Utility
 {
@@ -34,8 +30,8 @@ namespace Kargono::Utility
 			out << YAML::BeginMap; // Component Map
 			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
 			if (comp.ClassHandle != Assets::EmptyHandle)
-			{
-				Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
+			{ 
+				Ref<Scenes::EntityClass> entityClass = Assets::AssetService::GetEntityClass(comp.ClassHandle);
 				if (!entityClass)
 				{
 					KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
@@ -66,7 +62,7 @@ namespace Kargono::Utility
 				}
 				out << YAML::EndSeq; // End Fields
 			}
-			
+
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -198,76 +194,33 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-
-	AssetHandle AssetManager::CreateNewScene(const std::string& sceneName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateSceneFile(sceneName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Scene
-		s_SceneRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeSceneRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
+	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary Scene
 		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
 
 		// Save Binary into File
-		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
-		SerializeScene(temporaryScene, fullPath.string());
+		SerializeAsset(temporaryScene, assetPath);
 
 		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Scene;
-		newAsset.Data.FileLocation = scenePath;
 		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
+		asset.Data.SpecificFileData = metadata;
 	}
-
-	void AssetManager::SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
+	void SceneManager::SerializeAsset(Ref<Scenes::Scene> assetReference, const std::filesystem::path& assetPath)
 	{
 		bool submitScene = true;
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		{ // Physics
 			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
-			out << YAML::Key << "Gravity" << YAML::Value << scene->m_PhysicsSpecification.Gravity;
+			out << YAML::Key << "Gravity" << YAML::Value << assetReference->m_PhysicsSpecification.Gravity;
 			out << YAML::EndMap; // Physics Maps
 		}
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		scene->m_Registry.each([&](auto entityID)
+		assetReference->m_Registry.each([&](auto entityID)
 			{
-				Scenes::Entity entity = { entityID, scene.get() };
+				Scenes::Entity entity = { entityID, assetReference.get() };
 				if (!entity) { return; }
 
 				bool success = Utility::SerializeEntity(out, entity);
@@ -280,191 +233,31 @@ namespace Kargono::Assets
 		out << YAML::EndMap; // Start of File Map
 		if (submitScene)
 		{
-			std::ofstream fout(filepath);
+			std::ofstream fout(assetPath);
 			fout << out.c_str();
-			KG_INFO("Successfully Serialized Scene at {}", filepath);
+			KG_INFO("Successfully Serialized Scene at {}", assetPath.string());
 		}
 		else
 		{
 			KG_WARN("Failed to Serialize Scene");
 		}
-
 	}
-
-	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
+	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		if (!s_SceneRegistry.contains(sceneHandle))
-		{
-			KG_ERROR("Attempt to save scene that does not exist in registry");
-			return;
-		}
-		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
-		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
-	}
-
-	bool AssetManager::CheckSceneExists(const std::string& sceneName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	void AssetManager::DeserializeSceneRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_SceneRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
-
-		if (!std::filesystem::exists(sceneRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
+		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(sceneRegistryLocation.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", sceneRegistryLocation.string(), e.what());
-			return;
+			KG_WARN("Failed to load .kgscene file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Scene Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving shader specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::Scene)
-				{
-					Ref<Assets::SceneMetaData> sceneMetaData = CreateRef<Assets::SceneMetaData>();
-					newAsset.Data.SpecificFileData = sceneMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_SceneRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-	
-	void AssetManager::SerializeSceneRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Scene";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_SceneRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(sceneRegistryLocation.parent_path());
-
-		std::ofstream fout(sceneRegistryLocation);
-		fout << out.c_str();
-	}
-	
-	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		std::filesystem::path scenePath {};
-
-		if (Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), filepath))
-		{
-			scenePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-		else
-		{
-			scenePath = filepath;
-		}
-
-		for (auto& [assetHandle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.FileLocation.compare(scenePath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateScene(asset));
-			}
-		}
-		// Return empty scene if scene does not exist
-		KG_WARN("No Scene Associated with provided handle. Returned new empty scene");
-		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
-		return std::make_tuple(newHandle, GetScene(newHandle));
-	}
-	
-	void AssetManager::ClearSceneRegistry()
-	{
-		s_SceneRegistry.clear();
-	}
-
-	bool AssetManager::DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
-	{
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(filepath.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
-			return false;
-		}
-
-		KG_INFO("Deserializing scene");
 
 		auto physics = data["Physics"];
-		scene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
+		newScene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -475,10 +268,12 @@ namespace Kargono::Assets
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
-				if (tagComponent) { name = tagComponent["Tag"].as<std::string>(); }
-				//KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
+				if (tagComponent) 
+				{ 
+					name = tagComponent["Tag"].as<std::string>(); 
+				}
 
-				Scenes::Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, name);
+				Scenes::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -496,12 +291,12 @@ namespace Kargono::Assets
 					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
 					if (cInstComp.ClassHandle != Assets::EmptyHandle)
 					{
-						if (!s_EntityClassRegistry.contains(cInstComp.ClassHandle))
+						if (!AssetService::HasEntityClass(cInstComp.ClassHandle))
 						{
-							KG_ERROR("Could not find entity class for class instance component");
-							return false;
+							KG_WARN("Could not find entity class for class instance component");
+							return nullptr;
 						}
-						cInstComp.ClassReference = GetEntityClass(cInstComp.ClassHandle);
+						cInstComp.ClassReference = AssetService::GetEntityClass(cInstComp.ClassHandle);
 
 						auto instanceFields = classInstanceComponent["InstanceFields"];
 						if (instanceFields)
@@ -554,14 +349,14 @@ namespace Kargono::Assets
 					if (shapeComponent["TextureHandle"])
 					{
 						AssetHandle textureHandle = shapeComponent["TextureHandle"].as<uint64_t>();
-						sc.Texture = AssetManager::GetTexture(textureHandle);
+						sc.Texture = AssetService::GetTexture2D(textureHandle);
 						sc.TextureHandle = textureHandle;
 					}
 
 					if (shapeComponent["ShaderHandle"])
 					{
 						AssetHandle shaderHandle = shapeComponent["ShaderHandle"].as<uint64_t>();
-						sc.Shader = AssetManager::GetShader(shaderHandle);
+						sc.Shader = AssetService::GetShader(shaderHandle);
 						if (!sc.Shader)
 						{
 							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
@@ -574,7 +369,7 @@ namespace Kargono::Assets
 							shaderSpec.TextureInput = Utility::StringToTextureInputType(shaderSpecificationNode["TextureInput"].as<std::string>());
 							shaderSpec.DrawOutline = shaderSpecificationNode["DrawOutline"].as<bool>();
 							shaderSpec.RenderType = Utility::StringToRenderingType(shaderSpecificationNode["RenderType"].as<std::string>());
-							auto [newHandle, newShader] = AssetManager::GetShader(shaderSpec);
+							auto [newHandle, newShader] = AssetService::GetShader(shaderSpec);
 							shaderHandle = newHandle;
 							sc.Shader = newShader;
 						}
@@ -635,27 +430,7 @@ namespace Kargono::Assets
 				}
 			}
 		}
-		return true;
 
-	}
-	Ref<Scenes::Scene> AssetManager::InstantiateScene(const Assets::Asset& sceneAsset)
-	{
-		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
-		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.FileLocation).string());
 		return newScene;
-	}
-
-	Ref<Scenes::Scene> AssetManager::GetScene(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving scene!");
-
-		if (s_SceneRegistry.contains(handle))
-		{
-			auto asset = s_SceneRegistry[handle];
-			return InstantiateScene(asset);
-		}
-
-		KG_ERROR("No scene is associated with provided handle!");
-		return nullptr;
 	}
 }

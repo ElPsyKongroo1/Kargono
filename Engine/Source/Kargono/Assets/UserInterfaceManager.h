@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::RuntimeUI { class UserInterface; }
 
 namespace Kargono::Assets
 {
-	class UserInterfaceManager : public AssetManagerTemp<RuntimeUI::UserInterface>
+	class UserInterfaceManager : public AssetManager<RuntimeUI::UserInterface>
 	{
 	public:
-		UserInterfaceManager() : AssetManagerTemp<RuntimeUI::UserInterface>()
+		UserInterfaceManager() : AssetManager<RuntimeUI::UserInterface>()
 		{
 			m_AssetName = "User Interface";
 			m_AssetType = AssetType::UserInterface;

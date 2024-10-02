@@ -618,7 +618,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCount();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt32(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserCount());
+			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
 
 		return false;
@@ -629,7 +629,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -640,7 +640,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlot();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -651,7 +651,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
@@ -661,7 +661,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInit();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -671,7 +671,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminated();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -681,7 +681,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSession();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -691,7 +691,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
@@ -701,7 +701,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignal();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetManager::GetScript(scriptHandle)->m_Function, event.GetSignal());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
 	}
@@ -754,8 +754,8 @@ namespace Kargono
 			{
 				m_EditorScene->DestroyAllEntities();
 			}
-			Assets::AssetManager::ClearAll();
-			Assets::AssetManager::DeserializeAll();
+			Assets::AssetService::ClearAll();
+			Assets::AssetService::DeserializeAll();
 			if (startSceneHandle == Assets::EmptyHandle)
 			{
 				NewScene("NewScene");
@@ -779,30 +779,30 @@ namespace Kargono
 		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes";
 		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
 		if (filepath.empty()) { return; }
-		if (Assets::AssetManager::CheckSceneExists(filepath.stem().string()))
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
 			return;
 		}
-		m_EditorSceneHandle = Assets::AssetManager::CreateNewScene(filepath.stem().string());
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string());
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
-		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
+		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::NewScene(const std::string& sceneName)
 	{
 		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
-		if (Assets::AssetManager::CheckSceneExists(filepath.stem().string()))
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
 			return;
 		}
-		m_EditorSceneHandle = Assets::AssetManager::CreateNewScene(filepath.stem().string());
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string());
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
-		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
+		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
@@ -829,7 +829,7 @@ namespace Kargono
 			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;
 		}
-		auto [sceneHandle, newScene] = Assets::AssetManager::GetScene(path);
+		auto [sceneHandle, newScene] = Assets::AssetService::GetScene(path);
 
 		m_EditorScene = newScene;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -844,7 +844,7 @@ namespace Kargono
 			OnStop();
 		}
 
-		Ref<Scenes::Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		Ref<Scenes::Scene> newScene = Assets::AssetService::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
 
 		m_EditorScene = newScene;
@@ -859,7 +859,7 @@ namespace Kargono
 
 	void EditorApp::SerializeScene(Ref<Scenes::Scene> scene)
 	{
-		Assets::AssetManager::SaveScene(m_EditorSceneHandle, scene);
+		Assets::AssetService::SaveScene(m_EditorSceneHandle, scene);
 		
 	}
 
@@ -885,7 +885,7 @@ namespace Kargono
 		else
 		{
 			Scenes::GameStateService::SetActiveGameState(
-				Assets::AssetManager::GetGameState(Projects::ProjectService::GetActiveStartGameState()),
+				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveStartGameState()),
 				Projects::ProjectService::GetActiveStartGameState());
 		}
 
@@ -898,7 +898,7 @@ namespace Kargono
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
 		if (scriptHandle != 0)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetManager::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())

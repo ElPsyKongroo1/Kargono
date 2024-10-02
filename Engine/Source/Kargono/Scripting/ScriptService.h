@@ -13,8 +13,6 @@
 #include <sstream>
 #include <vector>
 
-namespace Kargono::Assets { class AssetManager; }
-
 namespace Kargono::Scripting
 {
 	class Script;
@@ -50,8 +48,6 @@ namespace Kargono::Scripting
 		}
 	private:
 		static std::vector<Ref<Script>> s_AllEngineScripts;
-	private:
-		friend Assets::AssetManager;
 	};
 	//==============================
 	// Script Class
@@ -65,8 +61,6 @@ namespace Kargono::Scripting
 		WrappedFuncType m_FuncType{ WrappedFuncType::None };
 		UUID m_ID{};
 		Ref<WrappedFunction> m_Function {nullptr};
-	private:
-		friend class Assets::AssetManager;
 	};
 }
 

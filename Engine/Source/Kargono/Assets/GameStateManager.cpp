@@ -1,82 +1,36 @@
 #include "kgpch.h"
 
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Projects/Project.h"
-#include "API/Serialization/yamlcppAPI.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/GameStateManager.h"
+
+#include "Kargono/Scenes/GameState.h"
 
 namespace Kargono::Assets
 {
-
-	//===================================================================================================================================================
-	
-	AssetHandle AssetManager::CreateNewGameState(const std::string& GameStateName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(GameStateName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_GameStateRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate game state asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateGameStateFile(GameStateName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and return handle.
-		s_GameStateRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeGameStateRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset)
+	void GameStateManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary GameState
 		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();
-		temporaryGameState->SetName(GameStateName);
+		temporaryGameState->SetName(name);
 
-		// Save Binary into File
-		std::string GameStatePath = "GameState/" + GameStateName + ".kgstate";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / GameStatePath;
-		SerializeGameState(temporaryGameState, fullPath.string());
+		SerializeAsset(temporaryGameState, assetPath);
 
 		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::GameState;
-		newAsset.Data.FileLocation = GameStatePath;
 		Ref<Assets::GameStateMetaData> metadata = CreateRef<Assets::GameStateMetaData>();
-		metadata->Name = GameStateName;
-		newAsset.Data.SpecificFileData = metadata;
+		metadata->Name = name;
+		asset.Data.SpecificFileData = metadata;
 	}
-
-	void AssetManager::SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
+	void GameStateManager::SerializeAsset(Ref<Scenes::GameState> assetReference, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 
-		out << YAML::Key << "Name" << YAML::Value << GameState->m_Name; // Output State Name
+		out << YAML::Key << "Name" << YAML::Value << assetReference->m_Name; // Output State Name
 
 		out << YAML::Key << "Fields" << YAML::Value;
 		out << YAML::BeginSeq; // Start Fields
 
-		for (auto& [name, field] : GameState->m_Fields)
+		for (auto& [name, field] : assetReference->m_Fields)
 		{
 			out << YAML::BeginMap; // Start Field
 
@@ -91,217 +45,32 @@ namespace Kargono::Assets
 
 		out << YAML::EndMap; // End of File Map
 
-		std::ofstream fout(filepath);
+		std::ofstream fout(assetPath);
 		fout << out.c_str();
-		KG_INFO("Successfully Serialized GameState at {}", filepath);
+		KG_INFO("Successfully Serialized GameState at {}", assetPath);
 	}
-
-	void AssetManager::SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::Scenes::GameState> GameState)
-	{
-		if (!s_GameStateRegistry.contains(GameStateHandle))
-		{
-			KG_ERROR("Attempt to save GameState that does not exist in registry");
-			return;
-		}
-		Assets::Asset GameStateAsset = s_GameStateRegistry[GameStateHandle];
-		SerializeGameState(GameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.FileLocation).string());
-	}
-
-	void AssetManager::DeleteGameState(AssetHandle handle)
-	{
-		if (!s_GameStateRegistry.contains(handle))
-		{
-			KG_WARN("Failed to delete GameState in AssetManager");
-			return;
-		}
-
-		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
-			s_GameStateRegistry.at(handle).Data.FileLocation);
-
-		s_GameStateRegistry.erase(handle);
-
-		SerializeGameStateRegistry();
-	}
-
-	bool AssetManager::CheckGameStateExists(const std::string& GameStateName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(GameStateName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_GameStateRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void AssetManager::DeserializeGameStateRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_GameStateRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& GameStateRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "GameState/GameStateRegistry.kgreg";
-
-		if (!std::filesystem::exists(GameStateRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(GameStateRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgstate file '{0}'\n     {1}", GameStateRegistryLocation.string(), e.what());
-			return;
-		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing GameState Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving GameState specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::GameState)
-				{
-					Ref<Assets::GameStateMetaData> GameStateMetaData = CreateRef<Assets::GameStateMetaData>();
-					GameStateMetaData->Name = metadata["Name"].as<std::string>();
-					newAsset.Data.SpecificFileData = GameStateMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_GameStateRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-	
-	std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> AssetManager::GetGameState(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		std::filesystem::path GameStatePath = filepath;
-
-		if (filepath.is_absolute())
-		{
-			GameStatePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-
-		for (auto& [assetHandle, asset] : s_GameStateRegistry)
-		{
-			if (asset.Data.FileLocation.compare(GameStatePath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateGameState(asset));
-			}
-		}
-		// Return empty GameState if GameState does not exist
-		KG_WARN("No GameState Associated with provided handle. Returned new empty GameState");
-		AssetHandle newHandle = CreateNewGameState(filepath.stem().string());
-		return std::make_tuple(newHandle, GetGameState(newHandle));
-	}
-	
-	void AssetManager::SerializeGameStateRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& GameStateRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "GameState/GameStateRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "GameState";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_GameStateRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-			if (asset.Data.Type == Assets::AssetType::GameState)
-			{
-				Assets::GameStateMetaData* metadata = static_cast<Assets::GameStateMetaData*>(asset.Data.SpecificFileData.get());
-
-				out << YAML::Key << "Name" << YAML::Value << metadata->Name;
-			}
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(GameStateRegistryLocation.parent_path());
-
-		std::ofstream fout(GameStateRegistryLocation);
-		fout << out.c_str();
-	}
-	
-	void AssetManager::ClearGameStateRegistry()
-	{
-		s_GameStateRegistry.clear();
-	}
-	
-	Ref<Scenes::GameState> AssetManager::InstantiateGameState(const Assets::Asset& GameStateAsset)
+	Ref<Scenes::GameState> GameStateManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
-		DeserializeGameState(newGameState, (Projects::ProjectService::GetActiveAssetDirectory() / GameStateAsset.Data.FileLocation).string());
-		return newGameState;
-	}
-
-	bool AssetManager::DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath)
-	{
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
-		KG_INFO("Deserializing game state");
-
-		GameState->m_Name = data["Name"].as<std::string>();
+		newGameState->m_Name = data["Name"].as<std::string>();
 
 		// Get Fields
 		{
 			auto fields = data["Fields"];
 			if (fields)
 			{
-				auto& newFieldsMap = GameState->m_Fields;
+				auto& newFieldsMap = newGameState->m_Fields;
 				for (auto field : fields)
 				{
 					std::string fieldName = field["Name"].as<std::string>();
@@ -311,31 +80,18 @@ namespace Kargono::Assets
 				}
 			}
 		}
-		return true;
 
+		return newGameState;
 	}
-
-	std::filesystem::path AssetManager::GetGameStateLocation(const AssetHandle& handle)
+	void GameStateManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
 	{
-		if (!s_GameStateRegistry.contains(handle))
-		{
-			KG_ERROR("Attempt to save GameState that does not exist in registry");
-			return "";
-		}
-		return s_GameStateRegistry[handle].Data.FileLocation;
+		Assets::GameStateMetaData* metadata = currentAsset.Data.GetSpecificMetaData<GameStateMetaData>();
+		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
 	}
-
-	Ref<Kargono::Scenes::GameState> AssetManager::GetGameState(const AssetHandle& handle)
+	void GameStateManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving GameState!");
-
-		if (s_GameStateRegistry.contains(handle))
-		{
-			auto asset = s_GameStateRegistry[handle];
-			return InstantiateGameState(asset);
-		}
-
-		KG_ERROR("No GameState is associated with provided handle!");
-		return nullptr;
+		Ref<Assets::GameStateMetaData> GameStateMetaData = CreateRef<Assets::GameStateMetaData>();
+		GameStateMetaData->Name = metadataNode["Name"].as<std::string>();
+		currentAsset.Data.SpecificFileData = GameStateMetaData;
 	}
 }

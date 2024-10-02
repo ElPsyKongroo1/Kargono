@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Input { class InputMode; }
 
 namespace Kargono::Assets
 {
-	class InputModeManager : public AssetManagerTemp<Input::InputMode>
+	class InputModeManager : public AssetManager<Input::InputMode>
 	{
 	public:
-		InputModeManager() : AssetManagerTemp<Input::InputMode>()
+		InputModeManager() : AssetManager<Input::InputMode>()
 		{
 			m_AssetName = "Input Mode";
 			m_AssetType = AssetType::InputMode;

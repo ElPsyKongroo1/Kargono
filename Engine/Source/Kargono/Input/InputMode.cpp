@@ -4,7 +4,7 @@
 
 #include "Kargono/Input/InputService.h"
 #include "Kargono/Core/Engine.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 
 namespace Kargono::Input
 {
@@ -28,7 +28,7 @@ namespace Kargono::Input
 		static Ref<InputMode> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
 
-		auto [handle, inputReference] = Assets::AssetManager::GetInputMode(inputMode);
+		auto [handle, inputReference] = Assets::AssetService::GetInputMode(inputMode);
 		s_InputRef = inputReference;
 		s_InputHandle = handle;
 
@@ -64,7 +64,7 @@ namespace Kargono::Input
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
-		Ref<Scripting::Script> newScript = Assets::AssetManager::GetScript(handle);
+		Ref<Scripting::Script> newScript = Assets::AssetService::GetScript(handle);
 		KG_ASSERT(newScript);
 		m_Script = newScript;
 		m_ScriptHandle = handle;

@@ -849,7 +849,7 @@ namespace Kargono::Panels
 		// Set up Line Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification lineShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(lineShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
@@ -865,7 +865,7 @@ namespace Kargono::Panels
 		// Set up Circle Input Specification for Overlay Calls
 		{
 			Rendering::ShaderSpecification shaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, true, true, false, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);

@@ -1,893 +1,546 @@
 #pragma once
-
+#include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/Rendering/Texture.h"
-#include "Kargono/Rendering/Shader.h"
-#include "Kargono/Audio/Audio.h"
-#include "Kargono/RuntimeUI/Font.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
-#include "Kargono/Scenes/GameState.h"
-#include "Kargono/Input/InputMode.h"
-#include "Kargono/Scripting/ScriptService.h"
-#include "Kargono/Scripting/ScriptModuleBuilder.h"
-#include "Kargono/Scenes/EntityClass.h"
+#include "Kargono/Projects/Project.h"
+#include "Kargono/Utility/FileSystem.h"
 
-#include <filesystem>
+#include "API/Serialization/yamlcppAPI.h"
+
+#include <bitset>
 #include <tuple>
-#include <unordered_set>
-#include <unordered_map>
+
+// Functions to call
+
+// Virtual functions to inject functionality
 
 
-namespace Kargono
+//==============================
+// Manage Registry
+//==============================
+
+// DeserializeRegistry
+// SerializeRegistry
+// Clear Registry
+// GetAssetRegistry()
+
+//==============================
+// Import Asset
+//==============================
+
+// ImportNewAssetFromFile
+// ImportNewAssetFromData()
+
+//==============================
+// Read Asset from Registry
+//==============================
+
+// GetAsset(handle)
+
+enum AssetManagerOptions : uint8_t
 {
-	namespace Scenes { class Scene; }
-	namespace Projects { class Project; }
-}
+	None = 0, // Default value
+	HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
+	HasIntermediateLocation = 2, // Specify that this asset manager generates an intermediate file to be stored in the project's Intermediates directory
+	HasFileLocation = 3, // Specify that this asset manager stores a file somewhere in the project's Assets directory
+	HasFileImporting = 4, // Specify that this asset manager is capable of importing the asset into the system from an external file
+	HasAssetSaving = 5, // Specify that this asset manager is capable of saving to the underlying file data for it's type of asset
+	HasAssetCreationFromName = 6 // Specify that this asset manager is capable of creating the underlying file data for it's type of asset
+};
 
-
-//============================================================
-// Assets Namespace
-//============================================================
-// This namespace holds all of the structs that the AssetManager deals with
-//		to manage Assets inside of the engine. Assets includes audio, textures,
-//		shaders, fonts, scenes, etc... These assets hold an AssetHandle to
-//		uniquely identify the asset and a metadata object that holds extra details
-//		about the asset. These details include the file location, a checksum,
-//		and Asset specific details such as its type and further asset specific metadata. // TODO: THIS NEEDS REWORK!
 namespace Kargono::Assets
 {
-	//============================================================
-	// Asset Manager Class
-	//============================================================
-	// Main API for getting resources at runtime!
+	using AssetRegistry = std::unordered_map<AssetHandle, Assets::Asset>;
+
+	template <typename AssetValue>
 	class AssetManager
 	{
-	//============================================================
-	// Textures
-	//============================================================
 	public:
-		//==============================
-		// Manage Texture Registry
-		//==============================
-		// Retrieve the current project's texture registry from disk and add to in-memory Registry
-		//		(s_TextureRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its texture specific metadata,
-		//		and instatiate each asset into the s_TextureRegistry.
-		static void DeserializeTextureRegistry();
-		// Save Current in-memory registry (s_TextureRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and texture specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeTextureRegistry();
-		// This function clears both the s_TextureRegistry and s_Textures which should also call
-		//		all destructors for in-memory Textures.
-		static void ClearTextureRegistry();
-
-		//==============================
-		// Import New Texture
-		//==============================
-
-		// This function registers a new texture with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_TextureRegistry and the on disk texture
-		//		registry
-		//		4. Instantiate the new texture into memory and return a handle to the new texture.
-		static AssetHandle ImportNewTextureFromFile(const std::filesystem::path& filePath);
-
-		// This function registers a new texture with the asset system using the provided data buffer.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_TextureRegistry and the on disk texture
-		//		registry
-		//		4. Instantiate the new texture into memory and return a handle to the new texture.
-		static AssetHandle ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels);
-
-		//==============================
-		// Load and Retrieve In-Memory Texture
-		//==============================
-		// Function to get a texture with a given name
-		static Ref<Rendering::Texture2D> GetTexture(const AssetHandle& handle);
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetTextureRegistry()
+		Ref<AssetValue> GetAsset(const AssetHandle& handle)
 		{
-			return s_TextureRegistry;
-		}
-		
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function loads a texture from an external format into an intermediate format and
-		//		stores the relevant asset metadata.
-		static void CreateTextureIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset);
-		// This function loads a texture from a binary buffer and stores this data into an intermediate
-		//		format along with relevant asset metadata.
-		static void CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset);
-		// Create Final Texture and to s_Textures
-		static Ref<Rendering::Texture2D> InstantiateTextureIntoMemory(Assets::Asset& asset);
-	private:
-		// This registry holds a reference to all of the available textures in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_TextureRegistry;
-		// This map holds all of the textures that have been fully loaded into memory and are ready
-		//		to use.
-		static inline std::unordered_map<AssetHandle, Ref<Rendering::Texture2D>> s_Textures;
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving asset!");
 
-	//============================================================
-	// Shaders
-	//============================================================
-	public:
-		//==============================
-		// Manage Shader Registry
-		//==============================
-		// Retrieve the current project's shader registry from disk and add to in-memory Registry
-		//		(s_ShaderRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its shader specific metadata,
-		//		and instatiate each asset into the s_ShaderRegistry.
-		static void DeserializeShaderRegistry();
-		// Save Current in-memory registry (s_ShaderRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and shader specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeShaderRegistry();
-		// This function clears both the s_ShaderRegistry and s_Shaders which should also call
-		//		all destructors for in-memory Shaders.
-		static void ClearShaderRegistry();
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				if (m_AssetCache.contains(handle))
+				{
+					return m_AssetCache[handle];
+				}
+			}
 
-		//==============================
-		// Load and Retrieve In-Memory Shader
-		//==============================
-		// Function finds shader associated with handle
-		static Ref<Kargono::Rendering::Shader> GetShader(const AssetHandle& handle);
-		// Function finds shader associated with Specification and returns asset handle along with shader
-		static std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> GetShader(const Rendering::ShaderSpecification& shaderSpec);
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
+			if (m_AssetRegistry.contains(handle))
+			{
+				auto asset = m_AssetRegistry[handle];
+				std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() / 
+					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? asset.Data.IntermediateLocation : asset.Data.FileLocation);
+				Ref<AssetValue> newAsset = DeserializeAsset(asset, assetPath);
+				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+				{
+					m_AssetCache.insert({ asset.Handle, newAsset });
+				}
+				return newAsset;
+			}
 
-		// This function registers a new shader with the asset system using the provided shader specification.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the shader created in shader builder and determine if the file already
-		//		exists in the registry. If the checksum fails but a specification exists that is identical, replace it.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_ShaderRegistry and the on disk shader
-		//		registry
-		//		4. Instantiate the new shader into memory and return a handle to the new shader.
-		static AssetHandle CreateNewShader(const Rendering::ShaderSpecification& shaderSpec);
-		// This function takes the shader source, splits the shader text into fragment/vertex shaders, compiles
-		//		the shaders into binary .kgvert/.kgfrag source files, and stores those files along with
-		//		a fill text version for debugging as .kgsource. Finally metadata is created for the shader.
-		static void CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
-			const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout);
-		// Create Final Shader and to s_Shaders
-		static Ref<Kargono::Rendering::Shader> InstantiateShaderIntoMemory(Assets::Asset& asset);
-	private:
-		// This registry holds a reference to all of the available shaders in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_ShaderRegistry;
-		// This map holds all of the shaders that have been fully loaded into memory and are ready
-		//		to use.
-		static inline std::unordered_map<AssetHandle, Ref<Kargono::Rendering::Shader>> s_Shaders;
-
-
-	//============================================================
-	// Audio
-	//============================================================
-	public:
-		//==============================
-		// Manage Audio Registry
-		//==============================
-		// Retrieve the current project's audio registry from disk and add to in-memory Registry
-		//		(s_AudioRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its audio specific metadata,
-		//		and instatiate each asset into the s_AudioRegistry.
-		static void DeserializeAudioRegistry();
-		// Save Current in-memory registry (s_AudioRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and audio specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeAudioRegistry();
-		// This function clears both the s_AudioRegistry and s_Audio which should also call
-		//		all destructors for in-memory Audio.
-		static void ClearAudioRegistry();
-
-		//==============================
-		// Import New Audio
-		//==============================
-
-		// This function registers a new audio with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_AudioRegistry and the on disk audio
-		//		registry
-		//		4. Instantiate the new audio into memory and return a handle to the new audio.
-		static AssetHandle ImportNewAudioFromFile(const std::filesystem::path& filePath);
-
-		//==============================
-		// Load and Retrieve In-Memory Audio
-		//==============================
-
-		// Function to get a texture with a given name
-		static Ref<Audio::AudioBuffer> GetAudio(const AssetHandle& handle);
-		// Function to get an audio buffer from its initial file location
-		static std::tuple<AssetHandle, Ref<Audio::AudioBuffer>> GetAudio(const std::filesystem::path& filepath);
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-
-		// This function takes the filepath to the original audio file and creates a PCM binary buffer, then
-		//		stores this binary buffer as an intermediate, then finally creates the relevant metadata for
-		//		loading the intermediate later.
-		static void CreateAudioIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset);
-		// Function to Load a new Audio from a buffer
-		static Ref<Audio::AudioBuffer> InstantiateAudioIntoMemory(Assets::Asset& asset);
-	private:
-		// This registry holds a reference to all of the available audio in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_AudioRegistry;
-		// This map holds all of the audio that have been fully loaded into memory and are ready
-		//		to use.
-		static inline std::unordered_map<AssetHandle, Ref<Audio::AudioBuffer>> s_Audio;
-
-	//============================================================
-	// Font
-	//============================================================
-	public:
-		//==============================
-		// Manage Font Registry
-		//==============================
-		// Retrieve the current project's font registry from disk and add to in-memory Registry
-		//		(s_FontRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its font specific metadata,
-		//		and instatiate each asset into the s_FontRegistry.
-		static void DeserializeFontRegistry();
-		// Save Current in-memory registry (s_FontRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and font specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeFontRegistry();
-		// This function clears both the s_FontRegistry and s_Fonts which should also call
-		//		all destructors for in-memory Fonts.
-		static void ClearFontRegistry();
-
-		//==============================
-		// Import New Font
-		//==============================
-
-		// This function registers a new font with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_FontRegistry and the on disk font
-		//		registry
-		//		4. Instantiate the new font into memory and return a handle to the new font.
-		static AssetHandle ImportNewFontFromFile(const std::filesystem::path& filePath);
-
-		//==============================
-		// Load and Retrieve In-Memory Font
-		//==============================
-		// Function to Load a new Font from a buffer
-		static Ref<RuntimeUI::Font> InstantiateFontIntoMemory(Assets::Asset& asset);
-		// Function to get a texture with a given name
-		static Ref<RuntimeUI::Font> GetFont(const AssetHandle& handle);
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function uses the filepath to load the font file from disk into a Character Map which
-		//		is used to create the .kgfont intermediate (series of Glyph images). The metadata is
-		//		created for the font to load the intermediates correctly.
-		static void CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset);
-	private:
-		// This registry holds a reference to all of the available fonts in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_FontRegistry;
-		// This map holds all of the audio that have been fully loaded into memory and are ready
-		//		to use.
-		static inline std::unordered_map<AssetHandle, Ref<RuntimeUI::Font>> s_Fonts;
-
-	//============================================================
-	// Scene
-	//============================================================
-	public:
-		//==============================
-		// Manage Scene Registry
-		//==============================
-		// Retrieve the current project's scene registry from disk and add to in-memory Registry
-		//		(s_SceneRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its scene specific metadata,
-		//		and instatiate each asset into the s_SceneRegistry.
-		static void DeserializeSceneRegistry();
-		// Save Current in-memory registry (s_SceneRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and scene specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeSceneRegistry();
-		// This function clears both the s_SceneRegistry and s_Scenes which should also call
-		//		all destructors for in-memory Scenes.
-		static void ClearSceneRegistry();
-
-		//==============================
-		// Create New Scene
-		//==============================
-
-		// This function registers a new scene with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the scene file on disk.
-		//		3. Register the new file with the in-memory s_SceneRegistry and the on disk scene
-		//		registry
-		//		4. Return the Scene handle
-		static AssetHandle CreateNewScene(const std::string& sceneName);
-
-		//==============================
-		// Save a Scene
-		//==============================
-		// Save/Update Current Scene
-		static void SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene);
-		// Save a single scene
-		static void SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath);
-		// Load a single scene
-		static bool DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath);
-
-		//==============================
-		// Load and Retrieve In-Memory Scene
-		//==============================
-		static Ref<Scenes::Scene> GetScene(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Scenes::Scene>> GetScene(const std::filesystem::path& filepath);
-		// Instantiate a new scene
-		static Ref<Scenes::Scene> InstantiateScene(const Assets::Asset& sceneAsset);
-
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		// Check if name already exists in registry
-		static bool CheckSceneExists(const std::string& sceneName);
-		// TODO: Commentplzzzz
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetSceneRegistry()
-		{
-			return s_SceneRegistry;
+			KG_WARN("No {} asset is associated with {} handle. Returning an empty asset reference", m_AssetName, handle);
+			return nullptr;
 		}
 
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function creates a .kgscene file with the specified name and fills the provided asset file
-		//		with relevant metadata.
-		static void CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset);
-	private:
-		// This registry holds a reference to all of the available scenes in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_SceneRegistry;
-
-	//============================================================
-	// UserInterface
-	//============================================================
-	public:
-		//==============================
-		// Manage UserInterface Registry
-		//==============================
-		// Retrieve the current project's userInterface registry from disk and add to in-memory Registry
-		//		(s_UserInterfaceRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its userInterface specific metadata,
-		//		and instatiate each asset into the s_UserInterfaceRegistry.
-		static void DeserializeUserInterfaceRegistry();
-		// Save Current in-memory registry (s_UserInterfaceRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and UserInterface specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeUserInterfaceRegistry();
-		// This function clears both the s_UserInterfaceRegistry and s_UserInterfaces which should also call
-		//		all destructors for in-memory UserInterfaces.
-		static void ClearUserInterfaceRegistry();
-
-		//==============================
-		// Create New UserInterface
-		//==============================
-
-		// This function registers a new userInterface with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the userInterface file on disk.
-		//		3. Register the new file with the in-memory s_UserInterfaceRegistry and the on disk userInterface
-		//		registry
-		//		4. Return the userInterface handle
-		static AssetHandle CreateNewUserInterface(const std::string& userInterfaceName);
-
-		static void DeleteUserInterface(AssetHandle handle);
-
-		//==============================
-		// Save a UserInterface
-		//==============================
-		// Save Current UserInterface
-		static void SaveUserInterface(AssetHandle userInterfaceHandle, Ref<RuntimeUI::UserInterface> userInterface);
-
-		//==============================
-		// Load and Retrieve In-Memory UserInterface
-		//==============================
-		// Function to get a texture with a given name
-		static Ref<RuntimeUI::UserInterface> GetUserInterface(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<RuntimeUI::UserInterface>> GetUserInterface(const std::filesystem::path& filepath);
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		// Check if name already exists in registry
-		static bool CheckUserInterfaceExists(const std::string& userInterfaceName);
-
-		// Returns the relative path from project directory of intermediate file
-		static std::filesystem::path GetUserInterfaceLocation(const AssetHandle& handle);
-
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetUserInterfaceRegistry()
+		std::tuple<AssetHandle, Ref<AssetValue>> GetAsset(const std::filesystem::path& fileLocation)
 		{
-			return s_UserInterfaceRegistry;
+			KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
+				"Attempt to retrieve a asset using a file location when this asset type does not support storing file locations");
+
+			std::filesystem::path assetPath = fileLocation;
+
+			if (fileLocation.is_absolute())
+			{
+				assetPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), fileLocation);
+			}
+
+			for (auto& [assetHandle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.FileLocation.compare(assetPath) == 0)
+				{
+					return { assetHandle, GetAsset(assetHandle) };
+				}
+			}
+			// Return empty asset if the asset is not found in the registry
+			KG_WARN("Invalid filepath provided to GetAsset(filepath) {}. Returning empty {} asset.", fileLocation.string(), m_AssetName);
+			return {Assets::EmptyHandle, nullptr};
 		}
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function creates a .userInterface file with the specified name and fills the provided asset file
-		//		with relevant metadata.
-		static void CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset);
-		// Save a single userInterface
-		static void SerializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath);
-		// Load a single userInterface
-		static bool DeserializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath);
-		// Instantiate a new userInterface
-		static Ref<RuntimeUI::UserInterface> InstantiateUserInterface(const Assets::Asset& userInterfaceAsset);
-	private:
-		// This registry holds a reference to all of the available UserInterface in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_UserInterfaceRegistry;
-
-	//============================================================
-	// InputMode
-	//============================================================
-	public:
-		//==============================
-		// Manage InputMode Registry
-		//==============================
-		// Retrieve the current project's inputMode registry from disk and add to in-memory Registry
-		//		(s_InputModeRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its inputMode specific metadata,
-		//		and instatiate each asset into the s_InputModeRegistry.
-		static void DeserializeInputModeRegistry();
-		// Save Current in-memory registry (s_InputModeRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and InputMode specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeInputModeRegistry();
-		// This function clears both the s_InputModeRegistry and s_InputModes which should also call
-		//		all destructors for in-memory InputModes.
-		static void ClearInputModeRegistry();
-
-		//==============================
-		// Create New InputMode
-		//==============================
-
-		// This function registers a new inputMode with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the inputMode file on disk.
-		//		3. Register the new file with the in-memory s_InputModeRegistry and the on disk inputMode
-		//		registry
-		//		4. Return the inputMode handle
-		static AssetHandle CreateNewInputMode(const std::string& inputModeName);
-
-		//==============================
-		// Save a InputMode
-		//==============================
-		// Save Current InputMode
-		static void SaveInputMode(AssetHandle inputModeHandle, Ref<Input::InputMode> inputMode);
-
-		//==============================
-		// Delete a InputMode
-		//==============================
-		static void DeleteInputMode(AssetHandle handle);
-
-		//==============================
-		// Load and Retrieve In-Memory InputMode
-		//==============================
-		// Function to get a texture with a given name
-		static Ref<Input::InputMode> GetInputMode(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Input::InputMode>> GetInputMode(const std::filesystem::path& filepath);
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		// Check if name already exists in registry
-		static bool CheckInputModeExists(const std::string& inputModeName);
-
-		// Returns the relative path from project directory of intermediate file
-		static std::filesystem::path GetInputModeLocation(const AssetHandle& handle);
-
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetInputModeRegistry() { return s_InputModeRegistry; }
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function creates a .inputMode file with the specified name and fills the provided asset file
-		//		with relevant metadata.
-		static void CreateInputModeFile(const std::string& inputModeName, Assets::Asset& newAsset);
-		// Save a single inputMode
-		static void SerializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath);
-		// Load a single inputMode
-		static bool DeserializeInputMode(Ref<Input::InputMode> inputMode, const std::filesystem::path& filepath);
-		// Instantiate a new inputMode
-		static Ref<Input::InputMode> InstantiateInputMode(const Assets::Asset& inputModeAsset);
-	private:
-		// This registry holds a reference to all of the available InputMode in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_InputModeRegistry;
-
-	//============================================================
-	// GameState
-	//============================================================
-	public:
-		//==============================
-		// Manage GameState Registry
-		//==============================
-		// Retrieve the current project's GameState registry from disk and add to in-memory Registry
-		//		(s_GameStateRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its GameState specific metadata,
-		//		and instatiate each asset into the s_GameStateRegistry.
-		static void DeserializeGameStateRegistry();
-		// Save Current in-memory registry (s_GameStateRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and GameState specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeGameStateRegistry();
-		// This function clears both the s_GameStateRegistry and s_GameStates which should also call
-		//		all destructors for in-memory GameStates.
-		static void ClearGameStateRegistry();
-
-		//==============================
-		// Create New GameState
-		//==============================
-
-		// This function registers a new GameState with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the GameState file on disk.
-		//		3. Register the new file with the in-memory s_GameStateRegistry and the on disk GameState
-		//		registry
-		//		4. Return the GameState handle
-		static AssetHandle CreateNewGameState(const std::string& GameStateName);
-
-		//==============================
-		// Save a GameState
-		//==============================
-		// Save Current GameState
-		static void SaveGameState(AssetHandle GameStateHandle, Ref<Kargono::Scenes::GameState> GameState);
-
-		//==============================
-		// Delete a GameState
-		//==============================
-		static void DeleteGameState(AssetHandle handle);
-
-		//==============================
-		// Load and Retrieve In-Memory GameState
-		//==============================
-		// Function to get a texture with a given name
-		static Ref<Kargono::Scenes::GameState> GetGameState(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Kargono::Scenes::GameState>> GetGameState(const std::filesystem::path& filepath);
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		// Check if name already exists in registry
-		static bool CheckGameStateExists(const std::string& GameStateName);
-
-		// Returns the relative path from project directory of intermediate file
-		static std::filesystem::path GetGameStateLocation(const AssetHandle& handle);
-
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetGameStateRegistry() { return s_GameStateRegistry; }
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function creates a .GameState file with the specified name and fills the provided asset file
-		//		with relevant metadata.
-		static void CreateGameStateFile(const std::string& GameStateName, Assets::Asset& newAsset);
-		// Save a single GameState
-		static void SerializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath);
-		// Load a single GameState
-		static bool DeserializeGameState(Ref<Kargono::Scenes::GameState> GameState, const std::filesystem::path& filepath);
-		// Instantiate a new GameState
-		static Ref<Kargono::Scenes::GameState> InstantiateGameState(const Assets::Asset& GameStateAsset);
-	private:
-		// This registry holds a reference to all of the available GameState in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_GameStateRegistry;
-
-
-		//============================================================
-		// EntityClass
-		//============================================================
-	public:
-		//==============================
-		// Manage EntityClass Registry
-		//==============================
-		// Retrieve the current project's EntityClass registry from disk and add to in-memory Registry
-		//		(s_EntityClassRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its EntityClass specific metadata,
-		//		and instatiate each asset into the s_EntityClassRegistry.
-		static void DeserializeEntityClassRegistry();
-		// Save Current in-memory registry (s_EntityClassRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and EntityClass specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeEntityClassRegistry();
-		// This function clears both the s_EntityClassRegistry and s_EntityClasss which should also call
-		//		all destructors for in-memory EntityClasss.
-		static void ClearEntityClassRegistry();
-
-		//==============================
-		// Create New EntityClass
-		//==============================
-
-		// This function registers a new EntityClass with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the EntityClass file on disk.
-		//		3. Register the new file with the in-memory s_EntityClassRegistry and the on disk EntityClass
-		//		registry
-		//		4. Return the EntityClass handle
-		static AssetHandle CreateNewEntityClass(const std::string& EntityClassName);
-
-		//==============================
-		// Save a EntityClass
-		//==============================
-		// Save Current EntityClass
-		static void SaveEntityClass(AssetHandle EntityClassHandle, Ref<Scenes::EntityClass> EntityClass, Ref<Scenes::Scene> editorScene = nullptr);
-
-		//==============================
-		// Delete a EntityClass
-		//==============================
-		static void DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene = nullptr);
-
-		//==============================
-		// Load and Retrieve In-Memory EntityClass
-		//==============================
-		// Function to get a texture with a given name
-		static Ref<Scenes::EntityClass> GetEntityClass(const AssetHandle& handle);
-		static std::tuple<AssetHandle, Ref<Scenes::EntityClass>> GetEntityClass(const std::filesystem::path& filepath);
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		// Check if name already exists in registry
-		static bool CheckEntityClassExists(const std::string& EntityClassName);
-
-		// Returns the relative path from project directory of intermediate file
-		static std::filesystem::path GetEntityClassLocation(const AssetHandle& handle);
-
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetEntityClassRegistry() { return s_EntityClassRegistry; }
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// This function creates a .EntityClass file with the specified name and fills the provided asset file
-		//		with relevant metadata.
-		static void CreateEntityClassFile(const std::string& EntityClassName, Assets::Asset& newAsset);
-		// Save a single EntityClass
-		static void SerializeEntityClass(Ref<Kargono::Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath);
-		// Load a single EntityClass
-		static bool DeserializeEntityClass(Ref<Kargono::Scenes::EntityClass> EntityClass, const std::filesystem::path& filepath);
-		// Instantiate a new EntityClass
-		static Ref<Kargono::Scenes::EntityClass> InstantiateEntityClass(const Assets::Asset& EntityClassAsset);
-	private:
-		// This registry holds a reference to all of the available EntityClass in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_EntityClassRegistry;
-
-	//============================================================
-	// Script
-	//============================================================
-	public:
-		//==============================
-		// Manage Script Registry
-		//==============================
-		// Retrieve the current project's Script registry from disk and add to in-memory Registry
-		//		(s_ScriptRegistry). This involves:
-		//		1. Retrieving the registry file from the current project asset directory.
-		//		2. Verifying the file is a registry file and opening the root node
-		//		3. Read each asset, retrieve its metadata, retrieve its Script specific metadata,
-		//		and instatiate each asset into the s_ScriptRegistry.
-		static void DeserializeScriptRegistry();
-		// Save Current in-memory registry (s_ScriptRegistry) to disk location specified in
-		//		current project. This involves:
-		//		1. Open a new registry file that is located in the current project asset directory.
-		//		2. Write each asset with its metadata and Script specific metadata into the new yaml file.
-		//		3. Write the file to the output stream.
-		static void SerializeScriptRegistry();
-		// This function clears both the s_ScriptRegistry and s_Script which should also call
-		//		all destructors for in-memory Script.
-		static void ClearScriptRegistry();
-
-		//==============================
-		// Import New Script
-		//==============================
-
-		struct ScriptSpec
+		std::filesystem::path GetAssetFileLocation(const AssetHandle& handle)
 		{
-			std::string Name {};
-			Scripting::ScriptType Type {Scripting::ScriptType::None };
-			std::string SectionLabel {};
-			WrappedFuncType FunctionType{ WrappedFuncType::None };
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation),
+				"Attempt to retrieve an asset's file location when none is support by the defined asset type.");
+			if (!m_AssetRegistry.contains(handle))
+			{
+				KG_WARN("Could not locate {} asset when attempting to retrieve it's file location using {} handle", m_AssetName, handle);
+				return std::filesystem::path();
+			}
+			return m_AssetRegistry[handle].Data.FileLocation;
+		}
+
+		std::filesystem::path GetAssetIntermediateLocation(const AssetHandle& handle)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasIntermediateLocation), 
+				"Attempt to retrieve asset intermediate when none is generated for defined type");
+			if (!m_AssetRegistry.contains(handle))
+			{
+				KG_WARN("Could not locate {} asset when attempting to retrieve it's intermediate location with {} handle", m_AssetName, handle);
+				return std::filesystem::path();
+			}
+			return m_AssetRegistry[handle].Data.IntermediateLocation;
+		}
+
+
+		bool HasAsset(const AssetHandle& handle)
+		{
+			return m_AssetRegistry.contains(handle);
+		}
+
+		// TODO: Redo this API, I hate it
+		bool HasAsset(const std::string& assetName)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
+				"Attempt to query the state of an asset using an asset name when asset type does not support using a file location.");
+			
+			// Calculate checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
+
+			// Ensure checksum is generated correctly
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Failed to generate checksum from asset name!");
+				return false;
+			}
+
+			// Check for a matching checksum
+			for (const auto& [handle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.CheckSum == currentCheckSum)
+				{
+					KG_WARN("Attempt to instantiate duplicate asset");
+					return true;
+				}
+			}
+
+			// Exit if no match is found
+			return false;
+		}
+
+		void SaveAsset(AssetHandle assetHandle, Ref<AssetValue> assetReference)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetSaving), "Attempt to save an asset who's type does not support data modification");
+
+			// Ensure handle exists inside registry
+			if (!m_AssetRegistry.contains(assetHandle))
+			{
+				KG_WARN("Attempt to save asset of type {} that does not exist in the asset registry", m_AssetName);
+				return;
+			}
+
+			// Find location of asset's data
+			Assets::Asset& asset = m_AssetRegistry[assetHandle];
+			std::filesystem::path dataLocation {};
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+			}
+			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+			}
+			else
+			{
+				KG_ASSERT(false, "Attempt to save an asset that does not have a specified file nor intermediate location");
+			}
+
+			// Update in memory asset if applicable
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.at(assetHandle) = assetReference;
+			}
+
+			// Save asset data on-disk
+			SerializeAsset(assetReference, dataLocation);
+		}
+
+		bool DeleteAsset(AssetHandle assetHandle)
+		{
+			if (!m_AssetRegistry.contains(assetHandle))
+			{
+				KG_WARN("Failed to delete {} asset. Asset was not found in registry.");
+				return false;
+			}
+
+			// Find location of asset's data
+			Assets::Asset& asset = m_AssetRegistry[assetHandle];
+			std::filesystem::path dataLocation {};
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation;
+			}
+			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+			}
+			else
+			{
+				KG_ASSERT(false, "Attempt to save an asset that does not have a specified file nor intermediate location");
+				return false;
+			}
+
+			DeleteAssetValidation(assetHandle);
+
+			// Delete the asset's data on-disk
+			Utility::FileSystem::DeleteSelectedFile(dataLocation);
+
+			// Delete the asset inside the registry
+			m_AssetRegistry.erase(assetHandle);
+
+			// Delete in-memory copy of this asset
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.erase(assetHandle);
+			}
+
+			// Save the modified registry to disk
+			SerializeAssetRegistry();
+			return true;
+		}
+
+		void ClearAssetRegistry()
+		{
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.clear();
+			}
+			m_AssetRegistry.clear();
+		}
+
+		AssetHandle CreateAsset(const std::string& assetName)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetCreationFromName), "Attempt to save an asset who's type does not support data creation");
+
+			// Create Checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
+
+			// Ensure checksum is valid
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Generated empty checksum from the string {}", assetName);
+				return Assets::EmptyHandle;
+			}
+
+			// Ensure duplicate asset is not found in registry.
+			for (const auto& [handle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.CheckSum == currentCheckSum)
+				{
+					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
+					return handle;
+				}
+			}
+
+			// Create New Asset/Handle
+			AssetHandle newHandle{ Assets::EmptyHandle };
+			Assets::Asset newAsset{};
+			newAsset.Handle = newHandle;
+			newAsset.Data.Type = m_AssetType;
+			newAsset.Data.CheckSum = currentCheckSum;
+			newAsset.Data.FileLocation = m_AssetName + (assetName + m_FileExtension);
+
+			// TODO: Fixme, this is temporary since a code path that uses an intermediate location is not yet necessary
+			KG_ASSERT(!m_Flags.test(AssetManagerOptions::HasIntermediateLocation), "Code path for intermediates is not yet supported");
+
+			// Create File
+			CreateAssetFileFromName(assetName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+
+			// Register New Asset and return handle.
+			m_AssetRegistry.insert({ newHandle, newAsset });
+			SerializeAssetRegistry();
+
+			// Fill in-memory cache if appropriate
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation) });
+			}
+
+			return newHandle;
+		}
+
+		AssetHandle ImportAssetFromFile(const std::filesystem::path& filePath)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileImporting), "Attempt to import an asset for a file type that does not support importing");
+
+			// Create Checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+
+			// Ensure checksum is valid
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Generated empty checksum from file at {}", filePath.string());
+				return Assets::EmptyHandle;
+			}
+
+			// Ensure duplicate asset is not found in registry.
+			for (const auto& [handle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.CheckSum == currentCheckSum)
+				{
+					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
+					return handle;
+				}
+			}
+
+			// Check if file extension is appropriate for this file type
+			bool foundValidExtension{ false };
+			for (auto& extension : m_ValidImportFileExtensions)
+			{
+				if (filePath.extension().string() == extension)
+				{
+					foundValidExtension = true;
+					break;
+				}
+			}
+			
+			// Exit if extension is invalid
+			if (!foundValidExtension)
+			{
+				KG_WARN("Invalid file extension ({}) for {} asset type. Valid file extensions for {} include: ");
+				for (auto& extension : m_ValidImportFileExtensions)
+				{
+					KG_WARN("  {}", extension);
+				}
+				return Assets::EmptyHandle;
+			}
+
+			// Create New Asset/Handle
+			AssetHandle newHandle { Assets::EmptyHandle };
+			Assets::Asset newAsset{};
+			newAsset.Handle = newHandle;
+			newAsset.Data.Type = m_AssetType;
+			
+			// Check if intermediates are used. If so, generate the intermediate.
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
+				newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension);
+				CreateAssetIntermediateFromFile(newAsset, filePath, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.IntermediateLocation);
+				newAsset.Data.CheckSum = currentCheckSum;
+			}
+			else
+			{
+				KG_ERROR("Attempt to import a file that does not generate an intermediate. I have not decided what happens in this case.");
+			}
+			// TODO: Make sure to modify the code below if fixing the asset above
+			std::filesystem::path assetPath = Projects::ProjectService::GetActiveAssetDirectory() /
+				(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? newAsset.Data.IntermediateLocation : newAsset.Data.FileLocation);
+
+			// Add new asset into asset registry
+			m_AssetRegistry.insert({ newHandle, newAsset });
+			SerializeAssetRegistry();
+
+			// Fill in-memory cache if appropriate
+			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
+			{
+				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
+			}
+			return newHandle;
+		}
+		void SerializeAssetRegistry()
+		{
+			// Get registry path
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
+			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveAssetDirectory() / m_RegistryLocation;
+			
+			// Set up serializer
+			YAML::Emitter serializer;
+			serializer << YAML::BeginMap;
+			serializer << YAML::Key << "Registry" << YAML::Value << m_AssetName;
+			serializer << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+
+			// Serialize other registry specific data
+			SerializeRegistrySpecificData(serializer);
+
+			// Asset
+			for (auto& [handle, asset] : m_AssetRegistry)
+			{
+				serializer << YAML::BeginMap; // Asset Map
+				serializer << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
+
+				serializer << YAML::Key << "MetaData" << YAML::Value;
+				serializer << YAML::BeginMap; // MetaData Map
+				serializer << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
+				if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+				{
+					serializer << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
+				}
+				if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+				{
+					serializer << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
+				}
+				serializer << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
+
+				SerializeAssetSpecificMetadata(serializer, asset);
+				
+				serializer << YAML::EndMap; // Close metadata map
+				serializer << YAML::EndMap; // Close asset map
+			}
+			serializer << YAML::EndSeq; // Close asset sequence
+			serializer << YAML::EndMap; // Close registry map
+
+			Utility::FileSystem::CreateNewDirectory(registryPath.parent_path());
+
+			std::ofstream fout(registryPath);
+			fout << serializer.c_str();
+		}
+
+		void DeserializeAssetRegistry()
+		{
+			// Clear current registry
+			m_AssetRegistry.clear();
+
+			// Get on-disk registry path
+			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
+			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveAssetDirectory() / m_RegistryLocation;
+
+			if (!std::filesystem::exists(registryPath))
+			{
+				KG_WARN("No .kgreg file found at provided registry path {}", registryPath.string());
+				return;
+			}
+			YAML::Node data;
+			try
+			{
+				data = YAML::LoadFile(registryPath.string());
+			}
+			catch (YAML::ParserException e)
+			{
+				KG_WARN("Failed to load {} file {}\n  {}", m_FileExtension , registryPath.string(), e.what());
+				return;
+			}
+			// Opening registry node 
+			if (!data["Registry"]) 
+			{ 
+				KG_WARN("Could not validate initial registry node for the file: {}", registryPath.string());
+				return; 
+			}
+
+			std::string registryName = data["Registry"].as<std::string>();
+			KG_INFO("Deserializing {} Registry", registryName);
+
+			// Open registry specific data
+			DeserializeRegistrySpecificData(data);
+
+			// Opening all assets 
+			auto assets = data["Assets"];
+			if (assets)
+			{
+				for (auto asset : assets)
+				{
+					Assets::Asset newAsset{};
+					newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+
+					// Retrieving metadata for asset 
+					auto metadata = asset["MetaData"];
+					newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
+					newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
+					if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+					{
+						newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
+					}
+					if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+					{
+						newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
+					}
+
+					// Open registry specific metadata
+					DeserializeAssetSpecificMetadata(metadata, newAsset);
+
+					// Add asset to in memory registry 
+					m_AssetRegistry.insert({ newAsset.Handle, newAsset });
+
+				}
+			}
+		}
+
+		std::unordered_map<AssetHandle, Asset>& GetAssetRegistry()
+		{
+			return m_AssetRegistry;
+		}
+
+		std::unordered_map<AssetHandle, Ref<AssetValue>>& GetAssetCache()
+		{
+			return m_AssetCache;
+		}
+
+		virtual void SerializeAsset(Ref<AssetValue> assetReference, const std::filesystem::path& assetPath) 
+		{ 
+			KG_ERROR("Attempt to serialize an asset that does not override the base class's implentation of SerializeAsset()");
 		};
-		// This function registers a new Script with the asset system using the provided filepath.
-		//		This function takes the following steps:
-		//		1. Create a checksum from the raw file provided and determine if the file already
-		//		exists in the registry.
-		//		2. Create the intermediate file format and store this format on disk.
-		//		3. Register the new file with the in-memory s_ScriptRegistry and the on disk Script
-		//		registry
-		//		4. Instantiate the new Script into memory and return a handle to the new Script.
-		static std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec);
 
-		static bool UpdateScript(AssetHandle scriptHandle , ScriptSpec& spec);
-
-		static bool DeleteScript(AssetHandle scriptHandle);
-
-		static bool AddScriptSectionLabel(const std::string& newLabel);
-		static bool EditScriptSectionLabel(const std::string& oldLabel, const std::string& newLabel);
-		static bool DeleteScriptSectionLabel(const std::string& label);
-
-		//==============================
-		// Load and Retrieve In-Memory Script
-		//==============================
-
-		// Function to get a texture with a given name
-		static Ref<Scripting::Script> GetScript(const AssetHandle& handle);
-		// Function to get an Script buffer from its initial file location
-		static std::tuple<AssetHandle, Ref<Scripting::Script>> GetScript(const std::filesystem::path& filepath);
-
-		static std::unordered_map<AssetHandle, Ref<Scripting::Script>>& GetScriptMap()
+		virtual void CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 		{
-			return s_Scripts;
+			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
 		}
 
-		static std::unordered_map<AssetHandle, Assets::Asset>& GetScriptRegistryMap()
-		{
-			return s_ScriptRegistry;
-		}
+		virtual void DeleteAssetValidation(AssetHandle assetHandle) {};
+		virtual Ref<AssetValue> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) = 0;
+		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) {};
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) {};
+		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) {};
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) {};
+		virtual void CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) {};
 
-		static std::unordered_set<std::string>& GetScriptSectionLabels()
-		{
-			return s_ScriptSectionLabels;
-		}
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-
-		static void FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset);
-		// Function to Load a new Script from a buffer
-		static Ref<Scripting::Script> InstantiateScriptIntoMemory(Assets::Asset& asset);
-	private:
-		// This registry holds a reference to all of the available Script in the current project.
-		//		Since the registry only holds references, it does not instantiate any of the objects
-		//		itself. It holds an AssetHandle to identify an asset and an Assets::Asset which holds
-		//		metadata that is necessary to load the intermediate file correctly.
-		static inline std::unordered_map<AssetHandle, Assets::Asset> s_ScriptRegistry;
-		static inline std::unordered_map<AssetHandle, Ref<Scripting::Script>> s_Scripts;
-		static inline std::unordered_set<std::string> s_ScriptSectionLabels;
-
-		friend class Scripting::ScriptService;
-		friend class Scripting::ScriptModuleBuilder;
-
-	//==============================
-	// General API
-	//==============================
-	public:
-
-		// Deserializes all registries into memory
-		static void DeserializeAll()
-		{
-			DeserializeShaderRegistry();
-			DeserializeTextureRegistry();
-			DeserializeAudioRegistry();
-			DeserializeFontRegistry();
-			DeserializeUserInterfaceRegistry();
-			DeserializeInputModeRegistry();
-			DeserializeScriptRegistry();
-			DeserializeGameStateRegistry();
-			DeserializeEntityClassRegistry();
-			DeserializeSceneRegistry();
-		}
-
-		// Serializes all registries into disk storage
-		static void SerializeAll()
-		{
-			SerializeShaderRegistry();
-			SerializeTextureRegistry();
-			SerializeAudioRegistry();
-			SerializeFontRegistry();
-			SerializeUserInterfaceRegistry();
-			SerializeInputModeRegistry();
-			SerializeScriptRegistry();
-			SerializeGameStateRegistry();
-			SerializeEntityClassRegistry();
-			SerializeSceneRegistry();
-		}
-
-		// Clears all Registries and In-Memory Assets
-		static void ClearAll()
-		{
-			ClearTextureRegistry();
-			ClearShaderRegistry();
-			ClearAudioRegistry();
-			ClearFontRegistry();
-			ClearUserInterfaceRegistry();
-			ClearInputModeRegistry();
-			ClearScriptRegistry();
-			ClearGameStateRegistry();
-			ClearEntityClassRegistry();
-			ClearSceneRegistry();
-		}
+	protected:
+		std::string m_AssetName{ "Uninitialized Asset Name" };
+		std::string m_FileExtension { ".kgfile" };
+		AssetType m_AssetType{ AssetType::None };
+		std::filesystem::path m_RegistryLocation{""};
+		std::vector<std::string> m_ValidImportFileExtensions{};
+		std::unordered_map<AssetHandle, Assets::Asset> m_AssetRegistry{};
+		std::unordered_map<AssetHandle, Ref<AssetValue>> m_AssetCache{};
+		std::bitset<8> m_Flags {0b00000000};
 	};
-	
-
 }

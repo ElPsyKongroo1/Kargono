@@ -56,19 +56,19 @@ namespace Kargono::Panels
 			s_AllScriptsTableSpec.OnRefresh();
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle;
 			s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 			handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle;
 			s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 			handle = s_EditorEntityClass->GetScripts().OnCreateHandle;
 			s_SelectOnCreateSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 			handle = s_EditorEntityClass->GetScripts().OnUpdateHandle;
 			s_SelectOnUpdateSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
 
@@ -81,7 +81,7 @@ namespace Kargono::Panels
 			s_OpenClassPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
 			s_OpenClassPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetManager::GetEntityClassRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
 			{
 				s_OpenClassPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
@@ -94,15 +94,15 @@ namespace Kargono::Panels
 				KG_WARN("No Entity Selected");
 				return;
 			}
-			if (!Assets::AssetManager::GetEntityClassRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetEntityClassRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not find on entity class in entity class editor");
 				return;
 			}
 
-			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(selection.Handle);
+			s_EditorEntityClass = Assets::AssetService::GetEntityClass(selection.Handle);
 			s_EditorEntityClassHandle = selection.Handle;
-			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+			s_TagHeader.Label = Assets::AssetService::GetEntityClassRegistry().at(
 				selection.Handle).Data.FileLocation.string();
 			s_TagHeader.EditColorActive = false;
 			s_OnRefreshData();
@@ -120,17 +120,17 @@ namespace Kargono::Panels
 				return;
 			}
 
-			for (auto& [id, asset] : Assets::AssetManager::GetEntityClassRegistry())
+			for (auto& [id, asset] : Assets::AssetService::GetEntityClassRegistry())
 			{
 				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == s_SelectClassNameSpec.CurrentOption)
 				{
 					return;
 				}
 			}
-			s_EditorEntityClassHandle = Assets::AssetManager::CreateNewEntityClass(s_SelectClassNameSpec.CurrentOption);
-			s_EditorEntityClass = Assets::AssetManager::GetEntityClass(s_EditorEntityClassHandle);
+			s_EditorEntityClassHandle = Assets::AssetService::CreateEntityClass(s_SelectClassNameSpec.CurrentOption);
+			s_EditorEntityClass = Assets::AssetService::GetEntityClass(s_EditorEntityClassHandle);
 			s_TagHeader.EditColorActive = false;
-			s_TagHeader.Label = Assets::AssetManager::GetEntityClassRegistry().at(
+			s_TagHeader.Label = Assets::AssetService::GetEntityClassRegistry().at(
 				s_EditorEntityClassHandle).Data.FileLocation.string();
 			s_OnRefreshData();
 		};
@@ -146,7 +146,7 @@ namespace Kargono::Panels
 		s_DeleteEntityClassWarning.Label = "Delete Entity Class";
 		s_DeleteEntityClassWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetManager::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorApp->m_EditorScene);
+			Assets::AssetService::DeleteEntityClass(s_EditorEntityClassHandle, s_EditorApp->m_EditorScene);
 			s_EditorApp->m_SceneEditorPanel->RefreshClassInstanceComponent();
 			s_EditorEntityClassHandle = 0;
 			s_EditorEntityClass = nullptr;
@@ -169,7 +169,7 @@ namespace Kargono::Panels
 
 		s_TagHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetManager::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
+			Assets::AssetService::SaveEntityClass(s_EditorEntityClassHandle, s_EditorEntityClass, s_EditorApp->m_EditorScene);
 			s_EditorApp->m_SceneEditorPanel->RefreshClassInstanceComponent();
 			s_TagHeader.EditColorActive = false;
 		});
@@ -323,7 +323,7 @@ namespace Kargono::Panels
 			s_SelectOnPhysicsCollisionStartSpec.GetAllOptions().clear();
 
 			s_SelectOnPhysicsCollisionStartSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
@@ -332,7 +332,7 @@ namespace Kargono::Panels
 			}
 			const Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle;
 			s_SelectOnPhysicsCollisionStartSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
 		s_SelectOnPhysicsCollisionStartSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -345,7 +345,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			if (!Assets::AssetManager::GetScriptRegistryMap().contains(selection.Handle))
+			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not locate OnPhysicsCollisionStart function in Entity Editor Panel");
 				return;
@@ -353,7 +353,7 @@ namespace Kargono::Panels
 
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionStartHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionStart =
-				Assets::AssetManager::GetScript(selection.Handle).get();
+				Assets::AssetService::GetScript(selection.Handle).get();
 			s_TagHeader.EditColorActive = true;
 		};
 
@@ -367,7 +367,7 @@ namespace Kargono::Panels
 			s_SelectOnPhysicsCollisionEndSpec.GetAllOptions().clear();
 
 			s_SelectOnPhysicsCollisionEndSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_FuncType == WrappedFuncType::Bool_UInt64UInt64)
 				{
@@ -376,7 +376,7 @@ namespace Kargono::Panels
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle;
 			s_SelectOnPhysicsCollisionEndSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
 		s_SelectOnPhysicsCollisionEndSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -389,7 +389,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			if (!Assets::AssetManager::GetScriptRegistryMap().contains(selection.Handle))
+			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not locate OnPhysicsCollisionEnd function in Entity Editor Panel");
 				return;
@@ -397,7 +397,7 @@ namespace Kargono::Panels
 
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionEndHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnPhysicsCollisionEnd =
-				Assets::AssetManager::GetScript(selection.Handle).get();
+				Assets::AssetService::GetScript(selection.Handle).get();
 			s_TagHeader.EditColorActive = true;
 		};
 
@@ -411,7 +411,7 @@ namespace Kargono::Panels
 			s_SelectOnCreateSpec.GetAllOptions().clear();
 
 			s_SelectOnCreateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_FuncType == WrappedFuncType::Void_UInt64)
 				{
@@ -420,7 +420,7 @@ namespace Kargono::Panels
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnCreateHandle;
 			s_SelectOnCreateSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
 		s_SelectOnCreateSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -433,7 +433,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			if (!Assets::AssetManager::GetScriptRegistryMap().contains(selection.Handle))
+			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not locate OnCreate function in Entity Editor Panel");
 				return;
@@ -441,7 +441,7 @@ namespace Kargono::Panels
 
 			s_EditorEntityClass->GetScripts().OnCreateHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnCreate =
-				Assets::AssetManager::GetScript(selection.Handle).get();
+				Assets::AssetService::GetScript(selection.Handle).get();
 			s_TagHeader.EditColorActive = true;
 		};
 
@@ -455,7 +455,7 @@ namespace Kargono::Panels
 			s_SelectOnUpdateSpec.GetAllOptions().clear();
 
 			s_SelectOnUpdateSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetManager::GetScriptMap())
+			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
 				if (script->m_FuncType == WrappedFuncType::Void_UInt64Float)
 				{
@@ -464,7 +464,7 @@ namespace Kargono::Panels
 			}
 			Assets::AssetHandle handle = s_EditorEntityClass->GetScripts().OnUpdateHandle;
 			s_SelectOnUpdateSpec.CurrentOption = { handle ?
-				Assets::AssetManager::GetScript(handle)->m_ScriptName : "None",
+				Assets::AssetService::GetScript(handle)->m_ScriptName : "None",
 				handle};
 		};
 		s_SelectOnUpdateSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -477,7 +477,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			if (!Assets::AssetManager::GetScriptRegistryMap().contains(selection.Handle))
+			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle))
 			{
 				KG_WARN("Could not locate OnUpdate function in Entity Editor Panel");
 				return;
@@ -485,7 +485,7 @@ namespace Kargono::Panels
 
 			s_EditorEntityClass->GetScripts().OnUpdateHandle = selection.Handle;
 			s_EditorEntityClass->GetScripts().OnUpdate =
-				Assets::AssetManager::GetScript(selection.Handle).get();
+				Assets::AssetService::GetScript(selection.Handle).get();
 			s_TagHeader.EditColorActive = true;
 		};
 
@@ -499,7 +499,7 @@ namespace Kargono::Panels
 			{
 				for (auto& scriptHandle: s_EditorEntityClass->GetScripts().AllClassScripts)
 				{
-					Ref<Scripting::Script> currentScript = Assets::AssetManager::GetScript(scriptHandle);
+					Ref<Scripting::Script> currentScript = Assets::AssetService::GetScript(scriptHandle);
 					if (!currentScript)
 					{
 						KG_WARN("Could not locate script in asset manager for all scripts table");
@@ -508,12 +508,12 @@ namespace Kargono::Panels
 
 					auto onLink = [&](EditorUI::TableEntry& entry)
 					{
-						if (!Assets::AssetManager::GetScriptRegistryMap().contains(entry.Handle))
+						if (!Assets::AssetService::GetScriptRegistry().contains(entry.Handle))
 						{
 							KG_WARN("Unable to open script in text editor. Script does not exist in registry");
 							return;
 						}
-						Assets::Asset& asset = Assets::AssetManager::GetScriptRegistryMap().at(entry.Handle);
+						Assets::Asset& asset = Assets::AssetService::GetScriptRegistry().at(entry.Handle);
 						s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 					};
 
@@ -609,7 +609,7 @@ namespace Kargono::Panels
 			return;
 		}
 
-		Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(handle);
+		Ref<Scenes::EntityClass> entityClass = Assets::AssetService::GetEntityClass(handle);
 		if (!entityClass)
 		{
 			KG_WARN("Invalid entity class pointer returned when attempting to refresh entity scripts");

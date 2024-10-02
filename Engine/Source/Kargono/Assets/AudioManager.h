@@ -1,12 +1,14 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Audio { class AudioBuffer; }
 
 namespace Kargono::Assets
 {
-	class AudioBufferManager : public AssetManagerTemp<Audio::AudioBuffer>
+	class AudioBufferManager : public AssetManager<Audio::AudioBuffer>
 	{
 	public:
-		AudioBufferManager() : AssetManagerTemp<Audio::AudioBuffer>()
+		AudioBufferManager() : AssetManager<Audio::AudioBuffer>()
 		{
 			m_AssetName = "Audio";
 			m_AssetType = AssetType::Audio;

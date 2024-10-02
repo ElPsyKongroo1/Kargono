@@ -2,7 +2,6 @@
 
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Scenes/SceneCamera.h"
-#include "Kargono/Assets/AssetManager.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/Shape.h"
 #include "Kargono/Audio/Audio.h"
@@ -152,23 +151,7 @@ namespace Kargono::Scenes
 		Ref<EntityClass> ClassReference{ nullptr };
 		std::vector<Ref<WrappedVariable>> Fields{};
 
-		bool ChangeClass(Assets::AssetHandle classHandle)
-		{
-			Ref<EntityClass> entityClassRef = Assets::AssetManager::GetEntityClass(classHandle);
-			if (!entityClassRef)
-			{
-				KG_WARN("Could not retrieve entity class reference in Components.h");
-				return false;
-			}
-			ClassHandle = classHandle;
-			ClassReference = entityClassRef;
-			Fields.clear();
-			for (auto& [name, type] : entityClassRef->GetFields())
-			{
-				Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
-			}
-			return true;
-		}
+		bool ChangeClass(Assets::AssetHandle classHandle);
 		ClassInstanceComponent() = default;
 		ClassInstanceComponent(const ClassInstanceComponent&) = default;
 	};
@@ -205,20 +188,7 @@ namespace Kargono::Scenes
 		Assets::AssetHandle TextureHandle;
 		Buffer ShaderData;
 
-		ShapeComponent()
-		{
-			auto [handle , shader] = Assets::AssetManager::GetShader(ShaderSpecification);
-			ShaderHandle = handle;
-			Shader = shader;
-			Buffer textureBuffer{ 4 };
-			textureBuffer.SetDataToByte(0xff);
-			TextureHandle = Assets::AssetManager::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
-			Texture = Assets::AssetManager::GetTexture(TextureHandle);
-			textureBuffer.Release();
-			Buffer buffer(Shader->GetInputLayout().GetStride() * sizeof(uint8_t));
-			ShaderData = buffer;
-			ShaderData.SetDataToByte(0);
-		}
+		ShapeComponent();
 		ShapeComponent(const ShapeComponent& other)
 		{
 			this->CurrentShape = other.CurrentShape;

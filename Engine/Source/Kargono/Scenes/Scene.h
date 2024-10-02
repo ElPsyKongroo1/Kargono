@@ -157,7 +157,6 @@ namespace Kargono::Scenes
 		// Friend Declarations
 		friend class Entity;
 		friend class SceneSerializer;
-		friend class Assets::AssetManager;
 		friend class SceneService;
 	};
 

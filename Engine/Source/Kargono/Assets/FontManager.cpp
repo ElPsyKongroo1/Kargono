@@ -1,11 +1,11 @@
 #include "kgpch.h"
 
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Projects/Project.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/FontManager.h"
+#include "Kargono/Rendering/Texture.h"
 
-#include "API/Serialization/yamlcppAPI.h"
 #include "API/Text/msdfgenAPI.h"
+#include "API/ImageProcessing/stbAPI.h"
 
 namespace Kargono::Utility
 {
@@ -32,152 +32,88 @@ namespace Kargono::Utility
 		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
 		memcpy_s(buffer.Data, buffer.Size, bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
 	}
+
+
+	/*template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
+	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
+	{
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+		msdf_atlas::GeneratorAttributes attributes;
+		attributes.config.overlapSupport = true;
+		attributes.scanlinePass = true;
+		msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
+		generator.setAttributes(attributes);
+		generator.setThreadCount(numAvailableThread);
+		generator.generate(glyphs.data(), (int32_t)glyphs.size());
+
+		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
+
+		TextureSpecification spec;
+		spec.Width = bitmap.width;
+		spec.Height = bitmap.height;
+		spec.Format = ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Texture2D> texture = Texture2D::Create(spec);
+		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(spec.Format));
+		return texture;
+	}*/
+
 }
 
 namespace Kargono::Assets
 {
-	//===================================================================================================================================================
-	
-	void AssetManager::DeserializeFontRegistry()
+	Ref<RuntimeUI::Font> Assets::FontManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		// Clear current registry and open registry in current project 
-		s_FontRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& fontRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
+		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
+		Assets::FontMetaData metadata = *asset.Data.GetSpecificMetaData<FontMetaData>();
+		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
+		auto& fontCharacters = newFont->GetCharacters();
 
-		if (!std::filesystem::exists(fontRegistryLocation))
+		// Create Texture
+		Rendering::TextureSpecification spec;
+		spec.Width = static_cast<uint32_t>(metadata.AtlasWidth);
+		spec.Height = static_cast<uint32_t>(metadata.AtlasHeight);
+		spec.Format = Rendering::ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
+		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
+		newFont->m_AtlasTexture = texture;
+
+		newFont->SetLineHeight(metadata.LineHeight);
+
+		for (auto& [character, characterStruct] : metadata.Characters)
 		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(fontRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", fontRegistryLocation.string(), e.what());
-			return;
+			fontCharacters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
 		}
 
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Font Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving font specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::Font)
-				{
-					Ref<Assets::FontMetaData> fontMetaData = CreateRef<Assets::FontMetaData>();
-
-					fontMetaData->AtlasWidth = metadata["AtlasWidth"].as<float>();
-					fontMetaData->AtlasHeight = metadata["AtlasHeight"].as<float>();
-					fontMetaData->LineHeight = metadata["LineHeight"].as<float>();
-
-					auto characters = metadata["Characters"];
-					auto& characterVector = fontMetaData->Characters;
-					for (auto character : characters)
-					{
-						RuntimeUI::Character newCharacter{};
-						newCharacter.Size = character["Size"].as<Math::vec2>();
-						newCharacter.Advance = character["Advance"].as<float>();
-						newCharacter.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
-						newCharacter.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
-						newCharacter.QuadMin = character["QuadMin"].as<Math::vec2>();
-						newCharacter.QuadMax = character["QuadMax"].as<Math::vec2>();
-						characterVector.push_back(std::pair<unsigned char, RuntimeUI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
-					}
-
-					newAsset.Data.SpecificFileData = fontMetaData;
-
-				}
-
-				// Add asset to in memory registry 
-				s_FontRegistry.insert({ newAsset.Handle, newAsset });
-
-			}
-		}
+		currentResource.Release();
+		return newFont;
 	}
-
-	void AssetManager::SerializeFontRegistry()
+	void Assets::FontManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& fontRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Fonts/Intermediates/FontRegistry.kgreg";
-		YAML::Emitter out;
+		Assets::FontMetaData* metadata = currentAsset.Data.GetSpecificMetaData<FontMetaData>();
 
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Font";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
+		serializer << YAML::Key << "AtlasWidth" << YAML::Value << metadata->AtlasWidth;
+		serializer << YAML::Key << "AtlasHeight" << YAML::Value << metadata->AtlasHeight;
+		serializer << YAML::Key << "LineHeight" << YAML::Value << metadata->LineHeight;
 
-		// Asset
-		for (auto& [handle, asset] : s_FontRegistry)
+		serializer << YAML::Key << "Characters" << YAML::Value << YAML::BeginSeq;
+		for (auto& [character, characterStruct] : metadata->Characters)
 		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			if (asset.Data.Type == Assets::AssetType::Font)
-			{
-				Assets::FontMetaData* metadata = static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
-
-
-				out << YAML::Key << "AtlasWidth" << YAML::Value << metadata->AtlasWidth;
-				out << YAML::Key << "AtlasHeight" << YAML::Value << metadata->AtlasHeight;
-				out << YAML::Key << "LineHeight" << YAML::Value << metadata->LineHeight;
-
-				out << YAML::Key << "Characters" << YAML::Value << YAML::BeginSeq;
-				for (auto& [character, characterStruct] : metadata->Characters)
-				{
-					out << YAML::BeginMap;
-					out << YAML::Key << "Character" << YAML::Value << static_cast<uint32_t>(character);
-					out << YAML::Key << "Size" << YAML::Value << characterStruct.Size;
-					out << YAML::Key << "TexCoordinateMin" << YAML::Value << characterStruct.TexCoordinateMin;
-					out << YAML::Key << "TexCoordinateMax" << YAML::Value << characterStruct.TexCoordinateMax;
-					out << YAML::Key << "QuadMin" << YAML::Value << characterStruct.QuadMin;
-					out << YAML::Key << "QuadMax" << YAML::Value << characterStruct.QuadMax;
-					out << YAML::Key << "Advance" << YAML::Value << characterStruct.Advance;
-					out << YAML::EndMap;
-				}
-				out << YAML::EndSeq;
-			}
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
+			serializer << YAML::BeginMap;
+			serializer << YAML::Key << "Character" << YAML::Value << static_cast<uint32_t>(character);
+			serializer << YAML::Key << "Size" << YAML::Value << characterStruct.Size;
+			serializer << YAML::Key << "TexCoordinateMin" << YAML::Value << characterStruct.TexCoordinateMin;
+			serializer << YAML::Key << "TexCoordinateMax" << YAML::Value << characterStruct.TexCoordinateMax;
+			serializer << YAML::Key << "QuadMin" << YAML::Value << characterStruct.QuadMin;
+			serializer << YAML::Key << "QuadMax" << YAML::Value << characterStruct.QuadMax;
+			serializer << YAML::Key << "Advance" << YAML::Value << characterStruct.Advance;
+			serializer << YAML::EndMap;
 		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(fontRegistryLocation.parent_path());
-
-		std::ofstream fout(fontRegistryLocation);
-		fout << out.c_str();
+		serializer << YAML::EndSeq;
 	}
-
-	void AssetManager::CreateFontIntermediateFromFile(const std::filesystem::path& filePath, Assets::Asset& newAsset)
+	void Assets::FontManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Buffers
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
@@ -188,11 +124,10 @@ namespace Kargono::Assets
 		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
 		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
 
-		std::string fileString = filePath.string();
-		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fileString.c_str());
+		msdfgen::FontHandle* font = msdfgen::loadFont(ft, fullFileLocation.string().c_str());
 		if (!font)
 		{
-			KG_ERROR("Font not loaded correctly from filepath: " + filePath.string());
+			KG_ERROR("Font not loaded correctly from filepath: " + fullFileLocation.string());
 			return;
 		}
 
@@ -295,115 +230,39 @@ namespace Kargono::Assets
 		}
 
 		// Save Binary Intermediate into File
-		std::string intermediatePath = "Fonts/Intermediates/" + (std::string)newAsset.Handle + ".kgfont";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / intermediatePath;
-		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
+		Utility::FileSystem::WriteFileBinary(fullIntermediateLocation, buffer);
 
 		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Font;
-		newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
-		newAsset.Data.IntermediateLocation = intermediatePath;
 		Ref<Assets::FontMetaData> metadata = CreateRef<Assets::FontMetaData>();
 		metadata->AtlasWidth = static_cast<float>(textureSpec.Width);
 		metadata->AtlasHeight = static_cast<float>(textureSpec.Height);
 		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
 		newAsset.Data.SpecificFileData = metadata;
-
 		buffer.Release();
 	}
-
-	AssetHandle AssetManager::ImportNewFontFromFile(const std::filesystem::path& filePath)
+	void Assets::FontManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
 	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
+		Ref<Assets::FontMetaData> fontMetaData = CreateRef<Assets::FontMetaData>();
 
-		if (currentCheckSum.empty())
+		fontMetaData->AtlasWidth = metadataNode["AtlasWidth"].as<float>();
+		fontMetaData->AtlasHeight = metadataNode["AtlasHeight"].as<float>();
+		fontMetaData->LineHeight = metadataNode["LineHeight"].as<float>();
+
+		auto characters = metadataNode["Characters"];
+		auto& characterVector = fontMetaData->Characters;
+		for (auto character : characters)
 		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
+			RuntimeUI::Character newCharacter{};
+			newCharacter.Size = character["Size"].as<Math::vec2>();
+			newCharacter.Advance = character["Advance"].as<float>();
+			newCharacter.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
+			newCharacter.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
+			newCharacter.QuadMin = character["QuadMin"].as<Math::vec2>();
+			newCharacter.QuadMax = character["QuadMax"].as<Math::vec2>();
+			characterVector.push_back(std::pair<unsigned char, RuntimeUI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
 		}
 
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_FontRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create Intermediate
-		CreateFontIntermediateFromFile(filePath, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Font
-		s_FontRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeFontRegistry(); // Update Registry File on Disk
-
-		s_Fonts.insert({ newHandle, InstantiateFontIntoMemory(newAsset) });
-
-		return newHandle;
-	}
-
-	void AssetManager::ClearFontRegistry()
-	{
-		s_FontRegistry.clear();
-		s_Fonts.clear();
-	}
-	
-	Ref<RuntimeUI::Font> AssetManager::InstantiateFontIntoMemory(Assets::Asset& asset)
-	{
-		Assets::FontMetaData metadata = *static_cast<Assets::FontMetaData*>(asset.Data.SpecificFileData.get());
-		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.IntermediateLocation);
-		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
-		auto& fontCharacters = newFont->GetCharacters();
-
-		// Create Texture
-		Rendering::TextureSpecification spec;
-		spec.Width = static_cast<uint32_t>(metadata.AtlasWidth);
-		spec.Height = static_cast<uint32_t>(metadata.AtlasHeight);
-		spec.Format = Rendering::ImageFormat::RGB8;
-		spec.GenerateMipMaps = false;
-		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
-		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
-		newFont->m_AtlasTexture = texture;
-
-		newFont->SetLineHeight(metadata.LineHeight);
-
-		for (auto& [character, characterStruct] : metadata.Characters)
-		{
-			fontCharacters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
-		}
-
-		currentResource.Release();
-		return newFont;
-
-	}
-
-	Ref<RuntimeUI::Font> AssetManager::GetFont(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving font!");
-
-		if (s_Fonts.contains(handle)) { return s_Fonts[handle]; }
-
-		if (s_FontRegistry.contains(handle))
-		{
-			auto asset = s_FontRegistry[handle];
-
-			Ref<RuntimeUI::Font> newFont = InstantiateFontIntoMemory(asset);
-			s_Fonts.insert({ asset.Handle, newFont });
-			return newFont;
-		}
-
-		KG_WARN("No font is associated with provided handle!");
-		return nullptr;
+		currentAsset.Data.SpecificFileData = fontMetaData;
 	}
 }

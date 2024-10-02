@@ -2,7 +2,7 @@
 
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Rendering/RenderingService.h"
@@ -25,7 +25,7 @@ namespace Kargono::RuntimeUI
 		// Initialize Window Spec Data
 		{
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false};
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
@@ -90,7 +90,7 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::SetActiveUIFromName(const std::string& uiName)
 	{
-		auto [handle, uiReference] = Assets::AssetManager::GetUserInterface(uiName);
+		auto [handle, uiReference] = Assets::AssetService::GetUserInterface(uiName);
 
 		if (!uiReference)
 		{

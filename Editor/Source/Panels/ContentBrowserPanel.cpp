@@ -351,8 +351,8 @@ namespace Kargono::Panels
 				{
 					if (ImGui::Selectable("Use Font In Current User Interface"))
 					{
-						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(directoryEntry);
-						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
+						Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(directoryEntry);
+						Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 						if (font)
 						{
 							RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);

@@ -7,6 +7,7 @@
 #include "Kargono/Input/InputService.h"
 #include "Kargono/Input/InputMode.h"
 #include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Rendering/Texture.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"

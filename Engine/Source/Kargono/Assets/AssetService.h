@@ -2,16 +2,16 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/AssetsTemp/AudioManagerTemp.h"
-#include "Kargono/AssetsTemp/EntityClassManagerTemp.h"
-#include "Kargono/AssetsTemp/FontManagerTemp.h"
-#include "Kargono/AssetsTemp/GameStateManagerTemp.h"
-#include "Kargono/AssetsTemp/InputModeManagerTemp.h"
-#include "Kargono/AssetsTemp/SceneManagerTemp.h"
-#include "Kargono/AssetsTemp/ScriptManagerTemp.h"
-#include "Kargono/AssetsTemp/ShaderManagerTemp.h"
-#include "Kargono/AssetsTemp/TextureManagerTemp.h"
-#include "Kargono/AssetsTemp/UserInterfaceManagerTemp.h"
+#include "Kargono/Assets/AudioManager.h"
+#include "Kargono/Assets/EntityClassManager.h"
+#include "Kargono/Assets/FontManager.h"
+#include "Kargono/Assets/GameStateManager.h"
+#include "Kargono/Assets/InputModeManager.h"
+#include "Kargono/Assets/SceneManager.h"
+#include "Kargono/Assets/ScriptManager.h"
+#include "Kargono/Assets/ShaderManager.h"
+#include "Kargono/Assets/TextureManager.h"
+#include "Kargono/Assets/UserInterfaceManager.h"
 
 #define DEFINE_MANAGER(typeNamespace, typeName) \
 		static Ref<typeNamespace##::##typeName> Get##typeName(const AssetHandle& handle) \
@@ -66,9 +66,9 @@
 		{\
 			s_AssetsContext.m_##typeName##Manager.SaveAsset(assetHandle, assetReference); \
 		}\
-		static void Delete##typeName(AssetHandle assetHandle) \
+		static bool Delete##typeName(AssetHandle assetHandle) \
 		{\
-			s_AssetsContext.m_##typeName##Manager.DeleteAsset(assetHandle); \
+			return s_AssetsContext.m_##typeName##Manager.DeleteAsset(assetHandle); \
 		}\
 		static AssetHandle Import##typeName##FromFile(const std::filesystem::path& filePath) \
 		{\
@@ -139,6 +139,11 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_ScriptManager.DeleteScriptSectionLabel(label);
 		}
 
+		static std::unordered_set<std::string>& GetScriptSectionLabels()
+		{
+			return s_AssetsContext.m_ScriptManager.m_ScriptSectionLabels;
+		}
+
 		static AssetHandle CreateNewShader(const Rendering::ShaderSpecification& shaderSpec)
 		{
 			return s_AssetsContext.m_ShaderManager.CreateNewShader(shaderSpec);
@@ -151,6 +156,51 @@ namespace Kargono::Assets
 		static AssetHandle ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
 		{
 			return s_AssetsContext.m_Texture2DManager.ImportNewTextureFromData(buffer, width, height, channels);
+		}
+
+		// Deserializes all registries into memory
+		static void DeserializeAll()
+		{
+			DeserializeShaderRegistry();
+			DeserializeTexture2DRegistry();
+			DeserializeAudioBufferRegistry();
+			DeserializeFontRegistry();
+			DeserializeUserInterfaceRegistry();
+			DeserializeInputModeRegistry();
+			DeserializeScriptRegistry();
+			DeserializeGameStateRegistry();
+			DeserializeEntityClassRegistry();
+			DeserializeSceneRegistry();
+		}
+
+		// Serializes all registries into disk storage
+		static void SerializeAll()
+		{
+			SerializeShaderRegistry();
+			SerializeTexture2DRegistry();
+			SerializeAudioBufferRegistry();
+			SerializeFontRegistry();
+			SerializeUserInterfaceRegistry();
+			SerializeInputModeRegistry();
+			SerializeScriptRegistry();
+			SerializeGameStateRegistry();
+			SerializeEntityClassRegistry();
+			SerializeSceneRegistry();
+		}
+
+		// Clears all Registries and In-Memory Assets
+		static void ClearAll()
+		{
+			ClearTexture2DRegistry();
+			ClearShaderRegistry();
+			ClearAudioBufferRegistry();
+			ClearFontRegistry();
+			ClearUserInterfaceRegistry();
+			ClearInputModeRegistry();
+			ClearScriptRegistry();
+			ClearGameStateRegistry();
+			ClearEntityClassRegistry();
+			ClearSceneRegistry();
 		}
 
 	private:

@@ -1,86 +1,40 @@
 #include "kgpch.h"
 
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Projects/Project.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/UserInterfaceManager.h"
 
-#include "API/Serialization/yamlcppAPI.h"
-
+#include "Kargono/RuntimeUI/RuntimeUI.h"
 
 namespace Kargono::Assets
 {
-	//===================================================================================================================================================
-
-	AssetHandle AssetManager::CreateNewUserInterface(const std::string& userInterfaceName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateUserInterfaceFile(userInterfaceName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and return handle.
-		s_UserInterfaceRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeUserInterfaceRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::CreateUserInterfaceFile(const std::string& userInterfaceName, Assets::Asset& newAsset)
+	void UserInterfaceManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary UserInterface
 		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
 
 		// Save into File
-		std::string userInterfacePath = "UserInterface/" + userInterfaceName + ".kgui";
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / userInterfacePath;
-		SerializeUserInterface(temporaryUserInterface, fullPath.string());
+		SerializeAsset(temporaryUserInterface, assetPath);
 
 		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::UserInterface;
-		newAsset.Data.FileLocation = userInterfacePath;
 		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
+		asset.Data.SpecificFileData = metadata;
 	}
-	
-	void AssetManager::SerializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath)
+	void UserInterfaceManager::SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		// Select Color
-		out << YAML::Key << "SelectColor" << YAML::Value << userInterface->m_SelectColor;
+		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_SelectColor;
 
 		// Function Pointers
-		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)userInterface->m_FunctionPointers.OnMoveHandle;
+		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.OnMoveHandle;
 		// Font
-		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(userInterface->m_FontHandle);
+		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(assetReference->m_FontHandle);
 		// Windows
 		out << YAML::Key << "Windows" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Windows Seq
 
-		for (auto& window : userInterface->m_Windows)
+		for (auto& window : assetReference->m_Windows)
 		{
 			out << YAML::BeginMap; // Start Window Map
 
@@ -141,221 +95,50 @@ namespace Kargono::Assets
 		out << YAML::EndSeq; // End of Windows Seq
 		out << YAML::EndMap; // Start of File Map
 
-		std::ofstream fout(filepath);
+		std::ofstream fout(assetPath);
 		fout << out.c_str();
-		KG_INFO("Successfully Serialized UserInterface at {}", filepath);
 	}
-
-	void AssetManager::DeleteUserInterface(AssetHandle handle)
+	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		if (!s_UserInterfaceRegistry.contains(handle))
-		{
-			KG_WARN("Failed to delete user interface in AssetManager");
-			return;
-		}
-
-		Utility::FileSystem::DeleteSelectedFile(Projects::ProjectService::GetActiveAssetDirectory() /
-			s_UserInterfaceRegistry.at(handle).Data.FileLocation);
-
-		s_UserInterfaceRegistry.erase(handle);
-
-		SerializeUserInterfaceRegistry();
-	}
-
-	void AssetManager::SaveUserInterface(AssetHandle userInterfaceHandle, Ref<RuntimeUI::UserInterface> userInterface)
-	{
-		if (!s_UserInterfaceRegistry.contains(userInterfaceHandle))
-		{
-			KG_ERROR("Attempt to save userInterface that does not exist in registry");
-			return;
-		}
-		Assets::Asset userInterfaceAsset = s_UserInterfaceRegistry[userInterfaceHandle];
-		SerializeUserInterface(userInterface, (Projects::ProjectService::GetActiveAssetDirectory() / userInterfaceAsset.Data.FileLocation).string());
-	}
-	
-	bool AssetManager::CheckUserInterfaceExists(const std::string& userInterfaceName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(userInterfaceName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	void AssetManager::DeserializeUserInterfaceRegistry()
-	{
-		// Clear current registry and open registry in current project 
-		s_UserInterfaceRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
-
-		if (!std::filesystem::exists(userInterfaceRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
+		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(userInterfaceRegistryLocation.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", userInterfaceRegistryLocation.string(), e.what());
-			return;
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
-
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing UserInterface Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.FileLocation = metadata["FileLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving uiobject specific metadata 
-				if (newAsset.Data.Type == Assets::AssetType::UserInterface)
-				{
-					Ref<Assets::UserInterfaceMetaData> userInterfaceMetaData = CreateRef<Assets::UserInterfaceMetaData>();
-					newAsset.Data.SpecificFileData = userInterfaceMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_UserInterfaceRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
-	}
-	
-	void AssetManager::SerializeUserInterfaceRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& userInterfaceRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "UserInterface/UserInterfaceRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "UserInterface";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_UserInterfaceRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "FileLocation" << YAML::Value << asset.Data.FileLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(userInterfaceRegistryLocation.parent_path());
-
-		std::ofstream fout(userInterfaceRegistryLocation);
-		fout << out.c_str();
-	}
-	
-	std::tuple<AssetHandle, Ref<RuntimeUI::UserInterface>> AssetManager::GetUserInterface(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-		std::filesystem::path userInterfacePath = filepath;
-
-		if (filepath.is_absolute())
-		{
-			userInterfacePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-
-		for (auto& [assetHandle, asset] : s_UserInterfaceRegistry)
-		{
-			if (asset.Data.FileLocation.compare(userInterfacePath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateUserInterface(asset));
-			}
-		}
-		// Return empty userInterface if userInterface does not exist
-		KG_WARN("No UserInterface Associated with provided handle. Returned new empty userInterface");
-		AssetHandle newHandle = CreateNewUserInterface(filepath.stem().string());
-		return std::make_tuple(newHandle, GetUserInterface(newHandle));
-	}
-	
-	void AssetManager::ClearUserInterfaceRegistry()
-	{
-		s_UserInterfaceRegistry.clear();
-	}
-
-	bool AssetManager::DeserializeUserInterface(Ref<RuntimeUI::UserInterface> userInterface, const std::filesystem::path& filepath)
-	{
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(filepath.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgui file '{0}'\n     {1}", filepath, e.what());
-			return false;
-		}
-
-		KG_INFO("Deserializing user interface object");
 
 		// Get SelectColor
-		userInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
+		newUserInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
 		// Function Pointers
-		userInterface->m_FunctionPointers.OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (userInterface->m_FunctionPointers.OnMoveHandle == Assets::EmptyHandle)
+		newUserInterface->m_FunctionPointers.OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
+		if (newUserInterface->m_FunctionPointers.OnMoveHandle == Assets::EmptyHandle)
 		{
-			userInterface->m_FunctionPointers.OnMove = nullptr;
+			newUserInterface->m_FunctionPointers.OnMove = nullptr;
 		}
 		else
 		{
-			Ref<Scripting::Script> onMoveScript = GetScript(userInterface->m_FunctionPointers.OnMoveHandle);
+			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(newUserInterface->m_FunctionPointers.OnMoveHandle);
 			if (!onMoveScript)
 			{
-				KG_ERROR("Unable to locate OnMove Script!");
-				return false;
+				KG_WARN("Unable to locate OnMove Script!");
+				return nullptr;
 			}
-			userInterface->m_FunctionPointers.OnMove = onMoveScript;
+			newUserInterface->m_FunctionPointers.OnMove = onMoveScript;
 		}
 
 		// Get Font
-		userInterface->m_FontHandle = data["Font"].as<uint64_t>();
-		userInterface->m_Font = GetFont(userInterface->m_FontHandle);
+		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
+		newUserInterface->m_Font = AssetService::GetFont(newUserInterface->m_FontHandle);
 		// Get Windows
 		auto windows = data["Windows"];
 		if (windows)
 		{
-			auto& newWindowsList = userInterface->m_Windows;
+			auto& newWindowsList = newUserInterface->m_Windows;
 			for (auto window : windows)
 			{
 				RuntimeUI::Window newWindow{};
@@ -395,8 +178,8 @@ namespace Kargono::Assets
 						}
 						default:
 						{
-							KG_ASSERT("Invalid Widget Type in UserInterface Deserialization");
-							return false;
+							KG_WARN("Invalid Widget Type in UserInterface Deserialization");
+							return nullptr;
 						}
 						}
 
@@ -418,11 +201,11 @@ namespace Kargono::Assets
 						}
 						else
 						{
-							Ref<Scripting::Script> onPressScript = Assets::AssetManager::GetScript(newWidget->FunctionPointers.OnPressHandle);
+							Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(newWidget->FunctionPointers.OnPressHandle);
 							if (!onPressScript)
 							{
-								KG_ERROR("Unable to locate OnPress Script!");
-								return false;
+								KG_WARN("Unable to locate OnPress Script!");
+								return nullptr;
 							}
 							newWidget->FunctionPointers.OnPress = onPressScript;
 						}
@@ -438,40 +221,6 @@ namespace Kargono::Assets
 
 			}
 		}
-		return true;
-
+		return newUserInterface;
 	}
-
-	Ref<RuntimeUI::UserInterface> AssetManager::InstantiateUserInterface(const Assets::Asset& userInterfaceAsset)
-	{
-		Ref<RuntimeUI::UserInterface> newUIObject = CreateRef<RuntimeUI::UserInterface>();
-		DeserializeUserInterface(newUIObject, (Projects::ProjectService::GetActiveAssetDirectory() / userInterfaceAsset.Data.FileLocation).string());
-		return newUIObject;
-	}
-
-	std::filesystem::path AssetManager::GetUserInterfaceLocation(const AssetHandle& handle)
-	{
-		if (!s_UserInterfaceRegistry.contains(handle))
-		{
-			KG_ERROR("Attempt to save userInterface that does not exist in registry");
-			return "";
-		}
-		return s_UserInterfaceRegistry[handle].Data.FileLocation;
-	}
-
-	Ref<RuntimeUI::UserInterface> AssetManager::GetUserInterface(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving userInterface!");
-
-		if (s_UserInterfaceRegistry.contains(handle))
-		{
-			auto asset = s_UserInterfaceRegistry[handle];
-			return InstantiateUserInterface(asset);
-		}
-
-		KG_ERROR("No userInterface is associated with provided handle!");
-		return nullptr;
-	}
-
-
 }

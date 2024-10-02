@@ -1,5 +1,8 @@
 #pragma once
-#include "Kargono/AssetsTemp/AssetManagerTemp.h"
+
+#include "Kargono/Assets/AssetManager.h"
+
+namespace Kargono::Scripting { class Script; }
 
 namespace Kargono::Assets
 {
@@ -11,10 +14,10 @@ namespace Kargono::Assets
 		WrappedFuncType FunctionType{ WrappedFuncType::None };
 	};
 
-	class ScriptManager : public AssetManagerTemp<Scripting::Script>
+	class ScriptManager : public AssetManager<Scripting::Script>
 	{
 	public:
-		ScriptManager() : AssetManagerTemp<Scripting::Script>()
+		ScriptManager() : AssetManager<Scripting::Script>()
 		{
 			m_AssetName = "Script";
 			m_AssetType = AssetType::Script;
