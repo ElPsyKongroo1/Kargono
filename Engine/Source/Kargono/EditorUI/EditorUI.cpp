@@ -1834,11 +1834,6 @@ namespace Kargono::EditorUI
 		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		if (spec.Flags & Table_UnderlineTitle)
-		{
-			ImGui::Separator();
-		}
-
 		if (!(spec.Flags & Table_Indented))
 		{
 			ImGui::PopFont();
@@ -1851,39 +1846,46 @@ namespace Kargono::EditorUI
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		}, 
 		s_TableExpandButton ,spec.Expanded, spec.Expanded ? s_HighlightColor1 : s_DisabledColor);
-		
-		if (spec.Expanded)
+
+		if (spec.Expanded && !spec.EditTableSelectionList.empty())
 		{
-			if (!spec.EditTableSelectionList.empty())
-			{
-				ImGui::SameLine();
-				CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			ImGui::SameLine();
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(spec.WidgetID - 1);
 				}, s_MediumOptionsButton, false, s_DisabledColor);
 
-				if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
+			if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
+			{
+				for (auto& [label, func] : spec.EditTableSelectionList)
 				{
-					for (auto& [label, func] : spec.EditTableSelectionList)
+					if (ImGui::Selectable((label + id).c_str()))
 					{
-						if (ImGui::Selectable((label + id).c_str()))
-						{
-							func();
-						}
+						func();
 					}
-					ImGui::EndPopup();
 				}
+				ImGui::EndPopup();
 			}
+		}
 
+		if (spec.Flags & Table_UnderlineTitle)
+		{
+			ImGui::Separator();
+		}
+		
+		if (spec.Expanded)
+		{
 			if (!spec.TableValues.empty())
 			{
 				// Column Titles
 				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: s_TextLeftIndentOffset);
-				TruncateText(spec.Column1Title, 12);
+				labelPosition = ImGui::FindPositionAfterLength(spec.Column1Title.c_str(), s_SecondaryTextLargeWidth);
+				TruncateText(spec.Column1Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(s_SecondaryTextPosOne);
-				TruncateText(spec.Column2Title, 12);
+				labelPosition = ImGui::FindPositionAfterLength(spec.Column2Title.c_str(), s_SecondaryTextLargeWidth);
+				TruncateText(spec.Column2Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::PopStyleColor();
 				Spacing(SpacingAmount::Small);
 			}

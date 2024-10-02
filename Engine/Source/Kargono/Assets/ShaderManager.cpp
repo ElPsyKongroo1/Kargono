@@ -163,12 +163,12 @@ namespace Kargono::Assets
 		}
 
 		// Create New Asset/Handle
-		AssetHandle newHandle{ Assets::EmptyHandle };
+		AssetHandle newHandle{};
 		Assets::Asset newAsset{};
 		newAsset.Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
-		newAsset.Data.IntermediateLocation = m_AssetName + "/" + (std::string)newHandle;
+		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / (std::string)newHandle;
 
 		// Create intermediate and save intermediate to disk
 		CreateShaderIntermediate(shaderSource, newAsset, shaderSpec, bufferLayout, uniformList);
@@ -178,6 +178,9 @@ namespace Kargono::Assets
 		SerializeAssetRegistry(); // Update Registry File on Disk
 		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 		m_AssetCache.insert({ newHandle, newShader });
+
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Shader, Events::ManageAssetAction::Create);
+		EngineService::SubmitToEventQueue(event);
 
 		return newHandle;
 	}

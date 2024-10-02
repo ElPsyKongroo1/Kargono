@@ -1,8 +1,10 @@
 #pragma once
 #include "Kargono/Core/Base.h"
+#include "Kargono/Core/Engine.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Events/AssetEvent.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -205,6 +207,9 @@ namespace Kargono::Assets
 
 			// Save asset data on-disk
 			SerializeAsset(assetReference, dataLocation);
+
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Update);
+			EngineService::SubmitToEventQueue(event);
 		}
 
 		bool DeleteAsset(AssetHandle assetHandle)
@@ -232,6 +237,7 @@ namespace Kargono::Assets
 				return false;
 			}
 
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
 			DeleteAssetValidation(assetHandle);
 
 			// Delete the asset's data on-disk
@@ -248,6 +254,8 @@ namespace Kargono::Assets
 
 			// Save the modified registry to disk
 			SerializeAssetRegistry();
+
+			EngineService::SubmitToEventQueue(event);
 			return true;
 		}
 
@@ -285,12 +293,12 @@ namespace Kargono::Assets
 			}
 
 			// Create New Asset/Handle
-			AssetHandle newHandle{ Assets::EmptyHandle };
+			AssetHandle newHandle{};
 			Assets::Asset newAsset{};
 			newAsset.Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 			newAsset.Data.CheckSum = currentCheckSum;
-			newAsset.Data.FileLocation = m_AssetName + (assetName + m_FileExtension);
+			newAsset.Data.FileLocation = assetName + m_FileExtension;
 
 			// TODO: Fixme, this is temporary since a code path that uses an intermediate location is not yet necessary
 			KG_ASSERT(!m_Flags.test(AssetManagerOptions::HasIntermediateLocation), "Code path for intermediates is not yet supported");
@@ -308,6 +316,8 @@ namespace Kargono::Assets
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
 			}
 
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
 
@@ -390,6 +400,9 @@ namespace Kargono::Assets
 			{
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 			}
+
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
 		void SerializeAssetRegistry()

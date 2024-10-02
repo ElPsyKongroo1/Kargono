@@ -116,6 +116,9 @@ namespace Kargono::Assets
 			AssetService::SaveScene(handle, scene);
 		}
 
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(entityClassHandle, EntityClassAsset.Data.Type, Events::ManageAssetAction::Update);
+		EngineService::SubmitToEventQueue(event);
+
 	}
 
 	void EntityClassManager::DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene)
@@ -129,6 +132,7 @@ namespace Kargono::Assets
 		// Remove entity class references from all scenes
 		Ref<Scenes::EntityClass> newEntityClass = GetAsset(handle);
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, AssetType::EntityClass, Events::ManageAssetAction::Delete);
 
 		// Update Active Scene if applicable
 		Utility::ClearClassReferenceFromScene(activeScene, newEntityClass, handle);
@@ -158,6 +162,7 @@ namespace Kargono::Assets
 		m_AssetRegistry.erase(handle);
 
 		SerializeAssetRegistry();
+		EngineService::SubmitToEventQueue(event);
 	}
 
 	void Assets::EntityClassManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)

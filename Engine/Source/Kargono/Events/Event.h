@@ -38,6 +38,8 @@ namespace Kargono::Events
 		CleanUpTimers,
 		SkipUpdate, AddExtraUpdate,
 		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
+		// Assets
+		ManageAsset,
 		// Physics
 		PhysicsCollisionStart, PhysicsCollisionEnd,
 		// Keyboard
@@ -71,7 +73,8 @@ namespace Kargono::Events
 		Keyboard			= BIT(4),
 		Mouse				= BIT(5),
 		MouseButton			= BIT(6),
-		Physics				= BIT(7)
+		Physics				= BIT(7),
+		Asset				= BIT(8)
 	};
 
 	//============================================================

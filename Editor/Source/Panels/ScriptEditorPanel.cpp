@@ -8,9 +8,9 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-
-	// Script Table (Create)
+	// Script Table
 	static EditorUI::TableSpec s_AllScriptsTable {};
+	// Script Table (Create)
 	static EditorUI::GenericPopupSpec s_CreateScriptPopup {};
 	static EditorUI::EditTextSpec s_CreateScriptName{};
 	static EditorUI::SelectOptionSpec s_CreateScriptFuncType{};

@@ -58,6 +58,7 @@ namespace Kargono
 
 		EditorUI::EditorUIService::Init();
 
+		m_AssetViewerPanel = CreateScope<Panels::AssetViewerPanel>();
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
@@ -213,6 +214,7 @@ namespace Kargono
 
 			if (ImGui::BeginMenu("Panels"))
 			{
+				ImGui::MenuItem("Asset Viewer", NULL, &m_ShowAssetViewer);
 				ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser);
 				ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchy);
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
@@ -279,6 +281,7 @@ namespace Kargono
 		}
 
 		// Display other panels
+		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
 		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
@@ -426,6 +429,11 @@ namespace Kargono
 	bool EditorApp::OnSceneEvent(Events::Event* event)
 	{
 		return m_SceneEditorPanel->OnSceneEvent(event);
+	}
+
+	bool EditorApp::OnAssetEvent(Events::Event* event)
+	{
+		return m_AssetViewerPanel->OnAssetEvent(event);
 	}
 
 	bool EditorApp::OnKeyPressedEditor(Events::KeyPressedEvent event)

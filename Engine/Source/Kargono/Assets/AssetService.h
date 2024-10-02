@@ -203,6 +203,28 @@ namespace Kargono::Assets
 			ClearSceneRegistry();
 		}
 
+		static Asset GetAssetFromAllRegistries(AssetHandle handle, AssetType type)
+		{
+			switch (type)
+			{
+			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
+			case AssetType::EntityClass: return GetEntityClassRegistry().at(handle);
+			case AssetType::Font: return GetFontRegistry().at(handle);
+			case AssetType::GameState: return GetGameStateRegistry().at(handle);
+			case AssetType::InputMode: return GetInputModeRegistry().at(handle);
+			case AssetType::Scene: return GetSceneRegistry().at(handle);
+			case AssetType::Script: return GetScriptRegistry().at(handle);
+			case AssetType::Shader: return GetShaderRegistry().at(handle);
+			case AssetType::Texture: return GetTexture2DRegistry().at(handle);
+			case AssetType::UserInterface: return GetUserInterfaceRegistry().at(handle);
+			case AssetType::None: 
+			default:
+				KG_ERROR("Invalid asset type provided to GetAssetFromAllRegistries function");
+				return {};
+			
+			}
+		}
+
 	private:
 		static inline AssetsContext s_AssetsContext{};
 	};

@@ -32,13 +32,13 @@ namespace Kargono::Assets
 		}
 
 		// Create New Asset/Handle
-		AssetHandle newHandle{ Assets::EmptyHandle };
+		AssetHandle newHandle{};
 		Assets::Asset newAsset{};
 		newAsset.Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Data.FileLocation = "";
-		newAsset.Data.IntermediateLocation = m_AssetName + ((std::string)newAsset.Handle + m_FileExtension);
+		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension);
 
 		// Create Intermediate
 		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
@@ -55,6 +55,8 @@ namespace Kargono::Assets
 			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 		}
 
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Texture, Events::ManageAssetAction::Create);
+		EngineService::SubmitToEventQueue(event);
 		return newHandle;
 
 	}

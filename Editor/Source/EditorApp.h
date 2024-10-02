@@ -1,6 +1,7 @@
 #pragma once
 #include "Kargono.h"
 
+#include "Panels/AssetViewerPanel.h"
 #include "Panels/SceneEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
@@ -103,6 +104,7 @@ namespace Kargono
 		virtual bool OnInputEvent(Events::Event* event) override;
 		virtual bool OnPhysicsEvent(Events::Event* event) override;
 		virtual bool OnSceneEvent(Events::Event* event) override;
+		virtual bool OnAssetEvent(Events::Event* event) override;
 	private:
 		// These private functions are called by the above OnEvent(e) function to handle application events.
 		// These next functions provide different code to respond to user input.
@@ -167,6 +169,7 @@ namespace Kargono
 		//=========================
 		static EditorApp* s_EditorApp;
 		// Booleans to display UI Windows
+		bool m_ShowAssetViewer = false;
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowProperties = true;
 		bool m_ShowContentBrowser = true;
@@ -208,6 +211,7 @@ namespace Kargono
 		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
+		Scope<Panels::AssetViewerPanel> m_AssetViewerPanel;
 		Scope<Panels::SceneEditorPanel> m_SceneEditorPanel;
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
@@ -223,6 +227,7 @@ namespace Kargono
 		Scope<Panels::InputModePanel>  m_InputModePanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 	private:
+		friend Panels::AssetViewerPanel;
 		friend Panels::ViewportPanel;
 		friend Panels::SceneEditorPanel;
 		friend Panels::ContentBrowserPanel;

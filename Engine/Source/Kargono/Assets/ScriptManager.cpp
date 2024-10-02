@@ -90,6 +90,8 @@ namespace Kargono::Assets
 
 		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
 
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+		EngineService::SubmitToEventQueue(event);
 		return std::make_tuple(newHandle, true);
 	}
 
@@ -227,6 +229,8 @@ namespace Kargono::Assets
 			script->m_Function = nullptr;
 		}
 
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(scriptHandle, asset.Data.Type, Events::ManageAssetAction::Update);
+		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
 
@@ -284,6 +288,9 @@ namespace Kargono::Assets
 		}
 
 		SerializeAssetRegistry();
+
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::Update);
+		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
 
@@ -316,6 +323,8 @@ namespace Kargono::Assets
 
 		SerializeAssetRegistry();
 
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::Update);
+		EngineService::SubmitToEventQueue(event); 
 		return true;
 	}
 
