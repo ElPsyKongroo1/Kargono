@@ -218,9 +218,9 @@ namespace Kargono::Assets
 		}
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		assetReference->m_Registry.each([&](auto entityID)
+		assetReference->m_EntityRegistry.m_EnTTRegistry.each([&](auto entityID)
 		{
-			ECS::Entity entity = { entityID, &assetReference->m_Registry };
+			ECS::Entity entity = { entityID, &assetReference->m_EntityRegistry.m_EnTTRegistry };
 			if (!entity) { return; }
 
 			bool success = Utility::SerializeEntity(out, entity);

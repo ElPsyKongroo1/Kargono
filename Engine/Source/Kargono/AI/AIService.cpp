@@ -29,7 +29,7 @@ namespace Kargono::AI
 		// Run on update for all active AI with AIComponents including the global, then the current state
 		for (auto enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
 		{
-			ECS::Entity entity { enttID, &activeScene->m_Registry };
+			ECS::Entity entity = activeScene->GetEntityByEnttID(enttID);
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
 			ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 

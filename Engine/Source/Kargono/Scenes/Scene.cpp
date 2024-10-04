@@ -21,8 +21,8 @@ namespace Kargono::Scenes
 		Ref<Scene> newScene = CreateRef<Scene>();
 		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
 
-		auto& srcSceneRegistry = other->m_Registry;
-		auto& dstSceneRegistry = newScene->m_Registry;
+		auto& srcSceneRegistry = other->m_EntityRegistry.m_EnTTRegistry;
+		auto& dstSceneRegistry = newScene->m_EntityRegistry.m_EnTTRegistry;
 		std::unordered_map<UUID, entt::entity> enttMap;
 
 		// Create entities in new scene
@@ -62,13 +62,13 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-		ECS::Entity entity = { m_Registry.create(), &m_Registry };
+		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry.m_EnTTRegistry };
 		entity.AddComponent<ECS::IDComponent>(uuid);
 		entity.AddComponent<ECS::TransformComponent>();
 		auto& tag = entity.AddComponent<ECS::TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		m_EntityMap[uuid] = entity;
+		m_EntityRegistry.m_EntityMap[uuid] = entity;
 
 		Events::ManageEntity event = { entity.GetUUID(), this, Events::ManageEntityAction::Create };
 		EngineService::OnEvent(&event);
@@ -81,24 +81,24 @@ namespace Kargono::Scenes
 		Events::ManageEntity event = {entity.GetUUID(), this , Events::ManageEntityAction::Delete};
 		EngineService::OnEvent(&event);
 
-		m_EntityMap.erase(entity.GetUUID());
-		if (m_Registry.valid(entity))
+		m_EntityRegistry.m_EntityMap.erase(entity.GetUUID());
+		if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
 		{
-			m_Registry.destroy(entity);
+			m_EntityRegistry.m_EnTTRegistry.destroy(entity);
 		}
 	}
 
 	void Scene::DestroyAllEntities()
 	{
-		if (m_EntityMap.empty()) { return; }
-		for (auto& [uuid, entity] : m_EntityMap)
+		if (m_EntityRegistry.m_EntityMap.empty()) { return; }
+		for (auto& [uuid, entity] : m_EntityRegistry.m_EntityMap)
 		{
-			if (m_Registry.valid(entity))
+			if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
 			{
-				m_Registry.destroy(entity);
+				m_EntityRegistry.m_EnTTRegistry.destroy(entity);
 			}
 		}
-		m_EntityMap.clear();
+		m_EntityRegistry.m_EntityMap.clear();
 	}
 	
 	void Scene::OnRuntimeStart()
@@ -109,7 +109,7 @@ namespace Kargono::Scenes
 		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto e : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_Registry };
+			ECS::Entity entity = { e, &m_EntityRegistry.m_EnTTRegistry };
 			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			Ref<EntityClass> entityClass = Assets::AssetService::GetEntityClass(classInstanceComp.ClassHandle);
 			KG_ASSERT(entityClass);
@@ -124,7 +124,7 @@ namespace Kargono::Scenes
 		auto view = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto enttID : view)
 		{
-			ECS::Entity entity = { enttID, &m_Registry };
+			ECS::Entity entity = { enttID, &m_EntityRegistry.m_EnTTRegistry };
 			const auto& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			KG_ASSERT(classInstanceComp.ClassReference);
 			if (!m_ScriptClassToEntityList.contains(classInstanceComp.ClassReference->GetName()))
@@ -155,11 +155,11 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::FindEntityByName(const std::string& name)
 	{
-		auto view = m_Registry.view<ECS::TagComponent>();
+		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::TagComponent>();
 		for (auto entity : view)
 		{
 			const ECS::TagComponent& tc = view.get<ECS::TagComponent>(entity);
-			if (tc.Tag == name) { return ECS::Entity{ entity, &m_Registry }; }
+			if (tc.Tag == name) { return ECS::Entity{ entity, & m_EntityRegistry.m_EnTTRegistry }; }
 		}
 		return {};
 	}
@@ -167,24 +167,37 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::GetEntityByUUID(UUID uuid)
 	{
-		if (!m_EntityMap.contains(uuid))
+		if (!m_EntityRegistry.m_EntityMap.contains(uuid))
 		{
 			KG_WARN("Could not find entity by uuid");
 			return {};
 		}
 
-		return { m_EntityMap.at(uuid), &m_Registry };
+		return { m_EntityRegistry.m_EntityMap.at(uuid), &m_EntityRegistry.m_EnTTRegistry };
+	}
+
+	ECS::Entity Scene::GetEntityByEnttID(entt::entity enttID)
+	{
+		// Ensure enttID is valid for this scene's registry
+		if (m_EntityRegistry.m_EnTTRegistry.valid(enttID))
+		{
+			return { enttID, &m_EntityRegistry.m_EnTTRegistry };
+		}
+
+		// Return empty entity
+		KG_WARN("Could not find entity using an entt ID");
+		return {};
 	}
 
 	bool Scene::CheckEntityExists(entt::entity entity)
 	{
-		return m_Registry.valid(entity);
+		return m_EntityRegistry.m_EnTTRegistry.valid(entity);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
 		// Resize non-fixed
-		auto view = m_Registry.view<ECS::CameraComponent>();
+		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
 		for (auto entity : view)
 		{
 			auto& cameraComponent = view.get<ECS::CameraComponent>(entity);
@@ -196,13 +209,13 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::GetPrimaryCameraEntity()
 	{
-		auto view = m_Registry.view<ECS::CameraComponent>();
+		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
 		for (auto entity: view)
 		{
 			const auto& camera = view.get<ECS::CameraComponent>(entity);
 			if (camera.Primary)
 			{
-				return ECS::Entity{ entity, &m_Registry };
+				return ECS::Entity{ entity, & m_EntityRegistry.m_EnTTRegistry };
 			}
 		}
 		return {};
@@ -212,7 +225,7 @@ namespace Kargono::Scenes
 		Rendering::RenderingService::BeginScene(camera, transform);
 		// Draw Shapes
 		{
-			auto view = m_Registry.view<ECS::TransformComponent, ECS::ShapeComponent>();
+			auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::TransformComponent, ECS::ShapeComponent>();
 			for (auto entity : view)
 			{
 				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
@@ -221,7 +234,7 @@ namespace Kargono::Scenes
 				inputSpec.Shader = shape.Shader;
 				inputSpec.Buffer = shape.ShaderData;
 				inputSpec.Entity = static_cast<uint32_t>(entity);
-				inputSpec.EntityRegistry = &m_Registry;
+				inputSpec.EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
 				inputSpec.ShapeComponent = &shape;
 				inputSpec.TransformMatrix = transform.GetTransform();
 
@@ -245,7 +258,7 @@ namespace Kargono::Scenes
 		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto e : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_Registry };
+			ECS::Entity entity = { e, &m_EntityRegistry.m_EnTTRegistry };
 			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			Ref<EntityClass> entityClass = classInstanceComp.ClassReference;
 			KG_ASSERT(entityClass);
@@ -358,9 +371,9 @@ namespace Kargono::Scenes
 	}
 	Assets::AssetHandle SceneService::FindEntityHandleByName(const std::string& name)
 	{
-		for (auto& [handle, enttID] : s_ActiveScene->m_EntityMap)
+		for (auto& [handle, enttID] : s_ActiveScene->m_EntityRegistry.m_EntityMap)
 		{
-			ECS::Entity entity{ enttID, &s_ActiveScene->m_Registry };
+			ECS::Entity entity{ enttID, &s_ActiveScene->m_EntityRegistry.m_EnTTRegistry };
 			if (entity.HasComponent<ECS::TagComponent>())
 			{
 				ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();

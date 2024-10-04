@@ -15,7 +15,7 @@ namespace Kargono::Utility
 		{
 			for (auto entity : scene->GetAllEntitiesWith<ECS::ClassInstanceComponent>())
 			{
-				ECS::Entity currentEntity { entity, &scene->m_Registry };
+				ECS::Entity currentEntity { entity, &scene->m_EntityRegistry.m_EnTTRegistry };
 				ECS::ClassInstanceComponent& component = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{
@@ -42,9 +42,9 @@ namespace Kargono::Utility
 	{
 		if (scene)
 		{
-			for (auto entity : scene->GetAllEntitiesWith<ECS::ClassInstanceComponent>())
+			for (auto enttID : scene->GetAllEntitiesWith<ECS::ClassInstanceComponent>())
 			{
-				ECS::Entity currentEntity { entity, &scene->m_Registry };
+				ECS::Entity currentEntity = scene->GetEntityByEnttID(enttID);
 				ECS::ClassInstanceComponent& component = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{

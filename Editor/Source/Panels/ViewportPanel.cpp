@@ -729,9 +729,7 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() =
-				Scenes::SceneService::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ?
-				ECS::Entity((entt::entity)pixelData, &Scenes::SceneService::GetActiveScene()->m_Registry) : ECS::Entity();
+			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)pixelData);
 		}
 	}
 
