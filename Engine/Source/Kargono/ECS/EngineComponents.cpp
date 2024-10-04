@@ -1,13 +1,13 @@
 #include "kgpch.h"
 
-#include "Kargono/Scenes/Components.h"
+#include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Assets/AssetService.h"
 
-namespace Kargono::Scenes
+namespace Kargono::ECS
 {
-	bool Kargono::Scenes::ClassInstanceComponent::ChangeClass(Assets::AssetHandle classHandle)
+	bool ClassInstanceComponent::ChangeClass(Assets::AssetHandle classHandle)
 	{
-		Ref<EntityClass> entityClassRef = Assets::AssetService::GetEntityClass(classHandle);
+		Ref<Scenes::EntityClass> entityClassRef = Assets::AssetService::GetEntityClass(classHandle);
 		if (!entityClassRef)
 		{
 			KG_WARN("Could not retrieve entity class reference in Components.h");

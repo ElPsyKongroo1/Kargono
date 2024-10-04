@@ -4,7 +4,7 @@
 
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/ECS/Entity.h"
 
 #include "API/Physics/Box2DBackend.h"
 
@@ -44,12 +44,12 @@ namespace Kargono::Physics
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld
-		auto rigidBodyView = scene->GetAllEntitiesWith<Scenes::Rigidbody2DComponent>();
+		auto rigidBodyView = scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
 		for (auto e : rigidBodyView)
 		{
-			Scenes::Entity entity = { e, scene };
-			auto& transform = entity.GetComponent<Scenes::TransformComponent>();
-			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			ECS::Entity entity = { e, &scene->m_Registry };
+			auto& transform = entity.GetComponent<ECS::TransformComponent>();
+			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
 			bodyDef.type = Utility::Rigidbody2DTypeToBox2DBody(rb2d.Type);
@@ -62,9 +62,9 @@ namespace Kargono::Physics
 			bodyUser.UUID = entity.GetUUID();
 			rb2d.RuntimeBody = body;
 
-			if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+			if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
-				auto& bc2d = entity.GetComponent<Scenes::BoxCollider2DComponent>();
+				auto& bc2d = entity.GetComponent<ECS::BoxCollider2DComponent>();
 				b2Vec2 offsets{ bc2d.Offset.y, -bc2d.Offset.x };
 				b2PolygonShape boxShape;
 				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y,
@@ -79,9 +79,9 @@ namespace Kargono::Physics
 				body->CreateFixture(&fixtureDef);
 			}
 
-			if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+			if (entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
-				auto& circleColliderComponent = entity.GetComponent<Scenes::CircleCollider2DComponent>();
+				auto& circleColliderComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(circleColliderComponent.Offset.x, circleColliderComponent.Offset.y);
@@ -105,20 +105,32 @@ namespace Kargono::Physics
 		m_PhysicsWorld = nullptr;
 	}
 
-	void Physics2DWorld::OnUpdate(Timestep ts)
+	void Physics2DService::Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec)
 	{
-		
+		KG_ASSERT(!s_ActivePhysicsWorld, "Attempt to initialize the physics 2D service, however, the service is already active.");
+		s_ActivePhysicsWorld = CreateRef<Physics2DWorld>(scene, physicsSpec.Gravity);
+	}
+
+	void Physics2DService::Terminate()
+	{
+		KG_ASSERT(s_ActivePhysicsWorld, "Attempt to terminate the active physics 2D service, however, the service is not currently active.");
+		s_ActivePhysicsWorld.reset();
+		s_ActivePhysicsWorld = nullptr;
+	}
+
+	void Physics2DService::OnUpdate(Timestep ts)
+	{
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
-		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+		s_ActivePhysicsWorld->m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D
-		auto view = m_Scene->GetAllEntitiesWith<Scenes::Rigidbody2DComponent>();
+		auto view = s_ActivePhysicsWorld->m_Scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
 		for (auto e : view)
 		{
-			Scenes::Entity entity = { e, m_Scene };
-			auto& transform = entity.GetComponent<Scenes::TransformComponent>();
-			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			ECS::Entity entity = { e, &s_ActivePhysicsWorld->m_Scene->m_Registry };
+			auto& transform = entity.GetComponent<ECS::TransformComponent>();
+			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			const auto& position = body->GetPosition();
@@ -128,12 +140,11 @@ namespace Kargono::Physics
 			// TODO FOR DEBUGGING
 			KG_ASSERT(!std::isnan(position.x) && !std::isnan(position.y) && !std::isnan(body->GetAngle()));
 		}
-		
 	}
 
-	void Physics2DWorld::SetGravity(const Math::vec2& gravity)
+	void Physics2DService::SetActiveGravity(const Math::vec2& gravity)
 	{
-		m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
+		s_ActivePhysicsWorld->m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
 	}
 
 }

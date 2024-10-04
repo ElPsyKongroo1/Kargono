@@ -15,7 +15,7 @@
 #include <functional>
 #include <tuple>
 
-namespace Kargono::Scenes
+namespace Kargono::ECS
 {
 	struct ShapeComponent;
 	struct TransformComponent;
@@ -42,7 +42,7 @@ namespace Kargono::Rendering
 	{
 		Ref<Shader> Shader;
 		Ref<Texture2D> Texture;
-		Scenes::ShapeComponent* ShapeComponent;
+		ECS::ShapeComponent* ShapeComponent;
 		Ref<DrawCallBuffer> CurrentDrawBuffer;
 		Buffer Buffer;
 		uint32_t Entity;

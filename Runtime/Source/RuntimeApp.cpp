@@ -90,13 +90,13 @@ namespace Kargono
  		OnUpdateRuntime(ts);
 
 		// Draw runtimeUI, if applicable
-		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -201,17 +201,17 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityOne.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -220,9 +220,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityTwo.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -237,17 +237,17 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityOne.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -256,9 +256,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityTwo.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -271,7 +271,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
+		Input::InputModeService::OnKeyPressed(event);
 		return false;
 	}
 
@@ -281,18 +281,18 @@ namespace Kargono
 		AI::AIService::OnUpdate(ts);
 
 		// Update
-		Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
+		Input::InputModeService::OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
-		Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
+		Physics::Physics2DService::OnUpdate(ts);
 
 		// Render 2D
-		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -455,6 +455,7 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
 		if (scriptHandle != 0)
@@ -482,6 +483,7 @@ namespace Kargono
 
 	void RuntimeApp::OnStop()
 	{
+		Physics::Physics2DService::Terminate();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		if (Projects::ProjectService::GetActiveAppIsNetworked())

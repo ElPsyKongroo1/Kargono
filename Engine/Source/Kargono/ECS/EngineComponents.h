@@ -14,7 +14,7 @@
 
 namespace Kargono::Rendering { class Texture2D; }
 
-namespace Kargono::Scenes
+namespace Kargono::ECS
 {
 	struct AIStateComponent
 	{
@@ -85,7 +85,7 @@ namespace Kargono::Scenes
 
 	struct CameraComponent
 	{
-		SceneCamera Camera;
+		Scenes::SceneCamera Camera;
 		bool Primary = true;
 
 		CameraComponent() = default;
@@ -107,7 +107,7 @@ namespace Kargono::Scenes
 	};
 
 	// Physics
-	struct Rigidbody2DComponent
+	struct Rigidbody2DComponent 
 	{
 		enum class BodyType
 		{
@@ -148,7 +148,7 @@ namespace Kargono::Scenes
 	{
 	public:
 		Assets::AssetHandle ClassHandle{ Assets::EmptyHandle };
-		Ref<EntityClass> ClassReference{ nullptr };
+		Ref<Scenes::EntityClass> ClassReference{ nullptr };
 		std::vector<Ref<WrappedVariable>> Fields{};
 
 		bool ChangeClass(Assets::AssetHandle classHandle);

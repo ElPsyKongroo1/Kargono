@@ -9,7 +9,7 @@
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/ECS/Entity.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Network/Client.h"
@@ -250,14 +250,14 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
-		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
-		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
+		entity.GetComponent<ECS::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
@@ -268,15 +268,15 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
-		Scenes::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
-		entity.GetComponent<Scenes::TransformComponent>().Translation = translation;
+		entity.GetComponent<ECS::TransformComponent>().Translation = translation;
 
-		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));

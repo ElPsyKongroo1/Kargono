@@ -26,6 +26,10 @@
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/AppTick.h"
 
+//-----------------ECS-----------------//
+#include "Kargono/ECS/Entity.h"
+#include "Kargono/ECS/EngineComponents.h"
+
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/NetworkingEvent.h"
@@ -58,8 +62,6 @@
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Components.h"
-#include "Kargono/Scenes/Entity.h"
 #include "Kargono/Scenes/EntityClass.h"
 #include "Kargono/Scenes/GameState.h"
 

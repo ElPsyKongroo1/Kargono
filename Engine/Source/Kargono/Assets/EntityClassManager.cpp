@@ -3,7 +3,7 @@
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Assets/EntityClassManager.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/ECS/Entity.h"
 #include "Kargono/Scenes/EntityClass.h"
 
 namespace Kargono::Utility
@@ -13,10 +13,10 @@ namespace Kargono::Utility
 	{
 		if (scene)
 		{
-			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
+			for (auto entity : scene->GetAllEntitiesWith<ECS::ClassInstanceComponent>())
 			{
-				Scenes::Entity currentEntity { entity, scene.get() };
-				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
+				ECS::Entity currentEntity { entity, &scene->m_Registry };
+				ECS::ClassInstanceComponent& component = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{
 					component.ClassReference = entityClass;
@@ -42,10 +42,10 @@ namespace Kargono::Utility
 	{
 		if (scene)
 		{
-			for (auto entity : scene->GetAllEntitiesWith<Scenes::ClassInstanceComponent>())
+			for (auto entity : scene->GetAllEntitiesWith<ECS::ClassInstanceComponent>())
 			{
-				Scenes::Entity currentEntity { entity, scene.get() };
-				Scenes::ClassInstanceComponent& component = currentEntity.GetComponent<Scenes::ClassInstanceComponent>();
+				ECS::Entity currentEntity { entity, &scene->m_Registry };
+				ECS::ClassInstanceComponent& component = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
 				if (component.ClassHandle == entityHandle)
 				{
 					component.ClassHandle = Assets::EmptyHandle;

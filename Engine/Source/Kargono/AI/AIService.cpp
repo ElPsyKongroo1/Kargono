@@ -2,7 +2,7 @@
 
 #include "Kargono/AI/AIService.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/ECS/Entity.h"
 
 namespace Kargono::AI
 {
@@ -27,11 +27,11 @@ namespace Kargono::AI
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
 		// Run on update for all active AI with AIComponents including the global, then the current state
-		for (auto enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::AIStateComponent>())
+		for (auto enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
 		{
-			Scenes::Entity entity { enttID, activeScene };
+			ECS::Entity entity { enttID, &activeScene->m_Registry };
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
-			Scenes::AIStateComponent& aiComponent = entity.GetComponent<Scenes::AIStateComponent>();
+			ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 			// Call Global State OnUpdate
 			if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnUpdate)
@@ -54,14 +54,14 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Scenes::Scene* activeScene = Scenes::SceneService::GetActiveScene().get();
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
-		Scenes::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained. Could not update global state.");
 
 		// Ensure new AIState is valid
 		//Ref<AIState> newState = Assets::AssetManager::GetAIState();
 		//KG_ASSERT(newState, "Invalid new AI state provided. Could not update global state.");
 
-		Scenes::AIStateComponent& aiComponent = entity.GetComponent<Scenes::AIStateComponent>();
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 		// Call OnExitState() for active global AIState
 		if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnExitState)

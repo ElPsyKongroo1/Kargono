@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Scenes/Components.h"
+#include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Events/PhysicsEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"
@@ -86,18 +86,6 @@ namespace Kargono::Physics
 		//		underlying physics world in m_PhysicsWorld
 		~Physics2DWorld();
 
-		//=========================
-		// LifeCycle Functions
-		//=========================
-		// This function iterates the position and velocity of current physics
-		//		world objects through the Step function and updates the transforms
-		//		of all entities in the scene that involve physics.
-		void OnUpdate(Timestep ts);
-		//=========================
-		// Update Underlying Physics World
-		//=========================
-		// This function simply sets the gravity settings of the active physics world.
-		void SetGravity(const Math::vec2& gravity);
 	private:
 		// Underlying physics world implementation
 		Scope<b2World> m_PhysicsWorld = nullptr;
@@ -107,5 +95,37 @@ namespace Kargono::Physics
 		// This contact listener moves physics collision events into the event pipeline
 		//		for further processing.
 		Scope<ContactListener> m_ContactListener = nullptr;
+	private:
+		friend class Physics2DService;
+	};
+
+	class Physics2DService
+	{
+	public:
+		//=========================
+		// Lifecycle Functions
+		//=========================
+		static void Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
+		static void Terminate();
+
+		//=========================
+		// On Event Functionality
+		//=========================
+		static void OnUpdate(Timestep ts);
+
+		//=========================
+		// Manage Active Physics2DWorld
+		//=========================
+		static void SetActiveGravity(const Math::vec2& gravity);
+
+		//=========================
+		// Getters/Setters
+		//=========================
+		static Ref<Physics2DWorld> GetActivePhysics2DWorld()
+		{
+			return s_ActivePhysicsWorld;
+		}
+	private:
+		static inline Ref<Physics2DWorld> s_ActivePhysicsWorld { nullptr };
 	};
 }

@@ -708,10 +708,10 @@ namespace Kargono::Panels
 		ImGui::Text("Physics Settings:");
 		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
 		{
-			if (Scenes::SceneService::GetActiveScene()->GetPhysicsWorld())
+			if (Physics::Physics2DService::GetActivePhysics2DWorld())
 			{
 				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Scenes::SceneService::GetActiveScene()->GetPhysicsWorld()->SetGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
+				Physics::Physics2DService::SetActiveGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
 

@@ -316,7 +316,7 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
-		return Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
+		return Input::InputModeService::OnKeyPressed(event);
 	}
 
 	bool EditorApp::OnApplicationEvent(Events::Event* event)
@@ -499,7 +499,7 @@ namespace Kargono
 			{
 			if (EditorUI::EditorUIService::GetActiveWidgetID() == 0)
 			{
-				Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);
@@ -526,14 +526,14 @@ namespace Kargono
 				if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 				{
 					m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
-					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
+					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 					// Algorithm to enable double clicking for an entity!
 					static float previousTime{ 0.0f };
-					static Scenes::Entity previousEntity{};
+					static ECS::Entity previousEntity{};
 					float currentTime = Utility::Time::GetTime();
 					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
 					{
-						auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
+						auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
 						m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
 						m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
 						m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
@@ -553,17 +553,17 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityOne.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -572,9 +572,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityTwo.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -589,17 +589,17 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityOne.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -608,9 +608,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityOne.HasComponent<ECS::ClassInstanceComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& component = entityTwo.GetComponent<ECS::ClassInstanceComponent>();
 			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
 			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
 			if (scriptHandle != Assets::EmptyHandle)
@@ -902,6 +902,7 @@ namespace Kargono
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
 		if (scriptHandle != 0)
@@ -926,15 +927,22 @@ namespace Kargono
 
 		m_SceneState = SceneState::Simulate;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Scenes::SceneService::GetActiveScene()->OnSimulationStart();
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 	}
 	void EditorApp::OnStop()
 	{
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-		if (m_SceneState == SceneState::Play) { Scenes::SceneService::GetActiveScene()->OnRuntimeStop(); }
-		else if (m_SceneState == SceneState::Simulate) { Scenes::SceneService::GetActiveScene()->OnSimulationStop(); }
+		if (m_SceneState == SceneState::Play) 
+		{ 
+			Physics::Physics2DService::Terminate();
+			Scenes::SceneService::GetActiveScene()->OnRuntimeStop(); 
+		}
+		else if (m_SceneState == SceneState::Simulate) 
+		{ 
+			Physics::Physics2DService::Terminate();
+		}
 
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -984,12 +992,12 @@ namespace Kargono
 		if (m_SceneState != SceneState::Edit)
 			return;
 
-		Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+		ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (selectedEntity)
 		{
-			Scenes::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneEditorPanel->SetSelectedEntity(newEntity);
-			s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(Scenes::ComponentType::None);
+			s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 		}
 	}
 

@@ -4,7 +4,7 @@
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
-#include "Kargono/Scenes/Components.h"
+#include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Rendering/Texture.h"
@@ -59,7 +59,7 @@ namespace Kargono::RuntimeUI
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			s_TextInputSpec.ShapeComponent = new Scenes::ShapeComponent();
+			s_TextInputSpec.ShapeComponent = new ECS::ShapeComponent();
 			s_TextInputSpec.ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
 
 			s_TextInputSpec.Shader = localShader;

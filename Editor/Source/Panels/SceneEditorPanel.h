@@ -13,29 +13,29 @@ namespace Kargono::Panels
 		bool OnSceneEvent(Events::Event* event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
-		void SetSelectedEntity(Scenes::Entity entity);
+		void SetSelectedEntity(ECS::Entity entity);
 		void RefreshClassInstanceComponent();
 		void RefreshTransformComponent();
 	public:
-		void SetDisplayedComponent(Scenes::ComponentType type)
+		void SetDisplayedComponent(ECS::ComponentType type)
 		{
 			m_DisplayedComponent = type;
 		}
 	private:
-		void DrawAllComponents(Scenes::Entity entity);
-		void DrawSingleComponent(Scenes::Entity entity);
+		void DrawAllComponents(ECS::Entity entity);
+		void DrawSingleComponent(ECS::Entity entity);
 	private:
-		void DrawTagComponent(Scenes::Entity entity);
-		void DrawTransformComponent(Scenes::Entity entity);
-		void DrawClassInstanceComponent(Scenes::Entity entity);
-		void DrawRigidbody2DComponent(Scenes::Entity entity);
-		void DrawBoxCollider2DComponent(Scenes::Entity entity);
-		void DrawCircleCollider2DComponent(Scenes::Entity entity);
-		void DrawCameraComponent(Scenes::Entity entity);
-		void DrawShapeComponent(Scenes::Entity entity);
+		void DrawTagComponent(ECS::Entity entity);
+		void DrawTransformComponent(ECS::Entity entity);
+		void DrawClassInstanceComponent(ECS::Entity entity);
+		void DrawRigidbody2DComponent(ECS::Entity entity);
+		void DrawBoxCollider2DComponent(ECS::Entity entity);
+		void DrawCircleCollider2DComponent(ECS::Entity entity);
+		void DrawCameraComponent(ECS::Entity entity);
+		void DrawShapeComponent(ECS::Entity entity);
 	private:
 		std::string m_PanelName{"Scene Editor"};
-		Scenes::ComponentType m_DisplayedComponent{Scenes::ComponentType::None };
+		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
 	private:
 		friend class PropertiesPanel;
 	};

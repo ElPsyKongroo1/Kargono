@@ -4,6 +4,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Scripting/ScriptService.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Core/Timestep.h"
 
 #include <vector>
 #include <unordered_map>
@@ -108,7 +110,12 @@ namespace Kargono::Input
 	class InputModeService
 	{
 	public:
-		
+		//=========================
+		// On Event Functionality
+		//=========================
+		static void OnUpdate(Timestep ts);
+		static bool OnKeyPressed(Events::KeyPressedEvent event);
+
 		//=========================
 		// Active Input Mode API
 		//=========================

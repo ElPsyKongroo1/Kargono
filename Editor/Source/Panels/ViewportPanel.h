@@ -26,7 +26,7 @@ namespace Kargono::Panels
 		void OnOverlayRender();
 		// This function holds the underlying logic to draw Camera Frustrum visualizations.
 		//		This function is called in OnOverlayRender().
-		void DrawFrustrum(Scenes::Entity& entity);
+		void DrawFrustrum(ECS::Entity& entity);
 
 		void DrawWorldAxis();
 

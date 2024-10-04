@@ -4,29 +4,29 @@
 #include "Kargono/Assets/SceneManager.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/ECS/Entity.h"
 
 namespace Kargono::Utility
 {
-	static bool SerializeEntity(YAML::Emitter& out, Scenes::Entity entity)
+	static bool SerializeEntity(YAML::Emitter& out, ECS::Entity entity)
 	{
-		KG_ASSERT(entity.HasComponent<Scenes::IDComponent>(), "Entity does not have a component");
+		KG_ASSERT(entity.HasComponent<ECS::IDComponent>(), "Entity does not have a component");
 		out << YAML::BeginMap; // Entity Map
 		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
 
-		if (entity.HasComponent<Scenes::TagComponent>())
+		if (entity.HasComponent<ECS::TagComponent>())
 		{
 			out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
+			auto& tag = entity.GetComponent<ECS::TagComponent>().Tag;
 			out << YAML::Key << "Tag" << YAML::Value << tag;
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entity.HasComponent<ECS::ClassInstanceComponent>())
 		{
 			out << YAML::Key << "ClassInstanceComponent";
-			Scenes::ClassInstanceComponent& comp = entity.GetComponent<Scenes::ClassInstanceComponent>();
+			ECS::ClassInstanceComponent& comp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			out << YAML::BeginMap; // Component Map
 			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
 			if (comp.ClassHandle != Assets::EmptyHandle)
@@ -66,23 +66,23 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::TransformComponent>())
+		if (entity.HasComponent<ECS::TransformComponent>())
 		{
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tc = entity.GetComponent<Scenes::TransformComponent>();
+			auto& tc = entity.GetComponent<ECS::TransformComponent>();
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
 
 			out << YAML::EndMap; // Component Map
 		}
-		if (entity.HasComponent<Scenes::CameraComponent>())
+		if (entity.HasComponent<ECS::CameraComponent>())
 		{
 			out << YAML::Key << "CameraComponent";
 			out << YAML::BeginMap; // Component Map
 
-			auto& cameraComponent = entity.GetComponent<Scenes::CameraComponent>();
+			auto& cameraComponent = entity.GetComponent<ECS::CameraComponent>();
 			auto& camera = cameraComponent.Camera;
 
 			out << YAML::Key << "Camera" << YAML::Value;
@@ -103,11 +103,11 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::ShapeComponent>())
+		if (entity.HasComponent<ECS::ShapeComponent>())
 		{
 			out << YAML::Key << "ShapeComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& shapeComponent = entity.GetComponent<Scenes::ShapeComponent>();
+			auto& shapeComponent = entity.GetComponent<ECS::ShapeComponent>();
 			out << YAML::Key << "CurrentShape" << YAML::Value << Utility::ShapeTypeToString(shapeComponent.CurrentShape);
 			if (shapeComponent.VertexColors)
 			{
@@ -148,21 +148,21 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& rb2dComponent = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			auto& rb2dComponent = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(rb2dComponent.Type);
 			out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+		if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 		{
 			out << YAML::Key << "BoxCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& bc2dComponent = entity.GetComponent<Scenes::BoxCollider2DComponent>();
+			auto& bc2dComponent = entity.GetComponent<ECS::BoxCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << bc2dComponent.Offset;
 			out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
 			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
@@ -172,11 +172,11 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+		if (entity.HasComponent<ECS::CircleCollider2DComponent>())
 		{
 			out << YAML::Key << "CircleCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& cc2dComponent = entity.GetComponent<Scenes::CircleCollider2DComponent>();
+			auto& cc2dComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << cc2dComponent.Offset;
 			out << YAML::Key << "Radius" << YAML::Value << cc2dComponent.Radius;
 			out << YAML::Key << "Density" << YAML::Value << cc2dComponent.Density;
@@ -219,16 +219,16 @@ namespace Kargono::Assets
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		assetReference->m_Registry.each([&](auto entityID)
-			{
-				Scenes::Entity entity = { entityID, assetReference.get() };
-				if (!entity) { return; }
+		{
+			ECS::Entity entity = { entityID, &assetReference->m_Registry };
+			if (!entity) { return; }
 
-				bool success = Utility::SerializeEntity(out, entity);
-				if (!success)
-				{
-					submitScene = false;
-				}
-			});
+			bool success = Utility::SerializeEntity(out, entity);
+			if (!success)
+			{
+				submitScene = false;
+			}
+		});
 		out << YAML::EndSeq;
 		out << YAML::EndMap; // Start of File Map
 		if (submitScene)
@@ -273,12 +273,12 @@ namespace Kargono::Assets
 					name = tagComponent["Tag"].as<std::string>(); 
 				}
 
-				Scenes::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
+				ECS::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					auto& tc = deserializedEntity.GetComponent<Scenes::TransformComponent>();
+					auto& tc = deserializedEntity.GetComponent<ECS::TransformComponent>();
 					tc.Translation = transformComponent["Translation"].as<Math::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<Math::vec3>();
 					tc.Scale = transformComponent["Scale"].as<Math::vec3>();
@@ -287,7 +287,7 @@ namespace Kargono::Assets
 				auto classInstanceComponent = entity["ClassInstanceComponent"];
 				if (classInstanceComponent)
 				{
-					auto& cInstComp = deserializedEntity.AddComponent<Scenes::ClassInstanceComponent>();
+					auto& cInstComp = deserializedEntity.AddComponent<ECS::ClassInstanceComponent>();
 					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
 					if (cInstComp.ClassHandle != Assets::EmptyHandle)
 					{
@@ -314,7 +314,7 @@ namespace Kargono::Assets
 				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
-					auto& cc = deserializedEntity.AddComponent<Scenes::CameraComponent>();
+					auto& cc = deserializedEntity.AddComponent<ECS::CameraComponent>();
 
 					const auto& cameraProps = cameraComponent["Camera"];
 
@@ -333,7 +333,7 @@ namespace Kargono::Assets
 				auto shapeComponent = entity["ShapeComponent"];
 				if (shapeComponent)
 				{
-					auto& sc = deserializedEntity.AddComponent<Scenes::ShapeComponent>();
+					auto& sc = deserializedEntity.AddComponent<ECS::ShapeComponent>();
 					sc.CurrentShape = Utility::StringToShapeType(shapeComponent["CurrentShape"].as<std::string>());
 
 					if (shapeComponent["VertexColors"])
@@ -400,7 +400,7 @@ namespace Kargono::Assets
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
 				if (rigidbody2DComponent)
 				{
-					auto& rb2d = deserializedEntity.AddComponent<Scenes::Rigidbody2DComponent>();
+					auto& rb2d = deserializedEntity.AddComponent<ECS::Rigidbody2DComponent>();
 					rb2d.Type = Utility::StringToRigidBody2DBodyType(rigidbody2DComponent["BodyType"].as<std::string>());
 					rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
 				}
@@ -408,7 +408,7 @@ namespace Kargono::Assets
 				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
 				if (boxCollider2DComponent)
 				{
-					auto& bc2d = deserializedEntity.AddComponent<Scenes::BoxCollider2DComponent>();
+					auto& bc2d = deserializedEntity.AddComponent<ECS::BoxCollider2DComponent>();
 					bc2d.Offset = boxCollider2DComponent["Offset"].as<Math::vec2>();
 					bc2d.Size = boxCollider2DComponent["Size"].as<Math::vec2>();
 					bc2d.Density = boxCollider2DComponent["Density"].as<float>();
@@ -420,7 +420,7 @@ namespace Kargono::Assets
 				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
 				if (circleCollider2DComponent)
 				{
-					auto& cc2d = deserializedEntity.AddComponent<Scenes::CircleCollider2DComponent>();
+					auto& cc2d = deserializedEntity.AddComponent<ECS::CircleCollider2DComponent>();
 					cc2d.Offset = circleCollider2DComponent["Offset"].as<Math::vec2>();
 					cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
 					cc2d.Density = circleCollider2DComponent["Density"].as<float>();
